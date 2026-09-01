@@ -555,21 +555,46 @@ func (b *Bot) GetStatus() discordtypes.BotStatus {
 	return status
 }
 
+func (b *Bot) GetStatusForGuild(guildID discord.GuildID) (discordtypes.BotStatus, bool) {
+	guild, ok := b.activeGuilds.Load(guildID)
+	if !ok || guild == nil {
+		return discordtypes.BotStatus{}, false
+	}
+
+	status := discordtypes.BotStatus{}
+	if interval := b.syncTime.Load(); interval != nil {
+		status.SyncInterval = *interval
+	}
+	status.Guilds = []discordtypes.GuildStatus{guild.status()}
+	return status, true
+}
+
 func (b *Bot) IsUserConfigAdmin(ctx context.Context, userID discord.UserID) (bool, error) {
 	account := &struct {
-		Groups  *accounts.AccountGroups `alias:"groups"`
 		License string                  `alias:"license"`
+		Groups  *accounts.AccountGroups `alias:"groups"`
 	}{}
 	stmt := table.FivenetAccountsOauth2.
-		SELECT(table.FivenetAccounts.Groups, table.FivenetAccounts.License).
-		FROM(table.FivenetAccountsOauth2.INNER_JOIN(
-			table.FivenetAccounts,
-			table.FivenetAccounts.ID.EQ(table.FivenetAccountsOauth2.AccountID),
-		)).WHERE(mysql.AND(
-		table.FivenetAccountsOauth2.Provider.EQ(mysql.String("discord")),
-		table.FivenetAccountsOauth2.ExternalID.EQ(mysql.String(strconv.FormatUint(uint64(userID), 10))),
-		table.FivenetAccounts.DeletedAt.IS_NULL(),
-	)).LIMIT(1)
+		SELECT(
+			table.FivenetAccounts.License.AS("license"),
+			table.FivenetAccounts.Groups.AS("groups"),
+		).
+		FROM(
+			table.FivenetAccountsOauth2.
+				INNER_JOIN(
+					table.FivenetAccounts,
+					table.FivenetAccounts.ID.EQ(table.FivenetAccountsOauth2.AccountID),
+				),
+		).
+		WHERE(mysql.AND(
+			table.FivenetAccountsOauth2.Provider.EQ(mysql.String("discord")),
+			table.FivenetAccountsOauth2.ExternalID.EQ(
+				mysql.String(strconv.FormatUint(uint64(userID), 10)),
+			),
+			table.FivenetAccounts.DeletedAt.IS_NULL(),
+		)).
+		LIMIT(1)
+
 	if err := stmt.QueryContext(ctx, b.db, account); err != nil {
 		if errors.Is(err, qrm.ErrNoRows) {
 			return false, nil
@@ -582,10 +607,15 @@ func (b *Bot) IsUserConfigAdmin(ctx context.Context, userID discord.UserID) (boo
 		b.authCfg.ConfigAdminGroups, b.authCfg.ConfigAdminUsers,
 		b.appCfg,
 	)
-	return account.Groups.ContainsAnyGroup(configGroups) || slices.Contains(configUsers, account.License), nil
+	return account.Groups.ContainsAnyGroup(configGroups) ||
+		slices.Contains(configUsers, account.License), nil
 }
 
-func (b *Bot) DebugUser(ctx context.Context, guildID discord.GuildID, userID discord.UserID) (*discordtypes.UserDebug, error) {
+func (b *Bot) DebugUser(
+	ctx context.Context,
+	guildID discord.GuildID,
+	userID discord.UserID,
+) (*discordtypes.UserDebug, error) {
 	result := &discordtypes.UserDebug{DiscordUserID: userID}
 	guild, ok := b.activeGuilds.Load(guildID)
 	if !ok || guild == nil {
@@ -606,16 +636,26 @@ func (b *Bot) DebugUser(ctx context.Context, guildID discord.GuildID, userID dis
 	}
 	tAccounts := table.FivenetAccounts
 	tUsers := table.FivenetUser
-	stmt := table.FivenetAccountsOauth2.SELECT(
-		tAccounts.Groups, tAccounts.Enabled, tUsers.ID, tUsers.Job, tUsers.JobGrade,
-	).FROM(table.FivenetAccountsOauth2.
-		INNER_JOIN(tAccounts, tAccounts.ID.EQ(table.FivenetAccountsOauth2.AccountID)).
-		LEFT_JOIN(table.FivenetUserAccounts, table.FivenetUserAccounts.AccountID.EQ(tAccounts.ID)).
-		LEFT_JOIN(tUsers, tUsers.ID.EQ(table.FivenetUserAccounts.UserID)),
-	).WHERE(mysql.AND(
-		table.FivenetAccountsOauth2.Provider.EQ(mysql.String("discord")),
-		table.FivenetAccountsOauth2.ExternalID.EQ(mysql.String(strconv.FormatUint(uint64(userID), 10))),
-	)).LIMIT(1)
+	stmt := table.FivenetAccountsOauth2.
+		SELECT(
+			tAccounts.Groups,
+			tAccounts.Enabled,
+			tUsers.ID,
+			tUsers.Job,
+			tUsers.JobGrade,
+		).
+		FROM(table.FivenetAccountsOauth2.
+			INNER_JOIN(tAccounts, tAccounts.ID.EQ(table.FivenetAccountsOauth2.AccountID)).
+			LEFT_JOIN(table.FivenetUserAccounts, table.FivenetUserAccounts.AccountID.EQ(tAccounts.ID)).
+			LEFT_JOIN(tUsers, tUsers.ID.EQ(table.FivenetUserAccounts.UserID)),
+		).
+		WHERE(mysql.AND(
+			table.FivenetAccountsOauth2.Provider.EQ(mysql.String("discord")),
+			table.FivenetAccountsOauth2.ExternalID.EQ(
+				mysql.String(strconv.FormatUint(uint64(userID), 10)),
+			),
+		)).
+		LIMIT(1)
 	if err := stmt.QueryContext(ctx, b.db, &row); err != nil {
 		if errors.Is(err, qrm.ErrNoRows) {
 			return result, nil
@@ -637,9 +677,12 @@ func (b *Bot) DebugUser(ctx context.Context, guildID discord.GuildID, userID dis
 
 	if b.dcCfg.GroupSync.Enabled {
 		for group, mapping := range b.dcCfg.GroupSync.Mapping {
-			if slices.ContainsFunc(result.Groups, func(v string) bool { return strings.EqualFold(strings.TrimSpace(v), group) }) {
+			if slices.ContainsFunc(
+				result.Groups,
+				func(v string) bool { return strings.EqualFold(strings.TrimSpace(v), group) },
+			) {
 				result.MappedGroups = append(result.MappedGroups, group)
-				if !(mapping.NotSameJob && result.PartOfJob) {
+				if !mapping.NotSameJob || !result.PartOfJob {
 					result.ExpectedRoles = append(result.ExpectedRoles, mapping.RoleName)
 				}
 			}

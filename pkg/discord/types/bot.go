@@ -10,8 +10,13 @@ import (
 type BotState interface {
 	GetJobFromGuildID(guildId discord.GuildID) (string, bool)
 	GetStatus() BotStatus
+	GetStatusForGuild(guildID discord.GuildID) (BotStatus, bool)
 	IsUserConfigAdmin(ctx context.Context, userID discord.UserID) (bool, error)
-	DebugUser(ctx context.Context, guildID discord.GuildID, userID discord.UserID) (*UserDebug, error)
+	DebugUser(
+		ctx context.Context,
+		guildID discord.GuildID,
+		userID discord.UserID,
+	) (*UserDebug, error)
 
 	RunSync(guildID discord.GuildID) (bool, error)
 

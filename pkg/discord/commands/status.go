@@ -39,7 +39,10 @@ func (c *StatusCommand) RegisterCommand(router *cmdroute.Router) api.CreateComma
 	}
 }
 
-func (c *StatusCommand) HandleCommand(ctx context.Context, cmd cmdroute.CommandData) *api.InteractionResponseData {
+func (c *StatusCommand) HandleCommand(
+	ctx context.Context,
+	cmd cmdroute.CommandData,
+) *api.InteractionResponseData {
 	t := c.l.Translator(string(cmd.Event.Locale))
 	resp := &api.InteractionResponseData{
 		Flags: discord.EphemeralMessage,
@@ -53,7 +56,8 @@ func (c *StatusCommand) HandleCommand(ctx context.Context, cmd cmdroute.CommandD
 	}
 	embed := &(*resp.Embeds)[0]
 
-	if cmd.Event.GuildID == discord.NullGuildID || cmd.Event.Member == nil || cmd.Event.Channel == nil {
+	if cmd.Event.GuildID == discord.NullGuildID || cmd.Event.Member == nil ||
+		cmd.Event.Channel == nil {
 		embed.Title = t("discord.commands.status.results.wrong_discord.title", nil)
 		embed.Description = t("discord.commands.status.results.wrong_discord.desc", nil)
 		return resp
@@ -67,8 +71,18 @@ func (c *StatusCommand) HandleCommand(ctx context.Context, cmd cmdroute.CommandD
 		return resp
 	}
 
-	status := c.b.GetStatus()
-	lines := []string{t("discord.commands.status.results.interval", map[string]any{"interval": status.SyncInterval.String()})}
+	status, ok := c.b.GetStatusForGuild(cmd.Event.GuildID)
+	if !ok {
+		embed.Title = t("discord.commands.status.results.wrong_discord.title", nil)
+		embed.Description = t("discord.commands.status.results.wrong_discord.desc", nil)
+		return resp
+	}
+	lines := []string{
+		t(
+			"discord.commands.status.results.interval",
+			map[string]any{"interval": status.SyncInterval.String()},
+		),
+	}
 	for _, guild := range status.Guilds {
 		state := t("discord.commands.status.results.idle", nil)
 		if guild.Running {
@@ -78,7 +92,18 @@ func (c *StatusCommand) HandleCommand(ctx context.Context, cmd cmdroute.CommandD
 		if !guild.LastSync.IsZero() {
 			lastSync = fmt.Sprintf("<t:%d:R>", guild.LastSync.Unix())
 		}
-		lines = append(lines, fmt.Sprintf("**%s** (`%d`) — **%s:** %s, **%s:** %s", guild.Job, guild.GuildID, t("discord.commands.status.results.state", nil), state, t("discord.commands.status.results.last_sync", nil), lastSync))
+		lines = append(
+			lines,
+			fmt.Sprintf(
+				"**%s** (`%d`) — **%s:** %s, **%s:** %s",
+				guild.Job,
+				guild.GuildID,
+				t("discord.commands.status.results.state", nil),
+				state,
+				t("discord.commands.status.results.last_sync", nil),
+				lastSync,
+			),
+		)
 	}
 	if len(status.Guilds) == 0 {
 		lines = append(lines, t("discord.commands.status.results.no_guilds", nil))

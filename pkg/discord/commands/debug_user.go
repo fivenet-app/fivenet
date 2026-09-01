@@ -9,6 +9,7 @@ import (
 	"github.com/diamondburned/arikawa/v3/api"
 	"github.com/diamondburned/arikawa/v3/api/cmdroute"
 	"github.com/diamondburned/arikawa/v3/discord"
+	"github.com/diamondburned/arikawa/v3/utils/json/option"
 	"github.com/fivenet-app/fivenet/v2026/i18n"
 	"github.com/fivenet-app/fivenet/v2026/pkg/discord/embeds"
 	discordtypes "github.com/fivenet-app/fivenet/v2026/pkg/discord/types"
@@ -107,9 +108,18 @@ func (c *DebugUserCommand) HandleCommand(
 		embed.Color = embeds.ColorError
 		return resp
 	}
+	username := strconv.FormatUint(userID, 10)
+	if cmd.Data != nil {
+		if user, ok := cmd.Data.Resolved.Users[discord.UserID(userID)]; ok {
+			if name := user.DisplayOrUsername(); name != "" {
+				username = name
+			}
+		}
+	}
+	resp.Content = option.NewNullableString(fmt.Sprintf("<@%d>", userID))
 	embed.Title = t(
 		"discord.commands.debug-user.results.title",
-		map[string]any{"user": fmt.Sprintf("<@%d>", userID)},
+		map[string]any{"user": username},
 	)
 	lines := []string{
 		fmt.Sprintf(
