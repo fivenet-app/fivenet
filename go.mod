@@ -26,7 +26,7 @@ require (
 	github.com/gin-contrib/static v1.1.6
 	github.com/gin-contrib/zap v1.1.7
 	github.com/gin-gonic/gin v1.12.0
-	github.com/go-jet/jet/v2 v2.15.0
+	github.com/go-jet/jet/v2 v2.16.0
 	github.com/go-playground/validator/v10 v10.30.3
 	github.com/go-sprout/sprout v1.1.1
 	github.com/go-sql-driver/mysql v1.10.0
@@ -53,7 +53,7 @@ require (
 	github.com/paulmach/orb v0.13.0
 	github.com/pkg/errors v0.9.1
 	github.com/prometheus/client_golang v1.24.1
-	github.com/prometheus/client_model v0.6.2
+	github.com/prometheus/client_model v0.6.3
 	github.com/puzpuzpuz/xsync/v4 v4.5.0
 	github.com/rs/cors v1.11.1
 	github.com/sergi/go-diff v1.4.0
