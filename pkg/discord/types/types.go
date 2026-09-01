@@ -116,7 +116,7 @@ func (u *User) Merge(user *User) {
 	if u.Roles == nil {
 		u.Roles = &UserRoles{}
 	}
-	if len(user.Roles.Sum) > 0 {
+	if user.Roles != nil && len(user.Roles.Sum) > 0 {
 		u.Roles.Sum = append(u.Roles.Sum, user.Roles.Sum...)
 		u.Roles.Sum = utils.SliceDedup(u.Roles.Sum)
 	}
