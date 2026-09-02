@@ -8605,6 +8605,7 @@ Auth Service handles user authentication, character selection and oauth2 connect
 | `dispatch_deleted` | [int64](#int64) |  |  |
 | `dispatch_updated` | [resources.centrum.dispatches.Dispatch](#resourcescentrumdispatchesDispatch) |  |  |
 | `dispatch_status` | [resources.centrum.dispatches.DispatchStatus](#resourcescentrumdispatchesDispatchStatus) |  |  |
+| `settings_deleted` | [string](#string) |  |  |
 
 
 

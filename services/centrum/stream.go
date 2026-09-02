@@ -176,6 +176,11 @@ var feeds = []feedCfg{
 				Change: &pbcentrum.StreamResponse_Settings{Settings: m.(*centrumsettings.Settings)},
 			}
 		},
+		WrapDelete: func(key string) *pbcentrum.StreamResponse {
+			return &pbcentrum.StreamResponse{
+				Change: &pbcentrum.StreamResponse_SettingsDeleted{SettingsDeleted: key},
+			}
+		},
 	},
 	{
 		StreamName: "centrum_dispatchers",
@@ -189,6 +194,13 @@ var feeds = []feedCfg{
 			return &pbcentrum.StreamResponse{
 				Change: &pbcentrum.StreamResponse_Dispatchers{
 					Dispatchers: m.(*centrumdispatchers.Dispatchers),
+				},
+			}
+		},
+		WrapDelete: func(key string) *pbcentrum.StreamResponse {
+			return &pbcentrum.StreamResponse{
+				Change: &pbcentrum.StreamResponse_Dispatchers{
+					Dispatchers: &centrumdispatchers.Dispatchers{Job: key},
 				},
 			}
 		},

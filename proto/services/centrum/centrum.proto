@@ -89,6 +89,7 @@ message StreamResponse {
     int64 dispatch_deleted = 9;
     resources.centrum.dispatches.Dispatch dispatch_updated = 10;
     resources.centrum.dispatches.DispatchStatus dispatch_status = 11;
+    string settings_deleted = 12;
   }
 }
 

@@ -233,6 +233,12 @@ export interface StreamResponse {
          */
         dispatchStatus: DispatchStatus;
     } | {
+        oneofKind: "settingsDeleted";
+        /**
+         * @generated from protobuf field: string settings_deleted = 12
+         */
+        settingsDeleted: string;
+    } | {
         oneofKind: undefined;
     };
 }
@@ -879,7 +885,8 @@ class StreamResponse$Type extends MessageType<StreamResponse> {
             { no: 8, name: "unit_status", kind: "message", oneof: "change", T: () => UnitStatus },
             { no: 9, name: "dispatch_deleted", kind: "scalar", oneof: "change", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ },
             { no: 10, name: "dispatch_updated", kind: "message", oneof: "change", T: () => Dispatch },
-            { no: 11, name: "dispatch_status", kind: "message", oneof: "change", T: () => DispatchStatus }
+            { no: 11, name: "dispatch_status", kind: "message", oneof: "change", T: () => DispatchStatus },
+            { no: 12, name: "settings_deleted", kind: "scalar", oneof: "change", T: 9 /*ScalarType.STRING*/ }
         ]);
     }
     create(value?: PartialMessage<StreamResponse>): StreamResponse {
@@ -960,6 +967,12 @@ class StreamResponse$Type extends MessageType<StreamResponse> {
                         dispatchStatus: DispatchStatus.internalBinaryRead(reader, reader.uint32(), options, (message.change as any).dispatchStatus)
                     };
                     break;
+                case /* string settings_deleted */ 12:
+                    message.change = {
+                        oneofKind: "settingsDeleted",
+                        settingsDeleted: reader.string()
+                    };
+                    break;
                 default:
                     let u = options.readUnknownField;
                     if (u === "throw")
@@ -1005,6 +1018,9 @@ class StreamResponse$Type extends MessageType<StreamResponse> {
         /* resources.centrum.dispatches.DispatchStatus dispatch_status = 11; */
         if (message.change.oneofKind === "dispatchStatus")
             DispatchStatus.internalBinaryWrite(message.change.dispatchStatus, writer.tag(11, WireType.LengthDelimited).fork(), options).join();
+        /* string settings_deleted = 12; */
+        if (message.change.oneofKind === "settingsDeleted")
+            writer.tag(12, WireType.LengthDelimited).string(message.change.settingsDeleted);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);

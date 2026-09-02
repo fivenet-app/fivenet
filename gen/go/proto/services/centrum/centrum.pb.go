@@ -939,6 +939,7 @@ type StreamResponse struct {
 	//	*StreamResponse_DispatchDeleted
 	//	*StreamResponse_DispatchUpdated
 	//	*StreamResponse_DispatchStatus
+	//	*StreamResponse_SettingsDeleted
 	Change        isStreamResponse_Change `protobuf_oneof:"change"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -1075,6 +1076,15 @@ func (x *StreamResponse) GetDispatchStatus() *dispatches.DispatchStatus {
 	return nil
 }
 
+func (x *StreamResponse) GetSettingsDeleted() string {
+	if x != nil {
+		if x, ok := x.Change.(*StreamResponse_SettingsDeleted); ok {
+			return x.SettingsDeleted
+		}
+	}
+	return ""
+}
+
 func (x *StreamResponse) SetHandshake(v *StreamHandshake) {
 	if v == nil {
 		x.Change = nil
@@ -1153,6 +1163,10 @@ func (x *StreamResponse) SetDispatchStatus(v *dispatches.DispatchStatus) {
 		return
 	}
 	x.Change = &StreamResponse_DispatchStatus{v}
+}
+
+func (x *StreamResponse) SetSettingsDeleted(v string) {
+	x.Change = &StreamResponse_SettingsDeleted{v}
 }
 
 func (x *StreamResponse) HasChange() bool {
@@ -1250,6 +1264,14 @@ func (x *StreamResponse) HasDispatchStatus() bool {
 	return ok
 }
 
+func (x *StreamResponse) HasSettingsDeleted() bool {
+	if x == nil {
+		return false
+	}
+	_, ok := x.Change.(*StreamResponse_SettingsDeleted)
+	return ok
+}
+
 func (x *StreamResponse) ClearChange() {
 	x.Change = nil
 }
@@ -1320,6 +1342,12 @@ func (x *StreamResponse) ClearDispatchStatus() {
 	}
 }
 
+func (x *StreamResponse) ClearSettingsDeleted() {
+	if _, ok := x.Change.(*StreamResponse_SettingsDeleted); ok {
+		x.Change = nil
+	}
+}
+
 const StreamResponse_Change_not_set_case case_StreamResponse_Change = 0
 const StreamResponse_Handshake_case case_StreamResponse_Change = 1
 const StreamResponse_LatestState_case case_StreamResponse_Change = 2
@@ -1332,6 +1360,7 @@ const StreamResponse_UnitStatus_case case_StreamResponse_Change = 8
 const StreamResponse_DispatchDeleted_case case_StreamResponse_Change = 9
 const StreamResponse_DispatchUpdated_case case_StreamResponse_Change = 10
 const StreamResponse_DispatchStatus_case case_StreamResponse_Change = 11
+const StreamResponse_SettingsDeleted_case case_StreamResponse_Change = 12
 
 func (x *StreamResponse) WhichChange() case_StreamResponse_Change {
 	if x == nil {
@@ -1360,6 +1389,8 @@ func (x *StreamResponse) WhichChange() case_StreamResponse_Change {
 		return StreamResponse_DispatchUpdated_case
 	case *StreamResponse_DispatchStatus:
 		return StreamResponse_DispatchStatus_case
+	case *StreamResponse_SettingsDeleted:
+		return StreamResponse_SettingsDeleted_case
 	default:
 		return StreamResponse_Change_not_set_case
 	}
@@ -1380,6 +1411,7 @@ type StreamResponse_builder struct {
 	DispatchDeleted *int64
 	DispatchUpdated *dispatches.Dispatch
 	DispatchStatus  *dispatches.DispatchStatus
+	SettingsDeleted *string
 	// -- end of Change
 }
 
@@ -1419,6 +1451,9 @@ func (b0 StreamResponse_builder) Build() *StreamResponse {
 	}
 	if b.DispatchStatus != nil {
 		x.Change = &StreamResponse_DispatchStatus{b.DispatchStatus}
+	}
+	if b.SettingsDeleted != nil {
+		x.Change = &StreamResponse_SettingsDeleted{*b.SettingsDeleted}
 	}
 	return m0
 }
@@ -1481,6 +1516,10 @@ type StreamResponse_DispatchStatus struct {
 	DispatchStatus *dispatches.DispatchStatus `protobuf:"bytes,11,opt,name=dispatch_status,json=dispatchStatus,proto3,oneof"`
 }
 
+type StreamResponse_SettingsDeleted struct {
+	SettingsDeleted string `protobuf:"bytes,12,opt,name=settings_deleted,json=settingsDeleted,proto3,oneof"`
+}
+
 func (*StreamResponse_Handshake) isStreamResponse_Change() {}
 
 func (*StreamResponse_LatestState) isStreamResponse_Change() {}
@@ -1502,6 +1541,8 @@ func (*StreamResponse_DispatchDeleted) isStreamResponse_Change() {}
 func (*StreamResponse_DispatchUpdated) isStreamResponse_Change() {}
 
 func (*StreamResponse_DispatchStatus) isStreamResponse_Change() {}
+
+func (*StreamResponse_SettingsDeleted) isStreamResponse_Change() {}
 
 var File_services_centrum_centrum_proto protoreflect.FileDescriptor
 
@@ -1541,7 +1582,7 @@ const file_services_centrum_centrum_proto_rawDesc = "" +
 	"dispatches\x18\x04 \x03(\v2&.resources.centrum.dispatches.DispatchR\n" +
 	"dispatchesB\x0e\n" +
 	"\f_own_unit_id\"\x0f\n" +
-	"\rStreamRequest\"\x88\x06\n" +
+	"\rStreamRequest\"\xb5\x06\n" +
 	"\x0eStreamResponse\x12A\n" +
 	"\thandshake\x18\x01 \x01(\v2!.services.centrum.StreamHandshakeH\x00R\thandshake\x12B\n" +
 	"\flatest_state\x18\x02 \x01(\v2\x1d.services.centrum.LatestStateH\x00R\vlatestState\x12B\n" +
@@ -1555,7 +1596,8 @@ const file_services_centrum_centrum_proto_rawDesc = "" +
 	"\x10dispatch_deleted\x18\t \x01(\x03H\x00R\x0fdispatchDeleted\x12S\n" +
 	"\x10dispatch_updated\x18\n" +
 	" \x01(\v2&.resources.centrum.dispatches.DispatchH\x00R\x0fdispatchUpdated\x12W\n" +
-	"\x0fdispatch_status\x18\v \x01(\v2,.resources.centrum.dispatches.DispatchStatusH\x00R\x0edispatchStatusB\b\n" +
+	"\x0fdispatch_status\x18\v \x01(\v2,.resources.centrum.dispatches.DispatchStatusH\x00R\x0edispatchStatus\x12+\n" +
+	"\x10settings_deleted\x18\f \x01(\tH\x00R\x0fsettingsDeletedB\b\n" +
 	"\x06change2\xdb\x05\n" +
 	"\x0eCentrumService\x12j\n" +
 	"\vGetSettings\x12$.services.centrum.GetSettingsRequest\x1a%.services.centrum.GetSettingsResponse\"\x0e\xd2\xf3\x18\n" +
@@ -1653,6 +1695,7 @@ func file_services_centrum_centrum_proto_init() {
 		(*StreamResponse_DispatchDeleted)(nil),
 		(*StreamResponse_DispatchUpdated)(nil),
 		(*StreamResponse_DispatchStatus)(nil),
+		(*StreamResponse_SettingsDeleted)(nil),
 	}
 	type x struct{}
 	out := protoimpl.TypeBuilder{

@@ -173,6 +173,9 @@ export const useCentrumStore = defineStore(
          * @param {Settings} newSettings - The new settings to apply.
          */
         const setOrUpdateSettings = (newSettings: Settings): void => {
+            const { activeChar } = useAuth();
+            if (newSettings.job !== activeChar.value?.job) return;
+
             if (settings.value !== undefined) {
                 settings.value.enabled = newSettings.enabled;
                 settings.value.job = newSettings.job;
@@ -572,6 +575,12 @@ export const useCentrumStore = defineStore(
                         }
 
                         setOrUpdateSettings(resp.change.settings);
+                    } else if (resp.change.oneofKind === 'settingsDeleted') {
+                        if (resp.change.settingsDeleted !== activeChar.value?.job) continue;
+
+                        settings.value = undefined;
+                        await restartStream();
+                        return;
                     } else if (resp.change.oneofKind === 'dispatchers') {
                         const idx = dispatchers.value.findIndex(
                             (d) => resp.change.oneofKind === 'dispatchers' && d.job === resp.change.dispatchers.job,

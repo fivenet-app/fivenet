@@ -3,6 +3,10 @@
 
 package centrum
 
+import (
+	htmlsanitizer "github.com/fivenet-app/fivenet/v2026/pkg/sanitizer/html"
+)
+
 // Sanitize sanitizes the message's fields, in case of complex types it calls
 // their Sanitize() method recursively.
 func (m *GetDispatchHeatmapResponse) Sanitize() error {
@@ -218,6 +222,11 @@ func (m *StreamResponse) Sanitize() error {
 				}
 			}
 		}
+
+		// Field: SettingsDeleted
+	case *StreamResponse_SettingsDeleted:
+
+		v.SettingsDeleted = htmlsanitizer.SanitizeAndUnescape(v.SettingsDeleted)
 
 		// Field: UnitStatus
 	case *StreamResponse_UnitStatus:
