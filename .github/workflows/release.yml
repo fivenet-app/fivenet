@@ -8,6 +8,43 @@ permissions:
   packages: write
 
 jobs:
+  generate-source-sbom:
+    name: Generate Source SBOM
+    runs-on: ubuntu-latest
+    env:
+      WAYBILL_VERSION: v0.6.1
+      WAYBILL_TARGET: x86_64-unknown-linux-gnu
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          fetch-depth: 0
+
+      - name: Install Waybill
+        run: |
+          curl --fail --location --retry 3 \
+            "https://github.com/kusari-oss/waybill/releases/download/${WAYBILL_VERSION}/waybill-${WAYBILL_VERSION}-${WAYBILL_TARGET}.tar.gz" \
+            --output waybill.tar.gz
+          GH_TOKEN="${{ github.token }}" gh attestation verify waybill.tar.gz \
+            --repo kusari-oss/waybill
+          tar -xzf waybill.tar.gz
+          install "$(find . -type f -name waybill -perm -u+x -print -quit)" "$RUNNER_TEMP/waybill"
+
+      - name: Generate SPDX 2.3 SBOM
+        run: |
+          "$RUNNER_TEMP/waybill" sbom scan \
+            --path . \
+            --format spdx-2.3-json \
+            --output fivenet.sbom.spdx.json
+
+      - name: Upload SBOM for release archives
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
+        with:
+          name: release-source-sbom
+          path: fivenet.sbom.spdx.json
+          if-no-files-found: error
+          retention-days: 1
+
   build-images:
     name: Build Images
     uses: ./.github/workflows/build_image.yml
@@ -15,6 +52,7 @@ jobs:
 
   build-binaries:
     name: Build Binaries
+    needs: [generate-source-sbom]
     runs-on: ubuntu-latest
     outputs:
       APP_VERSION: ${{ steps.set-version.outputs.APP_VERSION }}
@@ -39,6 +77,14 @@ jobs:
           echo "APP_VERSION=$APP_VERSION" >> $GITHUB_ENV
           echo "APP_VERSION=$APP_VERSION" >> $GITHUB_OUTPUT
 
+      - name: Download source SBOM
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8
+        with:
+          name: release-source-sbom
+
+      - name: Add source SBOM to archive inputs
+        run: test -f fivenet.sbom.spdx.json
+
       - name: Release Binaries
         uses: wangyoucao577/go-release-action@279495102627de7960cbc33434ab01a12bae144b # v1.55
         with:
@@ -47,10 +93,81 @@ jobs:
           goarch: ${{ matrix.goarch }}
           goversion: '1.24.1'
           binary_name: 'fivenet'
-          extra_files: LICENSE README.md VERSION dbsync.example.yaml
+          extra_files: LICENSE README.md VERSION dbsync.example.yaml fivenet.sbom.spdx.json
           ldflags: '-X github.com/fivenet-app/fivenet/v2026/pkg/version.Version=${{ env.APP_VERSION }}'
           md5sum: 'FALSE'
           sha256sum: 'TRUE'
+
+  generate-image-sbom:
+    name: Generate Container Image SBOM
+    needs: [build-images]
+    runs-on: ubuntu-latest
+    env:
+      WAYBILL_VERSION: v0.6.1
+      WAYBILL_TARGET: x86_64-unknown-linux-gnu
+      IMAGE_DIGEST: ${{ needs.build-images.outputs.image_digest }}
+    steps:
+      - name: Login to GHCR
+        uses: docker/login-action@dbcb813823bdd20940b903addbd779551569679f # v4
+        with:
+          registry: ghcr.io
+          username: ${{ github.repository_owner }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Install Waybill
+        run: |
+          curl --fail --location --retry 3 \
+            "https://github.com/kusari-oss/waybill/releases/download/${WAYBILL_VERSION}/waybill-${WAYBILL_VERSION}-${WAYBILL_TARGET}.tar.gz" \
+            --output waybill.tar.gz
+          GH_TOKEN="${{ github.token }}" gh attestation verify waybill.tar.gz \
+            --repo kusari-oss/waybill
+          tar -xzf waybill.tar.gz
+          install "$(find . -type f -name waybill -perm -u+x -print -quit)" "$RUNNER_TEMP/waybill"
+
+      - name: Pull immutable image
+        run: docker pull "ghcr.io/fivenet-app/fivenet@$IMAGE_DIGEST"
+
+      - name: Generate SPDX 2.3 image SBOM
+        run: |
+          test -n "$IMAGE_DIGEST"
+          "$RUNNER_TEMP/waybill" sbom scan \
+            --image "ghcr.io/fivenet-app/fivenet@$IMAGE_DIGEST" \
+            --format spdx-2.3-json \
+            --output fivenet.image.sbom.spdx.json
+
+      - name: Upload image SBOM
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
+        with:
+          name: release-image-sbom
+          path: fivenet.image.sbom.spdx.json
+          if-no-files-found: error
+          retention-days: 1
+
+  upload-sboms:
+    name: Attach SBOMs to GitHub Release
+    needs: [generate-source-sbom, build-images, build-binaries, generate-image-sbom]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download source SBOM
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8
+        with:
+          name: release-source-sbom
+
+      - name: Download image SBOM
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8
+        with:
+          name: release-image-sbom
+
+      - name: Attach SBOMs to release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          RELEASE_TAG: ${{ github.event.release.tag_name }}
+        run: |
+          gh release upload "$RELEASE_TAG" \
+            fivenet.sbom.spdx.json \
+            fivenet.image.sbom.spdx.json \
+            --repo "$GITHUB_REPOSITORY" \
+            --clobber
 
   update-stable-channel:
     name: Update Stable Channel

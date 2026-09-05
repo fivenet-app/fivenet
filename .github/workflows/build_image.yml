@@ -5,6 +5,9 @@ on:
       image_tag:
         description: 'The image tag that was built.'
         value: ${{ jobs.merge.outputs.image_tag }}
+      image_digest:
+        description: 'The immutable digest of the published image manifest.'
+        value: ${{ jobs.merge.outputs.image_digest }}
 
 permissions:
   contents: write
@@ -87,6 +90,7 @@ jobs:
     needs: [build-image]
     outputs:
       image_tag: ${{ steps.set-tag.outputs.image_tag }}
+      image_digest: ${{ steps.set-digest.outputs.image_digest }}
     steps:
       - name: Download digests
         uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8
@@ -138,3 +142,10 @@ jobs:
         run: |
           echo "Image Tag: ${{ steps.meta.outputs.version }}"
           docker buildx imagetools inspect ghcr.io/fivenet-app/fivenet:${{ steps.meta.outputs.version }}
+
+      - name: Set image digest
+        id: set-digest
+        run: |
+          IMAGE_DIGEST="$(docker buildx imagetools inspect --format '{{.Manifest.Digest}}' ghcr.io/fivenet-app/fivenet:${{ steps.meta.outputs.version }})"
+          test -n "$IMAGE_DIGEST"
+          echo "image_digest=$IMAGE_DIGEST" >> "$GITHUB_OUTPUT"
