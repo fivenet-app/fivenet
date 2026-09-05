@@ -187,11 +187,9 @@ jobs:
       - name: Dispatch chart update
         env:
           GH_TOKEN: ${{ secrets.CHARTS_REPO_TOKEN }}
-          APP_VERSION: ${{ needs.build-images.outputs.image_tag }}
-          RELEASE_VERSION: ${{ github.event.release.tag_name }}
+          APP_VERSION: ${{ github.event.release.tag_name }}
         run: |
           gh api repos/fivenet-app/charts/dispatches \
             --method POST \
             -f event_type=fivenet-release \
-            -f "client_payload[app_version]=$APP_VERSION" \
-            -f "client_payload[release_version]=$RELEASE_VERSION"
+            -f "client_payload[app_version]=$APP_VERSION"
