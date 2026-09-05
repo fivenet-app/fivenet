@@ -16,7 +16,7 @@ import { DeleteImageTracker } from '~/composables/tiptap/extensions/DeleteImageT
 import { imageUploadPlugin } from '~/composables/tiptap/extensions/ImageUploadPlugin';
 import type { UploadNamespaces } from '~/composables/useFileUploader';
 import type GrpcProvider from '~/composables/yjs/yjs';
-import type { DocumentData } from '~~/gen/ts/resources/documents/data/data';
+import { PenaltyCalculatorData, type DocumentData } from '~~/gen/ts/resources/documents/data/data';
 import type { File as FileGrpc } from '~~/gen/ts/resources/file/file';
 import type { UploadFileRequest, UploadFileResponse } from '~~/gen/ts/resources/file/filestore';
 import TiptapToolbar from './TiptapToolbar.vue';
@@ -276,7 +276,9 @@ function syncPenaltyCalculatorData(editor: Editor): void {
 
     const hasPenaltyBlock = hasPenaltyCalculatorNode(editor);
     if (!hasPenaltyBlock) {
-        if (documentData.value.penaltyCalculator) documentData.value.penaltyCalculator = undefined;
+        if (documentData.value.penaltyCalculator) {
+            documentData.value.penaltyCalculator = PenaltyCalculatorData.create();
+        }
         return;
     }
 

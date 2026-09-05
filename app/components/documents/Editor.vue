@@ -278,7 +278,7 @@ async function updateDocument(id: number, values: Schema): Promise<void> {
         title: values.title,
         content: tiptapToContent(values.content),
         contentType: ContentType.HTML,
-        data: values.data ?? {},
+        data: normalizeDocumentData(values.data),
         meta: {
             documentId: id,
             closed: values.closed,
@@ -531,7 +531,14 @@ provide('yjsProvider', provider);
                 <template #title>
                     <span>{{ $t('pages.documents.edit.title') }}</span>
 
-                    <IDCopyBadge :id="props.documentId" prefix="DOC" size="xs" disable-tooltip />
+                    <IDCopyBadge
+                        :id="props.documentId"
+                        prefix="DOC"
+                        size="xs"
+                        disable-tooltip
+                        :title="{ key: 'notifications.document_view.copy_document_id.title', parameters: {} }"
+                        :content="{ key: 'notifications.document_view.copy_document_id.content', parameters: {} }"
+                    />
                 </template>
 
                 <template #right>

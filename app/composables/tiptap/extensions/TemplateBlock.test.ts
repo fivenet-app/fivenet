@@ -133,7 +133,8 @@ describe('TemplateBlock', () => {
         const editor = new Editor({ extensions: [Document, Paragraph, Text, TemplateBlock, TemplateBlockEnd], content: '' });
         editor.commands.setContent(`<p>{{ ${value} }}</p>`, { emitUpdate: false });
 
-        expect(editor.getJSON().content?.[0]?.content?.[0]?.attrs?.['data-template-block']).toBe(value);
+        const firstNode = editor.getJSON().content?.[0]?.content?.[0];
+        expect(firstNode && 'attrs' in firstNode ? firstNode.attrs?.['data-template-block'] : undefined).toBe(value);
 
         editor.destroy();
     });

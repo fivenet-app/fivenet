@@ -132,7 +132,8 @@ describe('TemplateVar', () => {
         const editor = new Editor({ extensions: [Document, Paragraph, Text, TemplateVar], content: '' });
         editor.commands.setContent(`<p>{{ ${value} }}</p>`, { emitUpdate: false });
 
-        expect(editor.getJSON().content?.[0]?.content?.[0]?.attrs?.['data-template-var']).toBe(value);
+        const firstNode = editor.getJSON().content?.[0]?.content?.[0];
+        expect(firstNode && 'attrs' in firstNode ? firstNode.attrs?.['data-template-var'] : undefined).toBe(value);
 
         editor.destroy();
     });

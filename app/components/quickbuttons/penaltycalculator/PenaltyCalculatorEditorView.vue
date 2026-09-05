@@ -131,7 +131,9 @@ function deleteNodeWithConfirm(): void {
     }
 
     resetDeleteConfirm();
-    if (documentData.value?.penaltyCalculator) documentData.value.penaltyCalculator = undefined;
+    if (documentData.value?.penaltyCalculator) {
+        documentData.value.penaltyCalculator = PenaltyCalculatorData.create();
+    }
     props.deleteNode();
 }
 
