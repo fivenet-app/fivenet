@@ -2,6 +2,32 @@
 
 All notable changes to this project will be documented in this file.
 
+## [2026.9.0] - 2026-09-05
+
+### 🚀 Features
+
+- *(discord)* Add debug user and sync status command
+- *(discord)* Improve bot status diagnostics
+- *(discord)* Extend bot code tests
+- *(roles,attrs)* Rework roles/attrs list and view pages
+- *(ci)* Add sbom generation to release process
+
+### 🐛 Bug Fixes
+
+- *(tiptap)* Complex golang template var/block breaking on editor save
+- *(server)* Improve readiness handling and add /liveness path
+- *(dbsync)* Fallback phone numbers not having userId set
+- *(syncer)* Ensure userID is set on user dependant sync parts
+- *(server)* Add readiness hooks for non-HTTP commands
+- *(dbsync)* User sync restricting jobs to only 3 instead of "more"
+- *(dbsync)* User sync field validations too restrictive
+- *(discord)* Query column names for select
+- *(discord)* Debug user job not using user jobs table
+- *(tiptap)* Fix details toggle arrow icon and cleanup style
+- *(tiptap)* Clean up editor styles
+- *(centrum)* Handle settings and dispatcher deletions
+- Remove attributeGroup prettier config option
+
 ## [2026.8.5] - 2026-08-31
 
 ### 🚀 Features
