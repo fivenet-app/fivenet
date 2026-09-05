@@ -23,7 +23,7 @@ onMounted(async () => {
     } finally {
         useTimeoutFn(async () => {
             const route = useRoute();
-            if (route.name === 'auth-logout') {
+            if (route.path === '/auth/logout') {
                 if (route.query.redirect) {
                     const redirect = route.query.redirect as string;
                     if (redirect !== '/') {

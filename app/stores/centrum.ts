@@ -973,7 +973,7 @@ export const useCentrumStore = defineStore(
          */
         const getNotificationActions = (): NotificationActionI18n[] => {
             const route = useRoute();
-            if (route.name !== 'dispatch' && route.name !== 'livemap') {
+            if (route.path !== '/dispatch' && route.path !== '/livemap') {
                 return [
                     {
                         label: { key: 'common.click_here', parameters: {} },

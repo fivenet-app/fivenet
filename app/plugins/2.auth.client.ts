@@ -94,7 +94,7 @@ export default defineNuxtPlugin({
                             if (await wantsSetupRedirect()) {
                                 return navigateTo({
                                     path: '/settings/setup',
-                                    query: { redirect },
+                                    query: { redirect: redirect },
                                 });
                             }
 
@@ -113,7 +113,7 @@ export default defineNuxtPlugin({
                             if (await wantsSetupRedirect()) {
                                 return navigateTo({
                                     path: '/settings/setup',
-                                    query: { redirect },
+                                    query: { redirect: redirect },
                                 });
                             }
 
@@ -128,7 +128,7 @@ export default defineNuxtPlugin({
                         if (await wantsSetupRedirect()) {
                             return navigateTo({
                                 path: '/settings/setup',
-                                query: { redirect },
+                                query: { redirect: redirect },
                             });
                         }
 
@@ -142,7 +142,7 @@ export default defineNuxtPlugin({
                 if (await wantsSetupRedirect()) {
                     return navigateTo({
                         path: '/settings/setup',
-                        query: { redirect },
+                        query: { redirect: redirect },
                     });
                 }
 

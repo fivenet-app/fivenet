@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 import type { NavigationMenuItem } from '@nuxt/ui';
 import type { RoutesNamedLocations } from '@typed-router';
+import { isRoute } from '~/utils/route';
 import type { Perms } from '~~/gen/ts/perms';
 
 useHead({
@@ -32,7 +33,7 @@ const items = computed<NavigationMenuItem[]>(
                 icon: 'i-mdi-account-group',
                 to: '/jobs/colleagues',
                 permission: 'jobs.ColleaguesService/ListColleagues' as Perms,
-                active: route.name?.startsWith('jobs-colleagues'),
+                active: isRoute(route.path, '/jobs/colleagues'),
                 children: [
                     {
                         label: t('pages.jobs.colleagues.stats.title'),
@@ -59,7 +60,7 @@ const items = computed<NavigationMenuItem[]>(
                 icon: 'i-mdi-timeline-clock',
                 to: '/jobs/timeclock',
                 permission: 'jobs.TimeclockService/ListTimeclock' as Perms,
-                active: route.name?.startsWith('jobs-timeclock'),
+                active: isRoute(route.path, '/jobs/timeclock'),
                 children: [
                     {
                         label: t('common.inactive_colleagues'),

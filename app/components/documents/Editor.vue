@@ -32,6 +32,7 @@ import SelectMenu from '../partials/SelectMenu.vue';
 import ReferenceManager from './ReferenceManager.vue';
 import RelationManager from './RelationManager.vue';
 import { normalizeDocumentData } from '~/components/quickbuttons/penaltycalculator/helpers';
+import IDCopyBadge from '~/components/partials/IDCopyBadge.vue';
 
 const props = defineProps<{
     documentId: number;
@@ -522,9 +523,15 @@ provide('yjsProvider', provider);
 <template>
     <UDashboardPanel :ui="{ root: 'pb-(--page-content-bottom-offset)', body: 'p-0 sm:p-0 gap-0 sm:gap-0 overflow-y-hidden' }">
         <template #header>
-            <UDashboardNavbar :title="$t('pages.documents.edit.title')">
+            <UDashboardNavbar>
                 <template #leading>
                     <UDashboardSidebarCollapse />
+                </template>
+
+                <template #title>
+                    <span>{{ $t('pages.documents.edit.title') }}</span>
+
+                    <IDCopyBadge :id="props.documentId" prefix="DOC" size="xs" disable-tooltip />
                 </template>
 
                 <template #right>

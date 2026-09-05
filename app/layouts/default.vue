@@ -9,6 +9,7 @@ import PenaltyCalculatorDrawer from '~/components/quickbuttons/penaltycalculator
 import TopLogoDropdown from '~/components/TopLogoDropdown.vue';
 import UserMenu from '~/components/UserMenu.vue';
 import { useMailerStore } from '~/stores/mailer';
+import { isRoute } from '~/utils/route';
 import type { Perms } from '~~/gen/ts/perms';
 
 const { t } = useI18n();
@@ -49,7 +50,7 @@ const items = computed<NavigationMenuItem[]>(() =>
             },
             kbds: ['G', 'E'],
             permission: 'mailer.MailerService/ListEmails' as Perms,
-            active: route.name.startsWith('mail'),
+            active: isRoute(route.path, '/mail'),
         },
         {
             label: t('common.citizen', 1),
@@ -61,7 +62,7 @@ const items = computed<NavigationMenuItem[]>(() =>
             },
             kbds: ['G', 'C'],
             permission: 'citizens.CitizensService/ListCitizens' as Perms,
-            active: route.name.startsWith('citizens'),
+            active: isRoute(route.path, '/citizens'),
         },
         {
             label: t('common.vehicle', 2),
@@ -98,7 +99,7 @@ const items = computed<NavigationMenuItem[]>(() =>
                 },
             ].flatMap((item) => (item.permission === undefined || can(item.permission).value ? [item] : [])),
             permission: 'documents.DocumentsService/ListDocuments' as Perms,
-            active: route.name.startsWith('documents'),
+            active: isRoute(route.path, '/documents'),
         },
         {
             label: t('common.job'),
@@ -121,7 +122,7 @@ const items = computed<NavigationMenuItem[]>(() =>
                     icon: 'i-mdi-account-group',
                     to: '/jobs/colleagues',
                     permission: 'jobs.ColleaguesService/ListColleagues' as Perms,
-                    active: route.name?.startsWith('jobs-colleagues'),
+                    active: isRoute(route.path, '/jobs/colleagues'),
                     children: [
                         {
                             label: t('pages.jobs.colleagues.stats.title'),
@@ -148,7 +149,7 @@ const items = computed<NavigationMenuItem[]>(() =>
                     icon: 'i-mdi-timeline-clock',
                     to: '/jobs/timeclock',
                     permission: 'jobs.TimeclockService/ListTimeclock' as Perms,
-                    active: route.name?.startsWith('jobs-timeclock'),
+                    active: isRoute(route.path, '/jobs/timeclock'),
                     children: [
                         {
                             label: t('common.inactive_colleagues'),
@@ -172,7 +173,7 @@ const items = computed<NavigationMenuItem[]>(() =>
                 },
             ].flatMap((item) => (item.permission === undefined || can(item.permission).value ? [item] : [])),
             permission: 'jobs.ColleaguesService/ListColleagues' as Perms,
-            active: route.name.startsWith('jobs'),
+            active: isRoute(route.path, '/jobs'),
         },
         {
             label: t('common.calendar'),
@@ -183,7 +184,7 @@ const items = computed<NavigationMenuItem[]>(() =>
                 kbds: ['G', 'K'],
             },
             kbds: ['G', 'K'],
-            active: route.name.startsWith('calendar'),
+            active: isRoute(route.path, '/calendar'),
         },
         {
             label: t('common.qualification', 2),
@@ -195,7 +196,7 @@ const items = computed<NavigationMenuItem[]>(() =>
             },
             kbds: ['G', 'Q'],
             permission: 'qualifications.QualificationsService/ListQualifications' as Perms,
-            active: route.name.startsWith('qualifications'),
+            active: isRoute(route.path, '/qualifications'),
         },
         {
             label: t('common.livemap'),
@@ -218,7 +219,7 @@ const items = computed<NavigationMenuItem[]>(() =>
             },
             kbds: ['G', 'W'],
             permission: 'centrum.CentrumService/TakeControl' as Perms,
-            active: route.name.startsWith('dispatch') || route.name.startsWith('centrum'),
+            active: isRoute(route.path, '/dispatch') || isRoute(route.path, '/centrum'),
         },
         {
             label: t('common.wiki'),
@@ -230,7 +231,7 @@ const items = computed<NavigationMenuItem[]>(() =>
             },
             kbds: ['G', 'L'],
             permission: 'wiki.WikiService/ListPages' as Perms,
-            active: route.name.startsWith('wiki'),
+            active: isRoute(route.path, '/wiki'),
         },
         {
             label: t('common.control_panel'),
@@ -257,7 +258,7 @@ const items = computed<NavigationMenuItem[]>(() =>
                 },
             ].flatMap((item) => (item.permission === undefined || can(item.permission).value ? [item] : [])),
             permission: 'settings.SettingsService/GetJobProps' as Perms,
-            active: route.name.startsWith('settings'),
+            active: isRoute(route.path, '/settings'),
         },
     ].flatMap((item) => (item.permission === undefined || can(item.permission).value ? [item] : [])),
 );
