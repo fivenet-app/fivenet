@@ -1,0 +1,18 @@
+name: Update Stable Channel After Chart Release
+
+on:
+  repository_dispatch:
+    types: [chart-release]
+
+permissions:
+  contents: write
+
+jobs:
+  update-stable-channel:
+    name: Update Stable Channel
+    uses: ./.github/workflows/update-channel.yml
+    secrets: inherit
+    with:
+      channel: stable
+      image_tag: ${{ github.event.client_payload.app_version }}
+      chart_version: ${{ github.event.client_payload.chart_version }}
