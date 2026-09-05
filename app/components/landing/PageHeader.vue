@@ -45,8 +45,8 @@ async function changeLocale(newLocale: string) {
     await setUserLocale(newLocale);
 }
 
-const currentRoute = useRoute();
-const isAuthPage = computed(() => currentRoute.path.startsWith('/auth'));
+const route = useRoute();
+const isAuthPage = computed(() => route.path.startsWith('/auth'));
 </script>
 
 <template>
