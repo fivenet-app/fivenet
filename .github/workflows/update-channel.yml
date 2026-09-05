@@ -70,15 +70,35 @@ jobs:
 
       - name: Invoke update script
         if: steps.freshness.outputs.should_update == 'true'
+        env:
+          CHANNEL: ${{ inputs.channel }}
+          IMAGE_TAG: ${{ inputs.image_tag }}
+          CHART_VERSION: ${{ inputs.chart_version }}
         run: |
           ./internal/scripts/update-release-channel.sh \
-            "${{ inputs.channel }}" \
-            "${{ inputs.image_tag }}" \
-            "${{ inputs.chart_version }}"
+            "$CHANNEL" \
+            "$IMAGE_TAG" \
+            "$CHART_VERSION"
 
-      - name: Commit dev changes on develop
-        id: commit_dev
-        if: steps.freshness.outputs.should_update == 'true' && inputs.channel == 'dev'
+          # A chart release applies to both release channels. Keep the other
+          # channel's image tag while synchronizing its chart version.
+          if [[ -n "$CHART_VERSION" ]]; then
+            if [[ "$CHANNEL" == "dev" ]]; then
+              other_channel=stable
+            else
+              other_channel=dev
+            fi
+
+            other_image_tag="$(jq -r --arg ch "$other_channel" '.[$ch].appVersion' channels.json)"
+            ./internal/scripts/update-release-channel.sh \
+              "$other_channel" \
+              "$other_image_tag" \
+              "$CHART_VERSION"
+          fi
+
+      - name: Commit channel changes on develop
+        id: commit_channels
+        if: steps.freshness.outputs.should_update == 'true'
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "actions@github.com"
@@ -90,11 +110,16 @@ jobs:
           fi
 
           git add channels.json
-          git commit -m "ci: bump dev channel to ${{ inputs.image_tag }}"
+          git commit -m "ci: bump ${{ inputs.channel }} channel to ${{ inputs.image_tag }}"
 
           if git push origin HEAD:develop; then
             echo "publish_gh_pages=true" >> "$GITHUB_OUTPUT"
             exit 0
+          fi
+
+          if [[ "${{ inputs.channel }}" != "dev" ]]; then
+            echo "Failed to push channel update to develop"
+            exit 1
           fi
 
           git fetch origin develop
@@ -109,17 +134,8 @@ jobs:
           echo "Failed to push dev channel update even though source SHA is still latest"
           exit 1
 
-      - name: Commit stable changes on develop
-        if: steps.freshness.outputs.should_update == 'true' && inputs.channel != 'dev'
-        uses: stefanzweifel/git-auto-commit-action@4a55954c782fc1ea30b9056cd3e7a2b40ca8887d # v7
-        with:
-          commit_message: "ci: bump ${{ inputs.channel }} channel to ${{ inputs.image_tag }}"
-          file_pattern: |
-            channels.json
-          branch: develop
-
       - name: Checkout gh-pages branch
-        if: steps.freshness.outputs.should_update == 'true' && (inputs.channel != 'dev' || steps.commit_dev.outputs.publish_gh_pages == 'true')
+        if: steps.freshness.outputs.should_update == 'true' && steps.commit_channels.outputs.publish_gh_pages == 'true'
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
           ref: ${{ env.GH_PAGES_BRANCH }}
@@ -127,12 +143,12 @@ jobs:
           fetch-depth: 0
 
       - name: Publish to gh-pages
-        if: steps.freshness.outputs.should_update == 'true' && (inputs.channel != 'dev' || steps.commit_dev.outputs.publish_gh_pages == 'true')
+        if: steps.freshness.outputs.should_update == 'true' && steps.commit_channels.outputs.publish_gh_pages == 'true'
         run: |
           cp channels.json gh-pages/channels.json
           cd gh-pages
           git config user.name "github-actions[bot]"
           git config user.email "actions@github.com"
           git add channels.json
-          git commit -m "ci: update dev channel image to ${{ inputs.image_tag }}" || echo "No changes to commit"
+          git commit -m "ci: update ${{ inputs.channel }} channel to ${{ inputs.image_tag }}" || echo "No changes to commit"
           git push origin HEAD:${{ env.GH_PAGES_BRANCH }}
