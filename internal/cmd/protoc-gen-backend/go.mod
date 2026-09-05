@@ -1,6 +1,6 @@
 module github.com/fivenet-app/fivenet/v2026/internal/cmd/protoc-gen-backend
 
-go 1.27.0
+go 1.27.1
 
 require (
 	github.com/fivenet-app/fivenet/v2026 v2026.8.5
