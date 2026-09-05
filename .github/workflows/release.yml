@@ -173,9 +173,7 @@ jobs:
     name: Update Stable Channel
     needs:
       - build-images
-      - build-binaries
     uses: ./.github/workflows/update-channel.yml
     with:
       channel: stable
       image_tag: ${{ needs.build-images.outputs.image_tag }}
-      chart_version: ${{ needs.build-binaries.outputs.APP_VERSION }}
