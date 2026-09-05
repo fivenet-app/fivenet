@@ -2,6 +2,20 @@
 
 All notable changes to this project will be documented in this file.
 
+## [2026.9.1] - 2026-09-05
+
+### 🚀 Features
+
+- *(ci)* Automate chart updates on application releases
+
+### 🐛 Bug Fixes
+
+- *(ci)* Channels.json chart version update
+- *(routes)* Use `route.path` instead of `route.name`
+- *(documents)* Penaltycalculator data reduction undefined when block is
+- *(channels)* Update chart version
+- *(app)* Rename useRoute var
+
 ## [2026.9.0] - 2026-09-05
 
 ### 🚀 Features
