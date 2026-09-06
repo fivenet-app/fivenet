@@ -614,14 +614,14 @@ func (b *Bot) IsUserConfigAdmin(ctx context.Context, userID discord.UserID) (boo
 func (b *Bot) DebugUser(
 	ctx context.Context,
 	guildID discord.GuildID,
-	userID discord.UserID,
+	memberID discord.UserID,
 ) (*discordtypes.UserDebug, error) {
-	result := &discordtypes.UserDebug{DiscordUserID: userID}
+	result := &discordtypes.UserDebug{DiscordUserID: memberID}
 	guild, ok := b.activeGuilds.Load(guildID)
 	if !ok || guild == nil {
 		return result, nil
 	}
-	result.MemberFound = func() bool { _, err := b.dc.Member(guildID, userID); return err == nil }()
+	result.MemberFound = func() bool { _, err := b.dc.Member(guildID, memberID); return err == nil }()
 	result.SyncRunning = guild.IsRunning()
 	result.LastSync = guild.status().LastSync
 	result.GroupSyncEnabled = b.dcCfg.GroupSync.Enabled
@@ -645,21 +645,22 @@ func (b *Bot) DebugUser(
 			tUserJobs.Job.AS("job"),
 			tUserJobs.Grade.AS("job_grade"),
 		).
-		FROM(table.FivenetAccountsOauth2.
-			INNER_JOIN(tAccounts, tAccounts.ID.EQ(table.FivenetAccountsOauth2.AccountID)).
-			LEFT_JOIN(table.FivenetUserAccounts, table.FivenetUserAccounts.AccountID.EQ(tAccounts.ID)).
-			LEFT_JOIN(tUsers, tUsers.ID.EQ(table.FivenetUserAccounts.UserID)).
-			INNER_JOIN(tUserJobs,
-				mysql.AND(
-					tUserJobs.UserID.EQ(tUsers.ID),
-					tUserJobs.Job.EQ(mysql.String(guild.job)),
+		FROM(
+			table.FivenetAccountsOauth2.
+				INNER_JOIN(tAccounts, tAccounts.ID.EQ(table.FivenetAccountsOauth2.AccountID)).
+				LEFT_JOIN(table.FivenetUserAccounts, table.FivenetUserAccounts.AccountID.EQ(tAccounts.ID)).
+				LEFT_JOIN(tUsers, tUsers.ID.EQ(table.FivenetUserAccounts.UserID)).
+				LEFT_JOIN(tUserJobs,
+					mysql.AND(
+						tUserJobs.UserID.EQ(tUsers.ID),
+						tUserJobs.Job.EQ(mysql.String(guild.job)),
+					),
 				),
-			),
 		).
 		WHERE(mysql.AND(
 			table.FivenetAccountsOauth2.Provider.EQ(mysql.String("discord")),
 			table.FivenetAccountsOauth2.ExternalID.EQ(
-				mysql.String(strconv.FormatUint(uint64(userID), 10)),
+				mysql.String(strconv.FormatUint(uint64(memberID), 10)),
 			),
 		)).
 		LIMIT(1)
@@ -695,7 +696,7 @@ func (b *Bot) DebugUser(
 			}
 		}
 	}
-	member, err := b.dc.Member(guildID, userID)
+	member, err := b.dc.Member(guildID, memberID)
 	if err == nil {
 		roles, roleErr := b.dc.Roles(guildID)
 		if roleErr == nil {

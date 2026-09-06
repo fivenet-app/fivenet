@@ -36,7 +36,10 @@ func TestDebugUserUsesUserJobs(t *testing.T) {
 	guildID := discord.GuildID(123)
 	userID := discord.UserID(456)
 	dc := state.NewWithIntents("", gateway.IntentGuildMembers|gateway.IntentGuilds)
-	require.NoError(t, dc.Cabinet.MemberSet(guildID, &discord.Member{User: discord.User{ID: userID}}, false))
+	require.NoError(
+		t,
+		dc.Cabinet.MemberSet(guildID, &discord.Member{User: discord.User{ID: userID}}, false),
+	)
 
 	jobGuild := &Guild{job: "police", gid: guildID}
 	b := &Bot{
@@ -48,7 +51,7 @@ func TestDebugUserUsesUserJobs(t *testing.T) {
 	}
 	b.activeGuilds.Store(guildID, jobGuild)
 
-	got, err := b.DebugUser(context.Background(), guildID, userID)
+	got, err := b.DebugUser(t.Context(), guildID, userID)
 	require.NoError(t, err)
 	require.True(t, got.DiscordLinked)
 	require.True(t, got.AccountFound)
@@ -59,6 +62,8 @@ func TestDebugUserUsesUserJobs(t *testing.T) {
 }
 
 func TestGetJobGuildsFromDB(t *testing.T) {
+	t.Parallel()
+
 	db, mock, err := sqlmock.New()
 	require.NoError(t, err)
 	t.Cleanup(func() {
@@ -70,7 +75,7 @@ func TestGetJobGuildsFromDB(t *testing.T) {
 			AddRow("police", int64(123), nil))
 
 	b := &Bot{db: db}
-	got, err := b.getJobGuildsFromDB(context.Background())
+	got, err := b.getJobGuildsFromDB(t.Context())
 	require.NoError(t, err)
 	require.Len(t, got, 1)
 	require.Equal(t, "police", got[0].Job)
@@ -78,6 +83,8 @@ func TestGetJobGuildsFromDB(t *testing.T) {
 }
 
 func TestBotStatusAndGuildLookup(t *testing.T) {
+	t.Parallel()
+
 	interval := 5 * time.Minute
 	b := &Bot{
 		activeGuilds: xsync.NewMap[discord.GuildID, *Guild](),
@@ -105,6 +112,8 @@ func TestBotStatusAndGuildLookup(t *testing.T) {
 }
 
 func TestRunSyncQueuesExistingGuild(t *testing.T) {
+	t.Parallel()
+
 	workCh := make(chan *Guild, 1)
 	guild := &Guild{gid: 10, job: "police"}
 	b := &Bot{activeGuilds: xsync.NewMap[discord.GuildID, *Guild](), workCh: workCh}
@@ -120,17 +129,21 @@ func TestRunSyncQueuesExistingGuild(t *testing.T) {
 }
 
 func TestGetJobGuildsFromDBPropagatesErrors(t *testing.T) {
+	t.Parallel()
+
 	db, mock, err := sqlmock.New()
 	require.NoError(t, err)
 	t.Cleanup(func() { _ = db.Close() })
 	mock.ExpectQuery(regexp.QuoteMeta("SELECT")).WillReturnError(context.Canceled)
 
 	b := &Bot{db: db}
-	_, err = b.getJobGuildsFromDB(context.Background())
+	_, err = b.getJobGuildsFromDB(t.Context())
 	require.ErrorIs(t, err, context.Canceled)
 }
 
 func TestGetGuildsWithNoConfiguredGuildsDoesNothing(t *testing.T) {
+	t.Parallel()
+
 	db, mock, err := sqlmock.New()
 	require.NoError(t, err)
 	t.Cleanup(func() {
@@ -146,7 +159,7 @@ func TestGetGuildsWithNoConfiguredGuildsDoesNothing(t *testing.T) {
 		logger:       zaptest.NewLogger(t),
 		activeGuilds: xsync.NewMap[discord.GuildID, *Guild](),
 	}
-	require.NoError(t, b.getGuilds(context.Background()))
+	require.NoError(t, b.getGuilds(t.Context()))
 	count := 0
 	for range b.activeGuilds.All() {
 		count++
@@ -155,6 +168,8 @@ func TestGetGuildsWithNoConfiguredGuildsDoesNothing(t *testing.T) {
 }
 
 func TestIsUserConfigAdminMatchesConfiguredLicense(t *testing.T) {
+	t.Parallel()
+
 	db, mock, err := sqlmock.New()
 	require.NoError(t, err)
 	t.Cleanup(func() {
@@ -169,12 +184,14 @@ func TestIsUserConfigAdminMatchesConfiguredLicense(t *testing.T) {
 		db:      db,
 		authCfg: &config.Auth{ConfigAdminUsers: []string{"license-1"}},
 	}
-	isAdmin, err := b.IsUserConfigAdmin(context.Background(), discord.UserID(456))
+	isAdmin, err := b.IsUserConfigAdmin(t.Context(), discord.UserID(456))
 	require.NoError(t, err)
 	require.True(t, isAdmin)
 }
 
 func TestIsUserConfigAdminReturnsFalseForMissingAccount(t *testing.T) {
+	t.Parallel()
+
 	db, mock, err := sqlmock.New()
 	require.NoError(t, err)
 	t.Cleanup(func() {
@@ -186,12 +203,14 @@ func TestIsUserConfigAdminReturnsFalseForMissingAccount(t *testing.T) {
 	)
 
 	b := &Bot{db: db, authCfg: &config.Auth{}}
-	isAdmin, err := b.IsUserConfigAdmin(context.Background(), discord.UserID(456))
+	isAdmin, err := b.IsUserConfigAdmin(t.Context(), discord.UserID(456))
 	require.NoError(t, err)
 	require.False(t, isAdmin)
 }
 
 func TestDebugUserReportsInactiveAccount(t *testing.T) {
+	t.Parallel()
+
 	db, mock, err := sqlmock.New()
 	require.NoError(t, err)
 	t.Cleanup(func() {
@@ -206,7 +225,10 @@ func TestDebugUserReportsInactiveAccount(t *testing.T) {
 	guildID := discord.GuildID(123)
 	userID := discord.UserID(456)
 	dc := state.NewWithIntents("", gateway.IntentGuildMembers)
-	require.NoError(t, dc.Cabinet.MemberSet(guildID, &discord.Member{User: discord.User{ID: userID}}, false))
+	require.NoError(
+		t,
+		dc.Cabinet.MemberSet(guildID, &discord.Member{User: discord.User{ID: userID}}, false),
+	)
 	b := &Bot{
 		db:           db,
 		dc:           dc,
@@ -215,13 +237,15 @@ func TestDebugUserReportsInactiveAccount(t *testing.T) {
 	}
 	b.activeGuilds.Store(guildID, &Guild{job: "police", gid: guildID})
 
-	got, err := b.DebugUser(context.Background(), guildID, userID)
+	got, err := b.DebugUser(t.Context(), guildID, userID)
 	require.NoError(t, err)
 	require.True(t, got.AccountFound)
 	require.False(t, got.AccountActive)
 }
 
 func TestIsUserConfigAdminMatchesConfiguredGroup(t *testing.T) {
+	t.Parallel()
+
 	db, mock, err := sqlmock.New()
 	require.NoError(t, err)
 	t.Cleanup(func() {
@@ -233,55 +257,85 @@ func TestIsUserConfigAdminMatchesConfiguredGroup(t *testing.T) {
 	)
 
 	b := &Bot{db: db, authCfg: &config.Auth{ConfigAdminGroups: []string{"admins"}}}
-	isAdmin, err := b.IsUserConfigAdmin(context.Background(), discord.UserID(456))
+	isAdmin, err := b.IsUserConfigAdmin(t.Context(), discord.UserID(456))
 	require.NoError(t, err)
 	require.True(t, isAdmin)
 }
 
 func TestIsUserConfigAdminPropagatesDatabaseError(t *testing.T) {
+	t.Parallel()
+
 	db, mock, err := sqlmock.New()
 	require.NoError(t, err)
 	t.Cleanup(func() { _ = db.Close() })
 	mock.ExpectQuery("SELECT .*fivenet_accounts.*").WillReturnError(context.Canceled)
 
 	b := &Bot{db: db, authCfg: &config.Auth{}}
-	_, err = b.IsUserConfigAdmin(context.Background(), discord.UserID(456))
+	_, err = b.IsUserConfigAdmin(t.Context(), discord.UserID(456))
 	require.ErrorIs(t, err, context.Canceled)
 }
 
 func TestIsUserGuildAdminUsesCachedPermissions(t *testing.T) {
+	t.Parallel()
+
 	guildID := discord.GuildID(123)
 	channelID := discord.ChannelID(234)
 	userID := discord.UserID(456)
 	dc := state.NewWithIntents("", gateway.IntentGuildMembers|gateway.IntentGuilds)
 	require.NoError(t, dc.Cabinet.GuildSet(&discord.Guild{ID: guildID}, false))
-	require.NoError(t, dc.Cabinet.ChannelSet(&discord.Channel{ID: channelID, GuildID: guildID}, false))
-	require.NoError(t, dc.Cabinet.MemberSet(guildID, &discord.Member{User: discord.User{ID: userID}, RoleIDs: []discord.RoleID{99}}, false))
-	require.NoError(t, dc.Cabinet.RoleSet(guildID, &discord.Role{ID: 99, Permissions: discord.PermissionAdministrator}, false))
+	require.NoError(
+		t,
+		dc.Cabinet.ChannelSet(&discord.Channel{ID: channelID, GuildID: guildID}, false),
+	)
+	require.NoError(
+		t,
+		dc.Cabinet.MemberSet(
+			guildID,
+			&discord.Member{User: discord.User{ID: userID}, RoleIDs: []discord.RoleID{99}},
+			false,
+		),
+	)
+	require.NoError(
+		t,
+		dc.Cabinet.RoleSet(
+			guildID,
+			&discord.Role{ID: 99, Permissions: discord.PermissionAdministrator},
+			false,
+		),
+	)
 
 	b := &Bot{dc: dc}
-	isAdmin, err := b.IsUserGuildAdmin(context.Background(), channelID, userID)
+	isAdmin, err := b.IsUserGuildAdmin(t.Context(), channelID, userID)
 	require.NoError(t, err)
 	require.True(t, isAdmin)
 
-	require.NoError(t, dc.Cabinet.MemberSet(guildID, &discord.Member{User: discord.User{ID: userID}}, true))
-	isAdmin, err = b.IsUserGuildAdmin(context.Background(), channelID, userID)
+	require.NoError(
+		t,
+		dc.Cabinet.MemberSet(guildID, &discord.Member{User: discord.User{ID: userID}}, true),
+	)
+	isAdmin, err = b.IsUserGuildAdmin(t.Context(), channelID, userID)
 	require.NoError(t, err)
 	require.False(t, isAdmin)
 }
 
 func TestIsUserGuildAdminReturnsStateError(t *testing.T) {
+	t.Parallel()
+
 	b := &Bot{dc: state.NewWithIntents("", gateway.IntentGuildMembers|gateway.IntentGuilds)}
-	_, err := b.IsUserGuildAdmin(context.Background(), discord.ChannelID(234), discord.UserID(456))
+	_, err := b.IsUserGuildAdmin(t.Context(), discord.ChannelID(234), discord.UserID(456))
 	require.Error(t, err)
 }
 
 func TestRunSyncSkipsDisabledBot(t *testing.T) {
+	t.Parallel()
+
 	b := &Bot{enabled: false, logger: zaptest.NewLogger(t)}
-	require.NoError(t, b.runSync(context.Background()))
+	require.NoError(t, b.runSync(t.Context()))
 }
 
 func TestRunSyncQueuesActiveGuilds(t *testing.T) {
+	t.Parallel()
+
 	db, mock, err := sqlmock.New()
 	require.NoError(t, err)
 	t.Cleanup(func() {
@@ -304,11 +358,13 @@ func TestRunSyncQueuesActiveGuilds(t *testing.T) {
 	}
 	b.activeGuilds.Store(guild.gid, guild)
 
-	require.NoError(t, b.runSync(context.Background()))
+	require.NoError(t, b.runSync(t.Context()))
 	require.Same(t, guild, <-workCh)
 }
 
 func TestDebugUserMapsGroupsAndActualRoles(t *testing.T) {
+	t.Parallel()
+
 	db, mock, err := sqlmock.New()
 	require.NoError(t, err)
 	t.Cleanup(func() {
@@ -323,17 +379,29 @@ func TestDebugUserMapsGroupsAndActualRoles(t *testing.T) {
 	guildID := discord.GuildID(123)
 	userID := discord.UserID(456)
 	dc := state.NewWithIntents("", gateway.IntentGuildMembers|gateway.IntentGuilds)
-	require.NoError(t, dc.Cabinet.MemberSet(guildID, &discord.Member{User: discord.User{ID: userID}, RoleIDs: []discord.RoleID{99}}, false))
+	require.NoError(
+		t,
+		dc.Cabinet.MemberSet(
+			guildID,
+			&discord.Member{User: discord.User{ID: userID}, RoleIDs: []discord.RoleID{99}},
+			false,
+		),
+	)
 	require.NoError(t, dc.Cabinet.RoleSet(guildID, &discord.Role{ID: 99, Name: "Admin"}, false))
 	b := &Bot{
-		db:           db,
-		dc:           dc,
-		dcCfg:        &config.Discord{GroupSync: config.DiscordGroupSync{Enabled: true, Mapping: map[string]config.DiscordGroupRole{"admins": {RoleName: "Admin"}}}},
+		db: db,
+		dc: dc,
+		dcCfg: &config.Discord{
+			GroupSync: config.DiscordGroupSync{
+				Enabled: true,
+				Mapping: map[string]config.DiscordGroupRole{"admins": {RoleName: "Admin"}},
+			},
+		},
 		activeGuilds: xsync.NewMap[discord.GuildID, *Guild](),
 	}
 	b.activeGuilds.Store(guildID, &Guild{job: "police", gid: guildID})
 
-	got, err := b.DebugUser(context.Background(), guildID, userID)
+	got, err := b.DebugUser(t.Context(), guildID, userID)
 	require.NoError(t, err)
 	require.Equal(t, []string{"admins"}, got.MappedGroups)
 	require.Equal(t, []string{"Admin"}, got.ActualRoles)
@@ -342,8 +410,8 @@ func TestDebugUserMapsGroupsAndActualRoles(t *testing.T) {
 
 func TestHandlePrivateMessageIgnoresNonPrivateSources(t *testing.T) {
 	t.Parallel()
-	b := &Bot{}
 
+	b := &Bot{}
 	// Bot-authored and webhook messages must be ignored before any Discord
 	// client or i18n dependency is accessed.
 	b.handlePrivateMessage(&gateway.MessageCreateEvent{
@@ -360,6 +428,8 @@ func TestHandlePrivateMessageIgnoresNonPrivateSources(t *testing.T) {
 }
 
 func TestGetGuildsCreatesConfiguredGuild(t *testing.T) {
+	t.Parallel()
+
 	db, mock, err := sqlmock.New()
 	require.NoError(t, err)
 	t.Cleanup(func() {
@@ -388,7 +458,7 @@ func TestGetGuildsCreatesConfiguredGuild(t *testing.T) {
 		activeGuilds: xsync.NewMap[discord.GuildID, *Guild](),
 	}
 
-	require.NoError(t, b.getGuilds(context.Background()))
+	require.NoError(t, b.getGuilds(t.Context()))
 	created, ok := b.activeGuilds.Load(guildID)
 	require.True(t, ok)
 	require.Equal(t, "police", created.job)
@@ -397,6 +467,8 @@ func TestGetGuildsCreatesConfiguredGuild(t *testing.T) {
 }
 
 func TestGetGuildsRemovesActiveGuildMissingFromDiscord(t *testing.T) {
+	t.Parallel()
+
 	db, mock, err := sqlmock.New()
 	require.NoError(t, err)
 	t.Cleanup(func() {
@@ -408,7 +480,7 @@ func TestGetGuildsRemovesActiveGuildMissingFromDiscord(t *testing.T) {
 			AddRow("police", int64(123), nil),
 	)
 
-	ctx, cancel := context.WithCancel(context.Background())
+	ctx, cancel := context.WithCancel(t.Context())
 	defer cancel()
 	active := &Guild{gid: 123, job: "police", cancel: cancel}
 	dc := state.NewWithIntents("", gateway.IntentGuilds)
@@ -429,6 +501,8 @@ func TestGetGuildsRemovesActiveGuildMissingFromDiscord(t *testing.T) {
 }
 
 func TestGetGuildsRetainsActiveGuild(t *testing.T) {
+	t.Parallel()
+
 	db, mock, err := sqlmock.New()
 	require.NoError(t, err)
 	t.Cleanup(func() {
@@ -452,7 +526,7 @@ func TestGetGuildsRetainsActiveGuild(t *testing.T) {
 	}
 	b.activeGuilds.Store(guildID, active)
 
-	require.NoError(t, b.getGuilds(context.Background()))
+	require.NoError(t, b.getGuilds(t.Context()))
 	got, ok := b.activeGuilds.Load(guildID)
 	require.True(t, ok)
 	require.Same(t, active, got)

@@ -1,7 +1,6 @@
 package discord
 
 import (
-	"context"
 	"sync/atomic"
 	"testing"
 	"time"
@@ -13,10 +12,12 @@ import (
 
 func TestGuildRunRejectsSyncDuringCooldown(t *testing.T) {
 	t.Parallel()
+
 	g := &Guild{
-		initiated: func() (v atomic.Bool) { v.Store(true); return }(),
+		initiated: atomic.Bool{},
 		lastSync:  time.Now(),
 	}
+	g.initiated.Store(true)
 
 	require.ErrorIs(t, g.Run(false), ErrSyncCooldownTime)
 	require.False(t, g.IsRunning())
@@ -38,6 +39,6 @@ func TestGuildSetLastSyncIntervalUpdatesTimestamp(t *testing.T) {
 		logger: zaptest.NewLogger(t),
 	}
 	before := time.Now()
-	require.NoError(t, g.setLastSyncInterval(context.Background(), "police", nil))
+	require.NoError(t, g.setLastSyncInterval(t.Context(), "police", nil))
 	require.True(t, g.lastSync.After(before) || g.lastSync.Equal(before))
 }

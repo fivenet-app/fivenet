@@ -13,10 +13,18 @@ import (
 )
 
 func TestUsersAddMergesUsersAndDeduplicatesRoles(t *testing.T) {
+	t.Parallel()
+
 	role := &Role{ID: 10, Name: "Police"}
 	users := Users{}
-	users.Add(&User{ID: 42, Nickname: strptr("old"), Roles: &UserRoles{Sum: Roles{role}}})
-	users.Add(&User{ID: 42, Nickname: strptr("new"), Roles: &UserRoles{Sum: Roles{role, {ID: 11, Name: "Admin"}}}})
+	users.Add(&User{ID: 42, Nickname: new("old"), Roles: &UserRoles{Sum: Roles{role}}})
+	users.Add(
+		&User{
+			ID:       42,
+			Nickname: new("new"),
+			Roles:    &UserRoles{Sum: Roles{role, {ID: 11, Name: "Admin"}}},
+		},
+	)
 
 	got := users[42]
 	require.Equal(t, "new", *got.Nickname)
@@ -24,6 +32,8 @@ func TestUsersAddMergesUsersAndDeduplicatesRoles(t *testing.T) {
 }
 
 func TestUserJobHelpers(t *testing.T) {
+	t.Parallel()
+
 	ambulance := &users.UserJob{}
 	ambulance.SetJob("ambulance")
 	ambulance.SetGrade(1)
@@ -39,6 +49,8 @@ func TestUserJobHelpers(t *testing.T) {
 }
 
 func TestUserAddRoleDeduplicatesByIDOrName(t *testing.T) {
+	t.Parallel()
+
 	user := &User{ID: 1}
 	user.AddRole(&Role{ID: 10, Name: "Police"})
 	user.AddRole(&Role{ID: 10, Name: "Different name"})
@@ -48,6 +60,8 @@ func TestUserAddRoleDeduplicatesByIDOrName(t *testing.T) {
 }
 
 func TestStateMerge(t *testing.T) {
+	t.Parallel()
+
 	called := false
 	processor := func(context.Context, discord.GuildID, discord.Member, *User) ([]discord.Embed, error) {
 		called = true
@@ -56,7 +70,7 @@ func TestStateMerge(t *testing.T) {
 	state := &State{GuildID: 123, Users: Users{42: {ID: 42, Roles: &UserRoles{}}}}
 	state.Merge(&State{
 		Roles:          Roles{{ID: 1, Name: "Police"}},
-		Users:          Users{42: {ID: 42, Nickname: strptr("Officer")}},
+		Users:          Users{42: {ID: 42, Nickname: new("Officer")}},
 		UserProcessors: []UserProcessorHandler{processor},
 	})
 	state.Merge(nil)
@@ -64,12 +78,14 @@ func TestStateMerge(t *testing.T) {
 	require.Len(t, state.Roles, 1)
 	require.Equal(t, "Officer", *state.Users[42].Nickname)
 	require.Len(t, state.UserProcessors, 1)
-	_, err := state.UserProcessors[0](context.Background(), 123, discord.Member{}, state.Users[42])
+	_, err := state.UserProcessors[0](t.Context(), 123, discord.Member{}, state.Users[42])
 	require.NoError(t, err)
 	require.True(t, called)
 }
 
 func TestStateCalculateFiltersUnchangedUsersAndIgnoresBots(t *testing.T) {
+	t.Parallel()
+
 	role := &Role{ID: 9, Name: "Keep"}
 	state := &State{
 		GuildID: 123,
@@ -83,12 +99,14 @@ func TestStateCalculateFiltersUnchangedUsersAndIgnoresBots(t *testing.T) {
 		{User: discord.User{ID: 2, Bot: true}},
 	})
 
-	plan, _, err := state.Calculate(context.Background(), dc, false)
+	plan, _, err := state.Calculate(t.Context(), dc, false)
 	require.NoError(t, err)
 	require.Empty(t, plan.Users)
 }
 
 func TestStateCalculateAddsAndRemovesManagedRoles(t *testing.T) {
+	t.Parallel()
+
 	keep := &Role{ID: 9, Name: "Keep"}
 	remove := &Role{ID: 10, Name: "Remove"}
 	state := &State{
@@ -98,9 +116,13 @@ func TestStateCalculateAddsAndRemovesManagedRoles(t *testing.T) {
 			1: {ID: 1, Roles: &UserRoles{Sum: Roles{keep}}},
 		},
 	}
-	dc := newTestDiscordState(t, 123, []discord.Member{{User: discord.User{ID: 1}, RoleIDs: []discord.RoleID{10}}})
+	dc := newTestDiscordState(
+		t,
+		123,
+		[]discord.Member{{User: discord.User{ID: 1}, RoleIDs: []discord.RoleID{10}}},
+	)
 
-	plan, _, err := state.Calculate(context.Background(), dc, false)
+	plan, _, err := state.Calculate(t.Context(), dc, false)
 	require.NoError(t, err)
 	require.Len(t, plan.Users, 1)
 	require.Equal(t, discord.RoleID(9), plan.Users[0].Roles.ToAdd[0].ID)
@@ -108,23 +130,30 @@ func TestStateCalculateAddsAndRemovesManagedRoles(t *testing.T) {
 }
 
 func TestStateCalculatePropagatesProcessorErrors(t *testing.T) {
+	t.Parallel()
+
 	wantErr := errors.New("processor failed")
 	state := &State{
 		GuildID: 123,
-		UserProcessors: []UserProcessorHandler{func(context.Context, discord.GuildID, discord.Member, *User) ([]discord.Embed, error) {
-			return nil, wantErr
-		}},
+		UserProcessors: []UserProcessorHandler{
+			func(context.Context, discord.GuildID, discord.Member, *User) ([]discord.Embed, error) {
+				return nil, wantErr
+			},
+		},
 	}
 	dc := newTestDiscordState(t, 123, []discord.Member{{User: discord.User{ID: 1}}})
 
-	_, _, err := state.Calculate(context.Background(), dc, false)
+	_, _, err := state.Calculate(t.Context(), dc, false)
 	require.ErrorIs(t, err, wantErr)
 }
 
-func strptr(value string) *string { return &value }
-
-func newTestDiscordState(t *testing.T, guildID discord.GuildID, members []discord.Member) *state.State {
+func newTestDiscordState(
+	t *testing.T,
+	guildID discord.GuildID,
+	members []discord.Member,
+) *state.State {
 	t.Helper()
+
 	dc := state.NewWithIntents("", gateway.IntentGuildMembers|gateway.IntentGuilds)
 	for i := range members {
 		require.NoError(t, dc.Cabinet.MemberSet(guildID, &members[i], false))

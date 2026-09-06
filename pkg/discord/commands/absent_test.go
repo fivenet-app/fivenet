@@ -1,7 +1,6 @@
 package commands
 
 import (
-	"context"
 	"testing"
 
 	"github.com/DATA-DOG/go-sqlmock"
@@ -14,6 +13,7 @@ import (
 
 type absentBotState struct {
 	discordtypes.BotState
+
 	job string
 	ok  bool
 }
@@ -24,22 +24,23 @@ func (b absentBotState) GetJobFromGuildID(discord.GuildID) (string, bool) {
 
 func TestAbsentCommandRejectsInvalidDiscordContexts(t *testing.T) {
 	t.Parallel()
+
 	l, err := i18n.New()
 	require.NoError(t, err)
 	c := &AbsentCommand{l: l, b: absentBotState{}}
 
-	resp := c.HandleCommand(context.Background(), cmdroute.CommandData{
+	resp := c.HandleCommand(t.Context(), cmdroute.CommandData{
 		Event: &discord.InteractionEvent{GuildID: discord.NullGuildID},
 	})
 	require.Nil(t, resp)
 
-	resp = c.HandleCommand(context.Background(), cmdroute.CommandData{
+	resp = c.HandleCommand(t.Context(), cmdroute.CommandData{
 		Event: &discord.InteractionEvent{GuildID: 123},
 	})
 	require.NotNil(t, resp)
 	require.NotEmpty(t, (*resp.Embeds)[0].Title)
 
-	resp = c.HandleCommand(context.Background(), cmdroute.CommandData{
+	resp = c.HandleCommand(t.Context(), cmdroute.CommandData{
 		Event: &discord.InteractionEvent{
 			GuildID: 123,
 			Member:  &discord.Member{},
@@ -50,6 +51,8 @@ func TestAbsentCommandRejectsInvalidDiscordContexts(t *testing.T) {
 }
 
 func TestAbsentCommandReportsUserWithoutMatchingJob(t *testing.T) {
+	t.Parallel()
+
 	db, mock, err := sqlmock.New()
 	require.NoError(t, err)
 	t.Cleanup(func() {
@@ -67,7 +70,7 @@ func TestAbsentCommandReportsUserWithoutMatchingJob(t *testing.T) {
 		db: db,
 		b:  absentBotState{job: "police", ok: true},
 	}
-	resp := c.HandleCommand(context.Background(), cmdroute.CommandData{
+	resp := c.HandleCommand(t.Context(), cmdroute.CommandData{
 		Event: &discord.InteractionEvent{
 			GuildID: 123,
 			Member:  &discord.Member{User: discord.User{ID: 456}},
