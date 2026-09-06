@@ -1,3 +1,4 @@
+import type { RpcOptions } from '@protobuf-ts/runtime-rpc';
 import { getWikiWikiClient } from '~~/gen/ts/clients';
 import { ContentType } from '~~/gen/ts/resources/common/content/content';
 import type { Page } from '~~/gen/ts/resources/wiki/page';
@@ -57,15 +58,18 @@ export async function useWikiWiki() {
         );
     }
 
-    async function listPages(request: ListPagesRequest): Promise<ListPagesResponse> {
-        return runWikiCall<ListPagesResponse>(wikiWikiClient.listPages(request));
+    async function listPages(request: ListPagesRequest, options?: RpcOptions): Promise<ListPagesResponse> {
+        return runWikiCall<ListPagesResponse>(wikiWikiClient.listPages(request, options));
     }
 
-    async function getPage(id: number): Promise<Page | undefined> {
+    async function getPage(id: number, options?: RpcOptions): Promise<Page | undefined> {
         const response = await runWikiCall<GetPageResponse>(
-            wikiWikiClient.getPage({
-                id: id,
-            }),
+            wikiWikiClient.getPage(
+                {
+                    id: id,
+                },
+                options,
+            ),
         );
 
         return response.page;
@@ -89,8 +93,8 @@ export async function useWikiWiki() {
         );
     }
 
-    async function listPageActivity(request: ListPageActivityRequest): Promise<ListPageActivityResponse> {
-        return runWikiCall<ListPageActivityResponse>(wikiWikiClient.listPageActivity(request));
+    async function listPageActivity(request: ListPageActivityRequest, options?: RpcOptions): Promise<ListPageActivityResponse> {
+        return runWikiCall<ListPageActivityResponse>(wikiWikiClient.listPageActivity(request, options));
     }
 
     return {

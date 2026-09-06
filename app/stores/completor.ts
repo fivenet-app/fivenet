@@ -1,3 +1,4 @@
+import type { RpcOptions } from '@protobuf-ts/runtime-rpc';
 import { defineStore } from 'pinia';
 import {
     getCitizensLabelsClient,
@@ -57,10 +58,15 @@ export const useCompletorStore = defineStore(
          * Fetch job list and cache it in state.
          * @returns {Promise<Job[]>} - The list of jobs.
          */
-        const listJobs = async (refresh = false): Promise<Job[]> => {
+        const listJobs = async (refresh = false, abort?: AbortSignal): Promise<Job[]> => {
             if (jobs.value.length > 0 && !refresh) return jobs.value;
 
-            jobs.value = await completeJobs({});
+            jobs.value = await completeJobs(
+                {},
+                {
+                    abort: abort,
+                },
+            );
             return jobs.value;
         };
 
@@ -69,10 +75,10 @@ export const useCompletorStore = defineStore(
          * @param {CompleteJobsRequest} req - The request object for completing jobs.
          * @returns {Promise<Job[]>} - The completed jobs.
          */
-        const completeJobs = async (req: CompleteJobsRequest): Promise<Job[]> => {
+        const completeJobs = async (req: CompleteJobsRequest, options?: RpcOptions): Promise<Job[]> => {
             const completorCompletorClient = await getCompletorCompletorClient();
             try {
-                const call = completorCompletorClient.completeJobs(req);
+                const call = completorCompletorClient.completeJobs(req, options);
                 const { response } = await call;
                 return response.jobs;
             } catch (e) {
@@ -86,12 +92,17 @@ export const useCompletorStore = defineStore(
          * @param {number} userId - The ID of the user to find.
          * @returns {Promise<UserShort | undefined>} - The user with the specified ID, or undefined if not found.
          */
-        const findCitizen = async (userId: number): Promise<UserShort | undefined> => {
-            const users = await completeCitizens({
-                search: '',
-                userIds: [userId],
-                userIdsOnly: true,
-            });
+        const findCitizen = async (userId: number, abort?: AbortSignal): Promise<UserShort | undefined> => {
+            const users = await completeCitizens(
+                {
+                    search: '',
+                    userIds: [userId],
+                    userIdsOnly: true,
+                },
+                {
+                    abort: abort,
+                },
+            );
             return users.length === 0 ? undefined : users[0];
         };
 
@@ -100,10 +111,10 @@ export const useCompletorStore = defineStore(
          * @param {CompleteCitizensRequest} req - The request object for completing citizens.
          * @returns {Promise<UserShort[]>} - The completed citizens.
          */
-        const completeCitizens = async (req: CompleteCitizensRequest): Promise<UserShort[]> => {
+        const completeCitizens = async (req: CompleteCitizensRequest, options?: RpcOptions): Promise<UserShort[]> => {
             const completorCompletorClient = await getCompletorCompletorClient();
             try {
-                const call = completorCompletorClient.completeCitizens(req);
+                const call = completorCompletorClient.completeCitizens(req, options);
                 const { response } = await call;
                 return response.users.map((u) => ({
                     ...u,
@@ -123,13 +134,13 @@ export const useCompletorStore = defineStore(
          * @param {ListColleaguesRequest} req - The request object for listing colleagues.
          * @returns {Promise<Colleague[]>} - The list of colleagues.
          */
-        const listColleagues = async (req: ListColleaguesRequest): Promise<Colleague[]> => {
+        const listColleagues = async (req: ListColleaguesRequest, options?: RpcOptions): Promise<Colleague[]> => {
             if (!req.pagination) {
                 req.pagination = { offset: 0 };
             }
             const jobsColleaguesClient = await getJobsColleaguesClient();
             try {
-                const call = jobsColleaguesClient.listColleagues(req);
+                const call = jobsColleaguesClient.listColleagues(req, options);
                 const { response } = await call;
                 return response.colleagues;
             } catch (e) {
@@ -229,7 +240,7 @@ export const useCompletorStore = defineStore(
          * Fetch law books.
          * @returns {Promise<LawBook[]>} - The list of law books.
          */
-        const listLawBooks = async (refresh = false): Promise<LawBook[]> => {
+        const listLawBooks = async (refresh = false, options?: RpcOptions): Promise<LawBook[]> => {
             // Return cached law books if they are still valid and refresh is not requested
             if (
                 lawBooks.value &&
@@ -241,7 +252,7 @@ export const useCompletorStore = defineStore(
 
             const completorCompletorClient = await getCompletorCompletorClient();
             try {
-                const call = completorCompletorClient.listLawBooks({});
+                const call = completorCompletorClient.listLawBooks({}, options);
                 const { response } = await call;
 
                 lawBooks.value = {
@@ -269,10 +280,11 @@ export const useCompletorStore = defineStore(
          * @param {string} search - The search term for completing citizen labels.
          * @returns {Promise<Label[]>} - The completed citizen labels.
          */
-        const completeCitizenLabels = async (search: string, refresh = false): Promise<Label[]> => {
+        const completeCitizenLabels = async (search: string, refresh = false, options?: RpcOptions): Promise<Label[]> => {
             // Return cached law books if they are still valid and refresh is not requested
             if (
                 citizenLabels.value &&
+                !search &&
                 citizenLabels.value.data.length > 0 &&
                 Date.now() - citizenLabels.value.refreshedAt < maxCacheAge &&
                 !refresh
@@ -281,9 +293,12 @@ export const useCompletorStore = defineStore(
 
             const citizensLabelsClient = await getCitizensLabelsClient();
             try {
-                const call = citizensLabelsClient.listLabels({
-                    search: search,
-                });
+                const call = citizensLabelsClient.listLabels(
+                    {
+                        search: search,
+                    },
+                    options,
+                );
                 const { response } = await call;
                 // No search param given? Update cached state.
                 if (!search) {
@@ -300,10 +315,8 @@ export const useCompletorStore = defineStore(
         };
 
         return {
-            // State
             jobs,
 
-            // Actions
             getJobByName,
             listJobs,
             completeJobs,

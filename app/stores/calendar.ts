@@ -1,3 +1,4 @@
+import type { RpcOptions } from '@protobuf-ts/runtime-rpc';
 import { format } from 'date-fns';
 import { defineStore } from 'pinia';
 import { checkCalendarAccess } from '~/components/calendar/helpers';
@@ -36,7 +37,6 @@ export const useCalendarStore = defineStore(
         const notifications = useNotificationsStore();
         const settingsStore = useSettingsStore();
 
-        // State
         /**
          * List of active calendar IDs selected by the user.
          */
@@ -75,7 +75,6 @@ export const useCalendarStore = defineStore(
          */
         const notificationSound = useSounds('notification');
 
-        // Actions
         /**
          * Checks for upcoming calendar appointments and triggers notifications/reminders.
          * @returns {Promise<void>} A promise that resolves when the appointments are checked.
@@ -83,6 +82,8 @@ export const useCalendarStore = defineStore(
         const checkAppointments = async (): Promise<void> => {
             try {
                 const reminderTimes = settingsStore.calendar.reminderTimes;
+                if (reminderTimes.length === 0) return;
+
                 const highestReminder = Math.max(...reminderTimes);
 
                 const response = await getUpcomingEntries({
@@ -150,10 +151,10 @@ export const useCalendarStore = defineStore(
          * @param {GetCalendarRequest} req - The request parameters to fetch the calendar.
          * @returns {Promise<GetCalendarResponse>} A promise that resolves with the calendar response.
          */
-        const getCalendar = async (req: GetCalendarRequest): Promise<GetCalendarResponse> => {
+        const getCalendar = async (req: GetCalendarRequest, options?: RpcOptions): Promise<GetCalendarResponse> => {
             const calendarCalendarClient = await getCalendarCalendarClient();
 
-            const call = calendarCalendarClient.getCalendar(req);
+            const call = calendarCalendarClient.getCalendar(req, options);
             const { response } = await call;
 
             if (response.calendar) {
@@ -173,11 +174,11 @@ export const useCalendarStore = defineStore(
          * @param {ListCalendarsRequest} req - The request parameters to list calendars.
          * @returns {Promise<ListCalendarsResponse>} A promise that resolves with the list of calendars.
          */
-        const listCalendars = async (req: ListCalendarsRequest): Promise<ListCalendarsResponse> => {
+        const listCalendars = async (req: ListCalendarsRequest, options?: RpcOptions): Promise<ListCalendarsResponse> => {
             const calendarCalendarClient = await getCalendarCalendarClient();
 
             try {
-                const call = calendarCalendarClient.listCalendars(req);
+                const call = calendarCalendarClient.listCalendars(req, options);
                 const { response } = await call;
 
                 // Only "register" calendars in list when they are accessible by the user
@@ -199,7 +200,7 @@ export const useCalendarStore = defineStore(
                             foundCalendars.push(calendar.id);
                         });
 
-                        activeCalendarIds.value = Array.from(nextActiveIds);
+                        activeCalendarIds.value = Array.from(nextActiveIds).filter((id) => foundCalendars.includes(id));
 
                         // Remove non-accessible calendars (ignore public ones) and their entries from our list
                         calendars.value = calendars.value.filter((calendar): boolean => {
@@ -211,7 +212,7 @@ export const useCalendarStore = defineStore(
                                 return true;
                             }
 
-                            entries.value = entries.value.filter((entry) => entry.calendarId === calendar.id);
+                            entries.value = entries.value.filter((entry) => entry.calendarId !== calendar.id);
 
                             return false;
                         });
@@ -255,7 +256,9 @@ export const useCalendarStore = defineStore(
                     calendars.value.push(response.calendar);
                 }
 
-                activeCalendarIds.value.push(response.calendar.id);
+                if (!activeCalendarIds.value.includes(response.calendar.id)) {
+                    activeCalendarIds.value.push(response.calendar.id);
+                }
             }
 
             return response;
@@ -279,6 +282,8 @@ export const useCalendarStore = defineStore(
                 if (idx > -1) {
                     calendars.value.splice(idx, 1);
                 }
+                activeCalendarIds.value = activeCalendarIds.value.filter((calendarId) => calendarId !== id);
+                entries.value = entries.value.filter((entry) => entry.calendarId !== id);
             } catch (e) {
                 handleGRPCError(e as RpcError);
                 throw e;
@@ -291,10 +296,13 @@ export const useCalendarStore = defineStore(
          * @param {GetCalendarEntryRequest} req - The request parameters to fetch the calendar entry.
          * @returns {Promise<CalendarEntry | undefined>} A promise that resolves with the calendar entry.
          */
-        const getCalendarEntry = async (req: GetCalendarEntryRequest): Promise<CalendarEntry | undefined> => {
+        const getCalendarEntry = async (
+            req: GetCalendarEntryRequest,
+            options?: RpcOptions,
+        ): Promise<CalendarEntry | undefined> => {
             const calendarEntriesClient = await getCalendarEntriesClient();
 
-            const call = calendarEntriesClient.getCalendarEntry(req);
+            const call = calendarEntriesClient.getCalendarEntry(req, options);
             const { response } = await call;
 
             return response.entry;
@@ -395,11 +403,14 @@ export const useCalendarStore = defineStore(
          * @param {ListCalendarEntryRSVPRequest} req - The request parameters to list RSVP responses.
          * @returns {Promise<ListCalendarEntryRSVPResponse>} A promise that resolves with the RSVP responses.
          */
-        const listCalendarEntryRSVP = async (req: ListCalendarEntryRSVPRequest): Promise<ListCalendarEntryRSVPResponse> => {
+        const listCalendarEntryRSVP = async (
+            req: ListCalendarEntryRSVPRequest,
+            options?: RpcOptions,
+        ): Promise<ListCalendarEntryRSVPResponse> => {
             const calendarEntriesClient = await getCalendarEntriesClient();
 
             try {
-                const call = calendarEntriesClient.listCalendarEntryRSVP(req);
+                const call = calendarEntriesClient.listCalendarEntryRSVP(req, options);
                 const { response } = await call;
 
                 return response;
@@ -429,7 +440,6 @@ export const useCalendarStore = defineStore(
             }
         };
 
-        // Getters
         /**
          * Checks if the user has a private calendar.
          * @returns {boolean} True if the user has a private calendar, false otherwise.
@@ -450,7 +460,6 @@ export const useCalendarStore = defineStore(
         });
 
         return {
-            // State
             activeCalendarIds,
             view,
             currentDate,
@@ -458,7 +467,6 @@ export const useCalendarStore = defineStore(
             entries,
             eventReminders,
 
-            // Actions
             checkAppointments,
             getCalendar,
             listCalendars,
@@ -472,7 +480,6 @@ export const useCalendarStore = defineStore(
             listCalendarEntryRSVP,
             rsvpCalendarEntry,
 
-            // Getters
             hasPrivateCalendar,
             hasEditAccessToCalendar,
         };

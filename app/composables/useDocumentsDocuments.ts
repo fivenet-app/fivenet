@@ -1,3 +1,4 @@
+import type { RpcOptions } from '@protobuf-ts/runtime-rpc';
 import { getDocumentsDocumentsClient } from '~~/gen/ts/clients';
 import { ContentType } from '~~/gen/ts/resources/common/content/content';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
@@ -21,9 +22,9 @@ export async function useDocumentsDocuments() {
     const documents = ref<ListDocumentsResponse | undefined>();
     const pinnedDocuments = ref<ListDocumentPinsResponse | undefined>();
 
-    const listDocuments = async (req: ListDocumentsRequest): Promise<ListDocumentsResponse> => {
+    const listDocuments = async (req: ListDocumentsRequest, options?: RpcOptions): Promise<ListDocumentsResponse> => {
         try {
-            const call = documentsDocumentsClient.listDocuments(req);
+            const call = documentsDocumentsClient.listDocuments(req, options);
             const { response } = await call;
 
             documents.value = response;
@@ -35,11 +36,14 @@ export async function useDocumentsDocuments() {
         }
     };
 
-    const getDocument = async (id: number, redirectOnError?: boolean): Promise<GetDocumentResponse> => {
+    const getDocument = async (id: number, options?: RpcOptions, redirectOnError?: boolean): Promise<GetDocumentResponse> => {
         try {
-            const call = documentsDocumentsClient.getDocument({
-                documentId: id,
-            });
+            const call = documentsDocumentsClient.getDocument(
+                {
+                    documentId: id,
+                },
+                options,
+            );
             const { response } = await call;
 
             return response;
@@ -152,12 +156,15 @@ export async function useDocumentsDocuments() {
         }
     };
 
-    const listDocumentPins = async (page: number): Promise<ListDocumentPinsResponse> => {
-        const call = documentsDocumentsClient.listDocumentPins({
-            pagination: {
-                offset: calculateOffset(page, pinnedDocuments.value?.pagination),
+    const listDocumentPins = async (page: number, options?: RpcOptions): Promise<ListDocumentPinsResponse> => {
+        const call = documentsDocumentsClient.listDocumentPins(
+            {
+                pagination: {
+                    offset: calculateOffset(page, pinnedDocuments.value?.pagination),
+                },
             },
-        });
+            options,
+        );
         const { response } = await call;
 
         pinnedDocuments.value = response;
@@ -182,11 +189,9 @@ export async function useDocumentsDocuments() {
     };
 
     return {
-        // State
         documents,
         pinnedDocuments,
 
-        // Actions
         listDocuments,
         getDocument,
         createDocument,
