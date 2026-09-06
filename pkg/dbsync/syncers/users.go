@@ -595,7 +595,9 @@ func (s *UsersSync) retrieveLicenses(
 
 	licenses := []*userslicenses.License{}
 	if _, err := qrm.Query(ctx, s.db, q, args, &licenses); err != nil {
-		return nil, err
+		if !errors.Is(err, qrm.ErrNoRows) {
+			return nil, err
+		}
 	}
 
 	return licenses, nil
@@ -651,7 +653,9 @@ func (s *UsersSync) retrieveJobs(
 
 	jobs := []*users.UserJob{}
 	if _, err := qrm.Query(ctx, s.db, q, args, &jobs); err != nil {
-		return nil, err
+		if !errors.Is(err, qrm.ErrNoRows) {
+			return nil, err
+		}
 	}
 
 	return jobs, nil
@@ -710,7 +714,9 @@ func (s *UsersSync) retrievePhoneNumbers(
 
 	phoneNumbers := []*users.PhoneNumber{}
 	if _, err := qrm.Query(ctx, s.db, q, args, &phoneNumbers); err != nil {
-		return nil, err
+		if !errors.Is(err, qrm.ErrNoRows) {
+			return nil, err
+		}
 	}
 
 	return phoneNumbers, nil
