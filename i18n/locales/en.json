@@ -4002,7 +4002,7 @@
                     "likely_causes": "Likely causes",
                     "details": "Additional details",
                     "job": "Current job",
-                    "grade": "Grade",
+                    "grade": "Current grade",
                     "groups": "FiveNet groups",
                     "mapped_groups": "Mapped groups",
                     "missing_roles": "Missing roles",

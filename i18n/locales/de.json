@@ -4002,7 +4002,7 @@
                     "likely_causes": "Wahrscheinliche Ursachen",
                     "details": "Zusätzliche Details",
                     "job": "Aktueller Job",
-                    "grade": "Rang",
+                    "grade": "Aktueller Rang",
                     "groups": "FiveNet-Gruppen",
                     "mapped_groups": "Zugeordnete Gruppen",
                     "missing_roles": "Fehlende Rollen",
