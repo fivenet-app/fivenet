@@ -26,7 +26,7 @@ const (
 	_ = protoimpl.EnforceVersion(protoimpl.MaxVersion - 20)
 )
 
-// States of Cronjbo
+// States of Cronjob
 type CronjobState int32
 
 const (

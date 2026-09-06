@@ -42,7 +42,7 @@ message Cronjob {
   optional CronjobCompletedEvent last_completed_event = 9;
 }
 
-// States of Cronjbo
+// States of Cronjob
 enum CronjobState {
   CRONJOB_STATE_UNSPECIFIED = 0;
   CRONJOB_STATE_WAITING = 1;

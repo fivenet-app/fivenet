@@ -181,7 +181,7 @@ export interface GenericCronData {
     };
 }
 /**
- * States of Cronjbo
+ * States of Cronjob
  *
  * @generated from protobuf enum resources.cron.CronjobState
  */
