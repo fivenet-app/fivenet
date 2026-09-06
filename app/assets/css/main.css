@@ -7,7 +7,9 @@
 
     --ui-white: rgba(0, 0, 0, 1);
 
-    --page-content-bottom-offset: calc(var(--banner-message-bottom-offset, 0px) + var(--banner-impersonating-bottom-offset, 0px));
+    --page-content-bottom-offset: calc(
+        var(--banner-message-bottom-offset, 0px) + var(--banner-impersonating-bottom-offset, 0px)
+    );
 }
 
 .dark {
