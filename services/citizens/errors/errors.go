@@ -60,8 +60,8 @@ var (
 	)
 	ErrCitizenNotFound = common.NewI18nErr(
 		codes.NotFound,
-		&common.I18NItem{Key: "errors.citizens.CitizensService.ErrCitizenNotFound"},
-		nil,
+		&common.I18NItem{Key: "errors.citizens.CitizensService.ErrCitizenNotFound.content"},
+		&common.I18NItem{Key: "errors.citizens.CitizensService.ErrCitizenNotFound.title"},
 	)
 	ErrLabelNotFound = common.NewI18nErr(
 		codes.NotFound,
