@@ -39,7 +39,7 @@ type DBSyncCmd struct {
 }
 
 func getService(cli *CLI) service.Service {
-	fxOpts := fxopts.GetFxBaseOpts(cli.StartTimeout, false, false)
+	fxOpts := fxopts.GetFxBaseOpts(cli.StartTimeout, false, false, false)
 	fxOpts = append(fxOpts,
 		fx.Invoke(func(*dbsynctablemanager.TableManager) {}),
 		fx.Invoke(func(*dbsync.Sync) {}),

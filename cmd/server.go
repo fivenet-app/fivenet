@@ -13,7 +13,7 @@ type ServerCmd struct {
 func (c *ServerCmd) Run(cli *CLI) error {
 	instance.SetComponent("server")
 
-	fxOpts := fxopts.GetFxBaseOpts(cli.StartTimeout, true, true)
+	fxOpts := fxopts.GetFxBaseOpts(cli.StartTimeout, true, true, true)
 	fxOpts = append(fxOpts, fxopts.FxServerOpts()...)
 	fxOpts = append(fxOpts, fxopts.FxDemoOpts()...)
 

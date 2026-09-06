@@ -36,7 +36,7 @@ type MigrationsStatsBackfillCmd struct {
 }
 
 func (c *MigrationsStatsBackfillCmd) Run(cli *CLI) error {
-	fxOpts := fxopts.GetFxBaseOpts(12*time.Hour, false, true)
+	fxOpts := fxopts.GetFxBaseOpts(12*time.Hour, false, false, true)
 
 	if err := os.Setenv(envs.SkipDBMigrationsEnv, "true"); err != nil {
 		return err

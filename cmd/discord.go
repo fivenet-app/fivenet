@@ -17,7 +17,7 @@ type DiscordCmd struct {
 func (c *DiscordCmd) Run(cli *CLI) error {
 	instance.SetComponent("discord")
 
-	fxOpts := fxopts.GetFxBaseOpts(cli.StartTimeout, true, true)
+	fxOpts := fxopts.GetFxBaseOpts(cli.StartTimeout, true, false, true)
 	fxOpts = append(fxOpts,
 		fx.Invoke(func(*discord.Bot) {}),
 		fx.Invoke(func(*commands.Cmds) {}),

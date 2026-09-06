@@ -26,7 +26,7 @@ type ToolsDBCmd struct {
 type DBVersionCmd struct{}
 
 func (c *DBVersionCmd) Run(cli *CLI) error {
-	fxOpts := fxopts.GetFxBaseOpts(cli.StartTimeout, false, true)
+	fxOpts := fxopts.GetFxBaseOpts(cli.StartTimeout, false, false, true)
 
 	if err := os.Setenv(envs.SkipDBMigrationsEnv, "true"); err != nil {
 		return err
@@ -88,7 +88,7 @@ func (c *DBVersionCmd) run(_ context.Context, cfg *config.Config) error {
 type UpCmd struct{}
 
 func (c *UpCmd) Run(cli *CLI) error {
-	fxOpts := fxopts.GetFxBaseOpts(cli.StartTimeout, false, true)
+	fxOpts := fxopts.GetFxBaseOpts(cli.StartTimeout, false, false, true)
 
 	if err := os.Setenv(envs.SkipDBMigrationsEnv, "true"); err != nil {
 		return err

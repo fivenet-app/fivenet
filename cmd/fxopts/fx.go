@@ -92,7 +92,12 @@ import (
 	"go.uber.org/zap"
 )
 
-func GetFxBaseOpts(startTimeout time.Duration, withServer bool, withConfig bool) []fx.Option {
+func GetFxBaseOpts(
+	startTimeout time.Duration,
+	withServer bool,
+	withCron bool,
+	withConfig bool,
+) []fx.Option {
 	opts := []fx.Option{
 		fx.WithLogger(func(log *zap.Logger) fxevent.Logger {
 			l := &fxevent.ZapLogger{Logger: log}
@@ -254,8 +259,10 @@ func GetFxBaseOpts(startTimeout time.Duration, withServer bool, withConfig bool)
 	}
 
 	if withServer {
+		opts = append(opts, fx.Invoke(func(admin.AdminServer) {}))
+	}
+	if withCron {
 		opts = append(opts,
-			fx.Invoke(func(admin.AdminServer) {}),
 			fx.Invoke(func(croner.IRegistry) {}),
 			fx.Invoke(func(*croner.Scheduler) {}),
 		)
