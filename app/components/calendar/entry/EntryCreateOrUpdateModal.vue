@@ -136,9 +136,10 @@ function resetState(): void {
     state.recurringUntil = undefined;
 }
 
-const { data, status, refresh, error } = useLazyAsyncData(
+const { data, status, refresh, error } = useAuthedLazyAsyncData(
+    'userState',
     `calendar-entry:${props.entryId}`,
-    () => calendarStore.getCalendarEntry({ entryId: props.entryId! }),
+    ({ signal }) => calendarStore.getCalendarEntry({ entryId: props.entryId! }, { abort: signal }),
     {
         immediate: !!props.calendarId && !!props.entryId,
     },

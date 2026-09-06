@@ -48,19 +48,23 @@ const documentsDocumentsClient = await getDocumentsDocumentsClient();
 
 const documentId = computed(() => props.documentId ?? props.document?.id ?? 0);
 
-const { data, refresh, status, error } = useLazyAsyncData(
+const { data, refresh, status, error } = useAuthedLazyAsyncData(
+    'userState',
     `document-info-${documentId.value}`,
-    () => getDocument(documentId.value),
+    ({ signal }) => getDocument(documentId.value, signal),
     {
         immediate: !props.loadOnOpen,
     },
 );
 
-async function getDocument(id: number): Promise<Document> {
-    const call = documentsDocumentsClient.getDocument({
-        documentId: id,
-        infoOnly: true,
-    });
+async function getDocument(id: number, signal: AbortSignal): Promise<Document> {
+    const call = documentsDocumentsClient.getDocument(
+        {
+            documentId: id,
+            infoOnly: true,
+        },
+        { abort: signal },
+    );
     const { response } = await call;
 
     return response.document!;

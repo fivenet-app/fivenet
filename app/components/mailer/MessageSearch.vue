@@ -17,25 +17,29 @@ const mailerThreadClient = await getMailerThreadClient();
 const searchTerm = ref('');
 const searchTermDebounced = debouncedRef(searchTerm, 200);
 
-const { data: threads, status } = useLazyAsyncData(
+const { data: threads, status } = useAuthedLazyAsyncData(
+    'userState',
     `mailer-threads-search-${searchTermDebounced.value}`,
-    () => searchThreads(searchTerm.value),
+    ({ signal }) => searchThreads(searchTerm.value, signal),
     {
         watch: [searchTermDebounced],
     },
 );
 
-async function searchThreads(q: string): Promise<CommandPaletteItem[]> {
+async function searchThreads(q: string, signal: AbortSignal): Promise<CommandPaletteItem[]> {
     if (q.length < 3) return [];
 
     try {
-        const call = mailerThreadClient.searchThreads({
-            pagination: {
-                offset: 0,
-                pageSize: 6,
+        const call = mailerThreadClient.searchThreads(
+            {
+                pagination: {
+                    offset: 0,
+                    pageSize: 6,
+                },
+                search: q.trim().substring(0, 64),
             },
-            search: q.trim().substring(0, 64),
-        });
+            { abort: signal },
+        );
         const { response } = await call;
 
         return response.messages.flatMap((message) => ({

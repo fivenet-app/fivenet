@@ -80,18 +80,23 @@ if (props.userId !== undefined) {
     query.users = { userIds: [props.userId] };
 }
 
-const { data, status, refresh, error } = useLazyAsyncData(activityKey, () => listColleagueActivity(validatedQuery.value));
+const { data, status, refresh, error } = useAuthedLazyAsyncData('userState', activityKey, ({ signal }) =>
+    listColleagueActivity(validatedQuery.value, signal),
+);
 
-async function listColleagueActivity(values: Schema): Promise<ListColleagueActivityResponse> {
+async function listColleagueActivity(values: Schema, signal: AbortSignal): Promise<ListColleagueActivityResponse> {
     try {
-        const call = jobsColleaguesClient.listColleagueActivity({
-            pagination: {
-                offset: calculateOffset(values.page, data.value?.pagination),
+        const call = jobsColleaguesClient.listColleagueActivity(
+            {
+                pagination: {
+                    offset: calculateOffset(values.page, data.value?.pagination),
+                },
+                sort: values.sorting,
+                users: values.users,
+                activityTypes: values.types,
             },
-            sort: values.sorting,
-            users: values.users,
-            activityTypes: values.types,
-        });
+            { abort: signal },
+        );
         const { response } = await call;
 
         return response;

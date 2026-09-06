@@ -35,7 +35,12 @@ defineOptions({
     inheritAttrs: false,
 });
 
-const { data: templates, status, refresh, error } = useLazyAsyncData('documents-templates', () => listTemplates());
+const {
+    data: templates,
+    status,
+    refresh,
+    error,
+} = useAuthedLazyAsyncData('userState', 'documents-templates', ({ signal }) => listTemplates(signal));
 
 defineExpose({
     status,
@@ -46,9 +51,9 @@ const documentsTemplatesClient = await getDocumentsTemplatesClient();
 const notifications = useNotificationsStore();
 const movingTemplateId = ref<number | undefined>(undefined);
 
-async function listTemplates(): Promise<TemplateShort[]> {
+async function listTemplates(signal: AbortSignal): Promise<TemplateShort[]> {
     try {
-        const call = documentsTemplatesClient.listTemplates({});
+        const call = documentsTemplatesClient.listTemplates({}, { abort: signal });
         const { response } = await call;
 
         return response.templates;

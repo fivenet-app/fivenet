@@ -27,11 +27,16 @@ const { maxAccessEntries } = useAppConfig();
 
 const centrumCentrumClient = await getCentrumCentrumClient();
 
-const { data: settings, status, refresh, error } = useLazyAsyncData('settings-centrum-settings', () => getCentrumSettings());
+const {
+    data: settings,
+    status,
+    refresh,
+    error,
+} = useAuthedLazyAsyncData('capabilities', 'settings-centrum-settings', ({ signal }) => getCentrumSettings(signal));
 
-async function getCentrumSettings(): Promise<Settings> {
+async function getCentrumSettings(signal: AbortSignal): Promise<Settings> {
     try {
-        const call = centrumCentrumClient.getSettings({});
+        const call = centrumCentrumClient.getSettings({}, { abort: signal });
         const { response } = await call;
 
         return response.settings!;

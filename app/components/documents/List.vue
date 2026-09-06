@@ -93,9 +93,11 @@ const { validatedQuery, commitValidatedQuery } = useFormSearchValidation<typeof 
 
 const documentsKey = computed(() => `documents-${JSON.stringify(validatedQuery.value)}`);
 
-const { data, status, refresh, error } = useLazyAsyncData(documentsKey, () => listDocuments(validatedQuery.value));
+const { data, status, refresh, error } = useAuthedLazyAsyncData('userState', documentsKey, ({ signal }) =>
+    listDocuments(validatedQuery.value, signal),
+);
 
-async function listDocuments(values: Schema): Promise<ListDocumentsResponse> {
+async function listDocuments(values: Schema, signal: AbortSignal): Promise<ListDocumentsResponse> {
     const pagination = {
         offset: 0,
         pageSize: 20,
@@ -132,7 +134,7 @@ async function listDocuments(values: Schema): Promise<ListDocumentsResponse> {
     }
 
     try {
-        return await documentsDocuments.listDocuments(req);
+        return await documentsDocuments.listDocuments(req, { abort: signal });
     } catch (e) {
         handleGRPCError(e);
         throw e;

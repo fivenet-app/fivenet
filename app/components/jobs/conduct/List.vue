@@ -90,31 +90,35 @@ if (props.userId !== undefined) {
     watch(() => props.userId, setFromProps);
 }
 
-const { data, status, refresh, error } = useLazyAsyncData(
+const { data, status, refresh, error } = useAuthedLazyAsyncData(
+    'userState',
     () =>
         `jobs-conduct-${JSON.stringify(validatedQuery.value.sorting)}-${validatedQuery.value.page}-${validatedQuery.value.types.join(',')}-${validatedQuery.value.showExpired}-${validatedQuery.value.showDrafts}-${validatedQuery.value.showDeleted}-${validatedQuery.value.id}-${JSON.stringify(validatedQuery.value.users)}`,
-    () => listConductEntries(validatedQuery.value),
+    ({ signal }) => listConductEntries(validatedQuery.value, signal),
 );
 
-async function listConductEntries(values: Schema): Promise<ListConductEntriesResponse> {
+async function listConductEntries(values: Schema, signal: AbortSignal): Promise<ListConductEntriesResponse> {
     const entryIds: number[] = [];
     if (values.id) {
         entryIds.push(typeof values.id === 'string' ? parseInt(values.id, 10) : values.id);
     }
 
     try {
-        const call = jobsConductClient.listConductEntries({
-            pagination: {
-                offset: calculateOffset(values.page, data.value?.pagination),
+        const call = jobsConductClient.listConductEntries(
+            {
+                pagination: {
+                    offset: calculateOffset(values.page, data.value?.pagination),
+                },
+                sort: values.sorting,
+                types: values.types,
+                showExpired: values.showExpired,
+                showDrafts: values.showDrafts,
+                showDeleted: values.showDeleted,
+                users: values.users,
+                ids: entryIds,
             },
-            sort: values.sorting,
-            types: values.types,
-            showExpired: values.showExpired,
-            showDrafts: values.showDrafts,
-            showDeleted: values.showDeleted,
-            users: values.users,
-            ids: entryIds,
-        });
+            { abort: signal },
+        );
         const { response } = await call;
 
         return response;

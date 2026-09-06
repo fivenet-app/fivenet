@@ -96,13 +96,14 @@ const resultOptions = eventResults.map((e) => ({
     value: e,
 }));
 
-const { data, status, refresh, error } = useLazyAsyncData(
+const { data, status, refresh, error } = useAuthedLazyAsyncData(
+    'capabilities',
     () =>
         `settings-audit-${JSON.stringify(validatedQuery.value.sorting)}-${validatedQuery.value.page}-${validatedQuery.value.date?.start}-${validatedQuery.value.date?.end}-${validatedQuery.value.methods}-${validatedQuery.value.services}-${validatedQuery.value.search}-${validatedQuery.value.users.join(',')}`,
-    () => viewAuditLog(validatedQuery.value),
+    ({ signal }) => viewAuditLog(validatedQuery.value, signal),
 );
 
-async function viewAuditLog(values: Schema): Promise<ViewAuditLogResponse> {
+async function viewAuditLog(values: Schema, signal: AbortSignal): Promise<ViewAuditLogResponse> {
     const req: ViewAuditLogRequest = {
         pagination: {
             offset: calculateOffset(values.page, data.value?.pagination),
@@ -126,7 +127,7 @@ async function viewAuditLog(values: Schema): Promise<ViewAuditLogResponse> {
     }
 
     try {
-        const call = settingsSettingsClient.viewAuditLog(req);
+        const call = settingsSettingsClient.viewAuditLog(req, { abort: signal });
         const { response } = await call;
 
         return response;

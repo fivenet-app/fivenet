@@ -19,13 +19,18 @@ const {
     data: heatmap,
     status,
     refresh,
-} = useLazyAsyncData(`centrum-heatmap`, () => getDispatchHeatmap(), { immediate: props.show });
+} = useAuthedLazyAsyncData('userState', `centrum-heatmap`, ({ signal }) => getDispatchHeatmap(signal), {
+    immediate: props.show,
+});
 
-async function getDispatchHeatmap(): Promise<GetDispatchHeatmapResponse> {
+async function getDispatchHeatmap(signal: AbortSignal): Promise<GetDispatchHeatmapResponse> {
     try {
-        const call = centrumCentrumClient.getDispatchHeatmap({
-            status: [],
-        });
+        const call = centrumCentrumClient.getDispatchHeatmap(
+            {
+                status: [],
+            },
+            { abort: signal },
+        );
         const { response } = await call;
 
         return response;

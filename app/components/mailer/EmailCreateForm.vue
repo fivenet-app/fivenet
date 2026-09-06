@@ -45,15 +45,20 @@ const { selectedEmail, emails } = storeToRefs(mailerStore);
 
 const mailerMailerClient = await getMailerMailerClient();
 
-const { data: proposals, refresh: refreshProposabls } = useLazyAsyncData(`emails-proposals`, () => getEmailProposals());
+const { data: proposals, refresh: refreshProposabls } = useAuthedLazyAsyncData('userState', `emails-proposals`, ({ signal }) =>
+    getEmailProposals(signal),
+);
 
-async function getEmailProposals(): Promise<GetEmailProposalsResponse> {
+async function getEmailProposals(signal: AbortSignal): Promise<GetEmailProposalsResponse> {
     try {
-        const call = mailerMailerClient.getEmailProposals({
-            input: '',
-            job: !props.personalEmail,
-            userId: isSuperuser.value ? selectedEmail.value?.userId : undefined,
-        });
+        const call = mailerMailerClient.getEmailProposals(
+            {
+                input: '',
+                job: !props.personalEmail,
+                userId: isSuperuser.value ? selectedEmail.value?.userId : undefined,
+            },
+            { abort: signal },
+        );
         const { response } = await call;
 
         return response;

@@ -36,15 +36,23 @@ const jobsColleaguesClient = await getJobsColleaguesClient();
 
 const userId = computed(() => props.userId ?? props.user?.userId ?? 0);
 
-const { data, refresh, status, error } = useLazyAsyncData(`colleague-info-${userId.value}`, () => getCitizen(userId.value), {
-    immediate: !props.user,
-});
+const { data, refresh, status, error } = useAuthedLazyAsyncData(
+    'userState',
+    () => `colleague-info-${userId.value}`,
+    ({ signal }) => getCitizen(userId.value, signal),
+    {
+        immediate: !props.user,
+    },
+);
 
-async function getCitizen(id: number): Promise<Colleague> {
-    const call = jobsColleaguesClient.getColleague({
-        userId: id,
-        infoOnly: true,
-    });
+async function getCitizen(id: number, signal: AbortSignal): Promise<Colleague> {
+    const call = jobsColleaguesClient.getColleague(
+        {
+            userId: id,
+            infoOnly: true,
+        },
+        { abort: signal },
+    );
     const { response } = await call;
 
     return response.colleague!;

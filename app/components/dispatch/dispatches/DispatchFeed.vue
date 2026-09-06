@@ -15,23 +15,26 @@ const hasDispatchId = computed(() => dispatchId.value > 0);
 
 const activityKey = computed(() => `centrum-dispatch-${dispatchId.value}-activity-${offset.value}`);
 
-const { data, refresh } = useLazyAsyncData(activityKey, () => listDispatchActivity(), {
+const { data, refresh } = useAuthedLazyAsyncData('userState', activityKey, ({ signal }) => listDispatchActivity(signal), {
     default: () => ({ activity: [] }),
     immediate: false,
 });
 
-async function listDispatchActivity(): Promise<ListDispatchActivityResponse> {
+async function listDispatchActivity(signal: AbortSignal): Promise<ListDispatchActivityResponse> {
     if (!hasDispatchId.value) {
         return { activity: [] };
     }
 
     try {
-        const call = centrumDispatchesClient.listDispatchActivity({
-            pagination: {
-                offset: offset.value,
+        const call = centrumDispatchesClient.listDispatchActivity(
+            {
+                pagination: {
+                    offset: offset.value,
+                },
+                id: dispatchId.value,
             },
-            id: dispatchId.value,
-        });
+            { abort: signal },
+        );
         const { response } = await call;
 
         return response;

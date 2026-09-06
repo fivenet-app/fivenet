@@ -42,18 +42,23 @@ type RsvpScope = 'series' | 'occurrence';
 const pendingRsvpAction = ref<{ response: RsvpResponses; remove: boolean } | null>(null);
 const showRsvpScopeModal = ref<boolean>(false);
 
-const { data, status, refresh, error } = useLazyAsyncData(`calendar-entry:${props.entryId}-${page.value}`, () =>
-    listCalendarEntryRSVP(),
+const { data, status, refresh, error } = useAuthedLazyAsyncData(
+    'userState',
+    () => `calendar-entry:${props.entryId}-${page.value}`,
+    ({ signal }) => listCalendarEntryRSVP(signal),
 );
 
-async function listCalendarEntryRSVP(): Promise<ListCalendarEntryRSVPResponse> {
+async function listCalendarEntryRSVP(signal: AbortSignal): Promise<ListCalendarEntryRSVPResponse> {
     try {
-        const response = await calendarStore.listCalendarEntryRSVP({
-            pagination: {
-                offset: calculateOffset(page.value, data.value?.pagination),
+        const response = await calendarStore.listCalendarEntryRSVP(
+            {
+                pagination: {
+                    offset: calculateOffset(page.value, data.value?.pagination),
+                },
+                entryId: props.entryId,
             },
-            entryId: props.entryId,
-        });
+            { abort: signal },
+        );
 
         return response;
     } catch (e) {

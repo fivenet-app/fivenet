@@ -268,20 +268,26 @@ const {
     status,
     error,
     refresh,
-} = useLazyAsyncData(`qualification-${props.qualificationId}-editor`, () => getQualification(props.qualificationId));
+} = useAuthedLazyAsyncData('userState', `qualification-${props.qualificationId}-editor`, ({ signal }) =>
+    getQualification(props.qualificationId, signal),
+);
 
-async function getQualification(qualificationId: number): Promise<Qualification> {
+async function getQualification(qualificationId: number, signal: AbortSignal): Promise<Qualification> {
     try {
-        const call = qualificationsQualificationsClient.getQualification({
-            qualificationId: qualificationId,
-            withExam: true,
-        });
+        const call = qualificationsQualificationsClient.getQualification(
+            {
+                qualificationId: qualificationId,
+                withExam: true,
+            },
+            { abort: signal },
+        );
         const { response } = await call;
 
         return response.qualification!;
     } catch (e) {
         handleGRPCError(e as RpcError);
 
+        if (signal.aborted) throw e;
         await navigateTo('/qualifications');
         throw e;
     }

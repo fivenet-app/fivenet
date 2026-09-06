@@ -16,26 +16,30 @@ const documentsDocumentsClient = await getDocumentsDocumentsClient();
 
 const searchTerm = ref('');
 
-const { data: citizens, status: citizensStatus } = useLazyAsyncData(
+const { data: citizens, status: citizensStatus } = useAuthedLazyAsyncData(
+    'userState',
     `citizens-search-${searchTerm.value}`,
-    () => searchCitiznes(searchTerm.value),
+    ({ signal }) => searchCitiznes(searchTerm.value, signal),
     {
         watch: [searchTerm],
         deep: false,
     },
 );
 
-async function searchCitiznes(q: string): Promise<CommandPaletteItem[]> {
+async function searchCitiznes(q: string, signal: AbortSignal): Promise<CommandPaletteItem[]> {
     if (!q.startsWith('@') || q.length < 3) return [];
 
     try {
-        const call = citizensCitizensClient.listCitizens({
-            pagination: {
-                offset: 0,
-                pageSize: 10,
+        const call = citizensCitizensClient.listCitizens(
+            {
+                pagination: {
+                    offset: 0,
+                    pageSize: 10,
+                },
+                search: q.trim().substring(1, 64).trim(),
             },
-            search: q.trim().substring(1, 64).trim(),
-        });
+            { abort: signal },
+        );
         const { response } = await call;
 
         return response.users.map((u) => ({
@@ -50,29 +54,33 @@ async function searchCitiznes(q: string): Promise<CommandPaletteItem[]> {
     }
 }
 
-const { data: documents, status: documentsStatus } = useLazyAsyncData(
+const { data: documents, status: documentsStatus } = useAuthedLazyAsyncData(
+    'userState',
     `documents-search-${searchTerm.value}`,
-    () => searchDocuments(searchTerm.value),
+    ({ signal }) => searchDocuments(searchTerm.value, signal),
     {
         watch: [searchTerm],
         deep: false,
     },
 );
 
-async function searchDocuments(q: string): Promise<CommandPaletteItem[]> {
+async function searchDocuments(q: string, signal: AbortSignal): Promise<CommandPaletteItem[]> {
     if (!q.startsWith('#') || q.length < 3) return [];
 
     try {
-        const call = documentsDocumentsClient.listDocuments({
-            pagination: {
-                offset: 0,
-                pageSize: 10,
+        const call = documentsDocumentsClient.listDocuments(
+            {
+                pagination: {
+                    offset: 0,
+                    pageSize: 10,
+                },
+                search: q.trim().substring(1, 64).trim(),
+                categoryIds: [],
+                creatorIds: [],
+                documentIds: [],
             },
-            search: q.trim().substring(1, 64).trim(),
-            categoryIds: [],
-            creatorIds: [],
-            documentIds: [],
-        });
+            { abort: signal },
+        );
         const { response } = await call;
 
         return response.documents.map((d) => ({

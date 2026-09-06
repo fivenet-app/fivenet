@@ -62,16 +62,23 @@ const {
     status,
     refresh,
     error,
-} = useLazyAsyncData(`document-${props.doc.id}-requests-${offset.value}`, () => listDocumnetReqs(props.doc.id));
+} = useAuthedLazyAsyncData(
+    'userState',
+    () => `document-${props.doc.id}-requests-${offset.value}`,
+    ({ signal }) => listDocumnetReqs(props.doc.id, signal),
+);
 
-async function listDocumnetReqs(documentId: number): Promise<ListDocumentReqsResponse> {
+async function listDocumnetReqs(documentId: number, signal: AbortSignal): Promise<ListDocumentReqsResponse> {
     try {
-        const call = documentsDocumentsClient.listDocumentReqs({
-            pagination: {
-                offset: offset.value,
+        const call = documentsDocumentsClient.listDocumentReqs(
+            {
+                pagination: {
+                    offset: offset.value,
+                },
+                documentId,
             },
-            documentId,
-        });
+            { abort: signal },
+        );
         const { response } = await call;
 
         return response;

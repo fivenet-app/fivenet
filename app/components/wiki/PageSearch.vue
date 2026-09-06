@@ -14,21 +14,26 @@ const { listPages: listWikiPages } = await useWikiWiki();
 const searchTerm = ref('');
 const searchTermDebounced = debouncedRef(searchTerm, 200);
 
-const pagesKey = computed(() => `wiki-pages-search-${searchTermDebounced.value}`);
+const { data: pages, status } = useAuthedLazyAsyncData(
+    'userState',
+    () => `wiki-pages-search-${searchTermDebounced.value}`,
+    ({ signal }) => listPages(searchTermDebounced.value, signal),
+);
 
-const { data: pages, status } = useLazyAsyncData(pagesKey, () => listPages(searchTerm.value));
-
-async function listPages(q: string): Promise<CommandPaletteItem[]> {
+async function listPages(q: string, signal: AbortSignal): Promise<CommandPaletteItem[]> {
     if (q.length < 3) return [];
 
-    const response = await listWikiPages({
-        pagination: {
-            offset: 0,
-            pageSize: 6,
+    const response = await listWikiPages(
+        {
+            pagination: {
+                offset: 0,
+                pageSize: 6,
+            },
+            rootOnly: false,
+            search: q.trim().substring(0, 64),
         },
-        rootOnly: false,
-        search: q.trim().substring(0, 64),
-    });
+        { abort: signal },
+    );
 
     return response.pages.flatMap((page) => ({
         id: page.id,

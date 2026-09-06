@@ -7,7 +7,6 @@ import { computed, ref, watch } from 'vue';
 export const useCookiesStore = defineStore(
     'cookies',
     () => {
-        // State
         /**
          * Cookie consent state: null (undecided), true (accepted), false (rejected)
          */
@@ -17,25 +16,26 @@ export const useCookiesStore = defineStore(
          */
         const isConsentModalOpen = ref<boolean>(false);
 
-        // Watchers
         /**
          * Watch cookiesState and update modal visibility accordingly
          */
-        watch(cookiesState, (newValue) => {
-            if (newValue === true) {
-                isConsentModalOpen.value = false;
-            } else if (newValue === null) {
-                isConsentModalOpen.value = true;
-            }
-        });
+        watch(
+            cookiesState,
+            (newValue) => {
+                if (newValue === true) {
+                    isConsentModalOpen.value = false;
+                } else if (newValue === null) {
+                    isConsentModalOpen.value = true;
+                }
+            },
+            { immediate: true },
+        );
 
-        // Getters
         /**
          * Returns true if cookies have been accepted
          */
         const hasCookiesAccepted = computed(() => cookiesState.value === true);
 
-        // Methods
         /**
          * Accept cookies and close modal
          */
@@ -67,14 +67,11 @@ export const useCookiesStore = defineStore(
         };
 
         return {
-            // State
             cookiesState,
             isConsentModalOpen,
 
-            // Getters
             hasCookiesAccepted,
 
-            // Methods
             acceptCookies,
             rejectCookies,
             openConsentModal,

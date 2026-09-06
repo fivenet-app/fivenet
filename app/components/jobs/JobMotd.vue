@@ -8,11 +8,11 @@ const { can } = useAuth();
 
 const jobsJobsClient = await getJobsJobsClient();
 
-const { data, status, refresh } = useLazyAsyncData('jobs-motd', () => getMOTD());
+const { data, status, refresh } = useAuthedLazyAsyncData('userState', 'jobs-motd', ({ signal }) => getMOTD(signal));
 
-async function getMOTD(): Promise<GetMOTDResponse> {
+async function getMOTD(signal: AbortSignal): Promise<GetMOTDResponse> {
     try {
-        const call = jobsJobsClient.getMOTD({});
+        const call = jobsJobsClient.getMOTD({}, { abort: signal });
         const { response } = await call;
 
         return response;

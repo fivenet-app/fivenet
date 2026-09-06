@@ -56,19 +56,26 @@ const {
     status,
     refresh,
     error,
-} = useLazyAsyncData(`document-${props.documentId?.toString()}-relations-citzens-${queryCitizens.value}`, () => listCitizens());
+} = useAuthedLazyAsyncData(
+    'userState',
+    () => `document-${props.documentId?.toString()}-relations-citzens-${queryCitizens.value}`,
+    ({ signal }) => listCitizens(signal),
+);
 
 useDebouncedRefresh(queryCitizens, refresh, {
     debounce: 200,
     maxWait: 1750,
 });
 
-async function listCitizens(): Promise<UserShort[]> {
+async function listCitizens(signal: AbortSignal): Promise<UserShort[]> {
     try {
-        const users = await completorStore.completeCitizens({
-            search: queryCitizens.value,
-            userIds: [],
-        });
+        const users = await completorStore.completeCitizens(
+            {
+                search: queryCitizens.value,
+                userIds: [],
+            },
+            { abort: signal },
+        );
 
         return users.filter((user) => !modelValue.value.find((r) => r.targetUserId === user.userId));
     } catch (e) {

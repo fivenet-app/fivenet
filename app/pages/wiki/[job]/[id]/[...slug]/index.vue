@@ -6,7 +6,7 @@ import RefreshButton from '~/components/partials/RefreshButton.vue';
 import PageList from '~/components/wiki/PageList.vue';
 import PageView from '~/components/wiki/PageView.vue';
 import { pageToURL } from '~/components/wiki/helpers';
-import type { Page, PageShort } from '~~/gen/ts/resources/wiki/page';
+import type { PageShort } from '~~/gen/ts/resources/wiki/page';
 
 definePageMeta({
     title: 'common.wiki',
@@ -35,33 +35,36 @@ const {
     error: pagesError,
     status: pagesStatus,
     refresh: pagesRefresh,
-} = useLazyAsyncData(`wiki-pages-${route.params.job}`, () => listPages());
+} = useAuthedLazyAsyncData(
+    'userState',
+    () => `wiki-pages:${route.params.job}`,
+    async ({ signal }) => {
+        const job = route.params.job ?? activeChar.value?.job ?? '';
+        const response = await listWikiPages(
+            {
+                pagination: {
+                    offset: 0,
+                },
+                job: job,
+                rootOnly: false,
+            },
+            { abort: signal },
+        );
 
-async function listPages(): Promise<PageShort[]> {
-    const job = route.params.job ?? activeChar.value?.job ?? '';
-    const response = await listWikiPages({
-        pagination: {
-            offset: 0,
-        },
-        job: job,
-        rootOnly: false,
-    });
-
-    return response.pages;
-}
+        return response.pages;
+    },
+);
 
 const {
     data: page,
     status,
     refresh,
     error,
-} = useLazyAsyncData(`wiki-page:${route.path}`, () => getPage(parseInt(route.params.id)), {
-    watch: [() => route.path],
-});
-
-async function getPage(id: number): Promise<Page | undefined> {
-    return getWikiPage(id);
-}
+} = useAuthedLazyAsyncData(
+    'userState',
+    () => `wiki-page:${route.path}`,
+    ({ signal }) => getWikiPage(parseInt(route.params.id), { abort: signal }),
+);
 
 useHead({
     title: () =>

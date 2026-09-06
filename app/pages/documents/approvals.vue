@@ -98,19 +98,22 @@ const { validatedQuery, commitValidatedQuery } = useFormSearchValidation<typeof 
 
 const approvalTasksInboxKey = computed(() => `documents-approvals-${JSON.stringify(validatedQuery.value)}`);
 
-const { data, status, error, refresh } = useLazyAsyncData(approvalTasksInboxKey, () =>
-    listApprovalTasksInbox(validatedQuery.value),
+const { data, status, error, refresh } = useAuthedLazyAsyncData('userState', approvalTasksInboxKey, ({ signal }) =>
+    listApprovalTasksInbox(validatedQuery.value, signal),
 );
 
-async function listApprovalTasksInbox(values: Schema): Promise<ListApprovalTasksInboxResponse> {
-    const call = approvalClient.listApprovalTasksInbox({
-        pagination: {
-            offset: calculateOffset(values.page, data.value?.pagination),
+async function listApprovalTasksInbox(values: Schema, signal: AbortSignal): Promise<ListApprovalTasksInboxResponse> {
+    const call = approvalClient.listApprovalTasksInbox(
+        {
+            pagination: {
+                offset: calculateOffset(values.page, data.value?.pagination),
+            },
+            statuses: values.statuses,
+            onlyDrafts: values.onlyDrafts,
+            notAlreadyActed: values.notAlreadyActed,
         },
-        statuses: values.statuses,
-        onlyDrafts: values.onlyDrafts,
-        notAlreadyActed: values.notAlreadyActed,
-    });
+        { abort: signal },
+    );
     const { response } = await call;
 
     return response;

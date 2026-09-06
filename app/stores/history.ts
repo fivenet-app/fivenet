@@ -1,5 +1,6 @@
 import { defineStore } from 'pinia';
 import type { Version } from '~/types/history';
+import { deepToRaw } from '~/utils/deepToRaw';
 
 /**
  * Maximum number of history entries allowed per type.
@@ -14,6 +15,35 @@ export const useHistoryStore = defineStore(
          * Each entry contains metadata such as type, date, and content.
          */
         const history = ref<Version<unknown>[]>([]);
+        const accountData = ref<Record<string, Version<unknown>[]>>({});
+        let activeAccountId: number | null = null;
+
+        const cloneHistory = (data: Version<unknown>[]): Version<unknown>[] => structuredClone(deepToRaw(data));
+
+        const saveActiveAccountData = (): void => {
+            if (activeAccountId === null) return;
+            accountData.value[String(activeAccountId)] = cloneHistory(history.value);
+        };
+
+        const setAccountScope = (accountId: number | null): void => {
+            if (accountId === activeAccountId) return;
+
+            saveActiveAccountData();
+            activeAccountId = accountId;
+
+            if (accountId === null) {
+                history.value = [];
+                return;
+            }
+
+            Object.keys(accountData.value).forEach((key) => {
+                if (key !== String(accountId)) Reflect.deleteProperty(accountData.value, key);
+            });
+
+            history.value = cloneHistory(accountData.value[String(accountId)] ?? []);
+        };
+
+        watch(history, saveActiveAccountData, { deep: true });
 
         /**
          * Lists history entries filtered by a specific type.
@@ -69,11 +99,11 @@ export const useHistoryStore = defineStore(
             history.value.find((v) => v.date === versionDate) as Version<TContent> | undefined;
 
         /**
-         * Deletes a version by its unique identifier.
-         * @param {string} versionId - The unique identifier of the version to delete.
+         * Deletes a version by its date.
+         * @param {string} versionDate - The date of the version to delete.
          */
-        const deleteVersion = (versionId: string) => {
-            history.value = history.value.filter((v) => v.date !== versionId);
+        const deleteVersion = (versionDate: string) => {
+            history.value = history.value.filter((v) => v.date !== versionDate);
         };
 
         /**
@@ -120,10 +150,10 @@ export const useHistoryStore = defineStore(
         };
 
         return {
-            // State
             history,
+            accountData,
 
-            // Actions
+            setAccountScope,
             getLastVersion,
             listHistory,
             addVersion,
@@ -135,7 +165,10 @@ export const useHistoryStore = defineStore(
         };
     },
     {
-        persist: true,
+        persist: {
+            key: 'fivenet-history-v2',
+            pick: ['accountData'],
+        },
     },
 );
 

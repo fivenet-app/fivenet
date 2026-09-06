@@ -113,13 +113,14 @@ watch(props, setFromProps);
 const formRef = useTemplateRef<Form<typeof schema>>('formRef');
 const { validatedQuery, commitValidatedQuery } = useFormSearchValidation<typeof schema>(query, formRef);
 
-const { data, status, refresh, error } = useLazyAsyncData(
+const { data, status, refresh, error } = useAuthedLazyAsyncData(
+    'userState',
     () =>
         `jobs-timeclock-${JSON.stringify(validatedQuery.value.sorting)}-${validatedQuery.value.date.start.toDateString()}-${validatedQuery.value.date.end.toDateString()}-${validatedQuery.value.perDay}-${validatedQuery.value.mode}-${validatedQuery.value.viewMode}-${validatedQuery.value.users.userIds.join(',')}-${validatedQuery.value.users.groups?.groupIds?.join(',') ?? ''}-${validatedQuery.value.page}`,
-    () => listTimeclockEntries(validatedQuery.value),
+    ({ signal }) => listTimeclockEntries(validatedQuery.value, signal),
 );
 
-async function listTimeclockEntries(values: Schema): Promise<ListTimeclockResponse> {
+async function listTimeclockEntries(values: Schema, signal: AbortSignal): Promise<ListTimeclockResponse> {
     try {
         const startDate = isBefore(values.date.start, values.date.end)
             ? values.date.start
@@ -150,7 +151,7 @@ async function listTimeclockEntries(values: Schema): Promise<ListTimeclockRespon
             perDay: values.perDay,
         };
 
-        const call = jobsTimeclockClient.listTimeclock(req);
+        const call = jobsTimeclockClient.listTimeclock(req, { abort: signal });
         const { response } = await call;
 
         return response;

@@ -19,13 +19,18 @@ defineOptions({
 const mailerStore = useMailerStore();
 const { selectedEmail } = storeToRefs(mailerStore);
 
-const { data: templates } = useLazyAsyncData(`mailer-templates:${selectedEmail.value!.id}`, () => listTemplates());
+const { data: templates } = useAuthedLazyAsyncData('userState', `mailer-templates:${selectedEmail.value!.id}`, ({ signal }) =>
+    listTemplates(signal),
+);
 
-async function listTemplates(): Promise<ListTemplatesResponse> {
+async function listTemplates(signal: AbortSignal): Promise<ListTemplatesResponse> {
     try {
-        const call = mailerSettingsClient.listTemplates({
-            emailId: selectedEmail.value!.id,
-        });
+        const call = mailerSettingsClient.listTemplates(
+            {
+                emailId: selectedEmail.value!.id,
+            },
+            { abort: signal },
+        );
         const { response } = await call;
 
         return response;

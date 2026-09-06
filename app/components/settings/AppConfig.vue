@@ -29,11 +29,16 @@ const notifications = useNotificationsStore();
 
 const settingsConfigClient = await getSettingsConfigClient();
 
-const { data: config, status, refresh, error } = useLazyAsyncData(`settings-appconfig`, () => getAppConfig());
+const {
+    data: config,
+    status,
+    refresh,
+    error,
+} = useAuthedLazyAsyncData('capabilities', 'settings-appconfig', ({ signal }) => getAppConfig(signal));
 
-async function getAppConfig(): Promise<GetAppConfigResponse> {
+async function getAppConfig(signal: AbortSignal): Promise<GetAppConfigResponse> {
     try {
-        const call = settingsConfigClient.getAppConfig({});
+        const call = settingsConfigClient.getAppConfig({}, { abort: signal });
         const { response } = await call;
 
         return response;
@@ -46,7 +51,9 @@ async function getAppConfig(): Promise<GetAppConfigResponse> {
 const completorStore = useCompletorStore();
 const { listJobs } = completorStore;
 
-const { data: jobs } = useLazyAsyncData(`settings-appconfig-jobs`, () => listJobs());
+const { data: jobs } = useAuthedLazyAsyncData('capabilities', 'settings-appconfig-jobs', ({ signal }) =>
+    listJobs(false, signal),
+);
 
 const botPresenceTypes = ref<{ mode: DiscordBotPresenceType }[]>([
     { mode: DiscordBotPresenceType.UNSPECIFIED },

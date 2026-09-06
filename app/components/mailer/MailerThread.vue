@@ -90,9 +90,10 @@ function resetForm(): void {
     syncSnapshot();
 }
 
-const { data: thread, status } = useLazyAsyncData(
+const { data: thread, status } = useAuthedLazyAsyncData(
+    'userState',
     `mailer-thread:${props.threadId}`,
-    () => mailerStore.getThread(props.threadId),
+    ({ signal }) => mailerStore.getThread(props.threadId, { abort: signal }),
     {
         watch: [() => props.threadId],
     },
@@ -100,16 +101,20 @@ const { data: thread, status } = useLazyAsyncData(
 
 const messagePage = useRouteQuery('messagePage', '1', { transform: Number });
 
-const { status: messagesStatus, refresh: refreshMessages } = useLazyAsyncData(
+const { status: messagesStatus, refresh: refreshMessages } = useAuthedLazyAsyncData(
+    'userState',
     () => `mailer-thread:${props.threadId}-messages:${messagePage.value}`,
-    async () => {
-        const response = await mailerStore.listThreadMessages({
-            pagination: {
-                offset: calculateOffset(messagePage.value, messages.value?.pagination),
+    async ({ signal }) => {
+        const response = await mailerStore.listThreadMessages(
+            {
+                pagination: {
+                    offset: calculateOffset(messagePage.value, messages.value?.pagination),
+                },
+                emailId: selectedEmail.value!.id,
+                threadId: props.threadId,
             },
-            emailId: selectedEmail.value!.id,
-            threadId: props.threadId,
-        });
+            { abort: signal },
+        );
 
         resetForm();
 

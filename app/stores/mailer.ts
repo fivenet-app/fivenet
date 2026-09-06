@@ -1,5 +1,7 @@
+import type { RpcOptions } from '@protobuf-ts/runtime-rpc';
 import type { JSONContent } from '@tiptap/core';
 import type { NotificationActionI18n } from '~/types/notifications';
+import { deepToRaw } from '~/utils/deepToRaw';
 import { getMailerMailerClient, getMailerSettingsClient, getMailerThreadClient } from '~~/gen/ts/clients';
 import type { Email } from '~~/gen/ts/resources/mailer/emails/email';
 import type { MailerEvent } from '~~/gen/ts/resources/mailer/events/events';
@@ -36,12 +38,43 @@ import type {
 
 const logger = useLogger('💬 Mailer');
 
+type MailerDraft = {
+    title: string;
+    content: JSONContent | string | undefined;
+    recipients: { label: string }[];
+    attachments: MessageAttachment[];
+};
+
+type MailerAccountData = {
+    draft: MailerDraft;
+    addressBook: { label: string; name?: string }[];
+};
+
+const createEmptyMailerDraft = (): MailerDraft => ({
+    title: '',
+    content: undefined,
+    recipients: [],
+    attachments: [],
+});
+
 export const useMailerStore = defineStore(
     'mailer',
     () => {
         const notifications = useNotificationsStore();
+        const accountData = ref<Record<string, MailerAccountData>>({});
+        let activeAccountId: number | null = null;
+        let accountScopeGeneration = 0;
+        let accountScopeAbortController: AbortController | undefined;
 
-        // State
+        const getAccountScopeRequest = () => ({
+            generation: accountScopeGeneration,
+            options: {
+                abort: accountScopeAbortController?.signal,
+            },
+        });
+
+        const isCurrentAccountScope = (generation: number): boolean => generation === accountScopeGeneration;
+
         /**
          * Indicates whether the mailer store has finished loading its data.
          */
@@ -59,17 +92,7 @@ export const useMailerStore = defineStore(
          * @property {Array<{label: string}>} recipients - The list of recipients for the email draft.
          * @property {Array<MessageAttachment>} attachments - The list of attachments for the email draft.
          */
-        const draft = ref<{
-            title: string;
-            content: JSONContent | string | undefined;
-            recipients: { label: string }[];
-            attachments: MessageAttachment[];
-        }>({
-            title: '',
-            content: undefined,
-            recipients: [],
-            attachments: [],
-        });
+        const draft = ref<MailerDraft>(createEmptyMailerDraft());
 
         /**
          * Contains the list of email accounts available to the user.
@@ -113,6 +136,70 @@ export const useMailerStore = defineStore(
          */
         const addressBook = ref<{ label: string; name?: string }[]>([]);
 
+        const cloneMailerAccountData = (data: MailerAccountData): MailerAccountData => structuredClone(deepToRaw(data));
+
+        const saveActiveAccountData = (): void => {
+            if (activeAccountId === null) return;
+            accountData.value[String(activeAccountId)] = cloneMailerAccountData({
+                draft: draft.value,
+                addressBook: addressBook.value,
+            });
+        };
+
+        const clearActiveMailerData = (): void => {
+            draft.value = createEmptyMailerDraft();
+            addressBook.value = [];
+        };
+
+        const clearActiveMailerSession = (): void => {
+            loaded.value = false;
+            error.value = undefined;
+            emails.value = [];
+            selectedEmailId.value = undefined;
+            selectedEmail.value = undefined;
+            selectedThread.value = undefined;
+            unreadThreadIds.value = [];
+            threads.value = undefined;
+            messages.value = undefined;
+        };
+
+        /**
+         * Activates the account whose private mailer data should be visible.
+         * A null account always clears the live state.
+         */
+        const setAccountScope = (accountId: number | null): void => {
+            if (accountId === activeAccountId) return;
+
+            accountScopeGeneration++;
+            accountScopeAbortController?.abort();
+            accountScopeAbortController = accountId === null ? undefined : new AbortController();
+
+            saveActiveAccountData();
+            clearActiveMailerSession();
+            activeAccountId = accountId;
+
+            if (accountId === null) {
+                clearActiveMailerData();
+                return;
+            }
+
+            Object.keys(accountData.value).forEach((key) => {
+                if (key !== String(accountId)) Reflect.deleteProperty(accountData.value, key);
+            });
+
+            const saved = accountData.value[String(accountId)];
+            if (!saved) {
+                clearActiveMailerData();
+                return;
+            }
+
+            const restored = cloneMailerAccountData(saved);
+            draft.value = restored.draft;
+            addressBook.value = restored.addressBook;
+        };
+
+        watch([draft, addressBook], saveActiveAccountData, { deep: true });
+
         const notificationSound = useSounds('notification');
 
         /**
@@ -121,6 +208,7 @@ export const useMailerStore = defineStore(
          * @param {Thread} data - The thread data to process.
          */
         const handleThreadUpdate = async (data: Thread): Promise<void> => {
+            const { generation } = getAccountScopeRequest();
             logger.debug('threadUpdate', data);
 
             if (data.creatorEmail?.email && checkIfEmailBlocked(data.creatorEmail?.email)) {
@@ -142,6 +230,7 @@ export const useMailerStore = defineStore(
             }
 
             await setThreadState({ threadId: data.id, unread: true });
+            if (!isCurrentAccountScope(generation)) return;
 
             const threadIdx = threads.value?.threads.findIndex((t) => t.id === data.id);
             if (threadIdx !== undefined && threadIdx > -1) {
@@ -171,6 +260,7 @@ export const useMailerStore = defineStore(
          * @param {Message} data - The message data to process.
          */
         const handleMessageUpdate = async (data: Message): Promise<void> => {
+            const { generation } = getAccountScopeRequest();
             const threadIdx = threads.value?.threads.findIndex((t) => t.id === data.threadId);
             if (threadIdx !== undefined && threadIdx > -1) {
                 const thread = threads.value!.threads[threadIdx]!;
@@ -202,6 +292,7 @@ export const useMailerStore = defineStore(
 
             // Only set unread state when message isn't from same email and the user isn't active on that thread
             const state = await setThreadState({ threadId: data.threadId, unread: data.threadId !== selectedThread.value?.id });
+            if (!isCurrentAccountScope(generation)) return;
             if (state?.muted) return;
 
             notifications.add({
@@ -219,7 +310,6 @@ export const useMailerStore = defineStore(
             notificationSound.play();
         };
 
-        // Actions
         // `handleEvent` processes incoming mailer events and updates the store accordingly.
         /**
          * Process incoming mailer events and update the store accordingly.
@@ -227,6 +317,8 @@ export const useMailerStore = defineStore(
          * @param {MailerEvent} event - The mailer event to handle.
          */
         const handleEvent = async (event: MailerEvent): Promise<void> => {
+            if (activeAccountId === null) return;
+
             logger.debug('Received change - oneofKind:', event.data.oneofKind, event.data);
 
             if (event.data.oneofKind === 'emailUpdate') {
@@ -303,11 +395,13 @@ export const useMailerStore = defineStore(
          * Check and update the list of emails.
          */
         const checkEmails = async (): Promise<void> => {
+            const { generation } = getAccountScopeRequest();
             try {
                 if (emails.value.length === 0) {
                     // Reset unread thread ids list
                     unreadThreadIds.value.length = 0;
                     await listEmails(true, 0, false);
+                    if (!isCurrentAccountScope(generation)) return;
                 }
 
                 // Still no email addresses? Return here.
@@ -332,6 +426,7 @@ export const useMailerStore = defineStore(
                     },
                     false,
                 );
+                if (!isCurrentAccountScope(generation)) return;
 
                 unreadThreadIds.value = threadsResponse?.threads.map((t) => t.id) ?? [];
             } catch (_) {
@@ -353,6 +448,7 @@ export const useMailerStore = defineStore(
             offset: number = 0,
             redirect: boolean = true,
         ): Promise<ListEmailsResponse> => {
+            const { generation, options } = getAccountScopeRequest();
             error.value = undefined;
 
             if (addressBook.value.length > 30) {
@@ -362,13 +458,17 @@ export const useMailerStore = defineStore(
             const mailerMailerClient = await getMailerMailerClient();
 
             try {
-                const call = mailerMailerClient.listEmails({
-                    pagination: {
-                        offset,
+                const call = mailerMailerClient.listEmails(
+                    {
+                        pagination: {
+                            offset,
+                        },
+                        all,
                     },
-                    all,
-                });
+                    options,
+                );
                 const { response } = await call;
+                if (!isCurrentAccountScope(generation)) return response;
 
                 emails.value = response.emails;
                 if (emails.value.length === 0 || !hasPrivateEmail.value) {
@@ -380,6 +480,7 @@ export const useMailerStore = defineStore(
                             },
                             hash: '#',
                         });
+                        if (!isCurrentAccountScope(generation)) return response;
                     }
                 } else if (emails.value.length > 0) {
                     // Check if previously selected email is available
@@ -388,6 +489,7 @@ export const useMailerStore = defineStore(
                         selectedEmail.value = previousEmail;
                     } else if (emails.value[0] && emails.value[0].settings === undefined) {
                         selectedEmail.value = await getEmail(emails.value[0].id);
+                        if (!isCurrentAccountScope(generation)) return response;
                     } else {
                         selectedEmail.value = emails.value[0];
                     }
@@ -411,13 +513,18 @@ export const useMailerStore = defineStore(
          * @returns {Promise<Email | undefined>} - The email details, if found.
          */
         const getEmail = async (id: number): Promise<Email | undefined> => {
+            const { generation, options } = getAccountScopeRequest();
             const mailerMailerClient = await getMailerMailerClient();
 
             try {
-                const call = mailerMailerClient.getEmail({
-                    id,
-                });
+                const call = mailerMailerClient.getEmail(
+                    {
+                        id,
+                    },
+                    options,
+                );
                 const { response } = await call;
+                if (!isCurrentAccountScope(generation)) return response.email;
 
                 const emailObj = emails.value.find((e) => e.id === id);
                 if (emailObj) {
@@ -443,11 +550,13 @@ export const useMailerStore = defineStore(
          * @returns {Promise<CreateOrUpdateEmailResponse>} - The response containing the created or updated email.
          */
         const createOrUpdateEmail = async (req: CreateOrUpdateEmailRequest): Promise<CreateOrUpdateEmailResponse> => {
+            const { generation, options } = getAccountScopeRequest();
             const mailerMailerClient = await getMailerMailerClient();
 
             try {
-                const call = mailerMailerClient.createOrUpdateEmail(req);
+                const call = mailerMailerClient.createOrUpdateEmail(req, options);
                 const { response } = await call;
+                if (!isCurrentAccountScope(generation)) return response;
 
                 if (response.email) {
                     const idx = emails.value.findIndex((e) => e.id === response.email!.id);
@@ -476,11 +585,13 @@ export const useMailerStore = defineStore(
          * @returns {Promise<DeleteEmailResponse>} - The response confirming the deletion.
          */
         const deleteEmail = async (req: DeleteEmailRequest): Promise<DeleteEmailResponse> => {
+            const { generation, options } = getAccountScopeRequest();
             const mailerMailerClient = await getMailerMailerClient();
 
             try {
-                const call = mailerMailerClient.deleteEmail(req);
+                const call = mailerMailerClient.deleteEmail(req, options);
                 const { response } = await call;
+                if (!isCurrentAccountScope(generation)) return response;
 
                 if (selectedEmail.value?.id === req.id) {
                     selectedEmail.value = undefined;
@@ -518,12 +629,15 @@ export const useMailerStore = defineStore(
         const listThreads = async (
             req: ListThreadsRequest,
             store: boolean = true,
+            options?: RpcOptions,
         ): Promise<ListThreadsResponse | undefined> => {
+            const { generation, options: scopeOptions } = getAccountScopeRequest();
             const mailerThreadClient = await getMailerThreadClient();
 
             try {
-                const call = mailerThreadClient.listThreads(req);
+                const call = mailerThreadClient.listThreads(req, options ?? scopeOptions);
                 const { response } = await call;
+                if (!isCurrentAccountScope(generation)) return response;
 
                 // If response is at offset 0 and request is not for archived threads, update unread threads list
                 if (response.pagination?.offset === 0 && !!req.unread) {
@@ -570,17 +684,22 @@ export const useMailerStore = defineStore(
          * @param {number} threadId - The ID of the thread to fetch.
          * @returns {Promise<Thread | undefined>} - The thread details, if found.
          */
-        const getThread = async (threadId: number): Promise<Thread | undefined> => {
+        const getThread = async (threadId: number, options?: RpcOptions): Promise<Thread | undefined> => {
+            const { generation, options: scopeOptions } = getAccountScopeRequest();
             if (!selectedEmail.value) return;
 
             const mailerThreadClient = await getMailerThreadClient();
 
             try {
-                const call = mailerThreadClient.getThread({
-                    emailId: selectedEmail.value.id,
-                    threadId,
-                });
+                const call = mailerThreadClient.getThread(
+                    {
+                        emailId: selectedEmail.value.id,
+                        threadId,
+                    },
+                    options ?? scopeOptions,
+                );
                 const { response } = await call;
+                if (!isCurrentAccountScope(generation)) return response.thread;
 
                 if (response.thread && !response.thread.state) {
                     response.thread.state = {
@@ -615,11 +734,13 @@ export const useMailerStore = defineStore(
          * @returns {Promise<CreateThreadResponse>} - The response containing the created thread.
          */
         const createThread = async (req: CreateThreadRequest): Promise<CreateThreadResponse> => {
+            const { generation, options } = getAccountScopeRequest();
             const mailerThreadClient = await getMailerThreadClient();
 
             try {
-                const call = mailerThreadClient.createThread(req);
+                const call = mailerThreadClient.createThread(req, options);
                 const { response } = await call;
+                if (!isCurrentAccountScope(generation)) return response;
 
                 if (response.thread) {
                     req.recipients.forEach((r) => addToAddressBook(r));
@@ -644,11 +765,13 @@ export const useMailerStore = defineStore(
          * @returns {Promise<DeleteThreadResponse>} - The response confirming the deletion.
          */
         const deleteThread = async (req: DeleteThreadRequest): Promise<DeleteThreadResponse> => {
+            const { generation, options } = getAccountScopeRequest();
             const mailerThreadClient = await getMailerThreadClient();
 
             try {
-                const call = mailerThreadClient.deleteThread(req);
+                const call = mailerThreadClient.deleteThread(req, options);
                 const { response } = await call;
+                if (!isCurrentAccountScope(generation)) return response;
 
                 if (selectedThread.value?.id === req.threadId) {
                     selectedThread.value = undefined;
@@ -674,14 +797,19 @@ export const useMailerStore = defineStore(
          * @returns {Promise<ThreadState | undefined>} - The thread state, if found.
          */
         const getThreadState = async (threadId: number): Promise<ThreadState | undefined> => {
+            const { generation, options } = getAccountScopeRequest();
             const mailerThreadClient = await getMailerThreadClient();
 
             try {
-                const call = mailerThreadClient.getThreadState({
-                    emailId: selectedEmail.value!.id,
-                    threadId,
-                });
+                const call = mailerThreadClient.getThreadState(
+                    {
+                        emailId: selectedEmail.value!.id,
+                        threadId,
+                    },
+                    options,
+                );
                 const { response } = await call;
+                if (!isCurrentAccountScope(generation)) return response.state;
 
                 return response.state;
             } catch (e) {
@@ -738,17 +866,22 @@ export const useMailerStore = defineStore(
             state: Partial<ThreadState>,
             notify: boolean = false,
         ): Promise<ThreadState | undefined> => {
+            const { generation, options } = getAccountScopeRequest();
             if (!selectedEmail.value) return;
 
             const mailerThreadClient = await getMailerThreadClient();
 
-            const { response } = await mailerThreadClient.setThreadState({
-                state: {
-                    ...state,
-                    threadId: state.threadId!,
-                    emailId: selectedEmail.value.id,
+            const { response } = await mailerThreadClient.setThreadState(
+                {
+                    state: {
+                        ...state,
+                        threadId: state.threadId!,
+                        emailId: selectedEmail.value.id,
+                    },
                 },
-            });
+                options,
+            );
+            if (!isCurrentAccountScope(generation)) return response.state;
 
             if (response.state) {
                 updateThreadState(state.threadId!, response.state);
@@ -773,21 +906,26 @@ export const useMailerStore = defineStore(
          * @param {ListThreadMessagesRequest} req - The request data for fetching thread messages.
          * @returns {Promise<ListThreadMessagesResponse | undefined>} - The response containing the list of messages.
          */
-        const listThreadMessages = async (req: ListThreadMessagesRequest): Promise<ListThreadMessagesResponse | undefined> => {
+        const listThreadMessages = async (
+            req: ListThreadMessagesRequest,
+            options?: RpcOptions,
+        ): Promise<ListThreadMessagesResponse | undefined> => {
+            const { generation, options: scopeOptions } = getAccountScopeRequest();
             if (!selectedEmail.value) return;
 
             const mailerThreadClient = await getMailerThreadClient();
 
             try {
-                const call = mailerThreadClient.listThreadMessages(req);
+                const call = mailerThreadClient.listThreadMessages(req, options ?? scopeOptions);
                 const { response } = await call;
+                if (!isCurrentAccountScope(generation)) return response;
 
                 messages.value = response;
 
                 return response;
             } catch (e) {
                 const error = e as RpcError;
-                await handleGRPCError(error);
+                handleGRPCError(error);
 
                 // Switch away from thread if inaccessible
                 if (error?.message?.includes('.ErrThreadAccessDenied')) {
@@ -805,11 +943,13 @@ export const useMailerStore = defineStore(
          * @returns {Promise<PostMessageResponse>} - The response containing the posted message.
          */
         const postMessage = async (req: PostMessageRequest): Promise<PostMessageResponse> => {
+            const { generation, options } = getAccountScopeRequest();
             const mailerThreadClient = await getMailerThreadClient();
 
             try {
-                const call = mailerThreadClient.postMessage(req);
+                const call = mailerThreadClient.postMessage(req, options);
                 const { response } = await call;
+                if (!isCurrentAccountScope(generation)) return response;
 
                 if (response.message) {
                     req.recipients.forEach((r) => addToAddressBook(r));
@@ -831,11 +971,13 @@ export const useMailerStore = defineStore(
          * @returns {Promise<DeleteMessageResponse>} - The response confirming the deletion.
          */
         const deleteMessage = async (req: DeleteMessageRequest): Promise<DeleteMessageResponse> => {
+            const { generation, options } = getAccountScopeRequest();
             const mailerThreadClient = await getMailerThreadClient();
 
             try {
-                const call = mailerThreadClient.deleteMessage(req);
+                const call = mailerThreadClient.deleteMessage(req, options);
                 const { response } = await call;
+                if (!isCurrentAccountScope(generation)) return response;
 
                 notifications.add({
                     title: { key: 'notifications.action_successful.title', parameters: {} },
@@ -858,11 +1000,13 @@ export const useMailerStore = defineStore(
          * @returns {Promise<GetEmailSettingsResponse>} - The response containing the email settings.
          */
         const getEmailSettings = async (req: GetEmailSettingsRequest): Promise<GetEmailSettingsResponse> => {
+            const { generation, options } = getAccountScopeRequest();
             const mailerSettingsClient = await getMailerSettingsClient();
 
             try {
-                const call = mailerSettingsClient.getEmailSettings(req);
+                const call = mailerSettingsClient.getEmailSettings(req, options);
                 const { response } = await call;
+                if (!isCurrentAccountScope(generation)) return response;
 
                 if (response.settings && selectedEmail.value) {
                     selectedEmail.value.settings = response.settings;
@@ -882,11 +1026,13 @@ export const useMailerStore = defineStore(
          * @returns {Promise<SetEmailSettingsResponse>} - The response confirming the update.
          */
         const setEmailSettings = async (req: SetEmailSettingsRequest): Promise<SetEmailSettingsResponse> => {
+            const { generation, options } = getAccountScopeRequest();
             const mailerSettingsClient = await getMailerSettingsClient();
 
             try {
-                const call = mailerSettingsClient.setEmailSettings(req);
+                const call = mailerSettingsClient.setEmailSettings(req, options);
                 const { response } = await call;
+                if (!isCurrentAccountScope(generation)) return response;
 
                 if (response.settings && selectedEmail.value) {
                     selectedEmail.value.settings = response.settings;
@@ -955,7 +1101,6 @@ export const useMailerStore = defineStore(
             addressBook.value.unshift({ label: email, name });
         };
 
-        // Getters
         const hasPrivateEmail = computed<boolean>(() => {
             const { activeChar } = useAuth();
             return !!emails.value.find((e) => e.userId === activeChar.value?.userId);
@@ -969,7 +1114,7 @@ export const useMailerStore = defineStore(
         const unreadCount = computed<number>(() => unreadThreadIds.value.length);
 
         return {
-            // State
+            accountData,
             loaded,
             error,
             draft,
@@ -982,7 +1127,6 @@ export const useMailerStore = defineStore(
             messages,
             addressBook,
 
-            // Actions
             handleEvent,
             checkEmails,
             listEmails,
@@ -1003,8 +1147,8 @@ export const useMailerStore = defineStore(
             checkIfEmailBlocked,
             getNotificationActions,
             addToAddressBook,
+            setAccountScope,
 
-            // Getters
             hasPrivateEmail,
             getPrivateEmail,
             unreadCount,
@@ -1012,7 +1156,8 @@ export const useMailerStore = defineStore(
     },
     {
         persist: {
-            pick: ['draft', 'addressBook'],
+            key: 'fivenet-mailer-v2',
+            pick: ['accountData'],
         },
     },
 );

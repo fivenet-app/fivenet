@@ -43,14 +43,17 @@ const {
     status,
     refresh,
     error,
-} = useLazyAsyncData(`documents-template-${props.templateId}`, () => getTemplate());
+} = useAuthedLazyAsyncData('userState', `documents-template-${props.templateId}`, ({ signal }) => getTemplate(signal));
 
-async function getTemplate(): Promise<Template | undefined> {
+async function getTemplate(signal: AbortSignal): Promise<Template | undefined> {
     try {
-        const call = documentsTemplatesClient.getTemplate({
-            templateId: props.templateId,
-            render: false,
-        });
+        const call = documentsTemplatesClient.getTemplate(
+            {
+                templateId: props.templateId,
+                render: false,
+            },
+            { abort: signal },
+        );
         const { response } = await call;
 
         if (response.template?.schema) {

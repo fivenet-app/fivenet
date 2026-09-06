@@ -49,7 +49,7 @@ const {
     status: activityStatus,
     error: activityError,
     refresh: refreshActivity,
-} = useLazyAsyncData(activityKey, () => listGroupActivity(), {
+} = useAuthedLazyAsyncData('userState', activityKey, ({ signal }) => listGroupActivity(signal), {
     watch: [() => props.groupId, page, () => state.types, () => state.user?.userId, () => state.dateRange],
 });
 
@@ -68,18 +68,21 @@ const activityTypeItems = computed(() =>
         })),
 );
 
-async function listGroupActivity(): Promise<ListGroupActivityResponse> {
-    const { response } = await jobsGroupsClient.listGroupActivity({
-        groupId: props.groupId,
-        pagination: {
-            offset: calculateOffset(page.value, activity.value?.pagination),
+async function listGroupActivity(signal: AbortSignal): Promise<ListGroupActivityResponse> {
+    const { response } = await jobsGroupsClient.listGroupActivity(
+        {
+            groupId: props.groupId,
+            pagination: {
+                offset: calculateOffset(page.value, activity.value?.pagination),
+            },
+            sort: { columns: [{ id: 'created_at', desc: true }] },
+            types: state.types,
+            userId: state.user?.userId,
+            from: toTimestamp(state.dateRange?.start),
+            to: toTimestamp(state.dateRange?.end),
         },
-        sort: { columns: [{ id: 'created_at', desc: true }] },
-        types: state.types,
-        userId: state.user?.userId,
-        from: toTimestamp(state.dateRange?.start),
-        to: toTimestamp(state.dateRange?.end),
-    });
+        { abort: signal },
+    );
 
     return response;
 }

@@ -70,26 +70,30 @@ const { validatedQuery, commitValidatedQuery } = useFormSearchValidation<typeof 
 const settingsStore = useSettingsStore();
 const { jobsService } = storeToRefs(settingsStore);
 
-const { data, status, refresh, error } = useLazyAsyncData(
+const { data, status, refresh, error } = useAuthedLazyAsyncData(
+    'userState',
     () =>
         `jobs-colleagues-${JSON.stringify(validatedQuery.value.sorting)}-${validatedQuery.value.page}-${validatedQuery.value.name}-${validatedQuery.value.absent}-${validatedQuery.value.labels.join(',')}-${JSON.stringify(validatedQuery.value.users)}-${validatedQuery.value.namePrefix}-${validatedQuery.value.nameSuffix}`,
-    () => listColleagues(validatedQuery.value),
+    ({ signal }) => listColleagues(validatedQuery.value, signal),
 );
 
-async function listColleagues(values: Schema): Promise<ListColleaguesResponse> {
+async function listColleagues(values: Schema, signal: AbortSignal): Promise<ListColleaguesResponse> {
     try {
-        const call = jobsColleaguesClient.listColleagues({
-            pagination: {
-                offset: calculateOffset(values.page, data.value?.pagination),
+        const call = jobsColleaguesClient.listColleagues(
+            {
+                pagination: {
+                    offset: calculateOffset(values.page, data.value?.pagination),
+                },
+                sort: values.sorting,
+                search: values.name,
+                absent: values.absent,
+                labelIds: values.labels,
+                users: values.users,
+                namePrefix: values.namePrefix,
+                nameSuffix: values.nameSuffix,
             },
-            sort: values.sorting,
-            search: values.name,
-            absent: values.absent,
-            labelIds: values.labels,
-            users: values.users,
-            namePrefix: values.namePrefix,
-            nameSuffix: values.nameSuffix,
-        });
+            { abort: signal },
+        );
         const { response } = await call;
 
         return response;

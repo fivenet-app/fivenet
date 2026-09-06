@@ -18,7 +18,12 @@ const notifications = useNotificationsStore();
 
 const { t, d, n } = useI18n();
 
-const { data: lawBooks, status, refresh, error } = useLazyAsyncData(`lawbooks`, () => completorStore.listLawBooks());
+const {
+    data: lawBooks,
+    status,
+    refresh,
+    error,
+} = useAuthedLazyAsyncData('userState', `lawbooks`, ({ signal }) => completorStore.listLawBooks(false, { abort: signal }));
 
 const numberFormatter = useDisplayNumberFormat();
 

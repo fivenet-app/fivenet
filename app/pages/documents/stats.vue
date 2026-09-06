@@ -62,14 +62,17 @@ const {
     status,
     error,
     refresh,
-} = useLazyAsyncData('documents-stats-chart-documents-by-category', async () => {
-    const call = documentsStatsClient.getStats({
-        start: toUtcDateTimestamp(query.range.start),
-        end: toUtcDateTimestamp(query.range.end),
-        period: selectedPeriod.value,
-        category: query.category,
-        jobs: query.jobs,
-    });
+} = useAuthedLazyAsyncData('userState', 'documents-stats-chart-documents-by-category', async ({ signal }) => {
+    const call = documentsStatsClient.getStats(
+        {
+            start: toUtcDateTimestamp(query.range.start),
+            end: toUtcDateTimestamp(query.range.end),
+            period: selectedPeriod.value,
+            category: query.category,
+            jobs: query.jobs,
+        },
+        { abort: signal },
+    );
     const { response } = await call;
 
     if (response.documentsByCategory.length > 0) {

@@ -45,15 +45,20 @@ const notifications = useNotificationsStore();
 
 const qualificationsQualificationsClient = await getQualificationsQualificationsClient();
 
-const { data, status, refresh, error } = useLazyAsyncData(`qualification-${props.qualificationId}`, () =>
-    getQualification(props.qualificationId),
+const { data, status, refresh, error } = useAuthedLazyAsyncData(
+    'userState',
+    `qualification-${props.qualificationId}`,
+    ({ signal }) => getQualification(props.qualificationId, signal),
 );
 
-async function getQualification(qualificationId: number): Promise<GetQualificationResponse> {
+async function getQualification(qualificationId: number, signal: AbortSignal): Promise<GetQualificationResponse> {
     try {
-        const call = qualificationsQualificationsClient.getQualification({
-            qualificationId: qualificationId,
-        });
+        const call = qualificationsQualificationsClient.getQualification(
+            {
+                qualificationId: qualificationId,
+            },
+            { abort: signal },
+        );
         const { response } = await call;
 
         return response;

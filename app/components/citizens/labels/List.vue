@@ -31,15 +31,18 @@ const {
     status,
     error,
     refresh,
-} = useLazyAsyncData('citizens-labels', () => listLabels(), {
+} = useAuthedLazyAsyncData('userState', 'citizens-labels', ({ signal }) => listLabels(signal), {
     default: () => [] as Label[],
 });
 
-async function listLabels(): Promise<Label[]> {
+async function listLabels(signal: AbortSignal): Promise<Label[]> {
     try {
-        const { response } = await citizensLabelsClient.listLabels({
-            ownJobOnly: true,
-        });
+        const { response } = await citizensLabelsClient.listLabels(
+            {
+                ownJobOnly: true,
+            },
+            { abort: signal },
+        );
 
         return response?.labels ?? [];
     } catch (e) {

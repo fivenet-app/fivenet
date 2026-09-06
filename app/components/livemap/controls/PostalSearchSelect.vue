@@ -32,10 +32,11 @@ const {
     data: postals,
     status,
     execute,
-} = useLazyAsyncData(
+} = useAuthedLazyAsyncData(
+    'userState',
     'postals',
-    () =>
-        $fetch<Postal[]>('/data/postals.json').catch(() =>
+    ({ signal }) =>
+        $fetch<Postal[]>('/data/postals.json', { signal }).catch(() =>
             notifications.add({
                 title: { key: 'notifications.livemap.failed_loading_postals.title', parameters: {} },
                 description: { key: 'notifications.livemap.failed_loading_postals.content', parameters: {} },

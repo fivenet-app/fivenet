@@ -44,20 +44,24 @@ const query = reactive<Schema>(schema.parse({}));
 const formRef = useTemplateRef<Form<typeof schema>>('formRef');
 const { validatedQuery, commitValidatedQuery } = useFormSearchValidation<typeof schema>(query, formRef);
 
-const { data, status, refresh, error } = useLazyAsyncData(
+const { data, status, refresh, error } = useAuthedLazyAsyncData(
+    'userState',
     () => `notifications-${validatedQuery.value.page}-${validatedQuery.value.includeRead}`,
-    () => getNotifications(validatedQuery.value),
+    ({ signal }) => getNotifications(validatedQuery.value, signal),
 );
 
-async function getNotifications(values: Schema): Promise<GetNotificationsResponse> {
+async function getNotifications(values: Schema, signal: AbortSignal): Promise<GetNotificationsResponse> {
     try {
-        const call = notificationsNotificationsClient.getNotifications({
-            pagination: {
-                offset: calculateOffset(values.page, data.value?.pagination),
+        const call = notificationsNotificationsClient.getNotifications(
+            {
+                pagination: {
+                    offset: calculateOffset(values.page, data.value?.pagination),
+                },
+                includeRead: values.includeRead,
+                categories: values.categories,
             },
-            includeRead: values.includeRead,
-            categories: values.categories,
-        });
+            { abort: signal },
+        );
 
         const { response } = await call;
 

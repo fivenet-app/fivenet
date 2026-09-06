@@ -86,13 +86,20 @@ const {
     status,
     error,
     refresh,
-} = useLazyAsyncData('stamp', async () => {
-    const stampsClient = await getDocumentsStampsClient();
-    const { response } = await stampsClient.getStamp({
-        id: Number.parseInt(route.params.id as string),
-    });
-    return response.stamp;
-});
+} = useAuthedLazyAsyncData(
+    'userState',
+    () => `stamp-${route.params.id}`,
+    async ({ signal }) => {
+        const stampsClient = await getDocumentsStampsClient();
+        const { response } = await stampsClient.getStamp(
+            {
+                id: Number.parseInt(route.params.id as string),
+            },
+            { abort: signal },
+        );
+        return response.stamp;
+    },
+);
 
 function setFromProps(): void {
     if (!stamp.value) return;

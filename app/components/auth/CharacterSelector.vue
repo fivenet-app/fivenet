@@ -12,11 +12,16 @@ const authStore = useAuthStore();
 
 const { chooseCharacter } = authStore;
 
-const { data: chars, status, refresh, error } = useLazyAsyncData('chars', () => getCharacters());
+const {
+    data: chars,
+    status,
+    refresh,
+    error,
+} = useAuthedLazyAsyncData('account', 'characters', ({ signal }) => getCharacters(signal));
 
-async function getCharacters(): Promise<Character[]> {
+async function getCharacters(signal: AbortSignal): Promise<Character[]> {
     try {
-        const call = authAuthClient.getCharacters({});
+        const call = authAuthClient.getCharacters({}, { abort: signal });
         const { response } = await call;
 
         return response.chars;

@@ -53,7 +53,7 @@ const {
     status: leadersStatus,
     error: leadersError,
     refresh: refreshLeaders,
-} = useLazyAsyncData(leadersKey, () => listGroupLeaders(), {
+} = useAuthedLazyAsyncData('userState', leadersKey, ({ signal }) => listGroupLeaders(signal), {
     watch: [() => props.groupId, page],
 });
 
@@ -62,13 +62,16 @@ const leaderIds = computed(() => new Set(leaders.value.map((leader) => leader.us
 const isMutating = computed(() => pendingAction.value !== undefined);
 const canManageLeaders = computed(() => props.canManage && checkGroupAccess(props.access, GroupAccessLevel.MANAGE));
 
-async function listGroupLeaders(): Promise<ListGroupLeadersResponse> {
-    const { response } = await jobsGroupsClient.listGroupLeaders({
-        groupId: props.groupId,
-        pagination: {
-            offset: calculateOffset(page.value, leadersData.value?.pagination),
+async function listGroupLeaders(signal: AbortSignal): Promise<ListGroupLeadersResponse> {
+    const { response } = await jobsGroupsClient.listGroupLeaders(
+        {
+            groupId: props.groupId,
+            pagination: {
+                offset: calculateOffset(page.value, leadersData.value?.pagination),
+            },
         },
-    });
+        { abort: signal },
+    );
 
     return response;
 }

@@ -15,9 +15,9 @@ const { can, activeChar } = useAuth();
 
 const jobsColleaguesClient = await getJobsColleaguesClient();
 
-const { data: colleagueSelf } = useLazyAsyncData('jobs-selfcolleague', async () => {
+const { data: colleagueSelf } = useAuthedLazyAsyncData('userState', 'jobs-selfcolleague', async ({ signal }) => {
     try {
-        const call = jobsColleaguesClient.getSelf({});
+        const call = jobsColleaguesClient.getSelf({}, { abort: signal });
         const { response } = await call;
 
         return response;

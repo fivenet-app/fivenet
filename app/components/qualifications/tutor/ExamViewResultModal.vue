@@ -30,16 +30,20 @@ defineEmits<{
 
 const qualificationsExamClient = await getQualificationsExamClient();
 
-const { data, status, refresh, error } = useLazyAsyncData(
+const { data, status, refresh, error } = useAuthedLazyAsyncData(
+    'userState',
     `qualification-${props.qualificationId}-result-examinfo-${props.userId}`,
-    () => getUserExam(),
+    ({ signal }) => getUserExam(signal),
 );
 
-async function getUserExam(): Promise<GetUserExamResponse> {
-    const call = qualificationsExamClient.getUserExam({
-        qualificationId: props.qualificationId,
-        userId: props.userId,
-    });
+async function getUserExam(signal: AbortSignal): Promise<GetUserExamResponse> {
+    const call = qualificationsExamClient.getUserExam(
+        {
+            qualificationId: props.qualificationId,
+            userId: props.userId,
+        },
+        { abort: signal },
+    );
     const { response } = await call;
 
     totalQuestions.value =

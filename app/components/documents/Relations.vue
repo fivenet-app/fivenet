@@ -33,13 +33,16 @@ const {
     status,
     refresh,
     error,
-} = useLazyAsyncData(`document-${props.documentId}-relations`, () => getDocumentRelations());
+} = useAuthedLazyAsyncData('userState', `document-${props.documentId}-relations`, ({ signal }) => getDocumentRelations(signal));
 
-async function getDocumentRelations(): Promise<DocumentRelation[]> {
+async function getDocumentRelations(signal: AbortSignal): Promise<DocumentRelation[]> {
     try {
-        const call = documentsDocumentsClient.getDocumentRelations({
-            documentId: props.documentId,
-        });
+        const call = documentsDocumentsClient.getDocumentRelations(
+            {
+                documentId: props.documentId,
+            },
+            { abort: signal },
+        );
         const { response } = await call;
 
         return response.relations;

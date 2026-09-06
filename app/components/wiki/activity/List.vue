@@ -14,17 +14,22 @@ const { listPageActivity: listWikiPageActivity } = await useWikiWiki();
 
 const page = useRouteQuery('page', '1', { transform: Number });
 
-const { data, status, refresh, error } = useLazyAsyncData(`wiki-page:${props.pageId}-${page.value}-${page.value}`, () =>
-    listPageActivity(),
+const { data, status, refresh, error } = useAuthedLazyAsyncData(
+    'userState',
+    () => `wiki-page:${props.pageId}:activity:${page.value}`,
+    ({ signal }) => listPageActivity(signal),
 );
 
-async function listPageActivity(): Promise<ListPageActivityResponse> {
-    return listWikiPageActivity({
-        pagination: {
-            offset: calculateOffset(page.value, data.value?.pagination),
+async function listPageActivity(signal: AbortSignal): Promise<ListPageActivityResponse> {
+    return listWikiPageActivity(
+        {
+            pagination: {
+                offset: calculateOffset(page.value, data.value?.pagination),
+            },
+            pageId: props.pageId,
         },
-        pageId: props.pageId,
-    });
+        { abort: signal },
+    );
 }
 </script>
 

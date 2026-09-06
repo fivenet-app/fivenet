@@ -16,12 +16,17 @@ const documentsDocuments = await useDocumentsDocuments();
 
 const page = useRouteQuery('page', '1', { transform: Number });
 
-const { data, status, error, refresh } = useLazyAsyncData(`documents-pins-${page.value}`, () => listDocumentPins(), {
-    immediate: can('documents.DocumentsService/ToggleDocumentPin').value,
-});
+const { data, status, error, refresh } = useAuthedLazyAsyncData(
+    'userState',
+    () => `documents-pins-${page.value}`,
+    ({ signal }) => listDocumentPins(signal),
+    {
+        immediate: can('documents.DocumentsService/ToggleDocumentPin').value,
+    },
+);
 
-async function listDocumentPins(): Promise<ListDocumentPinsResponse> {
-    const call = documentsDocuments.listDocumentPins(page.value);
+async function listDocumentPins(signal: AbortSignal): Promise<ListDocumentPinsResponse> {
+    const call = documentsDocuments.listDocumentPins(page.value, { abort: signal });
     return await call;
 }
 

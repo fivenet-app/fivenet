@@ -14,11 +14,16 @@ const overlay = useOverlay();
 
 const documentsCategoriesClient = await getDocumentsCategoriesClient();
 
-const { data: categories, status, refresh, error } = useLazyAsyncData(`documents-categories`, () => listCategories());
+const {
+    data: categories,
+    status,
+    refresh,
+    error,
+} = useAuthedLazyAsyncData('userState', 'documents-categories', ({ signal }) => listCategories(signal));
 
-async function listCategories(): Promise<Category[]> {
+async function listCategories(signal: AbortSignal): Promise<Category[]> {
     try {
-        const call = documentsCategoriesClient.listCategories({});
+        const call = documentsCategoriesClient.listCategories({}, { abort: signal });
         const { response } = await call;
 
         return response.categories;

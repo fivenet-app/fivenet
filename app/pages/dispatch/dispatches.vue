@@ -52,9 +52,11 @@ const { validatedQuery, commitValidatedQuery } = useFormSearchValidation<typeof 
 
 const dispatchesKey = computed(() => `centrum-dispatches-${JSON.stringify(validatedQuery.value)}`);
 
-const { data, status, refresh, error } = useLazyAsyncData(dispatchesKey, () => listDispatches(validatedQuery.value));
+const { data, status, refresh, error } = useAuthedLazyAsyncData('userState', dispatchesKey, ({ signal }) =>
+    listDispatches(validatedQuery.value, signal),
+);
 
-async function listDispatches(values: Schema): Promise<ListDispatchesResponse> {
+async function listDispatches(values: Schema, signal: AbortSignal): Promise<ListDispatchesResponse> {
     try {
         const req: ListDispatchesRequest = {
             pagination: {
@@ -71,7 +73,7 @@ async function listDispatches(values: Schema): Promise<ListDispatchesResponse> {
             req.ids.push(values.id);
         }
 
-        const call = centrumDispatchesClient.listDispatches(req);
+        const call = centrumDispatchesClient.listDispatches(req, { abort: signal });
         const { response } = await call;
 
         return response;

@@ -24,7 +24,11 @@ const { listPages: listWikiPages, movePage: moveWikiPage } = await useWikiWiki()
 const movingPageId = ref<number | undefined>(undefined);
 const wikiPageChunkSize = 250;
 
-const { data, status, refresh, error } = useLazyAsyncData(`wiki-pages-move-${props.job}`, () => listPages());
+const { data, status, refresh, error } = useAuthedLazyAsyncData(
+    'userState',
+    () => `wiki-pages-move-${props.job}`,
+    ({ signal }) => listPages(signal),
+);
 
 const pages = computed<PageShort[]>({
     get: () => data.value ?? [],
@@ -33,20 +37,23 @@ const pages = computed<PageShort[]>({
     },
 });
 
-async function listPages(): Promise<PageShort[]> {
+async function listPages(signal: AbortSignal): Promise<PageShort[]> {
     const allPages: PageShort[] = [];
     let offset = 0;
     let totalCount = Number.POSITIVE_INFINITY;
 
     while (offset < totalCount) {
-        const response = await listWikiPages({
-            pagination: {
-                offset: offset,
-                pageSize: wikiPageChunkSize,
+        const response = await listWikiPages(
+            {
+                pagination: {
+                    offset: offset,
+                    pageSize: wikiPageChunkSize,
+                },
+                job: props.job,
+                rootOnly: false,
             },
-            job: props.job,
-            rootOnly: false,
-        });
+            { abort: signal },
+        );
 
         allPages.push(...response.pages);
         totalCount = response.pagination?.totalCount ?? allPages.length;

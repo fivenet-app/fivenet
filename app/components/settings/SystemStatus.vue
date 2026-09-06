@@ -7,12 +7,14 @@ import { isRequestPending } from '~/utils/data';
 
 const settingsSystemClient = await getSettingsSystemClient();
 
-const { data, error, status, refresh } = useLazyAsyncData('settings-system-status', () => getStatus());
+const { data, error, status, refresh } = useAuthedLazyAsyncData('capabilities', 'settings-system-status', ({ signal }) =>
+    getStatus(signal),
+);
 const isStatusLoading = computed(() => isRequestPending(status.value));
 
-async function getStatus() {
+async function getStatus(signal: AbortSignal) {
     try {
-        const call = settingsSystemClient.getStatus({});
+        const call = settingsSystemClient.getStatus({}, { abort: signal });
         const { response } = await call;
 
         return response.status;

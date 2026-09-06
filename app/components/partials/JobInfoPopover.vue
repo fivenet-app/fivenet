@@ -6,7 +6,9 @@ const props = defineProps<{
 
 const completorStore = useCompletorStore();
 
-const { data: jobsList } = useAsyncData('completor-jobs', () => completorStore.listJobs());
+const { data: jobsList } = useAuthedLazyAsyncData('userState', 'completor-jobs', ({ signal }) =>
+    completorStore.listJobs(false, signal),
+);
 
 const job = computed(() => jobsList.value?.find((j) => j.name === props.job));
 

@@ -25,11 +25,16 @@ const { getJobByName } = completorStore;
 
 const settingsSettingsClient = await getSettingsSettingsClient();
 
-const { data: roles, status, refresh, error } = useLazyAsyncData('settings-roles', () => getRoles());
+const {
+    data: roles,
+    status,
+    refresh,
+    error,
+} = useAuthedLazyAsyncData('capabilities', 'settings-roles', ({ signal }) => getRoles(signal));
 
-async function getRoles(): Promise<Role[]> {
+async function getRoles(signal: AbortSignal): Promise<Role[]> {
     try {
-        const call = settingsSettingsClient.getRoles({});
+        const call = settingsSettingsClient.getRoles({}, { abort: signal });
         const { response } = await call;
 
         return response.roles;

@@ -28,7 +28,7 @@ const {
     status,
     refresh,
     error,
-} = useLazyAsyncData(`documents-templates-${props.templateId}`, () => getTemplate());
+} = useAuthedLazyAsyncData('userState', `documents-templates-${props.templateId}`, ({ signal }) => getTemplate(signal));
 
 const loading = computed(() => isRequestPending(status.value));
 
@@ -42,16 +42,19 @@ const localizedError = computed(() => {
     return new Error(JSON.stringify(localizeTemplateErrorParameters(parsedError, $t)));
 });
 
-async function getTemplate(): Promise<Template> {
+async function getTemplate(signal: AbortSignal): Promise<Template> {
     try {
         const selection = clipboardStore.getTemplateSelection(false);
         logger.debug('Documents: Editor - Clipboard Template Selection', selection);
 
-        const call = documentsTemplatesClient.getTemplate({
-            templateId: props.templateId,
-            selection: selection,
-            render: true,
-        });
+        const call = documentsTemplatesClient.getTemplate(
+            {
+                templateId: props.templateId,
+                selection: selection,
+                render: true,
+            },
+            { abort: signal },
+        );
         const { response } = await call;
 
         return response.template!;

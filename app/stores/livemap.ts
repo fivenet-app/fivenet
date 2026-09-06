@@ -26,7 +26,6 @@ const initialReconnectBackoffTime = 1.75;
 export const useLivemapStore = defineStore(
     'livemap',
     () => {
-        // State
         const error = ref<RpcError | undefined>(undefined);
         const abort = ref<AbortController | undefined>(undefined);
         const stopping = ref<boolean>(false);
@@ -51,8 +50,6 @@ export const useLivemapStore = defineStore(
 
         const selectedMarker = ref<UserMarker | undefined>(undefined);
         const followMarker = ref<boolean>(false);
-
-        // Actions
 
         // Marker Management
         /**
@@ -352,31 +349,39 @@ export const useLivemapStore = defineStore(
             const settingsStore = useSettingsStore();
             const { livemap } = storeToRefs(settingsStore);
 
-            abort.value = new AbortController();
+            // Reserve the stream slot before awaiting client creation so concurrent
+            // callers cannot start duplicate streams.
+            const streamAbort = new AbortController();
+            abort.value = streamAbort;
             error.value = undefined;
 
             const foundMarkers: number[] = [];
             cleanupMarkerMarkers();
 
-            const livemapLivemapClient = await getLivemapLivemapClient();
-
             try {
-                currentStream = livemapLivemapClient.stream({}, { abort: abort.value.signal });
+                const livemapLivemapClient = await getLivemapLivemapClient();
+                if (abort.value !== streamAbort || streamAbort.signal.aborted) return;
+
+                currentStream = livemapLivemapClient.stream({}, { abort: streamAbort.signal });
                 for await (const respRaw of currentStream.responses) {
                     const resp = respRaw as StreamResponse;
                     await handleStreamResponse(resp, foundMarkers, activeChar.value, livemap.value);
+                }
+
+                if (abort.value === streamAbort && !streamAbort.signal.aborted && !stopping.value) {
+                    await restartStream();
                 }
             } catch (e) {
                 const err = e as RpcError;
                 error.value = undefined;
                 if (err.code === 'CANCELLED' || err.code === 'ABORTED') {
-                    if (!abort.value?.signal.aborted) {
+                    if (abort.value === streamAbort && !streamAbort.signal.aborted) {
                         await restartStream();
                     }
                     return;
                 }
                 logger.error('Stream failed', err.code, err.message, err.cause);
-                if (!abort.value?.signal.aborted) {
+                if (abort.value === streamAbort && !streamAbort.signal.aborted) {
                     await restartStream();
                 } else {
                     error.value = err;
@@ -397,6 +402,7 @@ export const useLivemapStore = defineStore(
                 logger.debug('Stopping Stream');
             }
             abort.value = undefined;
+            currentStream = undefined;
         };
 
         /**
@@ -435,7 +441,6 @@ export const useLivemapStore = defineStore(
         };
 
         return {
-            // State
             error,
             abort,
             stopping,
@@ -456,7 +461,6 @@ export const useLivemapStore = defineStore(
             selectedMarker,
             followMarker,
 
-            // Actions
             startStream,
             stopStream,
             restartStream,

@@ -77,10 +77,11 @@ const query = reactive<Schema>({
     page: 1,
 });
 
-const { data, status, refresh, error } = useLazyAsyncData(
+const { data, status, refresh, error } = useAuthedLazyAsyncData(
+    'userState',
     () =>
         `qualifications-results:${query.page}-${JSON.stringify(query)}-${props.qualification.id}-${JSON.stringify(props.searchQuery)}`,
-    () => listQualificationResults(props.qualification.id, props.status),
+    ({ signal }) => listQualificationResults(props.qualification.id, props.status, signal),
 );
 
 useDebouncedRefresh([query, () => props.searchQuery], refresh, { debounce: 250, maxWait: 1250 });
@@ -94,17 +95,21 @@ const qualificationsQualificationsClient = await getQualificationsQualifications
 async function listQualificationResults(
     qualificationId?: number,
     status?: ResultStatus[],
+    signal?: AbortSignal,
 ): Promise<ListQualificationsResultsResponse> {
     try {
-        const call = qualificationsQualificationsClient.listQualificationsResults({
-            pagination: {
-                offset: calculateOffset(query.page, data.value?.pagination),
+        const call = qualificationsQualificationsClient.listQualificationsResults(
+            {
+                pagination: {
+                    offset: calculateOffset(query.page, data.value?.pagination),
+                },
+                sort: query.sorting,
+                qualificationId: qualificationId,
+                status: status ?? [],
+                userIds: props.searchQuery.users,
             },
-            sort: query.sorting,
-            qualificationId: qualificationId,
-            status: status ?? [],
-            userIds: props.searchQuery.users,
-        });
+            { abort: signal },
+        );
         const { response } = await call;
 
         return response;

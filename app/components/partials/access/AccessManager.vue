@@ -215,7 +215,9 @@ function addNewEntry(): void {
 }
 
 const completorStore = useCompletorStore();
-const { data: jobsList } = useAsyncData('completor-jobs', () => completorStore.listJobs());
+const { data: jobsList } = useAuthedLazyAsyncData('userState', 'completor-jobs', ({ signal }) =>
+    completorStore.listJobs(false, signal),
+);
 </script>
 
 <template>

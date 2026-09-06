@@ -1,4 +1,5 @@
 import { defineStore } from 'pinia';
+import { deepToRaw } from '~/utils/deepToRaw';
 import { stringToDate } from '~/utils/time';
 import { ContentType } from '~~/gen/ts/resources/common/content/content';
 import type { Category } from '~~/gen/ts/resources/documents/category/category';
@@ -159,6 +160,9 @@ export const CLIPBOARD_MAX_ITEMS = 12;
 export const useClipboardStore = defineStore(
     'clipboard',
     () => {
+        const accountData = ref<Record<string, ClipboardData>>({});
+        let activeAccountId: number | null = null;
+
         const users = ref<ClipboardUser[]>([]);
         const documents = ref<ClipboardDocument[]>([]);
         const vehicles = ref<ClipboardVehicle[]>([]);
@@ -168,6 +172,69 @@ export const useClipboardStore = defineStore(
             documents: [],
             vehicles: [],
         });
+
+        const emptyClipboardData = (): ClipboardData => ({
+            users: [],
+            documents: [],
+            vehicles: [],
+        });
+
+        const cloneClipboardData = (data: ClipboardData): ClipboardData => ({
+            users: structuredClone(deepToRaw(data.users)),
+            documents: structuredClone(deepToRaw(data.documents)),
+            vehicles: structuredClone(deepToRaw(data.vehicles)),
+        });
+
+        const getActiveClipboardData = (): ClipboardData => ({
+            users: users.value,
+            documents: documents.value,
+            vehicles: vehicles.value,
+        });
+
+        const clearActiveClipboardData = (): void => {
+            users.value = [];
+            documents.value = [];
+            vehicles.value = [];
+            activeStack.value = emptyClipboardData();
+        };
+
+        const saveActiveAccountData = (): void => {
+            if (activeAccountId === null) return;
+            accountData.value[String(activeAccountId)] = cloneClipboardData(getActiveClipboardData());
+        };
+
+        /**
+         * Activates the account whose private clipboard data should be visible.
+         * A null account always clears the live state.
+         */
+        const setAccountScope = (accountId: number | null): void => {
+            if (accountId === activeAccountId) return;
+
+            saveActiveAccountData();
+            activeAccountId = accountId;
+
+            if (accountId === null) {
+                clearActiveClipboardData();
+                return;
+            }
+
+            Object.keys(accountData.value).forEach((key) => {
+                if (key !== String(accountId)) Reflect.deleteProperty(accountData.value, key);
+            });
+
+            const saved = accountData.value[String(accountId)];
+            if (!saved) {
+                clearActiveClipboardData();
+                return;
+            }
+
+            users.value = structuredClone(deepToRaw(saved.users));
+            documents.value = structuredClone(deepToRaw(saved.documents));
+            vehicles.value = structuredClone(deepToRaw(saved.vehicles));
+            activeStack.value = cloneClipboardData(saved);
+        };
+
+        watch([users, documents, vehicles, activeStack], () => saveActiveAccountData(), { deep: true });
 
         /**
          * Retrieves template data from the active stack.
@@ -401,6 +468,7 @@ export const useClipboardStore = defineStore(
         };
 
         return {
+            accountData,
             users,
             documents,
             vehicles,
@@ -419,11 +487,15 @@ export const useClipboardStore = defineStore(
             removeVehicle,
             clearVehicles,
             clear,
+            setAccountScope,
             checkRequirements,
         };
     },
     {
-        persist: true,
+        persist: {
+            key: 'fivenet-clipboard-v2',
+            pick: ['accountData'],
+        },
     },
 );
 

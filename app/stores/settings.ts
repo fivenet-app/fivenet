@@ -116,7 +116,6 @@ export type AudioSoundsSettings = {
 export const useSettingsStore = defineStore(
     'settings',
     () => {
-        // State
         const version = ref<string>(APP_VERSION);
         const locale = ref<Locale | undefined>(undefined);
 
@@ -287,7 +286,6 @@ export const useSettingsStore = defineStore(
         // Quick button Notepad fullscreen state
         const notepadFullscreen = ref<boolean>(false);
 
-        // Actions
         /**
          * Return the settings logger.
          */
@@ -388,7 +386,6 @@ export const useSettingsStore = defineStore(
         };
 
         return {
-            // State
             version,
             locale,
 
@@ -413,7 +410,6 @@ export const useSettingsStore = defineStore(
             signature,
             notepadFullscreen,
 
-            // Actions
             getLogger,
             setVersion,
             setNuiSettings,

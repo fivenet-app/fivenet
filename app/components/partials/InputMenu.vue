@@ -35,7 +35,8 @@ const loading = ref<boolean>(false);
 const searchTerm = ref('');
 const searchTermDebounced = debouncedRef(searchTerm, 200);
 
-const { data } = await useAsyncData(
+const { data } = await useAuthedLazyAsyncData(
+    'userState',
     () => `${props.searchableKey}-${searchTermDebounced.value}`,
     async () => {
         if (props.searchable === undefined) return [];

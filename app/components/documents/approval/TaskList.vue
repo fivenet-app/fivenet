@@ -21,22 +21,27 @@ const { can } = useAuth();
 
 const approvalClient = await getDocumentsApprovalClient();
 
-const { data, status, error, refresh } = useLazyAsyncData(`documents-approval-tasks-${props.documentId}`, () =>
-    listApprovalTasks(),
+const { data, status, error, refresh } = useAuthedLazyAsyncData(
+    'userState',
+    `documents-approval-tasks-${props.documentId}`,
+    ({ signal }) => listApprovalTasks(signal),
 );
 
-async function listApprovalTasks(): Promise<ListApprovalTasksResponse> {
-    const call = approvalClient.listApprovalTasks({
-        documentId: props.documentId,
-        statuses: [
-            ApprovalTaskStatus.PENDING,
-            ApprovalTaskStatus.APPROVED,
-            ApprovalTaskStatus.DECLINED,
-            ApprovalTaskStatus.EXPIRED,
-            ApprovalTaskStatus.COMPLETED,
-            ApprovalTaskStatus.CANCELLED,
-        ],
-    });
+async function listApprovalTasks(signal: AbortSignal): Promise<ListApprovalTasksResponse> {
+    const call = approvalClient.listApprovalTasks(
+        {
+            documentId: props.documentId,
+            statuses: [
+                ApprovalTaskStatus.PENDING,
+                ApprovalTaskStatus.APPROVED,
+                ApprovalTaskStatus.DECLINED,
+                ApprovalTaskStatus.EXPIRED,
+                ApprovalTaskStatus.COMPLETED,
+                ApprovalTaskStatus.CANCELLED,
+            ],
+        },
+        { abort: signal },
+    );
     const { response } = await call;
 
     return response;

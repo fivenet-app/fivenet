@@ -190,11 +190,18 @@ const state = reactive<Schema>({
 });
 
 const settingsConfigClient = await getSettingsConfigClient();
-const { data: config, status, refresh, error } = useLazyAsyncData(`settings-setup-appconfig`, () => getAppConfig());
+const {
+    data: config,
+    status,
+    refresh,
+    error,
+} = useAuthedLazyAsyncData('capabilities', 'settings-setup-appconfig', ({ signal }) => getAppConfig(signal));
 
 const completorStore = useCompletorStore();
 const { listJobs } = completorStore;
-const { data: jobs, refresh: refreshJobs } = useLazyAsyncData(`settings-setup-jobs`, () => listJobs());
+const { data: jobs, refresh: refreshJobs } = useAuthedLazyAsyncData('capabilities', 'settings-setup-jobs', ({ signal }) =>
+    listJobs(false, signal),
+);
 
 const notifications = useNotificationsStore();
 const isSubmitting = ref(false);
@@ -204,9 +211,9 @@ const redirectTarget = computed<RoutePathSchema>(() => {
     return getRedirectPath(redirect) as RoutePathSchema;
 });
 
-async function getAppConfig(): Promise<GetAppConfigResponse> {
+async function getAppConfig(signal: AbortSignal): Promise<GetAppConfigResponse> {
     try {
-        const call = settingsConfigClient.getAppConfig({});
+        const call = settingsConfigClient.getAppConfig({}, { abort: signal });
         const { response } = await call;
 
         return response;

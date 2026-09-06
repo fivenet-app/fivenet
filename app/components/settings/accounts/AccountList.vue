@@ -63,21 +63,29 @@ const accountsKey = computed(
         `settings-accounts-${validatedQuery.value.license}-${validatedQuery.value.onlyDisabled}-${validatedQuery.value.username}-${validatedQuery.value.externalId}-${JSON.stringify(validatedQuery.value.sorting)}-${validatedQuery.value.page}`,
 );
 
-const { data: accounts, status, refresh, error } = useLazyAsyncData(accountsKey, () => listAccounts(validatedQuery.value));
+const {
+    data: accounts,
+    status,
+    refresh,
+    error,
+} = useAuthedLazyAsyncData('capabilities', accountsKey, ({ signal }) => listAccounts(validatedQuery.value, signal));
 
-async function listAccounts(values: Schema): Promise<ListAccountsResponse> {
+async function listAccounts(values: Schema, signal: AbortSignal): Promise<ListAccountsResponse> {
     try {
-        const call = settingsAccountsClient.listAccounts({
-            pagination: {
-                offset: calculateOffset(values.page, accounts.value?.pagination),
+        const call = settingsAccountsClient.listAccounts(
+            {
+                pagination: {
+                    offset: calculateOffset(values.page, accounts.value?.pagination),
+                },
+                sort: values.sorting,
+                onlyDisabled: values.onlyDisabled,
+                license: values.license,
+                username: values.username,
+                externalId: values.externalId,
+                group: values.group,
             },
-            sort: values.sorting,
-            onlyDisabled: values.onlyDisabled,
-            license: values.license,
-            username: values.username,
-            externalId: values.externalId,
-            group: values.group,
-        });
+            { abort: signal },
+        );
         const { response } = await call;
 
         return response;

@@ -31,15 +31,18 @@ const {
     status,
     refresh,
     error,
-} = useLazyAsyncData('centrum-units', () => listUnits(), {
+} = useAuthedLazyAsyncData('capabilities', 'centrum-units', ({ signal }) => listUnits(signal), {
     default: () => [] as Unit[],
 });
 
-async function listUnits(): Promise<Unit[]> {
+async function listUnits(signal: AbortSignal): Promise<Unit[]> {
     try {
-        const call = centrumUnitsClient.listUnits({
-            status: [],
-        });
+        const call = centrumUnitsClient.listUnits(
+            {
+                status: [],
+            },
+            { abort: signal },
+        );
         const { response } = await call;
 
         return response.units;

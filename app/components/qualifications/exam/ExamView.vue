@@ -14,15 +14,20 @@ const props = defineProps<{
 
 const qualificationsExamClient = await getQualificationsExamClient();
 
-const { data, status, refresh, error } = useLazyAsyncData(`qualification-${props.qualificationId}-examinfo`, () =>
-    getExamInfo(props.qualificationId),
+const { data, status, refresh, error } = useAuthedLazyAsyncData(
+    'userState',
+    `qualification-${props.qualificationId}-examinfo`,
+    ({ signal }) => getExamInfo(props.qualificationId, signal),
 );
 
-async function getExamInfo(qualificationId: number): Promise<GetExamInfoResponse> {
+async function getExamInfo(qualificationId: number, signal: AbortSignal): Promise<GetExamInfoResponse> {
     try {
-        const call = qualificationsExamClient.getExamInfo({
-            qualificationId: qualificationId,
-        });
+        const call = qualificationsExamClient.getExamInfo(
+            {
+                qualificationId: qualificationId,
+            },
+            { abort: signal },
+        );
         const { response } = await call;
 
         examUser.value = response.examUser;

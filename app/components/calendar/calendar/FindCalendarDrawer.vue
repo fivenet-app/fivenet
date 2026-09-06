@@ -21,16 +21,23 @@ const calendarCalendarClient = await getCalendarCalendarClient();
 
 const page = ref<number>(1);
 
-const { data, status, error, refresh } = useLazyAsyncData(`calendars-${page.value}`, () => listCalendars());
+const { data, status, error, refresh } = useAuthedLazyAsyncData(
+    'userState',
+    () => `calendars-${page.value}`,
+    ({ signal }) => listCalendars(signal),
+);
 
-async function listCalendars(): Promise<ListCalendarsResponse> {
-    const response = await calendarStore.listCalendars({
-        pagination: {
-            offset: calculateOffset(page.value, data.value?.pagination),
+async function listCalendars(signal: AbortSignal): Promise<ListCalendarsResponse> {
+    const response = await calendarStore.listCalendars(
+        {
+            pagination: {
+                offset: calculateOffset(page.value, data.value?.pagination),
+            },
+            onlyPublic: true,
+            calendarIds: [],
         },
-        onlyPublic: true,
-        calendarIds: [],
-    });
+        { abort: signal },
+    );
 
     return response;
 }

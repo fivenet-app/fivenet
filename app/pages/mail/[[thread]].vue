@@ -68,15 +68,16 @@ const selectedTab = computed({
 
 const threadPage = useRouteQuery('threadPage', '1', { transform: Number });
 
-const { status, refresh } = useLazyAsyncData(
+const { status, refresh } = useAuthedLazyAsyncData(
+    'userState',
     () => `mailer-threads:${selectedEmail.value?.id ?? 0}:${selectedTab.value}:${threadPage.value}`,
-    () => loadThreads(),
+    ({ signal }) => loadThreads(signal),
     {
         immediate: false,
     },
 );
 
-async function loadThreads(): Promise<ListThreadsResponse | undefined> {
+async function loadThreads(signal: AbortSignal): Promise<ListThreadsResponse | undefined> {
     if (!selectedEmail.value?.id) return;
 
     if (selectedEmail.value.settings === undefined) {
@@ -84,14 +85,18 @@ async function loadThreads(): Promise<ListThreadsResponse | undefined> {
         unreadThreadIds.value = [];
     }
 
-    const resp = await mailerStore.listThreads({
-        pagination: {
-            offset: calculateOffset(threadPage.value, threads.value?.pagination),
+    const resp = await mailerStore.listThreads(
+        {
+            pagination: {
+                offset: calculateOffset(threadPage.value, threads.value?.pagination),
+            },
+            emailIds: [selectedEmail.value.id],
+            unread: selectedTab.value === 'unread' ? true : undefined,
+            archived: selectedTab.value === 'archive' ? true : false,
         },
-        emailIds: [selectedEmail.value.id],
-        unread: selectedTab.value === 'unread' ? true : undefined,
-        archived: selectedTab.value === 'archive' ? true : false,
-    });
+        true,
+        { abort: signal },
+    );
 
     return resp;
 }

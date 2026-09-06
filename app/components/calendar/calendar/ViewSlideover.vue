@@ -27,8 +27,8 @@ const overlay = useOverlay();
 const confirmModal = overlay.create(ConfirmModal);
 const calendarCreateOrUpdateModal = overlay.create(CreateOrUpdateModal);
 
-const { data, status, refresh, error } = useLazyAsyncData(`calendar-${props.calendarId}`, () =>
-    calendarStore.getCalendar({ calendarId: props.calendarId }),
+const { data, status, refresh, error } = useAuthedLazyAsyncData('userState', `calendar-${props.calendarId}`, ({ signal }) =>
+    calendarStore.getCalendar({ calendarId: props.calendarId }, { abort: signal }),
 );
 
 const calendar = computed(() => data.value?.calendar);

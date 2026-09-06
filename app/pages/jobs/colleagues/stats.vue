@@ -53,14 +53,17 @@ const {
     status,
     error,
     refresh,
-} = useLazyAsyncData('jobs-stats-chart-jobs-by-category', async () => {
-    const call = jobsStatsClient.getStats({
-        start: toUtcDateTimestamp(query.range.start),
-        end: toUtcDateTimestamp(query.range.end),
+} = useAuthedLazyAsyncData('userState', 'jobs-stats-chart-jobs-by-category', async ({ signal }) => {
+    const call = jobsStatsClient.getStats(
+        {
+            start: toUtcDateTimestamp(query.range.start),
+            end: toUtcDateTimestamp(query.range.end),
 
-        period: selectedPeriod.value,
-        category: query.category,
-    });
+            period: selectedPeriod.value,
+            category: query.category,
+        },
+        { abort: signal },
+    );
     const { response } = await call;
 
     return response;

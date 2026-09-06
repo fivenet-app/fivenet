@@ -54,18 +54,23 @@ const inactiveKey = computed(
         `jobs-timeclock-inactive-${JSON.stringify(validatedQuery.value.sorting)}-${validatedQuery.value.page}-${validatedQuery.value.days}-${JSON.stringify(validatedQuery.value.users)}`,
 );
 
-const { data, status, refresh, error } = useLazyAsyncData(inactiveKey, () => listInactiveEmployees(validatedQuery.value));
+const { data, status, refresh, error } = useAuthedLazyAsyncData('userState', inactiveKey, ({ signal }) =>
+    listInactiveEmployees(validatedQuery.value, signal),
+);
 
-async function listInactiveEmployees(values: Schema): Promise<ListInactiveEmployeesResponse> {
+async function listInactiveEmployees(values: Schema, signal: AbortSignal): Promise<ListInactiveEmployeesResponse> {
     try {
-        const call = jobsTimeclockClient.listInactiveEmployees({
-            pagination: {
-                offset: calculateOffset(validatedQuery.value.page, data.value?.pagination),
+        const call = jobsTimeclockClient.listInactiveEmployees(
+            {
+                pagination: {
+                    offset: calculateOffset(validatedQuery.value.page, data.value?.pagination),
+                },
+                sort: values.sorting,
+                days: values.days,
+                users: values.users,
             },
-            sort: values.sorting,
-            days: values.days,
-            users: values.users,
-        });
+            { abort: signal },
+        );
 
         const { response } = await call;
 

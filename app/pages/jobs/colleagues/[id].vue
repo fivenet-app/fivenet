@@ -50,16 +50,20 @@ const {
     status,
     refresh,
     error,
-} = useLazyAsyncData(
+} = useAuthedLazyAsyncData(
+    'userState',
     () => `jobs-colleague-${colleagueId.value}`,
-    () => getColleague(colleagueId.value),
+    ({ signal }) => getColleague(colleagueId.value, signal),
 );
 
-async function getColleague(userId: number): Promise<GetColleagueResponse> {
+async function getColleague(userId: number, signal: AbortSignal): Promise<GetColleagueResponse> {
     try {
-        const call = jobsColleaguesClient.getColleague({
-            userId,
-        });
+        const call = jobsColleaguesClient.getColleague(
+            {
+                userId,
+            },
+            { abort: signal },
+        );
         const { response } = await call;
 
         return response;

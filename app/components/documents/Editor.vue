@@ -64,7 +64,9 @@ const {
     status,
     error,
     refresh,
-} = useLazyAsyncData(`documents-${props.documentId}-editor`, () => documentsDocuments.getDocument(props.documentId));
+} = useAuthedLazyAsyncData('userState', `documents-${props.documentId}-editor`, ({ signal }) =>
+    documentsDocuments.getDocument(props.documentId, { abort: signal }),
+);
 
 useHead({
     title: () =>
@@ -119,10 +121,11 @@ const {
     status: statusReferences,
     error: errorReferences,
     refresh: refreshReferences,
-} = useLazyAsyncData(
+} = useAuthedLazyAsyncData(
+    'userState',
     `documents-${props.documentId}-references`,
-    async () => {
-        const call = documentsDocumentsClient.getDocumentReferences({ documentId: props.documentId });
+    async ({ signal }) => {
+        const call = documentsDocumentsClient.getDocumentReferences({ documentId: props.documentId }, { abort: signal });
         const { response } = await call;
 
         state.references = response.references;
@@ -137,10 +140,11 @@ const {
     status: statusRelations,
     error: errorRelations,
     refresh: refreshRelations,
-} = useLazyAsyncData(
+} = useAuthedLazyAsyncData(
+    'userState',
     `documents-${props.documentId}-relations`,
-    async () => {
-        const call = documentsDocumentsClient.getDocumentRelations({ documentId: props.documentId });
+    async ({ signal }) => {
+        const call = documentsDocumentsClient.getDocumentRelations({ documentId: props.documentId }, { abort: signal });
         const { response } = await call;
 
         state.relations = response.relations;

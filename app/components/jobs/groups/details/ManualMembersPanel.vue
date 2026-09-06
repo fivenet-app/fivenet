@@ -57,7 +57,7 @@ const {
     status: manualMembersStatus,
     error: manualMembersError,
     refresh: refreshManualMembers,
-} = useLazyAsyncData(manualMembersKey, () => listGroupManualMembers(), {
+} = useAuthedLazyAsyncData('userState', manualMembersKey, ({ signal }) => listGroupManualMembers(signal), {
     watch: [() => props.groupId, page],
 });
 
@@ -72,13 +72,16 @@ const policyNotice = computed(() =>
     supportsManualMembers.value ? undefined : 'components.jobs.groups.policy.manual_members_disabled',
 );
 
-async function listGroupManualMembers(): Promise<ListGroupManualMembersResponse> {
-    const { response } = await jobsGroupsClient.listGroupManualMembers({
-        groupId: props.groupId,
-        pagination: {
-            offset: calculateOffset(page.value, manualMembersData.value?.pagination),
+async function listGroupManualMembers(signal: AbortSignal): Promise<ListGroupManualMembersResponse> {
+    const { response } = await jobsGroupsClient.listGroupManualMembers(
+        {
+            groupId: props.groupId,
+            pagination: {
+                offset: calculateOffset(page.value, manualMembersData.value?.pagination),
+            },
         },
-    });
+        { abort: signal },
+    );
 
     return response;
 }

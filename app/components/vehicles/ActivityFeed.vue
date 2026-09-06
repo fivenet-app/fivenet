@@ -62,9 +62,14 @@ const formRef = useTemplateRef<Form<typeof schema>>('formRef');
 const { validatedQuery, commitValidatedQuery } = useFormSearchValidation<typeof schema>(query, formRef);
 
 const activityKey = computed(() => `vehicle-activity-${props.plate}-${JSON.stringify(validatedQuery.value)}`);
-const { data, status, refresh, error } = useLazyAsyncData(activityKey, () => listVehicleActivity(validatedQuery.value), {
-    immediate: false,
-});
+const { data, status, refresh, error } = useAuthedLazyAsyncData(
+    'userState',
+    activityKey,
+    ({ signal }) => listVehicleActivity(validatedQuery.value, signal),
+    {
+        immediate: false,
+    },
+);
 
 defineExpose({
     refresh,
@@ -87,17 +92,20 @@ watch(
     { immediate: true },
 );
 
-async function listVehicleActivity(values: Schema): Promise<ListVehicleActivityResponse> {
+async function listVehicleActivity(values: Schema, signal: AbortSignal): Promise<ListVehicleActivityResponse> {
     try {
         const vehiclesVehiclesClient = await vehiclesVehiclesClientPromise;
-        const call = vehiclesVehiclesClient.listVehicleActivity({
-            pagination: {
-                offset: calculateOffset(values.page, data.value?.pagination),
+        const call = vehiclesVehiclesClient.listVehicleActivity(
+            {
+                pagination: {
+                    offset: calculateOffset(values.page, data.value?.pagination),
+                },
+                sort: values.sorting,
+                plate: props.plate,
+                types: values.types,
             },
-            sort: values.sorting,
-            plate: props.plate,
-            types: values.types,
-        });
+            { abort: signal },
+        );
         const { response } = await call;
 
         return response;

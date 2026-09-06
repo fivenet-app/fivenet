@@ -85,24 +85,28 @@ const hideVehicleModell = ref<boolean>(false);
 const formRef = useTemplateRef<Form<typeof schema>>('formRef');
 const { validatedQuery, commitValidatedQuery } = useFormSearchValidation<typeof schema>(query, formRef);
 
-const { data, status, refresh, error } = useLazyAsyncData(
+const { data, status, refresh, error } = useAuthedLazyAsyncData(
+    'userState',
     () =>
         `vehicles-${validatedQuery.value.licensePlate}-${JSON.stringify(validatedQuery.value.userIds)}-${JSON.stringify(validatedQuery.value.sorting)}-${validatedQuery.value.page}`,
-    () => listVehicles(validatedQuery.value),
+    ({ signal }) => listVehicles(validatedQuery.value, signal),
 );
 
-async function listVehicles(values: Schema): Promise<ListVehiclesResponse> {
+async function listVehicles(values: Schema, signal: AbortSignal): Promise<ListVehiclesResponse> {
     try {
-        const call = vehiclesVehiclesClient.listVehicles({
-            pagination: {
-                offset: calculateOffset(values.page, data.value?.pagination),
+        const call = vehiclesVehiclesClient.listVehicles(
+            {
+                pagination: {
+                    offset: calculateOffset(values.page, data.value?.pagination),
+                },
+                sort: values.sorting,
+                licensePlate: values.licensePlate,
+                model: values.model,
+                userIds: values.userIds,
+                wanted: values.wanted,
             },
-            sort: values.sorting,
-            licensePlate: values.licensePlate,
-            model: values.model,
-            userIds: values.userIds,
-            wanted: values.wanted,
-        });
+            { abort: signal },
+        );
         const { response } = await call;
 
         if (response.vehicles.length > 0) {

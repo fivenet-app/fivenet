@@ -31,11 +31,16 @@ const query = useSearchForm('settings_auditlog', schema);
 const formRef = useTemplateRef<Form<typeof schema>>('formRef');
 const { validatedQuery, commitValidatedQuery } = useFormSearchValidation<typeof schema>(query, formRef);
 
-const { data: cronjobs, status, refresh, error } = useLazyAsyncData(`settings-cronjobs`, () => listCronjobs());
+const {
+    data: cronjobs,
+    status,
+    refresh,
+    error,
+} = useAuthedLazyAsyncData('capabilities', 'settings-cronjobs', ({ signal }) => listCronjobs(signal));
 
-async function listCronjobs(): Promise<ListCronjobsResponse> {
+async function listCronjobs(signal: AbortSignal): Promise<ListCronjobsResponse> {
     try {
-        const { response } = settingsCronClient.listCronjobs({});
+        const { response } = settingsCronClient.listCronjobs({}, { abort: signal });
 
         start();
 

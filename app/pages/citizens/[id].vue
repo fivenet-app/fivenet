@@ -51,13 +51,18 @@ const {
     status,
     refresh,
     error,
-} = useLazyAsyncData(`citizen-${route.params.id}`, () => getUser(parseInt(route.params.id)), {
-    watch: [() => route.params.id],
-});
+} = useAuthedLazyAsyncData(
+    'userState',
+    `citizen-${route.params.id}`,
+    ({ signal }) => getUser(parseInt(route.params.id), signal),
+    {
+        watch: [() => route.params.id],
+    },
+);
 
-async function getUser(userId: number): Promise<User> {
+async function getUser(userId: number, signal: AbortSignal): Promise<User> {
     try {
-        const call = citizensCitizensClient.getUser({ userId });
+        const call = citizensCitizensClient.getUser({ userId }, { abort: signal });
         const { response } = await call;
 
         if (response.user?.props === undefined) {

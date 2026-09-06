@@ -92,7 +92,7 @@ const {
     status: detailStatus,
     error: detailError,
     refresh: refreshDetail,
-} = useLazyAsyncData(detailKey, () => getGroupDetails(props.group.id), {
+} = useAuthedLazyAsyncData('userState', detailKey, ({ signal }) => getGroupDetails(props.group.id, signal), {
     watch: [() => props.group.id],
 });
 
@@ -170,11 +170,14 @@ async function restoreGroup(): Promise<void> {
     });
 }
 
-async function getGroupDetails(groupId: number): Promise<GetGroupResponse> {
-    const { response } = await jobsGroupsClient.getGroup({
-        id: groupId,
-        includeArchived: true,
-    });
+async function getGroupDetails(groupId: number, signal: AbortSignal): Promise<GetGroupResponse> {
+    const { response } = await jobsGroupsClient.getGroup(
+        {
+            id: groupId,
+            includeArchived: true,
+        },
+        { abort: signal },
+    );
 
     return response;
 }

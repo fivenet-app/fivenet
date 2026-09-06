@@ -11,16 +11,23 @@ const centrumUnitsClient = await getCentrumUnitsClient();
 
 const offset = ref(0);
 
-const { data, refresh } = useLazyAsyncData(`centrum-unit-${props.unitId}-activity-${offset.value}`, () => listUnitActivity());
+const { data, refresh } = useAuthedLazyAsyncData(
+    'userState',
+    `centrum-unit-${props.unitId}-activity-${offset.value}`,
+    ({ signal }) => listUnitActivity(signal),
+);
 
-async function listUnitActivity(): Promise<ListUnitActivityResponse> {
+async function listUnitActivity(signal: AbortSignal): Promise<ListUnitActivityResponse> {
     try {
-        const call = centrumUnitsClient.listUnitActivity({
-            pagination: {
-                offset: offset.value,
+        const call = centrumUnitsClient.listUnitActivity(
+            {
+                pagination: {
+                    offset: offset.value,
+                },
+                id: props.unitId,
             },
-            id: props.unitId,
-        });
+            { abort: signal },
+        );
         const { response } = await call;
 
         return response;

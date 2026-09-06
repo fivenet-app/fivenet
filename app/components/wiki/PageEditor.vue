@@ -52,12 +52,18 @@ const {
     status,
     error,
     refresh,
-} = useLazyAsyncData(`wiki-page:${route.path}`, () => getPage(parseInt(route.params.id)));
+} = useAuthedLazyAsyncData(
+    'userState',
+    () => `wiki-page:${route.path}`,
+    ({ signal }) => getPage(parseInt(route.params.id), signal),
+);
 
-async function getPage(id: number): Promise<Page | undefined> {
+async function getPage(id: number, signal: AbortSignal): Promise<Page | undefined> {
     try {
-        return await getWikiPage(id);
-    } catch {
+        return await getWikiPage(id, { abort: signal });
+    } catch (e) {
+        if (signal.aborted) throw e;
+
         await navigateTo({
             name: 'wiki-job-id-slug',
             params: { job: route.params.job, id: route.params.id, slug: [route.params.slug] },
@@ -127,22 +133,28 @@ const {
     data: pages,
     refresh: pagesRefresh,
     status: pagesStatus,
-} = useLazyAsyncData(`wiki-pages-id:${props.pageId}-editor`, () => listPages(), {
-    default: () => [] as PageShort[],
-});
+} = useAuthedLazyAsyncData(
+    'userState',
+    () => `wiki-pages-id:${props.pageId}-editor`,
+    async ({ signal }) => {
+        const job = route.params.job ?? activeChar.value?.job ?? '';
+        const response = await listWikiPages(
+            {
+                pagination: {
+                    offset: 0,
+                },
+                job: job,
+                rootOnly: false,
+            },
+            { abort: signal },
+        );
 
-async function listPages(): Promise<PageShort[]> {
-    const job = route.params.job ?? activeChar.value?.job ?? '';
-    const response = await listWikiPages({
-        pagination: {
-            offset: 0,
-        },
-        job: job,
-        rootOnly: false,
-    });
-
-    return response.pages;
-}
+        return response.pages;
+    },
+    {
+        default: () => [] as PageShort[],
+    },
+);
 
 const { hasUnsavedChanges, syncSnapshot } = useSnapshotChanges(state);
 const saving = ref<boolean>(false);

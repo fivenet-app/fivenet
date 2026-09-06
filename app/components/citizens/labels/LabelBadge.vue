@@ -17,10 +17,15 @@ const {
     data: labels,
     pending,
     error,
-} = useLazyAsyncData('citizens-labels', () => completorStore.completeCitizenLabels(''), {
-    // Load labels when no label object but an id is given
-    immediate: !props.label && !!props.id,
-});
+} = useAuthedLazyAsyncData(
+    'userState',
+    'citizens-labels',
+    ({ signal }) => completorStore.completeCitizenLabels('', false, { abort: signal }),
+    {
+        // Load labels when no label object but an id is given
+        immediate: !props.label && !!props.id,
+    },
+);
 
 const label = computed(() => (props.label ? props.label : labels.value?.find((l) => l.id === props.id)));
 

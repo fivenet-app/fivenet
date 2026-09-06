@@ -51,7 +51,12 @@ const { impersonateJob } = authStore;
 
 const settingsSettingsClient = await getSettingsSettingsClient();
 
-const { data: role, status, refresh, error } = useLazyAsyncData(`settings-roles-${props.roleId}`, () => getRole(props.roleId));
+const {
+    data: role,
+    status,
+    refresh,
+    error,
+} = useAuthedLazyAsyncData('capabilities', `settings-roles-${props.roleId}`, ({ signal }) => getRole(props.roleId, signal));
 
 const attrChangedStates = ref(new Map<number, boolean>());
 const childHasUnsavedChanges = computed(() => attrChangedStates.value.size > 0);
@@ -65,11 +70,14 @@ const permStates = ref(new Map<number, boolean | undefined>());
 
 const attrList = ref<RoleAttribute[]>([]);
 
-async function getRole(id: number): Promise<Role> {
+async function getRole(id: number, signal: AbortSignal): Promise<Role> {
     try {
-        const call = settingsSettingsClient.getRole({
-            id: id,
-        });
+        const call = settingsSettingsClient.getRole(
+            {
+                id: id,
+            },
+            { abort: signal },
+        );
         const { response } = await call;
 
         clearState();

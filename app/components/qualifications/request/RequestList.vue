@@ -51,28 +51,33 @@ const { validatedQuery, commitValidatedQuery } = useFormSearchValidation<typeof 
 
 const qualificationsQualificationsClient = await getQualificationsQualificationsClient();
 
-const { data, status, refresh, error } = useLazyAsyncData(
+const { data, status, refresh, error } = useAuthedLazyAsyncData(
+    'userState',
     () =>
         `qualifications-requests-${JSON.stringify(validatedQuery.value.sorting)}-${validatedQuery.value.page}-${validatedQuery.value.search}-${props.qualificationId}`,
-    () => listQualificationRequests(props.qualificationId, undefined, validatedQuery.value),
+    ({ signal }) => listQualificationRequests(props.qualificationId, undefined, validatedQuery.value, signal),
 );
 
 async function listQualificationRequests(
     qualificationId?: number,
     status?: RequestStatus[],
     values: Schema = validatedQuery.value,
+    signal?: AbortSignal,
 ): Promise<ListQualificationRequestsResponse> {
     try {
-        const call = qualificationsQualificationsClient.listQualificationRequests({
-            pagination: {
-                offset: calculateOffset(values.page, data.value?.pagination),
+        const call = qualificationsQualificationsClient.listQualificationRequests(
+            {
+                pagination: {
+                    offset: calculateOffset(values.page, data.value?.pagination),
+                },
+                sort: values.sorting,
+                qualificationId: qualificationId,
+                status: status ?? [],
+                userIds: [],
+                search: values.search,
             },
-            sort: values.sorting,
-            qualificationId: qualificationId,
-            status: status ?? [],
-            userIds: [],
-            search: values.search,
-        });
+            { abort: signal },
+        );
         const { response } = await call;
 
         return response;

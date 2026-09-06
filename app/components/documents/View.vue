@@ -65,7 +65,9 @@ const {
     status,
     refresh,
     error,
-} = useLazyAsyncData(`document-${props.documentId}`, () => documentsDocuments.getDocument(props.documentId));
+} = useAuthedLazyAsyncData('userState', `document-${props.documentId}`, ({ signal }) =>
+    documentsDocuments.getDocument(props.documentId, { abort: signal }),
+);
 
 const documentData = computed<DocumentData | undefined>(() => normalizeDocumentData(doc.value?.document?.data));
 provide('documents:content:data', documentData);

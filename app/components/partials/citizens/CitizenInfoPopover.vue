@@ -40,16 +40,24 @@ const citizensCitizensClient = await getCitizensCitizensClient();
 
 const userId = computed(() => props.userId ?? props.user?.userId ?? 0);
 
-const { data, refresh, status, error } = useLazyAsyncData(`citizen-info-${userId.value}`, () => getCitizen(userId.value), {
-    immediate: !props.user && !!userId.value,
-});
+const { data, refresh, status, error } = useAuthedLazyAsyncData(
+    'userState',
+    `citizen-info-${userId.value}`,
+    ({ signal }) => getCitizen(userId.value, signal),
+    {
+        immediate: !props.user && !!userId.value,
+    },
+);
 
-async function getCitizen(id: number): Promise<User | undefined> {
+async function getCitizen(id: number, signal: AbortSignal): Promise<User | undefined> {
     try {
-        const call = citizensCitizensClient.getUser({
-            userId: id,
-            infoOnly: true,
-        });
+        const call = citizensCitizensClient.getUser(
+            {
+                userId: id,
+                infoOnly: true,
+            },
+            { abort: signal },
+        );
         const { response } = await call;
 
         if (response.user!.phoneNumber && props.user?.phoneNumber) {

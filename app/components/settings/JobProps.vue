@@ -128,9 +128,9 @@ const state = reactive<Schema>({
 
 const { hasUnsavedChanges, syncSnapshot } = useSnapshotChanges(state);
 
-async function getJobProps(): Promise<JobProps> {
+async function getJobProps(signal: AbortSignal): Promise<JobProps> {
     try {
-        const call = settingsSettingsClient.getJobProps({});
+        const call = settingsSettingsClient.getJobProps({}, { abort: signal });
         const { response } = await call;
 
         return response.jobProps!;
@@ -140,7 +140,12 @@ async function getJobProps(): Promise<JobProps> {
     }
 }
 
-const { data: jobProps, status, refresh, error } = useLazyAsyncData(`settings-jobprops`, () => getJobProps());
+const {
+    data: jobProps,
+    status,
+    refresh,
+    error,
+} = useAuthedLazyAsyncData('capabilities', 'settings-jobprops', ({ signal }) => getJobProps(signal));
 
 async function setJobProps(values: Schema): Promise<void> {
     if (!jobProps.value) return;
@@ -236,7 +241,7 @@ watch(jobProps, () => setSettingsValues());
 const canEdit = can('settings.SettingsService/SetJobProps');
 
 const dcConnectRequired = ref<boolean>(false);
-const { data: userGuilds } = useLazyAsyncData(`settings-userguilds`, () => listGuilds(), {
+const { data: userGuilds } = useAuthedLazyAsyncData('capabilities', 'settings-userguilds', ({ signal }) => listGuilds(signal), {
     immediate: appConfig.discord.botEnabled,
     transform: (guilds) =>
         guilds.map((guild) => ({
@@ -249,11 +254,11 @@ const { data: userGuilds } = useLazyAsyncData(`settings-userguilds`, () => listG
     default: () => [] as Guild[],
 });
 
-async function listGuilds() {
+async function listGuilds(signal: AbortSignal) {
     if (!canEdit.value) return [];
 
     try {
-        const call = settingsSettingsClient.listUserGuilds({});
+        const call = settingsSettingsClient.listUserGuilds({}, { abort: signal });
         const { response } = await call;
 
         return response.guilds;

@@ -39,21 +39,25 @@ const query = useSearchForm('qualifications_list', schema);
 const formRef = useTemplateRef<Form<typeof schema>>('formRef');
 const { validatedQuery, commitValidatedQuery } = useFormSearchValidation<typeof schema>(query, formRef);
 
-const { data, status, refresh, error } = useLazyAsyncData(
+const { data, status, refresh, error } = useAuthedLazyAsyncData(
+    'userState',
     () =>
         `qualifications-${JSON.stringify(validatedQuery.value.sorting)}-${validatedQuery.value.page}-${validatedQuery.value.search}`,
-    () => listQualifications(validatedQuery.value),
+    ({ signal }) => listQualifications(validatedQuery.value, signal),
 );
 
-async function listQualifications(values: Schema): Promise<ListQualificationsResponse> {
+async function listQualifications(values: Schema, signal: AbortSignal): Promise<ListQualificationsResponse> {
     try {
-        const call = qualificationsQualificationsClient.listQualifications({
-            pagination: {
-                offset: calculateOffset(values.page, data.value?.pagination),
+        const call = qualificationsQualificationsClient.listQualifications(
+            {
+                pagination: {
+                    offset: calculateOffset(values.page, data.value?.pagination),
+                },
+                sort: values.sorting,
+                search: values.search,
             },
-            sort: values.sorting,
-            search: values.search,
-        });
+            { abort: signal },
+        );
         const { response } = await call;
 
         return response;

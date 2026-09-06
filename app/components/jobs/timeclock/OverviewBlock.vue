@@ -16,12 +16,14 @@ const props = withDefaults(
 
 const jobsTimeclockClient = await getJobsTimeclockClient();
 
-const { data, error, status, refresh } = useLazyAsyncData('jobs-timeclock-stats', () => getStats());
+const { data, error, status, refresh } = useAuthedLazyAsyncData('userState', 'jobs-timeclock-stats', ({ signal }) =>
+    getStats(signal),
+);
 
-async function getStats(): Promise<GetTimeclockStatsResponse> {
+async function getStats(signal: AbortSignal): Promise<GetTimeclockStatsResponse> {
     try {
         // Overview block stats are always for the active user only.
-        const call = jobsTimeclockClient.getTimeclockStats({});
+        const call = jobsTimeclockClient.getTimeclockStats({}, { abort: signal });
         const { response } = await call;
 
         return response;

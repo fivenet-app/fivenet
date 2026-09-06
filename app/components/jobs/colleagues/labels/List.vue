@@ -31,13 +31,13 @@ const {
     status,
     error,
     refresh,
-} = useLazyAsyncData('jobs-colleagues-labels', () => getColleagueLabels(), {
+} = useAuthedLazyAsyncData('userState', 'jobs-colleagues-labels', ({ signal }) => getColleagueLabels(signal), {
     default: () => [] as Label[],
 });
 
-async function getColleagueLabels(): Promise<Label[]> {
+async function getColleagueLabels(signal: AbortSignal): Promise<Label[]> {
     try {
-        const { response } = await jobsColleaguesClient.getColleagueLabels({});
+        const { response } = await jobsColleaguesClient.getColleagueLabels({}, { abort: signal });
 
         return response?.labels ?? [];
     } catch (e) {

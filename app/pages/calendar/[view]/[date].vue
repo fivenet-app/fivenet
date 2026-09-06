@@ -180,19 +180,23 @@ const {
     status: calendarsStatus,
     error: calendarsError,
     refresh: calendarsRefresh,
-} = useLazyAsyncData(
+} = useAuthedLazyAsyncData(
+    'userState',
     () => `calendars:${page.value}`,
-    () => listCalendars(page.value),
+    ({ signal }) => listCalendars(page.value, signal),
 );
 
-async function listCalendars(currentPage: number): Promise<ListCalendarsResponse> {
-    const response = await calendarStore.listCalendars({
-        pagination: {
-            offset: calculateOffset(currentPage, calendarsData.value?.pagination),
+async function listCalendars(currentPage: number, signal: AbortSignal): Promise<ListCalendarsResponse> {
+    const response = await calendarStore.listCalendars(
+        {
+            pagination: {
+                offset: calculateOffset(currentPage, calendarsData.value?.pagination),
+            },
+            onlyPublic: false,
+            calendarIds: [],
         },
-        onlyPublic: false,
-        calendarIds: [],
-    });
+        { abort: signal },
+    );
 
     if (activeCalendarIds.value.length === 0) {
         activeCalendarIds.value = response.calendars.map((calendar) => calendar.id);

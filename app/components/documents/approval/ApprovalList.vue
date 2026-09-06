@@ -28,15 +28,20 @@ const { can } = useAuth();
 
 const approvalClient = await getDocumentsApprovalClient();
 
-const { data, status, error, refresh } = useLazyAsyncData(`approval-drawer-${props.documentId}-approvals`, () =>
-    listApprovals(),
+const { data, status, error, refresh } = useAuthedLazyAsyncData(
+    'userState',
+    `approval-drawer-${props.documentId}-approvals`,
+    ({ signal }) => listApprovals(signal),
 );
 
-async function listApprovals(): Promise<ListApprovalsResponse> {
+async function listApprovals(signal: AbortSignal): Promise<ListApprovalsResponse> {
     try {
-        const call = approvalClient.listApprovals({
-            documentId: props.documentId,
-        });
+        const call = approvalClient.listApprovals(
+            {
+                documentId: props.documentId,
+            },
+            { abort: signal },
+        );
         const { response } = await call;
 
         return response;

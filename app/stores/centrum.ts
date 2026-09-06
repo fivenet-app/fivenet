@@ -32,7 +32,6 @@ export const useCentrumStore = defineStore(
     () => {
         const notifications = useNotificationsStore();
 
-        // State
         const error = ref<RpcError | undefined>(undefined);
         const abort = ref<AbortController | undefined>(undefined);
         const cleanupIntervalId = ref<ReturnType<typeof setInterval> | undefined>(undefined);
@@ -86,7 +85,6 @@ export const useCentrumStore = defineStore(
             return status === StatusDispatch.UNIT_ASSIGNED || status === StatusDispatch.UNIT_UNASSIGNED;
         };
 
-        // Getters
         /**
          * Gets the current mode of the centrum.
          * @returns {CentrumMode} The current mode of the centrum.
@@ -152,7 +150,7 @@ export const useCentrumStore = defineStore(
          */
         const getSortedOwnDispatches = computed<number[]>(() => {
             // Sort descending
-            return ownDispatches.value.sort((a, b) => b - a);
+            return [...ownDispatches.value].sort((a, b) => b - a);
         });
 
         /**
@@ -165,8 +163,6 @@ export const useCentrumStore = defineStore(
                 settings.value.effectiveAccess.dispatches.jobs.length > 0
             );
         });
-
-        // Actions
 
         /**
          * Sets or updates the centrum settings.
@@ -478,17 +474,21 @@ export const useCentrumStore = defineStore(
 
             const { activeChar } = useAuth();
 
-            abort.value = new AbortController();
+            // Reserve the stream slot before awaiting client creation so concurrent
+            // callers cannot start duplicate streams.
+            const streamAbort = new AbortController();
+            abort.value = streamAbort;
             error.value = undefined;
 
             if (!cleanupIntervalId.value) {
                 cleanupIntervalId.value = setInterval(() => cleanup(), cleanupInterval);
             }
 
-            const centrumCentrumClient = await getCentrumCentrumClient();
-
             try {
-                currentStream = centrumCentrumClient.stream({}, { abort: abort.value.signal });
+                const centrumCentrumClient = await getCentrumCentrumClient();
+                if (abort.value !== streamAbort || streamAbort.signal.aborted) return;
+
+                currentStream = centrumCentrumClient.stream({}, { abort: streamAbort.signal });
 
                 for await (const respRaw of currentStream.responses) {
                     // The gRPC stream may yield unknown, so cast to the expected type
@@ -726,13 +726,17 @@ export const useCentrumStore = defineStore(
                         logger.warn('Unknown change received - oneofKind:' + resp.change.oneofKind);
                     }
                 }
+
+                if (abort.value === streamAbort && !streamAbort.signal.aborted && !stopping.value) {
+                    await restartStream();
+                }
             } catch (e) {
                 const rpcError = e as RpcError;
 
                 // Handle stream cancellation or abortion
                 if (rpcError.code === 'CANCELLED' || rpcError.code === 'ABORTED') {
                     error.value = undefined;
-                    if (!abort.value?.signal.aborted) {
+                    if (abort.value === streamAbort && !streamAbort.signal.aborted) {
                         await restartStream();
                     }
                     return;
@@ -763,7 +767,7 @@ export const useCentrumStore = defineStore(
                 // Log and handle other errors
                 logger.error('Stream failed', rpcError.code, rpcError.message, rpcError.cause);
 
-                if (abort.value && !abort.value.signal.aborted) {
+                if (abort.value === streamAbort && !streamAbort.signal.aborted) {
                     await restartStream();
                 } else {
                     error.value = rpcError;
@@ -795,6 +799,7 @@ export const useCentrumStore = defineStore(
             acls.value?.dispatches?.jobs.forEach((job) => settingsStore.removeLivemapLayer(`dispatches_job_${job.job}`));
 
             abort.value = undefined;
+            currentStream = undefined;
         };
 
         /**
@@ -1034,7 +1039,6 @@ export const useCentrumStore = defineStore(
         };
 
         return {
-            // State
             error,
             abort,
             cleanupIntervalId,
@@ -1053,7 +1057,6 @@ export const useCentrumStore = defineStore(
             pendingDispatches,
             isCenter,
 
-            // Getters
             getCurrentMode,
             getJobDispatchers,
             anyDispatchersActive,
@@ -1063,7 +1066,6 @@ export const useCentrumStore = defineStore(
             getSortedOwnDispatches,
             isMultiJob,
 
-            // Actions
             setOrUpdateSettings,
             addOrUpdateUnit,
             updateUnitStatus,

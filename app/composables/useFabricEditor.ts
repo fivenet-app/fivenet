@@ -93,7 +93,6 @@ function createFabricEditor() {
     const MIN_ZOOM = 0.1;
     const MAX_ZOOM = 3.0;
 
-    // State
     const canvas = shallowRef<Canvas | null>(null);
     const canvasEl = ref<HTMLCanvasElement | null>(null);
     const canvasContainer = ref<HTMLElement | null>(null);
@@ -133,7 +132,6 @@ function createFabricEditor() {
 
     const clampZoom = (value: number) => Math.min(MAX_ZOOM, Math.max(MIN_ZOOM, value));
 
-    // Methods
     const createBorder = () => {
         const box = new Rect({
             left: 0,

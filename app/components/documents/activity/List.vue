@@ -18,17 +18,22 @@ const page = useRouteQuery('page', '1', { transform: Number });
 
 const documentActivityKey = computed(() => `document-${props.documentId}-${page.value}`);
 
-const { data, status, refresh, error } = useLazyAsyncData(documentActivityKey, () => listDocumentActivity());
+const { data, status, refresh, error } = useAuthedLazyAsyncData('userState', documentActivityKey, ({ signal }) =>
+    listDocumentActivity(signal),
+);
 
-async function listDocumentActivity(): Promise<ListDocumentActivityResponse> {
+async function listDocumentActivity(signal: AbortSignal): Promise<ListDocumentActivityResponse> {
     try {
-        const call = documentsDocumentsClient.listDocumentActivity({
-            pagination: {
-                offset: calculateOffset(page.value, data.value?.pagination),
+        const call = documentsDocumentsClient.listDocumentActivity(
+            {
+                pagination: {
+                    offset: calculateOffset(page.value, data.value?.pagination),
+                },
+                documentId: props.documentId,
+                activityTypes: [],
             },
-            documentId: props.documentId,
-            activityTypes: [],
-        });
+            { abort: signal },
+        );
         const { response } = await call;
 
         return response;

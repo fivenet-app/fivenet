@@ -73,20 +73,25 @@ const { validatedQuery, commitValidatedQuery } = useFormSearchValidation<typeof 
 
 const documentsKey = computed(() => `citizeninfo-documents-${props.userId}-${JSON.stringify(validatedQuery.value)}`);
 
-const { data, status, refresh, error } = useLazyAsyncData(documentsKey, () => listUserDocuments(validatedQuery.value));
+const { data, status, refresh, error } = useAuthedLazyAsyncData('userState', documentsKey, ({ signal }) =>
+    listUserDocuments(validatedQuery.value, signal),
+);
 
-async function listUserDocuments(values: Schema): Promise<ListUserDocumentsResponse> {
+async function listUserDocuments(values: Schema, signal: AbortSignal): Promise<ListUserDocumentsResponse> {
     try {
-        const call = documentsDocumentsClient.listUserDocuments({
-            pagination: {
-                offset: calculateOffset(values.page, data.value?.pagination),
+        const call = documentsDocumentsClient.listUserDocuments(
+            {
+                pagination: {
+                    offset: calculateOffset(values.page, data.value?.pagination),
+                },
+                sort: values.sorting,
+                userId: props.userId,
+                relations: values.relations,
+                closed: values.closed,
+                includeCreated: values.includeCreated,
             },
-            sort: values.sorting,
-            userId: props.userId,
-            relations: values.relations,
-            closed: values.closed,
-            includeCreated: values.includeCreated,
-        });
+            { abort: signal },
+        );
         const { response } = await call;
 
         return response;

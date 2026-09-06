@@ -31,13 +31,18 @@ const {
     status,
     refresh,
     error,
-} = useLazyAsyncData(`document-${props.documentId}-references`, () => getDocumentReferences());
+} = useAuthedLazyAsyncData('userState', `document-${props.documentId}-references`, ({ signal }) =>
+    getDocumentReferences(signal),
+);
 
-async function getDocumentReferences(): Promise<DocumentReference[]> {
+async function getDocumentReferences(signal: AbortSignal): Promise<DocumentReference[]> {
     try {
-        const call = documentsDocumentsClient.getDocumentReferences({
-            documentId: props.documentId,
-        });
+        const call = documentsDocumentsClient.getDocumentReferences(
+            {
+                documentId: props.documentId,
+            },
+            { abort: signal },
+        );
         const { response } = await call;
 
         return response.references;

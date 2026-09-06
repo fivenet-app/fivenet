@@ -42,7 +42,7 @@ const {
     status: membersStatus,
     error: membersError,
     refresh: refreshMembers,
-} = useLazyAsyncData(membersKey, () => listGroupMembers(), {
+} = useAuthedLazyAsyncData('userState', membersKey, ({ signal }) => listGroupMembers(signal), {
     watch: [() => props.groupId, page],
 });
 
@@ -57,19 +57,22 @@ const sourceItems = computed(() =>
         })),
 );
 
-async function listGroupMembers(): Promise<ListGroupMembersResponse> {
-    const { response } = await jobsGroupsClient.listGroupMembers({
-        groupId: props.groupId,
-        pagination: {
-            offset: calculateOffset(page.value, membersData.value?.pagination),
+async function listGroupMembers(signal: AbortSignal): Promise<ListGroupMembersResponse> {
+    const { response } = await jobsGroupsClient.listGroupMembers(
+        {
+            groupId: props.groupId,
+            pagination: {
+                offset: calculateOffset(page.value, membersData.value?.pagination),
+            },
+            sort: { columns: [{ id: 'user_id', desc: false }] },
+            search: state.search.trim() || undefined,
+            includeExcluded: true,
+            includeLeaders: true,
+            includeReasons: true,
+            sources: state.sources,
         },
-        sort: { columns: [{ id: 'user_id', desc: false }] },
-        search: state.search.trim() || undefined,
-        includeExcluded: true,
-        includeLeaders: true,
-        includeReasons: true,
-        sources: state.sources,
-    });
+        { abort: signal },
+    );
 
     return response;
 }

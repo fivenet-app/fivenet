@@ -65,9 +65,11 @@ const { validatedQuery, commitValidatedQuery } = useFormSearchValidation<typeof 
 
 const citizensKey = computed(() => `citizens-${JSON.stringify(validatedQuery.value)}`);
 
-const { data, status, refresh, error } = useLazyAsyncData(citizensKey, () => listCitizens(validatedQuery.value));
+const { data, status, refresh, error } = useAuthedLazyAsyncData('userState', citizensKey, ({ signal }) =>
+    listCitizens(validatedQuery.value, signal),
+);
 
-async function listCitizens(values: Schema): Promise<ListCitizensResponse> {
+async function listCitizens(values: Schema, signal: AbortSignal): Promise<ListCitizensResponse> {
     try {
         const req: ListCitizensRequest = {
             pagination: {
@@ -98,7 +100,7 @@ async function listCitizens(values: Schema): Promise<ListCitizensResponse> {
             req.maxHeight = values.height[1];
         }
 
-        const call = citizensCitizensClient.listCitizens(req);
+        const call = citizensCitizensClient.listCitizens(req, { abort: signal });
         const { response } = await call;
 
         return response;
@@ -490,6 +492,7 @@ defineShortcuts({
                 <template #name-cell="{ row }">
                     <div class="inline-flex items-center gap-1 text-highlighted">
                         <ProfilePictureImg
+                            :key="`${row.original.userId}-${row.original.props?.mugshot?.filePath}`"
                             :src="row.original.props?.mugshot?.filePath"
                             :name="`${row.original.firstname} ${row.original.lastname}`"
                             :alt="$t('common.mugshot')"

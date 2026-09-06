@@ -15,7 +15,9 @@ import {
 const props = defineProps<NodeViewProps>();
 
 const completorStore = useCompletorStore();
-const { data: lawBooks, refresh } = useLazyAsyncData(`lawbooks`, () => completorStore.listLawBooks());
+const { data: lawBooks, refresh } = useAuthedLazyAsyncData('userState', `lawbooks`, ({ signal }) =>
+    completorStore.listLawBooks(false, { abort: signal }),
+);
 
 const selectedPenalties = useState<SelectedPenalty[]>('quickButton:penaltyCalculator:selected', () => [] as SelectedPenalty[]);
 const reduction = useState<number>('quickButton:penaltyCalculator:reduction', () => 0);

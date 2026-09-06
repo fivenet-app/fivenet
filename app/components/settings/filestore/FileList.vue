@@ -41,16 +41,24 @@ const { validatedQuery, commitValidatedQuery } = useFormSearchValidation<typeof 
 
 const filesKey = computed(() => `files-${validatedQuery.value.page}-${validatedQuery.value.prefix}`);
 
-const { data: files, status, refresh, error } = useLazyAsyncData(filesKey, () => listFiles(validatedQuery.value));
+const {
+    data: files,
+    status,
+    refresh,
+    error,
+} = useAuthedLazyAsyncData('capabilities', filesKey, ({ signal }) => listFiles(validatedQuery.value, signal));
 
-async function listFiles(values: Schema): Promise<ListFilesResponse> {
+async function listFiles(values: Schema, signal: AbortSignal): Promise<ListFilesResponse> {
     try {
-        const { response } = filestoreFilestoreClient.listFiles({
-            pagination: {
-                offset: calculateOffset(values.page, files.value?.pagination),
+        const { response } = filestoreFilestoreClient.listFiles(
+            {
+                pagination: {
+                    offset: calculateOffset(values.page, files.value?.pagination),
+                },
+                path: values.prefix,
             },
-            path: values.prefix,
-        });
+            { abort: signal },
+        );
 
         return response;
     } catch (e) {

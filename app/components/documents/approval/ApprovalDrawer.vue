@@ -40,12 +40,15 @@ const {
     status,
     error,
     refresh,
-} = useLazyAsyncData(`documents-approval-policy-${props.documentId}`, () => getPolicy());
+} = useAuthedLazyAsyncData('userState', `documents-approval-policy-${props.documentId}`, ({ signal }) => getPolicy(signal));
 
-async function getPolicy(): Promise<ApprovalPolicy | undefined> {
-    const call = approvalClient.listApprovalPolicies({
-        documentId: props.documentId,
-    });
+async function getPolicy(signal: AbortSignal): Promise<ApprovalPolicy | undefined> {
+    const call = approvalClient.listApprovalPolicies(
+        {
+            documentId: props.documentId,
+        },
+        { abort: signal },
+    );
     const { response } = await call;
 
     if (docMeta.value === undefined) {

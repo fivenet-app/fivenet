@@ -26,16 +26,19 @@ const { can } = useAuth();
 
 const stampsClient = await getDocumentsStampsClient();
 
-const { data, status, error, refresh } = useLazyAsyncData(`documents-approvals-${JSON.stringify({})}`, () =>
-    listApprovalTasks(),
+const { data, status, error, refresh } = useAuthedLazyAsyncData('userState', 'documents-stamps', ({ signal }) =>
+    listApprovalTasks(signal),
 );
 
-async function listApprovalTasks(): Promise<ListUsableStampsResponse> {
-    const call = stampsClient.listUsableStamps({
-        pagination: {
-            offset: 0,
+async function listApprovalTasks(signal: AbortSignal): Promise<ListUsableStampsResponse> {
+    const call = stampsClient.listUsableStamps(
+        {
+            pagination: {
+                offset: 0,
+            },
         },
-    });
+        { abort: signal },
+    );
     const { response } = await call;
 
     return response;

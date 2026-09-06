@@ -28,11 +28,14 @@ defineEmits<{
 
 const { t, te } = useI18n();
 
-async function getEffectivePermissions(roleId: number): Promise<GetEffectivePermissionsResponse> {
+async function getEffectivePermissions(roleId: number, signal: AbortSignal): Promise<GetEffectivePermissionsResponse> {
     try {
-        const call = settingsSettingsClient.getEffectivePermissions({
-            roleId: roleId,
-        });
+        const call = settingsSettingsClient.getEffectivePermissions(
+            {
+                roleId: roleId,
+            },
+            { abort: signal },
+        );
         const { response } = await call;
 
         permList.value = response.permissions;
@@ -52,7 +55,9 @@ const {
     status,
     refresh,
     error,
-} = useLazyAsyncData(`settings-roles-${props.roleId}-effective`, () => getEffectivePermissions(props.roleId));
+} = useAuthedLazyAsyncData('capabilities', `settings-roles-${props.roleId}-effective`, ({ signal }) =>
+    getEffectivePermissions(props.roleId, signal),
+);
 
 const permList = ref<Permission[]>([]);
 const permNamespaces = ref<PermissionNamespaceGroup[]>([]);

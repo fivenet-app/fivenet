@@ -24,13 +24,21 @@ const { listJobs } = completorStore;
 
 const settingsSettingsClient = await getSettingsSettingsClient();
 
-const { data: roles, status, refresh, error } = useLazyAsyncData('settings-attrs-roles', () => getRoles());
+const {
+    data: roles,
+    status,
+    refresh,
+    error,
+} = useAuthedLazyAsyncData('capabilities', 'settings-attrs-roles', ({ signal }) => getRoles(signal));
 
-async function getRoles(): Promise<Role[]> {
+async function getRoles(signal: AbortSignal): Promise<Role[]> {
     try {
-        const call = settingsSettingsClient.getRoles({
-            lowestRank: true,
-        });
+        const call = settingsSettingsClient.getRoles(
+            {
+                lowestRank: true,
+            },
+            { abort: signal },
+        );
         const { response } = await call;
 
         return response.roles;

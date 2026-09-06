@@ -55,25 +55,32 @@ const {
     status,
     refresh,
     error,
-} = useLazyAsyncData(`document-${props.documentId}-references-docs-${queryDoc.value}`, () => listDocuments());
+} = useAuthedLazyAsyncData(
+    'userState',
+    () => `document-${props.documentId}-references-docs-${queryDoc.value}`,
+    ({ signal }) => listDocuments(signal),
+);
 
 useDebouncedRefresh(queryDoc, refresh, {
     debounce: 200,
     maxWait: 1750,
 });
 
-async function listDocuments(): Promise<DocumentShort[]> {
+async function listDocuments(signal: AbortSignal): Promise<DocumentShort[]> {
     try {
-        const call = documentsDocumentsClient.listDocuments({
-            pagination: {
-                offset: 0,
-                pageSize: 8,
+        const call = documentsDocumentsClient.listDocuments(
+            {
+                pagination: {
+                    offset: 0,
+                    pageSize: 8,
+                },
+                search: queryDoc.value,
+                categoryIds: [],
+                creatorIds: [],
+                documentIds: [],
             },
-            search: queryDoc.value,
-            categoryIds: [],
-            creatorIds: [],
-            documentIds: [],
-        });
+            { abort: signal },
+        );
         const { response } = await call;
 
         return response.documents.filter(

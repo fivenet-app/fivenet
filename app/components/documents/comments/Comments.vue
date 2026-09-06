@@ -44,22 +44,26 @@ const documentsCommentsClient = await getDocumentsCommentsClient();
 
 const page = useRouteQuery('page', '1', { transform: Number });
 
-const { data, status, refresh, error } = useLazyAsyncData(
+const { data, status, refresh, error } = useAuthedLazyAsyncData(
+    'userState',
     `document-${props.documentId}-comments-${page.value}`,
-    () => getComments(),
+    ({ signal }) => getComments(signal),
     {
         immediate: false,
     },
 );
 
-async function getComments(): Promise<GetCommentsResponse> {
+async function getComments(signal: AbortSignal): Promise<GetCommentsResponse> {
     try {
-        const call = documentsCommentsClient.getComments({
-            pagination: {
-                offset: calculateOffset(page.value, data.value?.pagination),
+        const call = documentsCommentsClient.getComments(
+            {
+                pagination: {
+                    offset: calculateOffset(page.value, data.value?.pagination),
+                },
+                documentId: props.documentId,
             },
-            documentId: props.documentId,
-        });
+            { abort: signal },
+        );
         const { response } = await call;
 
         if (response.pagination) {

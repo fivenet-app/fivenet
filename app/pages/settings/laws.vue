@@ -31,7 +31,9 @@ const {
     status,
     refresh,
     error,
-} = useLazyAsyncData(`settings-laws`, () => settingsLawsClient.listLawBooks({}).then((resp) => resp.response.books));
+} = useAuthedLazyAsyncData('capabilities', 'settings-laws', ({ signal }) =>
+    settingsLawsClient.listLawBooks({}, { abort: signal }).then((resp) => resp.response.books),
+);
 
 const lawBookListRef = useTemplateRef('lawBookListRef');
 

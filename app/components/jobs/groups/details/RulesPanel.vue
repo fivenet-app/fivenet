@@ -74,7 +74,7 @@ const {
     status: rulesStatus,
     error: rulesError,
     refresh: refreshRules,
-} = useLazyAsyncData(rulesKey, () => listGroupRules(), {
+} = useAuthedLazyAsyncData('userState', rulesKey, ({ signal }) => listGroupRules(signal), {
     watch: [() => props.groupId, page],
 });
 
@@ -122,13 +122,16 @@ const qualificationRuleTypeItems = computed(() => [
     { label: t('enums.jobs.groups.GroupQualificationRuleType.ANY'), value: GroupQualificationRuleType.ANY },
 ]);
 
-async function listGroupRules(): Promise<ListGroupRulesResponse> {
-    const { response } = await jobsGroupsClient.listGroupRules({
-        groupId: props.groupId,
-        pagination: {
-            offset: calculateOffset(page.value, rulesData.value?.pagination),
+async function listGroupRules(signal: AbortSignal): Promise<ListGroupRulesResponse> {
+    const { response } = await jobsGroupsClient.listGroupRules(
+        {
+            groupId: props.groupId,
+            pagination: {
+                offset: calculateOffset(page.value, rulesData.value?.pagination),
+            },
         },
-    });
+        { abort: signal },
+    );
 
     return response;
 }

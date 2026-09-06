@@ -103,20 +103,24 @@ const { hasUnsavedChanges, confirmLeave, syncSnapshot } = useSnapshotChanges(sta
         }),
 });
 
-const { data, status, error, refresh } = useLazyAsyncData(
+const { data, status, error, refresh } = useAuthedLazyAsyncData(
+    'userState',
     `citizens-label-${props.labelId}`,
-    () => getCitizenLabel(props.labelId!),
+    ({ signal }) => getCitizenLabel(props.labelId!, signal),
     {
         immediate: !!props.labelId,
         watch: [() => props.labelId],
     },
 );
 
-async function getCitizenLabel(labelId: number): Promise<GetLabelResponse> {
+async function getCitizenLabel(labelId: number, signal: AbortSignal): Promise<GetLabelResponse> {
     try {
-        const { response } = await citizensLabelsClient.getLabel({
-            id: labelId,
-        });
+        const { response } = await citizensLabelsClient.getLabel(
+            {
+                id: labelId,
+            },
+            { abort: signal },
+        );
 
         if (!response?.label) return response;
 

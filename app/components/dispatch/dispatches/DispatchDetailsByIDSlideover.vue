@@ -17,9 +17,11 @@ const { dispatches } = storeToRefs(centrumStore);
 
 const centrumDispatchesClient = await getCentrumDispatchesClient();
 
-const { data, refresh } = useLazyAsyncData(`centrum-dispatch-${props.dispatchId}`, () => getDispatch(props.dispatchId));
+const { data, refresh } = useAuthedLazyAsyncData('userState', `centrum-dispatch-${props.dispatchId}`, ({ signal }) =>
+    getDispatch(props.dispatchId, signal),
+);
 
-async function getDispatch(id: number): Promise<GetDispatchResponse> {
+async function getDispatch(id: number, signal: AbortSignal): Promise<GetDispatchResponse> {
     if (dispatches.value.has(id)) {
         return {
             dispatch: dispatches.value.get(id),
@@ -27,7 +29,7 @@ async function getDispatch(id: number): Promise<GetDispatchResponse> {
     }
 
     try {
-        const call = centrumDispatchesClient.getDispatch({ id });
+        const call = centrumDispatchesClient.getDispatch({ id }, { abort: signal });
         const { response } = await call;
 
         return response;

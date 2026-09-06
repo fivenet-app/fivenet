@@ -54,12 +54,13 @@ const {
     refresh,
     error,
     status,
-} = useLazyAsyncData(
+} = useAuthedLazyAsyncData(
+    'userState',
     `calendar-entry:${entryId}`,
-    async () => {
+    async ({ signal }) => {
         if (!entryId) return props.entry;
 
-        return await calendarStore.getCalendarEntry({ entryId });
+        return await calendarStore.getCalendarEntry({ entryId }, { abort: signal });
     },
     {
         default: () => props.entry,
@@ -68,8 +69,8 @@ const {
 );
 
 const calendarDetails = props.entry
-    ? useLazyAsyncData(`calendar-entry-calendar:${props.entry.calendarId}`, () =>
-          calendarStore.getCalendar({ calendarId: props.entry!.calendarId }),
+    ? useAuthedLazyAsyncData('userState', `calendar-entry-calendar:${props.entry.calendarId}`, ({ signal }) =>
+          calendarStore.getCalendar({ calendarId: props.entry!.calendarId }, { abort: signal }),
       )
     : undefined;
 

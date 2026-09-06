@@ -28,11 +28,16 @@ const { streamerMode } = storeToRefs(settingsStore);
 
 const authAuthClient = await getAuthAuthClient();
 
-const { data: account, status, refresh, error } = useLazyAsyncData(`accountinfo`, () => getAccountInfo());
+const {
+    data: account,
+    status,
+    refresh,
+    error,
+} = useAuthedLazyAsyncData('account', 'account-info', ({ signal }) => getAccountInfo(signal));
 
-async function getAccountInfo(): Promise<GetAccountInfoResponse> {
+async function getAccountInfo(signal: AbortSignal): Promise<GetAccountInfoResponse> {
     try {
-        const call = authAuthClient.getAccountInfo({});
+        const call = authAuthClient.getAccountInfo({}, { abort: signal });
         const { response } = await call;
 
         return response;

@@ -51,7 +51,7 @@ const {
     status,
     refresh,
     error,
-} = useLazyAsyncData(`settings-limiter-${props.job}`, () => getJobLimits(props.job));
+} = useAuthedLazyAsyncData('capabilities', `settings-limiter-${props.job}`, ({ signal }) => getJobLimits(props.job, signal));
 
 const completorStore = useCompletorStore();
 const { jobs } = storeToRefs(completorStore);
@@ -69,11 +69,14 @@ const permStates = ref(new Map<number, boolean | undefined>());
 
 const attrList = ref<RoleAttribute[]>([]);
 
-async function getJobLimits(job: string): Promise<GetJobLimitsResponse> {
+async function getJobLimits(job: string, signal: AbortSignal): Promise<GetJobLimitsResponse> {
     try {
-        const call = settingsSystemClient.getJobLimits({
-            job: job,
-        });
+        const call = settingsSystemClient.getJobLimits(
+            {
+                job: job,
+            },
+            { abort: signal },
+        );
         const { response } = await call;
 
         return response;

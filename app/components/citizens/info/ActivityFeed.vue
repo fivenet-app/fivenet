@@ -71,18 +71,23 @@ const { validatedQuery, commitValidatedQuery } = useFormSearchValidation<typeof 
 
 const activityKey = computed(() => `citizeninfo-activity-${props.userId}-${JSON.stringify(validatedQuery.value)}`);
 
-const { data, status, refresh, error } = useLazyAsyncData(activityKey, () => listUserActivity(validatedQuery.value));
+const { data, status, refresh, error } = useAuthedLazyAsyncData('userState', activityKey, ({ signal }) =>
+    listUserActivity(validatedQuery.value, signal),
+);
 
-async function listUserActivity(values: Schema): Promise<ListUserActivityResponse> {
+async function listUserActivity(values: Schema, signal: AbortSignal): Promise<ListUserActivityResponse> {
     try {
-        const call = citizensCitizensClient.listUserActivity({
-            pagination: {
-                offset: calculateOffset(values.page, data.value?.pagination),
+        const call = citizensCitizensClient.listUserActivity(
+            {
+                pagination: {
+                    offset: calculateOffset(values.page, data.value?.pagination),
+                },
+                sort: values.sorting,
+                userId: props.userId,
+                types: values.types,
             },
-            sort: values.sorting,
-            userId: props.userId,
-            types: values.types,
-        });
+            { abort: signal },
+        );
         const { response } = await call;
 
         return response;

@@ -22,17 +22,21 @@ const { location: storeLocation } = storeToRefs(livemapStore);
 
 const centrumDispatchesClient = await getCentrumDispatchesClient();
 
-const { data: dispatchTargetJobs } = useLazyAsyncData('centrum-dispatches-target-jobs', async () => {
-    try {
-        const call = centrumDispatchesClient.listDispatchTargetJobs({});
-        const { response } = await call;
+const { data: dispatchTargetJobs } = useAuthedLazyAsyncData(
+    'userState',
+    'centrum-dispatches-target-jobs',
+    async ({ signal }) => {
+        try {
+            const call = centrumDispatchesClient.listDispatchTargetJobs({}, { abort: signal });
+            const { response } = await call;
 
-        return response.jobs ?? [];
-    } catch (e) {
-        handleGRPCError(e as RpcError);
-        throw e;
-    }
-});
+            return response.jobs ?? [];
+        } catch (e) {
+            handleGRPCError(e as RpcError);
+            throw e;
+        }
+    },
+);
 
 const schema = z.object({
     message: z.coerce.string().min(3).max(255),

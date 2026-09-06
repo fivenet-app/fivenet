@@ -6,14 +6,12 @@ import { defineStore } from 'pinia';
 export const useUIStateStore = defineStore(
     'uiState',
     () => {
-        // State
         /**
          * Tracks window focus state (true if focused, false otherwise)
          */
         const windowFocus = useWindowFocus();
 
         return {
-            // State
             windowFocus,
         };
     },

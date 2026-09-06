@@ -26,12 +26,15 @@ const { width } = useElementSize(cardRef);
 
 const canSubmit = ref<boolean>(true);
 
-async function getColleagueLabelsStats(): Promise<GetColleagueLabelsStatsResponse> {
+async function getColleagueLabelsStats(signal: AbortSignal): Promise<GetColleagueLabelsStatsResponse> {
     canSubmit.value = false;
     try {
-        const { response } = await jobsColleaguesClient.getColleagueLabelsStats({
-            labelIds: [],
-        });
+        const { response } = await jobsColleaguesClient.getColleagueLabelsStats(
+            {
+                labelIds: [],
+            },
+            { abort: signal },
+        );
 
         return response;
     } catch (e) {
@@ -45,8 +48,8 @@ const {
     status,
     error,
     refresh,
-} = useLazyAsyncData('jobs-colleagues-labels-stats', () =>
-    getColleagueLabelsStats().finally(() => useTimeoutFn(() => (canSubmit.value = true), 400)),
+} = useAuthedLazyAsyncData('userState', 'jobs-colleagues-labels-stats', ({ signal }) =>
+    getColleagueLabelsStats(signal).finally(() => useTimeoutFn(() => (canSubmit.value = true), 400)),
 );
 
 const showTreeMap = ref(false);

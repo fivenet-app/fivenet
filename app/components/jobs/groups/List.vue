@@ -84,7 +84,12 @@ const listKey = computed(
         `jobs-groups-${validatedQuery.value.page}-${validatedQuery.value.status}-${validatedQuery.value.kind}-${validatedQuery.value.search}-${JSON.stringify(validatedQuery.value.sorting)}`,
 );
 
-const { data, status: requestStatus, refresh, error } = useLazyAsyncData(listKey, () => listGroups(validatedQuery.value));
+const {
+    data,
+    status: requestStatus,
+    refresh,
+    error,
+} = useAuthedLazyAsyncData('userState', listKey, ({ signal }) => listGroups(validatedQuery.value, signal));
 
 const editorModal = overlay.create(EditorModal);
 const detailsSlideover = overlay.create(DetailsSlideover);
@@ -154,7 +159,7 @@ const columns = computed<TableColumn<Group>[]>(() => [
     },
 ]);
 
-async function listGroups(values: Schema): Promise<ListGroupsResponse> {
+async function listGroups(values: Schema, signal: AbortSignal): Promise<ListGroupsResponse> {
     try {
         const statusStates =
             values.status === 'active'
@@ -173,19 +178,22 @@ async function listGroups(values: Schema): Promise<ListGroupsResponse> {
                     ? GroupType.SMART
                     : GroupType.MIXED;
 
-        const { response } = await jobsGroupsClient.listGroups({
-            pagination: {
-                offset: calculateOffset(values.page, data.value?.pagination),
+        const { response } = await jobsGroupsClient.listGroups(
+            {
+                pagination: {
+                    offset: calculateOffset(values.page, data.value?.pagination),
+                },
+                sort: values.sorting,
+                search: values.search.trim() ? values.search.trim() : undefined,
+                states: statusStates,
+                kind,
+                includeCounts: true,
+                includeInactive: values.status === 'all' || values.status === 'inactive',
+                includeArchived: values.status === 'all' || values.status === 'archived',
+                groupIds: [],
             },
-            sort: values.sorting,
-            search: values.search.trim() ? values.search.trim() : undefined,
-            states: statusStates,
-            kind,
-            includeCounts: true,
-            includeInactive: values.status === 'all' || values.status === 'inactive',
-            includeArchived: values.status === 'all' || values.status === 'archived',
-            groupIds: [],
-        });
+            { abort: signal },
+        );
 
         return response;
     } catch (e) {

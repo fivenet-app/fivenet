@@ -10,7 +10,9 @@ const props = defineProps<{
 }>();
 
 const completorStore = useCompletorStore();
-const { data: lawBooks } = useLazyAsyncData(`lawbooks`, () => completorStore.listLawBooks());
+const { data: lawBooks } = useAuthedLazyAsyncData('userState', `lawbooks`, ({ signal }) =>
+    completorStore.listLawBooks(false, { abort: signal }),
+);
 
 const documentData = inject<ComputedRef<DocumentData | undefined> | Ref<DocumentData | undefined>>('documents:content:data');
 

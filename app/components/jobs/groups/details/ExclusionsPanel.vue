@@ -58,7 +58,7 @@ const {
     status: exclusionsStatus,
     error: exclusionsError,
     refresh: refreshExclusions,
-} = useLazyAsyncData(exclusionsKey, () => listGroupMemberExclusions(), {
+} = useAuthedLazyAsyncData('userState', exclusionsKey, ({ signal }) => listGroupMemberExclusions(signal), {
     watch: [() => props.groupId, page],
 });
 
@@ -80,13 +80,16 @@ const exclusionReasonItems = computed(() => [
     { label: t('enums.jobs.groups.GroupExclusionReason.OTHER'), value: GroupExclusionReason.OTHER },
 ]);
 
-async function listGroupMemberExclusions(): Promise<ListGroupMemberExclusionsResponse> {
-    const { response } = await jobsGroupsClient.listGroupMemberExclusions({
-        groupId: props.groupId,
-        pagination: {
-            offset: calculateOffset(page.value, exclusionsData.value?.pagination),
+async function listGroupMemberExclusions(signal: AbortSignal): Promise<ListGroupMemberExclusionsResponse> {
+    const { response } = await jobsGroupsClient.listGroupMemberExclusions(
+        {
+            groupId: props.groupId,
+            pagination: {
+                offset: calculateOffset(page.value, exclusionsData.value?.pagination),
+            },
         },
-    });
+        { abort: signal },
+    );
 
     return response;
 }

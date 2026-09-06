@@ -135,9 +135,10 @@ const {
     status,
     refresh,
     error,
-} = useLazyAsyncData(
+} = useAuthedLazyAsyncData(
+    'userState',
     `calendar-calendar:${props.calendarId}`,
-    () => calendarStore.getCalendar({ calendarId: props.calendarId! }),
+    ({ signal }) => calendarStore.getCalendar({ calendarId: props.calendarId! }, { abort: signal }),
     {
         immediate: !!props.calendarId,
     },

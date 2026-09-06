@@ -97,20 +97,23 @@ const {
     error,
     status,
     refresh,
-} = await useLazyAsyncData(`conduct-entry-${props.entryId ?? 'new'}`, async () => {
+} = useAuthedLazyAsyncData('userState', `conduct-entry-${props.entryId ?? 'new'}`, async ({ signal }) => {
     if (!props.entryId) {
-        const call = jobsConductClient.createConductEntry({
-            entry: {
-                id: 0,
-                targetUserId: props.userId ?? 0,
-                job: '',
-                creatorId: activeChar.value?.userId ?? 0,
-                type: ConductType.NOTE,
-                draft: true,
-                message: tiptapToContent(),
-                files: [],
+        const call = jobsConductClient.createConductEntry(
+            {
+                entry: {
+                    id: 0,
+                    targetUserId: props.userId ?? 0,
+                    job: '',
+                    creatorId: activeChar.value?.userId ?? 0,
+                    type: ConductType.NOTE,
+                    draft: true,
+                    message: tiptapToContent(),
+                    files: [],
+                },
             },
-        });
+            { abort: signal },
+        );
         const { response } = await call;
 
         emit('created', response.entry!);
@@ -118,7 +121,7 @@ const {
         return response.entry;
     }
 
-    const call = jobsConductClient.getConductEntry({ id: props.entryId });
+    const call = jobsConductClient.getConductEntry({ id: props.entryId }, { abort: signal });
     const { response } = await call;
 
     return response.entry;

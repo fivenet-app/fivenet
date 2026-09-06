@@ -6,7 +6,6 @@ import GenericImg from '~/components/partials/elements/GenericImg.vue';
 import { pageToURL } from '~/components/wiki/helpers';
 import RefreshButton from '~/components/partials/RefreshButton.vue';
 import PageSearch from '~/components/wiki/PageSearch.vue';
-import type { PageShort } from '~~/gen/ts/resources/wiki/page';
 
 useHead({
     title: 'common.wiki',
@@ -22,15 +21,21 @@ const { activeChar, can } = useAuth();
 
 const { listPages: listWikiPages } = await useWikiWiki();
 
-const { data: pages, status, refresh, error } = useLazyAsyncData(`wiki-pages-index`, () => listPages());
-
-async function listPages(): Promise<PageShort[]> {
-    const response = await listWikiPages({
-        pagination: {
-            offset: 0,
+const {
+    data: pages,
+    status,
+    refresh,
+    error,
+} = useAuthedLazyAsyncData('userState', 'wiki-pages-index', async ({ signal }) => {
+    const response = await listWikiPages(
+        {
+            pagination: {
+                offset: 0,
+            },
+            rootOnly: true,
         },
-        rootOnly: true,
-    });
+        { abort: signal },
+    );
 
     const pages = response.pages.sort((a, b) => (a.jobLabel ?? a.job).localeCompare(b.jobLabel ?? b.job));
     if (pages.length > 0) {
@@ -39,7 +44,7 @@ async function listPages(): Promise<PageShort[]> {
     }
 
     return pages;
-}
+});
 
 watch(pages, async () => {
     if (!pages.value) return;
