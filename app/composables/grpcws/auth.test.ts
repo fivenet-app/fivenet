@@ -2,37 +2,32 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { getGrpcCharacterAuthToken, getGrpcWebsocketAuthToken } from './auth';
 
 const mocks = vi.hoisted(() => ({
-    activeChar: { value: null as unknown | null },
-    authUserTokenKey: 'fivenet:user_token_v1',
+    token: null as string | null,
 }));
 
-vi.mock('../useAuth', () => ({
-    useAuth: () => ({
-        activeChar: mocks.activeChar,
+vi.mock('~/stores/auth_session', () => ({
+    useAuthSessionStore: () => ({
+        getUserToken: () => mocks.token,
     }),
 }));
 
 describe('grpc auth token accessors', () => {
     beforeEach(() => {
-        mocks.activeChar.value = null;
-        sessionStorage.clear();
+        mocks.token = null;
     });
 
-    it('returns the stored token for character-scoped auth even when no character is selected', () => {
-        sessionStorage.setItem(mocks.authUserTokenKey, 'stale-char-token');
+    it('returns the in-memory token for character-scoped auth', () => {
+        mocks.token = 'char-token';
 
-        expect(getGrpcCharacterAuthToken()).toBe('stale-char-token');
+        expect(getGrpcCharacterAuthToken()).toBe('char-token');
     });
 
-    it('keeps websocket control auth tokenless in account-only mode', () => {
-        sessionStorage.setItem(mocks.authUserTokenKey, 'stale-char-token');
-
+    it('keeps websocket auth tokenless without a character session', () => {
         expect(getGrpcWebsocketAuthToken()).toBeNull();
     });
 
-    it('returns the stored websocket token when a character is selected', () => {
-        mocks.activeChar.value = { userId: 123 } as never;
-        sessionStorage.setItem(mocks.authUserTokenKey, 'char-token');
+    it('returns the in-memory websocket token when available', () => {
+        mocks.token = 'char-token';
 
         expect(getGrpcWebsocketAuthToken()).toBe('char-token');
     });

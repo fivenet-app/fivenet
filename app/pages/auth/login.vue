@@ -22,7 +22,6 @@ const { auth } = useAppConfig();
 const { t } = useI18n();
 
 const authStore = useAuthStore();
-const { username } = storeToRefs(authStore);
 
 const notifications = useNotificationsStore();
 
@@ -62,7 +61,18 @@ onMounted(async () => {
     if (query.u && query.u !== '') {
         logger.info('Got username via query param (oauth2 login)');
 
-        username.value = query.u as string;
+        const session = await authStore.ensureAccountSession();
+        if (session.kind !== 'ready') {
+            notifications.add({
+                title: { key: 'notifications.auth.oauth2_login.failed.title', parameters: {} },
+                description: {
+                    key: 'notifications.auth.oauth2_login.failed.content',
+                    parameters: { msg: 'Session unavailable' },
+                },
+                type: NotificationType.ERROR,
+            });
+            return;
+        }
 
         notifications.add({
             title: { key: 'notifications.auth.oauth2_login.success.title', parameters: {} },

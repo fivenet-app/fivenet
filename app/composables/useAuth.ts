@@ -11,6 +11,34 @@ export const jobAdminPermGuard = 'internal-superuser-jobadmin' as const;
 export const configAdminPermGuard = 'internal-superuser-configadmin' as const;
 export const todoPermGuard = 'todoservice-todomethod' as const;
 
+const authKeyPart = (value: number | string | boolean | null | undefined): string =>
+    encodeURIComponent(String(value ?? 'none'));
+
+export const authKeys = {
+    account: (accountId: number | null): string => `fivenet:account:${authKeyPart(accountId)}`,
+    character: (accountId: number | null, characterId: number | undefined): string =>
+        `${authKeys.account(accountId)}:character:${authKeyPart(characterId)}`,
+    capabilities: (
+        accountId: number | null,
+        characterId: number | undefined,
+        isSuperuser: boolean,
+        canBeSuperuser: boolean,
+        canBeConfigAdmin: boolean,
+    ): string =>
+        `${authKeys.character(accountId, characterId)}:superuser:${authKeyPart(isSuperuser)}:can-superuser:${authKeyPart(canBeSuperuser)}:config-admin:${authKeyPart(canBeConfigAdmin)}`,
+    userState: (
+        accountId: number | null,
+        characterId: number | undefined,
+        job: string | undefined,
+        grade: number | undefined,
+        isSuperuser: boolean,
+        canBeSuperuser: boolean,
+        canBeConfigAdmin: boolean,
+    ): string =>
+        `${authKeys.capabilities(accountId, characterId, isSuperuser, canBeSuperuser, canBeConfigAdmin)}:job:${authKeyPart(job)}:grade:${authKeyPart(grade)}`,
+    queryContext: (key: string, revision: number): string => `${key}:auth-revision:${authKeyPart(revision)}`,
+};
+
 // Wrapper around auth store to make live easier
 const _useAuth = () => {
     const authStore = useAuthStore();
@@ -24,6 +52,8 @@ const _useAuth = () => {
         attributes,
         canBeSuperuser,
         canBeConfigAdmin,
+        queryContext,
+        isQueryTransitioning,
     } = storeToRefs(authStore);
 
     function toGuardName(perm: string): string {
@@ -87,6 +117,44 @@ const _useAuth = () => {
             const input = typeof perm === 'string' ? [perm] : perm;
             return mode === 'all' ? input.every(canOne) : input.some(canOne);
         });
+    };
+
+    const keys = {
+        account: computed(() =>
+            authKeys.queryContext(authKeys.account(queryContext.value.accountId), queryContext.value.revision),
+        ),
+        character: computed(() =>
+            authKeys.queryContext(
+                authKeys.character(queryContext.value.accountId, queryContext.value.characterId),
+                queryContext.value.revision,
+            ),
+        ),
+        capabilities: computed(() =>
+            authKeys.queryContext(
+                authKeys.capabilities(
+                    queryContext.value.accountId,
+                    queryContext.value.characterId,
+                    queryContext.value.isSuperuser,
+                    queryContext.value.canBeSuperuser,
+                    queryContext.value.canBeConfigAdmin,
+                ),
+                queryContext.value.revision,
+            ),
+        ),
+        userState: computed(() =>
+            authKeys.queryContext(
+                authKeys.userState(
+                    queryContext.value.accountId,
+                    queryContext.value.characterId,
+                    queryContext.value.job,
+                    queryContext.value.grade,
+                    queryContext.value.isSuperuser,
+                    queryContext.value.canBeSuperuser,
+                    queryContext.value.canBeConfigAdmin,
+                ),
+                queryContext.value.revision,
+            ),
+        ),
     };
 
     function attr<P extends Perms, K extends PermAttrKey<P>>(perm: P, key: K, val: PermAttrValue<P, K>): ComputedRef<boolean>;
@@ -167,7 +235,6 @@ const _useAuth = () => {
     }
 
     return {
-        // Getters
         accountId,
         activeChar,
         canBeSuperuser,
@@ -175,6 +242,8 @@ const _useAuth = () => {
         isSuperuser,
         jobProps,
         username,
+        keys,
+        isQueryTransitioning,
 
         // Funcs
         can,

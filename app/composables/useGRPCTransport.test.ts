@@ -4,6 +4,7 @@ import { GrpcCombinedTransport } from './useGRPCTransport';
 const activeChar = { value: null as unknown | null };
 const accountId = { value: null as unknown | null };
 const userInfo = { accountId: null as number | null, userId: null as number | null };
+const userToken = { value: null as string | null };
 
 vi.mock('~/composables/useAuth', () => ({
     useAuth: () => ({
@@ -13,9 +14,9 @@ vi.mock('~/composables/useAuth', () => ({
 }));
 
 vi.mock('~/stores/auth_session', () => ({
-    authUserTokenKey: 'fivenet:user_token_v1',
     useAuthSessionStore: () => ({
         userInfo,
+        getUserToken: () => userToken.value,
     }),
 }));
 
@@ -52,11 +53,11 @@ describe('GrpcCombinedTransport auth headers', () => {
         accountId.value = null;
         userInfo.accountId = null;
         userInfo.userId = null;
-        sessionStorage.clear();
+        userToken.value = null;
     });
 
     it('keeps account-only unary calls tokenless when no character is active', () => {
-        sessionStorage.setItem(authUserTokenKey, 'stale-char-token');
+        userToken.value = 'stale-char-token';
         accountId.value = 123;
         userInfo.accountId = 999;
         const { transport, unaryClient } = createTransport();
@@ -74,7 +75,7 @@ describe('GrpcCombinedTransport auth headers', () => {
     });
 
     it('does not attach a token for choose-character restore when the character does not match', () => {
-        sessionStorage.setItem(authUserTokenKey, 'char-token');
+        userToken.value = 'char-token';
         accountId.value = 123;
         userInfo.accountId = 123;
         userInfo.userId = 456;
@@ -96,7 +97,7 @@ describe('GrpcCombinedTransport auth headers', () => {
         accountId.value = 123;
         userInfo.accountId = 123;
         userInfo.userId = 123;
-        sessionStorage.setItem(authUserTokenKey, 'char-token');
+        userToken.value = 'char-token';
         const { transport, unaryClient } = createTransport();
 
         transport.unary(

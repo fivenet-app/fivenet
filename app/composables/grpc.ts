@@ -21,9 +21,7 @@ function isErrorLike(err: unknown): err is Error {
 }
 
 function toError(err: unknown): Error {
-    if (isErrorLike(err)) {
-        return err;
-    }
+    if (isErrorLike(err)) return err;
 
     return new Error(typeof err === 'string' ? err : 'Unknown error');
 }
@@ -114,8 +112,14 @@ function applyTranslatedError(notification: Notification, message: string): void
     }
 }
 
-// Handle GRPC errors
-export async function handleGRPCError(err: unknown): Promise<boolean> {
+export type GRPCAuthScope = 'account' | 'character' | 'none';
+
+/**
+ * Reports an RPC failure and updates authentication state when the server has
+ * definitively rejected credentials. Route middleware owns all navigation;
+ * this function deliberately never redirects.
+ */
+export function handleGRPCError(err: unknown, options: { authScope?: GRPCAuthScope } = {}): boolean {
     if (err === undefined) return true;
 
     const error = toError(err);
@@ -151,8 +155,6 @@ export async function handleGRPCError(err: unknown): Promise<boolean> {
             return true;
         }
 
-        const route = useRoute();
-
         switch (code) {
             case 'INTERNAL':
                 break;
@@ -177,26 +179,22 @@ export async function handleGRPCError(err: unknown): Promise<boolean> {
                 notification.title = { key: 'notifications.grpc_errors.unauthenticated.title', parameters: {} };
                 notification.description = { key: 'notifications.grpc_errors.unauthenticated.content', parameters: {} };
 
-                logger.warn('Unauthenticated - logging out user');
-                useAuthStore().clearAuthInfo();
-
-                // Only update the redirect query param if it isn't already set
-                await navigateTo({
-                    name: 'auth-login',
-                    query: { redirect: route.query.redirect ?? route.fullPath },
-                    force: true,
-                });
+                logger.warn('Unauthenticated - invalidating user session');
+                if (options.authScope !== 'none') {
+                    const authStore = useAuthStore();
+                    if (options.authScope === 'character') authStore.clearCharacterSession('character-expired');
+                    else authStore.invalidateSession('account-expired');
+                }
                 break;
 
             case 'PERMISSION_DENIED':
                 if (!error.message.includes('ErrCharLock')) {
                     notification.title = { key: 'notifications.grpc_errors.permission_denied.title', parameters: {} };
                 } else {
-                    // In case of a permission denied char lock error, user must re-select their char
-                    await navigateTo({
-                        name: 'auth-character-selector',
-                        query: { redirect: route.query.redirect ?? route.fullPath },
-                    });
+                    // The active character is no longer usable. The route
+                    // middleware/state coordinator will lead the user back to
+                    // the selector if their current route needs a character.
+                    useAuthStore().clearCharacterSession('character-expired');
                 }
                 addCopyActionToNotification(notification, rpcErr, traceId);
                 break;

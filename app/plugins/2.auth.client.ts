@@ -1,22 +1,52 @@
 import { parseQuery, type RouteLocationNormalized } from 'vue-router';
 import { canAccessRoute, getRoutePermissionDeniedNotification } from '~/composables/auth/routePermission';
-import { restoreAuthTokenOnlySession } from '~/composables/auth/sessionRestore';
 import { isSetupBypassRoute } from '~/composables/setup';
+
+function loginRedirect(to: RouteLocationNormalized) {
+    return navigateTo({
+        name: 'auth-login',
+        query: { redirect: getRedirectPath((to.query.redirect ?? to.fullPath) as string) },
+        replace: true,
+    });
+}
+
+function characterSelectorRedirect(to: RouteLocationNormalized) {
+    return navigateTo({
+        name: 'auth-character-selector',
+        query: { redirect: getRedirectPath((to.query.redirect ?? to.fullPath) as string) },
+        replace: true,
+    });
+}
 
 export default defineNuxtPlugin({
     name: 'auth',
 
     async setup(nuxtApp) {
         addRouteMiddleware(async (to: RouteLocationNormalized, from: RouteLocationNormalized) => {
-            // Fail if app config wasn't loaded properlyl
-            const { $appConfigPromise } = nuxtApp;
-            const result = await $appConfigPromise;
-            if (result === undefined) return;
+            const appConfigResult = await nuxtApp.$appConfigPromise;
+            if (appConfigResult === undefined) return;
 
-            const appConfig = useAppConfig();
             const authStore = useAuthStore();
-            const { can, activeChar, username } = useAuth();
+            const { can, username } = useAuth();
+            const appConfig = useAppConfig();
             const isSetupRoute = to.path.startsWith('/settings/setup');
+
+            if (to.meta.requiresAuth === false) {
+                // A public page may be reached after a reload. Bootstrap from
+                // the account cookie before deciding whether it should redirect.
+                const account = await authStore.ensureAccountSession();
+                if (account.kind === 'ready' && to.meta.redirectIfAuthed !== false && username.value !== null) {
+                    const url = getRedirect(from);
+                    // @ts-expect-error route is validated by parseRedirectURL/getRedirect
+                    return navigateTo({ path: url.pathname, query: parseQuery(url.search), hash: url.hash, replace: true });
+                }
+
+                return true;
+            }
+
+            const account = await authStore.ensureAccountSession();
+            if (account.kind === 'needs-login') return loginRedirect(to);
+            if (account.kind === 'temporary-failure') return abortNavigation();
 
             const hasConfigAdminAccess = async (): Promise<boolean> => {
                 if (can('internal.Superuser/ConfigAdmin').value) return true;
@@ -24,153 +54,39 @@ export default defineNuxtPlugin({
                 try {
                     await authStore.refreshAccountSession();
                 } catch (_) {
-                    // Ignore refresh failures here; we only need the latest permission state if possible.
+                    return false;
                 }
 
                 return can('internal.Superuser/ConfigAdmin').value;
             };
 
             if (isSetupRoute && appConfig.setupComplete !== false) {
-                if (await hasConfigAdminAccess()) return true;
-
-                return navigateTo({
-                    name: 'overview',
-                });
+                return (await hasConfigAdminAccess()) ? true : navigateTo({ name: 'overview', replace: true });
             }
 
-            const wantsSetupRedirect = async (): Promise<boolean> => {
-                if (isSetupRoute || isSetupBypassRoute(to.path) || appConfig.setupComplete !== false) return false;
-
-                return hasConfigAdminAccess();
-            };
-
-            // Default is that a page requires authentication, but if it doesn't exit quickly
-            if (to.meta.requiresAuth === false) {
-                if ((to.meta.redirectIfAuthed === undefined || to.meta.redirectIfAuthed) && username.value !== null) {
-                    const url = getRedirect(from);
-
-                    // @ts-expect-error route should be valid, as we test it against a valid URL list
-                    return navigateTo({
-                        path: url.pathname,
-                        query: parseQuery(url.search),
-                        hash: url.hash,
-                    });
-                }
-
-                return true;
-            }
-
-            // Auth token is not null and only needed by route
-            if (to.meta.authTokenOnly && username.value !== null) {
-                await restoreAuthTokenOnlySession({
-                    activeChar,
-                    lastCharID: authStore.lastCharID,
-                    chooseCharacter: authStore.chooseCharacter,
-                    restoreAccountSession: authStore.restoreAccountSession,
-                });
-
-                if (await wantsSetupRedirect()) {
+            if (!isSetupRoute && !isSetupBypassRoute(to.path) && appConfig.setupComplete === false) {
+                if (await hasConfigAdminAccess()) {
                     return navigateTo({
                         path: '/settings/setup',
                         query: { redirect: getRedirectPath((to.query.redirect ?? to.fullPath) as string) },
+                        replace: true,
                     });
-                }
-
-                return true;
-            }
-
-            const redirect = getRedirectPath((to.query.redirect ?? to.fullPath) as string);
-            // Check if user has access token
-            if (username.value !== null) {
-                // If the user has an acitve char, check for perms otherwise, redirect to char selector
-                if (activeChar.value === null) {
-                    // If we don't have an active char, but a last char ID set, try to choose it and immidiately continue
-                    const authStore = useAuthStore();
-                    if (authStore.lastCharID !== undefined && authStore.lastCharID > 0) {
-                        const { setActiveChar, setPermissions, setJobProps } = authStore;
-                        try {
-                            await authStore.chooseCharacter(authStore.lastCharID);
-
-                            if (await wantsSetupRedirect()) {
-                                return navigateTo({
-                                    path: '/settings/setup',
-                                    query: { redirect: redirect },
-                                });
-                            }
-
-                            const url = parseRedirectURL(redirect);
-                            // @ts-expect-error route should be valid, as we test it against a valid list of URLs
-                            return await navigateTo({
-                                path: url.pathname,
-                                query: parseQuery(url.search),
-                                hash: url.hash,
-                            });
-                        } catch (_) {
-                            setActiveChar(null);
-                            setPermissions([], []);
-                            setJobProps(undefined);
-
-                            if (await wantsSetupRedirect()) {
-                                return navigateTo({
-                                    path: '/settings/setup',
-                                    query: { redirect: redirect },
-                                });
-                            }
-
-                            return navigateTo({
-                                name: 'auth-character-selector',
-                                query: { redirect: redirect },
-                            });
-                        }
-                    }
-
-                    if (activeChar.value === null) {
-                        if (await wantsSetupRedirect()) {
-                            return navigateTo({
-                                path: '/settings/setup',
-                                query: { redirect: redirect },
-                            });
-                        }
-
-                        return navigateTo({
-                            name: 'auth-character-selector',
-                            query: { redirect: redirect },
-                        });
-                    }
-                }
-
-                if (await wantsSetupRedirect()) {
-                    return navigateTo({
-                        path: '/settings/setup',
-                        query: { redirect: redirect },
-                    });
-                }
-
-                // No route permission check needed, so we can go ahead and return true
-                if (!to.meta.permission) return true;
-
-                // Route has permission attached to it, check if user "can" go there
-                if (canAccessRoute(to)) {
-                    // User has permission
-                    return true;
-                } else {
-                    const notifications = useNotificationsStore();
-                    notifications.add(getRoutePermissionDeniedNotification(to));
-
-                    if (username.value !== null) {
-                        return navigateTo({
-                            name: 'overview',
-                        });
-                    }
                 }
             }
 
-            // Only update the redirect query param if it isn't set already
-            return navigateTo({
-                name: 'auth-login',
-                // save the location we were at to come back later
-                query: { redirect: redirect },
-            });
+            // Existing authTokenOnly routes are account-only routes. Every
+            // other protected route requires a server-confirmed character.
+            if (!to.meta.authTokenOnly) {
+                const character = await authStore.ensureCharacterSession();
+                if (character.kind === 'needs-login') return loginRedirect(to);
+                if (character.kind === 'needs-character') return characterSelectorRedirect(to);
+                if (character.kind === 'temporary-failure') return abortNavigation();
+            }
+
+            if (!to.meta.permission || canAccessRoute(to)) return true;
+
+            useNotificationsStore().add(getRoutePermissionDeniedNotification(to));
+            return navigateTo({ name: 'overview', replace: true });
         });
     },
 });

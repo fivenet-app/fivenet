@@ -4,6 +4,7 @@ import { parseQuery } from 'vue-router';
 import { useGRPCWebsocketTransport } from '~/composables/grpcws';
 import { webSocket } from '~/composables/grpcws/bridge';
 import { isSetupBypassRoute } from '~/composables/setup';
+import { isUnauthenticatedError } from '~/utils/errors';
 import { getAuthAuthClient } from '~~/gen/ts/clients';
 import type { Job } from '~~/gen/ts/resources/jobs/jobs';
 import type { JobProps } from '~~/gen/ts/resources/jobs/props/props';
@@ -14,6 +15,27 @@ import type { User } from '~~/gen/ts/resources/users/user';
 import type { ImpersonateJobResponse, RefreshAccountSessionResponse } from '~~/gen/ts/services/auth/auth';
 
 const logger = useLogger('🔑 Auth');
+
+export type AuthPhase =
+    'anonymous' | 'bootstrapping' | 'account-ready' | 'selecting-character' | 'character-ready' | 'signing-out';
+
+export type AuthEnsureResult =
+    { kind: 'ready' } | { kind: 'needs-login' } | { kind: 'needs-character' } | { kind: 'temporary-failure'; error: unknown };
+
+/**
+ * Auth values that have been validated for use by data queries. These are kept
+ * separate from the live session while an auth transition is in progress.
+ */
+export type AuthQueryContext = {
+    accountId: number | null;
+    characterId: number | undefined;
+    job: string | undefined;
+    grade: number | undefined;
+    isSuperuser: boolean;
+    canBeSuperuser: boolean;
+    canBeConfigAdmin: boolean;
+    revision: number;
+};
 
 /**
  * Pinia store for managing user sessions, permissions, and state.
@@ -41,7 +63,6 @@ export const useAuthStore = defineStore(
             };
         };
 
-        // State
         /**
          * The username of the currently logged-in user.
          */
@@ -98,6 +119,59 @@ export const useAuthStore = defineStore(
          * Whether the current account can access config-admin setup without a character token.
          */
         const accountCanBeConfigAdmin = ref<boolean>(false);
+        /** Whether the current account is currently in superuser (job admin mode) access. */
+        const isSuperuser = computed<boolean>(() => !!permissions.value.find((p) => p.guardName === jobAdminPermGuard));
+        /** Whether the current account can access config-admin gated screens and RPCs. */
+        const canBeConfigAdmin = computed<boolean>(
+            () => permissions.value.some((p) => p.guardName === configAdminPermGuard) || accountCanBeConfigAdmin.value,
+        );
+        /** The server-confirmed authentication state for this tab. */
+        const phase = ref<AuthPhase>('anonymous');
+        /** Increments whenever credentials are cleared or replaced. */
+        const sessionGeneration = ref<number>(0);
+        const lastFailure = ref<{ kind: 'account-expired' | 'character-expired' | 'temporary'; at: number } | null>(null);
+        /** Prevents query-backed views from fetching until route access was revalidated. */
+        const isQueryTransitioning = ref(false);
+        const queryContextRevision = ref(0);
+
+        const buildQueryContext = (): AuthQueryContext => ({
+            accountId: accountId.value,
+            characterId: activeChar.value?.userId,
+            job: activeChar.value?.job,
+            grade: activeChar.value?.jobGrade,
+            isSuperuser: isSuperuser.value,
+            canBeSuperuser: canBeSuperuser.value,
+            canBeConfigAdmin: canBeConfigAdmin.value,
+            revision: queryContextRevision.value,
+        });
+        const queryContext = ref<AuthQueryContext>(buildQueryContext());
+
+        const beginQueryTransition = (): void => {
+            isQueryTransitioning.value = true;
+        };
+
+        /**
+         * Publish live auth state to async-data keys. Call only after current
+         * route access has been checked (and any redirect has completed).
+         */
+        const commitQueryContext = (): void => {
+            queryContextRevision.value += 1;
+            // Enable first: the following synchronous reactive key update is
+            // what starts the next request.
+            isQueryTransitioning.value = false;
+            queryContext.value = buildQueryContext();
+        };
+
+        let chooseCharacterPromise: Promise<void> | undefined;
+        let accountSessionPromise: Promise<RefreshAccountSessionResponse> | undefined;
+
+        const broadcastSessionChange = (type: 'login' | 'logout' | 'changed'): void => {
+            if (typeof BroadcastChannel === 'undefined') return;
+
+            const channel = new BroadcastChannel('fivenet-auth');
+            channel.postMessage({ type });
+            channel.close();
+        };
 
         /**
          * Set or unset the username.
@@ -202,19 +276,21 @@ export const useAuthStore = defineStore(
             if (loggingIn.value) return;
 
             loginStart();
-            accountId.value = null;
-            setActiveChar();
-            setPermissions([], []);
+            clearAuthInfo();
+            phase.value = 'bootstrapping';
+            lastFailure.value = null;
+            sessionGeneration.value += 1;
 
             try {
                 const authAuthClient = await getAuthAuthClient();
 
                 const call = authAuthClient.login({ username: user, password: pass });
                 const { response } = await call;
-                refreshCookie('fivenet_authed');
 
                 accountId.value = response.accountId;
                 setUsername(user);
+                phase.value = 'account-ready';
+                broadcastSessionChange('login');
                 loginStop();
 
                 if (response.char === undefined) {
@@ -232,6 +308,7 @@ export const useAuthStore = defineStore(
                     setPermissions(response.char.permissions, response.char.attributes);
                     setJobProps(response.char.jobProps);
                     setUserToken(response.char.token);
+                    phase.value = 'character-ready';
 
                     const startpage = settingsStore.startpage ?? '/overview';
                     try {
@@ -243,6 +320,7 @@ export const useAuthStore = defineStore(
                 }
             } catch (e) {
                 const err = e as RpcError;
+                phase.value = 'anonymous';
                 loginStop(err);
                 handleGRPCError(err);
             }
@@ -254,15 +332,13 @@ export const useAuthStore = defineStore(
         const doLogout = async (): Promise<void> => {
             // User is about to logout, ignore ongoing logins/choose character actions
             loginStart();
+            phase.value = 'signing-out';
 
             try {
                 const authAuthClient = await getAuthAuthClient();
 
                 await authAuthClient.logout({});
-
-                refreshCookie('fivenet_authed');
             } catch (e) {
-                clearAuthInfo();
                 handleGRPCError(e as RpcError);
 
                 notifications.add({
@@ -275,6 +351,7 @@ export const useAuthStore = defineStore(
                 });
             } finally {
                 clearAuthInfo();
+                broadcastSessionChange('logout');
                 loginStop();
             }
         };
@@ -284,11 +361,13 @@ export const useAuthStore = defineStore(
          * @param charId - The ID of the character to select. If undefined, the last character ID is used.
          * @param redirect - Whether to redirect the user after selecting the character.
          */
-        const chooseCharacter = async (charId?: number, redirect?: boolean, hideError: boolean = false): Promise<void> => {
-            // Prevent multiple simultaneous login attempts
-            if (loggingIn.value) return;
-
+        const chooseCharacterInternal = async (
+            charId?: number,
+            redirect?: boolean,
+            hideError: boolean = false,
+        ): Promise<void> => {
             loginStart();
+            phase.value = 'selecting-character';
 
             if (charId === undefined || charId <= 0) {
                 if (!lastCharID.value) {
@@ -306,7 +385,13 @@ export const useAuthStore = defineStore(
                     let refreshResp: RefreshAccountSessionResponse | null = null;
                     try {
                         refreshResp = await refreshAccountSession();
-                    } catch (_) {
+                    } catch (e) {
+                        if (isUnauthenticatedError(e)) {
+                            invalidateSession();
+                            loginStop();
+                            return;
+                        }
+
                         // Ignore refresh errors here; the selector fallback is still valid.
                     }
 
@@ -339,7 +424,12 @@ export const useAuthStore = defineStore(
                 if (accountId.value === null) {
                     try {
                         await refreshAccountSession();
-                    } catch (_) {
+                    } catch (e) {
+                        if (isUnauthenticatedError(e)) {
+                            invalidateSession();
+                            throw e;
+                        }
+
                         // Ignore refresh errors here; chooseCharacter can still proceed with the current session state.
                     }
                 }
@@ -363,6 +453,7 @@ export const useAuthStore = defineStore(
                 setPermissions(response.permissions, response.attributes);
                 setAccountCanBeConfigAdmin(false);
                 setJobProps(response.jobProps);
+                phase.value = 'character-ready';
 
                 if (redirect) {
                     const redirectQuery = useRoute().query.redirect;
@@ -383,10 +474,29 @@ export const useAuthStore = defineStore(
                 }
             } catch (e) {
                 if (!hideError) handleGRPCError(e as RpcError);
+                if (phase.value === 'selecting-character')
+                    phase.value = accountId.value === null ? 'anonymous' : 'account-ready';
                 throw e;
             } finally {
                 loginStop();
             }
+        };
+
+        const chooseCharacter = (charId?: number, redirect?: boolean, hideError: boolean = false): Promise<void> => {
+            if (chooseCharacterPromise) return chooseCharacterPromise;
+
+            const promise = chooseCharacterInternal(charId, redirect, hideError);
+            chooseCharacterPromise = promise;
+            void promise.then(
+                () => {
+                    if (chooseCharacterPromise === promise) chooseCharacterPromise = undefined;
+                },
+                () => {
+                    if (chooseCharacterPromise === promise) chooseCharacterPromise = undefined;
+                },
+            );
+
+            return promise;
         };
 
         /**
@@ -469,13 +579,8 @@ export const useAuthStore = defineStore(
             }
         };
 
-        /**
-         * Clears all authentication-related information from store and closes the WebSocket connection.
-         */
-        const clearAuthInfo = (): void => {
-            logger.info('Clearing auth info');
-            setUsername(null);
-            accountId.value = null;
+        /** Clears character-scoped state while retaining the account cookie session. */
+        const clearCharacterSession = (kind?: 'character-expired' | 'temporary'): void => {
             setActiveChar(null);
             setPermissions([], []);
             setCanBeSuperuser(false);
@@ -483,17 +588,42 @@ export const useAuthStore = defineStore(
             setJobProps(undefined);
             setUserToken();
 
+            if (kind) lastFailure.value = { kind, at: Date.now() };
+            phase.value = accountId.value === null ? 'anonymous' : 'account-ready';
+        };
+
+        /**
+         * Clears all authentication-related information from store and closes the WebSocket connection.
+         */
+        const clearAuthInfo = (): void => {
+            logger.info('Clearing auth info');
+            setUsername(null);
+            accountId.value = null;
+            clearCharacterSession();
+            phase.value = 'anonymous';
+
             // Close the WebSocket connection when logging out
             useGRPCWebsocketTransport().close();
         };
 
+        /** Clears server-rejected credentials while preserving the character preference. */
+        const invalidateSession = (kind: 'account-expired' | 'character-expired' = 'account-expired'): void => {
+            if (phase.value === 'anonymous' && accountId.value === null && username.value === null) return;
+
+            sessionGeneration.value += 1;
+            lastFailure.value = { kind, at: Date.now() };
+            clearAuthInfo();
+            broadcastSessionChange('changed');
+        };
+
         /**
-         * Set user token in session storage.
+         * Set the in-memory character token for this tab.
          * @param token - The user token to set. If undefined, the token is removed.
          */
-        const setUserToken = async (token?: string): Promise<void> => {
+        const setUserToken = (token?: string): void => {
             if (!token) {
                 authSessionStore.setUserToken(null);
+                useGRPCWebsocketTransport().updateUserToken(null);
                 return;
             }
 
@@ -506,32 +636,48 @@ export const useAuthStore = defineStore(
                 return;
             }
 
-            logger.debug('Setting user token in session storage');
+            logger.debug('Setting in-memory user token');
             authSessionStore.setUserToken(token);
             if (authSessionStore.userInfo?.accountId !== undefined) {
                 accountId.value = authSessionStore.userInfo.accountId;
             }
 
-            if (activeChar.value !== null) {
-                logger.info('User token updated, send WebSocket re-auth message');
-                useGRPCWebsocketTransport().updateUserToken(token);
-            }
+            logger.info('User token updated, send WebSocket re-auth message');
+            useGRPCWebsocketTransport().updateUserToken(token);
         };
 
         const fetchAccountSession = async (): Promise<RefreshAccountSessionResponse> => {
-            const authAuthClient = await getAuthAuthClient();
+            if (accountSessionPromise) return accountSessionPromise;
 
-            const call = authAuthClient.refreshAccountSession({});
-            const { response } = await call;
-            return response;
+            const promise = (async (): Promise<RefreshAccountSessionResponse> => {
+                const authAuthClient = await getAuthAuthClient();
+
+                const call = authAuthClient.refreshAccountSession({});
+                const { response } = await call;
+                return response;
+            })();
+
+            accountSessionPromise = promise;
+            void promise.then(
+                () => {
+                    if (accountSessionPromise === promise) accountSessionPromise = undefined;
+                },
+                () => {
+                    if (accountSessionPromise === promise) accountSessionPromise = undefined;
+                },
+            );
+
+            return promise;
         };
 
         const applyAccountSession = (response: RefreshAccountSessionResponse, openSocket: boolean): void => {
             accountId.value = response.accountId;
+            lastFailure.value = null;
             setAccountCanBeConfigAdmin(response.canBeConfigAdmin);
             if (response.username) {
                 setUsername(response.username, openSocket);
             }
+            if (activeChar.value === null) phase.value = 'account-ready';
         };
 
         const refreshAccountSession = async (): Promise<RefreshAccountSessionResponse | null> => {
@@ -548,20 +694,86 @@ export const useAuthStore = defineStore(
             return response;
         };
 
-        // Getters
-        /**
-         * Whether the current account is currently in superuser (job admin mode) access.
-         */
-        const isSuperuser = computed<boolean>(() => !!permissions.value.find((p) => p.guardName === jobAdminPermGuard));
-        /**
-         * Whether the current account can access config-admin gated screens and RPCs.
-         */
-        const canBeConfigAdmin = computed<boolean>(
-            () => permissions.value.some((p) => p.guardName === configAdminPermGuard) || accountCanBeConfigAdmin.value,
+        const ensureAccountSession = async (): Promise<AuthEnsureResult> => {
+            if (phase.value === 'account-ready' || phase.value === 'character-ready') return { kind: 'ready' };
+
+            phase.value = 'bootstrapping';
+            try {
+                await restoreAccountSession();
+                return { kind: 'ready' };
+            } catch (e) {
+                if (isUnauthenticatedError(e)) {
+                    invalidateSession('account-expired');
+                    return { kind: 'needs-login' };
+                }
+
+                // The account cookie may still be valid; do not turn a
+                // transport/server failure into a login redirect.
+                phase.value = 'bootstrapping';
+                lastFailure.value = { kind: 'temporary', at: Date.now() };
+                return { kind: 'temporary-failure', error: e };
+            }
+        };
+
+        const refreshCharacterSession = async (): Promise<AuthEnsureResult> => {
+            const characterId = activeChar.value?.userId ?? lastCharID.value;
+            if (!characterId) return { kind: 'needs-character' };
+
+            try {
+                await chooseCharacter(characterId, false, true);
+                return activeChar.value !== null ? { kind: 'ready' } : { kind: 'needs-character' };
+            } catch (e) {
+                if (isUnauthenticatedError(e)) {
+                    invalidateSession('account-expired');
+                    return { kind: 'needs-login' };
+                }
+
+                clearCharacterSession('temporary');
+                return { kind: 'temporary-failure', error: e };
+            }
+        };
+
+        const ensureCharacterSession = async (): Promise<AuthEnsureResult> => {
+            const account = await ensureAccountSession();
+            if (account.kind !== 'ready') return account;
+            if (phase.value === 'character-ready' && activeChar.value !== null) return { kind: 'ready' };
+            if (!lastCharID.value) return { kind: 'needs-character' };
+
+            try {
+                await chooseCharacter(lastCharID.value, false, true);
+                return activeChar.value !== null ? { kind: 'ready' } : { kind: 'needs-character' };
+            } catch (e) {
+                if (isUnauthenticatedError(e)) {
+                    invalidateSession('account-expired');
+                    return { kind: 'needs-login' };
+                }
+
+                clearCharacterSession('temporary');
+                return { kind: 'temporary-failure', error: e };
+            }
+        };
+
+        // Normal session changes may publish immediately. Auth event handlers
+        // call beginQueryTransition first, which holds this snapshot stable
+        // until they have revalidated the current route.
+        watch(
+            [
+                accountId,
+                activeChar,
+                permissions,
+                attributes,
+                canBeSuperuser,
+                accountCanBeConfigAdmin,
+                isSuperuser,
+                canBeConfigAdmin,
+            ],
+            () => {
+                if (!isQueryTransitioning.value) commitQueryContext();
+            },
+            { flush: 'sync' },
         );
 
         return {
-            // State
             username,
             accountId,
 
@@ -576,8 +788,12 @@ export const useAuthStore = defineStore(
             attributes,
             canBeSuperuser,
             canBeConfigAdmin,
+            phase,
+            sessionGeneration,
+            lastFailure,
+            queryContext,
+            isQueryTransitioning,
 
-            // Actions
             setUsername,
             loginStart,
             loginStop,
@@ -585,26 +801,32 @@ export const useAuthStore = defineStore(
             doLogout,
 
             clearAuthInfo,
+            clearCharacterSession,
+            invalidateSession,
             setUserToken,
             setActiveChar,
             setPermissions,
             setCanBeSuperuser,
             setAccountCanBeConfigAdmin,
             setJobProps,
+            beginQueryTransition,
+            commitQueryContext,
             refreshAccountSession,
             restoreAccountSession,
+            ensureAccountSession,
+            ensureCharacterSession,
+            refreshCharacterSession,
 
             chooseCharacter,
             impersonateJob,
             setSuperuserMode,
 
-            // Getters
             isSuperuser,
         };
     },
     {
         persist: {
-            pick: ['username', 'accountId', 'lastCharID'],
+            pick: ['lastCharID'],
         },
     },
 );

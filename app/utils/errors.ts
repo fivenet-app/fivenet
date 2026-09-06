@@ -1,6 +1,15 @@
 import type { Error as CommonError } from '~~/gen/ts/resources/common/error';
 import type { I18NItem } from '~~/gen/ts/resources/common/i18n';
 
+export function isUnauthenticatedError(error: unknown): boolean {
+    return (
+        typeof error === 'object' &&
+        error !== null &&
+        typeof (error as { code?: unknown }).code === 'string' &&
+        (error as { code: string }).code.toUpperCase() === 'UNAUTHENTICATED'
+    );
+}
+
 const templateKindTranslationKeys: Record<string, string> = {
     users: 'errors.documents.DocumentsService.TemplateKinds.users',
     documents: 'errors.documents.DocumentsService.TemplateKinds.documents',

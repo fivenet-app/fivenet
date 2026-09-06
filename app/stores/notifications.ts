@@ -25,7 +25,13 @@ const initialReconnectBackoffTime = 2;
 
 export type AccountCapabilityAuthStore = Pick<
     ReturnType<typeof useAuthStore>,
-    'isSuperuser' | 'canBeConfigAdmin' | 'setCanBeSuperuser' | 'setAccountCanBeConfigAdmin' | 'chooseCharacter'
+    | 'canBeSuperuser'
+    | 'canBeConfigAdmin'
+    | 'setCanBeSuperuser'
+    | 'setAccountCanBeConfigAdmin'
+    | 'refreshCharacterSession'
+    | 'beginQueryTransition'
+    | 'commitQueryContext'
 >;
 
 type StreamActiveChar = ReturnType<typeof useAuth>['activeChar']['value'];
@@ -55,32 +61,40 @@ export const handleAccountGroupsChangedEvent = async (
     scope: { accountOnly: boolean },
     addNotification?: (notification: Notification) => void,
 ): Promise<void> => {
-    const previousCanBeSuperuser = authStore.isSuperuser;
+    const previousCanBeSuperuser = authStore.canBeSuperuser;
     const previousCanBeConfigAdmin = authStore.canBeConfigAdmin;
 
-    authStore.setCanBeSuperuser(accountGroupsChanged.canBeSuperuser);
-
-    if (scope.accountOnly) {
-        authStore.setAccountCanBeConfigAdmin(accountGroupsChanged.canBeConfigAdmin);
-        if (addNotification) await revalidateCurrentRoutePermission(addNotification);
+    const capabilitiesChanged =
+        previousCanBeSuperuser !== accountGroupsChanged.canBeSuperuser ||
+        previousCanBeConfigAdmin !== accountGroupsChanged.canBeConfigAdmin;
+    if (!capabilitiesChanged) {
+        authStore.setCanBeSuperuser(accountGroupsChanged.canBeSuperuser);
         return;
     }
 
-    if (
-        previousCanBeSuperuser !== accountGroupsChanged.canBeSuperuser ||
-        previousCanBeConfigAdmin !== accountGroupsChanged.canBeConfigAdmin
-    ) {
+    // Keep async-data keys pinned while these live permission changes are
+    // reconciled with the current route.
+    authStore.beginQueryTransition();
+    try {
+        authStore.setCanBeSuperuser(accountGroupsChanged.canBeSuperuser);
         authStore.setAccountCanBeConfigAdmin(accountGroupsChanged.canBeConfigAdmin);
-        logger.info('User capabilities changed, forcing a choose character refresh');
-        await authStore.chooseCharacter(undefined, false);
+
+        if (!scope.accountOnly) {
+            logger.info('User capabilities changed, forcing a choose character refresh');
+            await authStore.refreshCharacterSession();
+        }
+
         if (addNotification) await revalidateCurrentRoutePermission(addNotification);
+    } finally {
+        // revalidateCurrentRoutePermission awaits its redirect, so publishing
+        // here cannot refetch the page from which access was revoked.
+        authStore.commitQueryContext();
     }
 };
 
 export const useNotificationsStore = defineStore(
     'notifications',
     () => {
-        // State
         /**
          * Indicates whether the user has enabled Do Not Disturb mode.
          */
@@ -123,7 +137,6 @@ export const useNotificationsStore = defineStore(
 
         const notificationSound = useSounds('notification');
 
-        // Actions
         /**
          * Removes a notification by its ID.
          * @param notId - The ID of the notification to remove.
@@ -171,8 +184,13 @@ export const useNotificationsStore = defineStore(
             if (!hasCharScope(scope)) return;
 
             logger.info('Refreshing token...');
-            await authStore.chooseCharacter(undefined);
-            await revalidateCurrentRoutePermission(add);
+            authStore.beginQueryTransition();
+            try {
+                await authStore.refreshCharacterSession();
+                await revalidateCurrentRoutePermission(add);
+            } finally {
+                authStore.commitQueryContext();
+            }
         };
 
         /**
@@ -315,7 +333,10 @@ export const useNotificationsStore = defineStore(
             logger.debug('Starting Stream');
             reconnecting.value = true;
 
-            const notificationsNotificationsClient = await getNotificationsNotificationsClient();
+            // Reserve the stream slot before awaiting client creation so concurrent
+            // callers cannot start duplicate streams.
+            const streamAbort = new AbortController();
+            abort.value = streamAbort;
 
             const authStore = useAuthStore();
             const { activeChar, can } = useAuth();
@@ -326,10 +347,11 @@ export const useNotificationsStore = defineStore(
             };
 
             const mailerStore = useMailerStore();
-            const streamAbort = new AbortController();
 
             try {
-                abort.value = streamAbort;
+                const notificationsNotificationsClient = await getNotificationsNotificationsClient();
+                if (abort.value !== streamAbort || streamAbort.signal.aborted) return;
+
                 currentStream = notificationsNotificationsClient.stream({ abort: streamAbort.signal });
                 setStreamReadyState(true);
 
@@ -393,18 +415,21 @@ export const useNotificationsStore = defineStore(
                     if (resp.restart) {
                         logger.debug('Server requested stream to be restarted');
                         reconnectBackoffTime.value = 0;
-                        await stopStream();
                         useGRPCWebsocketTransport().close();
                         await restartStream();
                         return;
                     }
+                }
+
+                if (shouldRestartNotificationStream(abort.value, streamAbort) && reconnecting.value) {
+                    await restartStream();
                 }
             } catch (e) {
                 const error = e as RpcError;
                 if (error.code !== 'CANCELLED' && error.code !== 'ABORTED') {
                     logger.debug('Stream failed', error.code, error.message, error.cause);
                     if (error.message.includes('ErrCharLock')) {
-                        await handleGRPCError(error);
+                        handleGRPCError(error);
                     }
                 }
 
@@ -425,7 +450,10 @@ export const useNotificationsStore = defineStore(
          * @param end - Whether to end the stream completely.
          */
         const stopStream = async (end?: boolean): Promise<void> => {
-            if (!abort.value) return;
+            if (!abort.value) {
+                currentStream = undefined;
+                return;
+            }
             logger.debug('Stopping Stream');
 
             if (end) {
@@ -438,6 +466,7 @@ export const useNotificationsStore = defineStore(
             setStreamReadyState(false);
             abort.value?.abort();
             abort.value = undefined;
+            currentStream = undefined;
         };
 
         /**
@@ -533,7 +562,6 @@ export const useNotificationsStore = defineStore(
         };
 
         return {
-            // State
             doNotDisturb,
             notifications,
             notificationCount,
@@ -544,7 +572,6 @@ export const useNotificationsStore = defineStore(
 
             dismissedBannerMessageID,
 
-            // Actions
             remove,
             add,
             reset,

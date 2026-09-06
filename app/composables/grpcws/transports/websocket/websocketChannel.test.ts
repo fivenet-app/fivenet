@@ -158,6 +158,18 @@ describe('WebsocketChannelImpl', () => {
 
         await channel.onMessage(createAuthOkBuffer());
         await charAuth;
+
+        token = null;
+        const accountOnlyReauth = channel.ensureAuthenticated();
+        expect(sentFrames).toHaveLength(3);
+        const accountOnlyReauthFrame = expectFrame(sentFrames, 2);
+        expect(accountOnlyReauthFrame.payload.oneofKind).toBe('header');
+        if (accountOnlyReauthFrame.payload.oneofKind !== 'header') throw new Error('Expected account-only reauth header frame');
+        expect(accountOnlyReauthFrame.payload.header.operation).toBe('reauth');
+        expect(accountOnlyReauthFrame.payload.header.headers.Authorization).toBeUndefined();
+
+        await channel.onMessage(createAuthOkBuffer());
+        await accountOnlyReauth;
     });
 
     it('rejects a superseded pending auth handshake before starting a new one', async () => {

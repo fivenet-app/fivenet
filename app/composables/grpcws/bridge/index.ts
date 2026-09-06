@@ -21,8 +21,8 @@ import { Metadata } from '~/composables/grpcws/metadata';
 import { GrpcFrame } from '~~/gen/ts/resources/grpcws/grpcws';
 import type { GrpcWSOptions } from '../../grpcws/bridge/options';
 import { errInternal, errTimeout, errUnavailable } from '../errors';
-import type { Transport, TransportFactory } from '../transports/transport';
-import { WebsocketChannelTransport } from '../transports/websocket/websocketChannel';
+import type { Transport } from '../transports/transport';
+import { WebsocketChannelTransport, type WebsocketChannelTransportFactory } from '../transports/websocket/websocketChannel';
 import { constructWebSocketAddress, createGrpcStatus, createGrpcTrailers } from './utils';
 
 const logger = useLogger('📡 GRPC-WS');
@@ -76,7 +76,7 @@ export const webSocket = useWebSocket(
 export class GrpcWSTransport implements RpcTransport {
     private readonly defaultOptions;
     webSocket: UseWebSocketReturn<ArrayBuffer>;
-    private wsTs: TransportFactory;
+    private wsTs: WebsocketChannelTransportFactory;
 
     constructor(defaultOptions: GrpcWSOptions) {
         this.defaultOptions = defaultOptions;
@@ -316,31 +316,18 @@ export class GrpcWSTransport implements RpcTransport {
         this.webSocket.close();
     }
 
-    updateUserToken(token: string): void {
+    /** Synchronize the socket's character scope through the channel auth state. */
+    updateUserToken(_token: string | null): void {
         if (this.webSocket.status.value !== 'OPEN') {
             logger.debug("Websocket isn't connected yet, skipping user token update", this.webSocket.status.value);
             return;
         }
 
-        this.webSocket.send(
-            GrpcFrame.toBinary(
-                GrpcFrame.create({
-                    streamId: 0,
-                    payload: {
-                        oneofKind: 'header',
-                        header: {
-                            headers: {
-                                Authorization: {
-                                    value: [`Bearer ${token}`],
-                                },
-                            },
-                            operation: 'reauth',
-                            status: 0,
-                        },
-                    },
-                }),
-            ).buffer as ArrayBuffer,
-        );
+        // Do not send a raw control frame here. The channel needs to record
+        // the pending token so replacement streams wait for this reauth.
+        void this.wsTs.ensureAuthenticated().catch((error: unknown) => {
+            logger.error('Websocket token reauth failed', error);
+        });
     }
 }
 

@@ -31,21 +31,30 @@ function defaultTokenProvider(): string | null {
     return getGrpcWebsocketAuthToken();
 }
 
+export type WebsocketChannelTransportFactory = TransportFactory & {
+    ensureAuthenticated: () => Promise<void>;
+};
+
 export function WebsocketChannelTransport(
     logger: ILogger,
     webSocket: WebSocketLike,
     tokenProvider: TokenProvider = defaultTokenProvider,
-): TransportFactory {
+): WebsocketChannelTransportFactory {
     const wsChannel = new WebsocketChannelImpl(logger, webSocket, tokenProvider);
 
-    return (opts: TransportOptions) => {
-        opts.debug && logger.debug('Websocket factory triggered, status:', webSocket.status.value);
-        if (webSocket.status.value === 'CLOSED') {
-            webSocket.open();
-        }
+    const transportFactory = Object.assign(
+        (opts: TransportOptions): GrpcStream => {
+            opts.debug && logger.debug('Websocket factory triggered, status:', webSocket.status.value);
+            if (webSocket.status.value === 'CLOSED') {
+                webSocket.open();
+            }
 
-        return wsChannel.getStream(opts);
-    };
+            return wsChannel.getStream(opts);
+        },
+        { ensureAuthenticated: (): Promise<void> => wsChannel.ensureAuthenticated() },
+    ) satisfies WebsocketChannelTransportFactory;
+
+    return transportFactory;
 }
 
 export interface GrpcStream extends Transport {

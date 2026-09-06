@@ -169,6 +169,39 @@ describe('useAuthStore', () => {
         );
     });
 
+    it('shares an in-flight character restore instead of resolving concurrent calls early', async () => {
+        mocks.authSessionStore.getUserToken.mockReturnValue('char-token');
+        mocks.authSessionStore.userInfo.accountId = 123;
+        mocks.authSessionStore.userInfo.userId = 123;
+
+        let resolveChooseCharacter: ((value: unknown) => void) | undefined;
+        mocks.chooseCharacter.mockReturnValueOnce(
+            new Promise((resolve) => {
+                resolveChooseCharacter = resolve;
+            }),
+        );
+
+        const authStore = useAuthStore();
+        const first = authStore.chooseCharacter(123, false);
+        const second = authStore.chooseCharacter(123, false);
+
+        await vi.waitFor(() => expect(mocks.chooseCharacter).toHaveBeenCalledTimes(1));
+
+        resolveChooseCharacter?.({
+            response: {
+                username: 'tester',
+                token: 'char-token',
+                char: { userId: 123 } as never,
+                permissions: [],
+                attributes: [],
+                jobProps: undefined,
+            },
+        });
+
+        await first;
+        await second;
+    });
+
     it('does not open the websocket when refreshing account session metadata', async () => {
         mocks.webSocket.status.value = 'CLOSED';
 
@@ -191,5 +224,92 @@ describe('useAuthStore', () => {
 
         expect(authStore.username).toBe('tester');
         expect(mocks.webSocket.open).toHaveBeenCalledTimes(1);
+    });
+
+    it('clears only in-memory state after a confirmed account-token failure', async () => {
+        mocks.refreshAccountSession.mockRejectedValueOnce({ code: 'UNAUTHENTICATED' });
+
+        const authStore = useAuthStore();
+        authStore.lastCharID = 123;
+        authStore.accountId = 456;
+        authStore.setUsername('tester', false);
+        authStore.setActiveChar({ userId: 123 } as never);
+        authStore.phase = 'anonymous';
+
+        await expect(authStore.ensureAccountSession()).resolves.toEqual({ kind: 'needs-login' });
+
+        expect(authStore.phase).toBe('anonymous');
+        expect(authStore.username).toBeNull();
+        expect(authStore.activeChar).toBeNull();
+        expect(authStore.lastCharID).toBe(123);
+        expect(mocks.authSessionStore.setUserToken).toHaveBeenLastCalledWith(null);
+    });
+
+    it('keeps a temporary account-session failure out of the login path', async () => {
+        mocks.refreshAccountSession.mockRejectedValueOnce(new Error('network unavailable'));
+
+        const authStore = useAuthStore();
+
+        await expect(authStore.ensureAccountSession()).resolves.toMatchObject({ kind: 'temporary-failure' });
+
+        expect(authStore.phase).toBe('bootstrapping');
+        expect(authStore.lastFailure?.kind).toBe('temporary');
+    });
+
+    it('requires character selection when the account has no remembered character', async () => {
+        const authStore = useAuthStore();
+
+        await expect(authStore.ensureCharacterSession()).resolves.toEqual({ kind: 'needs-character' });
+        expect(mocks.chooseCharacter).not.toHaveBeenCalled();
+    });
+
+    it('invalidates the account when character restoration is rejected', async () => {
+        mocks.chooseCharacter.mockRejectedValueOnce({ code: 'UNAUTHENTICATED' });
+
+        const authStore = useAuthStore();
+        authStore.lastCharID = 123;
+
+        await expect(authStore.ensureCharacterSession()).resolves.toEqual({ kind: 'needs-login' });
+
+        expect(authStore.phase).toBe('anonymous');
+        expect(authStore.lastCharID).toBe(123);
+        expect(mocks.authSessionStore.setUserToken).toHaveBeenLastCalledWith(null);
+    });
+
+    it('keeps temporary character restoration failures out of the selector redirect path', async () => {
+        mocks.chooseCharacter.mockRejectedValueOnce(new Error('network unavailable'));
+
+        const authStore = useAuthStore();
+        authStore.lastCharID = 123;
+
+        await expect(authStore.ensureCharacterSession()).resolves.toMatchObject({ kind: 'temporary-failure' });
+
+        expect(authStore.phase).toBe('account-ready');
+        expect(authStore.lastFailure?.kind).toBe('temporary');
+    });
+
+    it('shares an in-flight account restoration', async () => {
+        let resolveRefresh: ((value: unknown) => void) | undefined;
+        mocks.refreshAccountSession.mockReturnValueOnce(
+            new Promise((resolve) => {
+                resolveRefresh = resolve;
+            }),
+        );
+
+        const authStore = useAuthStore();
+        const first = authStore.ensureAccountSession();
+        const second = authStore.ensureAccountSession();
+
+        await vi.waitFor(() => expect(mocks.refreshAccountSession).toHaveBeenCalledTimes(1));
+        resolveRefresh?.({
+            response: {
+                accountId: 123,
+                canBeConfigAdmin: false,
+                username: 'tester',
+            },
+        });
+
+        await expect(first).resolves.toEqual({ kind: 'ready' });
+        await expect(second).resolves.toEqual({ kind: 'ready' });
     });
 });

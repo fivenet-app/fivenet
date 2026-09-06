@@ -1,13 +1,9 @@
-import { authUserTokenKey } from '../../stores/auth_session/constants';
-import { useAuth } from '../useAuth';
+import { useAuthSessionStore } from '~/stores/auth_session';
 
 export function getGrpcCharacterAuthToken(): string | null {
-    return sessionStorage.getItem(authUserTokenKey);
+    return useAuthSessionStore().getUserToken();
 }
 
 export function getGrpcWebsocketAuthToken(): string | null {
-    const { activeChar } = useAuth();
-    if (!activeChar.value) return null;
-
-    return sessionStorage.getItem(authUserTokenKey);
+    return useAuthSessionStore().getUserToken();
 }

@@ -26,10 +26,12 @@ export function getRoutePermissionDeniedNotification(route: RouteWithPermission)
     };
 }
 
-export async function revalidateCurrentRoutePermission(addNotification: (notification: Notification) => void): Promise<void> {
+export async function revalidateCurrentRoutePermission(
+    addNotification: (notification: Notification) => void,
+): Promise<boolean> {
     const route = useRoute();
 
-    if (canAccessRoute(route)) return;
+    if (canAccessRoute(route)) return true;
 
     addNotification(getRoutePermissionDeniedNotification(route));
 
@@ -39,4 +41,6 @@ export async function revalidateCurrentRoutePermission(addNotification: (notific
             name: 'overview',
         });
     }
+
+    return false;
 }

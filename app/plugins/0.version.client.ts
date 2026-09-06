@@ -17,6 +17,11 @@ export default defineNuxtPlugin({
             settingsStore.setVersion(APP_VERSION);
         }
 
+        // Remove unscoped private data after migrating to account-scoped persistence.
+        localStorage.removeItem('clipboard');
+        localStorage.removeItem('mailer');
+        localStorage.removeItem('historyStore');
+
         // Remove legacy dashboard cookies on app start to avoid sending stale state back to the server.
         const cookies = await cookieStore.getAll();
         cookies.forEach((cookie) => {

@@ -11,10 +11,13 @@ describe('handleAccountGroupsChangedEvent', () => {
     ) {
         return {
             isSuperuser: overrides.isSuperuser ?? false,
+            canBeSuperuser: overrides.isSuperuser ?? false,
             canBeConfigAdmin: overrides.canBeConfigAdmin ?? false,
             setCanBeSuperuser: vi.fn().mockReturnValue(overrides.isSuperuser ?? false),
             setAccountCanBeConfigAdmin: vi.fn(),
-            chooseCharacter: vi.fn().mockResolvedValue(undefined),
+            refreshCharacterSession: vi.fn().mockResolvedValue({ kind: 'ready' }),
+            beginQueryTransition: vi.fn(),
+            commitQueryContext: vi.fn(),
         };
     }
 
@@ -45,8 +48,9 @@ describe('handleAccountGroupsChangedEvent', () => {
         );
 
         expect(authStore.setCanBeSuperuser).toHaveBeenCalledWith(false);
-        expect(authStore.chooseCharacter).toHaveBeenCalledTimes(1);
-        expect(authStore.chooseCharacter).toHaveBeenCalledWith(undefined, false);
+        expect(authStore.refreshCharacterSession).toHaveBeenCalledTimes(1);
+        expect(authStore.beginQueryTransition).toHaveBeenCalledBefore(authStore.refreshCharacterSession);
+        expect(authStore.commitQueryContext).toHaveBeenCalledAfter(authStore.refreshCharacterSession);
     });
 
     it('refreshes when config-admin is revoked without a superuser change', async () => {
@@ -65,8 +69,7 @@ describe('handleAccountGroupsChangedEvent', () => {
         );
 
         expect(authStore.setCanBeSuperuser).toHaveBeenCalledWith(true);
-        expect(authStore.chooseCharacter).toHaveBeenCalledTimes(1);
-        expect(authStore.chooseCharacter).toHaveBeenCalledWith(undefined, false);
+        expect(authStore.refreshCharacterSession).toHaveBeenCalledTimes(1);
     });
 
     it('refreshes when superuser capability is revoked', async () => {
@@ -85,8 +88,7 @@ describe('handleAccountGroupsChangedEvent', () => {
         );
 
         expect(authStore.setCanBeSuperuser).toHaveBeenCalledWith(false);
-        expect(authStore.chooseCharacter).toHaveBeenCalledTimes(1);
-        expect(authStore.chooseCharacter).toHaveBeenCalledWith(undefined, false);
+        expect(authStore.refreshCharacterSession).toHaveBeenCalledTimes(1);
     });
 
     it('does not refresh when neither capability changes', async () => {
@@ -105,7 +107,7 @@ describe('handleAccountGroupsChangedEvent', () => {
         );
 
         expect(authStore.setCanBeSuperuser).toHaveBeenCalledWith(false);
-        expect(authStore.chooseCharacter).not.toHaveBeenCalled();
+        expect(authStore.refreshCharacterSession).not.toHaveBeenCalled();
     });
 
     it('updates account-level capabilities without reselecting a character in account-only scope', async () => {
@@ -125,7 +127,7 @@ describe('handleAccountGroupsChangedEvent', () => {
 
         expect(authStore.setCanBeSuperuser).toHaveBeenCalledWith(true);
         expect(authStore.setAccountCanBeConfigAdmin).toHaveBeenCalledWith(true);
-        expect(authStore.chooseCharacter).not.toHaveBeenCalled();
+        expect(authStore.refreshCharacterSession).not.toHaveBeenCalled();
     });
 
     it('clears account-level config-admin state before refreshing character-scoped revocations', async () => {
@@ -144,7 +146,7 @@ describe('handleAccountGroupsChangedEvent', () => {
         );
 
         expect(authStore.setAccountCanBeConfigAdmin).toHaveBeenCalledWith(false);
-        expect(authStore.chooseCharacter).toHaveBeenCalledWith(undefined, false);
+        expect(authStore.refreshCharacterSession).toHaveBeenCalledTimes(1);
     });
 
     it('does not restart when the live stream controller has already changed', () => {
