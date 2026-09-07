@@ -245,10 +245,13 @@ const columns = computed(() =>
                                             variant: 'link',
                                             icon: 'i-mdi-sync',
                                             onClick: async () => {
+                                                if (!row.original.userId) return;
+
                                                 try {
                                                     const settingsSystemClient = await getSettingsSystemClient();
                                                     await settingsSystemClient.triggerUserSync({
-                                                        userId: row.original.userId ?? 0,
+                                                        userId: [row.original.userId],
+                                                        identifiers: [],
                                                     });
 
                                                     notifications.add({
