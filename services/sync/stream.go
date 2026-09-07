@@ -95,7 +95,8 @@ func (s *Server) Stream(srv pbsync.SyncService_StreamServer) error {
 					continue
 				}
 
-				if dest.GetUserId() == 0 {
+				userSync := dest.GetUserSync()
+				if userSync == nil || (len(userSync.GetUserIds()) == 0 && len(userSync.GetIdentifiers()) == 0) {
 					continue
 				}
 

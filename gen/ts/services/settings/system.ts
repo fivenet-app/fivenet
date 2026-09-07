@@ -124,9 +124,13 @@ export interface GetStatusResponse {
  */
 export interface TriggerUserSyncRequest {
     /**
-     * @generated from protobuf field: int32 user_id = 1
+     * @generated from protobuf field: repeated int32 user_id = 1
      */
-    userId: number;
+    userId: number[];
+    /**
+     * @generated from protobuf field: repeated string identifiers = 2
+     */
+    identifiers: string[];
 }
 /**
  * @generated from protobuf message services.settings.TriggerUserSyncResponse
@@ -624,12 +628,14 @@ export const GetStatusResponse = new GetStatusResponse$Type();
 class TriggerUserSyncRequest$Type extends MessageType<TriggerUserSyncRequest> {
     constructor() {
         super("services.settings.TriggerUserSyncRequest", [
-            { no: 1, name: "user_id", kind: "scalar", T: 5 /*ScalarType.INT32*/, options: { "buf.validate.field": { int32: { gt: 0 } } } }
+            { no: 1, name: "user_id", kind: "scalar", repeat: 1 /*RepeatType.PACKED*/, T: 5 /*ScalarType.INT32*/, options: { "buf.validate.field": { repeated: { maxItems: "50", items: { int32: { gt: 0 } } } } } },
+            { no: 2, name: "identifiers", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { repeated: { maxItems: "50", items: { string: { maxLen: "64" } } } } } }
         ]);
     }
     create(value?: PartialMessage<TriggerUserSyncRequest>): TriggerUserSyncRequest {
         const message = globalThis.Object.create((this.messagePrototype!));
-        message.userId = 0;
+        message.userId = [];
+        message.identifiers = [];
         if (value !== undefined)
             reflectionMergePartial<TriggerUserSyncRequest>(this, message, value);
         return message;
@@ -639,8 +645,15 @@ class TriggerUserSyncRequest$Type extends MessageType<TriggerUserSyncRequest> {
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* int32 user_id */ 1:
-                    message.userId = reader.int32();
+                case /* repeated int32 user_id */ 1:
+                    if (wireType === WireType.LengthDelimited)
+                        for (let e = reader.int32() + reader.pos; reader.pos < e;)
+                            message.userId.push(reader.int32());
+                    else
+                        message.userId.push(reader.int32());
+                    break;
+                case /* repeated string identifiers */ 2:
+                    message.identifiers.push(reader.string());
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -654,9 +667,16 @@ class TriggerUserSyncRequest$Type extends MessageType<TriggerUserSyncRequest> {
         return message;
     }
     internalBinaryWrite(message: TriggerUserSyncRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* int32 user_id = 1; */
-        if (message.userId !== 0)
-            writer.tag(1, WireType.Varint).int32(message.userId);
+        /* repeated int32 user_id = 1; */
+        if (message.userId.length) {
+            writer.tag(1, WireType.LengthDelimited).fork();
+            for (let i = 0; i < message.userId.length; i++)
+                writer.int32(message.userId[i]);
+            writer.join();
+        }
+        /* repeated string identifiers = 2; */
+        for (let i = 0; i < message.identifiers.length; i++)
+            writer.tag(2, WireType.LengthDelimited).string(message.identifiers[i]);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);

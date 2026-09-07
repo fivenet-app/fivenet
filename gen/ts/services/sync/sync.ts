@@ -481,6 +481,10 @@ export interface DeleteUsersRequest {
      * @generated from protobuf field: repeated int32 user_ids = 1
      */
     userIds: number[];
+    /**
+     * @generated from protobuf field: repeated string identifiers = 2
+     */
+    identifiers: string[];
 }
 /**
  * @generated from protobuf message services.sync.DeleteVehiclesRequest
@@ -492,6 +496,19 @@ export interface DeleteVehiclesRequest {
     plates: string[];
 }
 /**
+ * @generated from protobuf message services.sync.UserSyncRequest
+ */
+export interface UserSyncRequest {
+    /**
+     * @generated from protobuf field: repeated int32 user_ids = 1
+     */
+    userIds: number[];
+    /**
+     * @generated from protobuf field: repeated string identifiers = 2
+     */
+    identifiers: string[];
+}
+/**
  * @generated from protobuf message services.sync.StreamResponse
  */
 export interface StreamResponse {
@@ -499,11 +516,11 @@ export interface StreamResponse {
      * @generated from protobuf oneof: payload
      */
     payload: {
-        oneofKind: "userId";
+        oneofKind: "userSync";
         /**
-         * @generated from protobuf field: int32 user_id = 1
+         * @generated from protobuf field: services.sync.UserSyncRequest user_sync = 1
          */
-        userId: number;
+        userSync: UserSyncRequest;
     } | {
         oneofKind: undefined;
     };
@@ -2571,12 +2588,14 @@ export const SendDataResponse = new SendDataResponse$Type();
 class DeleteUsersRequest$Type extends MessageType<DeleteUsersRequest> {
     constructor() {
         super("services.sync.DeleteUsersRequest", [
-            { no: 1, name: "user_ids", kind: "scalar", repeat: 1 /*RepeatType.PACKED*/, T: 5 /*ScalarType.INT32*/, options: { "buf.validate.field": { repeated: { maxItems: "300" } } } }
+            { no: 1, name: "user_ids", kind: "scalar", repeat: 1 /*RepeatType.PACKED*/, T: 5 /*ScalarType.INT32*/, options: { "buf.validate.field": { repeated: { maxItems: "300", items: { int32: { gt: 0 } } } } } },
+            { no: 2, name: "identifiers", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { repeated: { maxItems: "300", items: { string: { maxLen: "64" } } } } } }
         ]);
     }
     create(value?: PartialMessage<DeleteUsersRequest>): DeleteUsersRequest {
         const message = globalThis.Object.create((this.messagePrototype!));
         message.userIds = [];
+        message.identifiers = [];
         if (value !== undefined)
             reflectionMergePartial<DeleteUsersRequest>(this, message, value);
         return message;
@@ -2592,6 +2611,9 @@ class DeleteUsersRequest$Type extends MessageType<DeleteUsersRequest> {
                             message.userIds.push(reader.int32());
                     else
                         message.userIds.push(reader.int32());
+                    break;
+                case /* repeated string identifiers */ 2:
+                    message.identifiers.push(reader.string());
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -2612,6 +2634,9 @@ class DeleteUsersRequest$Type extends MessageType<DeleteUsersRequest> {
                 writer.int32(message.userIds[i]);
             writer.join();
         }
+        /* repeated string identifiers = 2; */
+        for (let i = 0; i < message.identifiers.length; i++)
+            writer.tag(2, WireType.LengthDelimited).string(message.identifiers[i]);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -2670,10 +2695,73 @@ class DeleteVehiclesRequest$Type extends MessageType<DeleteVehiclesRequest> {
  */
 export const DeleteVehiclesRequest = new DeleteVehiclesRequest$Type();
 // @generated message type with reflection information, may provide speed optimized methods
+class UserSyncRequest$Type extends MessageType<UserSyncRequest> {
+    constructor() {
+        super("services.sync.UserSyncRequest", [
+            { no: 1, name: "user_ids", kind: "scalar", repeat: 1 /*RepeatType.PACKED*/, T: 5 /*ScalarType.INT32*/, options: { "buf.validate.field": { repeated: { maxItems: "50", items: { int32: { gt: 0 } } } } } },
+            { no: 2, name: "identifiers", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { repeated: { maxItems: "50", items: { string: { maxLen: "64" } } } } } }
+        ]);
+    }
+    create(value?: PartialMessage<UserSyncRequest>): UserSyncRequest {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        message.userIds = [];
+        message.identifiers = [];
+        if (value !== undefined)
+            reflectionMergePartial<UserSyncRequest>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: UserSyncRequest): UserSyncRequest {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* repeated int32 user_ids */ 1:
+                    if (wireType === WireType.LengthDelimited)
+                        for (let e = reader.int32() + reader.pos; reader.pos < e;)
+                            message.userIds.push(reader.int32());
+                    else
+                        message.userIds.push(reader.int32());
+                    break;
+                case /* repeated string identifiers */ 2:
+                    message.identifiers.push(reader.string());
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: UserSyncRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* repeated int32 user_ids = 1; */
+        if (message.userIds.length) {
+            writer.tag(1, WireType.LengthDelimited).fork();
+            for (let i = 0; i < message.userIds.length; i++)
+                writer.int32(message.userIds[i]);
+            writer.join();
+        }
+        /* repeated string identifiers = 2; */
+        for (let i = 0; i < message.identifiers.length; i++)
+            writer.tag(2, WireType.LengthDelimited).string(message.identifiers[i]);
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message services.sync.UserSyncRequest
+ */
+export const UserSyncRequest = new UserSyncRequest$Type();
+// @generated message type with reflection information, may provide speed optimized methods
 class StreamResponse$Type extends MessageType<StreamResponse> {
     constructor() {
         super("services.sync.StreamResponse", [
-            { no: 1, name: "user_id", kind: "scalar", oneof: "payload", T: 5 /*ScalarType.INT32*/, options: { "buf.validate.field": { int32: { gt: 0 } } } }
+            { no: 1, name: "user_sync", kind: "message", oneof: "payload", T: () => UserSyncRequest }
         ]);
     }
     create(value?: PartialMessage<StreamResponse>): StreamResponse {
@@ -2688,10 +2776,10 @@ class StreamResponse$Type extends MessageType<StreamResponse> {
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* int32 user_id */ 1:
+                case /* services.sync.UserSyncRequest user_sync */ 1:
                     message.payload = {
-                        oneofKind: "userId",
-                        userId: reader.int32()
+                        oneofKind: "userSync",
+                        userSync: UserSyncRequest.internalBinaryRead(reader, reader.uint32(), options, (message.payload as any).userSync)
                     };
                     break;
                 default:
@@ -2706,9 +2794,9 @@ class StreamResponse$Type extends MessageType<StreamResponse> {
         return message;
     }
     internalBinaryWrite(message: StreamResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* int32 user_id = 1; */
-        if (message.payload.oneofKind === "userId")
-            writer.tag(1, WireType.Varint).int32(message.payload.userId);
+        /* services.sync.UserSyncRequest user_sync = 1; */
+        if (message.payload.oneofKind === "userSync")
+            UserSyncRequest.internalBinaryWrite(message.payload.userSync, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);

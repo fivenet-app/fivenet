@@ -52,7 +52,14 @@ message GetStatusResponse {
 }
 
 message TriggerUserSyncRequest {
-  int32 user_id = 1 [(buf.validate.field).int32.gt = 0];
+  repeated int32 user_id = 1 [
+    (buf.validate.field).repeated.items.int32.gt = 0,
+    (buf.validate.field).repeated.max_items = 50
+  ];
+  repeated string identifiers = 2 [
+    (buf.validate.field).repeated.items.string.max_len = 64,
+    (buf.validate.field).repeated.max_items = 50
+  ];
 }
 
 message TriggerUserSyncResponse {}

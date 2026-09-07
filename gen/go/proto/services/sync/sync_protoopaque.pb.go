@@ -2968,10 +2968,11 @@ func (b0 SendDataResponse_builder) Build() *SendDataResponse {
 }
 
 type DeleteUsersRequest struct {
-	state              protoimpl.MessageState `protogen:"opaque.v1"`
-	xxx_hidden_UserIds []int32                `protobuf:"varint,1,rep,packed,name=user_ids,json=userIds,proto3"`
-	unknownFields      protoimpl.UnknownFields
-	sizeCache          protoimpl.SizeCache
+	state                  protoimpl.MessageState `protogen:"opaque.v1"`
+	xxx_hidden_UserIds     []int32                `protobuf:"varint,1,rep,packed,name=user_ids,json=userIds,proto3"`
+	xxx_hidden_Identifiers []string               `protobuf:"bytes,2,rep,name=identifiers,proto3"`
+	unknownFields          protoimpl.UnknownFields
+	sizeCache              protoimpl.SizeCache
 }
 
 func (x *DeleteUsersRequest) Reset() {
@@ -3006,14 +3007,26 @@ func (x *DeleteUsersRequest) GetUserIds() []int32 {
 	return nil
 }
 
+func (x *DeleteUsersRequest) GetIdentifiers() []string {
+	if x != nil {
+		return x.xxx_hidden_Identifiers
+	}
+	return nil
+}
+
 func (x *DeleteUsersRequest) SetUserIds(v []int32) {
 	x.xxx_hidden_UserIds = v
+}
+
+func (x *DeleteUsersRequest) SetIdentifiers(v []string) {
+	x.xxx_hidden_Identifiers = v
 }
 
 type DeleteUsersRequest_builder struct {
 	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
 
-	UserIds []int32
+	UserIds     []int32
+	Identifiers []string
 }
 
 func (b0 DeleteUsersRequest_builder) Build() *DeleteUsersRequest {
@@ -3021,6 +3034,7 @@ func (b0 DeleteUsersRequest_builder) Build() *DeleteUsersRequest {
 	b, x := &b0, m0
 	_, _ = b, x
 	x.xxx_hidden_UserIds = b.UserIds
+	x.xxx_hidden_Identifiers = b.Identifiers
 	return m0
 }
 
@@ -3081,27 +3095,28 @@ func (b0 DeleteVehiclesRequest_builder) Build() *DeleteVehiclesRequest {
 	return m0
 }
 
-type StreamResponse struct {
-	state              protoimpl.MessageState   `protogen:"opaque.v1"`
-	xxx_hidden_Payload isStreamResponse_Payload `protobuf_oneof:"payload"`
-	unknownFields      protoimpl.UnknownFields
-	sizeCache          protoimpl.SizeCache
+type UserSyncRequest struct {
+	state                  protoimpl.MessageState `protogen:"opaque.v1"`
+	xxx_hidden_UserIds     []int32                `protobuf:"varint,1,rep,packed,name=user_ids,json=userIds,proto3"`
+	xxx_hidden_Identifiers []string               `protobuf:"bytes,2,rep,name=identifiers,proto3"`
+	unknownFields          protoimpl.UnknownFields
+	sizeCache              protoimpl.SizeCache
 }
 
-func (x *StreamResponse) Reset() {
-	*x = StreamResponse{}
+func (x *UserSyncRequest) Reset() {
+	*x = UserSyncRequest{}
 	mi := &file_services_sync_sync_proto_msgTypes[39]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *StreamResponse) String() string {
+func (x *UserSyncRequest) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*StreamResponse) ProtoMessage() {}
+func (*UserSyncRequest) ProtoMessage() {}
 
-func (x *StreamResponse) ProtoReflect() protoreflect.Message {
+func (x *UserSyncRequest) ProtoReflect() protoreflect.Message {
 	mi := &file_services_sync_sync_proto_msgTypes[39]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -3113,17 +3128,91 @@ func (x *StreamResponse) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-func (x *StreamResponse) GetUserId() int32 {
+func (x *UserSyncRequest) GetUserIds() []int32 {
 	if x != nil {
-		if x, ok := x.xxx_hidden_Payload.(*streamResponse_UserId); ok {
-			return x.UserId
-		}
+		return x.xxx_hidden_UserIds
 	}
-	return 0
+	return nil
 }
 
-func (x *StreamResponse) SetUserId(v int32) {
-	x.xxx_hidden_Payload = &streamResponse_UserId{v}
+func (x *UserSyncRequest) GetIdentifiers() []string {
+	if x != nil {
+		return x.xxx_hidden_Identifiers
+	}
+	return nil
+}
+
+func (x *UserSyncRequest) SetUserIds(v []int32) {
+	x.xxx_hidden_UserIds = v
+}
+
+func (x *UserSyncRequest) SetIdentifiers(v []string) {
+	x.xxx_hidden_Identifiers = v
+}
+
+type UserSyncRequest_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	UserIds     []int32
+	Identifiers []string
+}
+
+func (b0 UserSyncRequest_builder) Build() *UserSyncRequest {
+	m0 := &UserSyncRequest{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.xxx_hidden_UserIds = b.UserIds
+	x.xxx_hidden_Identifiers = b.Identifiers
+	return m0
+}
+
+type StreamResponse struct {
+	state              protoimpl.MessageState   `protogen:"opaque.v1"`
+	xxx_hidden_Payload isStreamResponse_Payload `protobuf_oneof:"payload"`
+	unknownFields      protoimpl.UnknownFields
+	sizeCache          protoimpl.SizeCache
+}
+
+func (x *StreamResponse) Reset() {
+	*x = StreamResponse{}
+	mi := &file_services_sync_sync_proto_msgTypes[40]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *StreamResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*StreamResponse) ProtoMessage() {}
+
+func (x *StreamResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_services_sync_sync_proto_msgTypes[40]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+func (x *StreamResponse) GetUserSync() *UserSyncRequest {
+	if x != nil {
+		if x, ok := x.xxx_hidden_Payload.(*streamResponse_UserSync); ok {
+			return x.UserSync
+		}
+	}
+	return nil
+}
+
+func (x *StreamResponse) SetUserSync(v *UserSyncRequest) {
+	if v == nil {
+		x.xxx_hidden_Payload = nil
+		return
+	}
+	x.xxx_hidden_Payload = &streamResponse_UserSync{v}
 }
 
 func (x *StreamResponse) HasPayload() bool {
@@ -3133,11 +3222,11 @@ func (x *StreamResponse) HasPayload() bool {
 	return x.xxx_hidden_Payload != nil
 }
 
-func (x *StreamResponse) HasUserId() bool {
+func (x *StreamResponse) HasUserSync() bool {
 	if x == nil {
 		return false
 	}
-	_, ok := x.xxx_hidden_Payload.(*streamResponse_UserId)
+	_, ok := x.xxx_hidden_Payload.(*streamResponse_UserSync)
 	return ok
 }
 
@@ -3145,22 +3234,22 @@ func (x *StreamResponse) ClearPayload() {
 	x.xxx_hidden_Payload = nil
 }
 
-func (x *StreamResponse) ClearUserId() {
-	if _, ok := x.xxx_hidden_Payload.(*streamResponse_UserId); ok {
+func (x *StreamResponse) ClearUserSync() {
+	if _, ok := x.xxx_hidden_Payload.(*streamResponse_UserSync); ok {
 		x.xxx_hidden_Payload = nil
 	}
 }
 
 const StreamResponse_Payload_not_set_case case_StreamResponse_Payload = 0
-const StreamResponse_UserId_case case_StreamResponse_Payload = 1
+const StreamResponse_UserSync_case case_StreamResponse_Payload = 1
 
 func (x *StreamResponse) WhichPayload() case_StreamResponse_Payload {
 	if x == nil {
 		return StreamResponse_Payload_not_set_case
 	}
 	switch x.xxx_hidden_Payload.(type) {
-	case *streamResponse_UserId:
-		return StreamResponse_UserId_case
+	case *streamResponse_UserSync:
+		return StreamResponse_UserSync_case
 	default:
 		return StreamResponse_Payload_not_set_case
 	}
@@ -3170,7 +3259,7 @@ type StreamResponse_builder struct {
 	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
 
 	// Fields of oneof xxx_hidden_Payload:
-	UserId *int32
+	UserSync *UserSyncRequest
 	// -- end of xxx_hidden_Payload
 }
 
@@ -3178,8 +3267,8 @@ func (b0 StreamResponse_builder) Build() *StreamResponse {
 	m0 := &StreamResponse{}
 	b, x := &b0, m0
 	_, _ = b, x
-	if b.UserId != nil {
-		x.xxx_hidden_Payload = &streamResponse_UserId{*b.UserId}
+	if b.UserSync != nil {
+		x.xxx_hidden_Payload = &streamResponse_UserSync{b.UserSync}
 	}
 	return m0
 }
@@ -3187,7 +3276,7 @@ func (b0 StreamResponse_builder) Build() *StreamResponse {
 type case_StreamResponse_Payload protoreflect.FieldNumber
 
 func (x case_StreamResponse_Payload) String() string {
-	md := file_services_sync_sync_proto_msgTypes[39].Descriptor()
+	md := file_services_sync_sync_proto_msgTypes[40].Descriptor()
 	if x == 0 {
 		return "not set"
 	}
@@ -3198,11 +3287,11 @@ type isStreamResponse_Payload interface {
 	isStreamResponse_Payload()
 }
 
-type streamResponse_UserId struct {
-	UserId int32 `protobuf:"varint,1,opt,name=user_id,json=userId,proto3,oneof"`
+type streamResponse_UserSync struct {
+	UserSync *UserSyncRequest `protobuf:"bytes,1,opt,name=user_sync,json=userSync,proto3,oneof"`
 }
 
-func (*streamResponse_UserId) isStreamResponse_Payload() {}
+func (*streamResponse_UserSync) isStreamResponse_Payload() {}
 
 type AddActivityRequest struct {
 	state               protoimpl.MessageState        `protogen:"opaque.v1"`
@@ -3213,7 +3302,7 @@ type AddActivityRequest struct {
 
 func (x *AddActivityRequest) Reset() {
 	*x = AddActivityRequest{}
-	mi := &file_services_sync_sync_proto_msgTypes[40]
+	mi := &file_services_sync_sync_proto_msgTypes[41]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3225,7 +3314,7 @@ func (x *AddActivityRequest) String() string {
 func (*AddActivityRequest) ProtoMessage() {}
 
 func (x *AddActivityRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_services_sync_sync_proto_msgTypes[40]
+	mi := &file_services_sync_sync_proto_msgTypes[41]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3625,7 +3714,7 @@ func (b0 AddActivityRequest_builder) Build() *AddActivityRequest {
 type case_AddActivityRequest_Activity protoreflect.FieldNumber
 
 func (x case_AddActivityRequest_Activity) String() string {
-	md := file_services_sync_sync_proto_msgTypes[40].Descriptor()
+	md := file_services_sync_sync_proto_msgTypes[41].Descriptor()
 	if x == 0 {
 		return "not set"
 	}
@@ -3706,7 +3795,7 @@ type SendDataRequest struct {
 
 func (x *SendDataRequest) Reset() {
 	*x = SendDataRequest{}
-	mi := &file_services_sync_sync_proto_msgTypes[41]
+	mi := &file_services_sync_sync_proto_msgTypes[42]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3718,7 +3807,7 @@ func (x *SendDataRequest) String() string {
 func (*SendDataRequest) ProtoMessage() {}
 
 func (x *SendDataRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_services_sync_sync_proto_msgTypes[41]
+	mi := &file_services_sync_sync_proto_msgTypes[42]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -4035,7 +4124,7 @@ func (b0 SendDataRequest_builder) Build() *SendDataRequest {
 type case_SendDataRequest_Data protoreflect.FieldNumber
 
 func (x case_SendDataRequest_Data) String() string {
-	md := file_services_sync_sync_proto_msgTypes[41].Descriptor()
+	md := file_services_sync_sync_proto_msgTypes[42].Descriptor()
 	if x == 0 {
 		return "not set"
 	}
@@ -4097,7 +4186,7 @@ type DeleteDataRequest struct {
 
 func (x *DeleteDataRequest) Reset() {
 	*x = DeleteDataRequest{}
-	mi := &file_services_sync_sync_proto_msgTypes[42]
+	mi := &file_services_sync_sync_proto_msgTypes[43]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -4109,7 +4198,7 @@ func (x *DeleteDataRequest) String() string {
 func (*DeleteDataRequest) ProtoMessage() {}
 
 func (x *DeleteDataRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_services_sync_sync_proto_msgTypes[42]
+	mi := &file_services_sync_sync_proto_msgTypes[43]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -4236,7 +4325,7 @@ func (b0 DeleteDataRequest_builder) Build() *DeleteDataRequest {
 type case_DeleteDataRequest_Data protoreflect.FieldNumber
 
 func (x case_DeleteDataRequest_Data) String() string {
-	md := file_services_sync_sync_proto_msgTypes[42].Descriptor()
+	md := file_services_sync_sync_proto_msgTypes[43].Descriptor()
 	if x == 0 {
 		return "not set"
 	}
@@ -4268,7 +4357,7 @@ type DeleteDataResponse struct {
 
 func (x *DeleteDataResponse) Reset() {
 	*x = DeleteDataResponse{}
-	mi := &file_services_sync_sync_proto_msgTypes[43]
+	mi := &file_services_sync_sync_proto_msgTypes[44]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -4280,7 +4369,7 @@ func (x *DeleteDataResponse) String() string {
 func (*DeleteDataResponse) ProtoMessage() {}
 
 func (x *DeleteDataResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_services_sync_sync_proto_msgTypes[43]
+	mi := &file_services_sync_sync_proto_msgTypes[44]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -4328,7 +4417,7 @@ type StreamRequest struct {
 
 func (x *StreamRequest) Reset() {
 	*x = StreamRequest{}
-	mi := &file_services_sync_sync_proto_msgTypes[44]
+	mi := &file_services_sync_sync_proto_msgTypes[45]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -4340,7 +4429,7 @@ func (x *StreamRequest) String() string {
 func (*StreamRequest) ProtoMessage() {}
 
 func (x *StreamRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_services_sync_sync_proto_msgTypes[44]
+	mi := &file_services_sync_sync_proto_msgTypes[45]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -4461,7 +4550,7 @@ func (b0 StreamRequest_builder) Build() *StreamRequest {
 type case_StreamRequest_Data protoreflect.FieldNumber
 
 func (x case_StreamRequest_Data) String() string {
-	md := file_services_sync_sync_proto_msgTypes[44].Descriptor()
+	md := file_services_sync_sync_proto_msgTypes[45].Descriptor()
 	if x == 0 {
 		return "not set"
 	}
@@ -4487,7 +4576,7 @@ type ClientSyncState struct {
 
 func (x *ClientSyncState) Reset() {
 	*x = ClientSyncState{}
-	mi := &file_services_sync_sync_proto_msgTypes[45]
+	mi := &file_services_sync_sync_proto_msgTypes[46]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -4499,7 +4588,7 @@ func (x *ClientSyncState) String() string {
 func (*ClientSyncState) ProtoMessage() {}
 
 func (x *ClientSyncState) ProtoReflect() protoreflect.Message {
-	mi := &file_services_sync_sync_proto_msgTypes[45]
+	mi := &file_services_sync_sync_proto_msgTypes[46]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -4678,13 +4767,17 @@ const file_services_sync_sync_proto_rawDesc = "" +
 	"\flast_char_id\x18\x01 \x01(\v2\x1f.resources.sync.data.LastCharIDR\n" +
 	"lastCharId\"7\n" +
 	"\x10SendDataResponse\x12#\n" +
-	"\rrows_affected\x18\x01 \x01(\x03R\frowsAffected\"/\n" +
+	"\rrows_affected\x18\x01 \x01(\x03R\frowsAffected\"Q\n" +
 	"\x12DeleteUsersRequest\x12\x19\n" +
-	"\buser_ids\x18\x01 \x03(\x05R\auserIds\"/\n" +
+	"\buser_ids\x18\x01 \x03(\x05R\auserIds\x12 \n" +
+	"\videntifiers\x18\x02 \x03(\tR\videntifiers\"/\n" +
 	"\x15DeleteVehiclesRequest\x12\x16\n" +
-	"\x06plates\x18\x01 \x03(\tR\x06plates\"6\n" +
-	"\x0eStreamResponse\x12\x19\n" +
-	"\auser_id\x18\x01 \x01(\x05H\x00R\x06userIdB\t\n" +
+	"\x06plates\x18\x01 \x03(\tR\x06plates\"N\n" +
+	"\x0fUserSyncRequest\x12\x19\n" +
+	"\buser_ids\x18\x01 \x03(\x05R\auserIds\x12 \n" +
+	"\videntifiers\x18\x02 \x03(\tR\videntifiers\"Z\n" +
+	"\x0eStreamResponse\x12=\n" +
+	"\tuser_sync\x18\x01 \x01(\v2\x1e.services.sync.UserSyncRequestH\x00R\buserSyncB\t\n" +
 	"\apayload\"\xec\x05\n" +
 	"\x12AddActivityRequest\x12J\n" +
 	"\vuser_oauth2\x18\x01 \x01(\v2'.resources.sync.activity.UserOAuth2ConnH\x00R\n" +
@@ -4761,7 +4854,7 @@ const file_services_sync_sync_proto_rawDesc = "" +
 	"\n" +
 	"DeleteData\x12 .services.sync.DeleteDataRequest\x1a!.services.sync.DeleteDataResponse\"\x03\x88\x02\x01BFZDgithub.com/fivenet-app/fivenet/v2026/gen/go/proto/services/sync;syncb\x06proto3"
 
-var file_services_sync_sync_proto_msgTypes = make([]protoimpl.MessageInfo, 46)
+var file_services_sync_sync_proto_msgTypes = make([]protoimpl.MessageInfo, 47)
 var file_services_sync_sync_proto_goTypes = []any{
 	(*GetStatusRequest)(nil),               // 0: services.sync.GetStatusRequest
 	(*GetStatusResponse)(nil),              // 1: services.sync.GetStatusResponse
@@ -4802,169 +4895,171 @@ var file_services_sync_sync_proto_goTypes = []any{
 	(*SendDataResponse)(nil),               // 36: services.sync.SendDataResponse
 	(*DeleteUsersRequest)(nil),             // 37: services.sync.DeleteUsersRequest
 	(*DeleteVehiclesRequest)(nil),          // 38: services.sync.DeleteVehiclesRequest
-	(*StreamResponse)(nil),                 // 39: services.sync.StreamResponse
-	(*AddActivityRequest)(nil),             // 40: services.sync.AddActivityRequest
-	(*SendDataRequest)(nil),                // 41: services.sync.SendDataRequest
-	(*DeleteDataRequest)(nil),              // 42: services.sync.DeleteDataRequest
-	(*DeleteDataResponse)(nil),             // 43: services.sync.DeleteDataResponse
-	(*StreamRequest)(nil),                  // 44: services.sync.StreamRequest
-	(*ClientSyncState)(nil),                // 45: services.sync.ClientSyncState
-	(*timestamp.Timestamp)(nil),            // 46: resources.timestamp.Timestamp
-	(*data.DataStatus)(nil),                // 47: resources.sync.data.DataStatus
-	(*activity.UserOAuth2Conn)(nil),        // 48: resources.sync.activity.UserOAuth2Conn
-	(*dispatches.Dispatch)(nil),            // 49: resources.centrum.dispatches.Dispatch
-	(*markers.MarkerMarker)(nil),           // 50: resources.livemap.markers.MarkerMarker
-	(*livemap.Coords)(nil),                 // 51: resources.livemap.Coords
-	(*activity1.UserActivity)(nil),         // 52: resources.users.activity.UserActivity
-	(*activity.UserProps)(nil),             // 53: resources.sync.activity.UserProps
-	(*props.UserProps)(nil),                // 54: resources.users.props.UserProps
-	(*props1.VehicleProps)(nil),            // 55: resources.vehicles.props.VehicleProps
-	(*activity2.ColleagueActivity)(nil),    // 56: resources.jobs.colleagues.activity.ColleagueActivity
-	(*activity.ColleagueProps)(nil),        // 57: resources.sync.activity.ColleagueProps
-	(*activity.TimeclockUpdate)(nil),       // 58: resources.sync.activity.TimeclockUpdate
-	(*activity.AccountUpdate)(nil),         // 59: resources.sync.activity.AccountUpdate
-	(*activity.UserUpdate)(nil),            // 60: resources.sync.activity.UserUpdate
-	(*jobs.Job)(nil),                       // 61: resources.jobs.Job
-	(*licenses.License)(nil),               // 62: resources.citizens.licenses.License
-	(*data.DataUser)(nil),                  // 63: resources.sync.data.DataUser
-	(*vehicles.Vehicle)(nil),               // 64: resources.vehicles.Vehicle
-	(*data.CitizenLocations)(nil),          // 65: resources.sync.data.CitizenLocations
-	(*data.LastCharID)(nil),                // 66: resources.sync.data.LastCharID
-	(*data.DataJobs)(nil),                  // 67: resources.sync.data.DataJobs
-	(*data.DataLicenses)(nil),              // 68: resources.sync.data.DataLicenses
-	(*data.DataAccounts)(nil),              // 69: resources.sync.data.DataAccounts
-	(*data.DataUsers)(nil),                 // 70: resources.sync.data.DataUsers
-	(*data.DataVehicles)(nil),              // 71: resources.sync.data.DataVehicles
-	(*data.DataUserLocations)(nil),         // 72: resources.sync.data.DataUserLocations
-	(*data.DeleteUsers)(nil),               // 73: resources.sync.data.DeleteUsers
-	(*data.DeleteVehicles)(nil),            // 74: resources.sync.data.DeleteVehicles
-	(*dbsync.DBSyncTableSyncState)(nil),    // 75: resources.dbsync.DBSyncTableSyncState
+	(*UserSyncRequest)(nil),                // 39: services.sync.UserSyncRequest
+	(*StreamResponse)(nil),                 // 40: services.sync.StreamResponse
+	(*AddActivityRequest)(nil),             // 41: services.sync.AddActivityRequest
+	(*SendDataRequest)(nil),                // 42: services.sync.SendDataRequest
+	(*DeleteDataRequest)(nil),              // 43: services.sync.DeleteDataRequest
+	(*DeleteDataResponse)(nil),             // 44: services.sync.DeleteDataResponse
+	(*StreamRequest)(nil),                  // 45: services.sync.StreamRequest
+	(*ClientSyncState)(nil),                // 46: services.sync.ClientSyncState
+	(*timestamp.Timestamp)(nil),            // 47: resources.timestamp.Timestamp
+	(*data.DataStatus)(nil),                // 48: resources.sync.data.DataStatus
+	(*activity.UserOAuth2Conn)(nil),        // 49: resources.sync.activity.UserOAuth2Conn
+	(*dispatches.Dispatch)(nil),            // 50: resources.centrum.dispatches.Dispatch
+	(*markers.MarkerMarker)(nil),           // 51: resources.livemap.markers.MarkerMarker
+	(*livemap.Coords)(nil),                 // 52: resources.livemap.Coords
+	(*activity1.UserActivity)(nil),         // 53: resources.users.activity.UserActivity
+	(*activity.UserProps)(nil),             // 54: resources.sync.activity.UserProps
+	(*props.UserProps)(nil),                // 55: resources.users.props.UserProps
+	(*props1.VehicleProps)(nil),            // 56: resources.vehicles.props.VehicleProps
+	(*activity2.ColleagueActivity)(nil),    // 57: resources.jobs.colleagues.activity.ColleagueActivity
+	(*activity.ColleagueProps)(nil),        // 58: resources.sync.activity.ColleagueProps
+	(*activity.TimeclockUpdate)(nil),       // 59: resources.sync.activity.TimeclockUpdate
+	(*activity.AccountUpdate)(nil),         // 60: resources.sync.activity.AccountUpdate
+	(*activity.UserUpdate)(nil),            // 61: resources.sync.activity.UserUpdate
+	(*jobs.Job)(nil),                       // 62: resources.jobs.Job
+	(*licenses.License)(nil),               // 63: resources.citizens.licenses.License
+	(*data.DataUser)(nil),                  // 64: resources.sync.data.DataUser
+	(*vehicles.Vehicle)(nil),               // 65: resources.vehicles.Vehicle
+	(*data.CitizenLocations)(nil),          // 66: resources.sync.data.CitizenLocations
+	(*data.LastCharID)(nil),                // 67: resources.sync.data.LastCharID
+	(*data.DataJobs)(nil),                  // 68: resources.sync.data.DataJobs
+	(*data.DataLicenses)(nil),              // 69: resources.sync.data.DataLicenses
+	(*data.DataAccounts)(nil),              // 70: resources.sync.data.DataAccounts
+	(*data.DataUsers)(nil),                 // 71: resources.sync.data.DataUsers
+	(*data.DataVehicles)(nil),              // 72: resources.sync.data.DataVehicles
+	(*data.DataUserLocations)(nil),         // 73: resources.sync.data.DataUserLocations
+	(*data.DeleteUsers)(nil),               // 74: resources.sync.data.DeleteUsers
+	(*data.DeleteVehicles)(nil),            // 75: resources.sync.data.DeleteVehicles
+	(*dbsync.DBSyncTableSyncState)(nil),    // 76: resources.dbsync.DBSyncTableSyncState
 }
 var file_services_sync_sync_proto_depIdxs = []int32{
-	46, // 0: services.sync.GetStatusResponse.last_synced_data:type_name -> resources.timestamp.Timestamp
-	46, // 1: services.sync.GetStatusResponse.last_synced_activity:type_name -> resources.timestamp.Timestamp
-	47, // 2: services.sync.GetStatusResponse.jobs:type_name -> resources.sync.data.DataStatus
-	47, // 3: services.sync.GetStatusResponse.licenses:type_name -> resources.sync.data.DataStatus
-	47, // 4: services.sync.GetStatusResponse.users:type_name -> resources.sync.data.DataStatus
-	47, // 5: services.sync.GetStatusResponse.vehicles:type_name -> resources.sync.data.DataStatus
-	47, // 6: services.sync.GetStatusResponse.accounts:type_name -> resources.sync.data.DataStatus
-	48, // 7: services.sync.AddUserOAuth2ConnRequest.user_oauth2:type_name -> resources.sync.activity.UserOAuth2Conn
-	49, // 8: services.sync.AddDispatchRequest.dispatch:type_name -> resources.centrum.dispatches.Dispatch
-	50, // 9: services.sync.AddMarkerRequest.marker:type_name -> resources.livemap.markers.MarkerMarker
-	51, // 10: services.sync.CloseUserDispatchesRequest.coords:type_name -> resources.livemap.Coords
-	52, // 11: services.sync.AddUserActivityRequest.user_activity:type_name -> resources.users.activity.UserActivity
+	47, // 0: services.sync.GetStatusResponse.last_synced_data:type_name -> resources.timestamp.Timestamp
+	47, // 1: services.sync.GetStatusResponse.last_synced_activity:type_name -> resources.timestamp.Timestamp
+	48, // 2: services.sync.GetStatusResponse.jobs:type_name -> resources.sync.data.DataStatus
+	48, // 3: services.sync.GetStatusResponse.licenses:type_name -> resources.sync.data.DataStatus
+	48, // 4: services.sync.GetStatusResponse.users:type_name -> resources.sync.data.DataStatus
+	48, // 5: services.sync.GetStatusResponse.vehicles:type_name -> resources.sync.data.DataStatus
+	48, // 6: services.sync.GetStatusResponse.accounts:type_name -> resources.sync.data.DataStatus
+	49, // 7: services.sync.AddUserOAuth2ConnRequest.user_oauth2:type_name -> resources.sync.activity.UserOAuth2Conn
+	50, // 8: services.sync.AddDispatchRequest.dispatch:type_name -> resources.centrum.dispatches.Dispatch
+	51, // 9: services.sync.AddMarkerRequest.marker:type_name -> resources.livemap.markers.MarkerMarker
+	52, // 10: services.sync.CloseUserDispatchesRequest.coords:type_name -> resources.livemap.Coords
+	53, // 11: services.sync.AddUserActivityRequest.user_activity:type_name -> resources.users.activity.UserActivity
 	2,  // 12: services.sync.AddUserActivityRequest.source_user:type_name -> services.sync.SourceUser
-	53, // 13: services.sync.AddUserPropsRequest.user_props:type_name -> resources.sync.activity.UserProps
+	54, // 13: services.sync.AddUserPropsRequest.user_props:type_name -> resources.sync.activity.UserProps
 	2,  // 14: services.sync.AddUserPropsRequest.source_user:type_name -> services.sync.SourceUser
-	54, // 15: services.sync.GetUserPropsResponse.user_props:type_name -> resources.users.props.UserProps
-	55, // 16: services.sync.GetVehiclePropsResponse.vehicle_props:type_name -> resources.vehicles.props.VehicleProps
-	55, // 17: services.sync.SetVehiclePropsRequest.vehicle_props:type_name -> resources.vehicles.props.VehicleProps
+	55, // 15: services.sync.GetUserPropsResponse.user_props:type_name -> resources.users.props.UserProps
+	56, // 16: services.sync.GetVehiclePropsResponse.vehicle_props:type_name -> resources.vehicles.props.VehicleProps
+	56, // 17: services.sync.SetVehiclePropsRequest.vehicle_props:type_name -> resources.vehicles.props.VehicleProps
 	2,  // 18: services.sync.SetVehiclePropsRequest.source_user:type_name -> services.sync.SourceUser
-	55, // 19: services.sync.SetVehiclePropsResponse.vehicle_props:type_name -> resources.vehicles.props.VehicleProps
-	56, // 20: services.sync.AddColleagueActivityRequest.colleague_activity:type_name -> resources.jobs.colleagues.activity.ColleagueActivity
+	56, // 19: services.sync.SetVehiclePropsResponse.vehicle_props:type_name -> resources.vehicles.props.VehicleProps
+	57, // 20: services.sync.AddColleagueActivityRequest.colleague_activity:type_name -> resources.jobs.colleagues.activity.ColleagueActivity
 	2,  // 21: services.sync.AddColleagueActivityRequest.source_user:type_name -> services.sync.SourceUser
-	57, // 22: services.sync.AddColleaguePropsRequest.colleague_props:type_name -> resources.sync.activity.ColleagueProps
+	58, // 22: services.sync.AddColleaguePropsRequest.colleague_props:type_name -> resources.sync.activity.ColleagueProps
 	2,  // 23: services.sync.AddColleaguePropsRequest.source_user:type_name -> services.sync.SourceUser
-	58, // 24: services.sync.AddJobTimeclockRequest.job_timeclock:type_name -> resources.sync.activity.TimeclockUpdate
-	59, // 25: services.sync.AddAccountUpdateRequest.account_update:type_name -> resources.sync.activity.AccountUpdate
-	60, // 26: services.sync.AddUserUpdateRequest.user_update:type_name -> resources.sync.activity.UserUpdate
-	46, // 27: services.sync.AddActivityResponse.created_at:type_name -> resources.timestamp.Timestamp
-	61, // 28: services.sync.SendJobsRequest.jobs:type_name -> resources.jobs.Job
-	62, // 29: services.sync.SendLicensesRequest.licenses:type_name -> resources.citizens.licenses.License
-	59, // 30: services.sync.SendAccountsRequest.account_updates:type_name -> resources.sync.activity.AccountUpdate
-	63, // 31: services.sync.SendUsersRequest.users:type_name -> resources.sync.data.DataUser
-	64, // 32: services.sync.SendVehiclesRequest.vehicles:type_name -> resources.vehicles.Vehicle
-	65, // 33: services.sync.SendUserLocationsRequest.users:type_name -> resources.sync.data.CitizenLocations
-	66, // 34: services.sync.SetLastCharIDRequest.last_char_id:type_name -> resources.sync.data.LastCharID
-	48, // 35: services.sync.AddActivityRequest.user_oauth2:type_name -> resources.sync.activity.UserOAuth2Conn
-	49, // 36: services.sync.AddActivityRequest.dispatch:type_name -> resources.centrum.dispatches.Dispatch
-	52, // 37: services.sync.AddActivityRequest.user_activity:type_name -> resources.users.activity.UserActivity
-	53, // 38: services.sync.AddActivityRequest.user_props:type_name -> resources.sync.activity.UserProps
-	56, // 39: services.sync.AddActivityRequest.colleague_activity:type_name -> resources.jobs.colleagues.activity.ColleagueActivity
-	57, // 40: services.sync.AddActivityRequest.colleague_props:type_name -> resources.sync.activity.ColleagueProps
-	58, // 41: services.sync.AddActivityRequest.job_timeclock:type_name -> resources.sync.activity.TimeclockUpdate
-	59, // 42: services.sync.AddActivityRequest.account_update:type_name -> resources.sync.activity.AccountUpdate
-	60, // 43: services.sync.AddActivityRequest.user_update:type_name -> resources.sync.activity.UserUpdate
-	67, // 44: services.sync.SendDataRequest.jobs:type_name -> resources.sync.data.DataJobs
-	68, // 45: services.sync.SendDataRequest.licenses:type_name -> resources.sync.data.DataLicenses
-	69, // 46: services.sync.SendDataRequest.accounts:type_name -> resources.sync.data.DataAccounts
-	70, // 47: services.sync.SendDataRequest.users:type_name -> resources.sync.data.DataUsers
-	71, // 48: services.sync.SendDataRequest.vehicles:type_name -> resources.sync.data.DataVehicles
-	72, // 49: services.sync.SendDataRequest.user_locations:type_name -> resources.sync.data.DataUserLocations
-	66, // 50: services.sync.SendDataRequest.last_char_id:type_name -> resources.sync.data.LastCharID
-	73, // 51: services.sync.DeleteDataRequest.users:type_name -> resources.sync.data.DeleteUsers
-	74, // 52: services.sync.DeleteDataRequest.vehicles:type_name -> resources.sync.data.DeleteVehicles
-	45, // 53: services.sync.StreamRequest.sync_state:type_name -> services.sync.ClientSyncState
-	75, // 54: services.sync.ClientSyncState.tables:type_name -> resources.dbsync.DBSyncTableSyncState
-	0,  // 55: services.sync.SyncService.GetStatus:input_type -> services.sync.GetStatusRequest
-	3,  // 56: services.sync.SyncService.RegisterAccount:input_type -> services.sync.RegisterAccountRequest
-	5,  // 57: services.sync.SyncService.TransferAccount:input_type -> services.sync.TransferAccountRequest
-	7,  // 58: services.sync.SyncService.AddUserOAuth2Conn:input_type -> services.sync.AddUserOAuth2ConnRequest
-	26, // 59: services.sync.SyncService.AddAccountUpdate:input_type -> services.sync.AddAccountUpdateRequest
-	27, // 60: services.sync.SyncService.AddUserUpdate:input_type -> services.sync.AddUserUpdateRequest
-	15, // 61: services.sync.SyncService.AddUserActivity:input_type -> services.sync.AddUserActivityRequest
-	16, // 62: services.sync.SyncService.AddUserProps:input_type -> services.sync.AddUserPropsRequest
-	17, // 63: services.sync.SyncService.GetUserProps:input_type -> services.sync.GetUserPropsRequest
-	19, // 64: services.sync.SyncService.GetVehicleProps:input_type -> services.sync.GetVehiclePropsRequest
-	21, // 65: services.sync.SyncService.SetVehicleProps:input_type -> services.sync.SetVehiclePropsRequest
-	23, // 66: services.sync.SyncService.AddColleagueActivity:input_type -> services.sync.AddColleagueActivityRequest
-	24, // 67: services.sync.SyncService.AddColleagueProps:input_type -> services.sync.AddColleaguePropsRequest
-	25, // 68: services.sync.SyncService.AddJobTimeclock:input_type -> services.sync.AddJobTimeclockRequest
-	8,  // 69: services.sync.SyncService.AddDispatch:input_type -> services.sync.AddDispatchRequest
-	9,  // 70: services.sync.SyncService.AddMarker:input_type -> services.sync.AddMarkerRequest
-	10, // 71: services.sync.SyncService.DeleteMarker:input_type -> services.sync.DeleteMarkerRequest
-	11, // 72: services.sync.SyncService.EndActiveJobTimeclocks:input_type -> services.sync.EndActiveJobTimeclocksRequest
-	13, // 73: services.sync.SyncService.CloseUserDispatches:input_type -> services.sync.CloseUserDispatchesRequest
-	29, // 74: services.sync.SyncService.SendJobs:input_type -> services.sync.SendJobsRequest
-	30, // 75: services.sync.SyncService.SendLicenses:input_type -> services.sync.SendLicensesRequest
-	31, // 76: services.sync.SyncService.SendAccounts:input_type -> services.sync.SendAccountsRequest
-	32, // 77: services.sync.SyncService.SendUsers:input_type -> services.sync.SendUsersRequest
-	33, // 78: services.sync.SyncService.SendVehicles:input_type -> services.sync.SendVehiclesRequest
-	34, // 79: services.sync.SyncService.SendUserLocations:input_type -> services.sync.SendUserLocationsRequest
-	35, // 80: services.sync.SyncService.SetLastCharID:input_type -> services.sync.SetLastCharIDRequest
-	37, // 81: services.sync.SyncService.DeleteUsers:input_type -> services.sync.DeleteUsersRequest
-	38, // 82: services.sync.SyncService.DeleteVehicles:input_type -> services.sync.DeleteVehiclesRequest
-	44, // 83: services.sync.SyncService.Stream:input_type -> services.sync.StreamRequest
-	40, // 84: services.sync.SyncService.AddActivity:input_type -> services.sync.AddActivityRequest
-	41, // 85: services.sync.SyncService.SendData:input_type -> services.sync.SendDataRequest
-	42, // 86: services.sync.SyncService.DeleteData:input_type -> services.sync.DeleteDataRequest
-	1,  // 87: services.sync.SyncService.GetStatus:output_type -> services.sync.GetStatusResponse
-	4,  // 88: services.sync.SyncService.RegisterAccount:output_type -> services.sync.RegisterAccountResponse
-	6,  // 89: services.sync.SyncService.TransferAccount:output_type -> services.sync.TransferAccountResponse
-	28, // 90: services.sync.SyncService.AddUserOAuth2Conn:output_type -> services.sync.AddActivityResponse
-	28, // 91: services.sync.SyncService.AddAccountUpdate:output_type -> services.sync.AddActivityResponse
-	28, // 92: services.sync.SyncService.AddUserUpdate:output_type -> services.sync.AddActivityResponse
-	28, // 93: services.sync.SyncService.AddUserActivity:output_type -> services.sync.AddActivityResponse
-	28, // 94: services.sync.SyncService.AddUserProps:output_type -> services.sync.AddActivityResponse
-	18, // 95: services.sync.SyncService.GetUserProps:output_type -> services.sync.GetUserPropsResponse
-	20, // 96: services.sync.SyncService.GetVehicleProps:output_type -> services.sync.GetVehiclePropsResponse
-	22, // 97: services.sync.SyncService.SetVehicleProps:output_type -> services.sync.SetVehiclePropsResponse
-	28, // 98: services.sync.SyncService.AddColleagueActivity:output_type -> services.sync.AddActivityResponse
-	28, // 99: services.sync.SyncService.AddColleagueProps:output_type -> services.sync.AddActivityResponse
-	28, // 100: services.sync.SyncService.AddJobTimeclock:output_type -> services.sync.AddActivityResponse
-	28, // 101: services.sync.SyncService.AddDispatch:output_type -> services.sync.AddActivityResponse
-	28, // 102: services.sync.SyncService.AddMarker:output_type -> services.sync.AddActivityResponse
-	43, // 103: services.sync.SyncService.DeleteMarker:output_type -> services.sync.DeleteDataResponse
-	12, // 104: services.sync.SyncService.EndActiveJobTimeclocks:output_type -> services.sync.EndActiveJobTimeclocksResponse
-	14, // 105: services.sync.SyncService.CloseUserDispatches:output_type -> services.sync.CloseUserDispatchesResponse
-	36, // 106: services.sync.SyncService.SendJobs:output_type -> services.sync.SendDataResponse
-	36, // 107: services.sync.SyncService.SendLicenses:output_type -> services.sync.SendDataResponse
-	36, // 108: services.sync.SyncService.SendAccounts:output_type -> services.sync.SendDataResponse
-	36, // 109: services.sync.SyncService.SendUsers:output_type -> services.sync.SendDataResponse
-	36, // 110: services.sync.SyncService.SendVehicles:output_type -> services.sync.SendDataResponse
-	36, // 111: services.sync.SyncService.SendUserLocations:output_type -> services.sync.SendDataResponse
-	36, // 112: services.sync.SyncService.SetLastCharID:output_type -> services.sync.SendDataResponse
-	43, // 113: services.sync.SyncService.DeleteUsers:output_type -> services.sync.DeleteDataResponse
-	43, // 114: services.sync.SyncService.DeleteVehicles:output_type -> services.sync.DeleteDataResponse
-	39, // 115: services.sync.SyncService.Stream:output_type -> services.sync.StreamResponse
-	28, // 116: services.sync.SyncService.AddActivity:output_type -> services.sync.AddActivityResponse
-	36, // 117: services.sync.SyncService.SendData:output_type -> services.sync.SendDataResponse
-	43, // 118: services.sync.SyncService.DeleteData:output_type -> services.sync.DeleteDataResponse
-	87, // [87:119] is the sub-list for method output_type
-	55, // [55:87] is the sub-list for method input_type
-	55, // [55:55] is the sub-list for extension type_name
-	55, // [55:55] is the sub-list for extension extendee
-	0,  // [0:55] is the sub-list for field type_name
+	59, // 24: services.sync.AddJobTimeclockRequest.job_timeclock:type_name -> resources.sync.activity.TimeclockUpdate
+	60, // 25: services.sync.AddAccountUpdateRequest.account_update:type_name -> resources.sync.activity.AccountUpdate
+	61, // 26: services.sync.AddUserUpdateRequest.user_update:type_name -> resources.sync.activity.UserUpdate
+	47, // 27: services.sync.AddActivityResponse.created_at:type_name -> resources.timestamp.Timestamp
+	62, // 28: services.sync.SendJobsRequest.jobs:type_name -> resources.jobs.Job
+	63, // 29: services.sync.SendLicensesRequest.licenses:type_name -> resources.citizens.licenses.License
+	60, // 30: services.sync.SendAccountsRequest.account_updates:type_name -> resources.sync.activity.AccountUpdate
+	64, // 31: services.sync.SendUsersRequest.users:type_name -> resources.sync.data.DataUser
+	65, // 32: services.sync.SendVehiclesRequest.vehicles:type_name -> resources.vehicles.Vehicle
+	66, // 33: services.sync.SendUserLocationsRequest.users:type_name -> resources.sync.data.CitizenLocations
+	67, // 34: services.sync.SetLastCharIDRequest.last_char_id:type_name -> resources.sync.data.LastCharID
+	39, // 35: services.sync.StreamResponse.user_sync:type_name -> services.sync.UserSyncRequest
+	49, // 36: services.sync.AddActivityRequest.user_oauth2:type_name -> resources.sync.activity.UserOAuth2Conn
+	50, // 37: services.sync.AddActivityRequest.dispatch:type_name -> resources.centrum.dispatches.Dispatch
+	53, // 38: services.sync.AddActivityRequest.user_activity:type_name -> resources.users.activity.UserActivity
+	54, // 39: services.sync.AddActivityRequest.user_props:type_name -> resources.sync.activity.UserProps
+	57, // 40: services.sync.AddActivityRequest.colleague_activity:type_name -> resources.jobs.colleagues.activity.ColleagueActivity
+	58, // 41: services.sync.AddActivityRequest.colleague_props:type_name -> resources.sync.activity.ColleagueProps
+	59, // 42: services.sync.AddActivityRequest.job_timeclock:type_name -> resources.sync.activity.TimeclockUpdate
+	60, // 43: services.sync.AddActivityRequest.account_update:type_name -> resources.sync.activity.AccountUpdate
+	61, // 44: services.sync.AddActivityRequest.user_update:type_name -> resources.sync.activity.UserUpdate
+	68, // 45: services.sync.SendDataRequest.jobs:type_name -> resources.sync.data.DataJobs
+	69, // 46: services.sync.SendDataRequest.licenses:type_name -> resources.sync.data.DataLicenses
+	70, // 47: services.sync.SendDataRequest.accounts:type_name -> resources.sync.data.DataAccounts
+	71, // 48: services.sync.SendDataRequest.users:type_name -> resources.sync.data.DataUsers
+	72, // 49: services.sync.SendDataRequest.vehicles:type_name -> resources.sync.data.DataVehicles
+	73, // 50: services.sync.SendDataRequest.user_locations:type_name -> resources.sync.data.DataUserLocations
+	67, // 51: services.sync.SendDataRequest.last_char_id:type_name -> resources.sync.data.LastCharID
+	74, // 52: services.sync.DeleteDataRequest.users:type_name -> resources.sync.data.DeleteUsers
+	75, // 53: services.sync.DeleteDataRequest.vehicles:type_name -> resources.sync.data.DeleteVehicles
+	46, // 54: services.sync.StreamRequest.sync_state:type_name -> services.sync.ClientSyncState
+	76, // 55: services.sync.ClientSyncState.tables:type_name -> resources.dbsync.DBSyncTableSyncState
+	0,  // 56: services.sync.SyncService.GetStatus:input_type -> services.sync.GetStatusRequest
+	3,  // 57: services.sync.SyncService.RegisterAccount:input_type -> services.sync.RegisterAccountRequest
+	5,  // 58: services.sync.SyncService.TransferAccount:input_type -> services.sync.TransferAccountRequest
+	7,  // 59: services.sync.SyncService.AddUserOAuth2Conn:input_type -> services.sync.AddUserOAuth2ConnRequest
+	26, // 60: services.sync.SyncService.AddAccountUpdate:input_type -> services.sync.AddAccountUpdateRequest
+	27, // 61: services.sync.SyncService.AddUserUpdate:input_type -> services.sync.AddUserUpdateRequest
+	15, // 62: services.sync.SyncService.AddUserActivity:input_type -> services.sync.AddUserActivityRequest
+	16, // 63: services.sync.SyncService.AddUserProps:input_type -> services.sync.AddUserPropsRequest
+	17, // 64: services.sync.SyncService.GetUserProps:input_type -> services.sync.GetUserPropsRequest
+	19, // 65: services.sync.SyncService.GetVehicleProps:input_type -> services.sync.GetVehiclePropsRequest
+	21, // 66: services.sync.SyncService.SetVehicleProps:input_type -> services.sync.SetVehiclePropsRequest
+	23, // 67: services.sync.SyncService.AddColleagueActivity:input_type -> services.sync.AddColleagueActivityRequest
+	24, // 68: services.sync.SyncService.AddColleagueProps:input_type -> services.sync.AddColleaguePropsRequest
+	25, // 69: services.sync.SyncService.AddJobTimeclock:input_type -> services.sync.AddJobTimeclockRequest
+	8,  // 70: services.sync.SyncService.AddDispatch:input_type -> services.sync.AddDispatchRequest
+	9,  // 71: services.sync.SyncService.AddMarker:input_type -> services.sync.AddMarkerRequest
+	10, // 72: services.sync.SyncService.DeleteMarker:input_type -> services.sync.DeleteMarkerRequest
+	11, // 73: services.sync.SyncService.EndActiveJobTimeclocks:input_type -> services.sync.EndActiveJobTimeclocksRequest
+	13, // 74: services.sync.SyncService.CloseUserDispatches:input_type -> services.sync.CloseUserDispatchesRequest
+	29, // 75: services.sync.SyncService.SendJobs:input_type -> services.sync.SendJobsRequest
+	30, // 76: services.sync.SyncService.SendLicenses:input_type -> services.sync.SendLicensesRequest
+	31, // 77: services.sync.SyncService.SendAccounts:input_type -> services.sync.SendAccountsRequest
+	32, // 78: services.sync.SyncService.SendUsers:input_type -> services.sync.SendUsersRequest
+	33, // 79: services.sync.SyncService.SendVehicles:input_type -> services.sync.SendVehiclesRequest
+	34, // 80: services.sync.SyncService.SendUserLocations:input_type -> services.sync.SendUserLocationsRequest
+	35, // 81: services.sync.SyncService.SetLastCharID:input_type -> services.sync.SetLastCharIDRequest
+	37, // 82: services.sync.SyncService.DeleteUsers:input_type -> services.sync.DeleteUsersRequest
+	38, // 83: services.sync.SyncService.DeleteVehicles:input_type -> services.sync.DeleteVehiclesRequest
+	45, // 84: services.sync.SyncService.Stream:input_type -> services.sync.StreamRequest
+	41, // 85: services.sync.SyncService.AddActivity:input_type -> services.sync.AddActivityRequest
+	42, // 86: services.sync.SyncService.SendData:input_type -> services.sync.SendDataRequest
+	43, // 87: services.sync.SyncService.DeleteData:input_type -> services.sync.DeleteDataRequest
+	1,  // 88: services.sync.SyncService.GetStatus:output_type -> services.sync.GetStatusResponse
+	4,  // 89: services.sync.SyncService.RegisterAccount:output_type -> services.sync.RegisterAccountResponse
+	6,  // 90: services.sync.SyncService.TransferAccount:output_type -> services.sync.TransferAccountResponse
+	28, // 91: services.sync.SyncService.AddUserOAuth2Conn:output_type -> services.sync.AddActivityResponse
+	28, // 92: services.sync.SyncService.AddAccountUpdate:output_type -> services.sync.AddActivityResponse
+	28, // 93: services.sync.SyncService.AddUserUpdate:output_type -> services.sync.AddActivityResponse
+	28, // 94: services.sync.SyncService.AddUserActivity:output_type -> services.sync.AddActivityResponse
+	28, // 95: services.sync.SyncService.AddUserProps:output_type -> services.sync.AddActivityResponse
+	18, // 96: services.sync.SyncService.GetUserProps:output_type -> services.sync.GetUserPropsResponse
+	20, // 97: services.sync.SyncService.GetVehicleProps:output_type -> services.sync.GetVehiclePropsResponse
+	22, // 98: services.sync.SyncService.SetVehicleProps:output_type -> services.sync.SetVehiclePropsResponse
+	28, // 99: services.sync.SyncService.AddColleagueActivity:output_type -> services.sync.AddActivityResponse
+	28, // 100: services.sync.SyncService.AddColleagueProps:output_type -> services.sync.AddActivityResponse
+	28, // 101: services.sync.SyncService.AddJobTimeclock:output_type -> services.sync.AddActivityResponse
+	28, // 102: services.sync.SyncService.AddDispatch:output_type -> services.sync.AddActivityResponse
+	28, // 103: services.sync.SyncService.AddMarker:output_type -> services.sync.AddActivityResponse
+	44, // 104: services.sync.SyncService.DeleteMarker:output_type -> services.sync.DeleteDataResponse
+	12, // 105: services.sync.SyncService.EndActiveJobTimeclocks:output_type -> services.sync.EndActiveJobTimeclocksResponse
+	14, // 106: services.sync.SyncService.CloseUserDispatches:output_type -> services.sync.CloseUserDispatchesResponse
+	36, // 107: services.sync.SyncService.SendJobs:output_type -> services.sync.SendDataResponse
+	36, // 108: services.sync.SyncService.SendLicenses:output_type -> services.sync.SendDataResponse
+	36, // 109: services.sync.SyncService.SendAccounts:output_type -> services.sync.SendDataResponse
+	36, // 110: services.sync.SyncService.SendUsers:output_type -> services.sync.SendDataResponse
+	36, // 111: services.sync.SyncService.SendVehicles:output_type -> services.sync.SendDataResponse
+	36, // 112: services.sync.SyncService.SendUserLocations:output_type -> services.sync.SendDataResponse
+	36, // 113: services.sync.SyncService.SetLastCharID:output_type -> services.sync.SendDataResponse
+	44, // 114: services.sync.SyncService.DeleteUsers:output_type -> services.sync.DeleteDataResponse
+	44, // 115: services.sync.SyncService.DeleteVehicles:output_type -> services.sync.DeleteDataResponse
+	40, // 116: services.sync.SyncService.Stream:output_type -> services.sync.StreamResponse
+	28, // 117: services.sync.SyncService.AddActivity:output_type -> services.sync.AddActivityResponse
+	36, // 118: services.sync.SyncService.SendData:output_type -> services.sync.SendDataResponse
+	44, // 119: services.sync.SyncService.DeleteData:output_type -> services.sync.DeleteDataResponse
+	88, // [88:120] is the sub-list for method output_type
+	56, // [56:88] is the sub-list for method input_type
+	56, // [56:56] is the sub-list for extension type_name
+	56, // [56:56] is the sub-list for extension extendee
+	0,  // [0:56] is the sub-list for field type_name
 }
 
 func init() { file_services_sync_sync_proto_init() }
@@ -4984,10 +5079,10 @@ func file_services_sync_sync_proto_init() {
 	file_services_sync_sync_proto_msgTypes[24].OneofWrappers = []any{}
 	file_services_sync_sync_proto_msgTypes[28].OneofWrappers = []any{}
 	file_services_sync_sync_proto_msgTypes[34].OneofWrappers = []any{}
-	file_services_sync_sync_proto_msgTypes[39].OneofWrappers = []any{
-		(*streamResponse_UserId)(nil),
-	}
 	file_services_sync_sync_proto_msgTypes[40].OneofWrappers = []any{
+		(*streamResponse_UserSync)(nil),
+	}
+	file_services_sync_sync_proto_msgTypes[41].OneofWrappers = []any{
 		(*addActivityRequest_UserOauth2)(nil),
 		(*addActivityRequest_Dispatch)(nil),
 		(*addActivityRequest_UserActivity)(nil),
@@ -4998,7 +5093,7 @@ func file_services_sync_sync_proto_init() {
 		(*addActivityRequest_AccountUpdate)(nil),
 		(*addActivityRequest_UserUpdate)(nil),
 	}
-	file_services_sync_sync_proto_msgTypes[41].OneofWrappers = []any{
+	file_services_sync_sync_proto_msgTypes[42].OneofWrappers = []any{
 		(*sendDataRequest_Jobs)(nil),
 		(*sendDataRequest_Licenses)(nil),
 		(*sendDataRequest_Accounts)(nil),
@@ -5007,11 +5102,11 @@ func file_services_sync_sync_proto_init() {
 		(*sendDataRequest_UserLocations)(nil),
 		(*sendDataRequest_LastCharId)(nil),
 	}
-	file_services_sync_sync_proto_msgTypes[42].OneofWrappers = []any{
+	file_services_sync_sync_proto_msgTypes[43].OneofWrappers = []any{
 		(*deleteDataRequest_Users)(nil),
 		(*deleteDataRequest_Vehicles)(nil),
 	}
-	file_services_sync_sync_proto_msgTypes[44].OneofWrappers = []any{
+	file_services_sync_sync_proto_msgTypes[45].OneofWrappers = []any{
 		(*streamRequest_SyncState)(nil),
 	}
 	type x struct{}
@@ -5020,7 +5115,7 @@ func file_services_sync_sync_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_services_sync_sync_proto_rawDesc), len(file_services_sync_sync_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   46,
+			NumMessages:   47,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

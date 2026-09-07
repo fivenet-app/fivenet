@@ -150,18 +150,8 @@ func (s *Sync) streamWorker(ctx context.Context) {
 				s.logger.Warn("received dbsync stream response without payload (nil)")
 				continue
 
-			case *pbsync.StreamResponse_UserId:
-				s.logger.Info(
-					"received single user sync request",
-					zap.Int32("user_id", data.UserId),
-				)
-				if err := s.users.SyncUser(ctx, data.UserId); err != nil {
-					s.logger.Error(
-						"error during single user sync",
-						zap.Int32("user_id", data.UserId),
-						zap.Error(err),
-					)
-				}
+			case *pbsync.StreamResponse_UserSync:
+				s.processUserSyncRequest(ctx, data.UserSync)
 
 			default:
 				s.logger.Warn(
@@ -169,6 +159,29 @@ func (s *Sync) streamWorker(ctx context.Context) {
 					zap.Any("payload", data),
 				)
 			}
+		}
+	}
+}
+
+func (s *Sync) processUserSyncRequest(ctx context.Context, req *pbsync.UserSyncRequest) {
+	if req == nil {
+		return
+	}
+
+	for _, userID := range req.GetUserIds() {
+		s.logger.Info("received user sync request", zap.Int32("user_id", userID))
+		if err := s.users.SyncUser(ctx, userID); err != nil {
+			s.logger.Error("error during user sync", zap.Int32("user_id", userID), zap.Error(err))
+		}
+	}
+	for _, identifier := range req.GetIdentifiers() {
+		s.logger.Info("received user sync request", zap.String("identifier", identifier))
+		if err := s.users.SyncUserByIdentifier(ctx, identifier); err != nil {
+			s.logger.Error(
+				"error during user sync",
+				zap.String("identifier", identifier),
+				zap.Error(err),
+			)
 		}
 	}
 }

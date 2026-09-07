@@ -166,18 +166,29 @@ func (s *Server) TriggerUserSync(
 	ctx context.Context,
 	req *pbsettings.TriggerUserSyncRequest,
 ) (*pbsettings.TriggerUserSyncResponse, error) {
-	logging.InjectFields(ctx, logging.Fields{"fivenet.sync.user_id", req.GetUserId()})
+	if len(req.GetUserId()) == 0 && len(req.GetIdentifiers()) == 0 {
+		return nil, fmt.Errorf("at least one user id or identifier must be provided")
+	}
 
-	_, err := s.js.PublishProto(
+	for _, identifier := range req.GetIdentifiers() {
+		if identifier == "" {
+			return nil, fmt.Errorf("user identifiers must not be empty")
+		}
+		logging.InjectFields(ctx, logging.Fields{"fivenet.sync.user_identifier", identifier})
+	}
+
+	if _, err := s.js.PublishProto(
 		ctx,
 		fmt.Sprintf("%s.%s", sync.BaseSubject, sync.TopicUser),
 		&pbsync.StreamResponse{
-			Payload: &pbsync.StreamResponse_UserId{
-				UserId: req.GetUserId(),
+			Payload: &pbsync.StreamResponse_UserSync{
+				UserSync: &pbsync.UserSyncRequest{
+					UserIds:     req.GetUserId(),
+					Identifiers: req.GetIdentifiers(),
+				},
 			},
 		},
-	)
-	if err != nil {
+	); err != nil {
 		return nil, err
 	}
 

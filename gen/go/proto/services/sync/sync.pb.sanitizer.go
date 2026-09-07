@@ -457,6 +457,24 @@ func (m *DeleteDataRequest) Sanitize() error {
 
 // Sanitize sanitizes the message's fields, in case of complex types it calls
 // their Sanitize() method recursively.
+func (m *DeleteUsersRequest) Sanitize() error {
+	if m == nil {
+		return nil
+	}
+
+	// Field: Identifiers
+	for idx, item := range m.Identifiers {
+		_, _ = idx, item
+
+		m.Identifiers[idx] = htmlsanitizer.SanitizeAndUnescape(m.Identifiers[idx])
+
+	}
+
+	return nil
+}
+
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *DeleteVehiclesRequest) Sanitize() error {
 	if m == nil {
 		return nil
@@ -971,6 +989,31 @@ func (m *StreamRequest) Sanitize() error {
 
 // Sanitize sanitizes the message's fields, in case of complex types it calls
 // their Sanitize() method recursively.
+func (m *StreamResponse) Sanitize() error {
+	if m == nil {
+		return nil
+	}
+
+	// Field: UserSync
+	switch v := m.Payload.(type) {
+
+	case *StreamResponse_UserSync:
+
+		if v.UserSync != nil {
+			if s, ok := any(v.UserSync).(interface{ Sanitize() error }); ok {
+				if err := s.Sanitize(); err != nil {
+					return err
+				}
+			}
+		}
+
+	}
+
+	return nil
+}
+
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *TransferAccountRequest) Sanitize() error {
 	if m == nil {
 		return nil
@@ -981,6 +1024,24 @@ func (m *TransferAccountRequest) Sanitize() error {
 
 	// Field: OldLicense
 	m.OldLicense = htmlsanitizer.SanitizeAndUnescape(m.OldLicense)
+
+	return nil
+}
+
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
+func (m *UserSyncRequest) Sanitize() error {
+	if m == nil {
+		return nil
+	}
+
+	// Field: Identifiers
+	for idx, item := range m.Identifiers {
+		_, _ = idx, item
+
+		m.Identifiers[idx] = htmlsanitizer.SanitizeAndUnescape(m.Identifiers[idx])
+
+	}
 
 	return nil
 }

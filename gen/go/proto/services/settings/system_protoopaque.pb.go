@@ -701,10 +701,11 @@ func (b0 GetStatusResponse_builder) Build() *GetStatusResponse {
 }
 
 type TriggerUserSyncRequest struct {
-	state             protoimpl.MessageState `protogen:"opaque.v1"`
-	xxx_hidden_UserId int32                  `protobuf:"varint,1,opt,name=user_id,json=userId,proto3"`
-	unknownFields     protoimpl.UnknownFields
-	sizeCache         protoimpl.SizeCache
+	state                  protoimpl.MessageState `protogen:"opaque.v1"`
+	xxx_hidden_UserId      []int32                `protobuf:"varint,1,rep,packed,name=user_id,json=userId,proto3"`
+	xxx_hidden_Identifiers []string               `protobuf:"bytes,2,rep,name=identifiers,proto3"`
+	unknownFields          protoimpl.UnknownFields
+	sizeCache              protoimpl.SizeCache
 }
 
 func (x *TriggerUserSyncRequest) Reset() {
@@ -732,21 +733,33 @@ func (x *TriggerUserSyncRequest) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-func (x *TriggerUserSyncRequest) GetUserId() int32 {
+func (x *TriggerUserSyncRequest) GetUserId() []int32 {
 	if x != nil {
 		return x.xxx_hidden_UserId
 	}
-	return 0
+	return nil
 }
 
-func (x *TriggerUserSyncRequest) SetUserId(v int32) {
+func (x *TriggerUserSyncRequest) GetIdentifiers() []string {
+	if x != nil {
+		return x.xxx_hidden_Identifiers
+	}
+	return nil
+}
+
+func (x *TriggerUserSyncRequest) SetUserId(v []int32) {
 	x.xxx_hidden_UserId = v
+}
+
+func (x *TriggerUserSyncRequest) SetIdentifiers(v []string) {
+	x.xxx_hidden_Identifiers = v
 }
 
 type TriggerUserSyncRequest_builder struct {
 	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
 
-	UserId int32
+	UserId      []int32
+	Identifiers []string
 }
 
 func (b0 TriggerUserSyncRequest_builder) Build() *TriggerUserSyncRequest {
@@ -754,6 +767,7 @@ func (b0 TriggerUserSyncRequest_builder) Build() *TriggerUserSyncRequest {
 	b, x := &b0, m0
 	_, _ = b, x
 	x.xxx_hidden_UserId = b.UserId
+	x.xxx_hidden_Identifiers = b.Identifiers
 	return m0
 }
 
@@ -835,9 +849,10 @@ const file_services_settings_system_proto_rawDesc = "" +
 	"\x15DeleteFactionResponse\"\x12\n" +
 	"\x10GetStatusRequest\"M\n" +
 	"\x11GetStatusResponse\x128\n" +
-	"\x06status\x18\x01 \x01(\v2 .resources.settings.SystemStatusR\x06status\"1\n" +
+	"\x06status\x18\x01 \x01(\v2 .resources.settings.SystemStatusR\x06status\"S\n" +
 	"\x16TriggerUserSyncRequest\x12\x17\n" +
-	"\auser_id\x18\x01 \x01(\x05R\x06userId\"\x19\n" +
+	"\auser_id\x18\x01 \x03(\x05R\x06userId\x12 \n" +
+	"\videntifiers\x18\x02 \x03(\tR\videntifiers\"\x19\n" +
 	"\x17TriggerUserSyncResponse2\xe3\x05\n" +
 	"\rSystemService\x12k\n" +
 	"\tGetStatus\x12#.services.settings.GetStatusRequest\x1a$.services.settings.GetStatusResponse\"\x13\xd2\xf3\x18\x0f\b\x01\"\vConfigAdmin\x12\x80\x01\n" +

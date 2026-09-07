@@ -55,11 +55,17 @@ type Sync struct {
 	// Main data syncers
 	accounts *syncers.AccountsSync
 
-	users       *syncers.UsersSync
+	users       usersSyncer
 	usersResync *syncers.UsersSync
 
 	vehicles       *syncers.VehiclesSync
 	vehiclesResync *syncers.VehiclesSync
+}
+
+type usersSyncer interface {
+	Sync(context.Context) (int64, int64, string, *time.Time, error)
+	SyncUser(context.Context, int32) error
+	SyncUserByIdentifier(context.Context, string) error
 }
 
 type Params struct {
