@@ -1,6 +1,8 @@
 import type { AuthPhase } from '~/stores/auth';
+import { useCentrumStore } from '~/stores/centrum';
 import { useClipboardStore } from '~/stores/clipboard';
 import { useHistoryStore } from '~/stores/history';
+import { useLivemapStore } from '~/stores/livemap';
 import { useMailerStore } from '~/stores/mailer';
 
 export function getAuthStateRedirect(
@@ -24,7 +26,10 @@ export default defineNuxtPlugin({
         const authStore = useAuthStore();
         const clipboardStore = useClipboardStore();
         const historyStore = useHistoryStore();
+        const centrumStore = useCentrumStore();
+        const livemapStore = useLivemapStore();
         const mailerStore = useMailerStore();
+        const auth = useAuth();
         const route = useRoute();
         let redirectPromise: Promise<unknown> | undefined;
 
@@ -36,6 +41,20 @@ export default defineNuxtPlugin({
                 mailerStore.setAccountScope(accountId);
             },
             { immediate: true, flush: 'sync' },
+        );
+
+        // `keys.userState` is derived from the last route-validated auth
+        // context. Restart shared streams only after that context is committed;
+        // raw permission/character changes occur earlier during the transition.
+        watch(
+            () => auth.keys.userState.value,
+            (key, previousKey) => {
+                if (!previousKey || key === previousKey || auth.isQueryTransitioning.value) return;
+
+                void livemapStore.restartForAuthContext();
+                void centrumStore.restartForAuthContext();
+            },
+            { flush: 'sync' },
         );
 
         const redirectToLoginOnce = (): Promise<unknown> => {

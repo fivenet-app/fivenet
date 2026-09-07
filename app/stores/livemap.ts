@@ -424,6 +424,19 @@ export const useLivemapStore = defineStore(
             }, reconnectBackoffTime.value * 1000);
         };
 
+        /**
+         * Restart immediately after the committed auth context changes.
+         * Unlike reconnects caused by transport failures, an auth change does
+         * not need exponential backoff: the old stream must stop serving its
+         * former authorization context as soon as possible.
+         */
+        const restartForAuthContext = async (): Promise<void> => {
+            if (!abort.value || stopping.value) return;
+
+            await stopStream();
+            if (!stopping.value) await startStream();
+        };
+
         // Misc Actions
         /**
          * Move to the given coordinates and optionally set an in-game waypoint.
@@ -464,6 +477,7 @@ export const useLivemapStore = defineStore(
             startStream,
             stopStream,
             restartStream,
+            restartForAuthContext,
             addOrUpdateMarkerMarker,
             addOrUpdateUserMarker,
             updateUserMarker,

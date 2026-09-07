@@ -824,6 +824,17 @@ export const useCentrumStore = defineStore(
             }, reconnectBackoffTime.value * 1000);
         };
 
+        /**
+         * Restart immediately after the committed auth context changes.
+         * Authorization changes should not use transport-reconnect backoff.
+         */
+        const restartForAuthContext = async (): Promise<void> => {
+            if (!abort.value || stopping.value) return;
+
+            await stopStream();
+            if (!stopping.value) await startStream();
+        };
+
         // Helpers
         /**
          * Calculates the time correction based on the server time.
@@ -1083,6 +1094,7 @@ export const useCentrumStore = defineStore(
             startStream,
             stopStream,
             restartStream,
+            restartForAuthContext,
             calculateTimeCorrection,
             addFeedItem,
             canDo,
