@@ -50,6 +50,10 @@ export interface LoginResponse {
      * @generated from protobuf field: optional services.auth.ChooseCharacterResponse char = 3
      */
     char?: ChooseCharacterResponse;
+    /**
+     * @generated from protobuf field: bool can_be_config_admin = 4
+     */
+    canBeConfigAdmin: boolean;
 }
 /**
  * @generated from protobuf message services.auth.LogoutRequest
@@ -408,12 +412,14 @@ class LoginResponse$Type extends MessageType<LoginResponse> {
         super("services.auth.LoginResponse", [
             { no: 1, name: "expires", kind: "message", T: () => Timestamp },
             { no: 2, name: "account_id", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ },
-            { no: 3, name: "char", kind: "message", T: () => ChooseCharacterResponse }
+            { no: 3, name: "char", kind: "message", T: () => ChooseCharacterResponse },
+            { no: 4, name: "can_be_config_admin", kind: "scalar", T: 8 /*ScalarType.BOOL*/ }
         ]);
     }
     create(value?: PartialMessage<LoginResponse>): LoginResponse {
         const message = globalThis.Object.create((this.messagePrototype!));
         message.accountId = 0;
+        message.canBeConfigAdmin = false;
         if (value !== undefined)
             reflectionMergePartial<LoginResponse>(this, message, value);
         return message;
@@ -431,6 +437,9 @@ class LoginResponse$Type extends MessageType<LoginResponse> {
                     break;
                 case /* optional services.auth.ChooseCharacterResponse char */ 3:
                     message.char = ChooseCharacterResponse.internalBinaryRead(reader, reader.uint32(), options, message.char);
+                    break;
+                case /* bool can_be_config_admin */ 4:
+                    message.canBeConfigAdmin = reader.bool();
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -453,6 +462,9 @@ class LoginResponse$Type extends MessageType<LoginResponse> {
         /* optional services.auth.ChooseCharacterResponse char = 3; */
         if (message.char)
             ChooseCharacterResponse.internalBinaryWrite(message.char, writer.tag(3, WireType.LengthDelimited).fork(), options).join();
+        /* bool can_be_config_admin = 4; */
+        if (message.canBeConfigAdmin !== false)
+            writer.tag(4, WireType.Varint).bool(message.canBeConfigAdmin);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);

@@ -8034,6 +8034,7 @@ Detailed user information for sync purposes Should be kept inline with `resource
 | `expires` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) |  |  |
 | `account_id` | [int64](#int64) |  |  |
 | `char` | [ChooseCharacterResponse](#servicesauthChooseCharacterResponse) | optional |  |
+| `can_be_config_admin` | [bool](#bool) |  |  |
 
 
 

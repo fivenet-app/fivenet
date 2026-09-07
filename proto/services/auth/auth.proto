@@ -36,6 +36,7 @@ message LoginResponse {
   resources.timestamp.Timestamp expires = 1;
   int64 account_id = 2;
   optional ChooseCharacterResponse char = 3;
+  bool can_be_config_admin = 4;
 }
 
 message LogoutRequest {}

@@ -15,13 +15,13 @@ definePageMeta({
 
 const authStore = useAuthStore();
 
-const { setActiveChar, setPermissions, setJobProps } = authStore;
-
-onBeforeMount(async () => {
-    setActiveChar(null);
-    setPermissions([], []);
-    setJobProps(undefined);
-});
+// Clear character-scoped state before CharacterSelector is created. Doing
+// this in onBeforeMount lets its auth-scoped async data start with a key that
+// immediately becomes stale, causing several cancelled GetCharacters calls.
+authStore.activeChar = null;
+authStore.permissions = [];
+authStore.attributes = [];
+authStore.jobProps = undefined;
 </script>
 
 <template>

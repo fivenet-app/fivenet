@@ -113,9 +113,10 @@ func (s *Server) Login(
 	}
 
 	return &pbauth.LoginResponse{
-		Expires:   timestamp.New(accClaims.ExpiresAt.Time),
-		AccountId: account.ID,
-		Char:      chooseCharResp,
+		Expires:          timestamp.New(accClaims.ExpiresAt.Time),
+		AccountId:        account.ID,
+		Char:             chooseCharResp,
+		CanBeConfigAdmin: s.canAccountBeConfigAdmin(accountProto.GetGroups(), accountProto.GetLicense()),
 	}, nil
 }
 

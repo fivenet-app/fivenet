@@ -105,12 +105,13 @@ func (b0 LoginRequest_builder) Build() *LoginRequest {
 }
 
 type LoginResponse struct {
-	state                protoimpl.MessageState   `protogen:"opaque.v1"`
-	xxx_hidden_Expires   *timestamp.Timestamp     `protobuf:"bytes,1,opt,name=expires,proto3"`
-	xxx_hidden_AccountId int64                    `protobuf:"varint,2,opt,name=account_id,json=accountId,proto3"`
-	xxx_hidden_Char      *ChooseCharacterResponse `protobuf:"bytes,3,opt,name=char,proto3,oneof"`
-	unknownFields        protoimpl.UnknownFields
-	sizeCache            protoimpl.SizeCache
+	state                       protoimpl.MessageState   `protogen:"opaque.v1"`
+	xxx_hidden_Expires          *timestamp.Timestamp     `protobuf:"bytes,1,opt,name=expires,proto3"`
+	xxx_hidden_AccountId        int64                    `protobuf:"varint,2,opt,name=account_id,json=accountId,proto3"`
+	xxx_hidden_Char             *ChooseCharacterResponse `protobuf:"bytes,3,opt,name=char,proto3,oneof"`
+	xxx_hidden_CanBeConfigAdmin bool                     `protobuf:"varint,4,opt,name=can_be_config_admin,json=canBeConfigAdmin,proto3"`
+	unknownFields               protoimpl.UnknownFields
+	sizeCache                   protoimpl.SizeCache
 }
 
 func (x *LoginResponse) Reset() {
@@ -159,6 +160,13 @@ func (x *LoginResponse) GetChar() *ChooseCharacterResponse {
 	return nil
 }
 
+func (x *LoginResponse) GetCanBeConfigAdmin() bool {
+	if x != nil {
+		return x.xxx_hidden_CanBeConfigAdmin
+	}
+	return false
+}
+
 func (x *LoginResponse) SetExpires(v *timestamp.Timestamp) {
 	x.xxx_hidden_Expires = v
 }
@@ -169,6 +177,10 @@ func (x *LoginResponse) SetAccountId(v int64) {
 
 func (x *LoginResponse) SetChar(v *ChooseCharacterResponse) {
 	x.xxx_hidden_Char = v
+}
+
+func (x *LoginResponse) SetCanBeConfigAdmin(v bool) {
+	x.xxx_hidden_CanBeConfigAdmin = v
 }
 
 func (x *LoginResponse) HasExpires() bool {
@@ -196,9 +208,10 @@ func (x *LoginResponse) ClearChar() {
 type LoginResponse_builder struct {
 	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
 
-	Expires   *timestamp.Timestamp
-	AccountId int64
-	Char      *ChooseCharacterResponse
+	Expires          *timestamp.Timestamp
+	AccountId        int64
+	Char             *ChooseCharacterResponse
+	CanBeConfigAdmin bool
 }
 
 func (b0 LoginResponse_builder) Build() *LoginResponse {
@@ -208,6 +221,7 @@ func (b0 LoginResponse_builder) Build() *LoginResponse {
 	x.xxx_hidden_Expires = b.Expires
 	x.xxx_hidden_AccountId = b.AccountId
 	x.xxx_hidden_Char = b.Char
+	x.xxx_hidden_CanBeConfigAdmin = b.CanBeConfigAdmin
 	return m0
 }
 
@@ -2015,12 +2029,13 @@ const file_services_auth_auth_proto_rawDesc = "" +
 	"\x18services/auth/auth.proto\x12\rservices.auth\x1a\x1ccodegen/audit/redacted.proto\x1a\x19codegen/perms/perms.proto\x1a!codegen/sanitizer/sanitizer.proto\x1a!resources/accounts/accounts.proto\x1a&resources/accounts/oauth2/oauth2.proto\x1a resources/jobs/props/props.proto\x1a1resources/permissions/attributes/attributes.proto\x1a3resources/permissions/permissions/permissions.proto\x1a#resources/timestamp/timestamp.proto\x1a\x1aresources/users/user.proto\x1a\x13tagger/tagger.proto\"L\n" +
 	"\fLoginRequest\x12\x1a\n" +
 	"\busername\x18\x01 \x01(\tR\busername\x12 \n" +
-	"\bpassword\x18\x02 \x01(\tB\x04\xf0\xf3\x18\x01R\bpassword\"\xb2\x01\n" +
+	"\bpassword\x18\x02 \x01(\tB\x04\xf0\xf3\x18\x01R\bpassword\"\xe1\x01\n" +
 	"\rLoginResponse\x128\n" +
 	"\aexpires\x18\x01 \x01(\v2\x1e.resources.timestamp.TimestampR\aexpires\x12\x1d\n" +
 	"\n" +
 	"account_id\x18\x02 \x01(\x03R\taccountId\x12?\n" +
-	"\x04char\x18\x03 \x01(\v2&.services.auth.ChooseCharacterResponseH\x00R\x04char\x88\x01\x01B\a\n" +
+	"\x04char\x18\x03 \x01(\v2&.services.auth.ChooseCharacterResponseH\x00R\x04char\x88\x01\x01\x12-\n" +
+	"\x13can_be_config_admin\x18\x04 \x01(\bR\x10canBeConfigAdminB\a\n" +
 	"\x05_char\"\x0f\n" +
 	"\rLogoutRequest\"*\n" +
 	"\x0eLogoutResponse\x12\x18\n" +

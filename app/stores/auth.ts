@@ -16,6 +16,18 @@ import type { ImpersonateJobResponse, RefreshAccountSessionResponse } from '~~/g
 
 const logger = useLogger('🔑 Auth');
 
+const getAuthTabId = (): string => {
+    if (typeof sessionStorage === 'undefined') return 'server';
+
+    const key = 'fivenet-auth-tab-id';
+    const existing = sessionStorage.getItem(key);
+    if (existing) return existing;
+
+    const id = typeof crypto !== 'undefined' && 'randomUUID' in crypto ? crypto.randomUUID() : Math.random().toString(36);
+    sessionStorage.setItem(key, id);
+    return id;
+};
+
 export type AuthPhase =
     'anonymous' | 'bootstrapping' | 'account-ready' | 'selecting-character' | 'character-ready' | 'signing-out';
 
@@ -127,6 +139,8 @@ export const useAuthStore = defineStore(
         );
         /** The server-confirmed authentication state for this tab. */
         const phase = ref<AuthPhase>('anonymous');
+        /** Non-HttpOnly marker maintained by the server for fast client-side session checks. */
+        const authedCookie = useCookie<string | null>('fivenet_authed');
         /** Increments whenever credentials are cleared or replaced. */
         const sessionGeneration = ref<number>(0);
         const lastFailure = ref<{ kind: 'account-expired' | 'character-expired' | 'temporary'; at: number } | null>(null);
@@ -156,10 +170,11 @@ export const useAuthStore = defineStore(
          */
         const commitQueryContext = (): void => {
             queryContextRevision.value += 1;
-            // Enable first: the following synchronous reactive key update is
-            // what starts the next request.
-            isQueryTransitioning.value = false;
+            // Publish the complete new key while requests are still disabled.
+            // Enabling first would start a request with the old key, which is
+            // immediately cancelled when queryContext updates below.
             queryContext.value = buildQueryContext();
+            isQueryTransitioning.value = false;
         };
 
         let chooseCharacterPromise: Promise<void> | undefined;
@@ -169,7 +184,7 @@ export const useAuthStore = defineStore(
             if (typeof BroadcastChannel === 'undefined') return;
 
             const channel = new BroadcastChannel('fivenet-auth');
-            channel.postMessage({ type });
+            channel.postMessage({ type, source: getAuthTabId() });
             channel.close();
         };
 
@@ -280,14 +295,19 @@ export const useAuthStore = defineStore(
             phase.value = 'bootstrapping';
             lastFailure.value = null;
             sessionGeneration.value += 1;
+            const loginGeneration = sessionGeneration.value;
 
             try {
                 const authAuthClient = await getAuthAuthClient();
 
                 const call = authAuthClient.login({ username: user, password: pass });
                 const { response } = await call;
+                if (sessionGeneration.value !== loginGeneration) return;
 
+                beginQueryTransition();
                 accountId.value = response.accountId;
+                setAccountCanBeConfigAdmin(response.canBeConfigAdmin);
+                authedCookie.value = 'true';
                 setUsername(user);
                 phase.value = 'account-ready';
                 broadcastSessionChange('login');
@@ -295,6 +315,7 @@ export const useAuthStore = defineStore(
 
                 if (response.char === undefined) {
                     logger.info('Login response (not fast-tracked), redirecting to char selector');
+                    commitQueryContext();
 
                     const route = useRoute();
                     await navigateTo({
@@ -309,6 +330,7 @@ export const useAuthStore = defineStore(
                     setJobProps(response.char.jobProps);
                     setUserToken(response.char.token);
                     phase.value = 'character-ready';
+                    commitQueryContext();
 
                     const startpage = settingsStore.startpage ?? '/overview';
                     try {
@@ -319,6 +341,7 @@ export const useAuthStore = defineStore(
                     }
                 }
             } catch (e) {
+                if (sessionGeneration.value !== loginGeneration) return;
                 const err = e as RpcError;
                 phase.value = 'anonymous';
                 loginStop(err);
@@ -333,8 +356,14 @@ export const useAuthStore = defineStore(
             // User is about to logout, ignore ongoing logins/choose character actions
             loginStart();
             phase.value = 'signing-out';
+            sessionGeneration.value += 1;
 
             try {
+                // ChooseCharacter refreshes the account cookie. Let an already
+                // running request finish before destroying that cookie, or its
+                // response can recreate the session after logout succeeds.
+                await chooseCharacterPromise?.catch(() => undefined);
+
                 const authAuthClient = await getAuthAuthClient();
 
                 await authAuthClient.logout({});
@@ -368,6 +397,7 @@ export const useAuthStore = defineStore(
         ): Promise<void> => {
             loginStart();
             phase.value = 'selecting-character';
+            const characterGeneration = sessionGeneration.value;
 
             if (charId === undefined || charId <= 0) {
                 if (!lastCharID.value) {
@@ -385,6 +415,7 @@ export const useAuthStore = defineStore(
                     let refreshResp: RefreshAccountSessionResponse | null = null;
                     try {
                         refreshResp = await refreshAccountSession();
+                        if (sessionGeneration.value !== characterGeneration) return;
                     } catch (e) {
                         if (isUnauthenticatedError(e)) {
                             invalidateSession();
@@ -424,6 +455,7 @@ export const useAuthStore = defineStore(
                 if (accountId.value === null) {
                     try {
                         await refreshAccountSession();
+                        if (sessionGeneration.value !== characterGeneration) return;
                     } catch (e) {
                         if (isUnauthenticatedError(e)) {
                             invalidateSession();
@@ -443,10 +475,12 @@ export const useAuthStore = defineStore(
                     characterAuthOptions(charId),
                 );
                 const { response } = await call;
+                if (sessionGeneration.value !== characterGeneration) return;
                 if (!response.char) {
                     throw new Error('Server Error! No character in choose character response.');
                 }
 
+                beginQueryTransition();
                 setUsername(response.username);
                 setActiveChar(response.char);
                 setUserToken(response.token);
@@ -454,6 +488,7 @@ export const useAuthStore = defineStore(
                 setAccountCanBeConfigAdmin(false);
                 setJobProps(response.jobProps);
                 phase.value = 'character-ready';
+                commitQueryContext();
 
                 if (redirect) {
                     const redirectQuery = useRoute().query.redirect;
@@ -518,10 +553,12 @@ export const useAuthStore = defineStore(
                 throw new Error('Server Error! No character in impersonate job response.');
             }
 
+            beginQueryTransition();
             setActiveChar(response.char);
             setPermissions(response.permissions, response.attributes);
             // Job props doesn't change on impersonation (user is part of the same job)
             setUserToken(response.token);
+            commitQueryContext();
 
             return response;
         };
@@ -544,12 +581,13 @@ export const useAuthStore = defineStore(
                 );
                 const { response } = await call;
                 // Update state with response data first so websocket reauth can pick up the active character.
+                beginQueryTransition();
                 setActiveChar(response.char!);
                 setUserToken(response.token);
                 setPermissions(response.permissions, response.attributes);
-                await navigateTo('/overview');
-
                 setJobProps(response.jobProps);
+                commitQueryContext();
+                await navigateTo('/overview');
 
                 // Notify user about the change
                 if (superuser) {
@@ -580,7 +618,8 @@ export const useAuthStore = defineStore(
         };
 
         /** Clears character-scoped state while retaining the account cookie session. */
-        const clearCharacterSession = (kind?: 'character-expired' | 'temporary'): void => {
+        const clearCharacterSession = (kind?: 'character-expired' | 'temporary', batched = true): void => {
+            if (batched) beginQueryTransition();
             setActiveChar(null);
             setPermissions([], []);
             setCanBeSuperuser(false);
@@ -590,17 +629,33 @@ export const useAuthStore = defineStore(
 
             if (kind) lastFailure.value = { kind, at: Date.now() };
             phase.value = accountId.value === null ? 'anonymous' : 'account-ready';
+            if (batched) commitQueryContext();
         };
 
         /**
          * Clears all authentication-related information from store and closes the WebSocket connection.
          */
         const clearAuthInfo = (): void => {
+            if (
+                phase.value === 'anonymous' &&
+                username.value === null &&
+                accountId.value === null &&
+                activeChar.value === null &&
+                authSessionStore.getUserToken() === null &&
+                authedCookie.value !== 'true'
+            ) {
+                return;
+            }
+
             logger.info('Clearing auth info');
+            sessionGeneration.value += 1;
+            beginQueryTransition();
+            authedCookie.value = 'false';
             setUsername(null);
             accountId.value = null;
-            clearCharacterSession();
+            clearCharacterSession(undefined, false);
             phase.value = 'anonymous';
+            commitQueryContext();
 
             // Close the WebSocket connection when logging out
             useGRPCWebsocketTransport().close();
@@ -671,6 +726,8 @@ export const useAuthStore = defineStore(
         };
 
         const applyAccountSession = (response: RefreshAccountSessionResponse, openSocket: boolean): void => {
+            beginQueryTransition();
+            authedCookie.value = 'true';
             accountId.value = response.accountId;
             lastFailure.value = null;
             setAccountCanBeConfigAdmin(response.canBeConfigAdmin);
@@ -678,31 +735,45 @@ export const useAuthStore = defineStore(
                 setUsername(response.username, openSocket);
             }
             if (activeChar.value === null) phase.value = 'account-ready';
+            commitQueryContext();
         };
 
         const refreshAccountSession = async (): Promise<RefreshAccountSessionResponse | null> => {
+            const generation = sessionGeneration.value;
             const response = await fetchAccountSession();
+            if (sessionGeneration.value !== generation) return null;
             applyAccountSession(response, false);
 
             return response;
         };
 
         const restoreAccountSession = async (): Promise<RefreshAccountSessionResponse | null> => {
+            const generation = sessionGeneration.value;
             const response = await fetchAccountSession();
+            if (sessionGeneration.value !== generation) return null;
             applyAccountSession(response, true);
 
             return response;
         };
 
-        const ensureAccountSession = async (): Promise<AuthEnsureResult> => {
-            // An unauthenticated refresh is a terminal result until the user
-            // logs in. Without this guard, public-route middleware can retry
-            // the same missing/expired cookie while redirecting to login.
-            if (phase.value === 'anonymous' && lastFailure.value?.kind === 'account-expired') {
+        const ensureAccountSession = async (force = false): Promise<AuthEnsureResult> => {
+            if (!force && authedCookie.value === 'false') {
+                if (phase.value !== 'anonymous' || accountId.value !== null || username.value !== null) {
+                    clearAuthInfo();
+                }
                 return { kind: 'needs-login' };
             }
 
-            if (phase.value === 'account-ready' || phase.value === 'character-ready') return { kind: 'ready' };
+            // An unauthenticated refresh is a terminal result until the user
+            // logs in. Without this guard, public-route middleware can retry
+            // the same missing/expired cookie while redirecting to login.
+            if (!force && phase.value === 'anonymous' && lastFailure.value?.kind === 'account-expired') {
+                return { kind: 'needs-login' };
+            }
+
+            if (!force && (phase.value === 'account-ready' || phase.value === 'character-ready')) {
+                return { kind: 'ready' };
+            }
 
             phase.value = 'bootstrapping';
             try {
@@ -801,7 +872,6 @@ export const useAuthStore = defineStore(
             queryContext,
             isQueryTransitioning,
 
-            setUsername,
             loginStart,
             loginStop,
             doLogin,
@@ -811,8 +881,6 @@ export const useAuthStore = defineStore(
             clearCharacterSession,
             invalidateSession,
             setUserToken,
-            setActiveChar,
-            setPermissions,
             setCanBeSuperuser,
             setAccountCanBeConfigAdmin,
             setJobProps,
