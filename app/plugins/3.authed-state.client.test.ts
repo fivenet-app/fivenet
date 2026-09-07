@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 import { getAuthStateRedirect } from './3.authed-state.client';
 
 const protectedCharacterRoute = {
+    path: '/overview',
     meta: {
         requiresAuth: true,
         authTokenOnly: false,
@@ -30,6 +31,15 @@ describe('auth state coordinator redirect decisions', () => {
                     requiresAuth: true,
                     authTokenOnly: true,
                 },
+            }),
+        ).toBeUndefined();
+    });
+
+    it('does not redirect the logout page after auth is cleared', () => {
+        expect(
+            getAuthStateRedirect('anonymous', null, {
+                path: '/auth/logout',
+                meta: { requiresAuth: true, authTokenOnly: true },
             }),
         ).toBeUndefined();
     });
