@@ -7240,6 +7240,7 @@ Detailed user information for sync purposes Should be kept inline with `resource
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | `user_ids` | [int32](#int32) | repeated |  |
+| `identifiers` | [string](#string) | repeated |  |
 
 
 
@@ -14352,7 +14353,8 @@ A roll-up of the entire USERLOC bucket. Published every N seconds on `$KV.user_l
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `user_id` | [int32](#int32) |  |  |
+| `user_id` | [int32](#int32) | repeated |  |
+| `identifiers` | [string](#string) | repeated |  |
 
 
 
@@ -14680,6 +14682,7 @@ Response containing the number of dispatches closed for the user.
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | `user_ids` | [int32](#int32) | repeated |  |
+| `identifiers` | [string](#string) | repeated |  |
 
 
 
@@ -14966,7 +14969,7 @@ Response containing the number of dispatches closed for the user.
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `user_id` | [int32](#int32) |  |  |
+| `user_sync` | [UserSyncRequest](#servicessyncUserSyncRequest) |  |  |
 
 
 
@@ -14985,6 +14988,18 @@ Response containing the number of dispatches closed for the user.
 
 
 ### services.sync.TransferAccountResponse
+
+
+
+
+
+### services.sync.UserSyncRequest
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `user_ids` | [int32](#int32) | repeated |  |
+| `identifiers` | [string](#string) | repeated |  |
 
 
 

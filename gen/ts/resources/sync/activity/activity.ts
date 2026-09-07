@@ -133,10 +133,10 @@ export interface AccountUpdate {
 class UserOAuth2Conn$Type extends MessageType<UserOAuth2Conn> {
     constructor() {
         super("resources.sync.activity.UserOAuth2Conn", [
-            { no: 1, name: "provider_name", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
-            { no: 2, name: "identifier", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
-            { no: 3, name: "external_id", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
-            { no: 4, name: "username", kind: "scalar", T: 9 /*ScalarType.STRING*/ }
+            { no: 1, name: "provider_name", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "255" } } } },
+            { no: 2, name: "identifier", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "64" } } } },
+            { no: 3, name: "external_id", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "128" } } } },
+            { no: 4, name: "username", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "255" } } } }
         ]);
     }
     create(value?: PartialMessage<UserOAuth2Conn>): UserOAuth2Conn {
