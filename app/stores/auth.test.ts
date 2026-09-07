@@ -3,6 +3,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { useAuthStore } from './auth';
 
 const mocks = vi.hoisted(() => ({
+    login: vi.fn(),
     chooseCharacter: vi.fn(),
     refreshAccountSession: vi.fn(),
     logout: vi.fn(),
@@ -39,6 +40,7 @@ const mocks = vi.hoisted(() => ({
 
 vi.mock('~~/gen/ts/clients', () => ({
     getAuthAuthClient: vi.fn(async () => ({
+        login: mocks.login,
         chooseCharacter: mocks.chooseCharacter,
         refreshAccountSession: mocks.refreshAccountSession,
         logout: mocks.logout,
@@ -82,6 +84,7 @@ describe('useAuthStore', () => {
                 username: 'tester',
             },
         });
+        mocks.login.mockResolvedValue({ response: {} });
         mocks.logout.mockResolvedValue({ response: {} });
     });
 
@@ -358,6 +361,50 @@ describe('useAuthStore', () => {
         expect(mocks.webSocket.open).not.toHaveBeenCalled();
     });
 
+    it('does not report a stale account refresh as ready after logout', async () => {
+        let resolveRefresh: ((value: unknown) => void) | undefined;
+        mocks.refreshAccountSession.mockReturnValueOnce(
+            new Promise((resolve) => {
+                resolveRefresh = resolve;
+            }),
+        );
+
+        const authStore = useAuthStore();
+        const ensure = authStore.ensureAccountSession();
+        authStore.clearAuthInfo();
+
+        resolveRefresh?.({
+            response: {
+                accountId: 123,
+                canBeConfigAdmin: false,
+                username: 'tester',
+            },
+        });
+
+        await expect(ensure).resolves.toEqual({ kind: 'needs-login' });
+    });
+
+    it('waits for login before sending logout', async () => {
+        let resolveLogin: ((value: unknown) => void) | undefined;
+        mocks.login.mockReturnValueOnce(
+            new Promise((resolve) => {
+                resolveLogin = resolve;
+            }),
+        );
+
+        const authStore = useAuthStore();
+        const login = authStore.doLogin('tester', 'password');
+        const logout = authStore.doLogout();
+
+        await Promise.resolve();
+        expect(mocks.logout).not.toHaveBeenCalled();
+
+        resolveLogin?.({ response: {} });
+        await Promise.all([login, logout]);
+
+        expect(mocks.logout).toHaveBeenCalledTimes(1);
+    });
+
     it('waits for character selection before destroying the account cookie', async () => {
         let resolveChooseCharacter: ((value: unknown) => void) | undefined;
         mocks.authSessionStore.getUserToken.mockReturnValue('char-token');
@@ -400,5 +447,20 @@ describe('useAuthStore', () => {
 
         expect(mocks.webSocket.close).toHaveBeenCalledTimes(0);
         expect(mocks.authSessionStore.setUserToken).toHaveBeenCalledTimes(0);
+    });
+
+    it('closes the websocket without reopening it when clearing an active session', () => {
+        mocks.authSessionStore.getUserToken.mockReturnValue('char-token');
+
+        const authStore = useAuthStore();
+        authStore.accountId = 123;
+        authStore.username = 'tester';
+        authStore.activeChar = { userId: 456 } as never;
+
+        authStore.clearAuthInfo();
+
+        expect(mocks.webSocket.close).toHaveBeenCalledTimes(1);
+        expect(mocks.webSocket.open).not.toHaveBeenCalled();
+        expect(mocks.grpcwsTransport.close).toHaveBeenCalledTimes(1);
     });
 });

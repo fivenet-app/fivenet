@@ -1,10 +1,50 @@
-import type { AuthPhase } from '~/stores/auth';
+import { getAuthTabId, type AuthPhase } from '~/stores/auth';
 import { useCentrumStore } from '~/stores/centrum';
 import { useClipboardStore } from '~/stores/clipboard';
 import { useHistoryStore } from '~/stores/history';
 import { useLivemapStore } from '~/stores/livemap';
 import { useMailerStore } from '~/stores/mailer';
+import type { Notification } from '~/types/notifications';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
+
+export type AuthBroadcastMessage = {
+    type?: 'login' | 'logout' | 'changed';
+    source?: string;
+};
+
+type AuthBroadcastStore = {
+    ensureAccountSession: (force?: boolean) => Promise<unknown>;
+    clearAuthInfo: () => void;
+};
+
+export async function handleAuthBroadcastMessage(
+    message: AuthBroadcastMessage | undefined,
+    tabId: string,
+    authStore: AuthBroadcastStore,
+    addNotification: (notification: Notification) => void,
+): Promise<void> {
+    if (message?.source && message.source === tabId) return;
+
+    if (message?.type === 'login') {
+        // A login can only be observed by checking the server-backed session;
+        // never select a character from a broadcast hint.
+        await authStore.ensureAccountSession(true);
+        return;
+    }
+
+    // Logout/invalidated-session notifications already contain the
+    // authoritative result. Clear local state without refreshing;
+    // refreshing here would broadcast another `changed` event on failure and
+    // create a request loop across tabs.
+    authStore.clearAuthInfo();
+    if (message?.type === 'logout') {
+        addNotification({
+            title: { key: 'notifications.auth.logged_out.title', parameters: {} },
+            description: { key: 'notifications.auth.logged_out.content', parameters: {} },
+            type: NotificationType.INFO,
+        });
+    }
+}
 
 export function getAuthStateRedirect(
     phase: AuthPhase,
@@ -109,33 +149,9 @@ export default defineNuxtPlugin({
 
         if (typeof BroadcastChannel !== 'undefined') {
             const channel = new BroadcastChannel('fivenet-auth');
-            const tabId = sessionStorage.getItem('fivenet-auth-tab-id');
-            channel.addEventListener(
-                'message',
-                async (event: MessageEvent<{ type?: 'login' | 'logout' | 'changed'; source?: string }>) => {
-                    if (event.data?.source && event.data.source === tabId) return;
-                    const type = event.data?.type;
-
-                    if (type === 'login') {
-                        // A login can only be observed by checking the server-backed
-                        // session; never select a character from a broadcast hint.
-                        await authStore.ensureAccountSession(true);
-                        return;
-                    }
-
-                    // Logout/invalidated-session notifications already contain the
-                    // authoritative result. Clear local state without refreshing;
-                    // refreshing here would broadcast another `changed` event on
-                    // failure and create a request loop across tabs.
-                    authStore.clearAuthInfo();
-                    if (type === 'logout') {
-                        notifications.add({
-                            title: { key: 'notifications.auth.logged_out.title', parameters: {} },
-                            description: { key: 'notifications.auth.logged_out.content', parameters: {} },
-                            type: NotificationType.INFO,
-                        });
-                    }
-                },
+            const tabId = getAuthTabId();
+            channel.addEventListener('message', async (event: MessageEvent<AuthBroadcastMessage>) =>
+                handleAuthBroadcastMessage(event.data, tabId, authStore, notifications.add),
             );
 
             onScopeDispose(() => channel.close());

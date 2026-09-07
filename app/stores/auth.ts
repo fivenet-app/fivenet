@@ -16,7 +16,7 @@ import type { ImpersonateJobResponse, RefreshAccountSessionResponse } from '~~/g
 
 const logger = useLogger('🔑 Auth');
 
-const getAuthTabId = (): string => {
+export const getAuthTabId = (): string => {
     if (typeof sessionStorage === 'undefined') return 'server';
 
     const key = 'fivenet-auth-tab-id';
@@ -178,6 +178,7 @@ export const useAuthStore = defineStore(
         };
 
         let chooseCharacterPromise: Promise<void> | undefined;
+        let loginPromise: Promise<void> | undefined;
         let accountSessionPromise: Promise<RefreshAccountSessionResponse> | undefined;
 
         const broadcastSessionChange = (type: 'login' | 'logout' | 'changed'): void => {
@@ -286,7 +287,7 @@ export const useAuthStore = defineStore(
          * @param user - The username of the user.
          * @param pass - The password of the user.
          */
-        const doLogin = async (user: string, pass: string): Promise<void> => {
+        const doLoginInternal = async (user: string, pass: string): Promise<void> => {
             // Prevent multiple simultaneous login attempts
             if (loggingIn.value) return;
 
@@ -349,6 +350,23 @@ export const useAuthStore = defineStore(
             }
         };
 
+        const doLogin = (user: string, pass: string): Promise<void> => {
+            if (loginPromise) return loginPromise;
+
+            const promise = doLoginInternal(user, pass);
+            loginPromise = promise;
+            void promise.then(
+                () => {
+                    if (loginPromise === promise) loginPromise = undefined;
+                },
+                () => {
+                    if (loginPromise === promise) loginPromise = undefined;
+                },
+            );
+
+            return promise;
+        };
+
         /**
          * Logout the currently logged-in user and clear authentication information.
          */
@@ -362,6 +380,7 @@ export const useAuthStore = defineStore(
                 // ChooseCharacter refreshes the account cookie. Let an already
                 // running request finish before destroying that cookie, or its
                 // response can recreate the session after logout succeeds.
+                await loginPromise?.catch(() => undefined);
                 await chooseCharacterPromise?.catch(() => undefined);
 
                 const authAuthClient = await getAuthAuthClient();
@@ -777,7 +796,17 @@ export const useAuthStore = defineStore(
 
             phase.value = 'bootstrapping';
             try {
-                await restoreAccountSession();
+                const response = await restoreAccountSession();
+                // The request completed for a previous auth generation. It
+                // must not be treated as a successful current session.
+                if (response === null) {
+                    if (force) {
+                        const retry = await restoreAccountSession();
+                        if (retry === null) return { kind: 'needs-login' };
+                    } else {
+                        return { kind: 'needs-login' };
+                    }
+                }
                 return { kind: 'ready' };
             } catch (e) {
                 if (isUnauthenticatedError(e)) {
