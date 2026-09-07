@@ -54,6 +54,7 @@ function copyError(): void {
 ${props.error ? JSON.stringify(props.error) : 'Unknown error'}
 \`\`\`
 **Version:** ${version}
+**URL**: ${window.location.href}
 `).catch(() => undefined);
 }
 
