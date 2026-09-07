@@ -61,6 +61,11 @@ const (
 
 var ErrTemplateActiveChar = errors.New("failed to resolve active character/user")
 
+const (
+	templateDoubleQuoteMarker = "\ue000"
+	templateSingleQuoteMarker = "\ue001"
+)
+
 var sproutTemplateFuncs = sync.OnceValue(func() sprout.FunctionMap {
 	return sprout.New(
 		sprout.WithRegistries(
@@ -103,6 +108,7 @@ func unwrapTemplateActionSpans(node *htmlnode.Node) {
 		if isTemplateActionSpan(child) {
 			for content := child.FirstChild; content != nil; {
 				nextContent := content.NextSibling
+				markTemplateActionQuotes(content)
 				child.RemoveChild(content)
 				node.InsertBefore(content, child)
 				content = nextContent
@@ -114,11 +120,22 @@ func unwrapTemplateActionSpans(node *htmlnode.Node) {
 	}
 }
 
+func markTemplateActionQuotes(node *htmlnode.Node) {
+	if node.Type == htmlnode.TextNode {
+		node.Data = strings.NewReplacer(`"`, templateDoubleQuoteMarker, `'`, templateSingleQuoteMarker).Replace(node.Data)
+	}
+
+	for child := node.FirstChild; child != nil; child = child.NextSibling {
+		markTemplateActionQuotes(child)
+	}
+}
+
 func stripTemplateActionSpans(content string) (string, error) {
 	// Parse the editor HTML as a fragment so action spans can be identified by
 	// their element and exact data-* attributes instead of matching HTML with a
-	// regular expression. Rendering the cleaned tree may normalize markup such
-	// as attribute quoting or equivalent whitespace, which is intentional.
+	// regular expression. Keep the rendered HTML escaped: unescaping the whole
+	// document would turn entities such as &quot; in attributes into literal
+	// quotes and produce invalid HTML.
 	fragment, err := htmlnode.ParseFragment(strings.NewReader(content), &htmlnode.Node{
 		Type:     htmlnode.ElementNode,
 		DataAtom: atom.Div,
@@ -141,7 +158,10 @@ func stripTemplateActionSpans(content string) (string, error) {
 		}
 	}
 
-	return htmlnode.UnescapeString(output.String()), nil
+	return strings.NewReplacer(
+		templateDoubleQuoteMarker, `"`,
+		templateSingleQuoteMarker, `'`,
+	).Replace(output.String()), nil
 }
 
 var templateSubjectAccessOptions = access.SubjectAccessOptions{

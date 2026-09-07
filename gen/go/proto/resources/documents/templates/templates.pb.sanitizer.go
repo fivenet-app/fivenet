@@ -38,7 +38,7 @@ func (m *Template) Sanitize() error {
 	}
 
 	// Field: Content
-	m.Content = htmlsanitizer.SanitizeAndUnescape(m.Content)
+	m.Content = htmlsanitizer.Sanitize(m.Content)
 
 	// Field: ContentAccess
 	if m.ContentAccess != nil {
@@ -50,7 +50,7 @@ func (m *Template) Sanitize() error {
 	}
 
 	// Field: ContentTitle
-	m.ContentTitle = htmlsanitizer.SanitizeAndUnescape(m.ContentTitle)
+	m.ContentTitle = htmlsanitizer.Sanitize(m.ContentTitle)
 
 	// Field: CreatedAt
 	if m.CreatedAt != nil {
@@ -108,7 +108,7 @@ func (m *Template) Sanitize() error {
 	}
 
 	// Field: State
-	m.State = htmlsanitizer.SanitizeAndUnescape(m.State)
+	m.State = htmlsanitizer.Sanitize(m.State)
 
 	// Field: Title
 	m.Title = htmlsanitizer.SanitizeAndUnescape(m.Title)

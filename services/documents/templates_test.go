@@ -97,6 +97,26 @@ func TestStripTemplateVarSpansPreservesTrimMarkers(t *testing.T) {
 	require.Equal(t, `<p>{{- .Firstname -}}</p>`, stripped)
 }
 
+func TestStripTemplateVarSpansPreservesQuotedArguments(t *testing.T) {
+	t.Parallel()
+
+	content := `<p><span class="template-var" data-template-var="now | date &#34;02.01.2006 15:04&#34;">{{ now | date "02.01.2006 15:04" }}</span></p>`
+
+	stripped, err := stripTemplateActionSpans(content)
+	require.NoError(t, err)
+	require.Equal(t, `<p>{{ now | date "02.01.2006 15:04" }}</p>`, stripped)
+}
+
+func TestStripTemplateActionSpansKeepsAttributeEntitiesEscaped(t *testing.T) {
+	t.Parallel()
+
+	content := `<p><span data-template-var="now | date &#34;02.01.2006 15:04&#34;">{{ now | date "02.01.2006 15:04" }}</span><span data-keep="now | date &#34;02.01.2006 15:04&#34;">keep</span></p>`
+
+	stripped, err := stripTemplateActionSpans(content)
+	require.NoError(t, err)
+	require.Equal(t, `<p>{{ now | date "02.01.2006 15:04" }}<span data-keep="now | date &#34;02.01.2006 15:04&#34;">keep</span></p>`, stripped)
+}
+
 func TestStripTemplateActionSpansPreservesOtherHTMLAttributes(t *testing.T) {
 	t.Parallel()
 
