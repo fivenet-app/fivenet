@@ -259,7 +259,7 @@ func (h *Hydrator) loadFallbackByUserID(
 		db = h.db
 	}
 
-	tUser := table.FivenetUser.AS("colleague")
+	tColleague := table.FivenetUser.AS("colleague")
 	tUserProps := table.FivenetUserProps.AS("colleague_user_props")
 	tAvatar := table.FivenetFiles.AS("colleague_profile_picture")
 
@@ -268,27 +268,27 @@ func (h *Hydrator) loadFallbackByUserID(
 		userIdExprs = append(userIdExprs, mysql.Int32(userID))
 	}
 
-	stmt := tUser.
+	stmt := tColleague.
 		SELECT(
-			tUser.ID,
-			tUser.Job.AS("colleague.job"),
-			tUser.JobGrade.AS("colleague.job_grade"),
-			tUser.Firstname,
-			tUser.Lastname,
-			tUser.Dateofbirth,
-			tUser.PhoneNumber,
+			tColleague.ID,
+			tColleague.Job.AS("colleague.job"),
+			tColleague.JobGrade.AS("colleague.job_grade"),
+			tColleague.Firstname,
+			tColleague.Lastname,
+			tColleague.Dateofbirth,
+			tColleague.PhoneNumber,
 			tUserProps.AvatarFileID.AS("colleague.profile_picture_file_id"),
 			tAvatar.FilePath.AS("colleague.profile_picture"),
 			tUserProps.Email.AS("colleague.email"),
 		).
 		FROM(
-			tUser.
-				LEFT_JOIN(tUserProps, tUserProps.UserID.EQ(tUser.ID)).
+			tColleague.
+				LEFT_JOIN(tUserProps, tUserProps.UserID.EQ(tColleague.ID)).
 				LEFT_JOIN(tAvatar, tAvatar.ID.EQ(tUserProps.AvatarFileID)),
 		).
 		WHERE(mysql.AND(
-			tUser.ID.IN(userIdExprs...),
-			tUser.DeletedAt.IS_NULL(),
+			tColleague.ID.IN(userIdExprs...),
+			tColleague.DeletedAt.IS_NULL(),
 		)).
 		LIMIT(int64(len(userIDs)))
 
