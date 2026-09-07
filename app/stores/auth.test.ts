@@ -312,4 +312,15 @@ describe('useAuthStore', () => {
         await expect(first).resolves.toEqual({ kind: 'ready' });
         await expect(second).resolves.toEqual({ kind: 'ready' });
     });
+
+    it('does not retry account restoration after an unauthenticated result', async () => {
+        mocks.refreshAccountSession.mockRejectedValueOnce({ code: 'UNAUTHENTICATED' });
+
+        const authStore = useAuthStore();
+
+        await expect(authStore.ensureAccountSession()).resolves.toEqual({ kind: 'needs-login' });
+        await expect(authStore.ensureAccountSession()).resolves.toEqual({ kind: 'needs-login' });
+
+        expect(mocks.refreshAccountSession).toHaveBeenCalledTimes(1);
+    });
 });

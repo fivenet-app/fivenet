@@ -32,7 +32,7 @@ const job = useRoute('settings-limiter-job').params.job;
         :job="job"
         @deleted="
             async () => {
-                navigateTo('/settings/limiter');
+                await navigateTo('/settings/limiter');
                 $emit('deleted');
             }
         "

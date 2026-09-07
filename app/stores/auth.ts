@@ -695,6 +695,13 @@ export const useAuthStore = defineStore(
         };
 
         const ensureAccountSession = async (): Promise<AuthEnsureResult> => {
+            // An unauthenticated refresh is a terminal result until the user
+            // logs in. Without this guard, public-route middleware can retry
+            // the same missing/expired cookie while redirecting to login.
+            if (phase.value === 'anonymous' && lastFailure.value?.kind === 'account-expired') {
+                return { kind: 'needs-login' };
+            }
+
             if (phase.value === 'account-ready' || phase.value === 'character-ready') return { kind: 'ready' };
 
             phase.value = 'bootstrapping';
