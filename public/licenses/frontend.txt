@@ -1216,7 +1216,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 ---
 
-The following software may be included in this product: @dxup/nuxt (0.5.6)
+The following software may be included in this product: @dxup/nuxt (0.5.10)
 This software contains the following license and notice below:
 
 The MIT License (MIT)
@@ -1825,7 +1825,7 @@ USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 ---
 
-The following software may be included in this product: @iconify/collections (1.0.722)
+The following software may be included in this product: @iconify/collections (1.0.730)
 This software contains the following license and notice below:
 
 MIT License
@@ -2146,7 +2146,7 @@ SOFTWARE.
 
 ---
 
-The following software may be included in this product: @jridgewell/sourcemap-codec (1.5.5)
+The following software may be included in this product: @jridgewell/sourcemap-codec (1.6.0)
 This software contains the following license and notice below:
 
 Copyright 2024 Justin Ridgewell <justin@ridgewell.name>
@@ -2355,7 +2355,7 @@ USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 ---
 
-The following software may be included in this product: @noble/hashes (2.3.0)
+The following software may be included in this product: @noble/hashes (2.4.0)
 This software contains the following license and notice below:
 
 The MIT License (MIT)
@@ -2530,7 +2530,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 ---
 
-The following software may be included in this product: @nuxt/devtools (3.4.1)
+The following software may be included in this product: @nuxt/devtools (3.4.2)
 This software contains the following license and notice below:
 
 MIT License
@@ -2557,7 +2557,7 @@ SOFTWARE.
 
 ---
 
-The following software may be included in this product: @nuxt/devtools-kit (3.4.1)
+The following software may be included in this product: @nuxt/devtools-kit (3.4.2)
 This software contains the following license and notice below:
 
 MIT License
@@ -2611,7 +2611,7 @@ SOFTWARE.
 
 ---
 
-The following software may be included in this product: @nuxt/devtools-wizard (3.4.1)
+The following software may be included in this product: @nuxt/devtools-wizard (3.4.2)
 This software contains the following license and notice below:
 
 MIT License
@@ -2665,7 +2665,7 @@ SOFTWARE.
 
 ---
 
-The following software may be included in this product: @nuxt/icon (2.5.0)
+The following software may be included in this product: @nuxt/icon (2.5.1)
 This software contains the following license and notice below:
 
 MIT License
@@ -2990,7 +2990,7 @@ SOFTWARE.
 
 ---
 
-The following software may be included in this product: @oxc-project/types (0.146.0)
+The following software may be included in this product: @oxc-project/types (0.147.0)
 This software contains the following license and notice below:
 
 MIT License
@@ -3425,7 +3425,7 @@ THE SOFTWARE IS PROVIDED 'AS IS', WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 ---
 
-The following software may be included in this product: @rolldown/binding-linux-x64-gnu (1.2.5)
+The following software may be included in this product: @rolldown/binding-linux-x64-gnu (1.2.6)
 This software contains the following license and notice below:
 
 MIT License
@@ -3689,7 +3689,7 @@ THE SOFTWARE.
 
 ---
 
-The following software may be included in this product: @rollup/rollup-linux-x64-gnu (4.62.4)
+The following software may be included in this product: @rollup/rollup-linux-x64-gnu (4.63.1)
 This software contains the following license and notice below:
 
 MIT License
@@ -4414,7 +4414,7 @@ SOFTWARE.
 
 ---
 
-The following software may be included in this product: @tanstack/virtual-core (3.17.7)
+The following software may be included in this product: @tanstack/virtual-core (3.17.8)
 This software contains the following license and notice below:
 
 MIT License
@@ -4468,7 +4468,7 @@ SOFTWARE.
 
 ---
 
-The following software may be included in this product: @tanstack/vue-virtual (3.13.35)
+The following software may be included in this product: @tanstack/vue-virtual (3.13.36)
 This software contains the following license and notice below:
 
 MIT License
@@ -4495,7 +4495,7 @@ SOFTWARE.
 
 ---
 
-The following software may be included in this product: @tiptap/core (3.30.5)
+The following software may be included in this product: @tiptap/core (3.31.3)
 This software contains the following license and notice below:
 
 MIT License
@@ -4549,6 +4549,33 @@ SOFTWARE.
 
 ---
 
+The following software may be included in this product: @tiptap/extension-blockquote (3.31.3)
+This software contains the following license and notice below:
+
+MIT License
+
+Copyright (c) 2025, Tiptap GmbH
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+
+---
+
 The following software may be included in this product: @tiptap/extension-bold (3.30.5)
 This software contains the following license and notice below:
 
@@ -4576,7 +4603,7 @@ SOFTWARE.
 
 ---
 
-The following software may be included in this product: @tiptap/extension-bubble-menu (3.30.5)
+The following software may be included in this product: @tiptap/extension-bold (3.31.3)
 This software contains the following license and notice below:
 
 MIT License
@@ -4603,7 +4630,7 @@ SOFTWARE.
 
 ---
 
-The following software may be included in this product: @tiptap/extension-bullet-list (3.29.2)
+The following software may be included in this product: @tiptap/extension-bubble-menu (3.31.3)
 This software contains the following license and notice below:
 
 MIT License
@@ -4630,7 +4657,34 @@ SOFTWARE.
 
 ---
 
-The following software may be included in this product: @tiptap/extension-character-count (3.30.5)
+The following software may be included in this product: @tiptap/extension-bullet-list (3.30.5)
+This software contains the following license and notice below:
+
+MIT License
+
+Copyright (c) 2025, Tiptap GmbH
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+
+---
+
+The following software may be included in this product: @tiptap/extension-character-count (3.31.3)
 This software contains the following license and notice below:
 
 MIT License
@@ -4684,6 +4738,33 @@ SOFTWARE.
 
 ---
 
+The following software may be included in this product: @tiptap/extension-code (3.31.3)
+This software contains the following license and notice below:
+
+MIT License
+
+Copyright (c) 2025, Tiptap GmbH
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+
+---
+
 The following software may be included in this product: @tiptap/extension-code-block (3.30.5)
 This software contains the following license and notice below:
 
@@ -4711,7 +4792,7 @@ SOFTWARE.
 
 ---
 
-The following software may be included in this product: @tiptap/extension-collaboration (3.30.5)
+The following software may be included in this product: @tiptap/extension-code-block (3.31.3)
 This software contains the following license and notice below:
 
 MIT License
@@ -4738,7 +4819,7 @@ SOFTWARE.
 
 ---
 
-The following software may be included in this product: @tiptap/extension-collaboration-caret (3.30.5)
+The following software may be included in this product: @tiptap/extension-collaboration (3.31.3)
 This software contains the following license and notice below:
 
 MIT License
@@ -4765,7 +4846,7 @@ SOFTWARE.
 
 ---
 
-The following software may be included in this product: @tiptap/extension-color (3.30.5)
+The following software may be included in this product: @tiptap/extension-collaboration-caret (3.31.3)
 This software contains the following license and notice below:
 
 MIT License
@@ -4792,7 +4873,34 @@ SOFTWARE.
 
 ---
 
-The following software may be included in this product: @tiptap/extension-details (3.30.5)
+The following software may be included in this product: @tiptap/extension-color (3.31.3)
+This software contains the following license and notice below:
+
+MIT License
+
+Copyright (c) 2025, Tiptap GmbH
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+
+---
+
+The following software may be included in this product: @tiptap/extension-details (3.31.3)
 This software contains the following license and notice below:
 
 MIT License
@@ -4846,7 +4954,7 @@ SOFTWARE.
 
 ---
 
-The following software may be included in this product: @tiptap/extension-drag-handle (3.30.5)
+The following software may be included in this product: @tiptap/extension-document (3.31.3)
 This software contains the following license and notice below:
 
 MIT License
@@ -4873,7 +4981,7 @@ SOFTWARE.
 
 ---
 
-The following software may be included in this product: @tiptap/extension-drag-handle-vue-3 (3.30.5)
+The following software may be included in this product: @tiptap/extension-drag-handle (3.31.3)
 This software contains the following license and notice below:
 
 MIT License
@@ -4900,7 +5008,7 @@ SOFTWARE.
 
 ---
 
-The following software may be included in this product: @tiptap/extension-dropcursor (3.29.2)
+The following software may be included in this product: @tiptap/extension-drag-handle-vue-3 (3.31.3)
 This software contains the following license and notice below:
 
 MIT License
@@ -4927,7 +5035,7 @@ SOFTWARE.
 
 ---
 
-The following software may be included in this product: @tiptap/extension-emoji (3.30.5)
+The following software may be included in this product: @tiptap/extension-dropcursor (3.30.5)
 This software contains the following license and notice below:
 
 MIT License
@@ -4954,7 +5062,7 @@ SOFTWARE.
 
 ---
 
-The following software may be included in this product: @tiptap/extension-floating-menu (3.30.5)
+The following software may be included in this product: @tiptap/extension-emoji (3.31.3)
 This software contains the following license and notice below:
 
 MIT License
@@ -4981,7 +5089,7 @@ SOFTWARE.
 
 ---
 
-The following software may be included in this product: @tiptap/extension-font-family (3.30.5)
+The following software may be included in this product: @tiptap/extension-floating-menu (3.31.3)
 This software contains the following license and notice below:
 
 MIT License
@@ -5008,7 +5116,34 @@ SOFTWARE.
 
 ---
 
-The following software may be included in this product: @tiptap/extension-gapcursor (3.29.2)
+The following software may be included in this product: @tiptap/extension-font-family (3.31.3)
+This software contains the following license and notice below:
+
+MIT License
+
+Copyright (c) 2025, Tiptap GmbH
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+
+---
+
+The following software may be included in this product: @tiptap/extension-gapcursor (3.30.5)
 This software contains the following license and notice below:
 
 MIT License
@@ -5062,6 +5197,33 @@ SOFTWARE.
 
 ---
 
+The following software may be included in this product: @tiptap/extension-hard-break (3.31.3)
+This software contains the following license and notice below:
+
+MIT License
+
+Copyright (c) 2025, Tiptap GmbH
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+
+---
+
 The following software may be included in this product: @tiptap/extension-heading (3.30.5)
 This software contains the following license and notice below:
 
@@ -5089,7 +5251,7 @@ SOFTWARE.
 
 ---
 
-The following software may be included in this product: @tiptap/extension-highlight (3.30.5)
+The following software may be included in this product: @tiptap/extension-heading (3.31.3)
 This software contains the following license and notice below:
 
 MIT License
@@ -5116,7 +5278,34 @@ SOFTWARE.
 
 ---
 
-The following software may be included in this product: @tiptap/extension-history (3.30.5)
+The following software may be included in this product: @tiptap/extension-highlight (3.31.3)
+This software contains the following license and notice below:
+
+MIT License
+
+Copyright (c) 2025, Tiptap GmbH
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+
+---
+
+The following software may be included in this product: @tiptap/extension-history (3.31.3)
 This software contains the following license and notice below:
 
 MIT License
@@ -5170,7 +5359,7 @@ SOFTWARE.
 
 ---
 
-The following software may be included in this product: @tiptap/extension-image (3.30.5)
+The following software may be included in this product: @tiptap/extension-horizontal-rule (3.31.3)
 This software contains the following license and notice below:
 
 MIT License
@@ -5197,7 +5386,34 @@ SOFTWARE.
 
 ---
 
-The following software may be included in this product: @tiptap/extension-invisible-characters (3.30.5)
+The following software may be included in this product: @tiptap/extension-image (3.31.3)
+This software contains the following license and notice below:
+
+MIT License
+
+Copyright (c) 2025, Tiptap GmbH
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+
+---
+
+The following software may be included in this product: @tiptap/extension-invisible-characters (3.31.3)
 This software contains the following license and notice below:
 
 MIT License
@@ -5251,7 +5467,61 @@ SOFTWARE.
 
 ---
 
+The following software may be included in this product: @tiptap/extension-italic (3.31.3)
+This software contains the following license and notice below:
+
+MIT License
+
+Copyright (c) 2025, Tiptap GmbH
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+
+---
+
 The following software may be included in this product: @tiptap/extension-link (3.30.5)
+This software contains the following license and notice below:
+
+MIT License
+
+Copyright (c) 2025, Tiptap GmbH
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+
+---
+
+The following software may be included in this product: @tiptap/extension-link (3.31.3)
 This software contains the following license and notice below:
 
 MIT License
@@ -5305,7 +5575,34 @@ SOFTWARE.
 
 ---
 
-The following software may be included in this product: @tiptap/extension-list-item (3.29.2)
+The following software may be included in this product: @tiptap/extension-list (3.31.3)
+This software contains the following license and notice below:
+
+MIT License
+
+Copyright (c) 2025, Tiptap GmbH
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+
+---
+
+The following software may be included in this product: @tiptap/extension-list-item (3.30.5)
 This software contains the following license and notice below:
 
 MIT License
@@ -5359,7 +5656,7 @@ SOFTWARE.
 
 ---
 
-The following software may be included in this product: @tiptap/extension-mention (3.30.5)
+The following software may be included in this product: @tiptap/extension-list-keymap (3.31.3)
 This software contains the following license and notice below:
 
 MIT License
@@ -5386,7 +5683,7 @@ SOFTWARE.
 
 ---
 
-The following software may be included in this product: @tiptap/extension-node-range (3.30.5)
+The following software may be included in this product: @tiptap/extension-mention (3.31.3)
 This software contains the following license and notice below:
 
 MIT License
@@ -5413,7 +5710,34 @@ SOFTWARE.
 
 ---
 
-The following software may be included in this product: @tiptap/extension-ordered-list (3.29.2)
+The following software may be included in this product: @tiptap/extension-node-range (3.31.3)
+This software contains the following license and notice below:
+
+MIT License
+
+Copyright (c) 2025, Tiptap GmbH
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+
+---
+
+The following software may be included in this product: @tiptap/extension-ordered-list (3.30.5)
 This software contains the following license and notice below:
 
 MIT License
@@ -5467,7 +5791,34 @@ SOFTWARE.
 
 ---
 
-The following software may be included in this product: @tiptap/extension-placeholder (3.30.5)
+The following software may be included in this product: @tiptap/extension-paragraph (3.31.3)
+This software contains the following license and notice below:
+
+MIT License
+
+Copyright (c) 2025, Tiptap GmbH
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+
+---
+
+The following software may be included in this product: @tiptap/extension-placeholder (3.31.3)
 This software contains the following license and notice below:
 
 MIT License
@@ -5521,7 +5872,7 @@ SOFTWARE.
 
 ---
 
-The following software may be included in this product: @tiptap/extension-subscript (3.30.5)
+The following software may be included in this product: @tiptap/extension-strike (3.31.3)
 This software contains the following license and notice below:
 
 MIT License
@@ -5548,7 +5899,7 @@ SOFTWARE.
 
 ---
 
-The following software may be included in this product: @tiptap/extension-superscript (3.30.5)
+The following software may be included in this product: @tiptap/extension-subscript (3.31.3)
 This software contains the following license and notice below:
 
 MIT License
@@ -5575,7 +5926,7 @@ SOFTWARE.
 
 ---
 
-The following software may be included in this product: @tiptap/extension-table (3.30.5)
+The following software may be included in this product: @tiptap/extension-superscript (3.31.3)
 This software contains the following license and notice below:
 
 MIT License
@@ -5602,7 +5953,7 @@ SOFTWARE.
 
 ---
 
-The following software may be included in this product: @tiptap/extension-task-item (3.30.5)
+The following software may be included in this product: @tiptap/extension-table (3.31.3)
 This software contains the following license and notice below:
 
 MIT License
@@ -5629,7 +5980,34 @@ SOFTWARE.
 
 ---
 
-The following software may be included in this product: @tiptap/extension-task-list (3.30.5)
+The following software may be included in this product: @tiptap/extension-task-item (3.31.3)
+This software contains the following license and notice below:
+
+MIT License
+
+Copyright (c) 2025, Tiptap GmbH
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+
+---
+
+The following software may be included in this product: @tiptap/extension-task-list (3.31.3)
 This software contains the following license and notice below:
 
 MIT License
@@ -5683,7 +6061,7 @@ SOFTWARE.
 
 ---
 
-The following software may be included in this product: @tiptap/extension-text-align (3.30.5)
+The following software may be included in this product: @tiptap/extension-text (3.31.3)
 This software contains the following license and notice below:
 
 MIT License
@@ -5710,7 +6088,7 @@ SOFTWARE.
 
 ---
 
-The following software may be included in this product: @tiptap/extension-text-style (3.30.5)
+The following software may be included in this product: @tiptap/extension-text-align (3.31.3)
 This software contains the following license and notice below:
 
 MIT License
@@ -5737,7 +6115,34 @@ SOFTWARE.
 
 ---
 
-The following software may be included in this product: @tiptap/extension-typography (3.30.5)
+The following software may be included in this product: @tiptap/extension-text-style (3.31.3)
+This software contains the following license and notice below:
+
+MIT License
+
+Copyright (c) 2025, Tiptap GmbH
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+
+---
+
+The following software may be included in this product: @tiptap/extension-typography (3.31.3)
 This software contains the following license and notice below:
 
 MIT License
@@ -5791,7 +6196,34 @@ SOFTWARE.
 
 ---
 
-The following software may be included in this product: @tiptap/extension-unique-id (3.30.5)
+The following software may be included in this product: @tiptap/extension-underline (3.31.3)
+This software contains the following license and notice below:
+
+MIT License
+
+Copyright (c) 2025, Tiptap GmbH
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+
+---
+
+The following software may be included in this product: @tiptap/extension-unique-id (3.31.3)
 This software contains the following license and notice below:
 
 MIT License
@@ -5845,7 +6277,7 @@ SOFTWARE.
 
 ---
 
-The following software may be included in this product: @tiptap/html (3.30.5)
+The following software may be included in this product: @tiptap/extensions (3.31.3)
 This software contains the following license and notice below:
 
 MIT License
@@ -5872,7 +6304,7 @@ SOFTWARE.
 
 ---
 
-The following software may be included in this product: @tiptap/markdown (3.29.2)
+The following software may be included in this product: @tiptap/html (3.31.3)
 This software contains the following license and notice below:
 
 MIT License
@@ -5899,7 +6331,7 @@ SOFTWARE.
 
 ---
 
-The following software may be included in this product: @tiptap/pm (3.30.5)
+The following software may be included in this product: @tiptap/markdown (3.30.5)
 This software contains the following license and notice below:
 
 MIT License
@@ -5926,7 +6358,7 @@ SOFTWARE.
 
 ---
 
-The following software may be included in this product: @tiptap/starter-kit (3.29.2)
+The following software may be included in this product: @tiptap/pm (3.31.3)
 This software contains the following license and notice below:
 
 MIT License
@@ -5953,7 +6385,7 @@ SOFTWARE.
 
 ---
 
-The following software may be included in this product: @tiptap/static-renderer (3.30.5)
+The following software may be included in this product: @tiptap/starter-kit (3.30.5)
 This software contains the following license and notice below:
 
 MIT License
@@ -5980,7 +6412,7 @@ SOFTWARE.
 
 ---
 
-The following software may be included in this product: @tiptap/suggestion (3.30.5)
+The following software may be included in this product: @tiptap/static-renderer (3.31.3)
 This software contains the following license and notice below:
 
 MIT License
@@ -6007,7 +6439,34 @@ SOFTWARE.
 
 ---
 
-The following software may be included in this product: @tiptap/vue-3 (3.30.5)
+The following software may be included in this product: @tiptap/suggestion (3.31.3)
+This software contains the following license and notice below:
+
+MIT License
+
+Copyright (c) 2025, Tiptap GmbH
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+
+---
+
+The following software may be included in this product: @tiptap/vue-3 (3.31.3)
 This software contains the following license and notice below:
 
 MIT License
@@ -7412,7 +7871,7 @@ SOFTWARE
 
 ---
 
-The following software may be included in this product: @types/node (26.4.0)
+The following software may be included in this product: @types/node (26.4.1)
 This software contains the following license and notice below:
 
 MIT License
@@ -7979,7 +8438,7 @@ SOFTWARE
 
 ---
 
-The following software may be included in this product: @typescript-eslint/parser (8.66.0)
+The following software may be included in this product: @typescript-eslint/parser (8.68.0)
 This software contains the following license and notice below:
 
 MIT License
@@ -8006,7 +8465,7 @@ SOFTWARE.
 
 ---
 
-The following software may be included in this product: @typescript-eslint/project-service (8.66.0)
+The following software may be included in this product: @typescript-eslint/project-service (8.68.0)
 This software contains the following license and notice below:
 
 MIT License
@@ -8033,7 +8492,7 @@ SOFTWARE.
 
 ---
 
-The following software may be included in this product: @typescript-eslint/scope-manager (8.66.0)
+The following software may be included in this product: @typescript-eslint/scope-manager (8.68.0)
 This software contains the following license and notice below:
 
 MIT License
@@ -8060,7 +8519,7 @@ SOFTWARE.
 
 ---
 
-The following software may be included in this product: @typescript-eslint/tsconfig-utils (8.66.0)
+The following software may be included in this product: @typescript-eslint/tsconfig-utils (8.68.0)
 This software contains the following license and notice below:
 
 MIT License
@@ -8087,7 +8546,7 @@ SOFTWARE.
 
 ---
 
-The following software may be included in this product: @typescript-eslint/types (8.66.0)
+The following software may be included in this product: @typescript-eslint/types (8.68.0)
 This software contains the following license and notice below:
 
 MIT License
@@ -8114,7 +8573,7 @@ SOFTWARE.
 
 ---
 
-The following software may be included in this product: @typescript-eslint/typescript-estree (8.66.0)
+The following software may be included in this product: @typescript-eslint/typescript-estree (8.68.0)
 This software contains the following license and notice below:
 
 MIT License
@@ -8141,7 +8600,7 @@ SOFTWARE.
 
 ---
 
-The following software may be included in this product: @typescript-eslint/visitor-keys (8.66.0)
+The following software may be included in this product: @typescript-eslint/visitor-keys (8.68.0)
 This software contains the following license and notice below:
 
 MIT License
@@ -8272,7 +8731,7 @@ THE SOFTWARE.
 
 ---
 
-The following software may be included in this product: @vercel/nft (1.10.2)
+The following software may be included in this product: @vercel/nft (1.11.0)
 This software contains the following license and notice below:
 
 Copyright 2019 Vercel, Inc.
@@ -8912,33 +9371,6 @@ This software contains the following license and notice below:
 MIT License
 
 Copyright (c) 2023 webfansplz
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
-
----
-
-The following software may be included in this product: @vue/language-core (3.3.9)
-This software contains the following license and notice below:
-
-MIT License
-
-Copyright (c) 2021-present Johnson Chu
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -9622,7 +10054,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 ---
 
-The following software may be included in this product: ansi-regex (6.2.2)
+The following software may be included in this product: ansi-regex (6.3.0)
 This software contains the following license and notice below:
 
 MIT License
@@ -9925,7 +10357,7 @@ SOFTWARE.
 
 ---
 
-The following software may be included in this product: autoprefixer (10.5.4)
+The following software may be included in this product: autoprefixer (10.5.5)
 This software contains the following license and notice below:
 
 The MIT License (MIT)
@@ -10228,7 +10660,7 @@ SOFTWARE.
 
 ---
 
-The following software may be included in this product: birpc (4.1.0)
+The following software may be included in this product: birpc (4.2.0)
 This software contains the following license and notice below:
 
 MIT License
@@ -10357,7 +10789,7 @@ THE SOFTWARE.
 
 ---
 
-The following software may be included in this product: browserslist (4.28.8)
+The following software may be included in this product: browserslist (4.28.9)
 This software contains the following license and notice below:
 
 The MIT License (MIT)
@@ -11098,7 +11530,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 ---
 
-The following software may be included in this product: colord (2.9.3)
+The following software may be included in this product: colord (2.10.0)
 This software contains the following license and notice below:
 
 MIT License
@@ -11957,7 +12389,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 ---
 
-The following software may be included in this product: crossws (0.4.10)
+The following software may be included in this product: crossws (0.4.12)
 This software contains the following license and notice below:
 
 MIT License
@@ -12617,7 +13049,7 @@ THE SOFTWARE.
 
 ---
 
-The following software may be included in this product: default-browser (5.5.0)
+The following software may be included in this product: default-browser (5.5.1)
 This software contains the following license and notice below:
 
 MIT License
@@ -12826,7 +13258,7 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 ---
 
-The following software may be included in this product: devalue (5.9.0)
+The following software may be included in this product: devalue (5.9.2)
 This software contains the following license and notice below:
 
 Copyright (c) 2018-19 [these people](https://github.com/rich-harris/devalue/graphs/contributors)
@@ -13769,7 +14201,7 @@ SOFTWARE.
 
 ---
 
-The following software may be included in this product: es-module-lexer (2.3.1)
+The following software may be included in this product: es-module-lexer (2.3.2)
 This software contains the following license and notice below:
 
 MIT License
@@ -15655,7 +16087,7 @@ THE SOFTWARE.
 
 ---
 
-The following software may be included in this product: globals (17.9.0)
+The following software may be included in this product: globals (17.11.0)
 This software contains the following license and notice below:
 
 MIT License
@@ -15670,7 +16102,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 ---
 
-The following software may be included in this product: globby (16.2.3)
+The following software may be included in this product: globby (16.2.4)
 This software contains the following license and notice below:
 
 MIT License
@@ -15808,7 +16240,7 @@ SOFTWARE.
 
 ---
 
-The following software may be included in this product: happy-dom (20.12.0)
+The following software may be included in this product: happy-dom (20.14.0)
 This software contains the following license and notice below:
 
 MIT License
@@ -17122,7 +17554,7 @@ IN THE SOFTWARE.
 
 ---
 
-The following software may be included in this product: impound (1.1.6)
+The following software may be included in this product: impound (1.2.0)
 This software contains the following license and notice below:
 
 MIT License
@@ -18022,7 +18454,7 @@ THE SOFTWARE.
 
 ---
 
-The following software may be included in this product: js-yaml (4.3.1)
+The following software may be included in this product: js-yaml (4.3.2)
 This software contains the following license and notice below:
 
 (The MIT License)
@@ -18988,7 +19420,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 ---
 
-The following software may be included in this product: magic-string (1.2.2)
+The following software may be included in this product: magic-string (1.2.3)
 This software contains the following license and notice below:
 
 Copyright 2018 Rich Harris
@@ -19133,7 +19565,7 @@ This software is provided by the copyright holders and contributors “as is” 
 
 ---
 
-The following software may be included in this product: maska (3.2.0)
+The following software may be included in this product: maska (3.2.1)
 This software contains the following license and notice below:
 
 The MIT License (MIT)
@@ -21119,7 +21551,7 @@ SOFTWARE.
 
 ---
 
-The following software may be included in this product: node-abi (3.94.0)
+The following software may be included in this product: node-abi (3.96.0)
 This software contains the following license and notice below:
 
 MIT License
@@ -21161,7 +21593,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 ---
 
-The following software may be included in this product: node-addon-api (8.9.1)
+The following software may be included in this product: node-addon-api (8.9.2)
 This software contains the following license and notice below:
 
 The MIT License (MIT)
@@ -21405,7 +21837,7 @@ SOFTWARE.
 
 ---
 
-The following software may be included in this product: node-releases (2.0.53)
+The following software may be included in this product: node-releases (2.0.54)
 This software contains the following license and notice below:
 
 The MIT License
@@ -21615,7 +22047,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 ---
 
-The following software may be included in this product: nwsapi (2.2.24)
+The following software may be included in this product: nwsapi (2.2.26)
 This software contains the following license and notice below:
 
 Copyright (c) 2007-2026 Diego Perini (http://www.iport.it/)
@@ -21920,7 +22352,7 @@ SOFTWARE.
 
 ---
 
-The following software may be included in this product: open (11.0.0)
+The following software may be included in this product: open (11.0.2)
 This software contains the following license and notice below:
 
 MIT License
@@ -22563,7 +22995,7 @@ THE SOFTWARE.
 
 ---
 
-The following software may be included in this product: picomatch (4.0.5)
+The following software may be included in this product: picomatch (4.0.7)
 This software contains the following license and notice below:
 
 The MIT License (MIT)
@@ -22759,7 +23191,7 @@ SOFTWARE.
 
 ---
 
-The following software may be included in this product: postcss (8.5.26)
+The following software may be included in this product: postcss (8.5.28)
 This software contains the following license and notice below:
 
 The MIT License (MIT)
@@ -23658,6 +24090,21 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 ---
 
+The following software may be included in this product: powershell-utils (0.2.1)
+This software contains the following license and notice below:
+
+MIT License
+
+Copyright (c) Sindre Sorhus <sindresorhus@gmail.com> (https://sindresorhus.com)
+
+Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+---
+
 The following software may be included in this product: prebuild-install (7.1.3)
 This software contains the following license and notice below:
 
@@ -23713,7 +24160,7 @@ OTHER DEALINGS IN THE SOFTWARE.
 
 ---
 
-The following software may be included in this product: pretty-bytes (7.1.1)
+The following software may be included in this product: pretty-bytes (7.1.2)
 This software contains the following license and notice below:
 
 MIT License
@@ -23836,7 +24283,7 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 ---
 
-The following software may be included in this product: prosemirror-changeset (2.4.1)
+The following software may be included in this product: prosemirror-changeset (2.4.2)
 This software contains the following license and notice below:
 
 Copyright (C) 2017 by Marijn Haverbeke <marijn@haverbeke.berlin> and others
@@ -24136,7 +24583,7 @@ THE SOFTWARE.
 
 ---
 
-The following software may be included in this product: prosemirror-view (1.42.2)
+The following software may be included in this product: prosemirror-view (1.42.3)
 This software contains the following license and notice below:
 
 Copyright (C) 2015-2017 by Marijn Haverbeke <marijn@haverbeke.berlin> and others
@@ -25397,7 +25844,7 @@ SOFTWARE.
 
 ---
 
-The following software may be included in this product: rolldown (1.2.5)
+The following software may be included in this product: rolldown (1.2.6)
 This software contains the following license and notice below:
 
 MIT License
@@ -25455,7 +25902,7 @@ SOFTWARE.
 
 ---
 
-The following software may be included in this product: rollup (4.62.4)
+The following software may be included in this product: rollup (4.63.1)
 This software contains the following license and notice below:
 
 # Rollup core license
@@ -26140,7 +26587,7 @@ Repository: https://github.com/yargs/yargs-parser.git
 
 ---
 
-The following software may be included in this product: rollup-plugin-visualizer (7.0.1)
+The following software may be included in this product: rollup-plugin-visualizer (7.1.1)
 This software contains the following license and notice below:
 
 The MIT License (MIT)
@@ -26367,7 +26814,7 @@ SOFTWARE.
 
 ---
 
-The following software may be included in this product: sass (1.103.1)
+The following software may be included in this product: sass (1.104.0)
 This software contains the following license and notice below:
 
 Dart Sass license:
@@ -28176,7 +28623,7 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 ---
 
-The following software may be included in this product: seroval (1.6.2)
+The following software may be included in this product: seroval (1.6.4)
 This software contains the following license and notice below:
 
 MIT License Copyright (c) 2025 Alexis Munsayac <alexis.munsayac@gmail.com>
@@ -28900,7 +29347,7 @@ SOFTWARE.
 
 ---
 
-The following software may be included in this product: streamx (2.28.0)
+The following software may be included in this product: streamx (2.28.1)
 This software contains the following license and notice below:
 
 The MIT License (MIT)
@@ -29725,7 +30172,7 @@ THE SOFTWARE.
 
 ---
 
-The following software may be included in this product: tar-stream (3.2.0)
+The following software may be included in this product: tar-stream (3.2.1)
 This software contains the following license and notice below:
 
 The MIT License (MIT)
@@ -30773,7 +31220,7 @@ THE SOFTWARE.
 
 ---
 
-The following software may be included in this product: unifont (0.7.4)
+The following software may be included in this product: unifont (0.7.5)
 This software contains the following license and notice below:
 
 MIT License
@@ -31179,7 +31626,7 @@ SOFTWARE.
 
 ---
 
-The following software may be included in this product: unrouting (0.2.2)
+The following software may be included in this product: unrouting (0.2.3)
 This software contains the following license and notice below:
 
 MIT License
@@ -31369,7 +31816,7 @@ SOFTWARE.
 
 ---
 
-The following software may be included in this product: update-browserslist-db (1.3.1)
+The following software may be included in this product: update-browserslist-db (1.3.2)
 This software contains the following license and notice below:
 
 The MIT License (MIT)
@@ -34927,7 +35374,7 @@ Repository: git+https://github.com/websockets/ws.git
 
 ---
 
-The following software may be included in this product: vscode-uri (3.1.0)
+The following software may be included in this product: vscode-uri (3.2.0)
 This software contains the following license and notice below:
 
 The MIT License (MIT)
@@ -35055,7 +35502,7 @@ SOFTWARE.
 
 ---
 
-The following software may be included in this product: vue-component-meta (3.3.9)
+The following software may be included in this product: vue-component-meta (3.3.11)
 This software contains the following license and notice below:
 
 MIT License
@@ -35268,7 +35715,7 @@ SOFTWARE.
 
 ---
 
-The following software may be included in this product: vue-router (5.3.0)
+The following software may be included in this product: vue-router (5.3.1)
 This software contains the following license and notice below:
 
 The MIT License (MIT)
@@ -35741,7 +36188,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 ---
 
-The following software may be included in this product: wsl-utils (0.3.1)
+The following software may be included in this product: wsl-utils (1.0.0)
 This software contains the following license and notice below:
 
 MIT License
@@ -36070,7 +36517,7 @@ SOFTWARE.
 
 ---
 
-The following software may be included in this product: @csstools/css-syntax-patches-for-csstree (1.1.7)
+The following software may be included in this product: @csstools/css-syntax-patches-for-csstree (1.1.9)
 This software contains the following license and notice below:
 
 MIT No Attribution (MIT-0)
@@ -38167,7 +38614,7 @@ limitations under the License.
 
 ---
 
-The following software may be included in this product: @img/sharp-linux-x64 (0.35.3)
+The following software may be included in this product: @img/sharp-linux-x64 (0.35.4)
 This software contains the following license and notice below:
 
 Apache License
@@ -38364,7 +38811,7 @@ third-party archives.
 
 ---
 
-The following software may be included in this product: @internationalized/date (3.12.3)
+The following software may be included in this product: @internationalized/date (3.12.4)
 This software contains the following license and notice below:
 
 Apache License
@@ -40238,7 +40685,7 @@ limitations under the License.
 
 ---
 
-The following software may be included in this product: bare-events (2.9.1)
+The following software may be included in this product: bare-events (2.9.2)
 This software contains the following license and notice below:
 
 Apache License
@@ -40445,7 +40892,7 @@ limitations under the License.
 
 ---
 
-The following software may be included in this product: bare-fs (4.8.0)
+The following software may be included in this product: bare-fs (4.8.1)
 This software contains the following license and notice below:
 
 Apache License
@@ -40893,7 +41340,7 @@ limitations under the License.
 
 ---
 
-The following software may be included in this product: bare-stream (2.13.3)
+The following software may be included in this product: bare-stream (2.13.4)
 This software contains the following license and notice below:
 
 Apache License
@@ -41100,7 +41547,7 @@ limitations under the License.
 
 ---
 
-The following software may be included in this product: bare-url (2.5.1)
+The following software may be included in this product: bare-url (2.5.2)
 This software contains the following license and notice below:
 
 Apache License
@@ -41307,7 +41754,7 @@ limitations under the License.
 
 ---
 
-The following software may be included in this product: baseline-browser-mapping (2.11.13)
+The following software may be included in this product: baseline-browser-mapping (2.11.20)
 This software contains the following license and notice below:
 
 Apache License
@@ -44556,7 +45003,7 @@ limitations under the License.
 
 ---
 
-The following software may be included in this product: sharp (0.35.3)
+The following software may be included in this product: sharp (0.35.4)
 This software contains the following license and notice below:
 
 Apache License
@@ -45922,7 +46369,7 @@ For more information, please see
 
 ---
 
-The following software may be included in this product: @img/sharp-libvips-linux-x64 (1.3.2)
+The following software may be included in this product: @img/sharp-libvips-linux-x64 (1.3.3)
 This software contains the following license and notice below:
 
 Copyright (c) Lovell Fuller
@@ -46334,7 +46781,7 @@ THIS SOFTWARE.
 
 ---
 
-The following software may be included in this product: @ungap/structured-clone (1.3.3)
+The following software may be included in this product: @ungap/structured-clone (1.4.0)
 This software contains the following license and notice below:
 
 ISC License
@@ -47198,7 +47645,7 @@ THIS SOFTWARE.
 
 ---
 
-The following software may be included in this product: electron-to-chromium (1.5.403)
+The following software may be included in this product: electron-to-chromium (1.5.422)
 This software contains the following license and notice below:
 
 Copyright 2018 Kilian Valkhof
@@ -47209,7 +47656,7 @@ THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES WITH RE
 
 ---
 
-The following software may be included in this product: fastq (1.20.1)
+The following software may be included in this product: fastq (1.20.3)
 This software contains the following license and notice below:
 
 Copyright (c) 2015-2020, Matteo Collina <matteo.collina@gmail.com>
@@ -48619,7 +49066,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ---
 
-The following software may be included in this product: fast-uri (3.1.5)
+The following software may be included in this product: fast-uri (3.1.6)
 This software contains the following license and notice below:
 
 Copyright (c) 2011-2021, Gary Court until https://github.com/garycourt/uri-js/commit/a1acf730b4bba3f1097c9f52e7d9d3aba8cdcaae
@@ -48947,7 +49394,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ---
 
-The following software may be included in this product: serialize-javascript (7.1.0)
+The following software may be included in this product: serialize-javascript (7.1.1)
 This software contains the following license and notice below:
 
 Copyright 2014 Yahoo! Inc.
@@ -49047,6 +49494,39 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ---
 
 The following software may be included in this product: source-map (0.7.6)
+This software contains the following license and notice below:
+
+Copyright (c) 2009-2011, Mozilla Foundation and contributors
+All rights reserved.
+
+Redistribution and use in source and binary forms, with or without
+modification, are permitted provided that the following conditions are met:
+
+* Redistributions of source code must retain the above copyright notice, this
+  list of conditions and the following disclaimer.
+
+* Redistributions in binary form must reproduce the above copyright notice,
+  this list of conditions and the following disclaimer in the documentation
+  and/or other materials provided with the distribution.
+
+* Neither the names of the Mozilla Foundation nor the names of project
+  contributors may be used to endorse or promote products derived from this
+  software without specific prior written permission.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
+FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+---
+
+The following software may be included in this product: source-map (0.8.0)
 This software contains the following license and notice below:
 
 Copyright (c) 2009-2011, Mozilla Foundation and contributors
@@ -49638,7 +50118,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ---
 
-The following software may be included in this product: terser (5.49.2)
+The following software may be included in this product: terser (5.51.2)
 This software contains the following license and notice below:
 
 Copyright 2012-2018 (c) Mihai Bazon <mihai.bazon@gmail.com>
@@ -50164,7 +50644,7 @@ OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
 ---
 
-The following software may be included in this product: caniuse-lite (1.0.30001809)
+The following software may be included in this product: caniuse-lite (1.0.30001810)
 This software contains the following license and notice below:
 
 Attribution 4.0 International
