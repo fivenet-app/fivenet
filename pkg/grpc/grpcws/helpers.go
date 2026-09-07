@@ -60,7 +60,7 @@ func IsGrpcWebSocketChannelRequest(req *http.Request) bool {
 		return false
 	}
 
-	for _, subproto := range req.Header.Values("Sec-Websocket-Protocol") {
+	for _, subproto := range req.Header.Values("Sec-WebSocket-Protocol") {
 		for token := range strings.SplitSeq(subproto, ",") {
 			token = strings.TrimSpace(token)
 			if strings.EqualFold(token, "grpc-websocket-channel") {

@@ -2,6 +2,7 @@ package settings
 
 import (
 	"context"
+	"errors"
 	"fmt"
 
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/audit"
@@ -167,12 +168,12 @@ func (s *Server) TriggerUserSync(
 	req *pbsettings.TriggerUserSyncRequest,
 ) (*pbsettings.TriggerUserSyncResponse, error) {
 	if len(req.GetUserId()) == 0 && len(req.GetIdentifiers()) == 0 {
-		return nil, fmt.Errorf("at least one user id or identifier must be provided")
+		return nil, errors.New("at least one user id or identifier must be provided")
 	}
 
 	for _, identifier := range req.GetIdentifiers() {
 		if identifier == "" {
-			return nil, fmt.Errorf("user identifiers must not be empty")
+			return nil, errors.New("user identifiers must not be empty")
 		}
 		logging.InjectFields(ctx, logging.Fields{"fivenet.sync.user_identifier", identifier})
 	}

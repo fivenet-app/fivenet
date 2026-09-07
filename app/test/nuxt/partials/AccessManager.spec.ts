@@ -23,7 +23,13 @@ vi.mock('~/stores/completor', () => ({
 }));
 
 vi.mock('~/composables/useAuth', () => ({
-    useAuth: () => ({ activeChar: mocks.activeChar }),
+    useAuth: () => ({
+        activeChar: mocks.activeChar,
+        keys: {
+            userState: { value: 'test-user-state' },
+        },
+        isQueryTransitioning: { value: false },
+    }),
 }));
 
 vi.mock('~~/gen/ts/clients', () => ({
