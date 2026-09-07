@@ -2163,6 +2163,25 @@
                         "vehicles_resync": "Vehicles Resync"
                     }
                 },
+                "trigger_user_sync": {
+                    "title": "Trigger User Sync",
+                    "open": "Trigger User Sync",
+                    "entries": "Users",
+                    "placeholder": "id:123\nidentifier:license:abc123",
+                    "description": "Enter one entry per line. Use id:<number> for user IDs or identifier:<value> for external identifiers. Maximum 50 entries.",
+                    "submit": "Queue Synchronization",
+                    "success": {
+                        "title": "Synchronization queued",
+                        "description": "The user synchronization requests have been queued."
+                    },
+                    "validation": {
+                        "required": "Enter at least one user ID or identifier.",
+                        "invalid_format": "Each entry must start with id: or identifier:.",
+                        "invalid_id": "User IDs must be positive 32-bit integers.",
+                        "invalid_identifier": "Identifiers must contain 1-64 characters.",
+                        "too_many": "Enter no more than 50 unique entries."
+                    }
+                },
                 "title": "System Status",
                 "new_version_available": "New version available"
             },

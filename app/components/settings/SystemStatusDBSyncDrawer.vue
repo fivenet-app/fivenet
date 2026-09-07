@@ -5,6 +5,7 @@ import DataNoDataBlock from '../partials/data/DataNoDataBlock.vue';
 import GenericTime from '../partials/elements/GenericTime.vue';
 import RefreshButton from '~/components/partials/RefreshButton.vue';
 import type { DBSyncTableSyncState } from '~~/gen/ts/resources/dbsync/state';
+import TriggerUserSyncDrawer from '~/components/settings/TriggerUserSyncDrawer.vue';
 
 const props = defineProps<{
     dbsync?: DBSyncStatus | null;
@@ -123,13 +124,13 @@ function refresh() {
                 </span>
             </p>
 
+            <TriggerUserSyncDrawer :disabled="props.disabled" />
+
+            <RefreshButton icon-only :disabled="props.disabled" @click="refresh" />
+
             <UTooltip :text="$t('common.close', 1)">
                 <UButton icon="i-mdi-close" color="neutral" variant="ghost" size="md" @click="isOpen = false" />
             </UTooltip>
-        </template>
-
-        <template #actions>
-            <RefreshButton icon-only :disabled="props.disabled" @click="refresh" />
         </template>
 
         <template #body>

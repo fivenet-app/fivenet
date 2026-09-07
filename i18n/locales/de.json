@@ -2163,6 +2163,25 @@
                         "vehicles_resync": "Fahrzeuge Resync"
                     }
                 },
+                "trigger_user_sync": {
+                    "title": "Benutzersynchronisierung auslösen",
+                    "open": "Benutzersynchronisierung",
+                    "entries": "Benutzer",
+                    "placeholder": "id:123\nidentifier:license:abc123",
+                    "description": "Ein Eintrag pro Zeile. Verwende id:<Nummer> für Benutzer-IDs oder identifier:<Wert> für externe Identifikatoren. Maximal 50 Einträge.",
+                    "submit": "Synchronisierung einreihen",
+                    "success": {
+                        "title": "Synchronisierung eingereiht",
+                        "description": "Die Benutzersynchronisierungsanfragen wurden eingereiht."
+                    },
+                    "validation": {
+                        "required": "Gib mindestens eine Benutzer-ID oder einen Identifikator ein.",
+                        "invalid_format": "Jeder Eintrag muss mit id: oder identifier: beginnen.",
+                        "invalid_id": "Benutzer-IDs müssen positive 32-Bit-Ganzzahlen sein.",
+                        "invalid_identifier": "Identifikatoren müssen 1-64 Zeichen enthalten.",
+                        "too_many": "Gib höchstens 50 eindeutige Einträge ein."
+                    }
+                },
                 "title": "System-Status",
                 "new_version_available": "Neue Version verfügbar"
             },
