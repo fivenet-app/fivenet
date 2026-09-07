@@ -2,6 +2,13 @@ module github.com/fivenet-app/fivenet/v2026
 
 go 1.27.1
 
+ignore (
+	./app
+	./gen/ts
+	./node_modules
+	./public
+)
+
 require (
 	buf.build/go/protovalidate v1.4.0
 	github.com/DATA-DOG/go-sqlmock v1.5.2
