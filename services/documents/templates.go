@@ -122,7 +122,8 @@ func unwrapTemplateActionSpans(node *htmlnode.Node) {
 
 func markTemplateActionQuotes(node *htmlnode.Node) {
 	if node.Type == htmlnode.TextNode {
-		node.Data = strings.NewReplacer(`"`, templateDoubleQuoteMarker, `'`, templateSingleQuoteMarker).Replace(node.Data)
+		node.Data = strings.NewReplacer(`"`, templateDoubleQuoteMarker, `'`, templateSingleQuoteMarker).
+			Replace(node.Data)
 	}
 
 	for child := node.FirstChild; child != nil; child = child.NextSibling {

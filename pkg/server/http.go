@@ -163,7 +163,7 @@ func NewEngine(p EngineParams) (*gin.Engine, error) {
 		Context: ginzap.Fn(func(c *gin.Context) []zapcore.Field {
 			fields := []zapcore.Field{}
 			// Log request ID
-			if requestID := c.Writer.Header().Get("X-Request-Id"); requestID != "" {
+			if requestID := c.Writer.Header().Get("X-Request-ID"); requestID != "" {
 				fields = append(fields, zap.String("request_id", requestID))
 			}
 
