@@ -5,10 +5,11 @@ import ClipboardDocuments from '~/components/clipboard/modal/ClipboardDocuments.
 import ClipboardVehicles from '~/components/clipboard/modal/ClipboardVehicles.vue';
 import List from '~/components/documents/templates/List.vue';
 import RequirementsList from '~/components/documents/templates/RequirementsList.vue';
-import { useClipboardStore } from '~/stores/clipboard';
+import { CLIPBOARD_MAX_ITEMS, useClipboardStore } from '~/stores/clipboard';
 import type { ObjectSpecs, TemplateRequirements, TemplateShort } from '~~/gen/ts/resources/documents/templates/templates';
 
 const clipboardStore = useClipboardStore();
+const { activeStack } = storeToRefs(clipboardStore);
 
 const emits = defineEmits<{
     (e: 'close', v: boolean): void;
@@ -53,6 +54,17 @@ function clipboardComponent(type: RequirementType) {
     }
 }
 
+function activeStackCount(type: RequirementType): number {
+    switch (type) {
+        case 'citizens':
+            return activeStack.value.users.length;
+        case 'documents':
+            return activeStack.value.documents.length;
+        case 'vehicles':
+            return activeStack.value.vehicles.length;
+    }
+}
+
 function hasRequirement(specs?: ObjectSpecs): boolean {
     return !!specs && (specs.required === true || (specs.min ?? 0) > 0 || (specs.max ?? 0) > 0);
 }
@@ -78,8 +90,8 @@ async function selectTemplate(t?: TemplateShort | undefined): Promise<void> {
         requirementDefinitions.forEach(({ type, key }) => {
             const specs = requirements[key];
             if (hasRequirement(specs)) {
-                reqStatus.value[type] = clipboardStore.checkRequirements(specs!, type);
-                clipboardStore.promoteToActiveStack(type);
+                clipboardStore.promoteToActiveStack(type, specs?.max);
+                reqStatus.value[type] = clipboardStore.checkRequirements(specs!, type, true);
             } else {
                 reqStatus.value[type] = true;
             }
@@ -170,10 +182,18 @@ const query = useSearchForm('documents-templates', schema);
                                 @statisfied="(v: boolean) => (reqStatus[requirement.type] = v)"
                                 @close="$emit('close', false)"
                             >
+                                <template #title-suffix>
+                                    <UBadge
+                                        color="neutral"
+                                        variant="soft"
+                                        size="sm"
+                                        :label="`${activeStackCount(requirement.type)}/${CLIPBOARD_MAX_ITEMS}`"
+                                    />
+                                </template>
                                 <template #header>
                                     <span class="text-sm">
                                         <RequirementsList
-                                            :name="$t('common.' + requirement.name, 2)"
+                                            :name="$t('common.' + requirement.name)"
                                             :plural="$t('common.' + requirement.name, 2)"
                                             :specs="reqs[requirement.key]!"
                                             :fulfilled="reqStatus[requirement.type]"

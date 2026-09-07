@@ -257,18 +257,26 @@ export const useClipboardStore = defineStore(
          * Promotes a specific list type to the active stack.
          * @param {ListType} listType - The type of list to promote (e.g., 'documents', 'citizens', 'vehicles').
          */
-        const promoteToActiveStack = (listType: ListType): void => {
+        const promoteToActiveStack = (listType: ListType, maxItems?: number): void => {
+            const limit = typeof maxItems === 'number' && maxItems > 0 ? maxItems : undefined;
+
             switch (listType) {
                 case 'documents':
-                    activeStack.value.documents = JSON.parse(JSON.stringify(documents.value)) as ClipboardDocument[];
+                    activeStack.value.documents = JSON.parse(
+                        JSON.stringify(limit ? documents.value.slice(0, limit) : documents.value),
+                    ) as ClipboardDocument[];
                     break;
 
                 case 'citizens':
-                    activeStack.value.users = JSON.parse(JSON.stringify(users.value)) as ClipboardUser[];
+                    activeStack.value.users = JSON.parse(
+                        JSON.stringify(limit ? users.value.slice(0, limit) : users.value),
+                    ) as ClipboardUser[];
                     break;
 
                 case 'vehicles':
-                    activeStack.value.vehicles = JSON.parse(JSON.stringify(vehicles.value)) as ClipboardVehicle[];
+                    activeStack.value.vehicles = JSON.parse(
+                        JSON.stringify(limit ? vehicles.value.slice(0, limit) : vehicles.value),
+                    ) as ClipboardVehicle[];
                     break;
             }
         };
@@ -442,11 +450,21 @@ export const useClipboardStore = defineStore(
          * Checks if the clipboard meets the specified requirements.
          * @param {ObjectSpecs} reqs - The requirements to check against.
          * @param {ListType} listType - The type of list to check (e.g., 'documents', 'citizens', 'vehicles').
+         * @param {boolean} activeOnly - Check the active stack instead of the full clipboard.
          * @returns {boolean} True if the requirements are met, false otherwise.
          */
-        const checkRequirements = (reqs: ObjectSpecs, listType: ListType): boolean => {
-            const listLength =
-                listType === 'documents' ? documents.value : listType === 'citizens' ? users.value : vehicles.value;
+        const checkRequirements = (reqs: ObjectSpecs, listType: ListType, activeOnly = false): boolean => {
+            const listLength = activeOnly
+                ? listType === 'documents'
+                    ? activeStack.value.documents
+                    : listType === 'citizens'
+                      ? activeStack.value.users
+                      : activeStack.value.vehicles
+                : listType === 'documents'
+                  ? documents.value
+                  : listType === 'citizens'
+                    ? users.value
+                    : vehicles.value;
             const length = listLength.length;
 
             // Check if the list is required and empty

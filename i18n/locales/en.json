@@ -708,6 +708,16 @@
         "show": "View",
         "selected_no": "{0} selected",
         "required": "Required",
+        "requirement": {
+            "required": "{count} {kind} required",
+            "not_required": "No {kind} required",
+            "exact": "Exactly {count} {kind}",
+            "exact_required": "{count} {kind} required",
+            "minimum": "At least {count} {kind}",
+            "minimum_required": "At least {count} {kind} required",
+            "maximum": "At most {count} {kind}",
+            "with_max": "{label} (max. {maximum})"
+        },
         "reminder": "Reminder | Reminders",
         "workflow": "Workflow",
         "auto_close": "Auto Close",

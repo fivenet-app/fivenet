@@ -708,6 +708,16 @@
         "show": "Anzeigen",
         "selected_no": "{0} ausgewählt",
         "required": "Benötigt",
+        "requirement": {
+            "required": "{count} {kind} erforderlich",
+            "not_required": "Keine {kind} erforderlich",
+            "exact": "Genau {count} {kind}",
+            "exact_required": "{count} {kind} erforderlich",
+            "minimum": "Mindestens {count} {kind}",
+            "minimum_required": "Mindestens {count} {kind} erforderlich",
+            "maximum": "Maximal {count} {kind}",
+            "with_max": "{label} (max. {maximum})"
+        },
         "reminder": "Erinnerung | Erinnerungen",
         "workflow": "Workflow",
         "auto_close": "Automatisches Schließen | Automatische Schließung",

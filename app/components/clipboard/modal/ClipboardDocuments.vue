@@ -39,6 +39,9 @@ const rowSelection = ref<Record<string, boolean>>(
 const selected = computed(() =>
     documents.value.filter((document) => rowSelection.value[String(document.id)]).map((document) => document.id),
 );
+const maxSelectionReached = computed(
+    () => typeof props.specs?.max === 'number' && props.specs.max > 0 && selected.value.length >= props.specs.max,
+);
 const getRowId = (document: ClipboardDocument) => String(document.id);
 
 async function select(): Promise<void> {
@@ -103,8 +106,8 @@ const columns = computed(() =>
                 ? {
                       id: 'select',
                       header: ({ table }) =>
-                          props.specs?.max === 1
-                              ? h('span', { class: 'block h-8' })
+                          (props.specs?.max && props.specs.max > 0) || documents.value.length === 0
+                              ? h('span', { class: 'block h-5' })
                               : h(UCheckbox, {
                                     modelValue: table.getIsSomePageRowsSelected()
                                         ? 'indeterminate'
@@ -114,6 +117,7 @@ const columns = computed(() =>
                       cell: ({ row }) =>
                           h(UCheckbox, {
                               modelValue: row.getIsSelected(),
+                              disabled: maxSelectionReached.value && !row.getIsSelected(),
                               ui: { label: 'hidden' },
                               'onUpdate:modelValue': (value: unknown) => row.toggleSelected(!!value),
                           }),
@@ -198,6 +202,7 @@ watch(props, async (newVal) => {
 
 function onSelect(_event: Event, row: TableRow<ClipboardDocument>): void {
     if (!props.showSelect) return;
+    if (maxSelectionReached.value && !row.getIsSelected()) return;
     if (props.specs?.max === 1 && !row.getIsSelected()) rowSelection.value = {};
     row.toggleSelected(!row.getIsSelected());
 }
@@ -206,7 +211,10 @@ function onSelect(_event: Event, row: TableRow<ClipboardDocument>): void {
 <template>
     <div>
         <h3 v-if="!hideHeader" class="flex items-center justify-between text-lg font-medium">
-            <span>{{ $t('common.document', 2) }}</span>
+            <span class="flex items-center gap-2">
+                <span>{{ $t('common.document', 2) }}</span>
+                <slot name="title-suffix" />
+            </span>
             <slot name="header" />
         </h3>
 

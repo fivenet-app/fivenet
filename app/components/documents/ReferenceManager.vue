@@ -30,7 +30,7 @@ const documentsDocumentsClient = await getDocumentsDocumentsClient();
 const items = ref<TabsItem[]>([
     {
         label: t('components.documents.document_managers.view_current'),
-        icon: 'i-mdi-file-search',
+        icon: 'i-mdi-view-list-outline',
         slot: 'current' as const,
         value: 'current',
     },
@@ -42,7 +42,7 @@ const items = ref<TabsItem[]>([
     },
     {
         label: t('components.documents.document_managers.add_new'),
-        icon: 'i-mdi-file-document-plus',
+        icon: 'i-mdi-file-search',
         slot: 'new' as const,
         value: 'new',
     },
