@@ -8,6 +8,8 @@ export default defineAppConfig({
 
     defaultLocale: 'en',
 
+    setupComplete: false,
+
     auth: {
         signupEnabled: true,
         lastCharLock: false,
