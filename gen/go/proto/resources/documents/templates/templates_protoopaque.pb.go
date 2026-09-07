@@ -1677,7 +1677,7 @@ var File_resources_documents_templates_templates_proto protoreflect.FileDescript
 
 const file_resources_documents_templates_templates_proto_rawDesc = "" +
 	"\n" +
-	"-resources/documents/templates/templates.proto\x12\x1dresources.documents.templates\x1a!codegen/dbscanner/dbscanner.proto\x1a!codegen/sanitizer/sanitizer.proto\x1a\x1dresources/access/access.proto\x1a+resources/documents/approval/approval.proto\x1a+resources/documents/category/category.proto\x1a+resources/documents/workflow/workflow.proto\x1a#resources/timestamp/timestamp.proto\x1a\x13tagger/tagger.proto\"\xfe\t\n" +
+	"-resources/documents/templates/templates.proto\x12\x1dresources.documents.templates\x1a!codegen/dbscanner/dbscanner.proto\x1a!codegen/sanitizer/sanitizer.proto\x1a\x1dresources/access/access.proto\x1a+resources/documents/approval/approval.proto\x1a+resources/documents/category/category.proto\x1a+resources/documents/workflow/workflow.proto\x1a#resources/timestamp/timestamp.proto\x1a\x13tagger/tagger.proto\"\xee\t\n" +
 	"\bTemplate\x12\x1f\n" +
 	"\x02id\x18\x01 \x01(\x03B\x0f\x9a\x84\x9e\x03\n" +
 	"alias:\"id\"R\x02id\x12B\n" +
@@ -1692,10 +1692,10 @@ const file_resources_documents_templates_templates_proto_rawDesc = "" +
 	"\vdescription\x18\b \x01(\tB\x06\xda\xf3\x18\x02\b\x01R\vdescription\x12#\n" +
 	"\x05color\x18\t \x01(\tB\b\xda\xf3\x18\x04\b\x01\x18\x01H\x03R\x05color\x88\x01\x01\x12!\n" +
 	"\x04icon\x18\n" +
-	" \x01(\tB\b\xda\xf3\x18\x04\b\x01\x18\x01H\x04R\x04icon\x88\x01\x01\x12O\n" +
-	"\rcontent_title\x18\v \x01(\tB*\xda\xf3\x18\f\b\x01\x12\bSanitize\x9a\x84\x9e\x03\x15alias:\"content_title\"R\fcontentTitle\x12>\n" +
-	"\acontent\x18\f \x01(\tB$\xda\xf3\x18\f\b\x01\x12\bSanitize\x9a\x84\x9e\x03\x0falias:\"content\"R\acontent\x128\n" +
-	"\x05state\x18\r \x01(\tB\"\xda\xf3\x18\f\b\x01\x12\bSanitize\x9a\x84\x9e\x03\ralias:\"state\"R\x05state\x12Z\n" +
+	" \x01(\tB\b\xda\xf3\x18\x04\b\x01\x18\x01H\x04R\x04icon\x88\x01\x01\x12G\n" +
+	"\rcontent_title\x18\v \x01(\tB\"\xda\xf3\x18\x04\b\x01\x18\x01\x9a\x84\x9e\x03\x15alias:\"content_title\"R\fcontentTitle\x12>\n" +
+	"\acontent\x18\f \x01(\tB$\xda\xf3\x18\f\b\x01\x12\bSanitize\x9a\x84\x9e\x03\x0falias:\"content\"R\acontent\x120\n" +
+	"\x05state\x18\r \x01(\tB\x1a\xda\xf3\x18\x04\b\x01\x18\x01\x9a\x84\x9e\x03\ralias:\"state\"R\x05state\x12Z\n" +
 	"\x06schema\x18\x0e \x01(\v2-.resources.documents.templates.TemplateSchemaB\x13\x9a\x84\x9e\x03\x0ealias:\"schema\"R\x06schema\x12\x1f\n" +
 	"\vcreator_job\x18\x0f \x01(\tR\n" +
 	"creatorJob\x12/\n" +

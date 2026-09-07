@@ -51,7 +51,7 @@ message Template {
     (buf.validate.field).string.max_bytes = 10240,
     (codegen.sanitizer.sanitizer) = {
       enabled: true
-      method: "Sanitize"
+      strip_html_tags: true
     },
     (tagger.tags) = "alias:\"content_title\""
   ];
@@ -70,7 +70,7 @@ message Template {
     (buf.validate.field).string.max_len = 512,
     (codegen.sanitizer.sanitizer) = {
       enabled: true
-      method: "Sanitize"
+      strip_html_tags: true
     },
     (tagger.tags) = "alias:\"state\""
   ];

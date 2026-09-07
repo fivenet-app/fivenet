@@ -50,7 +50,7 @@ func (m *Template) Sanitize() error {
 	}
 
 	// Field: ContentTitle
-	m.ContentTitle = htmlsanitizer.Sanitize(m.ContentTitle)
+	m.ContentTitle = htmlsanitizer.StripHTMLTags(m.ContentTitle)
 
 	// Field: CreatedAt
 	if m.CreatedAt != nil {
@@ -108,7 +108,7 @@ func (m *Template) Sanitize() error {
 	}
 
 	// Field: State
-	m.State = htmlsanitizer.Sanitize(m.State)
+	m.State = htmlsanitizer.StripHTMLTags(m.State)
 
 	// Field: Title
 	m.Title = htmlsanitizer.SanitizeAndUnescape(m.Title)
