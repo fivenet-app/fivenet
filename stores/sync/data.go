@@ -120,7 +120,7 @@ func (s *Store) DeleteData(
 ) (*pbsync.DeleteDataResponse, error) {
 	switch d := req.GetData().(type) {
 	case *pbsync.DeleteDataRequest_Users:
-		return s.DeleteUsers(ctx, d.Users.GetUserIds())
+		return s.DeleteUsers(ctx, d.Users.GetUserIds(), d.Users.GetIdentifiers())
 	case *pbsync.DeleteDataRequest_Vehicles:
 		return s.DeleteVehicles(ctx, d.Vehicles.GetPlates())
 	}

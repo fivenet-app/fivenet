@@ -114,6 +114,10 @@ export interface DeleteUsers {
      * @generated from protobuf field: repeated int32 user_ids = 1
      */
     userIds: number[];
+    /**
+     * @generated from protobuf field: repeated string identifiers = 2
+     */
+    identifiers: string[];
 }
 /**
  * @generated from protobuf message resources.sync.data.DeleteVehicles
@@ -629,12 +633,14 @@ export const CitizenLocations = new CitizenLocations$Type();
 class DeleteUsers$Type extends MessageType<DeleteUsers> {
     constructor() {
         super("resources.sync.data.DeleteUsers", [
-            { no: 1, name: "user_ids", kind: "scalar", repeat: 1 /*RepeatType.PACKED*/, T: 5 /*ScalarType.INT32*/, options: { "buf.validate.field": { repeated: { maxItems: "100" } } } }
+            { no: 1, name: "user_ids", kind: "scalar", repeat: 1 /*RepeatType.PACKED*/, T: 5 /*ScalarType.INT32*/, options: { "buf.validate.field": { repeated: { maxItems: "300", items: { int32: { gt: 0 } } } } } },
+            { no: 2, name: "identifiers", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { repeated: { maxItems: "300", items: { string: { maxLen: "64" } } } } } }
         ]);
     }
     create(value?: PartialMessage<DeleteUsers>): DeleteUsers {
         const message = globalThis.Object.create((this.messagePrototype!));
         message.userIds = [];
+        message.identifiers = [];
         if (value !== undefined)
             reflectionMergePartial<DeleteUsers>(this, message, value);
         return message;
@@ -650,6 +656,9 @@ class DeleteUsers$Type extends MessageType<DeleteUsers> {
                             message.userIds.push(reader.int32());
                     else
                         message.userIds.push(reader.int32());
+                    break;
+                case /* repeated string identifiers */ 2:
+                    message.identifiers.push(reader.string());
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -670,6 +679,9 @@ class DeleteUsers$Type extends MessageType<DeleteUsers> {
                 writer.int32(message.userIds[i]);
             writer.join();
         }
+        /* repeated string identifiers = 2; */
+        for (let i = 0; i < message.identifiers.length; i++)
+            writer.tag(2, WireType.LengthDelimited).string(message.identifiers[i]);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);

@@ -98,15 +98,31 @@ func (s *Store) reconcileUserRow(
 			zap.Int32("removed_user_id", byIdentifier.ID),
 			zap.String("identifier", identifier),
 		)
+		// Keep the row as a tombstone, but free the unique identifier so the
+		// incoming external identity can claim it.
+		tombstoneIdentifier := fmt.Sprintf("__deleted_user_%d", byIdentifier.ID)
 		if _, err := tUsers.
-			DELETE().
+			UPDATE(tUsers.Identifier, tUsers.DeletedAt).
+			SET(tombstoneIdentifier, mysql.CURRENT_TIMESTAMP()).
 			WHERE(tUsers.ID.EQ(mysql.Int32(byIdentifier.ID))).
 			LIMIT(1).
 			ExecContext(ctx, tx); err != nil {
 			return 0, fmt.Errorf(
-				"failed to remove conflicting local user %d for external user %d: %w",
+				"failed to tombstone conflicting local user %d for external user %d: %w",
 				byIdentifier.ID,
 				externalID,
+				err,
+			)
+		}
+		if _, err := tSyncUser.
+			UPDATE(tSyncUser.Identifier).
+			SET(tombstoneIdentifier).
+			WHERE(tSyncUser.UserID.EQ(mysql.Int32(byIdentifier.ID))).
+			LIMIT(1).
+			ExecContext(ctx, tx); err != nil {
+			return 0, fmt.Errorf(
+				"failed to update sync tombstone for conflicting local user %d: %w",
+				byIdentifier.ID,
 				err,
 			)
 		}
@@ -152,8 +168,10 @@ func (s *Store) reconcileUserRow(
 			tUsers.ID, tUsers.License, tUsers.Identifier, tUsers.Firstname,
 			tUsers.Lastname, tUsers.Dateofbirth, tUsers.Job, tUsers.JobGrade,
 			tUsers.Sex, tUsers.PhoneNumber, tUsers.Height, tUsers.Visum, tUsers.Playtime,
+			tUsers.DeletedAt,
 		).
-		SET(values[0], values[1:]...).
+		// Clear deleted_at when the source sends the user again.
+		SET(values[0], append(values[1:], nil)...).
 		WHERE(tUsers.ID.EQ(mysql.Int32(targetID))).
 		LIMIT(1).
 		ExecContext(ctx, tx)
@@ -175,20 +193,43 @@ func (s *Store) SendUsers(ctx context.Context, data []*syncdata.DataUser) (int64
 func (s *Store) DeleteUsers(
 	ctx context.Context,
 	userIDs []int32,
+	identifiers []string,
 ) (*pbsync.DeleteDataResponse, error) {
-	if len(userIDs) == 0 {
+	if len(userIDs) == 0 && len(identifiers) == 0 {
 		return &pbsync.DeleteDataResponse{}, nil
 	}
 
 	userExprs := make([]mysql.Expression, 0, len(userIDs))
 	for _, userID := range userIDs {
+		if userID <= 0 {
+			return nil, fmt.Errorf("cannot delete user with invalid user id %d", userID)
+		}
 		userExprs = append(userExprs, mysql.Int32(userID))
+	}
+	identifierExprs := make([]mysql.Expression, 0, len(identifiers))
+	for _, identifier := range identifiers {
+		if strings.TrimSpace(identifier) == "" {
+			return nil, errors.New("cannot delete user with empty identifier")
+		}
+		identifierExprs = append(identifierExprs, mysql.String(identifier))
 	}
 
 	tUsers := table.FivenetUser
+	conditions := make([]mysql.BoolExpression, 0, 2)
+	if len(userExprs) > 0 {
+		conditions = append(conditions, tUsers.ID.IN(userExprs...))
+	}
+	if len(identifierExprs) > 0 {
+		conditions = append(conditions, tUsers.Identifier.IN(identifierExprs...))
+	}
+	condition := conditions[0]
+	if len(conditions) > 1 {
+		condition = condition.OR(conditions[1])
+	}
 	delStmt := tUsers.
-		DELETE().
-		WHERE(tUsers.ID.IN(userExprs...)).
+		UPDATE(tUsers.DeletedAt).
+		SET(mysql.CURRENT_TIMESTAMP()).
+		WHERE(condition.AND(tUsers.DeletedAt.IS_NULL())).
 		LIMIT(int64(len(userIDs)))
 
 	res, err := delStmt.ExecContext(ctx, s.db)

@@ -32,5 +32,6 @@ func (s *Server) DeleteUsers(
 	ctx context.Context,
 	req *pbsync.DeleteUsersRequest,
 ) (*pbsync.DeleteDataResponse, error) {
-	return s.store.DeleteUsers(ctx, req.GetUserIds())
+	s.lastSyncedData.Store(time.Now().Unix())
+	return s.store.DeleteUsers(ctx, req.GetUserIds(), req.GetIdentifiers())
 }

@@ -724,31 +724,69 @@ func (s *UsersSync) retrievePhoneNumbers(
 
 // SyncUser sync an individual user's info by user id.
 func (s *UsersSync) SyncUser(ctx context.Context, userId int32) error {
-	wheres := []string{}
-	if userId != 0 {
-		wheres = append(wheres, fmt.Sprintf("%#q = ?", s.cfg.Tables.Users.Columns.ID))
+	if userId <= 0 {
+		return fmt.Errorf("cannot sync user with invalid user id %d", userId)
+	}
+
+	wheres := []string{
+		fmt.Sprintf("%#q = ?", s.cfg.Tables.Users.Columns.ID),
 	}
 	q := s.cfg.Tables.Users.GetQuery(nil, 0, 1, wheres...)
 	s.logger.Debug("users single resync query", zap.String("query", q))
+	return s.syncUserQuery(ctx, q, userId, []int32{userId}, nil)
+}
 
-	user := &syncdata.DataUser{}
-	if _, err := qrm.Query(ctx, s.db, q, []any{
-		userId,
-	}, user); err != nil {
-		return fmt.Errorf("failed to query single user %d. %w", userId, err)
+// SyncUserByIdentifier syncs an individual user by its external identifier.
+func (s *UsersSync) SyncUserByIdentifier(ctx context.Context, identifier string) error {
+	identifier = strings.TrimSpace(identifier)
+	if identifier == "" {
+		return errors.New("cannot sync user with empty identifier")
 	}
+
+	wheres := []string{
+		fmt.Sprintf("%#q = ?", s.cfg.Tables.Users.Columns.Identifier),
+	}
+	q := s.cfg.Tables.Users.GetQuery(nil, 0, 1, wheres...)
+	s.logger.Debug(
+		"users single resync query",
+		zap.String("query", q),
+		zap.String("identifier", identifier),
+	)
+	return s.syncUserQuery(ctx, q, identifier, nil, []string{identifier})
+}
+
+func (s *UsersSync) syncUserQuery(
+	ctx context.Context,
+	query string,
+	lookupValue any,
+	missingUserIDs []int32,
+	missingIdentifiers []string,
+) error {
+	user := &syncdata.DataUser{}
+	if _, err := qrm.Query(ctx, s.db, query, []any{lookupValue}, user); err != nil {
+		if errors.Is(err, qrm.ErrNoRows) {
+			return s.softDeleteusers(ctx, missingUserIDs, missingIdentifiers)
+		}
+		return fmt.Errorf("failed to query single user for %v. %w", lookupValue, err)
+	}
+
+	return s.syncUserData(ctx, user)
+}
+
+func (s *UsersSync) syncUserData(ctx context.Context, user *syncdata.DataUser) error {
+	userID := user.GetUserId()
 
 	us := []*syncdata.DataUser{user}
 	if err := s.retrieveAndAttachJobs(ctx, us); err != nil {
-		return fmt.Errorf("failed to retrieve and attach jobs for user %d. %w", userId, err)
+		return fmt.Errorf("failed to retrieve and attach jobs for user %d. %w", userID, err)
 	}
 	if err := s.retrieveAndAttachLicenses(ctx, us); err != nil {
-		return fmt.Errorf("failed to retrieve and attach licenses for user %d. %w", userId, err)
+		return fmt.Errorf("failed to retrieve and attach licenses for user %d. %w", userID, err)
 	}
 	if err := s.retrieveAndAttachPhoneNumbers(ctx, us); err != nil {
 		return fmt.Errorf(
 			"failed to retrieve and attach phone numbers for user %d. %w",
-			userId,
+			userID,
 			err,
 		)
 	}
@@ -757,18 +795,42 @@ func (s *UsersSync) SyncUser(ctx context.Context, userId int32) error {
 
 	if len(us) > 0 {
 		if err := s.sendUsersDataInChunks(ctx, us, nil); err != nil {
-			return fmt.Errorf("failed to send user data for user %d. %w", userId, err)
+			return fmt.Errorf("failed to send user data for user %d. %w", userID, err)
 		}
 	}
 
 	s.logger.Debug(
 		"sync single user data",
-		zap.Int32("user_id", user.GetUserId()),
+		zap.Int32("user_id", userID),
 		zap.String("job", user.GetJob()),
 		zap.Int32("job_grade", user.GetJobGrade()),
 		zap.Int("jobs_len", len(user.GetJobs())),
 	)
 
+	return nil
+}
+
+func (s *UsersSync) softDeleteusers(
+	ctx context.Context,
+	userIDs []int32,
+	identifiers []string,
+) error {
+	req := &pbsync.DeleteUsersRequest{UserIds: userIDs, Identifiers: identifiers}
+	if err := s.send(ctx, req, func(
+		ctx context.Context,
+		cli pbsync.SyncServiceClient,
+	) error {
+		_, err := cli.DeleteUsers(ctx, req)
+		return err
+	}); err != nil {
+		return fmt.Errorf("failed to delete missing users from destination. %w", err)
+	}
+
+	s.logger.Info(
+		"source user no longer exists, marked destination user deleted",
+		zap.Int32s("user_ids", userIDs),
+		zap.Strings("identifiers", identifiers),
+	)
 	return nil
 }
 

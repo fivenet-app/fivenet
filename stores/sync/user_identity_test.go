@@ -1,12 +1,38 @@
 package syncstore
 
 import (
+	"regexp"
 	"testing"
 
 	"github.com/DATA-DOG/go-sqlmock"
 	syncdata "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/sync/data"
 	"github.com/stretchr/testify/require"
 )
+
+func TestDeleteUsersSoftDeletesRows(t *testing.T) {
+	t.Parallel()
+
+	store, mock := newTestStore(t)
+	mock.ExpectExec(regexp.QuoteMeta("UPDATE fivenet_user SET deleted_at = CURRENT_TIMESTAMP")).
+		WithArgs(int32(42), int32(43), int64(2)).
+		WillReturnResult(sqlmock.NewResult(0, 2))
+
+	resp, err := store.DeleteUsers(t.Context(), []int32{42, 43}, nil)
+	require.NoError(t, err)
+	require.Equal(t, int64(2), resp.GetRowsAffected())
+	require.NoError(t, mock.ExpectationsWereMet())
+}
+
+func TestDeleteUsersRejectsInvalidIDs(t *testing.T) {
+	t.Parallel()
+
+	store, mock := newTestStore(t)
+	for _, userID := range []int32{0, -1} {
+		_, err := store.DeleteUsers(t.Context(), []int32{userID}, nil)
+		require.Error(t, err)
+	}
+	require.NoError(t, mock.ExpectationsWereMet())
+}
 
 func testSyncUser() *syncdata.DataUser {
 	return &syncdata.DataUser{
@@ -153,7 +179,9 @@ func TestReconcileUserRowExternalIDWinsIdentityConflict(t *testing.T) {
 		WithArgs(sqlmock.AnyArg(), sqlmock.AnyArg()).
 		WillReturnRows(sqlmock.NewRows([]string{"id", "identifier"}).
 			AddRow(7, "license:external-42"))
-	mock.ExpectExec(`(?s)DELETE FROM fivenet_user`).
+	mock.ExpectExec(`(?s)UPDATE fivenet_user SET identifier = .*deleted_at = CURRENT_TIMESTAMP`).
+		WillReturnResult(sqlmock.NewResult(0, 1))
+	mock.ExpectExec(`(?s)UPDATE fivenet_sync_user SET identifier = .*`).
 		WillReturnResult(sqlmock.NewResult(0, 1))
 	mock.ExpectExec(`(?s)UPDATE fivenet_user`).
 		WillReturnResult(sqlmock.NewResult(0, 1))

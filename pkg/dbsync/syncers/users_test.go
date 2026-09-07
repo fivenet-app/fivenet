@@ -1,15 +1,120 @@
 package syncers
 
 import (
+	"context"
+	"errors"
 	"testing"
 
+	"github.com/DATA-DOG/go-sqlmock"
 	syncdata "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/sync/data"
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/users"
+	pbsync "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/sync"
 	dbsyncconfig "github.com/fivenet-app/fivenet/v2026/pkg/dbsync/config"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"go.uber.org/zap"
+	"google.golang.org/grpc"
 )
+
+type deleteUsersClient struct {
+	pbsync.SyncServiceClient
+
+	err error
+	req *pbsync.DeleteUsersRequest
+}
+
+func (c *deleteUsersClient) DeleteUsers(
+	_ context.Context,
+	req *pbsync.DeleteUsersRequest,
+	_ ...grpc.CallOption,
+) (*pbsync.DeleteDataResponse, error) {
+	c.req = req
+	return &pbsync.DeleteDataResponse{}, c.err
+}
+
+func newSingleUserSync(
+	t *testing.T,
+	client pbsync.SyncServiceClient,
+) (*UsersSync, sqlmock.Sqlmock) {
+	t.Helper()
+	db, mock, err := sqlmock.New()
+	require.NoError(t, err)
+	t.Cleanup(func() { _ = db.Close() })
+
+	query := "SELECT id, identifier FROM users WHERE id = ? LIMIT 1"
+	syncer := &UsersSync{
+		Syncer: &Syncer{
+			logger: zap.NewNop(),
+			db:     db,
+			cli:    client,
+			cfg: &dbsyncconfig.DBSyncConfig{
+				Tables: dbsyncconfig.DBSyncSourceTables{
+					Users: dbsyncconfig.UsersTable{
+						DBSyncTable: dbsyncconfig.DBSyncTable{Query: &query},
+					},
+				},
+			},
+		},
+		logger: zap.NewNop(),
+	}
+	return syncer, mock
+}
+
+func TestSyncUserDeletesDestinationWhenSourceUserIsMissing(t *testing.T) {
+	t.Parallel()
+
+	client := &deleteUsersClient{}
+	syncer, mock := newSingleUserSync(t, client)
+	mock.ExpectQuery("SELECT id, identifier FROM users WHERE id = \\? LIMIT 1").
+		WithArgs(int32(42)).
+		WillReturnRows(sqlmock.NewRows([]string{"id", "identifier"}))
+
+	require.NoError(t, syncer.SyncUser(t.Context(), 42))
+	require.NotNil(t, client.req)
+	require.Equal(t, []int32{42}, client.req.GetUserIds())
+	require.NoError(t, mock.ExpectationsWereMet())
+}
+
+func TestSyncUserRejectsInvalidUserID(t *testing.T) {
+	t.Parallel()
+
+	syncer, mock := newSingleUserSync(t, &deleteUsersClient{})
+	for _, userID := range []int32{0, -1} {
+		require.Error(t, syncer.SyncUser(t.Context(), userID))
+	}
+	require.NoError(t, mock.ExpectationsWereMet())
+}
+
+func TestSyncUserReturnsDeleteError(t *testing.T) {
+	t.Parallel()
+
+	deleteErr := errors.New("delete unavailable")
+	client := &deleteUsersClient{err: deleteErr}
+	syncer, mock := newSingleUserSync(t, client)
+	mock.ExpectQuery("SELECT id, identifier FROM users WHERE id = \\? LIMIT 1").
+		WithArgs(int32(42)).
+		WillReturnRows(sqlmock.NewRows([]string{"id", "identifier"}))
+
+	err := syncer.SyncUser(t.Context(), 42)
+	require.Error(t, err)
+	require.ErrorIs(t, err, deleteErr)
+	require.NoError(t, mock.ExpectationsWereMet())
+}
+
+func TestSyncUserDryRunDoesNotCallDeleteRPC(t *testing.T) {
+	t.Parallel()
+
+	client := &deleteUsersClient{}
+	syncer, mock := newSingleUserSync(t, client)
+	syncer.cfg.Destination.DryRun = true
+	mock.ExpectQuery("SELECT id, identifier FROM users WHERE id = \\? LIMIT 1").
+		WithArgs(int32(42)).
+		WillReturnRows(sqlmock.NewRows([]string{"id", "identifier"}))
+
+	require.NoError(t, syncer.SyncUser(t.Context(), 42))
+	require.Nil(t, client.req)
+	require.NoError(t, mock.ExpectationsWereMet())
+}
 
 func TestCleanupUserJobUsesJobsWhenScalarJobEmpty(t *testing.T) {
 	t.Parallel()

@@ -571,10 +571,11 @@ func (b0 CitizenLocations_builder) Build() *CitizenLocations {
 }
 
 type DeleteUsers struct {
-	state              protoimpl.MessageState `protogen:"opaque.v1"`
-	xxx_hidden_UserIds []int32                `protobuf:"varint,1,rep,packed,name=user_ids,json=userIds,proto3"`
-	unknownFields      protoimpl.UnknownFields
-	sizeCache          protoimpl.SizeCache
+	state                  protoimpl.MessageState `protogen:"opaque.v1"`
+	xxx_hidden_UserIds     []int32                `protobuf:"varint,1,rep,packed,name=user_ids,json=userIds,proto3"`
+	xxx_hidden_Identifiers []string               `protobuf:"bytes,2,rep,name=identifiers,proto3"`
+	unknownFields          protoimpl.UnknownFields
+	sizeCache              protoimpl.SizeCache
 }
 
 func (x *DeleteUsers) Reset() {
@@ -609,14 +610,26 @@ func (x *DeleteUsers) GetUserIds() []int32 {
 	return nil
 }
 
+func (x *DeleteUsers) GetIdentifiers() []string {
+	if x != nil {
+		return x.xxx_hidden_Identifiers
+	}
+	return nil
+}
+
 func (x *DeleteUsers) SetUserIds(v []int32) {
 	x.xxx_hidden_UserIds = v
+}
+
+func (x *DeleteUsers) SetIdentifiers(v []string) {
+	x.xxx_hidden_Identifiers = v
 }
 
 type DeleteUsers_builder struct {
 	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
 
-	UserIds []int32
+	UserIds     []int32
+	Identifiers []string
 }
 
 func (b0 DeleteUsers_builder) Build() *DeleteUsers {
@@ -624,6 +637,7 @@ func (b0 DeleteUsers_builder) Build() *DeleteUsers {
 	b, x := &b0, m0
 	_, _ = b, x
 	x.xxx_hidden_UserIds = b.UserIds
+	x.xxx_hidden_Identifiers = b.Identifiers
 	return m0
 }
 
@@ -1407,9 +1421,10 @@ const file_resources_sync_data_data_proto_rawDesc = "" +
 	"\x06hidden\x18\x04 \x01(\bR\x06hidden\x12\x16\n" +
 	"\x06remove\x18\x05 \x01(\bR\x06removeB\f\n" +
 	"\n" +
-	"_job_grade\"(\n" +
+	"_job_grade\"J\n" +
 	"\vDeleteUsers\x12\x19\n" +
-	"\buser_ids\x18\x01 \x03(\x05R\auserIds\"(\n" +
+	"\buser_ids\x18\x01 \x03(\x05R\auserIds\x12 \n" +
+	"\videntifiers\x18\x02 \x03(\tR\videntifiers\"(\n" +
 	"\x0eDeleteVehicles\x12\x16\n" +
 	"\x06plates\x18\x01 \x03(\tR\x06plates\"^\n" +
 	"\n" +

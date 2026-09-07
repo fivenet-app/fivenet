@@ -260,6 +260,24 @@ func (m *DataVehicles) Sanitize() error {
 
 // Sanitize sanitizes the message's fields, in case of complex types it calls
 // their Sanitize() method recursively.
+func (m *DeleteUsers) Sanitize() error {
+	if m == nil {
+		return nil
+	}
+
+	// Field: Identifiers
+	for idx, item := range m.Identifiers {
+		_, _ = idx, item
+
+		m.Identifiers[idx] = htmlsanitizer.SanitizeAndUnescape(m.Identifiers[idx])
+
+	}
+
+	return nil
+}
+
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *DeleteVehicles) Sanitize() error {
 	if m == nil {
 		return nil
