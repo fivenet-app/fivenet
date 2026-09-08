@@ -14,11 +14,11 @@ require (
 	github.com/DATA-DOG/go-sqlmock v1.5.2
 	github.com/DeRuina/timberjack v1.4.7
 	github.com/HugoSmits86/nativewebp v1.3.0
-	github.com/XSAM/otelsql v0.43.0
+	github.com/XSAM/otelsql v0.44.0
 	github.com/adhocore/gronx v1.20.3
 	github.com/alecthomas/kong v1.16.1
 	github.com/blevesearch/bleve/v2 v2.6.1
-	github.com/brianvoe/gofakeit/v7 v7.16.0
+	github.com/brianvoe/gofakeit/v7 v7.17.0
 	github.com/cespare/xxhash/v2 v2.3.0
 	github.com/coder/websocket v1.8.15
 	github.com/creasty/defaults v1.8.0
