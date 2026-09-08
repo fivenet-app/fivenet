@@ -239,6 +239,22 @@ func NewEngine(p EngineParams) (*gin.Engine, error) {
 	// Setup assets and other static files serving
 	frontendFS := static.LocalFile(".output/public/", false)
 	fileServer := http.FileServer(frontendFS)
+	serveFrontend := func(c *gin.Context, spaFallback bool) {
+		if strings.HasPrefix(c.Request.URL.Path, "/_nuxt/") {
+			// Nuxt assets are content-hashed and can safely be cached until they
+			// are no longer referenced by an index.html response.
+			c.Header("Cache-Control", "public, max-age=31536000, immutable")
+		} else if spaFallback {
+			// Keep index.html and SPA deep-link fallbacks fresh. Caching either
+			// across deployments can leave clients with an asset manifest from a
+			// previous image generation.
+			c.Header("Cache-Control", "no-store, no-cache, must-revalidate")
+			c.Header("Pragma", "no-cache")
+			c.Header("Expires", "0")
+		}
+
+		fileServer.ServeHTTP(c.Writer, c.Request)
+	}
 
 	// GRPC-web and websocket handling
 	wrapperGrpc := grpcws.WrapServer(p.GRPCSrv,
@@ -285,14 +301,14 @@ func NewEngine(p EngineParams) (*gin.Engine, error) {
 		// If the target is a directory (e.g., `/livemap`, `/settings/jobprops`), load root `index.html`
 		if strings.HasSuffix(requestPath, "/") || !strings.Contains(requestPath, ".") {
 			c.Request.URL.Path = "/"
-			fileServer.ServeHTTP(c.Writer, c.Request)
+			serveFrontend(c, true)
 			c.Abort()
 			return
 		}
 
 		// Check if index file exists
 		if frontendFS.Exists("/", requestPath) {
-			fileServer.ServeHTTP(c.Writer, c.Request)
+			serveFrontend(c, false)
 			c.Abort()
 			return
 		}
