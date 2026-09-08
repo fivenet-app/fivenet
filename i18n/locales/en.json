@@ -2815,6 +2815,10 @@
                     "title": "Account error",
                     "content": "Failed to get/ update your account, please try again."
                 },
+                "ErrUsernameTaken": {
+                    "title": "Username already taken",
+                    "content": "That username is already in use. Please choose a different username."
+                },
                 "ErrInvalidLogin": {
                     "content": "Please check your username and password and try again.",
                     "title": "Wrong username or password!"

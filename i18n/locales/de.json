@@ -2815,6 +2815,10 @@
                     "title": "Fehler beim Anzeigen/ Aktualisieren ihres Accounts.",
                     "content": "Ein Fehler ist aufgetreten, bitte versuchen Sie es erneut."
                 },
+                "ErrUsernameTaken": {
+                    "title": "Benutzername bereits vergeben",
+                    "content": "Dieser Benutzername wird bereits verwendet. Bitte wählen Sie einen anderen Benutzernamen."
+                },
                 "ErrInvalidLogin": {
                     "content": "Bitte überprüfen sie ihren Username und Passwort, und versuchen sie es erneut.",
                     "title": "Falscher Username oder Passwort!"

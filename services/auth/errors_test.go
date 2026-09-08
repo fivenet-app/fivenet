@@ -99,6 +99,60 @@ func TestCreateAccountReturnsGenericFailureForUsedToken(t *testing.T) {
 	proto.CompareGRPCError(t, errorsauth.ErrGenericAccount, err)
 }
 
+func TestCreateAccountReturnsUsernameTaken(t *testing.T) {
+	t.Parallel()
+
+	store := &refreshAccountSessionStore{
+		getNewAccountByRegTokenFn: func(_ context.Context, _ string) (*model.FivenetAccounts, error) {
+			return &model.FivenetAccounts{ID: 6}, nil
+		},
+		getAccountByUsernameFn: func(_ context.Context, username string, _ bool) (*model.FivenetAccounts, error) {
+			require.Equal(t, "existing-user", username)
+			return &model.FivenetAccounts{ID: 7}, nil
+		},
+	}
+	srv := newAuthErrorTestServer(t, store)
+
+	resp, err := srv.CreateAccount(t.Context(), &pbauth.CreateAccountRequest{
+		RegToken: "reg-token",
+		Username: " existing-user ",
+		Password: "password",
+	})
+	require.Nil(t, resp)
+	proto.CompareGRPCError(t, errorsauth.ErrUsernameTaken, err)
+}
+
+func TestChangeUsernameReturnsUsernameTaken(t *testing.T) {
+	t.Parallel()
+
+	hashedPassword, err := hashPassword("password")
+	require.NoError(t, err)
+
+	store := &refreshAccountSessionStore{
+		getAccountByIDAndUsernameFn: func(_ context.Context, _ int64, _ string, _ bool) (*model.FivenetAccounts, error) {
+			username := "user"
+			return &model.FivenetAccounts{
+				ID:       8,
+				Username: &username,
+				Password: &hashedPassword,
+			}, nil
+		},
+		getAccountByUsernameFn: func(_ context.Context, username string, _ bool) (*model.FivenetAccounts, error) {
+			require.Equal(t, "existing-user", username)
+			return &model.FivenetAccounts{ID: 9}, nil
+		},
+	}
+	srv := newAuthErrorTestServer(t, store)
+	token := newAccountToken(t, srv.tm, 8, "user")
+
+	resp, err := srv.ChangeUsername(newIncomingAuthCtx(token), &pbauth.ChangeUsernameRequest{
+		CurrentUsername: "user",
+		NewUsername:     "existing-user",
+	})
+	require.Nil(t, resp)
+	proto.CompareGRPCError(t, errorsauth.ErrUsernameTaken, err)
+}
+
 func TestChangePasswordReturnsCollapsedStateError(t *testing.T) {
 	t.Parallel()
 

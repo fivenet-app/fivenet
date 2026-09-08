@@ -176,6 +176,20 @@ func (s *Server) CreateAccount(
 
 	req.Username = normalizeUsername(req.GetUsername())
 
+	existing, err := s.store.GetAccountByUsername(ctx, req.GetUsername(), false)
+	if err != nil && !errors.Is(err, qrm.ErrNoRows) {
+		auditAuthFailure(ctx, "create_account", "username_lookup_failed", map[string]string{
+			accountIDAuditFieldKey: strconv.FormatInt(acc.ID, 10),
+		})
+		return nil, errswrap.NewError(err, errorsauth.ErrGenericAccount)
+	}
+	if existing != nil {
+		auditAuthFailure(ctx, "create_account", "username_taken", map[string]string{
+			accountIDAuditFieldKey: strconv.FormatInt(acc.ID, 10),
+		})
+		return nil, errorsauth.ErrUsernameTaken
+	}
+
 	hashedPassword, err := hashPassword(req.GetPassword())
 	if err != nil {
 		auditAuthFailure(ctx, "create_account", "password_hash_failed", map[string]string{
@@ -386,7 +400,7 @@ func (s *Server) ChangeUsername(
 		auditAuthFailure(ctx, "change_username", "new_username_taken", map[string]string{
 			accountIDAuditFieldKey: strconv.FormatInt(acc.ID, 10),
 		})
-		return nil, errorsauth.ErrChangeUsername
+		return nil, errorsauth.ErrUsernameTaken
 	}
 
 	acc.Username = &newUsername

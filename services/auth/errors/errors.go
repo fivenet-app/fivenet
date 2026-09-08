@@ -11,6 +11,11 @@ var (
 		&common.I18NItem{Key: "errors.auth.AuthService.ErrGenericAccount.content"},
 		&common.I18NItem{Key: "errors.auth.AuthService.ErrGenericAccount.title"},
 	)
+	ErrUsernameTaken = common.NewI18nErr(
+		codes.AlreadyExists,
+		&common.I18NItem{Key: "errors.auth.AuthService.ErrUsernameTaken.content"},
+		&common.I18NItem{Key: "errors.auth.AuthService.ErrUsernameTaken.title"},
+	)
 	ErrInvalidLogin = common.NewI18nErr(
 		codes.InvalidArgument,
 		&common.I18NItem{Key: "errors.auth.AuthService.ErrInvalidLogin.content"},
