@@ -21,7 +21,7 @@ const authStore = useAuthStore();
 authStore.activeChar = null;
 authStore.permissions = [];
 authStore.attributes = [];
-authStore.jobProps = undefined;
+authStore.jobProps = null;
 </script>
 
 <template>

@@ -47,7 +47,9 @@ func (m *ChooseCharacterRequest) Sanitize() error {
 	}
 
 	// Field: SuperuserJob
-	m.SuperuserJob = htmlsanitizer.SanitizeAndUnescape(m.SuperuserJob)
+	if m.SuperuserJob != nil {
+		*m.SuperuserJob = htmlsanitizer.SanitizeAndUnescape(*m.SuperuserJob)
+	}
 
 	return nil
 }

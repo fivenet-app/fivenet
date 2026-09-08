@@ -468,10 +468,13 @@ func TestChooseCharacterFallsBackToAccountSessionWhenUserTokenIsMissingOrInvalid
 			"Cookie": auth.AccCookieName + "=" + updatedAccountToken,
 		}),
 	)
-	reloadedRestoreRes, err := client.ChooseCharacter(reloadedRestoreCtx, &pbauth.ChooseCharacterRequest{
-		CharId:           1,
-		RestoreSuperuser: true,
-	})
+	reloadedRestoreRes, err := client.ChooseCharacter(
+		reloadedRestoreCtx,
+		&pbauth.ChooseCharacterRequest{
+			CharId:           1,
+			RestoreSuperuser: new(true),
+		},
+	)
 	require.NoError(err)
 	require.NotNil(reloadedRestoreRes)
 	assert.True(hasPermission(reloadedRestoreRes.GetPermissions(), perms.PermJobAdmin))

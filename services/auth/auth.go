@@ -113,10 +113,13 @@ func (s *Server) Login(
 	}
 
 	return &pbauth.LoginResponse{
-		Expires:          timestamp.New(accClaims.ExpiresAt.Time),
-		AccountId:        account.ID,
-		Char:             chooseCharResp,
-		CanBeConfigAdmin: s.canAccountBeConfigAdmin(accountProto.GetGroups(), accountProto.GetLicense()),
+		Expires:   timestamp.New(accClaims.ExpiresAt.Time),
+		AccountId: account.ID,
+		Char:      chooseCharResp,
+		CanBeConfigAdmin: s.canAccountBeConfigAdmin(
+			accountProto.GetGroups(),
+			accountProto.GetLicense(),
+		),
 	}, nil
 }
 
@@ -642,7 +645,8 @@ func (s *Server) ChooseCharacter(
 	)
 
 	superuserActive := req.GetRestoreSuperuser() && canBeSuperuser
-	if currentUserClaims != nil && currentUserClaims.Superuser != nil && *currentUserClaims.Superuser {
+	if currentUserClaims != nil && currentUserClaims.Superuser != nil &&
+		*currentUserClaims.Superuser {
 		superuserActive = canBeSuperuser
 	}
 

@@ -1204,8 +1204,8 @@ func (b0 GetCharactersResponse_builder) Build() *GetCharactersResponse {
 type ChooseCharacterRequest struct {
 	state            protoimpl.MessageState `protogen:"hybrid.v1"`
 	CharId           int32                  `protobuf:"varint,1,opt,name=char_id,json=charId,proto3" json:"char_id,omitempty"`
-	RestoreSuperuser bool                   `protobuf:"varint,2,opt,name=restore_superuser,json=restoreSuperuser,proto3" json:"restore_superuser,omitempty"`
-	SuperuserJob     string                 `protobuf:"bytes,3,opt,name=superuser_job,json=superuserJob,proto3" json:"superuser_job,omitempty"`
+	RestoreSuperuser *bool                  `protobuf:"varint,2,opt,name=restore_superuser,json=restoreSuperuser,proto3,oneof" json:"restore_superuser,omitempty"`
+	SuperuserJob     *string                `protobuf:"bytes,3,opt,name=superuser_job,json=superuserJob,proto3,oneof" json:"superuser_job,omitempty"`
 	unknownFields    protoimpl.UnknownFields
 	sizeCache        protoimpl.SizeCache
 }
@@ -1243,15 +1243,15 @@ func (x *ChooseCharacterRequest) GetCharId() int32 {
 }
 
 func (x *ChooseCharacterRequest) GetRestoreSuperuser() bool {
-	if x != nil {
-		return x.RestoreSuperuser
+	if x != nil && x.RestoreSuperuser != nil {
+		return *x.RestoreSuperuser
 	}
 	return false
 }
 
 func (x *ChooseCharacterRequest) GetSuperuserJob() string {
-	if x != nil {
-		return x.SuperuserJob
+	if x != nil && x.SuperuserJob != nil {
+		return *x.SuperuserJob
 	}
 	return ""
 }
@@ -1261,19 +1261,41 @@ func (x *ChooseCharacterRequest) SetCharId(v int32) {
 }
 
 func (x *ChooseCharacterRequest) SetRestoreSuperuser(v bool) {
-	x.RestoreSuperuser = v
+	x.RestoreSuperuser = &v
 }
 
 func (x *ChooseCharacterRequest) SetSuperuserJob(v string) {
-	x.SuperuserJob = v
+	x.SuperuserJob = &v
+}
+
+func (x *ChooseCharacterRequest) HasRestoreSuperuser() bool {
+	if x == nil {
+		return false
+	}
+	return x.RestoreSuperuser != nil
+}
+
+func (x *ChooseCharacterRequest) HasSuperuserJob() bool {
+	if x == nil {
+		return false
+	}
+	return x.SuperuserJob != nil
+}
+
+func (x *ChooseCharacterRequest) ClearRestoreSuperuser() {
+	x.RestoreSuperuser = nil
+}
+
+func (x *ChooseCharacterRequest) ClearSuperuserJob() {
+	x.SuperuserJob = nil
 }
 
 type ChooseCharacterRequest_builder struct {
 	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
 
 	CharId           int32
-	RestoreSuperuser bool
-	SuperuserJob     string
+	RestoreSuperuser *bool
+	SuperuserJob     *string
 }
 
 func (b0 ChooseCharacterRequest_builder) Build() *ChooseCharacterRequest {
@@ -2073,11 +2095,13 @@ const file_services_auth_auth_proto_rawDesc = "" +
 	"\x13can_be_config_admin\x18\x04 \x01(\bR\x10canBeConfigAdmin\"\x16\n" +
 	"\x14GetCharactersRequest\"L\n" +
 	"\x15GetCharactersResponse\x123\n" +
-	"\x05chars\x18\x01 \x03(\v2\x1d.resources.accounts.CharacterR\x05chars\"\x83\x01\n" +
+	"\x05chars\x18\x01 \x03(\v2\x1d.resources.accounts.CharacterR\x05chars\"\xb5\x01\n" +
 	"\x16ChooseCharacterRequest\x12\x17\n" +
-	"\achar_id\x18\x01 \x01(\x05R\x06charId\x12+\n" +
-	"\x11restore_superuser\x18\x02 \x01(\bR\x10restoreSuperuser\x12#\n" +
-	"\rsuperuser_job\x18\x03 \x01(\tR\fsuperuserJob\"\xa2\x03\n" +
+	"\achar_id\x18\x01 \x01(\x05R\x06charId\x120\n" +
+	"\x11restore_superuser\x18\x02 \x01(\bH\x00R\x10restoreSuperuser\x88\x01\x01\x12(\n" +
+	"\rsuperuser_job\x18\x03 \x01(\tH\x01R\fsuperuserJob\x88\x01\x01B\x14\n" +
+	"\x12_restore_superuserB\x10\n" +
+	"\x0e_superuser_job\"\xa2\x03\n" +
 	"\x17ChooseCharacterResponse\x12\x14\n" +
 	"\x05token\x18\x01 \x01(\tR\x05token\x12\x1a\n" +
 	"\busername\x18\x02 \x01(\tR\busername\x128\n" +
@@ -2233,6 +2257,7 @@ func file_services_auth_auth_proto_init() {
 		return
 	}
 	file_services_auth_auth_proto_msgTypes[1].OneofWrappers = []any{}
+	file_services_auth_auth_proto_msgTypes[18].OneofWrappers = []any{}
 	file_services_auth_auth_proto_msgTypes[24].OneofWrappers = []any{}
 	file_services_auth_auth_proto_msgTypes[25].OneofWrappers = []any{}
 	type x struct{}

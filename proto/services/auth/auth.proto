@@ -161,8 +161,8 @@ message GetCharactersResponse {
 
 message ChooseCharacterRequest {
   int32 char_id = 1 [(buf.validate.field).int32.gt = 0];
-  bool restore_superuser = 2;
-  string superuser_job = 3;
+  optional bool restore_superuser = 2;
+  optional string superuser_job = 3;
 }
 
 message ChooseCharacterResponse {
