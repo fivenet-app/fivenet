@@ -7865,6 +7865,8 @@ Detailed user information for sync purposes Should be kept inline with `resource
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | `char_id` | [int32](#int32) |  |  |
+| `restore_superuser` | [bool](#bool) |  |  |
+| `superuser_job` | [string](#string) |  |  |
 
 
 

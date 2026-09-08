@@ -24,6 +24,7 @@ const mocks = vi.hoisted(() => ({
     },
     settingsStore: {
         startpage: '/overview',
+        setVersion: vi.fn(),
     },
     grpcwsTransport: {
         updateUserToken: vi.fn(),

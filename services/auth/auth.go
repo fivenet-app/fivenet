@@ -600,6 +600,8 @@ func (s *Server) ChooseCharacter(
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsauth.ErrNoCharFound)
 	}
+	originalJob := char.GetJob()
+	originalGrade := char.GetJobGrade()
 
 	// Make sure the user isn't sending us a different char ID than their own
 	if !strings.HasSuffix(char.GetIdentifier(), currentAccClaims.Subject) {
@@ -639,6 +641,11 @@ func (s *Server) ChooseCharacter(
 		configAdminUsers,
 	)
 
+	superuserActive := req.GetRestoreSuperuser() && canBeSuperuser
+	if currentUserClaims != nil && currentUserClaims.Superuser != nil && *currentUserClaims.Superuser {
+		superuserActive = canBeSuperuser
+	}
+
 	if err := s.ui.RefreshUserInfo(ctx, char.GetUserId()); err != nil {
 		s.logger.Error(
 			"failed to refresh user info",
@@ -656,13 +663,32 @@ func (s *Server) ChooseCharacter(
 		return nil, errorsgrpcauth.ErrCharLock
 	}
 
+	if superuserActive {
+		requestedJob := req.GetSuperuserJob()
+		if requestedJob == "" && currentUserClaims != nil && currentUserClaims.Job != nil {
+			requestedJob = *currentUserClaims.Job
+		}
+		if requestedJob != "" {
+			job, jobGrade, selectedProps, err := s.getJobWithProps(ctx, requestedJob)
+			if err != nil {
+				return nil, errswrap.NewError(
+					fmt.Errorf("failed to restore superuser job %q. %w", requestedJob, err),
+					errorsauth.ErrGenericLogin,
+				)
+			}
+			jProps = selectedProps
+			char.Job = job.GetName()
+			char.JobGrade = jobGrade
+			s.enricher.EnrichJobInfo(char)
+		}
+	}
+
 	ps, attrs, err := s.listUserPerms(
 		ctx,
 		char,
 		canBeSuperuser,
 		canBeConfigAdmin,
-		currentUserClaims != nil && currentUserClaims.Superuser != nil &&
-			*currentUserClaims.Superuser,
+		superuserActive,
 	)
 	if err != nil {
 		return nil, err
@@ -687,9 +713,8 @@ func (s *Server) ChooseCharacter(
 
 	// Ensure superuser is set on user claims
 	userClaims := auth.MapUserToClaims(account.GetId(), char)
-	if canBeSuperuser && currentUserClaims != nil && currentUserClaims.Superuser != nil &&
-		*currentUserClaims.Superuser {
-		userClaims.Superuser = currentUserClaims.Superuser
+	if superuserActive {
+		userClaims.Superuser = &superuserActive
 	}
 	// Based on impersonation, (re-)set the job and grade of the user
 	if currentUserClaims != nil && currentUserClaims.OriginalJob != nil {
@@ -711,6 +736,11 @@ func (s *Server) ChooseCharacter(
 			userClaims.OriginalJob = currentUserClaims.OriginalJob
 
 			s.enricher.EnrichJobInfo(char)
+		}
+	} else if superuserActive {
+		userClaims.OriginalJob = &authclaims.UserJobInfo{
+			Job:      originalJob,
+			JobGrade: originalGrade,
 		}
 	} else {
 		userClaims.OriginalJob = nil

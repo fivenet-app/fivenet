@@ -16,6 +16,33 @@ import type { ImpersonateJobResponse, RefreshAccountSessionResponse } from '~~/g
 
 const logger = useLogger('🔑 Auth');
 
+type SuperuserRestoreHint = {
+    accountId: number;
+    charId: number;
+    job: string;
+};
+
+const superuserRestoreHintKey = 'fivenet-superuser-restore';
+
+const readSuperuserRestoreHint = (): SuperuserRestoreHint | null => {
+    if (typeof sessionStorage === 'undefined') return null;
+    try {
+        const value = sessionStorage.getItem(superuserRestoreHintKey);
+        if (!value) return null;
+        const hint = JSON.parse(value) as Partial<SuperuserRestoreHint>;
+        if (typeof hint.accountId !== 'number' || typeof hint.charId !== 'number' || typeof hint.job !== 'string') return null;
+        return hint.accountId > 0 && hint.charId > 0 ? (hint as SuperuserRestoreHint) : null;
+    } catch (_) {
+        return null;
+    }
+};
+
+const writeSuperuserRestoreHint = (hint: SuperuserRestoreHint | null): void => {
+    if (typeof sessionStorage === 'undefined') return;
+    if (hint === null) sessionStorage.removeItem(superuserRestoreHintKey);
+    else sessionStorage.setItem(superuserRestoreHintKey, JSON.stringify(hint));
+};
+
 export const getAuthTabId = (): string => {
     if (typeof sessionStorage === 'undefined') return 'server';
 
@@ -88,6 +115,7 @@ export const useAuthStore = defineStore(
          * The ID of the last selected character.
          */
         const lastCharID = ref<number | undefined>(0);
+        const superuserRestoreHint = ref<SuperuserRestoreHint | null>(readSuperuserRestoreHint());
         /**
          * The currently active character.
          */
@@ -486,10 +514,18 @@ export const useAuthStore = defineStore(
                 }
 
                 const authAuthClient = await getAuthAuthClient();
+                const restoreHint =
+                    superuserRestoreHint.value?.accountId === accountId.value && superuserRestoreHint.value?.charId === charId;
 
                 const call = authAuthClient.chooseCharacter(
                     {
                         charId: charId,
+                        ...(restoreHint
+                            ? {
+                                  restoreSuperuser: true,
+                                  superuserJob: superuserRestoreHint.value?.job ?? '',
+                              }
+                            : {}),
                     },
                     characterAuthOptions(charId),
                 );
@@ -506,6 +542,14 @@ export const useAuthStore = defineStore(
                 setPermissions(response.permissions, response.attributes);
                 setAccountCanBeConfigAdmin(false);
                 setJobProps(response.jobProps);
+                if (
+                    superuserRestoreHint.value?.accountId === accountId.value &&
+                    superuserRestoreHint.value?.charId === charId &&
+                    !response.permissions.some((p) => p.guardName === jobAdminPermGuard)
+                ) {
+                    superuserRestoreHint.value = null;
+                    writeSuperuserRestoreHint(null);
+                }
                 phase.value = 'character-ready';
                 commitQueryContext();
 
@@ -605,6 +649,14 @@ export const useAuthStore = defineStore(
                 setUserToken(response.token);
                 setPermissions(response.permissions, response.attributes);
                 setJobProps(response.jobProps);
+                superuserRestoreHint.value = superuser
+                    ? {
+                          accountId: accountId.value ?? 0,
+                          charId: response.char?.userId ?? activeChar.value?.userId ?? 0,
+                          job: response.char?.job ?? job?.name ?? '',
+                      }
+                    : null;
+                writeSuperuserRestoreHint(superuserRestoreHint.value);
                 commitQueryContext();
                 await navigateTo('/overview');
 
@@ -673,6 +725,8 @@ export const useAuthStore = defineStore(
             setUsername(null);
             accountId.value = null;
             clearCharacterSession(undefined, false);
+            superuserRestoreHint.value = null;
+            writeSuperuserRestoreHint(null);
             phase.value = 'anonymous';
             commitQueryContext();
 

@@ -219,6 +219,14 @@ export interface ChooseCharacterRequest {
      * @generated from protobuf field: int32 char_id = 1
      */
     charId: number;
+    /**
+     * @generated from protobuf field: bool restore_superuser = 2
+     */
+    restoreSuperuser: boolean;
+    /**
+     * @generated from protobuf field: string superuser_job = 3
+     */
+    superuserJob: string;
 }
 /**
  * @generated from protobuf message services.auth.ChooseCharacterResponse
@@ -1246,12 +1254,16 @@ export const GetCharactersResponse = new GetCharactersResponse$Type();
 class ChooseCharacterRequest$Type extends MessageType<ChooseCharacterRequest> {
     constructor() {
         super("services.auth.ChooseCharacterRequest", [
-            { no: 1, name: "char_id", kind: "scalar", T: 5 /*ScalarType.INT32*/, options: { "buf.validate.field": { int32: { gt: 0 } } } }
+            { no: 1, name: "char_id", kind: "scalar", T: 5 /*ScalarType.INT32*/, options: { "buf.validate.field": { int32: { gt: 0 } } } },
+            { no: 2, name: "restore_superuser", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
+            { no: 3, name: "superuser_job", kind: "scalar", T: 9 /*ScalarType.STRING*/ }
         ]);
     }
     create(value?: PartialMessage<ChooseCharacterRequest>): ChooseCharacterRequest {
         const message = globalThis.Object.create((this.messagePrototype!));
         message.charId = 0;
+        message.restoreSuperuser = false;
+        message.superuserJob = "";
         if (value !== undefined)
             reflectionMergePartial<ChooseCharacterRequest>(this, message, value);
         return message;
@@ -1263,6 +1275,12 @@ class ChooseCharacterRequest$Type extends MessageType<ChooseCharacterRequest> {
             switch (fieldNo) {
                 case /* int32 char_id */ 1:
                     message.charId = reader.int32();
+                    break;
+                case /* bool restore_superuser */ 2:
+                    message.restoreSuperuser = reader.bool();
+                    break;
+                case /* string superuser_job */ 3:
+                    message.superuserJob = reader.string();
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -1279,6 +1297,12 @@ class ChooseCharacterRequest$Type extends MessageType<ChooseCharacterRequest> {
         /* int32 char_id = 1; */
         if (message.charId !== 0)
             writer.tag(1, WireType.Varint).int32(message.charId);
+        /* bool restore_superuser = 2; */
+        if (message.restoreSuperuser !== false)
+            writer.tag(2, WireType.Varint).bool(message.restoreSuperuser);
+        /* string superuser_job = 3; */
+        if (message.superuserJob !== "")
+            writer.tag(3, WireType.LengthDelimited).string(message.superuserJob);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);

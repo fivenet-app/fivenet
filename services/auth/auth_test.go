@@ -460,6 +460,27 @@ func TestChooseCharacterFallsBackToAccountSessionWhenUserTokenIsMissingOrInvalid
 	require.NotNil(parsedSuperuserClaims.Superuser)
 	assert.True(*parsedSuperuserClaims.Superuser)
 
+	// A browser reload loses the character token, so restore mode must be
+	// recoverable from an account-token-only request when eligibility remains.
+	reloadedRestoreCtx := metadata.NewOutgoingContext(
+		ctx,
+		metadata.New(map[string]string{
+			"Cookie": auth.AccCookieName + "=" + updatedAccountToken,
+		}),
+	)
+	reloadedRestoreRes, err := client.ChooseCharacter(reloadedRestoreCtx, &pbauth.ChooseCharacterRequest{
+		CharId:           1,
+		RestoreSuperuser: true,
+	})
+	require.NoError(err)
+	require.NotNil(reloadedRestoreRes)
+	assert.True(hasPermission(reloadedRestoreRes.GetPermissions(), perms.PermJobAdmin))
+
+	parsedReloadedRestoreClaims, err := srv.tm.ParseUserToken(reloadedRestoreRes.GetToken())
+	require.NoError(err)
+	require.NotNil(parsedReloadedRestoreClaims.Superuser)
+	assert.True(*parsedReloadedRestoreClaims.Superuser)
+
 	validRestoreCtx := metadata.NewOutgoingContext(
 		ctx,
 		metadata.New(map[string]string{

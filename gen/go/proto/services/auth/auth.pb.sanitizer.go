@@ -41,6 +41,19 @@ func (m *ChangeUsernameRequest) Sanitize() error {
 
 // Sanitize sanitizes the message's fields, in case of complex types it calls
 // their Sanitize() method recursively.
+func (m *ChooseCharacterRequest) Sanitize() error {
+	if m == nil {
+		return nil
+	}
+
+	// Field: SuperuserJob
+	m.SuperuserJob = htmlsanitizer.SanitizeAndUnescape(m.SuperuserJob)
+
+	return nil
+}
+
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *ChooseCharacterResponse) Sanitize() error {
 	if m == nil {
 		return nil
