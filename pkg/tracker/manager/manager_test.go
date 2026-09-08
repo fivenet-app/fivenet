@@ -261,7 +261,7 @@ func TestCleanupUserIDsDeletesStaleLocationKeyWhenMarkerMissing(t *testing.T) {
 	t.Parallel()
 
 	ctx := t.Context()
-	manager, db, _, stop := newTrackerManagerForTest(t)
+	manager, db, trackerStub, stop := newTrackerManagerForTest(t)
 	defer stop()
 
 	staleUser := &livemapmarkers.UserMarker{
@@ -273,8 +273,9 @@ func TestCleanupUserIDsDeletesStaleLocationKeyWhenMarkerMissing(t *testing.T) {
 	require.NoError(t, manager.userLocStore.Put(ctx, staleKey, staleUser))
 
 	require.NoError(t, dbInsertTestUser(ctx, db, 42, "police"))
-	require.NoError(t, dbInsertDispatcher(ctx, db, "police", 42))
-	require.NoError(t, manager.dispatchers.LoadFromDB(ctx, "police"))
+	trackerStub.SeedUserMarker(staleUser)
+	require.NoError(t, manager.dispatchers.SetUserState(ctx, "police", 42, true))
+	trackerStub.DeleteUserMarker(42)
 
 	removed, err := manager.cleanupUserIDs(ctx, map[int32]any{
 		staleUser.GetUserId(): nil,
