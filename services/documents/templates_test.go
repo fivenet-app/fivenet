@@ -26,8 +26,8 @@ func TestRenderTemplateUsesResolvedUserProps(t *testing.T) {
 			{
 				Firstname: "Canonical",
 				Props: &usersprops.UserProps{
-					Email:     stringPtr("canonical@example.test"),
-					OpenFines: int64Ptr(42),
+					Email:     new("canonical@example.test"),
+					OpenFines: new(int64(42)),
 				},
 			},
 		},
@@ -53,12 +53,12 @@ func TestRenderTemplateUsesColleagueActiveChar(t *testing.T) {
 	data := &resolvedTemplateData{ActiveChar: &jobscolleagues.Colleague{
 		Firstname:            "Active",
 		Lastname:             "Colleague",
-		PhoneNumber:          stringPtr("555-0100"),
-		ProfilePicture:       stringPtr("/avatars/42.png"),
-		ProfilePictureFileId: int64Ptr(42),
+		PhoneNumber:          new("555-0100"),
+		ProfilePicture:       new("/avatars/42.png"),
+		ProfilePictureFileId: new(int64(42)),
 		Props: &jobscolleagues.ColleagueProps{
-			NamePrefix: stringPtr("Dr."),
-			NameSuffix: stringPtr("Jr."),
+			NamePrefix: new("Dr."),
+			NameSuffix: new("Jr."),
 		},
 	}}
 
@@ -151,7 +151,7 @@ func TestValidateTemplateRequirementsAfterResolution(t *testing.T) {
 	tmpl := &documentstemplates.Template{
 		Schema: &documentstemplates.TemplateSchema{
 			Requirements: &documentstemplates.TemplateRequirements{
-				Users: &documentstemplates.ObjectSpecs{Required: true, Min: int32Ptr(2)},
+				Users: &documentstemplates.ObjectSpecs{Required: true, Min: new(int32(2))},
 			},
 		},
 	}
@@ -160,9 +160,3 @@ func TestValidateTemplateRequirementsAfterResolution(t *testing.T) {
 
 	require.Equal(t, codes.InvalidArgument, status.Code(err))
 }
-
-func stringPtr(v string) *string { return &v }
-
-func int32Ptr(v int32) *int32 { return &v }
-
-func int64Ptr(v int64) *int64 { return &v }
