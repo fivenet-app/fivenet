@@ -100,14 +100,16 @@ message Links {
     (codegen.sanitizer.sanitizer) = {
       enabled: true
       strip_html_tags: true
-    }
+    },
+    (tagger.tags) = "json:\"privacy_policy\""
   ];
   optional string imprint = 2 [
     (buf.validate.field).string.max_len = 255,
     (codegen.sanitizer.sanitizer) = {
       enabled: true
       strip_html_tags: true
-    }
+    },
+    (tagger.tags) = "json:\"imprint\""
   ];
 }
 
@@ -273,7 +275,7 @@ message PenaltyCalculatorWarn {
 }
 
 message Livemap {
-  bool enable_cayo_perico = 1;
+  bool enable_cayo_perico = 1 [(tagger.tags) = "json:\"enableCayoPerico\""];
 }
 
 message Game {

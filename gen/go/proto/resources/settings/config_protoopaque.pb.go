@@ -2404,10 +2404,10 @@ const file_resources_settings_config_proto_rawDesc = "" +
 	"\aWebsite\x12/\n" +
 	"\x05links\x18\x01 \x01(\v2\x19.resources.settings.LinksR\x05links\x124\n" +
 	"\n" +
-	"stats_page\x18\x02 \x01(\bB\x15\x9a\x84\x9e\x03\x10json:\"statsPage\"R\tstatsPage\"\x85\x01\n" +
-	"\x05Links\x124\n" +
-	"\x0eprivacy_policy\x18\x01 \x01(\tB\b\xda\xf3\x18\x04\b\x01\x18\x01H\x00R\rprivacyPolicy\x88\x01\x01\x12'\n" +
-	"\aimprint\x18\x02 \x01(\tB\b\xda\xf3\x18\x04\b\x01\x18\x01H\x01R\aimprint\x88\x01\x01B\x11\n" +
+	"stats_page\x18\x02 \x01(\bB\x15\x9a\x84\x9e\x03\x10json:\"statsPage\"R\tstatsPage\"\xb2\x01\n" +
+	"\x05Links\x12N\n" +
+	"\x0eprivacy_policy\x18\x01 \x01(\tB\"\xda\xf3\x18\x04\b\x01\x18\x01\x9a\x84\x9e\x03\x15json:\"privacy_policy\"H\x00R\rprivacyPolicy\x88\x01\x01\x12:\n" +
+	"\aimprint\x18\x02 \x01(\tB\x1b\xda\xf3\x18\x04\b\x01\x18\x01\x9a\x84\x9e\x03\x0ejson:\"imprint\"H\x01R\aimprint\x88\x01\x01B\x11\n" +
 	"\x0f_privacy_policyB\n" +
 	"\n" +
 	"\b_imprint\"\xa9\x01\n" +
@@ -2476,9 +2476,9 @@ const file_resources_settings_config_proto_rawDesc = "" +
 	"\x05_fineB\x11\n" +
 	"\x0f_detention_timeB\x0e\n" +
 	"\f_stvo_pointsB\x0f\n" +
-	"\r_warn_message\"7\n" +
-	"\aLivemap\x12,\n" +
-	"\x12enable_cayo_perico\x18\x01 \x01(\bR\x10enableCayoPerico\"\x91\x03\n" +
+	"\r_warn_message\"U\n" +
+	"\aLivemap\x12J\n" +
+	"\x12enable_cayo_perico\x18\x01 \x01(\bB\x1c\x9a\x84\x9e\x03\x17json:\"enableCayoPerico\"R\x10enableCayoPerico\"\x91\x03\n" +
 	"\x04Game\x12F\n" +
 	" max_wanted_duration_user_enabled\x18\x04 \x01(\bR\x1cmaxWantedDurationUserEnabled\x12W\n" +
 	"\x18max_wanted_duration_user\x18\x05 \x01(\v2\x19.google.protobuf.DurationH\x00R\x15maxWantedDurationUser\x88\x01\x01\x12L\n" +

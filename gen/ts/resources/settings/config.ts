@@ -795,8 +795,8 @@ export const Website = new Website$Type();
 class Links$Type extends MessageType<Links> {
     constructor() {
         super("resources.settings.Links", [
-            { no: 1, name: "privacy_policy", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "255" } }, "codegen.sanitizer.sanitizer": { enabled: true, stripHtmlTags: true } } },
-            { no: 2, name: "imprint", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "255" } }, "codegen.sanitizer.sanitizer": { enabled: true, stripHtmlTags: true } } }
+            { no: 1, name: "privacy_policy", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "255" } }, "codegen.sanitizer.sanitizer": { enabled: true, stripHtmlTags: true }, "tagger.tags": "json:\"privacy_policy\"" } },
+            { no: 2, name: "imprint", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "255" } }, "codegen.sanitizer.sanitizer": { enabled: true, stripHtmlTags: true }, "tagger.tags": "json:\"imprint\"" } }
         ]);
     }
     create(value?: PartialMessage<Links>): Links {
@@ -1520,7 +1520,7 @@ export const PenaltyCalculatorWarn = new PenaltyCalculatorWarn$Type();
 class Livemap$Type extends MessageType<Livemap> {
     constructor() {
         super("resources.settings.Livemap", [
-            { no: 1, name: "enable_cayo_perico", kind: "scalar", T: 8 /*ScalarType.BOOL*/ }
+            { no: 1, name: "enable_cayo_perico", kind: "scalar", T: 8 /*ScalarType.BOOL*/, options: { "tagger.tags": "json:\"enableCayoPerico\"" } }
         ]);
     }
     create(value?: PartialMessage<Livemap>): Livemap {
