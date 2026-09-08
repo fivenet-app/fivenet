@@ -2,6 +2,7 @@ import type { RpcError, ServerStreamingCall } from '@protobuf-ts/runtime-rpc';
 import { defineStore } from 'pinia';
 import { compareUnitsBySortOrder } from '~/components/dispatch/helpers';
 import type { NotificationActionI18n } from '~/types/notifications';
+import { restartForAuthContext as restartAuthContextStream } from '~/utils/authContextStream';
 import { getCentrumCentrumClient, getCentrumDispatchesClient } from '~~/gen/ts/clients';
 import type { Dispatchers } from '~~/gen/ts/resources/centrum/dispatchers/dispatchers';
 import {
@@ -829,10 +830,7 @@ export const useCentrumStore = defineStore(
          * Authorization changes should not use transport-reconnect backoff.
          */
         const restartForAuthContext = async (): Promise<void> => {
-            if (!abort.value || stopping.value) return;
-
-            await stopStream();
-            if (!stopping.value) await startStream();
+            await restartAuthContextStream({ abort: abort.value, isStopping: () => stopping.value }, stopStream, startStream);
         };
 
         // Helpers

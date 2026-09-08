@@ -1,5 +1,6 @@
 import type { RpcError, ServerStreamingCall } from '@protobuf-ts/runtime-rpc';
 import { defineStore } from 'pinia';
+import { restartForAuthContext as restartAuthContextStream } from '~/utils/authContextStream';
 import { getLivemapLivemapClient } from '~~/gen/ts/clients';
 import type { Job } from '~~/gen/ts/resources/jobs/jobs';
 import type { Coords } from '~~/gen/ts/resources/livemap/coords';
@@ -431,10 +432,7 @@ export const useLivemapStore = defineStore(
          * former authorization context as soon as possible.
          */
         const restartForAuthContext = async (): Promise<void> => {
-            if (!abort.value || stopping.value) return;
-
-            await stopStream();
-            if (!stopping.value) await startStream();
+            await restartAuthContextStream({ abort: abort.value, isStopping: () => stopping.value }, stopStream, startStream);
         };
 
         // Misc Actions

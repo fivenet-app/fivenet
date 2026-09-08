@@ -5,6 +5,7 @@ import { useHistoryStore } from '~/stores/history';
 import { useLivemapStore } from '~/stores/livemap';
 import { useMailerStore } from '~/stores/mailer';
 import type { Notification } from '~/types/notifications';
+import { createAuthContextRestartHandler } from '~/utils/authContextStream';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 
 export type AuthBroadcastMessage = {
@@ -89,16 +90,13 @@ export default defineNuxtPlugin({
         // `keys.userState` is derived from the last route-validated auth
         // context. Restart shared streams only after that context is committed;
         // raw permission/character changes occur earlier during the transition.
-        watch(
-            () => auth.keys.userState.value,
-            (key, previousKey) => {
-                if (!previousKey || key === previousKey || auth.isQueryTransitioning.value) return;
-
-                void livemapStore.restartForAuthContext();
-                void centrumStore.restartForAuthContext();
-            },
-            { flush: 'sync' },
-        );
+        const restartForCommittedUserState = createAuthContextRestartHandler(auth.keys.userState.value, () => {
+            void livemapStore.restartForAuthContext();
+            void centrumStore.restartForAuthContext();
+        });
+        watch([() => auth.keys.userState.value, () => auth.isQueryTransitioning.value], restartForCommittedUserState, {
+            flush: 'sync',
+        });
 
         const redirectToLoginOnce = (): Promise<unknown> => {
             if (redirectPromise) return redirectPromise;
