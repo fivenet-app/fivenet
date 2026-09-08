@@ -60,22 +60,10 @@ func (s *Housekeeper) cleanupDispatchers(ctx context.Context) (int, int, int, in
 		jobsAffected++
 		for _, user := range value.GetDispatchers() {
 			usersProcessed++
-			um, ok, err := s.tracker.GetUserMapping(user.GetUserId())
-			if err != nil {
-				errs = multierr.Append(
-					errs,
-					fmt.Errorf(
-						"unable to get user %d mapping for %s dispatchers. %w",
-						user.GetUserId(),
-						job,
-						err,
-					),
-				)
-				continue
-			}
-
-			// Dispatcher is still valid when the user's job matches the dispatchers list job and the mapping is visible.
-			if user.GetJob() == job && ok && um != nil && !um.Hidden {
+			marker, ok := s.tracker.GetUserMarkerById(user.GetUserId())
+			// Dispatcher state is session-bound: only a visible marker for the
+			// same job keeps the dispatcher signed on.
+			if ok && marker != nil && !marker.GetHidden() && marker.GetJob() == job {
 				continue
 			}
 
