@@ -86,11 +86,12 @@ async function selectTemplate(t?: TemplateShort | undefined): Promise<void> {
             documents: false,
             vehicles: false,
         };
-        clipboardStore.clearActiveStack();
         requirementDefinitions.forEach(({ type, key }) => {
             const specs = requirements[key];
+            // Preserve the current selection first, then add unrestricted
+            // clipboard items so template fields can use the whole list.
+            clipboardStore.promoteToActiveStack(type, specs?.max);
             if (hasRequirement(specs)) {
-                clipboardStore.promoteToActiveStack(type, specs?.max);
                 reqStatus.value[type] = clipboardStore.checkRequirements(specs!, type, true);
             } else {
                 reqStatus.value[type] = true;

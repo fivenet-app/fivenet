@@ -81,6 +81,31 @@ export function getVehicle(obj: ClipboardVehicle): Vehicle {
     };
 }
 
+function prioritizeClipboardItems<T>(
+    selected: T[],
+    available: T[],
+    getKey: (item: T) => string | number,
+    maxItems?: number,
+): T[] {
+    const availableByKey = new Map(available.map((item) => [getKey(item), item]));
+    const seen = new Set<string | number>();
+    const prioritized: T[] = [];
+
+    for (const item of [...selected, ...available]) {
+        const key = getKey(item);
+        if (seen.has(key)) continue;
+
+        const availableItem = availableByKey.get(key);
+        if (!availableItem) continue;
+
+        seen.add(key);
+        prioritized.push(availableItem);
+    }
+
+    const limit = typeof maxItems === 'number' && maxItems > 0 ? maxItems : undefined;
+    return limit ? prioritized.slice(0, limit) : prioritized;
+}
+
 /**
  * Converts a ClipboardUser object back to a User object.
  * @param {ClipboardUser} obj - The ClipboardUser object to convert.
@@ -258,24 +283,38 @@ export const useClipboardStore = defineStore(
          * @param {ListType} listType - The type of list to promote (e.g., 'documents', 'citizens', 'vehicles').
          */
         const promoteToActiveStack = (listType: ListType, maxItems?: number): void => {
-            const limit = typeof maxItems === 'number' && maxItems > 0 ? maxItems : undefined;
-
             switch (listType) {
                 case 'documents':
                     activeStack.value.documents = JSON.parse(
-                        JSON.stringify(limit ? documents.value.slice(0, limit) : documents.value),
+                        JSON.stringify(
+                            prioritizeClipboardItems(
+                                activeStack.value.documents,
+                                documents.value,
+                                (document) => document.id,
+                                maxItems,
+                            ),
+                        ),
                     ) as ClipboardDocument[];
                     break;
 
                 case 'citizens':
                     activeStack.value.users = JSON.parse(
-                        JSON.stringify(limit ? users.value.slice(0, limit) : users.value),
+                        JSON.stringify(
+                            prioritizeClipboardItems(activeStack.value.users, users.value, (user) => user.userId!, maxItems),
+                        ),
                     ) as ClipboardUser[];
                     break;
 
                 case 'vehicles':
                     activeStack.value.vehicles = JSON.parse(
-                        JSON.stringify(limit ? vehicles.value.slice(0, limit) : vehicles.value),
+                        JSON.stringify(
+                            prioritizeClipboardItems(
+                                activeStack.value.vehicles,
+                                vehicles.value,
+                                (vehicle) => vehicle.plate,
+                                maxItems,
+                            ),
+                        ),
                     ) as ClipboardVehicle[];
                     break;
             }
