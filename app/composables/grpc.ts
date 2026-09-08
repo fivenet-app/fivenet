@@ -80,7 +80,8 @@ function addCopyActionToNotification(notification: Notification, err: RpcError, 
                 `## Error occured at ${new Date().toISOString()}:
 **Service/Method**: \`${err.serviceName}/${err.methodName}\` => \`${err.code}\`
 **Message**: \`${err.message}\`
-**TraceID**: \`${traceId}\``,
+**TraceID**: \`${traceId}\`
+**URL**: \`${window.location.href}\``,
             );
 
             const notifications = useNotificationsStore();
