@@ -270,6 +270,35 @@ function resultsToLabel(results: EventResult[]): string {
     return results.map((c) => t(`enums.settings.AuditLog.EventResult.${EventResult[c ?? 0]}`)).join(', ');
 }
 
+function metadataForDisplay(meta: AuditEntry['meta']): Record<string, string> {
+    if (!meta) {
+        return {};
+    }
+
+    const displayMeta = { ...meta.meta };
+    delete displayMeta.duration_ms;
+    delete displayMeta.grpc_code;
+
+    return displayMeta;
+}
+
+function hasMetadataForDisplay(meta: AuditEntry['meta']): boolean {
+    return Object.keys(metadataForDisplay(meta)).length > 0;
+}
+
+function hasJsonData(data?: string): boolean {
+    if (!data) {
+        return false;
+    }
+
+    try {
+        const parsed = JSON.parse(data) as unknown;
+        return parsed === null || typeof parsed !== 'object' || Object.keys(parsed).length > 0;
+    } catch {
+        return true;
+    }
+}
+
 watch(
     () => query.services,
     () => {
@@ -529,8 +558,10 @@ const tomorrow = addDays(today, 1);
                             </div>
                         </template>
 
-                        <span v-if="!row.original.data">{{ $t('common.na') }}</span>
-                        <template v-else>
+                        <div v-if="!hasJsonData(row.original.data)" class="p-3 text-muted">
+                            {{ $t('common.empty') }}
+                        </div>
+                        <div v-else class="p-1">
                             <VueJsonPretty
                                 :data="JSON.parse(row.original.data!) as JSONDataType"
                                 show-icon
@@ -539,19 +570,47 @@ const tomorrow = addDays(today, 1);
                                 :height="dataToggled ? 240 : 800"
                                 show-line-number
                             />
-                        </template>
+                        </div>
+
+                        <USeparator />
+
+                        <div class="flex items-center justify-between gap-2 px-2 py-2">
+                            <div class="font-semibold text-highlighted">
+                                {{ $t('common.metadata') }}
+                            </div>
+                        </div>
+
+                        <div v-if="hasMetadataForDisplay(row.original.meta)" class="p-1">
+                            <VueJsonPretty
+                                :data="metadataForDisplay(row.original.meta)"
+                                show-icon
+                                show-length
+                                show-line-number
+                            />
+                        </div>
+                        <div v-else class="p-3 text-muted">
+                            {{ $t('common.empty') }}
+                        </div>
 
                         <template v-if="row.original.meta" #footer>
-                            <div class="flex flex-row items-center justify-between gap-2">
-                                <div>
-                                    <span class="font-semibold">{{ $t('common.duration') }}</span
-                                    >: {{ row.original.meta.meta['duration_ms'] ?? $t('common.na') }} ms
-                                </div>
+                            <div class="grid grid-cols-1 gap-2 sm:grid-cols-2">
+                                <UCard variant="subtle" :ui="{ body: 'p-2 sm:p-2' }">
+                                    <div class="text-xs text-muted">{{ $t('common.duration') }}</div>
+                                    <div class="font-semibold text-highlighted">
+                                        {{ row.original.meta.meta['duration_ms'] ?? $t('common.na') }} ms
+                                    </div>
+                                </UCard>
 
-                                <div>
-                                    <span class="font-semibold">{{ $t('common.code') }}</span
-                                    >: {{ row.original.meta.meta['code'] ?? $t('common.na') }}
-                                </div>
+                                <UCard variant="subtle" :ui="{ body: 'p-2 sm:p-2' }">
+                                    <div class="text-xs text-muted">{{ $t('common.code') }}</div>
+                                    <div class="font-semibold text-highlighted">
+                                        {{
+                                            row.original.meta.meta['grpc_code'] ??
+                                            row.original.meta.meta['code'] ??
+                                            $t('common.na')
+                                        }}
+                                    </div>
+                                </UCard>
                             </div>
                         </template>
                     </UCard>

@@ -405,6 +405,7 @@
         "account": "Account",
         "info": "Info",
         "data": "Data",
+        "empty": "Empty",
         "your": "your",
         "character": "Character | Characters",
         "user": "User | Users",
