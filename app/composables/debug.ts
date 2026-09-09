@@ -1,36 +1,53 @@
 import { useGRPCWebsocketTransport } from './grpcws';
 
-export function collectDebugInfo(): string {
+export interface DebugContext {
+    version: string;
+    url: string;
+    character: string;
+    medium: string;
+    resolution: string;
+    languageTimezone: string;
+    connection: string;
+    nui: string;
+}
+
+export function getDebugContext(): DebugContext {
     const authStore = useAuthStore();
-    const { activeChar, attributes, permissions } = storeToRefs(authStore);
-
-    const authSessionStore = useAuthSessionStore();
-    const { userInfo } = storeToRefs(authSessionStore);
-
+    const { activeChar } = storeToRefs(authStore);
     const settingsStore = useSettingsStore();
-
     const { webSocket } = useGRPCWebsocketTransport();
-
     const { name: browserName, platform: browserPlatform } = getBrowserNameAndPlatform();
 
+    return {
+        version: `v${APP_VERSION} / v${settingsStore.version}`,
+        url: `${window.location.origin}${window.location.pathname}`,
+        character: activeChar.value
+            ? `${activeChar.value.userId} (${activeChar.value.job} - ${activeChar.value.jobGrade})`
+            : 'N/A',
+        medium: `${browserName} on ${browserPlatform}`,
+        resolution: `${window.screen.width}x${window.screen.height} / ${window.devicePixelRatio}`,
+        languageTimezone: `${navigator.language} / ${Intl.DateTimeFormat().resolvedOptions().timeZone}`,
+        connection: `${navigator.onLine ? 'Online' : 'Offline'} / WebSocket ${webSocket.status.value}`,
+        nui: `${settingsStore.nuiEnabled ? 'Enabled' : 'Disabled'} (${settingsStore.nuiResourceName ?? 'N/A'})`,
+    };
+}
+
+export function formatDebugContext(context: DebugContext): string {
+    return `- FiveNet/Server Version: \`${context.version}\`
+- URL: \`${context.url}\`
+- Character: \`${context.character}\`
+- Browser/Platform: \`${context.medium}\`
+- Resolution/DPR: \`${context.resolution}\`
+- Language/Timezone: \`${context.languageTimezone}\`
+- Connection: \`${context.connection}\`
+- NUI: \`${context.nui}\``;
+}
+
+export function collectDebugInfo(): string {
+    const context = getDebugContext();
+
     return `## Debug Info
-- Version: ${APP_VERSION} / ${settingsStore.version}
-- Access Token Expiration: ${userInfo.value?.expiration ? userInfo.value.expiration.toISOString() : 'N/A'}
-- NUI: ${settingsStore.nuiEnabled ? 'Enabled' : 'Disabled'} (${settingsStore.nuiResourceName ?? 'N/A'})
-- WebSocket Status: ${webSocket.status.value}
-- Active Char ID: ${activeChar.value ? activeChar.value.userId : 'N/A'} (Identifier: ${activeChar.value ? activeChar.value.identifier : 'N/A'})
-- Active Char Job: ${activeChar.value ? `${activeChar.value.job} (Rank: ${activeChar.value.jobGrade})` : 'N/A'}
-- Permissions: ${permissions.value.length} (Attributes: ${attributes.value.length})
-
-### Browser Info
-
-- Browser: ${browserName}
-- Platform: ${browserPlatform}
-- Resolution: ${window.screen.width}x${window.screen.height} (Device Pixel Ratio: ${window.devicePixelRatio})
-- Language: ${navigator.language}
-- Timezone: ${Intl.DateTimeFormat().resolvedOptions().timeZone}
-- Online: ${navigator.onLine ? 'Yes' : 'No'}
-- Cookies Enabled: ${navigator.cookieEnabled ? 'Yes' : 'No'}
+${formatDebugContext(context)}
 `;
 }
 

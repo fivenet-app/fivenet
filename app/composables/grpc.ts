@@ -1,6 +1,8 @@
 import type { RpcError } from '#imports';
+import { formatDebugContext, getDebugContext } from '~/composables/debug';
 import { useAuthStore } from '~/stores/auth';
 import type { Notification } from '~/types/notifications';
+import { formatErrorReport } from '~/utils/error-report';
 import { isTranslatedError, localizeTemplateErrorParameters, parseErrorMessage } from '~/utils/errors';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 
@@ -35,20 +37,6 @@ function isRpcError(err: unknown): err is RpcError {
     );
 }
 
-function extractTraceId(err: RpcError): string {
-    const traceId = err.meta['trailer+x-trace-id'];
-
-    if (typeof traceId === 'string') {
-        return traceId;
-    }
-
-    if (Array.isArray(traceId)) {
-        return traceId.join(',');
-    }
-
-    return 'N/A';
-}
-
 function isThrottledCode(code: string): boolean {
     return throttledErrorCodes.includes(code);
 }
@@ -72,16 +60,18 @@ function shouldSkipThrottledError(code: string): boolean {
     return false;
 }
 
-function addCopyActionToNotification(notification: Notification, err: RpcError, traceId: string): void {
+function addCopyActionToNotification(notification: Notification, err: RpcError): void {
     notification.actions?.push({
         label: { key: 'pages.error.copy_error' },
         onClick: async () => {
+            const debugContext = getDebugContext();
+
             copyToClipboardWrapper(
-                `## Error occured at ${new Date().toISOString()}:
-**Service/Method**: \`${err.serviceName}/${err.methodName}\` => \`${err.code}\`
-**Message**: \`${err.message}\`
-**TraceID**: \`${traceId}\`
-**URL**: \`${window.location.href}\``,
+                formatErrorReport(err, {
+                    source: `gRPC ${err.serviceName ?? 'N/A'}/${err.methodName ?? 'N/A'} (${err.code})`,
+                    statusCode: err.code,
+                    context: formatDebugContext(debugContext),
+                }),
             );
 
             const notifications = useNotificationsStore();
@@ -142,12 +132,11 @@ export function handleGRPCError(err: unknown, options: { authScope?: GRPCAuthSco
         applyTranslatedError(notification, error.message);
     } else {
         const code = rpcErr.code.toUpperCase();
-        const traceId = extractTraceId(rpcErr);
 
         // If the error code has already been "handled", skip "handling" them for now.
         // Only do this for internal, deadline_exceeded, cancelled, permission_denied, unauthenticated codes.
         logger.error(
-            `GRPC Error: ${code} - ${error.message} (Trace ID: '${extractTraceId(rpcErr)}')`,
+            `GRPC Error: ${code} - ${error.message}`,
             isThrottledCode(code),
             `(Call: ${rpcErr.serviceName ?? 'N/A'}/${rpcErr.methodName ?? 'N/A'})`,
         );
@@ -158,12 +147,13 @@ export function handleGRPCError(err: unknown, options: { authScope?: GRPCAuthSco
 
         switch (code) {
             case 'INTERNAL':
+                addCopyActionToNotification(notification, rpcErr);
                 break;
 
             case 'DEADLINE_EXCEEDED':
                 notification.title = { key: 'notifications.grpc_errors.deadline_exceeded.title', parameters: {} };
                 notification.description = { key: 'notifications.grpc_errors.deadline_exceeded.content', parameters: {} };
-                addCopyActionToNotification(notification, rpcErr, traceId);
+                addCopyActionToNotification(notification, rpcErr);
                 break;
 
             case 'CANCELLED':
@@ -173,6 +163,7 @@ export function handleGRPCError(err: unknown, options: { authScope?: GRPCAuthSco
             case 'UNAVAILABLE':
                 notification.title = { key: 'notifications.grpc_errors.unavailable.title', parameters: {} };
                 notification.description = { key: 'notifications.grpc_errors.unavailable.content', parameters: {} };
+                addCopyActionToNotification(notification, rpcErr);
                 break;
 
             case 'UNAUTHENTICATED':
@@ -197,7 +188,7 @@ export function handleGRPCError(err: unknown, options: { authScope?: GRPCAuthSco
                     // the selector if their current route needs a character.
                     useAuthStore().clearCharacterSession('character-expired');
                 }
-                addCopyActionToNotification(notification, rpcErr, traceId);
+                addCopyActionToNotification(notification, rpcErr);
                 break;
 
             case 'NOT_FOUND':
@@ -210,7 +201,7 @@ export function handleGRPCError(err: unknown, options: { authScope?: GRPCAuthSco
                     key: 'notifications.grpc_errors.default.content',
                     parameters: { msg: error.message, code: rpcErr?.code.valueOf() ?? 'N/A' },
                 };
-                addCopyActionToNotification(notification, rpcErr, traceId);
+                addCopyActionToNotification(notification, rpcErr);
                 break;
         }
         applyTranslatedError(notification, error.message);

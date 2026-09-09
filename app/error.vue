@@ -2,6 +2,7 @@
 <script setup lang="ts">
 import '~/assets/css/herofull-pattern.css';
 import FiveNetLogo from '~/components/partials/logos/FiveNetLogo.vue';
+import { formatErrorReport, getSafeBrowserDebugContext } from '~/utils/error-report';
 
 useHead({
     title: 'Error occured - FiveNet',
@@ -49,13 +50,12 @@ const version = APP_VERSION;
 function copyError(): void {
     if (!props.error) return;
 
-    void copyToClipboardWrapper(`**App Error occured - ${new Date().toLocaleString()}**
-\`\`\`
-${props.error ? JSON.stringify(props.error) : 'Unknown error'}
-\`\`\`
-**Version:** ${version}
-**URL**: ${window.location.href}
-`).catch(() => undefined);
+    void copyToClipboardWrapper(
+        formatErrorReport(props.error, {
+            source: 'Application Error',
+            context: getSafeBrowserDebugContext(),
+        }),
+    ).catch(() => undefined);
 }
 
 function setDevConfig(): void {
