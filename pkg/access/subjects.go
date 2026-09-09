@@ -750,7 +750,7 @@ func (a *SubjectObjectAccess) ClearTarget(ctx context.Context, tx qrm.DB, target
 	stmt := a.accessTable.
 		DELETE().
 		WHERE(a.accessColumns.TargetID.EQ(mysql.Int64(targetID))).
-		LIMIT(1000)
+		LIMIT(500)
 
 	_, err := stmt.ExecContext(ctx, tx)
 	return err

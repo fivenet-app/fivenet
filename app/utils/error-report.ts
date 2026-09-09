@@ -79,7 +79,7 @@ export function getSafeBrowserDebugContext(): string {
               ? 'Safari'
               : 'Unknown';
 
-    return `- FiveNet/Server Version: \`v${APP_VERSION} / N/A\`
+    return `- FiveNet/Server Version: \`${APP_VERSION} / N/A\`
 - URL: \`${window.location.origin}${window.location.pathname}\`
 - Browser/Platform: \`${browser} / ${navigator.platform}\`
 - Resolution/DPR: \`${window.screen.width}x${window.screen.height} / ${window.devicePixelRatio}\`

@@ -72,7 +72,7 @@ export default defineAppConfig({
         },
         notification: 3500,
     },
-    maxAccessEntries: 12,
+    maxAccessEntries: 15,
 
     fallbackColor: 'blue',
 

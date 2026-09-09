@@ -19,7 +19,7 @@ export function getDebugContext(): DebugContext {
     const { name: browserName, platform: browserPlatform } = getBrowserNameAndPlatform();
 
     return {
-        version: `v${APP_VERSION} / v${settingsStore.version}`,
+        version: `${APP_VERSION} / ${settingsStore.version}`,
         url: `${window.location.origin}${window.location.pathname}`,
         character: activeChar.value
             ? `${activeChar.value.userId} (${activeChar.value.job} - ${activeChar.value.jobGrade})`
