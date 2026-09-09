@@ -129,7 +129,7 @@ watch(
 const canSubmit = ref<boolean>(true);
 const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) => {
     canSubmit.value = false;
-    await createThread(event.data).finally(() => useTimeoutFn(() => (canSubmit.value = true), 1000));
+    await createThread(event.data).finally(() => useTimeoutFn(() => (canSubmit.value = true), 400));
 }, 1000);
 
 const editorRef = useTemplateRef('editorRef');

@@ -236,7 +236,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
     if (!selectedEmail.value?.id) return;
 
     canSubmit.value = false;
-    await postMessage(event.data).finally(() => useTimeoutFn(() => (canSubmit.value = true), 1000));
+    await postMessage(event.data).finally(() => useTimeoutFn(() => (canSubmit.value = true), 400));
 }, 1000);
 
 const editorRef = useTemplateRef('editorRef');
