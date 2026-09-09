@@ -51,9 +51,7 @@ function setFromProps(): void {
     syncSnapshot();
 }
 
-watch([namePrefix, nameSuffix], () => {
-    setFromProps();
-});
+watch([namePrefix, nameSuffix], () => setFromProps());
 
 async function setJobsUserNote(values: Schema): Promise<undefined | SetColleaguePropsResponse> {
     try {
