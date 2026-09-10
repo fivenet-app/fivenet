@@ -1,12 +1,5 @@
 import { defineVitestProject } from '@nuxt/test-utils/config';
 import { configDefaults, defineConfig } from 'vitest/config';
-import { deepToRaw } from './app/utils/deepToRaw.ts';
-
-const nativeStructuredClone = globalThis.structuredClone.bind(globalThis);
-
-globalThis.structuredClone = ((value: unknown, options?: StructuredSerializeOptions) => {
-    return nativeStructuredClone(deepToRaw(value), options);
-}) as typeof globalThis.structuredClone;
 
 export default defineConfig({
     root: '.',
@@ -35,6 +28,7 @@ export default defineConfig({
                     exclude: ['app/**/*.{e2e,unit}.{test,spec}.ts', ...configDefaults.exclude, '.direnv/*'],
                     environment: 'nuxt',
                     hookTimeout: 30_000,
+                    fsModuleCache: true,
                 },
             }),
         ],
