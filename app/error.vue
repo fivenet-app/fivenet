@@ -47,13 +47,31 @@ async function handleError(url = '/'): Promise<void> {
 
 const version = APP_VERSION;
 
+function getRouteDebugContext(): string {
+    try {
+        const routes = router.getRoutes().map((route) => ({
+            name: route.name === undefined ? undefined : String(route.name),
+            path: route.path,
+        }));
+
+        // Keep the same diagnostic available in the browser console while also
+        // including it in the copied report for cases where the console is not
+        // available anymore.
+        console.table(routes);
+
+        return `### Client Router\n\n- Current route: \`${route.value.fullPath}\`\n- Current route name: \`${route.value.name === undefined ? 'N/A' : String(route.value.name)}\`\n\n### Registered Routes\n\n\`\`\`json\n${JSON.stringify(routes, null, 2)}\n\`\`\``;
+    } catch {
+        return '### Client Router\n\nUnable to inspect registered routes.';
+    }
+}
+
 function copyError(): void {
     if (!props.error) return;
 
     void copyToClipboardWrapper(
         formatErrorReport(props.error, {
             source: 'Application Error',
-            context: getSafeBrowserDebugContext(),
+            context: `${getSafeBrowserDebugContext()}\n\n${getRouteDebugContext()}`,
         }),
     ).catch(() => undefined);
 }
