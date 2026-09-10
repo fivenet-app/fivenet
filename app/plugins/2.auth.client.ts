@@ -2,20 +2,28 @@ import { parseQuery, type RouteLocationNormalized } from 'vue-router';
 import { canAccessRoute, getRoutePermissionDeniedNotification } from '~/composables/auth/routePermission';
 import { isSetupBypassRoute } from '~/composables/setup';
 
-function loginRedirect(to: RouteLocationNormalized) {
-    return navigateTo({
+export function getLoginRedirect(to: RouteLocationNormalized) {
+    return {
         name: 'auth-login',
         query: { redirect: getRedirectPath((to.query.redirect ?? to.fullPath) as string) },
         replace: true,
-    });
+    } as const;
 }
 
-function characterSelectorRedirect(to: RouteLocationNormalized) {
-    return navigateTo({
+function loginRedirect(to: RouteLocationNormalized) {
+    return navigateTo(getLoginRedirect(to));
+}
+
+export function getCharacterSelectorRedirect(to: RouteLocationNormalized) {
+    return {
         name: 'auth-character-selector',
         query: { redirect: getRedirectPath((to.query.redirect ?? to.fullPath) as string) },
         replace: true,
-    });
+    } as const;
+}
+
+function characterSelectorRedirect(to: RouteLocationNormalized) {
+    return navigateTo(getCharacterSelectorRedirect(to));
 }
 
 export default defineNuxtPlugin({
@@ -45,8 +53,7 @@ export default defineNuxtPlugin({
             }
 
             const account = await authStore.ensureAccountSession();
-            if (account.kind === 'needs-login') return loginRedirect(to);
-            if (account.kind === 'temporary-failure') return abortNavigation();
+            if (account.kind === 'needs-login' || account.kind === 'temporary-failure') return loginRedirect(to);
 
             const hasConfigAdminAccess = async (): Promise<boolean> => {
                 if (can('internal.Superuser/ConfigAdmin').value) return true;
@@ -79,8 +86,9 @@ export default defineNuxtPlugin({
             if (!to.meta.authTokenOnly) {
                 const character = await authStore.ensureCharacterSession();
                 if (character.kind === 'needs-login') return loginRedirect(to);
-                if (character.kind === 'needs-character') return characterSelectorRedirect(to);
-                if (character.kind === 'temporary-failure') return abortNavigation();
+                if (character.kind === 'needs-character' || character.kind === 'temporary-failure') {
+                    return characterSelectorRedirect(to);
+                }
             }
 
             if (!to.meta.permission || canAccessRoute(to)) return true;
