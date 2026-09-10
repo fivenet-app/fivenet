@@ -147,7 +147,7 @@ const updateCurvedTextFillColor = (val: string) => {
                             class="w-full"
                             type="text"
                             :model-value="(activeObject as Textbox).text"
-                            @update:model-value="updateText($event)"
+                            @update:model-value="($event) => updateText($event)"
                         />
                     </UFormField>
 
@@ -189,7 +189,7 @@ const updateCurvedTextFillColor = (val: string) => {
                         <ColorPicker
                             class="w-full"
                             :model-value="typeof activeObject.fill === 'string' ? activeObject.fill : '#000000'"
-                            @update:model-value="updateFillColor($event ?? '#000000')"
+                            @update:model-value="($event) => updateFillColor($event ?? '#000000')"
                         />
                     </UFormField>
                 </div>
@@ -200,7 +200,7 @@ const updateCurvedTextFillColor = (val: string) => {
                             class="w-full"
                             type="text"
                             :model-value="(activeObject as FabricCurvedText).text"
-                            @update:model-value="updateCurvedText($event)"
+                            @update:model-value="($event) => updateCurvedText($event)"
                         />
                     </UFormField>
 
@@ -248,7 +248,7 @@ const updateCurvedTextFillColor = (val: string) => {
                                     ? ((activeObject as FabricCurvedText).fill as string)
                                     : '#000000'
                             "
-                            @update:model-value="updateCurvedTextFillColor($event ?? '#000000')"
+                            @update:model-value="($event) => updateCurvedTextFillColor($event ?? '#000000')"
                         />
                     </UFormField>
                 </div>
@@ -263,7 +263,7 @@ const updateCurvedTextFillColor = (val: string) => {
                                     ? activeObject.fill
                                     : '#000000'
                             "
-                            @update:model-value="updateFillColor($event ?? '#000000')"
+                            @update:model-value="($event) => updateFillColor($event ?? '#000000')"
                         />
                     </UFormField>
 
@@ -275,7 +275,7 @@ const updateCurvedTextFillColor = (val: string) => {
                                     ? activeObject.stroke
                                     : '#000000'
                             "
-                            @update:model-value="updateStrokeColor($event ?? '#000000')"
+                            @update:model-value="($event) => updateStrokeColor($event ?? '#000000')"
                         />
                     </UFormField>
 
@@ -286,7 +286,7 @@ const updateCurvedTextFillColor = (val: string) => {
                             :min="0"
                             :step="1"
                             :max="24"
-                            @update:model-value="updateStrokeWidth($event ?? 0)"
+                            @update:model-value="($event) => updateStrokeWidth($event ?? 0)"
                         />
                     </UFormField>
 
@@ -297,7 +297,7 @@ const updateCurvedTextFillColor = (val: string) => {
                             :items="strokeDashes"
                             label-key="name"
                             value-key="value"
-                            @update:model-value="updateStrokeDash($event)"
+                            @update:model-value="($event) => updateStrokeDash($event)"
                         />
                     </UFormField>
 
@@ -308,7 +308,7 @@ const updateCurvedTextFillColor = (val: string) => {
                             :max="1"
                             :step="0.1"
                             :model-value="activeObject.opacity ?? 1"
-                            @update:model-value="updateOpacity($event ?? 1)"
+                            @update:model-value="($event) => updateOpacity($event ?? 1)"
                         />
                     </UFormField>
 
@@ -336,7 +336,7 @@ const updateCurvedTextFillColor = (val: string) => {
                                     ? activeObject.fill
                                     : '#000000'
                             "
-                            @update:model-value="updateFillColor($event ?? '#000000')"
+                            @update:model-value="($event) => updateFillColor($event ?? '#000000')"
                         />
                     </UFormField>
 
@@ -348,7 +348,7 @@ const updateCurvedTextFillColor = (val: string) => {
                                     ? activeObject.stroke
                                     : '#000000'
                             "
-                            @update:model-value="updateStrokeColor($event ?? '#000000')"
+                            @update:model-value="($event) => updateStrokeColor($event ?? '#000000')"
                         />
                     </UFormField>
 
@@ -359,7 +359,7 @@ const updateCurvedTextFillColor = (val: string) => {
                             :min="0"
                             :step="1"
                             :max="24"
-                            @update:model-value="updateStrokeWidth($event ?? 0)"
+                            @update:model-value="($event) => updateStrokeWidth($event ?? 0)"
                         />
                     </UFormField>
 
@@ -370,7 +370,7 @@ const updateCurvedTextFillColor = (val: string) => {
                             :items="strokeDashes"
                             label-key="name"
                             value-key="value"
-                            @update:model-value="updateStrokeDash($event)"
+                            @update:model-value="($event) => updateStrokeDash($event)"
                         />
                     </UFormField>
 
@@ -381,7 +381,7 @@ const updateCurvedTextFillColor = (val: string) => {
                             :max="1"
                             :step="0.1"
                             :model-value="activeObject.opacity ?? 1"
-                            @update:model-value="updateOpacity($event ?? 1)"
+                            @update:model-value="($event) => updateOpacity($event ?? 1)"
                         />
                     </UFormField>
 
@@ -424,7 +424,7 @@ const updateCurvedTextFillColor = (val: string) => {
                             :max="1"
                             :step="0.1"
                             :model-value="activeObject.opacity ?? 1"
-                            @update:model-value="updateOpacity($event ?? 1)"
+                            @update:model-value="($event) => updateOpacity($event ?? 1)"
                         />
                     </UFormField>
                 </div>
