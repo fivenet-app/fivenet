@@ -66,6 +66,9 @@ func (c *UpdateCmd) Run(ctx *kong.Context) error {
 		}
 
 		log.Printf("✅ Successfully updated FiveNet to version %s", latest.Version())
+		log.Printf(
+			"⚠️ You need to restart the FiveNet DBSync service now to complete the update. E.g., run `fivenet dbsync restart` or restart the service.",
+		)
 	} else {
 		log.Println(
 			"🔎 Not updating because check only mode is enabled! To update the binary disable `--check-only`",
