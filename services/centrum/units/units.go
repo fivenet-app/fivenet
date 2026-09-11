@@ -527,15 +527,16 @@ func (s *UnitDB) UpdateStatus(
 	ctx context.Context,
 	unitId int64,
 	in *centrumunits.UnitStatus,
-) (*centrumunits.UnitStatus, error) {
+) (*centrumunits.UnitStatus, bool, error) {
 	unit, err := s.Get(ctx, unitId)
 	if err != nil {
-		return nil, err
+		return nil, false, err
 	}
 
-	// If the unit status is the same and is a status that shouldn't be duplicated, don't update the status again
+	// Suppress only a true duplicate. A reason/code or actor change is a new,
+	// client-visible status update even when the status enum is unchanged.
 	if unit.GetStatus() != nil &&
-		unit.GetStatus().GetStatus() == in.GetStatus() &&
+		sameUnitStatusContent(unit.GetStatus(), in) &&
 		(in.GetStatus() == centrumunits.StatusUnit_STATUS_UNIT_ON_BREAK ||
 			in.GetStatus() == centrumunits.StatusUnit_STATUS_UNIT_BUSY ||
 			in.GetStatus() == centrumunits.StatusUnit_STATUS_UNIT_UNAVAILABLE ||
@@ -543,11 +544,11 @@ func (s *UnitDB) UpdateStatus(
 		// Additionally if the status is under 2 minutes disallow the same status update
 		(unit.GetStatus().GetCreatedAt() == nil || time.Since(unit.GetStatus().GetCreatedAt().AsTime()) < 2*time.Minute) {
 		s.logger.Debug(
-			"skipping unit status update due to same status or time",
+			"skipping duplicate unit status update",
 			zap.Int64("unit_id", unitId),
 			zap.String("status", in.GetStatus().String()),
 		)
-		return nil, nil
+		return unit.GetStatus(), false, nil
 	}
 
 	if unit.GetAttributes() != nil &&
@@ -556,7 +557,7 @@ func (s *UnitDB) UpdateStatus(
 		if in.GetStatus() != centrumunits.StatusUnit_STATUS_UNIT_BUSY &&
 			in.GetStatus() != centrumunits.StatusUnit_STATUS_UNIT_ON_BREAK &&
 			in.GetStatus() != centrumunits.StatusUnit_STATUS_UNIT_UNAVAILABLE {
-			return nil, nil
+			return unit.GetStatus(), false, nil
 		}
 	}
 
@@ -581,7 +582,7 @@ func (s *UnitDB) UpdateStatus(
 			},
 		)
 		if err != nil {
-			return nil, err
+			return nil, false, err
 		}
 
 		if um, ok := s.tracker.GetUserMarkerById(in.GetUserId()); ok {
@@ -609,7 +610,7 @@ func (s *UnitDB) UpdateStatus(
 				},
 			)
 			if err != nil {
-				return nil, err
+				return nil, false, err
 			}
 		}
 	}
@@ -649,24 +650,33 @@ func (s *UnitDB) UpdateStatus(
 
 	res, err := stmt.ExecContext(ctx, s.db)
 	if err != nil {
-		return nil, err
+		return nil, false, err
 	}
 
 	lastId, err := res.LastInsertId()
 	if err != nil {
-		return nil, err
+		return nil, false, err
 	}
 	in.SetId(lastId)
 
 	if err := s.updateStatusInKV(ctx, in.GetUnitId(), in); err != nil {
-		return nil, err
+		return nil, false, err
 	}
 
 	if err := s.publishStatus(ctx, in, unit.GetJob()); err != nil {
-		return nil, err
+		return nil, false, err
 	}
 
-	return in, nil
+	return in, true, nil
+}
+
+func sameUnitStatusContent(current, next *centrumunits.UnitStatus) bool {
+	return current.GetStatus() == next.GetStatus() &&
+		current.GetReason() == next.GetReason() &&
+		current.GetCode() == next.GetCode() &&
+		current.GetUserId() == next.GetUserId() &&
+		current.GetCreatorId() == next.GetCreatorId() &&
+		current.GetCreatorJob() == next.GetCreatorJob()
 }
 
 func (s *UnitDB) UpdateUnitAssignments(

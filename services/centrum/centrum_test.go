@@ -57,6 +57,7 @@ func newCentrumJoinUnitTestTracker() *centrumJoinUnitTestTracker {
 		markers: map[int32]*livemapmarkers.UserMarker{
 			1: {
 				UserId: 1,
+				Job:    "ambulance",
 				Hidden: false,
 			},
 		},
@@ -76,8 +77,8 @@ func (t *centrumJoinUnitTestTracker) GetUserMarkerById(
 }
 
 func (t *centrumJoinUnitTestTracker) IsUserOnDuty(userId int32) bool {
-	_, ok := t.markers[userId]
-	return ok
+	marker, ok := t.markers[userId]
+	return ok && marker != nil && !marker.GetHidden()
 }
 
 func (t *centrumJoinUnitTestTracker) Subscribe(
@@ -563,10 +564,10 @@ func TestSyncUnitMembershipClearsStaleMappingForMissingUnit(t *testing.T) {
 		JobGrade: 17,
 	})
 
-	missingUnitID := int64(999_999)
-	require.NoError(t, trackerStub.SetUserMappingForUser(ctx, 1, &missingUnitID))
+	unit := createUnitForTest(t, srv, ctx, "Alpha-Deleted")
+	require.NoError(t, trackerStub.SetUserMappingForUser(ctx, 1, &unit.Id))
 
-	require.NoError(t, srv.units.SyncUnitMembership(ctx, missingUnitID))
+	require.NoError(t, srv.units.Delete(ctx, unit.GetId()))
 
 	_, ok, err := trackerStub.GetUserMapping(1)
 	require.NoError(t, err)
@@ -585,9 +586,9 @@ func TestSyncUnitMembershipPreservesValidMappingAndClearsStaleOnes(t *testing.T)
 
 	unit := createUnitForTest(t, srv, ctx, "Alpha-Membership")
 	insertAssignmentRowForTest(t, db, unit.GetId(), 1)
-
-	staleUnitID := unit.GetId()
-	require.NoError(t, trackerStub.SetUserMappingForUser(ctx, 2, &staleUnitID))
+	insertAssignmentRowForTest(t, db, unit.GetId(), 2)
+	require.NoError(t, srv.units.SyncUnitMembership(ctx, unit.GetId()))
+	deleteAssignmentRowForTest(t, db, unit.GetId(), 2)
 
 	require.NoError(t, srv.units.SyncUnitMembership(ctx, unit.GetId()))
 
@@ -623,6 +624,96 @@ func TestSyncUserUnitMappingDeletesMappingForOffDutyUserWithoutAssignment(t *tes
 	_, ok, err := trackerStub.GetUserMapping(1)
 	require.NoError(t, err)
 	assert.False(t, ok)
+}
+
+func TestSyncUserUnitMappingRemovesAssignmentForUserOnDifferentJob(t *testing.T) {
+	t.Parallel()
+
+	srv, db, trackerStub := newCentrumJoinUnitTestServer(t)
+	ctx := auth.ContextWithUserInfo(t.Context(), &pbuserinfo.UserInfo{
+		UserId:   1,
+		Job:      "ambulance",
+		JobGrade: 17,
+	})
+
+	unit := createUnitForTest(t, srv, ctx, "Alpha-Job-Change")
+	seedAssignmentForTest(t, db, trackerStub, unit.GetId(), 1)
+	trackerStub.markers[1].Job = "police"
+
+	require.NoError(t, srv.units.SyncUserUnitMapping(ctx, 1))
+
+	mapping, ok, err := trackerStub.GetUserMapping(1)
+	require.NoError(t, err)
+	require.True(t, ok)
+	require.NotNil(t, mapping)
+	assert.Nil(t, mapping.UnitId)
+	assertUnitCacheHasUser(t, srv, ctx, unit.GetId(), 1, false)
+}
+
+func TestUpdateUnitStatusPersistsChangedReasonForSameStatus(t *testing.T) {
+	t.Parallel()
+
+	srv, _, _ := newCentrumJoinUnitTestServer(t)
+	ctx := auth.ContextWithUserInfo(t.Context(), &pbuserinfo.UserInfo{
+		UserId:   1,
+		Job:      "ambulance",
+		JobGrade: 17,
+	})
+	unit := createUnitForTest(t, srv, ctx, "Alpha-Status")
+	firstReason := "available for patrol"
+
+	first, updated, err := srv.units.UpdateStatus(ctx, unit.GetId(), &centrumunits.UnitStatus{
+		UnitId: unit.GetId(),
+		Status: centrumunits.StatusUnit_STATUS_UNIT_AVAILABLE,
+		Reason: &firstReason,
+	})
+	require.NoError(t, err)
+	require.True(t, updated)
+	require.NotNil(t, first)
+
+	secondReason := "available for transport"
+	second, updated, err := srv.units.UpdateStatus(ctx, unit.GetId(), &centrumunits.UnitStatus{
+		UnitId: unit.GetId(),
+		Status: centrumunits.StatusUnit_STATUS_UNIT_AVAILABLE,
+		Reason: &secondReason,
+	})
+	require.NoError(t, err)
+	require.True(t, updated)
+	require.NotNil(t, second)
+	assert.Greater(t, second.GetId(), first.GetId())
+	assert.Equal(t, "available for transport", second.GetReason())
+}
+
+func TestUpdateUnitStatusResponseContainsPersistedStatus(t *testing.T) {
+	t.Parallel()
+
+	srv, _, _ := newCentrumJoinUnitTestServer(t)
+	ctx := auth.ContextWithUserInfo(t.Context(), &pbuserinfo.UserInfo{
+		UserId:   1,
+		Job:      "ambulance",
+		JobGrade: 17,
+	})
+	unit := createUnitForTest(t, srv, ctx, "Alpha-Status-Response")
+	userID := int32(1)
+	require.NoError(t, srv.units.UpdateUnitAssignments(ctx, "ambulance", &userID, unit.GetId(), []int32{userID}, nil))
+
+	first, err := srv.UpdateUnitStatus(ctx, &pbcentrum.UpdateUnitStatusRequest{
+		UnitId: unit.GetId(),
+		Status: centrumunits.StatusUnit_STATUS_UNIT_BUSY,
+	})
+	require.NoError(t, err)
+	require.True(t, first.GetUpdated())
+	require.NotNil(t, first.GetStatus())
+	require.Equal(t, centrumunits.StatusUnit_STATUS_UNIT_BUSY, first.GetStatus().GetStatus())
+
+	second, err := srv.UpdateUnitStatus(ctx, &pbcentrum.UpdateUnitStatusRequest{
+		UnitId: unit.GetId(),
+		Status: centrumunits.StatusUnit_STATUS_UNIT_BUSY,
+	})
+	require.NoError(t, err)
+	assert.False(t, second.GetUpdated())
+	require.NotNil(t, second.GetStatus())
+	assert.Equal(t, first.GetStatus().GetId(), second.GetStatus().GetId())
 }
 
 func TestUpdateUnitAssignmentsDropsUsersOutsideUnitJob(t *testing.T) {
@@ -945,4 +1036,7 @@ func TestUpdateDispatchStatusAllowsMissingTrackerMapping(t *testing.T) {
 	})
 	require.NoError(t, err)
 	require.NotNil(t, resp)
+	require.True(t, resp.GetUpdated())
+	require.NotNil(t, resp.GetStatus())
+	assert.Greater(t, resp.GetStatus().GetId(), int64(0))
 }

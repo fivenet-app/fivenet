@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"strconv"
+	"time"
 
 	centrumdispatchers "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/centrum/dispatchers"
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/cron"
@@ -19,6 +20,9 @@ const (
 )
 
 func (s *Housekeeper) runCleanupDispatchers(ctx context.Context, data *cron.CronjobData) error {
+	startedAt := time.Now()
+	defer s.metrics.ObserveHousekeeperDuration("cleanup_dispatchers", time.Since(startedAt).Seconds())
+
 	ctx, span := s.tracer.Start(ctx, "centrum.dispatchers_cleanup")
 	defer span.End()
 
@@ -34,6 +38,12 @@ func (s *Housekeeper) runCleanupDispatchers(ctx context.Context, data *cron.Cron
 	)
 	if err != nil {
 		s.logger.Error("failed to remove old dispatchers", zap.Error(err))
+	}
+	s.metrics.SetHousekeeperWork("cleanup_dispatchers", "dispatchers_checked", dispatchersChecked)
+	s.metrics.SetHousekeeperWork("cleanup_dispatchers", "dispatchers_removed", dispatchersRemoved)
+	s.metrics.SetHousekeeperWork("cleanup_dispatchers", "users_processed", usersProcessed)
+	s.metrics.SetHousekeeperWork("cleanup_dispatchers", "jobs_affected", jobsAffected)
+	if err != nil {
 		return err
 	}
 

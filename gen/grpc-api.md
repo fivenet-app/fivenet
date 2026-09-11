@@ -9060,6 +9060,12 @@ Auth Service handles user authentication, character selection and oauth2 connect
 ### services.centrum.UpdateDispatchStatusResponse
 
 
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `status` | [resources.centrum.dispatches.DispatchStatus](#resourcescentrumdispatchesDispatchStatus) | optional |  |
+| `updated` | [bool](#bool) |  |  |
+
+
 
 
  <!-- end messages -->
@@ -9249,6 +9255,12 @@ Auth Service handles user authentication, character selection and oauth2 connect
 
 
 ### services.centrum.UpdateUnitStatusResponse
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `status` | [resources.centrum.units.UnitStatus](#resourcescentrumunitsUnitStatus) | optional |  |
+| `updated` | [bool](#bool) |  |  |
 
 
 

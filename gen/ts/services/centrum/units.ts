@@ -172,6 +172,14 @@ export interface UpdateUnitStatusRequest {
  * @generated from protobuf message services.centrum.UpdateUnitStatusResponse
  */
 export interface UpdateUnitStatusResponse {
+    /**
+     * @generated from protobuf field: optional resources.centrum.units.UnitStatus status = 1
+     */
+    status?: UnitStatus;
+    /**
+     * @generated from protobuf field: bool updated = 2
+     */
+    updated: boolean;
 }
 // @generated message type with reflection information, may provide speed optimized methods
 class JoinUnitRequest$Type extends MessageType<JoinUnitRequest> {
@@ -934,10 +942,14 @@ export const UpdateUnitStatusRequest = new UpdateUnitStatusRequest$Type();
 // @generated message type with reflection information, may provide speed optimized methods
 class UpdateUnitStatusResponse$Type extends MessageType<UpdateUnitStatusResponse> {
     constructor() {
-        super("services.centrum.UpdateUnitStatusResponse", []);
+        super("services.centrum.UpdateUnitStatusResponse", [
+            { no: 1, name: "status", kind: "message", T: () => UnitStatus },
+            { no: 2, name: "updated", kind: "scalar", T: 8 /*ScalarType.BOOL*/ }
+        ]);
     }
     create(value?: PartialMessage<UpdateUnitStatusResponse>): UpdateUnitStatusResponse {
         const message = globalThis.Object.create((this.messagePrototype!));
+        message.updated = false;
         if (value !== undefined)
             reflectionMergePartial<UpdateUnitStatusResponse>(this, message, value);
         return message;
@@ -947,6 +959,12 @@ class UpdateUnitStatusResponse$Type extends MessageType<UpdateUnitStatusResponse
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
+                case /* optional resources.centrum.units.UnitStatus status */ 1:
+                    message.status = UnitStatus.internalBinaryRead(reader, reader.uint32(), options, message.status);
+                    break;
+                case /* bool updated */ 2:
+                    message.updated = reader.bool();
+                    break;
                 default:
                     let u = options.readUnknownField;
                     if (u === "throw")
@@ -959,6 +977,12 @@ class UpdateUnitStatusResponse$Type extends MessageType<UpdateUnitStatusResponse
         return message;
     }
     internalBinaryWrite(message: UpdateUnitStatusResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* optional resources.centrum.units.UnitStatus status = 1; */
+        if (message.status)
+            UnitStatus.internalBinaryWrite(message.status, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
+        /* bool updated = 2; */
+        if (message.updated !== false)
+            writer.tag(2, WireType.Varint).bool(message.updated);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);

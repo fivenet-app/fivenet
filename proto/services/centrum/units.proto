@@ -89,7 +89,10 @@ message UpdateUnitStatusRequest {
   ];
 }
 
-message UpdateUnitStatusResponse {}
+message UpdateUnitStatusResponse {
+  optional resources.centrum.units.UnitStatus status = 1;
+  bool updated = 2;
+}
 
 service UnitsService {
   option (codegen.perms.perms_svc) = {

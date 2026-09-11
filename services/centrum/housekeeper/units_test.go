@@ -51,7 +51,7 @@ type housekeeperTrackerStub struct {
 func (t *housekeeperTrackerStub) ListTrackedJobs() []string { return nil }
 
 func (t *housekeeperTrackerStub) GetUserMarkerById(id int32) (*livemapmarkers.UserMarker, bool) {
-	return &livemapmarkers.UserMarker{UserId: id}, true
+	return &livemapmarkers.UserMarker{UserId: id, Job: "ambulance"}, true
 }
 
 func (t *housekeeperTrackerStub) IsUserOnDuty(userId int32) bool {
