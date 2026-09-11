@@ -1142,7 +1142,9 @@ func (b0 UpdateDispatchStatusRequest_builder) Build() *UpdateDispatchStatusReque
 }
 
 type UpdateDispatchStatusResponse struct {
-	state         protoimpl.MessageState `protogen:"hybrid.v1"`
+	state         protoimpl.MessageState     `protogen:"hybrid.v1"`
+	Status        *dispatches.DispatchStatus `protobuf:"bytes,1,opt,name=status,proto3,oneof" json:"status,omitempty"`
+	Updated       bool                       `protobuf:"varint,2,opt,name=updated,proto3" json:"updated,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1172,15 +1174,52 @@ func (x *UpdateDispatchStatusResponse) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
+func (x *UpdateDispatchStatusResponse) GetStatus() *dispatches.DispatchStatus {
+	if x != nil {
+		return x.Status
+	}
+	return nil
+}
+
+func (x *UpdateDispatchStatusResponse) GetUpdated() bool {
+	if x != nil {
+		return x.Updated
+	}
+	return false
+}
+
+func (x *UpdateDispatchStatusResponse) SetStatus(v *dispatches.DispatchStatus) {
+	x.Status = v
+}
+
+func (x *UpdateDispatchStatusResponse) SetUpdated(v bool) {
+	x.Updated = v
+}
+
+func (x *UpdateDispatchStatusResponse) HasStatus() bool {
+	if x == nil {
+		return false
+	}
+	return x.Status != nil
+}
+
+func (x *UpdateDispatchStatusResponse) ClearStatus() {
+	x.Status = nil
+}
+
 type UpdateDispatchStatusResponse_builder struct {
 	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
 
+	Status  *dispatches.DispatchStatus
+	Updated bool
 }
 
 func (b0 UpdateDispatchStatusResponse_builder) Build() *UpdateDispatchStatusResponse {
 	m0 := &UpdateDispatchStatusResponse{}
 	b, x := &b0, m0
 	_, _ = b, x
+	x.Status = b.Status
+	x.Updated = b.Updated
 	return m0
 }
 
@@ -1535,8 +1574,11 @@ const file_services_centrum_dispatches_proto_rawDesc = "" +
 	"\x06reason\x18\x03 \x01(\tB\x06\xda\xf3\x18\x02\b\x01H\x00R\x06reason\x88\x01\x01\x12\x1f\n" +
 	"\x04code\x18\x04 \x01(\tB\x06\xda\xf3\x18\x02\b\x01H\x01R\x04code\x88\x01\x01B\t\n" +
 	"\a_reasonB\a\n" +
-	"\x05_code\"\x1e\n" +
-	"\x1cUpdateDispatchStatusResponse\"\x94\x01\n" +
+	"\x05_code\"\x8e\x01\n" +
+	"\x1cUpdateDispatchStatusResponse\x12I\n" +
+	"\x06status\x18\x01 \x01(\v2,.resources.centrum.dispatches.DispatchStatusH\x00R\x06status\x88\x01\x01\x12\x18\n" +
+	"\aupdated\x18\x02 \x01(\bR\aupdatedB\t\n" +
+	"\a_status\"\x94\x01\n" +
 	"\x15AssignDispatchRequest\x12\x1f\n" +
 	"\vdispatch_id\x18\x01 \x01(\x03R\n" +
 	"dispatchId\x12\x15\n" +
@@ -1610,32 +1652,33 @@ var file_services_centrum_dispatches_proto_depIdxs = []int32{
 	23, // 12: services.centrum.UpdateDispatchResponse.dispatch:type_name -> resources.centrum.dispatches.Dispatch
 	25, // 13: services.centrum.ListDispatchTargetJobsResponse.jobs:type_name -> resources.jobs.Job
 	21, // 14: services.centrum.UpdateDispatchStatusRequest.status:type_name -> resources.centrum.dispatches.StatusDispatch
-	26, // 15: services.centrum.TakeDispatchRequest.resp:type_name -> resources.centrum.dispatches.TakeDispatchResp
-	6,  // 16: services.centrum.DispatchesService.CreateDispatch:input_type -> services.centrum.CreateDispatchRequest
-	8,  // 17: services.centrum.DispatchesService.UpdateDispatch:input_type -> services.centrum.UpdateDispatchRequest
-	10, // 18: services.centrum.DispatchesService.DeleteDispatch:input_type -> services.centrum.DeleteDispatchRequest
-	12, // 19: services.centrum.DispatchesService.ListDispatchTargetJobs:input_type -> services.centrum.ListDispatchTargetJobsRequest
-	16, // 20: services.centrum.DispatchesService.AssignDispatch:input_type -> services.centrum.AssignDispatchRequest
-	2,  // 21: services.centrum.DispatchesService.GetDispatch:input_type -> services.centrum.GetDispatchRequest
-	0,  // 22: services.centrum.DispatchesService.ListDispatches:input_type -> services.centrum.ListDispatchesRequest
-	4,  // 23: services.centrum.DispatchesService.ListDispatchActivity:input_type -> services.centrum.ListDispatchActivityRequest
-	18, // 24: services.centrum.DispatchesService.TakeDispatch:input_type -> services.centrum.TakeDispatchRequest
-	14, // 25: services.centrum.DispatchesService.UpdateDispatchStatus:input_type -> services.centrum.UpdateDispatchStatusRequest
-	7,  // 26: services.centrum.DispatchesService.CreateDispatch:output_type -> services.centrum.CreateDispatchResponse
-	9,  // 27: services.centrum.DispatchesService.UpdateDispatch:output_type -> services.centrum.UpdateDispatchResponse
-	11, // 28: services.centrum.DispatchesService.DeleteDispatch:output_type -> services.centrum.DeleteDispatchResponse
-	13, // 29: services.centrum.DispatchesService.ListDispatchTargetJobs:output_type -> services.centrum.ListDispatchTargetJobsResponse
-	17, // 30: services.centrum.DispatchesService.AssignDispatch:output_type -> services.centrum.AssignDispatchResponse
-	3,  // 31: services.centrum.DispatchesService.GetDispatch:output_type -> services.centrum.GetDispatchResponse
-	1,  // 32: services.centrum.DispatchesService.ListDispatches:output_type -> services.centrum.ListDispatchesResponse
-	5,  // 33: services.centrum.DispatchesService.ListDispatchActivity:output_type -> services.centrum.ListDispatchActivityResponse
-	19, // 34: services.centrum.DispatchesService.TakeDispatch:output_type -> services.centrum.TakeDispatchResponse
-	15, // 35: services.centrum.DispatchesService.UpdateDispatchStatus:output_type -> services.centrum.UpdateDispatchStatusResponse
-	26, // [26:36] is the sub-list for method output_type
-	16, // [16:26] is the sub-list for method input_type
-	16, // [16:16] is the sub-list for extension type_name
-	16, // [16:16] is the sub-list for extension extendee
-	0,  // [0:16] is the sub-list for field type_name
+	24, // 15: services.centrum.UpdateDispatchStatusResponse.status:type_name -> resources.centrum.dispatches.DispatchStatus
+	26, // 16: services.centrum.TakeDispatchRequest.resp:type_name -> resources.centrum.dispatches.TakeDispatchResp
+	6,  // 17: services.centrum.DispatchesService.CreateDispatch:input_type -> services.centrum.CreateDispatchRequest
+	8,  // 18: services.centrum.DispatchesService.UpdateDispatch:input_type -> services.centrum.UpdateDispatchRequest
+	10, // 19: services.centrum.DispatchesService.DeleteDispatch:input_type -> services.centrum.DeleteDispatchRequest
+	12, // 20: services.centrum.DispatchesService.ListDispatchTargetJobs:input_type -> services.centrum.ListDispatchTargetJobsRequest
+	16, // 21: services.centrum.DispatchesService.AssignDispatch:input_type -> services.centrum.AssignDispatchRequest
+	2,  // 22: services.centrum.DispatchesService.GetDispatch:input_type -> services.centrum.GetDispatchRequest
+	0,  // 23: services.centrum.DispatchesService.ListDispatches:input_type -> services.centrum.ListDispatchesRequest
+	4,  // 24: services.centrum.DispatchesService.ListDispatchActivity:input_type -> services.centrum.ListDispatchActivityRequest
+	18, // 25: services.centrum.DispatchesService.TakeDispatch:input_type -> services.centrum.TakeDispatchRequest
+	14, // 26: services.centrum.DispatchesService.UpdateDispatchStatus:input_type -> services.centrum.UpdateDispatchStatusRequest
+	7,  // 27: services.centrum.DispatchesService.CreateDispatch:output_type -> services.centrum.CreateDispatchResponse
+	9,  // 28: services.centrum.DispatchesService.UpdateDispatch:output_type -> services.centrum.UpdateDispatchResponse
+	11, // 29: services.centrum.DispatchesService.DeleteDispatch:output_type -> services.centrum.DeleteDispatchResponse
+	13, // 30: services.centrum.DispatchesService.ListDispatchTargetJobs:output_type -> services.centrum.ListDispatchTargetJobsResponse
+	17, // 31: services.centrum.DispatchesService.AssignDispatch:output_type -> services.centrum.AssignDispatchResponse
+	3,  // 32: services.centrum.DispatchesService.GetDispatch:output_type -> services.centrum.GetDispatchResponse
+	1,  // 33: services.centrum.DispatchesService.ListDispatches:output_type -> services.centrum.ListDispatchesResponse
+	5,  // 34: services.centrum.DispatchesService.ListDispatchActivity:output_type -> services.centrum.ListDispatchActivityResponse
+	19, // 35: services.centrum.DispatchesService.TakeDispatch:output_type -> services.centrum.TakeDispatchResponse
+	15, // 36: services.centrum.DispatchesService.UpdateDispatchStatus:output_type -> services.centrum.UpdateDispatchStatusResponse
+	27, // [27:37] is the sub-list for method output_type
+	17, // [17:27] is the sub-list for method input_type
+	17, // [17:17] is the sub-list for extension type_name
+	17, // [17:17] is the sub-list for extension extendee
+	0,  // [0:17] is the sub-list for field type_name
 }
 
 func init() { file_services_centrum_dispatches_proto_init() }
@@ -1645,6 +1688,7 @@ func file_services_centrum_dispatches_proto_init() {
 	}
 	file_services_centrum_dispatches_proto_msgTypes[0].OneofWrappers = []any{}
 	file_services_centrum_dispatches_proto_msgTypes[14].OneofWrappers = []any{}
+	file_services_centrum_dispatches_proto_msgTypes[15].OneofWrappers = []any{}
 	file_services_centrum_dispatches_proto_msgTypes[16].OneofWrappers = []any{}
 	file_services_centrum_dispatches_proto_msgTypes[18].OneofWrappers = []any{}
 	type x struct{}

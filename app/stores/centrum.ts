@@ -250,6 +250,8 @@ export const useCentrumStore = defineStore(
                 // Don't set user added / removed for status
                 if (status.status === StatusUnit.USER_ADDED || status.status === StatusUnit.USER_REMOVED) return;
 
+                if (status.id > 0 && u.status.id >= status.id) return;
+
                 // Normal status update
                 u.status.id = status.id;
                 u.status.createdAt = status.createdAt;
@@ -367,6 +369,8 @@ export const useCentrumStore = defineStore(
             if (!disp.status) {
                 disp.status = status;
             } else {
+                if (status.id > 0 && disp.status.id >= status.id) return;
+
                 disp.status.id = status.id;
                 disp.status.createdAt = status.createdAt;
                 disp.status.dispatchId = status.dispatchId;
@@ -534,15 +538,15 @@ export const useCentrumStore = defineStore(
                         dispatchers.value.push(...(resp.change.latestState.dispatchers?.dispatchers ?? []));
                         isDispatcher.value = checkIfDispatcher(activeChar.value?.userId);
 
-                        const foundUnits: number[] = [];
+                        const foundUnits = new Set<number>();
                         resp.change.latestState.units.forEach((u) => {
-                            foundUnits.push(u.id);
+                            foundUnits.add(u.id);
                             addOrUpdateUnit(u);
                         });
                         // Remove missing units
                         let removedUnits = 0;
                         units.value.forEach((_, id) => {
-                            if (!foundUnits.includes(id)) {
+                            if (!foundUnits.has(id)) {
                                 removeUnit(id);
                                 removedUnits++;
                             }
@@ -550,15 +554,15 @@ export const useCentrumStore = defineStore(
                         logger.debug(`Removed ${removedUnits} old units`);
                         setOwnUnit(resp.change.latestState.ownUnitId);
 
-                        const foundDispatches: number[] = [];
+                        const foundDispatches = new Set<number>();
                         resp.change.latestState.dispatches.forEach((d) => {
-                            foundDispatches.push(d.id);
+                            foundDispatches.add(d.id);
                             addOrUpdateDispatch(d);
                         });
                         // Remove missing dispatches
                         let removedDispatches = 0;
                         dispatches.value.forEach((_, id) => {
-                            if (!foundDispatches.includes(id)) {
+                            if (!foundDispatches.has(id)) {
                                 removeDispatch(id);
                                 removedDispatches++;
                             }
@@ -631,10 +635,6 @@ export const useCentrumStore = defineStore(
                                 pendingDispatches.value.length = 0;
                             }
                         }
-
-                        if (isCenter.value && resp.change.unitUpdated.status) {
-                            addFeedItem(resp.change.unitUpdated.status);
-                        }
                     } else if (resp.change.oneofKind === 'unitStatus') {
                         updateUnitStatus(resp.change.unitStatus);
 
@@ -684,10 +684,6 @@ export const useCentrumStore = defineStore(
                         removeDispatch(resp.change.dispatchDeleted);
                     } else if (resp.change.oneofKind === 'dispatchUpdated') {
                         addOrUpdateDispatch(resp.change.dispatchUpdated);
-
-                        if (isCenter.value && resp.change.dispatchUpdated.status) {
-                            addFeedItem(resp.change.dispatchUpdated.status);
-                        }
                     } else if (resp.change.oneofKind === 'dispatchStatus') {
                         const ds = resp.change.dispatchStatus;
 
@@ -701,7 +697,7 @@ export const useCentrumStore = defineStore(
                                 dispatchCompleted.play();
                             }
                         } else if (ds.status === StatusDispatch.ARCHIVED) {
-                            removeDispatch(ds.id);
+                            removeDispatch(ds.dispatchId);
                             continue;
                         } else if (ds.status === StatusDispatch.NEED_ASSISTANCE) {
                             dispatchSOS.play();

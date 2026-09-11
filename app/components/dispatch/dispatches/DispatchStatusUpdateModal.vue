@@ -46,7 +46,13 @@ async function updateDispatchStatus(dispatchId: number, values: Schema): Promise
             code: values.code,
             reason: values.reason,
         });
-        await call;
+        const { response } = await call;
+
+        if (response.status) {
+            centrumStore.updateDispatchStatus(response.status);
+        }
+
+        if (!response.updated) return;
 
         notifications.add({
             title: { key: 'notifications.centrum.sidebar.dispatch_status_updated.title', parameters: {} },

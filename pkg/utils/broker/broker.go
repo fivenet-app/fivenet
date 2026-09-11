@@ -9,20 +9,52 @@ import (
 type Broker[T any] struct {
 	// number of active subscribers
 	subs atomic.Int64
+	// queue size assigned to each subscriber
+	subscriberBuffer int
+	// close slow subscribers instead of silently dropping a message
+	closeSlowSubscribers bool
 	// channel for publishing messages
 	publishCh chan T
 	// channel for new subscriptions
-	subCh chan chan T
+	subCh chan subscription[T]
 	// channel for unsubscriptions
 	unsubCh chan chan T
 }
 
+type subscription[T any] struct {
+	channel chan T
+	ready   chan struct{}
+}
+
 // New creates a new Broker instance.
 func New[T any]() *Broker[T] {
+	return NewWithBuffer[T](7)
+}
+
+// NewWithBuffer creates a broker with the given per-subscriber queue size.
+// Slow subscribers still drop messages rather than blocking every publisher.
+func NewWithBuffer[T any](subscriberBuffer int) *Broker[T] {
+	return newBroker[T](subscriberBuffer, false)
+}
+
+// NewWithResyncOnSlowSubscriber creates a broker that closes a subscriber's
+// channel when its queue overflows. Consumers can use the close as a resync
+// signal instead of continuing with incomplete state.
+func NewWithResyncOnSlowSubscriber[T any](subscriberBuffer int) *Broker[T] {
+	return newBroker[T](subscriberBuffer, true)
+}
+
+func newBroker[T any](subscriberBuffer int, closeSlowSubscribers bool) *Broker[T] {
+	if subscriberBuffer < 1 {
+		subscriberBuffer = 1
+	}
+
 	return &Broker[T]{
-		publishCh: make(chan T, 1),
-		subCh:     make(chan chan T, 1),
-		unsubCh:   make(chan chan T, 1),
+		subscriberBuffer:     subscriberBuffer,
+		closeSlowSubscribers: closeSlowSubscribers,
+		publishCh:            make(chan T, 1),
+		subCh:                make(chan subscription[T], 1),
+		unsubCh:              make(chan chan T, 1),
 	}
 }
 
@@ -38,14 +70,17 @@ func (b *Broker[T]) Start(ctx context.Context) {
 			}
 			return
 
-		case msgCh := <-b.subCh:
-			subs[msgCh] = struct{}{}
+		case sub := <-b.subCh:
+			subs[sub.channel] = struct{}{}
 			b.subs.Add(1)
+			close(sub.ready)
 
 		case msgCh := <-b.unsubCh:
-			delete(subs, msgCh)
-			close(msgCh)
-			b.subs.Add(-1)
+			if _, ok := subs[msgCh]; ok {
+				delete(subs, msgCh)
+				close(msgCh)
+				b.subs.Add(-1)
+			}
 
 		case msg := <-b.publishCh:
 			for msgCh := range subs {
@@ -53,6 +88,11 @@ func (b *Broker[T]) Start(ctx context.Context) {
 				select {
 				case msgCh <- msg:
 				default:
+					if b.closeSlowSubscribers {
+						delete(subs, msgCh)
+						close(msgCh)
+						b.subs.Add(-1)
+					}
 				}
 			}
 		}
@@ -61,8 +101,10 @@ func (b *Broker[T]) Start(ctx context.Context) {
 
 // Subscribe registers a new subscriber and returns its message channel.
 func (b *Broker[T]) Subscribe() chan T {
-	msgCh := make(chan T, 7)
-	b.subCh <- msgCh
+	msgCh := make(chan T, b.subscriberBuffer)
+	ready := make(chan struct{})
+	b.subCh <- subscription[T]{channel: msgCh, ready: ready}
+	<-ready
 	return msgCh
 }
 

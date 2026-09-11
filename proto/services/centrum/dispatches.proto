@@ -105,7 +105,10 @@ message UpdateDispatchStatusRequest {
   ];
 }
 
-message UpdateDispatchStatusResponse {}
+message UpdateDispatchStatusResponse {
+  optional resources.centrum.dispatches.DispatchStatus status = 1;
+  bool updated = 2;
+}
 
 message AssignDispatchRequest {
   int64 dispatch_id = 1;

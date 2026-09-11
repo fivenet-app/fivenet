@@ -112,12 +112,16 @@ func (s *DispatchDB) Filter(
 ) []*centrumdispatches.Dispatch {
 	ds := s.List(ctx, jobs)
 
-	ds = slices.DeleteFunc(ds, func(dispatch *centrumdispatches.Dispatch) bool {
-		// Hide user info when dispatch is anonymous
+	// List returns cache-owned objects. Redaction is response-specific and must
+	// not mutate the shared dispatch projection.
+	for i, dispatch := range ds {
 		if dispatch.GetAnon() {
-			dispatch.ClearCreator()
+			ds[i] = proto.Clone(dispatch).(*centrumdispatches.Dispatch)
+			ds[i].ClearCreator()
 		}
+	}
 
+	ds = slices.DeleteFunc(ds, func(dispatch *centrumdispatches.Dispatch) bool {
 		// Include statuses that should be listed
 		if len(statuses) > 0 && !slices.Contains(statuses, dispatch.GetStatus().GetStatus()) {
 			return true

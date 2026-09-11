@@ -91,3 +91,23 @@ func TestBrokerStart(t *testing.T) {
 		// sub2 should be closed
 	}
 }
+
+func TestBrokerClosesSlowResyncSubscriber(t *testing.T) {
+	t.Parallel()
+
+	ctx, cancel := context.WithCancel(t.Context())
+	defer cancel()
+
+	broker := NewWithResyncOnSlowSubscriber[int](1)
+	go broker.Start(ctx)
+
+	sub := broker.Subscribe()
+	broker.Publish(1)
+	broker.Publish(2)
+	broker.Publish(3)
+
+	assert.Equal(t, 1, <-sub)
+	_, ok := <-sub
+	assert.False(t, ok)
+	assert.Eventually(t, func() bool { return broker.SubCount() == 0 }, time.Second, 10*time.Millisecond)
+}

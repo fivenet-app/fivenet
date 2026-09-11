@@ -794,7 +794,7 @@ func (s *DispatchDB) UpdateStatus(
 				zap.Int64("dispatch_id", dsp.GetId()),
 				zap.String("status", in.GetStatus().String()),
 			)
-			return in, nil
+			return dsp.GetStatus(), nil
 		}
 
 		// If the dispatch is complete, we ignore any unit unassignments/accepts/declines
@@ -803,7 +803,7 @@ func (s *DispatchDB) UpdateStatus(
 				in.GetStatus() == centrumdispatches.StatusDispatch_STATUS_DISPATCH_UNIT_UNASSIGNED ||
 				in.GetStatus() == centrumdispatches.StatusDispatch_STATUS_DISPATCH_UNIT_ACCEPTED ||
 				in.GetStatus() == centrumdispatches.StatusDispatch_STATUS_DISPATCH_UNIT_DECLINED) {
-			return in, nil
+			return dsp.GetStatus(), nil
 		}
 	}
 
@@ -1632,7 +1632,7 @@ func (s *DispatchDB) TakeDispatch(
 							unit.GetStatus().
 								GetStatus() !=
 								centrumunits.StatusUnit_STATUS_UNIT_BUSY {
-							if _, err := s.units.UpdateStatus(
+							if _, _, err := s.units.UpdateStatus(
 								ctx,
 								unit.GetId(),
 								&centrumunits.UnitStatus{

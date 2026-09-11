@@ -9,9 +9,15 @@ import (
 	"go.uber.org/zap"
 )
 
+type userDutyContext struct {
+	job    string
+	hidden bool
+}
+
 func (s *Housekeeper) runUserChangesWatch(ctx context.Context) {
+	contexts := map[int32]userDutyContext{}
 	for {
-		if err := s.watchUserChanges(ctx); err != nil {
+		if err := s.watchUserChanges(ctx, contexts); err != nil {
 			if !errors.Is(err, context.Canceled) {
 				s.logger.Error("failed to watch user changes", zap.Error(err))
 			}
@@ -27,7 +33,7 @@ func (s *Housekeeper) runUserChangesWatch(ctx context.Context) {
 	}
 }
 
-func (s *Housekeeper) watchUserChanges(ctx context.Context) error {
+func (s *Housekeeper) watchUserChanges(ctx context.Context, contexts map[int32]userDutyContext) error {
 	watch, err := s.tracker.Subscribe(ctx)
 	if err != nil {
 		return err
@@ -59,6 +65,15 @@ func (s *Housekeeper) watchUserChanges(ctx context.Context) error {
 						)
 						return
 					}
+					current := userDutyContext{
+						job:    userMarker.GetJob(),
+						hidden: userMarker.GetHidden(),
+					}
+					previous, seen := contexts[userMarker.GetUserId()]
+					contexts[userMarker.GetUserId()] = current
+					if seen && previous == current {
+						return
+					}
 
 					if err := s.units.SyncUserUnitMapping(ctx, userMarker.GetUserId()); err != nil {
 						s.logger.Error(
@@ -83,6 +98,18 @@ func (s *Housekeeper) watchUserChanges(ctx context.Context) error {
 							zap.Error(err),
 						)
 						return
+					}
+					delete(contexts, userMarker.GetUserId())
+
+					// A deleted marker means the user is no longer on duty. Reconcile
+					// durable membership immediately instead of waiting for a unit ping
+					// or the daily audit.
+					if err := s.units.SyncUserUnitMapping(ctx, userMarker.GetUserId()); err != nil {
+						s.logger.Error(
+							"failed to sync user unit mapping for usermarker delete event",
+							zap.Int32("user_id", userMarker.GetUserId()),
+							zap.Error(err),
+						)
 					}
 
 					// Check if user is signed on as dispatcher

@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"strconv"
 	"sync"
+	"sync/atomic"
 	"time"
 
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/cron"
@@ -20,11 +21,13 @@ import (
 	"github.com/fivenet-app/fivenet/v2026/pkg/mstlystcdata"
 	"github.com/fivenet-app/fivenet/v2026/pkg/perms"
 	"github.com/fivenet-app/fivenet/v2026/pkg/tracker"
+	"github.com/fivenet-app/fivenet/v2026/pkg/utils/broker"
 	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
 	"github.com/fivenet-app/fivenet/v2026/services/centrum/dispatchers"
 	"github.com/fivenet-app/fivenet/v2026/services/centrum/dispatches"
 	eventscentrum "github.com/fivenet-app/fivenet/v2026/services/centrum/events"
 	"github.com/fivenet-app/fivenet/v2026/services/centrum/helpers"
+	centrummetrics "github.com/fivenet-app/fivenet/v2026/services/centrum/metrics"
 	"github.com/fivenet-app/fivenet/v2026/services/centrum/settings"
 	"github.com/fivenet-app/fivenet/v2026/services/centrum/units"
 	citizenshydrator "github.com/fivenet-app/fivenet/v2026/stores/citizens/hydrator"
@@ -100,6 +103,14 @@ type Server struct {
 	tracer trace.Tracer
 	wg     sync.WaitGroup
 	jsCons jetstream.ConsumeContext
+
+	feedBroker   *broker.Broker[*feedEvent]
+	feedMu       sync.Mutex
+	feedSequence atomic.Uint64
+	ready        chan struct{}
+	readyMu      sync.RWMutex
+	readyErr     error
+	metrics      *centrummetrics.Metrics
 
 	db                *sql.DB
 	perms             perms.Permissions
@@ -177,6 +188,12 @@ func NewServer(p Params) Result {
 		dispatchers: p.Dispatchers,
 		units:       p.Units,
 		dispatches:  p.Dispatches,
+
+		// Snapshot generation may take longer than the default broker queue.
+		// A sequence gap still forces a resync if this buffer is exceeded.
+		feedBroker: broker.NewWithResyncOnSlowSubscriber[*feedEvent](512),
+		ready:      make(chan struct{}),
+		metrics:    centrummetrics.Get(),
 	}
 
 	p.LC.Append(fx.StartHook(func(ctxStartup context.Context) error {
@@ -185,10 +202,21 @@ func NewServer(p Params) Result {
 		}
 
 		s.wg.Go(func() {
-			if err := s.loadData(ctxCancel); err != nil {
+			s.feedBroker.Start(ctxCancel)
+		})
+
+		s.wg.Go(func() {
+			err := s.loadData(ctxCancel)
+			s.readyMu.Lock()
+			s.readyErr = err
+			close(s.ready)
+			s.readyMu.Unlock()
+			if err != nil {
 				s.logger.Error("failed to load initial centrum data", zap.Error(err))
 			}
 		})
+
+		s.startFeedHub(ctxCancel)
 
 		return nil
 	}))
@@ -210,6 +238,17 @@ func NewServer(p Params) Result {
 		Server:       s,
 		Service:      s,
 		CronRegister: s,
+	}
+}
+
+func (s *Server) waitForReady(ctx context.Context) error {
+	select {
+	case <-ctx.Done():
+		return ctx.Err()
+	case <-s.ready:
+		s.readyMu.RLock()
+		defer s.readyMu.RUnlock()
+		return s.readyErr
 	}
 }
 

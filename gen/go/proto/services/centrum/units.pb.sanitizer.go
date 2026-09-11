@@ -171,3 +171,22 @@ func (m *UpdateUnitStatusRequest) Sanitize() error {
 
 	return nil
 }
+
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
+func (m *UpdateUnitStatusResponse) Sanitize() error {
+	if m == nil {
+		return nil
+	}
+
+	// Field: Status
+	if m.Status != nil {
+		if v, ok := any(m.GetStatus()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+	}
+
+	return nil
+}

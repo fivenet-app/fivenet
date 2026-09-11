@@ -194,6 +194,14 @@ export interface UpdateDispatchStatusRequest {
  * @generated from protobuf message services.centrum.UpdateDispatchStatusResponse
  */
 export interface UpdateDispatchStatusResponse {
+    /**
+     * @generated from protobuf field: optional resources.centrum.dispatches.DispatchStatus status = 1
+     */
+    status?: DispatchStatus;
+    /**
+     * @generated from protobuf field: bool updated = 2
+     */
+    updated: boolean;
 }
 /**
  * @generated from protobuf message services.centrum.AssignDispatchRequest
@@ -1041,10 +1049,14 @@ export const UpdateDispatchStatusRequest = new UpdateDispatchStatusRequest$Type(
 // @generated message type with reflection information, may provide speed optimized methods
 class UpdateDispatchStatusResponse$Type extends MessageType<UpdateDispatchStatusResponse> {
     constructor() {
-        super("services.centrum.UpdateDispatchStatusResponse", []);
+        super("services.centrum.UpdateDispatchStatusResponse", [
+            { no: 1, name: "status", kind: "message", T: () => DispatchStatus },
+            { no: 2, name: "updated", kind: "scalar", T: 8 /*ScalarType.BOOL*/ }
+        ]);
     }
     create(value?: PartialMessage<UpdateDispatchStatusResponse>): UpdateDispatchStatusResponse {
         const message = globalThis.Object.create((this.messagePrototype!));
+        message.updated = false;
         if (value !== undefined)
             reflectionMergePartial<UpdateDispatchStatusResponse>(this, message, value);
         return message;
@@ -1054,6 +1066,12 @@ class UpdateDispatchStatusResponse$Type extends MessageType<UpdateDispatchStatus
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
+                case /* optional resources.centrum.dispatches.DispatchStatus status */ 1:
+                    message.status = DispatchStatus.internalBinaryRead(reader, reader.uint32(), options, message.status);
+                    break;
+                case /* bool updated */ 2:
+                    message.updated = reader.bool();
+                    break;
                 default:
                     let u = options.readUnknownField;
                     if (u === "throw")
@@ -1066,6 +1084,12 @@ class UpdateDispatchStatusResponse$Type extends MessageType<UpdateDispatchStatus
         return message;
     }
     internalBinaryWrite(message: UpdateDispatchStatusResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* optional resources.centrum.dispatches.DispatchStatus status = 1; */
+        if (message.status)
+            DispatchStatus.internalBinaryWrite(message.status, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
+        /* bool updated = 2; */
+        if (message.updated !== false)
+            writer.tag(2, WireType.Varint).bool(message.updated);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
