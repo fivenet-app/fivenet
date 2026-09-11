@@ -257,7 +257,7 @@ func (s *Server) UpdateUnitStatus(
 		return nil, errorscentrum.ErrNotPartOfUnit
 	}
 
-	if _, err := s.units.UpdateStatus(ctx, unit.GetId(), &centrumunits.UnitStatus{
+	status, updated, err := s.units.UpdateStatus(ctx, unit.GetId(), &centrumunits.UnitStatus{
 		CreatedAt:  timestamp.Now(),
 		UnitId:     unit.GetId(),
 		Status:     req.GetStatus(),
@@ -266,13 +266,17 @@ func (s *Server) UpdateUnitStatus(
 		UserId:     &userInfo.UserId,
 		CreatorId:  &userInfo.UserId,
 		CreatorJob: &userInfo.Job,
-	}); err != nil {
+	})
+	if err != nil {
 		return nil, errswrap.NewError(err, errorscentrum.ErrFailedQuery)
 	}
 
 	grpc_audit.SetAction(ctx, audit.EventAction_EVENT_ACTION_CREATED)
 
-	return &pbcentrum.UpdateUnitStatusResponse{}, nil
+	return &pbcentrum.UpdateUnitStatusResponse{
+		Status:  status,
+		Updated: updated,
+	}, nil
 }
 
 func (s *Server) AssignUnit(

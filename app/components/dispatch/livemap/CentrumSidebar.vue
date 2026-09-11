@@ -100,7 +100,13 @@ async function updateDispatchStatus(dispatchId: number, status: StatusDispatch):
             dispatchId: dispatchId,
             status: status,
         });
-        await call;
+        const { response } = await call;
+
+        if (response.status) {
+            centrumStore.updateDispatchStatus(response.status);
+        }
+
+        if (!response.updated) return;
 
         notifications.add({
             title: { key: 'notifications.centrum.sidebar.dispatch_status_updated.title', parameters: {} },
@@ -140,7 +146,13 @@ async function updateUnitStatus(id: number, status: StatusUnit): Promise<void> {
             unitId: id,
             status: status,
         });
-        await call;
+        const { response } = await call;
+
+        if (response.status) {
+            centrumStore.updateUnitStatus(response.status);
+        }
+
+        if (!response.updated) return;
 
         notifications.add({
             title: { key: 'notifications.centrum.sidebar.unit_status_updated.title', parameters: {} },

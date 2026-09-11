@@ -17,6 +17,7 @@ import (
 	"github.com/fivenet-app/fivenet/v2026/services/centrum/dispatchers"
 	"github.com/fivenet-app/fivenet/v2026/services/centrum/dispatches"
 	"github.com/fivenet-app/fivenet/v2026/services/centrum/helpers"
+	centrummetrics "github.com/fivenet-app/fivenet/v2026/services/centrum/metrics"
 	"github.com/fivenet-app/fivenet/v2026/services/centrum/settings"
 	"github.com/fivenet-app/fivenet/v2026/services/centrum/units"
 	"github.com/go-jet/jet/v2/qrm"
@@ -45,6 +46,7 @@ type Housekeeper struct {
 	wg     sync.WaitGroup
 
 	tracer  trace.Tracer
+	metrics *centrummetrics.Metrics
 	db      *sql.DB
 	tracker tracker.ITracker
 	le      *leaderelection.LeaderElector
@@ -104,6 +106,7 @@ func New(p Params) Result {
 		wg:     sync.WaitGroup{},
 
 		tracer:  p.TP.Tracer("centrum.manager.housekeeper"),
+		metrics: centrummetrics.Get(),
 		db:      p.DB,
 		tracker: p.Tracker,
 
@@ -186,6 +189,7 @@ func (s *Housekeeper) RegisterCronjobs(ctx context.Context, registry croner.IReg
 		"centrum.manager_housekeeper.load_new_dispatches",
 		"centrum.manager_housekeeper.dispatch_assignment_expiration",
 		"centrum.manager_housekeeper.cleanup_units",
+		"centrum.manager_housekeeper.audit_unit_membership",
 		"centrum.manager_housekeeper.cancel_old_dispatches",
 		"centrum.manager_housekeeper.delete_old_dispatches",
 		"centrum.manager_housekeeper.delete_old_dispatches_from_kv",
@@ -215,6 +219,14 @@ func (s *Housekeeper) RegisterCronjobs(ctx context.Context, registry croner.IReg
 		Name:     "centrum.housekeeper.cleanup_units",
 		Schedule: "15 * * * *", // Every hour at 15 minutes past the hour
 		Timeout:  durationpb.New(6 * time.Second),
+	}); err != nil {
+		return err
+	}
+
+	if err := registry.RegisterCronjob(ctx, &cron.Cronjob{
+		Name:     "centrum.housekeeper.audit_unit_membership",
+		Schedule: "30 3 * * *", // Daily at 03:30
+		Timeout:  durationpb.New(30 * time.Second),
 	}); err != nil {
 		return err
 	}
@@ -261,6 +273,7 @@ func (s *Housekeeper) RegisterCronjobHandlers(h *croner.Handlers) error {
 		s.runHandleDispatchAssignmentExpiration,
 	)
 	h.Add("centrum.housekeeper.cleanup_units", s.runCleanupUnits)
+	h.Add("centrum.housekeeper.audit_unit_membership", s.runAuditUnitMembership)
 	h.Add("centrum.housekeeper.cancel_old_dispatches", s.runCancelOldDispatches)
 	h.Add("centrum.housekeeper.delete_old_dispatches", s.runDeleteOldDispatches)
 	h.Add("centrum.housekeeper.delete_old_dispatches_from_kv", s.runDeleteOldDispatchesFromKV)

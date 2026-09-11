@@ -6,6 +6,7 @@ import (
 	"fmt"
 
 	centrumunits "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/centrum/units"
+	centrumutils "github.com/fivenet-app/fivenet/v2026/services/centrum/utils"
 	"github.com/nats-io/nats.go/jetstream"
 	"go.uber.org/zap"
 )
@@ -29,9 +30,31 @@ func (s *UnitDB) SyncUserUnitMapping(ctx context.Context, userId int32) error {
 	if err != nil {
 		return err
 	}
+	if unitId > 0 {
+		unit, err := s.Get(ctx, unitId)
+		if err != nil {
+			return err
+		}
+
+		marker, markerFound := s.tracker.GetUserMarkerById(userId)
+		inJob, err := s.UserInJob(ctx, s.db, unit.GetJob(), userId)
+		if err != nil {
+			return err
+		}
+
+		// Unit membership is tied to the user's current duty context. Do not
+		// retain an old-job or off-duty assignment until the periodic audit runs.
+		if !markerFound || marker == nil || marker.GetHidden() ||
+			!s.tracker.IsUserOnDuty(userId) || marker.GetJob() != unit.GetJob() || !inJob {
+			if err := s.RemoveUnitAssignments(ctx, "", &userId, unitId, []int32{userId}); err != nil {
+				return err
+			}
+			unitId = 0
+		}
+	}
 
 	var targetUnitId *int64
-	if unitId > 0 {
+	if unitId > 0 && s.tracker.IsUserOnDuty(userId) {
 		targetUnitId = &unitId
 	}
 
@@ -84,6 +107,10 @@ func (s *UnitDB) syncLoadedUnitMembership(ctx context.Context, unit *centrumunit
 	}
 
 	unitId := unit.GetId()
+	previous, err := s.store.Get(centrumutils.IdKey(unitId))
+	if err != nil && !errors.Is(err, jetstream.ErrKeyNotFound) {
+		return err
+	}
 	if err := s.updateInKV(ctx, unitId, unit); err != nil {
 		return err
 	}
@@ -108,35 +135,46 @@ func (s *UnitDB) syncLoadedUnitMembership(ctx context.Context, unit *centrumunit
 		}
 	}
 
-	return errors.Join(errs, s.clearStaleTrackerMappingsForUnit(ctx, unitId, userIds))
+	return errors.Join(errs, s.clearRemovedTrackerMappingsForUnit(ctx, unitId, previous.GetUsers(), userIds))
 }
 
 func (s *UnitDB) syncMissingUnitMembership(ctx context.Context, unitId int64) error {
+	previous, err := s.store.Get(centrumutils.IdKey(unitId))
+	if err != nil && !errors.Is(err, jetstream.ErrKeyNotFound) {
+		return err
+	}
+
 	var errs error
 	if err := s.deleteInKV(ctx, unitId); err != nil && !errors.Is(err, jetstream.ErrKeyNotFound) {
 		errs = errors.Join(errs, err)
 	}
 
-	return errors.Join(errs, s.clearStaleTrackerMappingsForUnit(ctx, unitId, nil))
+	return errors.Join(errs, s.clearRemovedTrackerMappingsForUnit(ctx, unitId, previous.GetUsers(), nil))
 }
 
-func (s *UnitDB) clearStaleTrackerMappingsForUnit(
+func (s *UnitDB) clearRemovedTrackerMappingsForUnit(
 	ctx context.Context,
 	unitId int64,
+	previousUsers []*centrumunits.UnitAssignment,
 	validUserIds map[int32]struct{},
 ) error {
-	mappings, err := s.tracker.ListUserMappings(ctx)
-	if err != nil {
-		return err
-	}
-
 	var errs error
-	for userId, mapping := range mappings {
-		if mapping == nil || mapping.UnitId == nil || mapping.GetUnitId() != unitId {
+	for _, user := range previousUsers {
+		userId := user.GetUserId()
+		if userId <= 0 {
 			continue
 		}
 
 		if _, ok := validUserIds[userId]; ok {
+			continue
+		}
+
+		mapping, ok, err := s.tracker.GetUserMapping(userId)
+		if err != nil {
+			errs = errors.Join(errs, err)
+			continue
+		}
+		if !ok || mapping == nil || mapping.UnitId == nil || mapping.GetUnitId() != unitId {
 			continue
 		}
 
