@@ -223,7 +223,7 @@ func (c *Jobs) Refresh(ctx context.Context) error {
 			tJobs.Name.ASC(),
 			tJobsGrades.Grade.ASC(),
 		).
-		LIMIT(200)
+		LIMIT(2500)
 
 	var dest []*jobs.Job
 	if err := stmt.QueryContext(ctx, c.db, &dest); err != nil {
