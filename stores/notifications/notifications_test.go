@@ -52,7 +52,7 @@ func TestStoreListAppliesNotificationFiltersAndPaging(t *testing.T) {
 		},
 	}
 
-	expectedQuery := regexp.QuoteMeta(`ORDER BY notification.id DESC LIMIT ? OFFSET ?;`)
+	expectedQuery := regexp.QuoteMeta(`ORDER BY notification.created_at DESC, notification.id DESC LIMIT ? OFFSET ?;`)
 	mock.ExpectQuery(expectedQuery).
 		WithArgs(int32(3), int32(resourcesnotifications.NotificationCategory_NOTIFICATION_CATEGORY_GENERAL), int64(20), int64(10)).
 		WillReturnRows(sqlmock.NewRows([]string{"notification.id", "notification.user_id"}).AddRow(int64(42), int32(3)))
@@ -62,6 +62,21 @@ func TestStoreListAppliesNotificationFiltersAndPaging(t *testing.T) {
 	require.Len(t, notifications, 1)
 	assert.Equal(t, int64(42), notifications[0].GetId())
 	assert.Equal(t, int32(3), notifications[0].GetUserId())
+	require.NoError(t, mock.ExpectationsWereMet())
+}
+
+func TestStoreListOnlyIncludesArchivedNotifications(t *testing.T) {
+	t.Parallel()
+
+	store, mock := newTestStore(t)
+
+	expectedQuery := regexp.QuoteMeta(`notification.archived_at IS NOT NULL`)
+	mock.ExpectQuery(expectedQuery).
+		WithArgs(int32(3), int64(20), int64(0)).
+		WillReturnRows(sqlmock.NewRows([]string{"notification.id", "notification.user_id"}))
+
+	_, err := store.List(t.Context(), ListQuery{UserID: 3, ArchivedOnly: true, Limit: 20})
+	require.NoError(t, err)
 	require.NoError(t, mock.ExpectationsWereMet())
 }
 
@@ -89,7 +104,7 @@ func TestStoreMarkNotificationsMarksSelectedRows(t *testing.T) {
 	) +
 		`(?s).*`
 	mock.ExpectExec(expectedQuery).
-		WithArgs(int32(3), int64(10), int64(11)).
+		WithArgs(int32(3), int64(10), int64(11), int64(200)).
 		WillReturnResult(sqlmock.NewResult(0, 2))
 
 	affected, err := store.MarkNotifications(t.Context(), query)
@@ -113,7 +128,7 @@ func TestStoreMarkNotificationsMarksUnread(t *testing.T) {
 		`(?s).*` + regexp.QuoteMeta(`fivenet_notifications.user_id = ?`) +
 		`(?s).*` + regexp.QuoteMeta(`fivenet_notifications.read_at IS NOT NULL`)
 	mock.ExpectExec(expectedQuery).
-		WithArgs(int32(3)).
+		WithArgs(int32(3), int64(200)).
 		WillReturnResult(sqlmock.NewResult(0, 1))
 
 	affected, err := store.MarkNotifications(t.Context(), query)

@@ -69,6 +69,15 @@ func (m *Notification) Sanitize() error {
 		return nil
 	}
 
+	// Field: ArchivedAt
+	if m.ArchivedAt != nil {
+		if v, ok := any(m.GetArchivedAt()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+	}
+
 	// Field: Content
 	if m.Content != nil {
 		if v, ok := any(m.GetContent()).(interface{ Sanitize() error }); ok {
@@ -94,6 +103,20 @@ func (m *Notification) Sanitize() error {
 				return err
 			}
 		}
+	}
+
+	// Field: Delivery
+	if m.Delivery != nil {
+		if v, ok := any(m.GetDelivery()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+	}
+
+	// Field: EntityType
+	if m.EntityType != nil {
+		*m.EntityType = htmlsanitizer.SanitizeAndUnescape(*m.EntityType)
 	}
 
 	// Field: ReadAt

@@ -8,6 +8,12 @@ import { NotificationsService } from "./notifications";
 import type { StreamResponse } from "./notifications";
 import type { StreamRequest } from "./notifications";
 import type { DuplexStreamingCall } from "@protobuf-ts/runtime-rpc";
+import type { UpdateNotificationPreferenceResponse } from "./notifications";
+import type { UpdateNotificationPreferenceRequest } from "./notifications";
+import type { GetNotificationPreferencesResponse } from "./notifications";
+import type { GetNotificationPreferencesRequest } from "./notifications";
+import type { UpdateNotificationStateResponse } from "./notifications";
+import type { UpdateNotificationStateRequest } from "./notifications";
 import type { MarkNotificationsResponse } from "./notifications";
 import type { MarkNotificationsRequest } from "./notifications";
 import { stackIntercept } from "@protobuf-ts/runtime-rpc";
@@ -27,6 +33,18 @@ export interface INotificationsServiceClient {
      * @generated from protobuf rpc: MarkNotifications
      */
     markNotifications(input: MarkNotificationsRequest, options?: RpcOptions): UnaryCall<MarkNotificationsRequest, MarkNotificationsResponse>;
+    /**
+     * @generated from protobuf rpc: UpdateNotificationState
+     */
+    updateNotificationState(input: UpdateNotificationStateRequest, options?: RpcOptions): UnaryCall<UpdateNotificationStateRequest, UpdateNotificationStateResponse>;
+    /**
+     * @generated from protobuf rpc: GetNotificationPreferences
+     */
+    getNotificationPreferences(input: GetNotificationPreferencesRequest, options?: RpcOptions): UnaryCall<GetNotificationPreferencesRequest, GetNotificationPreferencesResponse>;
+    /**
+     * @generated from protobuf rpc: UpdateNotificationPreference
+     */
+    updateNotificationPreference(input: UpdateNotificationPreferenceRequest, options?: RpcOptions): UnaryCall<UpdateNotificationPreferenceRequest, UpdateNotificationPreferenceResponse>;
     /**
      * @generated from protobuf rpc: Stream
      */
@@ -56,10 +74,31 @@ export class NotificationsServiceClient implements INotificationsServiceClient, 
         return stackIntercept<MarkNotificationsRequest, MarkNotificationsResponse>("unary", this._transport, method, opt, input);
     }
     /**
+     * @generated from protobuf rpc: UpdateNotificationState
+     */
+    updateNotificationState(input: UpdateNotificationStateRequest, options?: RpcOptions): UnaryCall<UpdateNotificationStateRequest, UpdateNotificationStateResponse> {
+        const method = this.methods[2], opt = this._transport.mergeOptions(options);
+        return stackIntercept<UpdateNotificationStateRequest, UpdateNotificationStateResponse>("unary", this._transport, method, opt, input);
+    }
+    /**
+     * @generated from protobuf rpc: GetNotificationPreferences
+     */
+    getNotificationPreferences(input: GetNotificationPreferencesRequest, options?: RpcOptions): UnaryCall<GetNotificationPreferencesRequest, GetNotificationPreferencesResponse> {
+        const method = this.methods[3], opt = this._transport.mergeOptions(options);
+        return stackIntercept<GetNotificationPreferencesRequest, GetNotificationPreferencesResponse>("unary", this._transport, method, opt, input);
+    }
+    /**
+     * @generated from protobuf rpc: UpdateNotificationPreference
+     */
+    updateNotificationPreference(input: UpdateNotificationPreferenceRequest, options?: RpcOptions): UnaryCall<UpdateNotificationPreferenceRequest, UpdateNotificationPreferenceResponse> {
+        const method = this.methods[4], opt = this._transport.mergeOptions(options);
+        return stackIntercept<UpdateNotificationPreferenceRequest, UpdateNotificationPreferenceResponse>("unary", this._transport, method, opt, input);
+    }
+    /**
      * @generated from protobuf rpc: Stream
      */
     stream(options?: RpcOptions): DuplexStreamingCall<StreamRequest, StreamResponse> {
-        const method = this.methods[2], opt = this._transport.mergeOptions(options);
+        const method = this.methods[5], opt = this._transport.mergeOptions(options);
         return stackIntercept<StreamRequest, StreamResponse>("duplex", this._transport, method, opt);
     }
 }

@@ -5,6 +5,28 @@ package notifications
 
 // Sanitize sanitizes the message's fields, in case of complex types it calls
 // their Sanitize() method recursively.
+func (m *GetNotificationPreferencesResponse) Sanitize() error {
+	if m == nil {
+		return nil
+	}
+
+	// Field: Preferences
+	for idx, item := range m.Preferences {
+		_, _ = idx, item
+
+		if v, ok := any(item).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+
+	}
+
+	return nil
+}
+
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *GetNotificationsRequest) Sanitize() error {
 	if m == nil {
 		return nil
@@ -12,6 +34,12 @@ func (m *GetNotificationsRequest) Sanitize() error {
 
 	// Field: Categories
 	for idx, item := range m.Categories {
+		_, _ = idx, item
+
+	}
+
+	// Field: Kinds
+	for idx, item := range m.Kinds {
 		_, _ = idx, item
 
 	}
@@ -156,6 +184,47 @@ func (m *StreamResponse) Sanitize() error {
 				if err := s.Sanitize(); err != nil {
 					return err
 				}
+			}
+		}
+
+	}
+
+	return nil
+}
+
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
+func (m *UpdateNotificationPreferenceRequest) Sanitize() error {
+	if m == nil {
+		return nil
+	}
+
+	// Field: Preference
+	if m.Preference != nil {
+		if v, ok := any(m.GetPreference()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+	}
+
+	return nil
+}
+
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
+func (m *UpdateNotificationPreferenceResponse) Sanitize() error {
+	if m == nil {
+		return nil
+	}
+
+	// Field: Preferences
+	for idx, item := range m.Preferences {
+		_, _ = idx, item
+
+		if v, ok := any(item).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
 			}
 		}
 

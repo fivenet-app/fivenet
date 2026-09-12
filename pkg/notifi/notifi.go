@@ -9,8 +9,12 @@ import (
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/notifications"
 	notificationsclientview "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/notifications/clientview"
 	notificationsevents "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/notifications/events"
+	pbtimestamp "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/timestamp"
+	"github.com/fivenet-app/fivenet/v2026/pkg/dbutils"
 	"github.com/fivenet-app/fivenet/v2026/pkg/events"
 	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
+	notificationsstore "github.com/fivenet-app/fivenet/v2026/stores/notifications"
+	"github.com/go-jet/jet/v2/qrm"
 	"go.uber.org/fx"
 	"go.uber.org/zap"
 	"google.golang.org/protobuf/proto"
@@ -20,6 +24,13 @@ import (
 type INotifi interface {
 	// NotifyUser inserts a notification for a user and publishes it asynchronously.
 	NotifyUser(ctx context.Context, not *notifications.Notification) error
+	// PrepareUserNotification stores the inbox record on db and returns a
+	// publisher which must only be called after its surrounding transaction commits.
+	PrepareUserNotification(
+		ctx context.Context,
+		db qrm.DB,
+		not *notifications.Notification,
+	) (func(context.Context) error, error)
 	// SendObjectEvent publishes an object event notification to the event system.
 	SendObjectEvent(ctx context.Context, event *notificationsclientview.ObjectEvent) error
 	// SendAccountEvent publishes an account event notification to the event system.
@@ -41,7 +52,8 @@ type Notifi struct {
 	// db is the database connection used for storing notifications.
 	db *sql.DB
 	// js is the event system wrapper for publishing notifications.
-	js *events.JSWrapper
+	js          *events.JSWrapper
+	preferences notificationsstore.IStore
 }
 
 // Params contains dependencies for constructing a Notifi instance.
@@ -55,15 +67,17 @@ type Params struct {
 	// DB is the database connection.
 	DB *sql.DB
 	// JS is the event system wrapper.
-	JS *events.JSWrapper
+	JS                *events.JSWrapper
+	NotificationStore notificationsstore.IStore
 }
 
 // New creates a new Notifi instance and registers event hooks.
 func New(p Params) INotifi {
 	n := &Notifi{
-		logger: p.Logger,
-		db:     p.DB,
-		js:     p.JS,
+		logger:      p.Logger,
+		db:          p.DB,
+		js:          p.JS,
+		preferences: p.NotificationStore,
 	}
 
 	// Register event hooks on application start.
@@ -76,12 +90,54 @@ func New(p Params) INotifi {
 
 // NotifyUser inserts a notification for a user and publishes it asynchronously.
 func (n *Notifi) NotifyUser(ctx context.Context, not *notifications.Notification) error {
-	nId, err := n.insertNotification(ctx, not)
+	publish, err := n.PrepareUserNotification(ctx, n.db, not)
+	if err != nil || publish == nil {
+		return err
+	}
+	return publish(ctx)
+}
+
+// PrepareUserNotification persists an inbox notification in db. The returned
+// callback deliberately defers NATS publication until the caller has committed
+// the transaction which caused the notification.
+func (n *Notifi) PrepareUserNotification(
+	ctx context.Context,
+	db qrm.DB,
+	not *notifications.Notification,
+) (func(context.Context) error, error) {
+	delivery, err := n.preferences.ResolveDelivery(
+		ctx,
+		not.GetUserId(),
+		not.GetCategory(),
+		not.GetKind(),
+	)
 	if err != nil {
-		return fmt.Errorf("failed to insert notification into database. %w", err)
+		return nil, fmt.Errorf("failed to resolve notification delivery preferences. %w", err)
+	}
+	not.Delivery = delivery
+	if not.GetCreatedAt() == nil {
+		not.CreatedAt = pbtimestamp.Now()
 	}
 
-	not.Id = nId
+	if delivery.GetInboxEnabled() {
+		nId, err := n.insertNotification(ctx, db, not)
+		if err != nil {
+			return nil, fmt.Errorf("failed to insert notification into database. %w", err)
+		}
+		not.Id = nId
+	}
+
+	if !delivery.GetInboxEnabled() && !delivery.GetToastEnabled() && !delivery.GetSoundEnabled() {
+		return nil, nil
+	}
+
+	return func(ctx context.Context) error { return n.publishUserNotification(ctx, not) }, nil
+}
+
+func (n *Notifi) publishUserNotification(
+	ctx context.Context,
+	not *notifications.Notification,
+) error {
 	data, err := proto.Marshal(&notificationsevents.UserEvent{
 		Data: &notificationsevents.UserEvent_Notification{
 			Notification: not,
@@ -105,6 +161,7 @@ func (n *Notifi) NotifyUser(ctx context.Context, not *notifications.Notification
 // insertNotification inserts a notification into the database and returns the new notification ID.
 func (n *Notifi) insertNotification(
 	ctx context.Context,
+	db qrm.DB,
 	not *notifications.Notification,
 ) (int64, error) {
 	tNots := table.FivenetNotifications
@@ -112,22 +169,32 @@ func (n *Notifi) insertNotification(
 	stmt := tNots.
 		INSERT(
 			tNots.UserID,
+			tNots.ActorUserID,
+			tNots.EntityType,
+			tNots.EntityID,
 			tNots.Title,
 			tNots.Type,
 			tNots.Content,
 			tNots.Category,
+			tNots.Kind,
 			tNots.Data,
+			tNots.Starred,
 		).
 		VALUES(
 			not.GetUserId(),
+			dbutils.Int32P(not.GetActorUserId()),
+			dbutils.StringPP(not.EntityType),
+			dbutils.Int64P(not.GetEntityId()),
 			not.GetTitle(),
 			not.GetType(),
 			not.GetContent(),
 			not.GetCategory(),
+			not.GetKind(),
 			not.GetData(),
+			not.GetStarred(),
 		)
 
-	res, err := stmt.ExecContext(ctx, n.db)
+	res, err := stmt.ExecContext(ctx, db)
 	if err != nil {
 		return 0, fmt.Errorf("failed to insert notification into database. %w", err)
 	}

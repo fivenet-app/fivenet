@@ -80,10 +80,15 @@ func (x NotificationType) Number() protoreflect.EnumNumber {
 type NotificationCategory int32
 
 const (
-	NotificationCategory_NOTIFICATION_CATEGORY_UNSPECIFIED NotificationCategory = 0
-	NotificationCategory_NOTIFICATION_CATEGORY_GENERAL     NotificationCategory = 1
-	NotificationCategory_NOTIFICATION_CATEGORY_DOCUMENT    NotificationCategory = 2
-	NotificationCategory_NOTIFICATION_CATEGORY_CALENDAR    NotificationCategory = 3
+	NotificationCategory_NOTIFICATION_CATEGORY_UNSPECIFIED    NotificationCategory = 0
+	NotificationCategory_NOTIFICATION_CATEGORY_GENERAL        NotificationCategory = 1
+	NotificationCategory_NOTIFICATION_CATEGORY_DOCUMENT       NotificationCategory = 2
+	NotificationCategory_NOTIFICATION_CATEGORY_CALENDAR       NotificationCategory = 3
+	NotificationCategory_NOTIFICATION_CATEGORY_JOBS           NotificationCategory = 4
+	NotificationCategory_NOTIFICATION_CATEGORY_QUALIFICATIONS NotificationCategory = 5
+	NotificationCategory_NOTIFICATION_CATEGORY_MAILER         NotificationCategory = 6
+	NotificationCategory_NOTIFICATION_CATEGORY_DISPATCH       NotificationCategory = 7
+	NotificationCategory_NOTIFICATION_CATEGORY_SYSTEM         NotificationCategory = 8
 )
 
 // Enum value maps for NotificationCategory.
@@ -93,12 +98,22 @@ var (
 		1: "NOTIFICATION_CATEGORY_GENERAL",
 		2: "NOTIFICATION_CATEGORY_DOCUMENT",
 		3: "NOTIFICATION_CATEGORY_CALENDAR",
+		4: "NOTIFICATION_CATEGORY_JOBS",
+		5: "NOTIFICATION_CATEGORY_QUALIFICATIONS",
+		6: "NOTIFICATION_CATEGORY_MAILER",
+		7: "NOTIFICATION_CATEGORY_DISPATCH",
+		8: "NOTIFICATION_CATEGORY_SYSTEM",
 	}
 	NotificationCategory_value = map[string]int32{
-		"NOTIFICATION_CATEGORY_UNSPECIFIED": 0,
-		"NOTIFICATION_CATEGORY_GENERAL":     1,
-		"NOTIFICATION_CATEGORY_DOCUMENT":    2,
-		"NOTIFICATION_CATEGORY_CALENDAR":    3,
+		"NOTIFICATION_CATEGORY_UNSPECIFIED":    0,
+		"NOTIFICATION_CATEGORY_GENERAL":        1,
+		"NOTIFICATION_CATEGORY_DOCUMENT":       2,
+		"NOTIFICATION_CATEGORY_CALENDAR":       3,
+		"NOTIFICATION_CATEGORY_JOBS":           4,
+		"NOTIFICATION_CATEGORY_QUALIFICATIONS": 5,
+		"NOTIFICATION_CATEGORY_MAILER":         6,
+		"NOTIFICATION_CATEGORY_DISPATCH":       7,
+		"NOTIFICATION_CATEGORY_SYSTEM":         8,
 	}
 )
 
@@ -124,6 +139,289 @@ func (x NotificationCategory) Number() protoreflect.EnumNumber {
 	return protoreflect.EnumNumber(x)
 }
 
+// A precise, typed event within a notification category. Categories remain
+// intentionally broad so clients can provide consistent filtering and UI.
+type NotificationKind int32
+
+const (
+	NotificationKind_NOTIFICATION_KIND_UNSPECIFIED                   NotificationKind = 0
+	NotificationKind_NOTIFICATION_KIND_JOBS_GROUP_LEADERSHIP_ADDED   NotificationKind = 1
+	NotificationKind_NOTIFICATION_KIND_JOBS_GROUP_LEADERSHIP_REMOVED NotificationKind = 2
+)
+
+// Enum value maps for NotificationKind.
+var (
+	NotificationKind_name = map[int32]string{
+		0: "NOTIFICATION_KIND_UNSPECIFIED",
+		1: "NOTIFICATION_KIND_JOBS_GROUP_LEADERSHIP_ADDED",
+		2: "NOTIFICATION_KIND_JOBS_GROUP_LEADERSHIP_REMOVED",
+	}
+	NotificationKind_value = map[string]int32{
+		"NOTIFICATION_KIND_UNSPECIFIED":                   0,
+		"NOTIFICATION_KIND_JOBS_GROUP_LEADERSHIP_ADDED":   1,
+		"NOTIFICATION_KIND_JOBS_GROUP_LEADERSHIP_REMOVED": 2,
+	}
+)
+
+func (x NotificationKind) Enum() *NotificationKind {
+	p := new(NotificationKind)
+	*p = x
+	return p
+}
+
+func (x NotificationKind) String() string {
+	return protoimpl.X.EnumStringOf(x.Descriptor(), protoreflect.EnumNumber(x))
+}
+
+func (NotificationKind) Descriptor() protoreflect.EnumDescriptor {
+	return file_resources_notifications_notifications_proto_enumTypes[2].Descriptor()
+}
+
+func (NotificationKind) Type() protoreflect.EnumType {
+	return &file_resources_notifications_notifications_proto_enumTypes[2]
+}
+
+func (x NotificationKind) Number() protoreflect.EnumNumber {
+	return protoreflect.EnumNumber(x)
+}
+
+// A per-user override for notification delivery. An unspecified category and
+// kind form the global default; a category with an unspecified kind is a
+// category default; and both set is a kind-specific override. Optional fields
+// intentionally inherit from the less specific scope when absent.
+type NotificationPreference struct {
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
+	Category      NotificationCategory   `protobuf:"varint,1,opt,name=category,proto3,enum=resources.notifications.NotificationCategory" json:"category,omitempty"`
+	Kind          NotificationKind       `protobuf:"varint,2,opt,name=kind,proto3,enum=resources.notifications.NotificationKind" json:"kind,omitempty"`
+	InboxEnabled  *bool                  `protobuf:"varint,3,opt,name=inbox_enabled,json=inboxEnabled,proto3,oneof" json:"inbox_enabled,omitempty"`
+	ToastEnabled  *bool                  `protobuf:"varint,4,opt,name=toast_enabled,json=toastEnabled,proto3,oneof" json:"toast_enabled,omitempty"`
+	SoundEnabled  *bool                  `protobuf:"varint,5,opt,name=sound_enabled,json=soundEnabled,proto3,oneof" json:"sound_enabled,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *NotificationPreference) Reset() {
+	*x = NotificationPreference{}
+	mi := &file_resources_notifications_notifications_proto_msgTypes[0]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *NotificationPreference) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*NotificationPreference) ProtoMessage() {}
+
+func (x *NotificationPreference) ProtoReflect() protoreflect.Message {
+	mi := &file_resources_notifications_notifications_proto_msgTypes[0]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+func (x *NotificationPreference) GetCategory() NotificationCategory {
+	if x != nil {
+		return x.Category
+	}
+	return NotificationCategory_NOTIFICATION_CATEGORY_UNSPECIFIED
+}
+
+func (x *NotificationPreference) GetKind() NotificationKind {
+	if x != nil {
+		return x.Kind
+	}
+	return NotificationKind_NOTIFICATION_KIND_UNSPECIFIED
+}
+
+func (x *NotificationPreference) GetInboxEnabled() bool {
+	if x != nil && x.InboxEnabled != nil {
+		return *x.InboxEnabled
+	}
+	return false
+}
+
+func (x *NotificationPreference) GetToastEnabled() bool {
+	if x != nil && x.ToastEnabled != nil {
+		return *x.ToastEnabled
+	}
+	return false
+}
+
+func (x *NotificationPreference) GetSoundEnabled() bool {
+	if x != nil && x.SoundEnabled != nil {
+		return *x.SoundEnabled
+	}
+	return false
+}
+
+func (x *NotificationPreference) SetCategory(v NotificationCategory) {
+	x.Category = v
+}
+
+func (x *NotificationPreference) SetKind(v NotificationKind) {
+	x.Kind = v
+}
+
+func (x *NotificationPreference) SetInboxEnabled(v bool) {
+	x.InboxEnabled = &v
+}
+
+func (x *NotificationPreference) SetToastEnabled(v bool) {
+	x.ToastEnabled = &v
+}
+
+func (x *NotificationPreference) SetSoundEnabled(v bool) {
+	x.SoundEnabled = &v
+}
+
+func (x *NotificationPreference) HasInboxEnabled() bool {
+	if x == nil {
+		return false
+	}
+	return x.InboxEnabled != nil
+}
+
+func (x *NotificationPreference) HasToastEnabled() bool {
+	if x == nil {
+		return false
+	}
+	return x.ToastEnabled != nil
+}
+
+func (x *NotificationPreference) HasSoundEnabled() bool {
+	if x == nil {
+		return false
+	}
+	return x.SoundEnabled != nil
+}
+
+func (x *NotificationPreference) ClearInboxEnabled() {
+	x.InboxEnabled = nil
+}
+
+func (x *NotificationPreference) ClearToastEnabled() {
+	x.ToastEnabled = nil
+}
+
+func (x *NotificationPreference) ClearSoundEnabled() {
+	x.SoundEnabled = nil
+}
+
+type NotificationPreference_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Category     NotificationCategory
+	Kind         NotificationKind
+	InboxEnabled *bool
+	ToastEnabled *bool
+	SoundEnabled *bool
+}
+
+func (b0 NotificationPreference_builder) Build() *NotificationPreference {
+	m0 := &NotificationPreference{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Category = b.Category
+	x.Kind = b.Kind
+	x.InboxEnabled = b.InboxEnabled
+	x.ToastEnabled = b.ToastEnabled
+	x.SoundEnabled = b.SoundEnabled
+	return m0
+}
+
+// Delivery instructions are resolved server-side and are only attached to a
+// live notification event. They are never persisted with the notification.
+type NotificationDelivery struct {
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
+	InboxEnabled  bool                   `protobuf:"varint,1,opt,name=inbox_enabled,json=inboxEnabled,proto3" json:"inbox_enabled,omitempty"`
+	ToastEnabled  bool                   `protobuf:"varint,2,opt,name=toast_enabled,json=toastEnabled,proto3" json:"toast_enabled,omitempty"`
+	SoundEnabled  bool                   `protobuf:"varint,3,opt,name=sound_enabled,json=soundEnabled,proto3" json:"sound_enabled,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *NotificationDelivery) Reset() {
+	*x = NotificationDelivery{}
+	mi := &file_resources_notifications_notifications_proto_msgTypes[1]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *NotificationDelivery) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*NotificationDelivery) ProtoMessage() {}
+
+func (x *NotificationDelivery) ProtoReflect() protoreflect.Message {
+	mi := &file_resources_notifications_notifications_proto_msgTypes[1]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+func (x *NotificationDelivery) GetInboxEnabled() bool {
+	if x != nil {
+		return x.InboxEnabled
+	}
+	return false
+}
+
+func (x *NotificationDelivery) GetToastEnabled() bool {
+	if x != nil {
+		return x.ToastEnabled
+	}
+	return false
+}
+
+func (x *NotificationDelivery) GetSoundEnabled() bool {
+	if x != nil {
+		return x.SoundEnabled
+	}
+	return false
+}
+
+func (x *NotificationDelivery) SetInboxEnabled(v bool) {
+	x.InboxEnabled = v
+}
+
+func (x *NotificationDelivery) SetToastEnabled(v bool) {
+	x.ToastEnabled = v
+}
+
+func (x *NotificationDelivery) SetSoundEnabled(v bool) {
+	x.SoundEnabled = v
+}
+
+type NotificationDelivery_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	InboxEnabled bool
+	ToastEnabled bool
+	SoundEnabled bool
+}
+
+func (b0 NotificationDelivery_builder) Build() *NotificationDelivery {
+	m0 := &NotificationDelivery{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.InboxEnabled = b.InboxEnabled
+	x.ToastEnabled = b.ToastEnabled
+	x.SoundEnabled = b.SoundEnabled
+	return m0
+}
+
 type Notification struct {
 	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
@@ -136,13 +434,19 @@ type Notification struct {
 	Category      NotificationCategory   `protobuf:"varint,8,opt,name=category,proto3,enum=resources.notifications.NotificationCategory" json:"category,omitempty"`
 	Data          *Data                  `protobuf:"bytes,9,opt,name=data,proto3,oneof" json:"data,omitempty"`
 	Starred       *bool                  `protobuf:"varint,10,opt,name=starred,proto3,oneof" json:"starred,omitempty"`
+	Kind          NotificationKind       `protobuf:"varint,11,opt,name=kind,proto3,enum=resources.notifications.NotificationKind" json:"kind,omitempty"`
+	ActorUserId   *int32                 `protobuf:"varint,12,opt,name=actor_user_id,json=actorUserId,proto3,oneof" json:"actor_user_id,omitempty"`
+	EntityType    *string                `protobuf:"bytes,13,opt,name=entity_type,json=entityType,proto3,oneof" json:"entity_type,omitempty"`
+	EntityId      *int64                 `protobuf:"varint,14,opt,name=entity_id,json=entityId,proto3,oneof" json:"entity_id,omitempty"`
+	ArchivedAt    *timestamp.Timestamp   `protobuf:"bytes,15,opt,name=archived_at,json=archivedAt,proto3" json:"archived_at,omitempty"`
+	Delivery      *NotificationDelivery  `protobuf:"bytes,16,opt,name=delivery,proto3,oneof" json:"delivery,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
 func (x *Notification) Reset() {
 	*x = Notification{}
-	mi := &file_resources_notifications_notifications_proto_msgTypes[0]
+	mi := &file_resources_notifications_notifications_proto_msgTypes[2]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -154,7 +458,7 @@ func (x *Notification) String() string {
 func (*Notification) ProtoMessage() {}
 
 func (x *Notification) ProtoReflect() protoreflect.Message {
-	mi := &file_resources_notifications_notifications_proto_msgTypes[0]
+	mi := &file_resources_notifications_notifications_proto_msgTypes[2]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -235,6 +539,48 @@ func (x *Notification) GetStarred() bool {
 	return false
 }
 
+func (x *Notification) GetKind() NotificationKind {
+	if x != nil {
+		return x.Kind
+	}
+	return NotificationKind_NOTIFICATION_KIND_UNSPECIFIED
+}
+
+func (x *Notification) GetActorUserId() int32 {
+	if x != nil && x.ActorUserId != nil {
+		return *x.ActorUserId
+	}
+	return 0
+}
+
+func (x *Notification) GetEntityType() string {
+	if x != nil && x.EntityType != nil {
+		return *x.EntityType
+	}
+	return ""
+}
+
+func (x *Notification) GetEntityId() int64 {
+	if x != nil && x.EntityId != nil {
+		return *x.EntityId
+	}
+	return 0
+}
+
+func (x *Notification) GetArchivedAt() *timestamp.Timestamp {
+	if x != nil {
+		return x.ArchivedAt
+	}
+	return nil
+}
+
+func (x *Notification) GetDelivery() *NotificationDelivery {
+	if x != nil {
+		return x.Delivery
+	}
+	return nil
+}
+
 func (x *Notification) SetId(v int64) {
 	x.Id = v
 }
@@ -273,6 +619,30 @@ func (x *Notification) SetData(v *Data) {
 
 func (x *Notification) SetStarred(v bool) {
 	x.Starred = &v
+}
+
+func (x *Notification) SetKind(v NotificationKind) {
+	x.Kind = v
+}
+
+func (x *Notification) SetActorUserId(v int32) {
+	x.ActorUserId = &v
+}
+
+func (x *Notification) SetEntityType(v string) {
+	x.EntityType = &v
+}
+
+func (x *Notification) SetEntityId(v int64) {
+	x.EntityId = &v
+}
+
+func (x *Notification) SetArchivedAt(v *timestamp.Timestamp) {
+	x.ArchivedAt = v
+}
+
+func (x *Notification) SetDelivery(v *NotificationDelivery) {
+	x.Delivery = v
 }
 
 func (x *Notification) HasCreatedAt() bool {
@@ -317,6 +687,41 @@ func (x *Notification) HasStarred() bool {
 	return x.Starred != nil
 }
 
+func (x *Notification) HasActorUserId() bool {
+	if x == nil {
+		return false
+	}
+	return x.ActorUserId != nil
+}
+
+func (x *Notification) HasEntityType() bool {
+	if x == nil {
+		return false
+	}
+	return x.EntityType != nil
+}
+
+func (x *Notification) HasEntityId() bool {
+	if x == nil {
+		return false
+	}
+	return x.EntityId != nil
+}
+
+func (x *Notification) HasArchivedAt() bool {
+	if x == nil {
+		return false
+	}
+	return x.ArchivedAt != nil
+}
+
+func (x *Notification) HasDelivery() bool {
+	if x == nil {
+		return false
+	}
+	return x.Delivery != nil
+}
+
 func (x *Notification) ClearCreatedAt() {
 	x.CreatedAt = nil
 }
@@ -341,19 +746,45 @@ func (x *Notification) ClearStarred() {
 	x.Starred = nil
 }
 
+func (x *Notification) ClearActorUserId() {
+	x.ActorUserId = nil
+}
+
+func (x *Notification) ClearEntityType() {
+	x.EntityType = nil
+}
+
+func (x *Notification) ClearEntityId() {
+	x.EntityId = nil
+}
+
+func (x *Notification) ClearArchivedAt() {
+	x.ArchivedAt = nil
+}
+
+func (x *Notification) ClearDelivery() {
+	x.Delivery = nil
+}
+
 type Notification_builder struct {
 	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
 
-	Id        int64
-	CreatedAt *timestamp.Timestamp
-	ReadAt    *timestamp.Timestamp
-	UserId    int32
-	Title     *common.I18NItem
-	Type      NotificationType
-	Content   *common.I18NItem
-	Category  NotificationCategory
-	Data      *Data
-	Starred   *bool
+	Id          int64
+	CreatedAt   *timestamp.Timestamp
+	ReadAt      *timestamp.Timestamp
+	UserId      int32
+	Title       *common.I18NItem
+	Type        NotificationType
+	Content     *common.I18NItem
+	Category    NotificationCategory
+	Data        *Data
+	Starred     *bool
+	Kind        NotificationKind
+	ActorUserId *int32
+	EntityType  *string
+	EntityId    *int64
+	ArchivedAt  *timestamp.Timestamp
+	Delivery    *NotificationDelivery
 }
 
 func (b0 Notification_builder) Build() *Notification {
@@ -370,6 +801,12 @@ func (b0 Notification_builder) Build() *Notification {
 	x.Category = b.Category
 	x.Data = b.Data
 	x.Starred = b.Starred
+	x.Kind = b.Kind
+	x.ActorUserId = b.ActorUserId
+	x.EntityType = b.EntityType
+	x.EntityId = b.EntityId
+	x.ArchivedAt = b.ArchivedAt
+	x.Delivery = b.Delivery
 	return m0
 }
 
@@ -384,7 +821,7 @@ type Data struct {
 
 func (x *Data) Reset() {
 	*x = Data{}
-	mi := &file_resources_notifications_notifications_proto_msgTypes[1]
+	mi := &file_resources_notifications_notifications_proto_msgTypes[3]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -396,7 +833,7 @@ func (x *Data) String() string {
 func (*Data) ProtoMessage() {}
 
 func (x *Data) ProtoReflect() protoreflect.Message {
-	mi := &file_resources_notifications_notifications_proto_msgTypes[1]
+	mi := &file_resources_notifications_notifications_proto_msgTypes[3]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -502,7 +939,7 @@ type Link struct {
 
 func (x *Link) Reset() {
 	*x = Link{}
-	mi := &file_resources_notifications_notifications_proto_msgTypes[2]
+	mi := &file_resources_notifications_notifications_proto_msgTypes[4]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -514,7 +951,7 @@ func (x *Link) String() string {
 func (*Link) ProtoMessage() {}
 
 func (x *Link) ProtoReflect() protoreflect.Message {
-	mi := &file_resources_notifications_notifications_proto_msgTypes[2]
+	mi := &file_resources_notifications_notifications_proto_msgTypes[4]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -608,7 +1045,7 @@ type CalendarData struct {
 
 func (x *CalendarData) Reset() {
 	*x = CalendarData{}
-	mi := &file_resources_notifications_notifications_proto_msgTypes[3]
+	mi := &file_resources_notifications_notifications_proto_msgTypes[5]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -620,7 +1057,7 @@ func (x *CalendarData) String() string {
 func (*CalendarData) ProtoMessage() {}
 
 func (x *CalendarData) ProtoReflect() protoreflect.Message {
-	mi := &file_resources_notifications_notifications_proto_msgTypes[3]
+	mi := &file_resources_notifications_notifications_proto_msgTypes[5]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -695,7 +1132,20 @@ var File_resources_notifications_notifications_proto protoreflect.FileDescriptor
 
 const file_resources_notifications_notifications_proto_rawDesc = "" +
 	"\n" +
-	"+resources/notifications/notifications.proto\x12\x17resources.notifications\x1a!codegen/dbscanner/dbscanner.proto\x1a!codegen/sanitizer/sanitizer.proto\x1a\x1bresources/common/i18n.proto\x1a#resources/timestamp/timestamp.proto\x1a resources/users/short/user.proto\"\x9d\x04\n" +
+	"+resources/notifications/notifications.proto\x12\x17resources.notifications\x1a!codegen/dbscanner/dbscanner.proto\x1a!codegen/sanitizer/sanitizer.proto\x1a\x1bresources/common/i18n.proto\x1a#resources/timestamp/timestamp.proto\x1a resources/users/short/user.proto\"\xd6\x02\n" +
+	"\x16NotificationPreference\x12I\n" +
+	"\bcategory\x18\x01 \x01(\x0e2-.resources.notifications.NotificationCategoryR\bcategory\x12=\n" +
+	"\x04kind\x18\x02 \x01(\x0e2).resources.notifications.NotificationKindR\x04kind\x12(\n" +
+	"\rinbox_enabled\x18\x03 \x01(\bH\x00R\finboxEnabled\x88\x01\x01\x12(\n" +
+	"\rtoast_enabled\x18\x04 \x01(\bH\x01R\ftoastEnabled\x88\x01\x01\x12(\n" +
+	"\rsound_enabled\x18\x05 \x01(\bH\x02R\fsoundEnabled\x88\x01\x01B\x10\n" +
+	"\x0e_inbox_enabledB\x10\n" +
+	"\x0e_toast_enabledB\x10\n" +
+	"\x0e_sound_enabled\"\x85\x01\n" +
+	"\x14NotificationDelivery\x12#\n" +
+	"\rinbox_enabled\x18\x01 \x01(\bR\finboxEnabled\x12#\n" +
+	"\rtoast_enabled\x18\x02 \x01(\bR\ftoastEnabled\x12#\n" +
+	"\rsound_enabled\x18\x03 \x01(\bR\fsoundEnabled\"\x9b\a\n" +
 	"\fNotification\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12=\n" +
 	"\n" +
@@ -708,10 +1158,23 @@ const file_resources_notifications_notifications_proto_rawDesc = "" +
 	"\bcategory\x18\b \x01(\x0e2-.resources.notifications.NotificationCategoryR\bcategory\x126\n" +
 	"\x04data\x18\t \x01(\v2\x1d.resources.notifications.DataH\x00R\x04data\x88\x01\x01\x12\x1d\n" +
 	"\astarred\x18\n" +
-	" \x01(\bH\x01R\astarred\x88\x01\x01B\a\n" +
+	" \x01(\bH\x01R\astarred\x88\x01\x01\x12=\n" +
+	"\x04kind\x18\v \x01(\x0e2).resources.notifications.NotificationKindR\x04kind\x12'\n" +
+	"\ractor_user_id\x18\f \x01(\x05H\x02R\vactorUserId\x88\x01\x01\x12$\n" +
+	"\ventity_type\x18\r \x01(\tH\x03R\n" +
+	"entityType\x88\x01\x01\x12 \n" +
+	"\tentity_id\x18\x0e \x01(\x03H\x04R\bentityId\x88\x01\x01\x12?\n" +
+	"\varchived_at\x18\x0f \x01(\v2\x1e.resources.timestamp.TimestampR\n" +
+	"archivedAt\x12N\n" +
+	"\bdelivery\x18\x10 \x01(\v2-.resources.notifications.NotificationDeliveryH\x05R\bdelivery\x88\x01\x01B\a\n" +
 	"\x05_dataB\n" +
 	"\n" +
-	"\b_starred\"\xf6\x01\n" +
+	"\b_starredB\x10\n" +
+	"\x0e_actor_user_idB\x0e\n" +
+	"\f_entity_typeB\f\n" +
+	"\n" +
+	"_entity_idB\v\n" +
+	"\t_delivery\"\xf6\x01\n" +
 	"\x04Data\x126\n" +
 	"\x04link\x18\x01 \x01(\v2\x1d.resources.notifications.LinkH\x00R\x04link\x88\x01\x01\x12B\n" +
 	"\tcaused_by\x18\x02 \x01(\v2 .resources.users.short.UserShortH\x01R\bcausedBy\x88\x01\x01\x12F\n" +
@@ -737,42 +1200,59 @@ const file_resources_notifications_notifications_proto_rawDesc = "" +
 	"\x17NOTIFICATION_TYPE_ERROR\x10\x01\x12\x1d\n" +
 	"\x19NOTIFICATION_TYPE_WARNING\x10\x02\x12\x1a\n" +
 	"\x16NOTIFICATION_TYPE_INFO\x10\x03\x12\x1d\n" +
-	"\x19NOTIFICATION_TYPE_SUCCESS\x10\x04*\xa8\x01\n" +
+	"\x19NOTIFICATION_TYPE_SUCCESS\x10\x04*\xda\x02\n" +
 	"\x14NotificationCategory\x12%\n" +
 	"!NOTIFICATION_CATEGORY_UNSPECIFIED\x10\x00\x12!\n" +
 	"\x1dNOTIFICATION_CATEGORY_GENERAL\x10\x01\x12\"\n" +
 	"\x1eNOTIFICATION_CATEGORY_DOCUMENT\x10\x02\x12\"\n" +
-	"\x1eNOTIFICATION_CATEGORY_CALENDAR\x10\x03BYZWgithub.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/notifications;notificationsb\x06proto3"
+	"\x1eNOTIFICATION_CATEGORY_CALENDAR\x10\x03\x12\x1e\n" +
+	"\x1aNOTIFICATION_CATEGORY_JOBS\x10\x04\x12(\n" +
+	"$NOTIFICATION_CATEGORY_QUALIFICATIONS\x10\x05\x12 \n" +
+	"\x1cNOTIFICATION_CATEGORY_MAILER\x10\x06\x12\"\n" +
+	"\x1eNOTIFICATION_CATEGORY_DISPATCH\x10\a\x12 \n" +
+	"\x1cNOTIFICATION_CATEGORY_SYSTEM\x10\b*\x9d\x01\n" +
+	"\x10NotificationKind\x12!\n" +
+	"\x1dNOTIFICATION_KIND_UNSPECIFIED\x10\x00\x121\n" +
+	"-NOTIFICATION_KIND_JOBS_GROUP_LEADERSHIP_ADDED\x10\x01\x123\n" +
+	"/NOTIFICATION_KIND_JOBS_GROUP_LEADERSHIP_REMOVED\x10\x02BYZWgithub.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/notifications;notificationsb\x06proto3"
 
-var file_resources_notifications_notifications_proto_enumTypes = make([]protoimpl.EnumInfo, 2)
-var file_resources_notifications_notifications_proto_msgTypes = make([]protoimpl.MessageInfo, 4)
+var file_resources_notifications_notifications_proto_enumTypes = make([]protoimpl.EnumInfo, 3)
+var file_resources_notifications_notifications_proto_msgTypes = make([]protoimpl.MessageInfo, 6)
 var file_resources_notifications_notifications_proto_goTypes = []any{
-	(NotificationType)(0),       // 0: resources.notifications.NotificationType
-	(NotificationCategory)(0),   // 1: resources.notifications.NotificationCategory
-	(*Notification)(nil),        // 2: resources.notifications.Notification
-	(*Data)(nil),                // 3: resources.notifications.Data
-	(*Link)(nil),                // 4: resources.notifications.Link
-	(*CalendarData)(nil),        // 5: resources.notifications.CalendarData
-	(*timestamp.Timestamp)(nil), // 6: resources.timestamp.Timestamp
-	(*common.I18NItem)(nil),     // 7: resources.common.I18NItem
-	(*short.UserShort)(nil),     // 8: resources.users.short.UserShort
+	(NotificationType)(0),          // 0: resources.notifications.NotificationType
+	(NotificationCategory)(0),      // 1: resources.notifications.NotificationCategory
+	(NotificationKind)(0),          // 2: resources.notifications.NotificationKind
+	(*NotificationPreference)(nil), // 3: resources.notifications.NotificationPreference
+	(*NotificationDelivery)(nil),   // 4: resources.notifications.NotificationDelivery
+	(*Notification)(nil),           // 5: resources.notifications.Notification
+	(*Data)(nil),                   // 6: resources.notifications.Data
+	(*Link)(nil),                   // 7: resources.notifications.Link
+	(*CalendarData)(nil),           // 8: resources.notifications.CalendarData
+	(*timestamp.Timestamp)(nil),    // 9: resources.timestamp.Timestamp
+	(*common.I18NItem)(nil),        // 10: resources.common.I18NItem
+	(*short.UserShort)(nil),        // 11: resources.users.short.UserShort
 }
 var file_resources_notifications_notifications_proto_depIdxs = []int32{
-	6,  // 0: resources.notifications.Notification.created_at:type_name -> resources.timestamp.Timestamp
-	6,  // 1: resources.notifications.Notification.read_at:type_name -> resources.timestamp.Timestamp
-	7,  // 2: resources.notifications.Notification.title:type_name -> resources.common.I18NItem
-	0,  // 3: resources.notifications.Notification.type:type_name -> resources.notifications.NotificationType
-	7,  // 4: resources.notifications.Notification.content:type_name -> resources.common.I18NItem
-	1,  // 5: resources.notifications.Notification.category:type_name -> resources.notifications.NotificationCategory
-	3,  // 6: resources.notifications.Notification.data:type_name -> resources.notifications.Data
-	4,  // 7: resources.notifications.Data.link:type_name -> resources.notifications.Link
-	8,  // 8: resources.notifications.Data.caused_by:type_name -> resources.users.short.UserShort
-	5,  // 9: resources.notifications.Data.calendar:type_name -> resources.notifications.CalendarData
-	10, // [10:10] is the sub-list for method output_type
-	10, // [10:10] is the sub-list for method input_type
-	10, // [10:10] is the sub-list for extension type_name
-	10, // [10:10] is the sub-list for extension extendee
-	0,  // [0:10] is the sub-list for field type_name
+	1,  // 0: resources.notifications.NotificationPreference.category:type_name -> resources.notifications.NotificationCategory
+	2,  // 1: resources.notifications.NotificationPreference.kind:type_name -> resources.notifications.NotificationKind
+	9,  // 2: resources.notifications.Notification.created_at:type_name -> resources.timestamp.Timestamp
+	9,  // 3: resources.notifications.Notification.read_at:type_name -> resources.timestamp.Timestamp
+	10, // 4: resources.notifications.Notification.title:type_name -> resources.common.I18NItem
+	0,  // 5: resources.notifications.Notification.type:type_name -> resources.notifications.NotificationType
+	10, // 6: resources.notifications.Notification.content:type_name -> resources.common.I18NItem
+	1,  // 7: resources.notifications.Notification.category:type_name -> resources.notifications.NotificationCategory
+	6,  // 8: resources.notifications.Notification.data:type_name -> resources.notifications.Data
+	2,  // 9: resources.notifications.Notification.kind:type_name -> resources.notifications.NotificationKind
+	9,  // 10: resources.notifications.Notification.archived_at:type_name -> resources.timestamp.Timestamp
+	4,  // 11: resources.notifications.Notification.delivery:type_name -> resources.notifications.NotificationDelivery
+	7,  // 12: resources.notifications.Data.link:type_name -> resources.notifications.Link
+	11, // 13: resources.notifications.Data.caused_by:type_name -> resources.users.short.UserShort
+	8,  // 14: resources.notifications.Data.calendar:type_name -> resources.notifications.CalendarData
+	15, // [15:15] is the sub-list for method output_type
+	15, // [15:15] is the sub-list for method input_type
+	15, // [15:15] is the sub-list for extension type_name
+	15, // [15:15] is the sub-list for extension extendee
+	0,  // [0:15] is the sub-list for field type_name
 }
 
 func init() { file_resources_notifications_notifications_proto_init() }
@@ -781,16 +1261,17 @@ func file_resources_notifications_notifications_proto_init() {
 		return
 	}
 	file_resources_notifications_notifications_proto_msgTypes[0].OneofWrappers = []any{}
-	file_resources_notifications_notifications_proto_msgTypes[1].OneofWrappers = []any{}
 	file_resources_notifications_notifications_proto_msgTypes[2].OneofWrappers = []any{}
 	file_resources_notifications_notifications_proto_msgTypes[3].OneofWrappers = []any{}
+	file_resources_notifications_notifications_proto_msgTypes[4].OneofWrappers = []any{}
+	file_resources_notifications_notifications_proto_msgTypes[5].OneofWrappers = []any{}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_resources_notifications_notifications_proto_rawDesc), len(file_resources_notifications_notifications_proto_rawDesc)),
-			NumEnums:      2,
-			NumMessages:   4,
+			NumEnums:      3,
+			NumMessages:   6,
 			NumExtensions: 0,
 			NumServices:   0,
 		},

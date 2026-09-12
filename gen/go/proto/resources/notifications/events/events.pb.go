@@ -36,6 +36,7 @@ type UserEvent struct {
 	//	*UserEvent_NotificationsReadCount
 	//	*UserEvent_UserInfoChanged
 	//	*UserEvent_AccountGroupsChanged
+	//	*UserEvent_NotificationsUnreadCount
 	Data          isUserEvent_Data `protobuf_oneof:"data"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -118,6 +119,15 @@ func (x *UserEvent) GetAccountGroupsChanged() *userinfo.AccountGroupsChanged {
 	return nil
 }
 
+func (x *UserEvent) GetNotificationsUnreadCount() int64 {
+	if x != nil {
+		if x, ok := x.Data.(*UserEvent_NotificationsUnreadCount); ok {
+			return x.NotificationsUnreadCount
+		}
+	}
+	return 0
+}
+
 func (x *UserEvent) SetRefreshToken(v bool) {
 	x.Data = &UserEvent_RefreshToken{v}
 }
@@ -148,6 +158,10 @@ func (x *UserEvent) SetAccountGroupsChanged(v *userinfo.AccountGroupsChanged) {
 		return
 	}
 	x.Data = &UserEvent_AccountGroupsChanged{v}
+}
+
+func (x *UserEvent) SetNotificationsUnreadCount(v int64) {
+	x.Data = &UserEvent_NotificationsUnreadCount{v}
 }
 
 func (x *UserEvent) HasData() bool {
@@ -197,6 +211,14 @@ func (x *UserEvent) HasAccountGroupsChanged() bool {
 	return ok
 }
 
+func (x *UserEvent) HasNotificationsUnreadCount() bool {
+	if x == nil {
+		return false
+	}
+	_, ok := x.Data.(*UserEvent_NotificationsUnreadCount)
+	return ok
+}
+
 func (x *UserEvent) ClearData() {
 	x.Data = nil
 }
@@ -231,12 +253,19 @@ func (x *UserEvent) ClearAccountGroupsChanged() {
 	}
 }
 
+func (x *UserEvent) ClearNotificationsUnreadCount() {
+	if _, ok := x.Data.(*UserEvent_NotificationsUnreadCount); ok {
+		x.Data = nil
+	}
+}
+
 const UserEvent_Data_not_set_case case_UserEvent_Data = 0
 const UserEvent_RefreshToken_case case_UserEvent_Data = 1
 const UserEvent_Notification_case case_UserEvent_Data = 2
 const UserEvent_NotificationsReadCount_case case_UserEvent_Data = 3
 const UserEvent_UserInfoChanged_case case_UserEvent_Data = 4
 const UserEvent_AccountGroupsChanged_case case_UserEvent_Data = 5
+const UserEvent_NotificationsUnreadCount_case case_UserEvent_Data = 6
 
 func (x *UserEvent) WhichData() case_UserEvent_Data {
 	if x == nil {
@@ -253,6 +282,8 @@ func (x *UserEvent) WhichData() case_UserEvent_Data {
 		return UserEvent_UserInfoChanged_case
 	case *UserEvent_AccountGroupsChanged:
 		return UserEvent_AccountGroupsChanged_case
+	case *UserEvent_NotificationsUnreadCount:
+		return UserEvent_NotificationsUnreadCount_case
 	default:
 		return UserEvent_Data_not_set_case
 	}
@@ -264,10 +295,13 @@ type UserEvent_builder struct {
 	// Fields of oneof Data:
 	RefreshToken *bool
 	// Notifications
-	Notification           *notifications.Notification
+	Notification *notifications.Notification
+	// Deprecated delta kept for wire compatibility with older clients.
 	NotificationsReadCount *int64
 	UserInfoChanged        *userinfo.UserInfoChanged
 	AccountGroupsChanged   *userinfo.AccountGroupsChanged
+	// The authoritative unread count after a notification-state mutation.
+	NotificationsUnreadCount *int64
 	// -- end of Data
 }
 
@@ -289,6 +323,9 @@ func (b0 UserEvent_builder) Build() *UserEvent {
 	}
 	if b.AccountGroupsChanged != nil {
 		x.Data = &UserEvent_AccountGroupsChanged{b.AccountGroupsChanged}
+	}
+	if b.NotificationsUnreadCount != nil {
+		x.Data = &UserEvent_NotificationsUnreadCount{*b.NotificationsUnreadCount}
 	}
 	return m0
 }
@@ -317,6 +354,7 @@ type UserEvent_Notification struct {
 }
 
 type UserEvent_NotificationsReadCount struct {
+	// Deprecated delta kept for wire compatibility with older clients.
 	NotificationsReadCount int64 `protobuf:"varint,3,opt,name=notifications_read_count,json=notificationsReadCount,proto3,oneof"`
 }
 
@@ -328,6 +366,11 @@ type UserEvent_AccountGroupsChanged struct {
 	AccountGroupsChanged *userinfo.AccountGroupsChanged `protobuf:"bytes,5,opt,name=account_groups_changed,json=accountGroupsChanged,proto3,oneof"`
 }
 
+type UserEvent_NotificationsUnreadCount struct {
+	// The authoritative unread count after a notification-state mutation.
+	NotificationsUnreadCount int64 `protobuf:"varint,6,opt,name=notifications_unread_count,json=notificationsUnreadCount,proto3,oneof"`
+}
+
 func (*UserEvent_RefreshToken) isUserEvent_Data() {}
 
 func (*UserEvent_Notification) isUserEvent_Data() {}
@@ -337,6 +380,8 @@ func (*UserEvent_NotificationsReadCount) isUserEvent_Data() {}
 func (*UserEvent_UserInfoChanged) isUserEvent_Data() {}
 
 func (*UserEvent_AccountGroupsChanged) isUserEvent_Data() {}
+
+func (*UserEvent_NotificationsUnreadCount) isUserEvent_Data() {}
 
 // Job related events
 type JobEvent struct {
@@ -797,13 +842,14 @@ var File_resources_notifications_events_events_proto protoreflect.FileDescriptor
 
 const file_resources_notifications_events_events_proto_rawDesc = "" +
 	"\n" +
-	"+resources/notifications/events/events.proto\x12\x1eresources.notifications.events\x1a)resources/clientconfig/clientconfig.proto\x1a resources/jobs/props/props.proto\x1a+resources/notifications/notifications.proto\x1a!resources/userinfo/userinfo.proto\"\xf8\x02\n" +
+	"+resources/notifications/events/events.proto\x12\x1eresources.notifications.events\x1a)resources/clientconfig/clientconfig.proto\x1a resources/jobs/props/props.proto\x1a+resources/notifications/notifications.proto\x1a!resources/userinfo/userinfo.proto\"\xb8\x03\n" +
 	"\tUserEvent\x12%\n" +
 	"\rrefresh_token\x18\x01 \x01(\bH\x00R\frefreshToken\x12K\n" +
 	"\fnotification\x18\x02 \x01(\v2%.resources.notifications.NotificationH\x00R\fnotification\x12:\n" +
 	"\x18notifications_read_count\x18\x03 \x01(\x03H\x00R\x16notificationsReadCount\x12Q\n" +
 	"\x11user_info_changed\x18\x04 \x01(\v2#.resources.userinfo.UserInfoChangedH\x00R\x0fuserInfoChanged\x12`\n" +
-	"\x16account_groups_changed\x18\x05 \x01(\v2(.resources.userinfo.AccountGroupsChangedH\x00R\x14accountGroupsChangedB\x06\n" +
+	"\x16account_groups_changed\x18\x05 \x01(\v2(.resources.userinfo.AccountGroupsChangedH\x00R\x14accountGroupsChanged\x12>\n" +
+	"\x1anotifications_unread_count\x18\x06 \x01(\x03H\x00R\x18notificationsUnreadCountB\x06\n" +
 	"\x04data\"Q\n" +
 	"\bJobEvent\x12=\n" +
 	"\tjob_props\x18\x01 \x01(\v2\x1e.resources.jobs.props.JobPropsH\x00R\bjobPropsB\x06\n" +
@@ -852,6 +898,7 @@ func file_resources_notifications_events_events_proto_init() {
 		(*UserEvent_NotificationsReadCount)(nil),
 		(*UserEvent_UserInfoChanged)(nil),
 		(*UserEvent_AccountGroupsChanged)(nil),
+		(*UserEvent_NotificationsUnreadCount)(nil),
 	}
 	file_resources_notifications_events_events_proto_msgTypes[1].OneofWrappers = []any{
 		(*JobEvent_JobProps)(nil),

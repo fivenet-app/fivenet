@@ -19,9 +19,12 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	NotificationsService_GetNotifications_FullMethodName  = "/services.notifications.NotificationsService/GetNotifications"
-	NotificationsService_MarkNotifications_FullMethodName = "/services.notifications.NotificationsService/MarkNotifications"
-	NotificationsService_Stream_FullMethodName            = "/services.notifications.NotificationsService/Stream"
+	NotificationsService_GetNotifications_FullMethodName             = "/services.notifications.NotificationsService/GetNotifications"
+	NotificationsService_MarkNotifications_FullMethodName            = "/services.notifications.NotificationsService/MarkNotifications"
+	NotificationsService_UpdateNotificationState_FullMethodName      = "/services.notifications.NotificationsService/UpdateNotificationState"
+	NotificationsService_GetNotificationPreferences_FullMethodName   = "/services.notifications.NotificationsService/GetNotificationPreferences"
+	NotificationsService_UpdateNotificationPreference_FullMethodName = "/services.notifications.NotificationsService/UpdateNotificationPreference"
+	NotificationsService_Stream_FullMethodName                       = "/services.notifications.NotificationsService/Stream"
 )
 
 // NotificationsServiceClient is the client API for NotificationsService service.
@@ -30,6 +33,9 @@ const (
 type NotificationsServiceClient interface {
 	GetNotifications(ctx context.Context, in *GetNotificationsRequest, opts ...grpc.CallOption) (*GetNotificationsResponse, error)
 	MarkNotifications(ctx context.Context, in *MarkNotificationsRequest, opts ...grpc.CallOption) (*MarkNotificationsResponse, error)
+	UpdateNotificationState(ctx context.Context, in *UpdateNotificationStateRequest, opts ...grpc.CallOption) (*UpdateNotificationStateResponse, error)
+	GetNotificationPreferences(ctx context.Context, in *GetNotificationPreferencesRequest, opts ...grpc.CallOption) (*GetNotificationPreferencesResponse, error)
+	UpdateNotificationPreference(ctx context.Context, in *UpdateNotificationPreferenceRequest, opts ...grpc.CallOption) (*UpdateNotificationPreferenceResponse, error)
 	Stream(ctx context.Context, opts ...grpc.CallOption) (grpc.BidiStreamingClient[StreamRequest, StreamResponse], error)
 }
 
@@ -61,6 +67,36 @@ func (c *notificationsServiceClient) MarkNotifications(ctx context.Context, in *
 	return out, nil
 }
 
+func (c *notificationsServiceClient) UpdateNotificationState(ctx context.Context, in *UpdateNotificationStateRequest, opts ...grpc.CallOption) (*UpdateNotificationStateResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(UpdateNotificationStateResponse)
+	err := c.cc.Invoke(ctx, NotificationsService_UpdateNotificationState_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *notificationsServiceClient) GetNotificationPreferences(ctx context.Context, in *GetNotificationPreferencesRequest, opts ...grpc.CallOption) (*GetNotificationPreferencesResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetNotificationPreferencesResponse)
+	err := c.cc.Invoke(ctx, NotificationsService_GetNotificationPreferences_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *notificationsServiceClient) UpdateNotificationPreference(ctx context.Context, in *UpdateNotificationPreferenceRequest, opts ...grpc.CallOption) (*UpdateNotificationPreferenceResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(UpdateNotificationPreferenceResponse)
+	err := c.cc.Invoke(ctx, NotificationsService_UpdateNotificationPreference_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *notificationsServiceClient) Stream(ctx context.Context, opts ...grpc.CallOption) (grpc.BidiStreamingClient[StreamRequest, StreamResponse], error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	stream, err := c.cc.NewStream(ctx, &NotificationsService_ServiceDesc.Streams[0], NotificationsService_Stream_FullMethodName, cOpts...)
@@ -80,6 +116,9 @@ type NotificationsService_StreamClient = grpc.BidiStreamingClient[StreamRequest,
 type NotificationsServiceServer interface {
 	GetNotifications(context.Context, *GetNotificationsRequest) (*GetNotificationsResponse, error)
 	MarkNotifications(context.Context, *MarkNotificationsRequest) (*MarkNotificationsResponse, error)
+	UpdateNotificationState(context.Context, *UpdateNotificationStateRequest) (*UpdateNotificationStateResponse, error)
+	GetNotificationPreferences(context.Context, *GetNotificationPreferencesRequest) (*GetNotificationPreferencesResponse, error)
+	UpdateNotificationPreference(context.Context, *UpdateNotificationPreferenceRequest) (*UpdateNotificationPreferenceResponse, error)
 	Stream(grpc.BidiStreamingServer[StreamRequest, StreamResponse]) error
 	mustEmbedUnimplementedNotificationsServiceServer()
 }
@@ -96,6 +135,15 @@ func (UnimplementedNotificationsServiceServer) GetNotifications(context.Context,
 }
 func (UnimplementedNotificationsServiceServer) MarkNotifications(context.Context, *MarkNotificationsRequest) (*MarkNotificationsResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method MarkNotifications not implemented")
+}
+func (UnimplementedNotificationsServiceServer) UpdateNotificationState(context.Context, *UpdateNotificationStateRequest) (*UpdateNotificationStateResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UpdateNotificationState not implemented")
+}
+func (UnimplementedNotificationsServiceServer) GetNotificationPreferences(context.Context, *GetNotificationPreferencesRequest) (*GetNotificationPreferencesResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetNotificationPreferences not implemented")
+}
+func (UnimplementedNotificationsServiceServer) UpdateNotificationPreference(context.Context, *UpdateNotificationPreferenceRequest) (*UpdateNotificationPreferenceResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UpdateNotificationPreference not implemented")
 }
 func (UnimplementedNotificationsServiceServer) Stream(grpc.BidiStreamingServer[StreamRequest, StreamResponse]) error {
 	return status.Errorf(codes.Unimplemented, "method Stream not implemented")
@@ -157,6 +205,60 @@ func _NotificationsService_MarkNotifications_Handler(srv interface{}, ctx contex
 	return interceptor(ctx, in, info, handler)
 }
 
+func _NotificationsService_UpdateNotificationState_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UpdateNotificationStateRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(NotificationsServiceServer).UpdateNotificationState(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: NotificationsService_UpdateNotificationState_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(NotificationsServiceServer).UpdateNotificationState(ctx, req.(*UpdateNotificationStateRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _NotificationsService_GetNotificationPreferences_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetNotificationPreferencesRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(NotificationsServiceServer).GetNotificationPreferences(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: NotificationsService_GetNotificationPreferences_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(NotificationsServiceServer).GetNotificationPreferences(ctx, req.(*GetNotificationPreferencesRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _NotificationsService_UpdateNotificationPreference_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UpdateNotificationPreferenceRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(NotificationsServiceServer).UpdateNotificationPreference(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: NotificationsService_UpdateNotificationPreference_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(NotificationsServiceServer).UpdateNotificationPreference(ctx, req.(*UpdateNotificationPreferenceRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _NotificationsService_Stream_Handler(srv interface{}, stream grpc.ServerStream) error {
 	return srv.(NotificationsServiceServer).Stream(&grpc.GenericServerStream[StreamRequest, StreamResponse]{ServerStream: stream})
 }
@@ -178,6 +280,18 @@ var NotificationsService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "MarkNotifications",
 			Handler:    _NotificationsService_MarkNotifications_Handler,
+		},
+		{
+			MethodName: "UpdateNotificationState",
+			Handler:    _NotificationsService_UpdateNotificationState_Handler,
+		},
+		{
+			MethodName: "GetNotificationPreferences",
+			Handler:    _NotificationsService_GetNotificationPreferences_Handler,
+		},
+		{
+			MethodName: "UpdateNotificationPreference",
+			Handler:    _NotificationsService_UpdateNotificationPreference_Handler,
 		},
 	},
 	Streams: []grpc.StreamDesc{

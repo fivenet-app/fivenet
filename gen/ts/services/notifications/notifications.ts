@@ -19,8 +19,10 @@ import { JobGradeEvent } from "../../resources/notifications/events/events";
 import { JobEvent } from "../../resources/notifications/events/events";
 import { UserEvent } from "../../resources/notifications/events/events";
 import { ClientView } from "../../resources/notifications/clientview/clientview";
+import { NotificationPreference } from "../../resources/notifications/notifications";
 import { Notification } from "../../resources/notifications/notifications";
 import { PaginationResponse } from "../../resources/common/database/database";
+import { NotificationKind } from "../../resources/notifications/notifications";
 import { NotificationCategory } from "../../resources/notifications/notifications";
 import { PaginationRequest } from "../../resources/common/database/database";
 /**
@@ -39,6 +41,22 @@ export interface GetNotificationsRequest {
      * @generated from protobuf field: repeated resources.notifications.NotificationCategory categories = 3
      */
     categories: NotificationCategory[];
+    /**
+     * @generated from protobuf field: repeated resources.notifications.NotificationKind kinds = 4
+     */
+    kinds: NotificationKind[];
+    /**
+     * @generated from protobuf field: optional bool include_archived = 5
+     */
+    includeArchived?: boolean;
+    /**
+     * @generated from protobuf field: optional bool starred_only = 6
+     */
+    starredOnly?: boolean;
+    /**
+     * @generated from protobuf field: optional bool archived_only = 7
+     */
+    archivedOnly?: boolean;
 }
 /**
  * @generated from protobuf message services.notifications.GetNotificationsResponse
@@ -84,6 +102,79 @@ export interface MarkNotificationsResponse {
      * @generated from protobuf field: int64 unread_count = 2
      */
     unreadCount: number;
+}
+/**
+ * @generated from protobuf message services.notifications.UpdateNotificationStateRequest
+ */
+export interface UpdateNotificationStateRequest {
+    /**
+     * @generated from protobuf field: repeated int64 ids = 1
+     */
+    ids: number[];
+    /**
+     * @generated from protobuf field: optional bool unread = 2
+     */
+    unread?: boolean;
+    /**
+     * @generated from protobuf field: optional bool starred = 3
+     */
+    starred?: boolean;
+    /**
+     * @generated from protobuf field: optional bool archived = 4
+     */
+    archived?: boolean;
+}
+/**
+ * @generated from protobuf message services.notifications.UpdateNotificationStateResponse
+ */
+export interface UpdateNotificationStateResponse {
+    /**
+     * @generated from protobuf field: int64 updated = 1
+     */
+    updated: number;
+    /**
+     * @generated from protobuf field: int64 unread_count = 2
+     */
+    unreadCount: number;
+}
+/**
+ * @generated from protobuf message services.notifications.GetNotificationPreferencesRequest
+ */
+export interface GetNotificationPreferencesRequest {
+}
+/**
+ * @generated from protobuf message services.notifications.GetNotificationPreferencesResponse
+ */
+export interface GetNotificationPreferencesResponse {
+    /**
+     * @generated from protobuf field: repeated resources.notifications.NotificationPreference preferences = 1
+     */
+    preferences: NotificationPreference[];
+}
+/**
+ * Updates one preference scope. Fields omitted from preference inherit from a
+ * less-specific scope. reset removes the complete override for this scope.
+ *
+ * @generated from protobuf message services.notifications.UpdateNotificationPreferenceRequest
+ */
+export interface UpdateNotificationPreferenceRequest {
+    /**
+     * @generated from protobuf field: resources.notifications.NotificationPreference preference = 1
+     */
+    preference?: NotificationPreference;
+    /**
+     * @generated from protobuf field: optional bool reset = 2
+     */
+    reset?: boolean;
+}
+/**
+ * @generated from protobuf message services.notifications.UpdateNotificationPreferenceResponse
+ */
+export interface UpdateNotificationPreferenceResponse {
+    /**
+     * @generated from protobuf field: repeated resources.notifications.NotificationPreference preferences = 1
+     */
+    preferences: NotificationPreference[];
 }
 /**
  * @generated from protobuf message services.notifications.StreamRequest
@@ -172,12 +263,17 @@ class GetNotificationsRequest$Type extends MessageType<GetNotificationsRequest> 
         super("services.notifications.GetNotificationsRequest", [
             { no: 1, name: "pagination", kind: "message", T: () => PaginationRequest, options: { "buf.validate.field": { required: true } } },
             { no: 2, name: "include_read", kind: "scalar", opt: true, T: 8 /*ScalarType.BOOL*/ },
-            { no: 3, name: "categories", kind: "enum", repeat: 1 /*RepeatType.PACKED*/, T: () => ["resources.notifications.NotificationCategory", NotificationCategory, "NOTIFICATION_CATEGORY_"], options: { "buf.validate.field": { repeated: { maxItems: "4", items: { enum: { definedOnly: true } } } } } }
+            { no: 3, name: "categories", kind: "enum", repeat: 1 /*RepeatType.PACKED*/, T: () => ["resources.notifications.NotificationCategory", NotificationCategory, "NOTIFICATION_CATEGORY_"], options: { "buf.validate.field": { repeated: { maxItems: "8", items: { enum: { definedOnly: true } } } } } },
+            { no: 4, name: "kinds", kind: "enum", repeat: 1 /*RepeatType.PACKED*/, T: () => ["resources.notifications.NotificationKind", NotificationKind, "NOTIFICATION_KIND_"], options: { "buf.validate.field": { repeated: { maxItems: "32", items: { enum: { definedOnly: true } } } } } },
+            { no: 5, name: "include_archived", kind: "scalar", opt: true, T: 8 /*ScalarType.BOOL*/ },
+            { no: 6, name: "starred_only", kind: "scalar", opt: true, T: 8 /*ScalarType.BOOL*/ },
+            { no: 7, name: "archived_only", kind: "scalar", opt: true, T: 8 /*ScalarType.BOOL*/ }
         ]);
     }
     create(value?: PartialMessage<GetNotificationsRequest>): GetNotificationsRequest {
         const message = globalThis.Object.create((this.messagePrototype!));
         message.categories = [];
+        message.kinds = [];
         if (value !== undefined)
             reflectionMergePartial<GetNotificationsRequest>(this, message, value);
         return message;
@@ -199,6 +295,22 @@ class GetNotificationsRequest$Type extends MessageType<GetNotificationsRequest> 
                             message.categories.push(reader.int32());
                     else
                         message.categories.push(reader.int32());
+                    break;
+                case /* repeated resources.notifications.NotificationKind kinds */ 4:
+                    if (wireType === WireType.LengthDelimited)
+                        for (let e = reader.int32() + reader.pos; reader.pos < e;)
+                            message.kinds.push(reader.int32());
+                    else
+                        message.kinds.push(reader.int32());
+                    break;
+                case /* optional bool include_archived */ 5:
+                    message.includeArchived = reader.bool();
+                    break;
+                case /* optional bool starred_only */ 6:
+                    message.starredOnly = reader.bool();
+                    break;
+                case /* optional bool archived_only */ 7:
+                    message.archivedOnly = reader.bool();
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -225,6 +337,22 @@ class GetNotificationsRequest$Type extends MessageType<GetNotificationsRequest> 
                 writer.int32(message.categories[i]);
             writer.join();
         }
+        /* repeated resources.notifications.NotificationKind kinds = 4; */
+        if (message.kinds.length) {
+            writer.tag(4, WireType.LengthDelimited).fork();
+            for (let i = 0; i < message.kinds.length; i++)
+                writer.int32(message.kinds[i]);
+            writer.join();
+        }
+        /* optional bool include_archived = 5; */
+        if (message.includeArchived !== undefined)
+            writer.tag(5, WireType.Varint).bool(message.includeArchived);
+        /* optional bool starred_only = 6; */
+        if (message.starredOnly !== undefined)
+            writer.tag(6, WireType.Varint).bool(message.starredOnly);
+        /* optional bool archived_only = 7; */
+        if (message.archivedOnly !== undefined)
+            writer.tag(7, WireType.Varint).bool(message.archivedOnly);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -415,6 +543,322 @@ class MarkNotificationsResponse$Type extends MessageType<MarkNotificationsRespon
  */
 export const MarkNotificationsResponse = new MarkNotificationsResponse$Type();
 // @generated message type with reflection information, may provide speed optimized methods
+class UpdateNotificationStateRequest$Type extends MessageType<UpdateNotificationStateRequest> {
+    constructor() {
+        super("services.notifications.UpdateNotificationStateRequest", [
+            { no: 1, name: "ids", kind: "scalar", repeat: 1 /*RepeatType.PACKED*/, T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/, options: { "buf.validate.field": { repeated: { minItems: "1", maxItems: "20" } } } },
+            { no: 2, name: "unread", kind: "scalar", opt: true, T: 8 /*ScalarType.BOOL*/ },
+            { no: 3, name: "starred", kind: "scalar", opt: true, T: 8 /*ScalarType.BOOL*/ },
+            { no: 4, name: "archived", kind: "scalar", opt: true, T: 8 /*ScalarType.BOOL*/ }
+        ]);
+    }
+    create(value?: PartialMessage<UpdateNotificationStateRequest>): UpdateNotificationStateRequest {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        message.ids = [];
+        if (value !== undefined)
+            reflectionMergePartial<UpdateNotificationStateRequest>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: UpdateNotificationStateRequest): UpdateNotificationStateRequest {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* repeated int64 ids */ 1:
+                    if (wireType === WireType.LengthDelimited)
+                        for (let e = reader.int32() + reader.pos; reader.pos < e;)
+                            message.ids.push(reader.int64().toNumber());
+                    else
+                        message.ids.push(reader.int64().toNumber());
+                    break;
+                case /* optional bool unread */ 2:
+                    message.unread = reader.bool();
+                    break;
+                case /* optional bool starred */ 3:
+                    message.starred = reader.bool();
+                    break;
+                case /* optional bool archived */ 4:
+                    message.archived = reader.bool();
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: UpdateNotificationStateRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* repeated int64 ids = 1; */
+        if (message.ids.length) {
+            writer.tag(1, WireType.LengthDelimited).fork();
+            for (let i = 0; i < message.ids.length; i++)
+                writer.int64(message.ids[i]);
+            writer.join();
+        }
+        /* optional bool unread = 2; */
+        if (message.unread !== undefined)
+            writer.tag(2, WireType.Varint).bool(message.unread);
+        /* optional bool starred = 3; */
+        if (message.starred !== undefined)
+            writer.tag(3, WireType.Varint).bool(message.starred);
+        /* optional bool archived = 4; */
+        if (message.archived !== undefined)
+            writer.tag(4, WireType.Varint).bool(message.archived);
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message services.notifications.UpdateNotificationStateRequest
+ */
+export const UpdateNotificationStateRequest = new UpdateNotificationStateRequest$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class UpdateNotificationStateResponse$Type extends MessageType<UpdateNotificationStateResponse> {
+    constructor() {
+        super("services.notifications.UpdateNotificationStateResponse", [
+            { no: 1, name: "updated", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ },
+            { no: 2, name: "unread_count", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ }
+        ]);
+    }
+    create(value?: PartialMessage<UpdateNotificationStateResponse>): UpdateNotificationStateResponse {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        message.updated = 0;
+        message.unreadCount = 0;
+        if (value !== undefined)
+            reflectionMergePartial<UpdateNotificationStateResponse>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: UpdateNotificationStateResponse): UpdateNotificationStateResponse {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* int64 updated */ 1:
+                    message.updated = reader.int64().toNumber();
+                    break;
+                case /* int64 unread_count */ 2:
+                    message.unreadCount = reader.int64().toNumber();
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: UpdateNotificationStateResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* int64 updated = 1; */
+        if (message.updated !== 0)
+            writer.tag(1, WireType.Varint).int64(message.updated);
+        /* int64 unread_count = 2; */
+        if (message.unreadCount !== 0)
+            writer.tag(2, WireType.Varint).int64(message.unreadCount);
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message services.notifications.UpdateNotificationStateResponse
+ */
+export const UpdateNotificationStateResponse = new UpdateNotificationStateResponse$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class GetNotificationPreferencesRequest$Type extends MessageType<GetNotificationPreferencesRequest> {
+    constructor() {
+        super("services.notifications.GetNotificationPreferencesRequest", []);
+    }
+    create(value?: PartialMessage<GetNotificationPreferencesRequest>): GetNotificationPreferencesRequest {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        if (value !== undefined)
+            reflectionMergePartial<GetNotificationPreferencesRequest>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: GetNotificationPreferencesRequest): GetNotificationPreferencesRequest {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: GetNotificationPreferencesRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message services.notifications.GetNotificationPreferencesRequest
+ */
+export const GetNotificationPreferencesRequest = new GetNotificationPreferencesRequest$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class GetNotificationPreferencesResponse$Type extends MessageType<GetNotificationPreferencesResponse> {
+    constructor() {
+        super("services.notifications.GetNotificationPreferencesResponse", [
+            { no: 1, name: "preferences", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => NotificationPreference, options: { "codegen.itemslen.enabled": true } }
+        ]);
+    }
+    create(value?: PartialMessage<GetNotificationPreferencesResponse>): GetNotificationPreferencesResponse {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        message.preferences = [];
+        if (value !== undefined)
+            reflectionMergePartial<GetNotificationPreferencesResponse>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: GetNotificationPreferencesResponse): GetNotificationPreferencesResponse {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* repeated resources.notifications.NotificationPreference preferences */ 1:
+                    message.preferences.push(NotificationPreference.internalBinaryRead(reader, reader.uint32(), options));
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: GetNotificationPreferencesResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* repeated resources.notifications.NotificationPreference preferences = 1; */
+        for (let i = 0; i < message.preferences.length; i++)
+            NotificationPreference.internalBinaryWrite(message.preferences[i], writer.tag(1, WireType.LengthDelimited).fork(), options).join();
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message services.notifications.GetNotificationPreferencesResponse
+ */
+export const GetNotificationPreferencesResponse = new GetNotificationPreferencesResponse$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class UpdateNotificationPreferenceRequest$Type extends MessageType<UpdateNotificationPreferenceRequest> {
+    constructor() {
+        super("services.notifications.UpdateNotificationPreferenceRequest", [
+            { no: 1, name: "preference", kind: "message", T: () => NotificationPreference, options: { "buf.validate.field": { required: true } } },
+            { no: 2, name: "reset", kind: "scalar", opt: true, T: 8 /*ScalarType.BOOL*/ }
+        ]);
+    }
+    create(value?: PartialMessage<UpdateNotificationPreferenceRequest>): UpdateNotificationPreferenceRequest {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        if (value !== undefined)
+            reflectionMergePartial<UpdateNotificationPreferenceRequest>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: UpdateNotificationPreferenceRequest): UpdateNotificationPreferenceRequest {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* resources.notifications.NotificationPreference preference */ 1:
+                    message.preference = NotificationPreference.internalBinaryRead(reader, reader.uint32(), options, message.preference);
+                    break;
+                case /* optional bool reset */ 2:
+                    message.reset = reader.bool();
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: UpdateNotificationPreferenceRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* resources.notifications.NotificationPreference preference = 1; */
+        if (message.preference)
+            NotificationPreference.internalBinaryWrite(message.preference, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
+        /* optional bool reset = 2; */
+        if (message.reset !== undefined)
+            writer.tag(2, WireType.Varint).bool(message.reset);
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message services.notifications.UpdateNotificationPreferenceRequest
+ */
+export const UpdateNotificationPreferenceRequest = new UpdateNotificationPreferenceRequest$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class UpdateNotificationPreferenceResponse$Type extends MessageType<UpdateNotificationPreferenceResponse> {
+    constructor() {
+        super("services.notifications.UpdateNotificationPreferenceResponse", [
+            { no: 1, name: "preferences", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => NotificationPreference, options: { "codegen.itemslen.enabled": true } }
+        ]);
+    }
+    create(value?: PartialMessage<UpdateNotificationPreferenceResponse>): UpdateNotificationPreferenceResponse {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        message.preferences = [];
+        if (value !== undefined)
+            reflectionMergePartial<UpdateNotificationPreferenceResponse>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: UpdateNotificationPreferenceResponse): UpdateNotificationPreferenceResponse {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* repeated resources.notifications.NotificationPreference preferences */ 1:
+                    message.preferences.push(NotificationPreference.internalBinaryRead(reader, reader.uint32(), options));
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: UpdateNotificationPreferenceResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* repeated resources.notifications.NotificationPreference preferences = 1; */
+        for (let i = 0; i < message.preferences.length; i++)
+            NotificationPreference.internalBinaryWrite(message.preferences[i], writer.tag(1, WireType.LengthDelimited).fork(), options).join();
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message services.notifications.UpdateNotificationPreferenceResponse
+ */
+export const UpdateNotificationPreferenceResponse = new UpdateNotificationPreferenceResponse$Type();
+// @generated message type with reflection information, may provide speed optimized methods
 class StreamRequest$Type extends MessageType<StreamRequest> {
     constructor() {
         super("services.notifications.StreamRequest", [
@@ -595,5 +1039,8 @@ export const StreamResponse = new StreamResponse$Type();
 export const NotificationsService = new ServiceType("services.notifications.NotificationsService", [
     { name: "GetNotifications", options: { "codegen.perms.perms": { enabled: true, name: "Any" } }, I: GetNotificationsRequest, O: GetNotificationsResponse },
     { name: "MarkNotifications", options: { "codegen.perms.perms": { enabled: true, name: "Any" } }, I: MarkNotificationsRequest, O: MarkNotificationsResponse },
+    { name: "UpdateNotificationState", options: { "codegen.perms.perms": { enabled: true, name: "Any" } }, I: UpdateNotificationStateRequest, O: UpdateNotificationStateResponse },
+    { name: "GetNotificationPreferences", options: { "codegen.perms.perms": { enabled: true, name: "Any" } }, I: GetNotificationPreferencesRequest, O: GetNotificationPreferencesResponse },
+    { name: "UpdateNotificationPreference", options: { "codegen.perms.perms": { enabled: true, name: "Any" } }, I: UpdateNotificationPreferenceRequest, O: UpdateNotificationPreferenceResponse },
     { name: "Stream", serverStreaming: true, clientStreaming: true, options: { "codegen.perms.perms": { enabled: true, name: "Any" } }, I: StreamRequest, O: StreamResponse }
 ]);

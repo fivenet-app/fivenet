@@ -30,12 +30,16 @@ const (
 )
 
 type GetNotificationsRequest struct {
-	state         protoimpl.MessageState               `protogen:"hybrid.v1"`
-	Pagination    *database.PaginationRequest          `protobuf:"bytes,1,opt,name=pagination,proto3" json:"pagination,omitempty"`
-	IncludeRead   *bool                                `protobuf:"varint,2,opt,name=include_read,json=includeRead,proto3,oneof" json:"include_read,omitempty"`
-	Categories    []notifications.NotificationCategory `protobuf:"varint,3,rep,packed,name=categories,proto3,enum=resources.notifications.NotificationCategory" json:"categories,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
+	state           protoimpl.MessageState               `protogen:"hybrid.v1"`
+	Pagination      *database.PaginationRequest          `protobuf:"bytes,1,opt,name=pagination,proto3" json:"pagination,omitempty"`
+	IncludeRead     *bool                                `protobuf:"varint,2,opt,name=include_read,json=includeRead,proto3,oneof" json:"include_read,omitempty"`
+	Categories      []notifications.NotificationCategory `protobuf:"varint,3,rep,packed,name=categories,proto3,enum=resources.notifications.NotificationCategory" json:"categories,omitempty"`
+	Kinds           []notifications.NotificationKind     `protobuf:"varint,4,rep,packed,name=kinds,proto3,enum=resources.notifications.NotificationKind" json:"kinds,omitempty"`
+	IncludeArchived *bool                                `protobuf:"varint,5,opt,name=include_archived,json=includeArchived,proto3,oneof" json:"include_archived,omitempty"`
+	StarredOnly     *bool                                `protobuf:"varint,6,opt,name=starred_only,json=starredOnly,proto3,oneof" json:"starred_only,omitempty"`
+	ArchivedOnly    *bool                                `protobuf:"varint,7,opt,name=archived_only,json=archivedOnly,proto3,oneof" json:"archived_only,omitempty"`
+	unknownFields   protoimpl.UnknownFields
+	sizeCache       protoimpl.SizeCache
 }
 
 func (x *GetNotificationsRequest) Reset() {
@@ -84,6 +88,34 @@ func (x *GetNotificationsRequest) GetCategories() []notifications.NotificationCa
 	return nil
 }
 
+func (x *GetNotificationsRequest) GetKinds() []notifications.NotificationKind {
+	if x != nil {
+		return x.Kinds
+	}
+	return nil
+}
+
+func (x *GetNotificationsRequest) GetIncludeArchived() bool {
+	if x != nil && x.IncludeArchived != nil {
+		return *x.IncludeArchived
+	}
+	return false
+}
+
+func (x *GetNotificationsRequest) GetStarredOnly() bool {
+	if x != nil && x.StarredOnly != nil {
+		return *x.StarredOnly
+	}
+	return false
+}
+
+func (x *GetNotificationsRequest) GetArchivedOnly() bool {
+	if x != nil && x.ArchivedOnly != nil {
+		return *x.ArchivedOnly
+	}
+	return false
+}
+
 func (x *GetNotificationsRequest) SetPagination(v *database.PaginationRequest) {
 	x.Pagination = v
 }
@@ -94,6 +126,22 @@ func (x *GetNotificationsRequest) SetIncludeRead(v bool) {
 
 func (x *GetNotificationsRequest) SetCategories(v []notifications.NotificationCategory) {
 	x.Categories = v
+}
+
+func (x *GetNotificationsRequest) SetKinds(v []notifications.NotificationKind) {
+	x.Kinds = v
+}
+
+func (x *GetNotificationsRequest) SetIncludeArchived(v bool) {
+	x.IncludeArchived = &v
+}
+
+func (x *GetNotificationsRequest) SetStarredOnly(v bool) {
+	x.StarredOnly = &v
+}
+
+func (x *GetNotificationsRequest) SetArchivedOnly(v bool) {
+	x.ArchivedOnly = &v
 }
 
 func (x *GetNotificationsRequest) HasPagination() bool {
@@ -110,6 +158,27 @@ func (x *GetNotificationsRequest) HasIncludeRead() bool {
 	return x.IncludeRead != nil
 }
 
+func (x *GetNotificationsRequest) HasIncludeArchived() bool {
+	if x == nil {
+		return false
+	}
+	return x.IncludeArchived != nil
+}
+
+func (x *GetNotificationsRequest) HasStarredOnly() bool {
+	if x == nil {
+		return false
+	}
+	return x.StarredOnly != nil
+}
+
+func (x *GetNotificationsRequest) HasArchivedOnly() bool {
+	if x == nil {
+		return false
+	}
+	return x.ArchivedOnly != nil
+}
+
 func (x *GetNotificationsRequest) ClearPagination() {
 	x.Pagination = nil
 }
@@ -118,12 +187,28 @@ func (x *GetNotificationsRequest) ClearIncludeRead() {
 	x.IncludeRead = nil
 }
 
+func (x *GetNotificationsRequest) ClearIncludeArchived() {
+	x.IncludeArchived = nil
+}
+
+func (x *GetNotificationsRequest) ClearStarredOnly() {
+	x.StarredOnly = nil
+}
+
+func (x *GetNotificationsRequest) ClearArchivedOnly() {
+	x.ArchivedOnly = nil
+}
+
 type GetNotificationsRequest_builder struct {
 	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
 
-	Pagination  *database.PaginationRequest
-	IncludeRead *bool
-	Categories  []notifications.NotificationCategory
+	Pagination      *database.PaginationRequest
+	IncludeRead     *bool
+	Categories      []notifications.NotificationCategory
+	Kinds           []notifications.NotificationKind
+	IncludeArchived *bool
+	StarredOnly     *bool
+	ArchivedOnly    *bool
 }
 
 func (b0 GetNotificationsRequest_builder) Build() *GetNotificationsRequest {
@@ -133,6 +218,10 @@ func (b0 GetNotificationsRequest_builder) Build() *GetNotificationsRequest {
 	x.Pagination = b.Pagination
 	x.IncludeRead = b.IncludeRead
 	x.Categories = b.Categories
+	x.Kinds = b.Kinds
+	x.IncludeArchived = b.IncludeArchived
+	x.StarredOnly = b.StarredOnly
+	x.ArchivedOnly = b.ArchivedOnly
 	return m0
 }
 
@@ -387,6 +476,466 @@ func (b0 MarkNotificationsResponse_builder) Build() *MarkNotificationsResponse {
 	return m0
 }
 
+type UpdateNotificationStateRequest struct {
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
+	Ids           []int64                `protobuf:"varint,1,rep,packed,name=ids,proto3" json:"ids,omitempty"`
+	Unread        *bool                  `protobuf:"varint,2,opt,name=unread,proto3,oneof" json:"unread,omitempty"`
+	Starred       *bool                  `protobuf:"varint,3,opt,name=starred,proto3,oneof" json:"starred,omitempty"`
+	Archived      *bool                  `protobuf:"varint,4,opt,name=archived,proto3,oneof" json:"archived,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *UpdateNotificationStateRequest) Reset() {
+	*x = UpdateNotificationStateRequest{}
+	mi := &file_services_notifications_notifications_proto_msgTypes[4]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *UpdateNotificationStateRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*UpdateNotificationStateRequest) ProtoMessage() {}
+
+func (x *UpdateNotificationStateRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_services_notifications_notifications_proto_msgTypes[4]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+func (x *UpdateNotificationStateRequest) GetIds() []int64 {
+	if x != nil {
+		return x.Ids
+	}
+	return nil
+}
+
+func (x *UpdateNotificationStateRequest) GetUnread() bool {
+	if x != nil && x.Unread != nil {
+		return *x.Unread
+	}
+	return false
+}
+
+func (x *UpdateNotificationStateRequest) GetStarred() bool {
+	if x != nil && x.Starred != nil {
+		return *x.Starred
+	}
+	return false
+}
+
+func (x *UpdateNotificationStateRequest) GetArchived() bool {
+	if x != nil && x.Archived != nil {
+		return *x.Archived
+	}
+	return false
+}
+
+func (x *UpdateNotificationStateRequest) SetIds(v []int64) {
+	x.Ids = v
+}
+
+func (x *UpdateNotificationStateRequest) SetUnread(v bool) {
+	x.Unread = &v
+}
+
+func (x *UpdateNotificationStateRequest) SetStarred(v bool) {
+	x.Starred = &v
+}
+
+func (x *UpdateNotificationStateRequest) SetArchived(v bool) {
+	x.Archived = &v
+}
+
+func (x *UpdateNotificationStateRequest) HasUnread() bool {
+	if x == nil {
+		return false
+	}
+	return x.Unread != nil
+}
+
+func (x *UpdateNotificationStateRequest) HasStarred() bool {
+	if x == nil {
+		return false
+	}
+	return x.Starred != nil
+}
+
+func (x *UpdateNotificationStateRequest) HasArchived() bool {
+	if x == nil {
+		return false
+	}
+	return x.Archived != nil
+}
+
+func (x *UpdateNotificationStateRequest) ClearUnread() {
+	x.Unread = nil
+}
+
+func (x *UpdateNotificationStateRequest) ClearStarred() {
+	x.Starred = nil
+}
+
+func (x *UpdateNotificationStateRequest) ClearArchived() {
+	x.Archived = nil
+}
+
+type UpdateNotificationStateRequest_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Ids      []int64
+	Unread   *bool
+	Starred  *bool
+	Archived *bool
+}
+
+func (b0 UpdateNotificationStateRequest_builder) Build() *UpdateNotificationStateRequest {
+	m0 := &UpdateNotificationStateRequest{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Ids = b.Ids
+	x.Unread = b.Unread
+	x.Starred = b.Starred
+	x.Archived = b.Archived
+	return m0
+}
+
+type UpdateNotificationStateResponse struct {
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
+	Updated       int64                  `protobuf:"varint,1,opt,name=updated,proto3" json:"updated,omitempty"`
+	UnreadCount   int64                  `protobuf:"varint,2,opt,name=unread_count,json=unreadCount,proto3" json:"unread_count,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *UpdateNotificationStateResponse) Reset() {
+	*x = UpdateNotificationStateResponse{}
+	mi := &file_services_notifications_notifications_proto_msgTypes[5]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *UpdateNotificationStateResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*UpdateNotificationStateResponse) ProtoMessage() {}
+
+func (x *UpdateNotificationStateResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_services_notifications_notifications_proto_msgTypes[5]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+func (x *UpdateNotificationStateResponse) GetUpdated() int64 {
+	if x != nil {
+		return x.Updated
+	}
+	return 0
+}
+
+func (x *UpdateNotificationStateResponse) GetUnreadCount() int64 {
+	if x != nil {
+		return x.UnreadCount
+	}
+	return 0
+}
+
+func (x *UpdateNotificationStateResponse) SetUpdated(v int64) {
+	x.Updated = v
+}
+
+func (x *UpdateNotificationStateResponse) SetUnreadCount(v int64) {
+	x.UnreadCount = v
+}
+
+type UpdateNotificationStateResponse_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Updated     int64
+	UnreadCount int64
+}
+
+func (b0 UpdateNotificationStateResponse_builder) Build() *UpdateNotificationStateResponse {
+	m0 := &UpdateNotificationStateResponse{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Updated = b.Updated
+	x.UnreadCount = b.UnreadCount
+	return m0
+}
+
+type GetNotificationPreferencesRequest struct {
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GetNotificationPreferencesRequest) Reset() {
+	*x = GetNotificationPreferencesRequest{}
+	mi := &file_services_notifications_notifications_proto_msgTypes[6]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetNotificationPreferencesRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetNotificationPreferencesRequest) ProtoMessage() {}
+
+func (x *GetNotificationPreferencesRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_services_notifications_notifications_proto_msgTypes[6]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+type GetNotificationPreferencesRequest_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+}
+
+func (b0 GetNotificationPreferencesRequest_builder) Build() *GetNotificationPreferencesRequest {
+	m0 := &GetNotificationPreferencesRequest{}
+	b, x := &b0, m0
+	_, _ = b, x
+	return m0
+}
+
+type GetNotificationPreferencesResponse struct {
+	state         protoimpl.MessageState                  `protogen:"hybrid.v1"`
+	Preferences   []*notifications.NotificationPreference `protobuf:"bytes,1,rep,name=preferences,proto3" json:"preferences,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GetNotificationPreferencesResponse) Reset() {
+	*x = GetNotificationPreferencesResponse{}
+	mi := &file_services_notifications_notifications_proto_msgTypes[7]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetNotificationPreferencesResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetNotificationPreferencesResponse) ProtoMessage() {}
+
+func (x *GetNotificationPreferencesResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_services_notifications_notifications_proto_msgTypes[7]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+func (x *GetNotificationPreferencesResponse) GetPreferences() []*notifications.NotificationPreference {
+	if x != nil {
+		return x.Preferences
+	}
+	return nil
+}
+
+func (x *GetNotificationPreferencesResponse) SetPreferences(v []*notifications.NotificationPreference) {
+	x.Preferences = v
+}
+
+type GetNotificationPreferencesResponse_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Preferences []*notifications.NotificationPreference
+}
+
+func (b0 GetNotificationPreferencesResponse_builder) Build() *GetNotificationPreferencesResponse {
+	m0 := &GetNotificationPreferencesResponse{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Preferences = b.Preferences
+	return m0
+}
+
+// Updates one preference scope. Fields omitted from preference inherit from a
+// less-specific scope. reset removes the complete override for this scope.
+type UpdateNotificationPreferenceRequest struct {
+	state         protoimpl.MessageState                `protogen:"hybrid.v1"`
+	Preference    *notifications.NotificationPreference `protobuf:"bytes,1,opt,name=preference,proto3" json:"preference,omitempty"`
+	Reset_        *bool                                 `protobuf:"varint,2,opt,name=reset,proto3,oneof" json:"reset,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *UpdateNotificationPreferenceRequest) Reset() {
+	*x = UpdateNotificationPreferenceRequest{}
+	mi := &file_services_notifications_notifications_proto_msgTypes[8]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *UpdateNotificationPreferenceRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*UpdateNotificationPreferenceRequest) ProtoMessage() {}
+
+func (x *UpdateNotificationPreferenceRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_services_notifications_notifications_proto_msgTypes[8]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+func (x *UpdateNotificationPreferenceRequest) GetPreference() *notifications.NotificationPreference {
+	if x != nil {
+		return x.Preference
+	}
+	return nil
+}
+
+func (x *UpdateNotificationPreferenceRequest) GetReset() bool {
+	if x != nil && x.Reset_ != nil {
+		return *x.Reset_
+	}
+	return false
+}
+
+// Deprecated: Use GetReset instead.
+func (x *UpdateNotificationPreferenceRequest) GetReset_() bool {
+	return x.GetReset()
+}
+
+func (x *UpdateNotificationPreferenceRequest) SetPreference(v *notifications.NotificationPreference) {
+	x.Preference = v
+}
+
+func (x *UpdateNotificationPreferenceRequest) SetReset(v bool) {
+	x.Reset_ = &v
+}
+
+func (x *UpdateNotificationPreferenceRequest) HasPreference() bool {
+	if x == nil {
+		return false
+	}
+	return x.Preference != nil
+}
+
+func (x *UpdateNotificationPreferenceRequest) HasReset() bool {
+	if x == nil {
+		return false
+	}
+	return x.Reset_ != nil
+}
+
+func (x *UpdateNotificationPreferenceRequest) ClearPreference() {
+	x.Preference = nil
+}
+
+func (x *UpdateNotificationPreferenceRequest) ClearReset() {
+	x.Reset_ = nil
+}
+
+type UpdateNotificationPreferenceRequest_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Preference *notifications.NotificationPreference
+	Reset      *bool
+}
+
+func (b0 UpdateNotificationPreferenceRequest_builder) Build() *UpdateNotificationPreferenceRequest {
+	m0 := &UpdateNotificationPreferenceRequest{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Preference = b.Preference
+	x.Reset_ = b.Reset
+	return m0
+}
+
+type UpdateNotificationPreferenceResponse struct {
+	state         protoimpl.MessageState                  `protogen:"hybrid.v1"`
+	Preferences   []*notifications.NotificationPreference `protobuf:"bytes,1,rep,name=preferences,proto3" json:"preferences,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *UpdateNotificationPreferenceResponse) Reset() {
+	*x = UpdateNotificationPreferenceResponse{}
+	mi := &file_services_notifications_notifications_proto_msgTypes[9]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *UpdateNotificationPreferenceResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*UpdateNotificationPreferenceResponse) ProtoMessage() {}
+
+func (x *UpdateNotificationPreferenceResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_services_notifications_notifications_proto_msgTypes[9]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+func (x *UpdateNotificationPreferenceResponse) GetPreferences() []*notifications.NotificationPreference {
+	if x != nil {
+		return x.Preferences
+	}
+	return nil
+}
+
+func (x *UpdateNotificationPreferenceResponse) SetPreferences(v []*notifications.NotificationPreference) {
+	x.Preferences = v
+}
+
+type UpdateNotificationPreferenceResponse_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Preferences []*notifications.NotificationPreference
+}
+
+func (b0 UpdateNotificationPreferenceResponse_builder) Build() *UpdateNotificationPreferenceResponse {
+	m0 := &UpdateNotificationPreferenceResponse{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Preferences = b.Preferences
+	return m0
+}
+
 type StreamRequest struct {
 	state protoimpl.MessageState `protogen:"hybrid.v1"`
 	// Types that are valid to be assigned to Data:
@@ -399,7 +948,7 @@ type StreamRequest struct {
 
 func (x *StreamRequest) Reset() {
 	*x = StreamRequest{}
-	mi := &file_services_notifications_notifications_proto_msgTypes[4]
+	mi := &file_services_notifications_notifications_proto_msgTypes[10]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -411,7 +960,7 @@ func (x *StreamRequest) String() string {
 func (*StreamRequest) ProtoMessage() {}
 
 func (x *StreamRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_services_notifications_notifications_proto_msgTypes[4]
+	mi := &file_services_notifications_notifications_proto_msgTypes[10]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -507,7 +1056,7 @@ func (b0 StreamRequest_builder) Build() *StreamRequest {
 type case_StreamRequest_Data protoreflect.FieldNumber
 
 func (x case_StreamRequest_Data) String() string {
-	md := file_services_notifications_notifications_proto_msgTypes[4].Descriptor()
+	md := file_services_notifications_notifications_proto_msgTypes[10].Descriptor()
 	if x == 0 {
 		return "not set"
 	}
@@ -544,7 +1093,7 @@ type StreamResponse struct {
 
 func (x *StreamResponse) Reset() {
 	*x = StreamResponse{}
-	mi := &file_services_notifications_notifications_proto_msgTypes[5]
+	mi := &file_services_notifications_notifications_proto_msgTypes[11]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -556,7 +1105,7 @@ func (x *StreamResponse) String() string {
 func (*StreamResponse) ProtoMessage() {}
 
 func (x *StreamResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_services_notifications_notifications_proto_msgTypes[5]
+	mi := &file_services_notifications_notifications_proto_msgTypes[11]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -915,7 +1464,7 @@ func (b0 StreamResponse_builder) Build() *StreamResponse {
 type case_StreamResponse_Data protoreflect.FieldNumber
 
 func (x case_StreamResponse_Data) String() string {
-	md := file_services_notifications_notifications_proto_msgTypes[5].Descriptor()
+	md := file_services_notifications_notifications_proto_msgTypes[11].Descriptor()
 	if x == 0 {
 		return "not set"
 	}
@@ -974,7 +1523,7 @@ var File_services_notifications_notifications_proto protoreflect.FileDescriptor
 
 const file_services_notifications_notifications_proto_rawDesc = "" +
 	"\n" +
-	"*services/notifications/notifications.proto\x12\x16services.notifications\x1a\x1fcodegen/itemslen/itemslen.proto\x1a\x19codegen/perms/perms.proto\x1a(resources/common/database/database.proto\x1a$resources/mailer/events/events.proto\x1a3resources/notifications/clientview/clientview.proto\x1a+resources/notifications/events/events.proto\x1a+resources/notifications/notifications.proto\"\xef\x01\n" +
+	"*services/notifications/notifications.proto\x12\x16services.notifications\x1a\x1fcodegen/itemslen/itemslen.proto\x1a\x19codegen/perms/perms.proto\x1a(resources/common/database/database.proto\x1a$resources/mailer/events/events.proto\x1a3resources/notifications/clientview/clientview.proto\x1a+resources/notifications/events/events.proto\x1a+resources/notifications/notifications.proto\"\xea\x03\n" +
 	"\x17GetNotificationsRequest\x12L\n" +
 	"\n" +
 	"pagination\x18\x01 \x01(\v2,.resources.common.database.PaginationRequestR\n" +
@@ -982,8 +1531,15 @@ const file_services_notifications_notifications_proto_rawDesc = "" +
 	"\finclude_read\x18\x02 \x01(\bH\x00R\vincludeRead\x88\x01\x01\x12M\n" +
 	"\n" +
 	"categories\x18\x03 \x03(\x0e2-.resources.notifications.NotificationCategoryR\n" +
-	"categoriesB\x0f\n" +
-	"\r_include_read\"\xbc\x01\n" +
+	"categories\x12?\n" +
+	"\x05kinds\x18\x04 \x03(\x0e2).resources.notifications.NotificationKindR\x05kinds\x12.\n" +
+	"\x10include_archived\x18\x05 \x01(\bH\x01R\x0fincludeArchived\x88\x01\x01\x12&\n" +
+	"\fstarred_only\x18\x06 \x01(\bH\x02R\vstarredOnly\x88\x01\x01\x12(\n" +
+	"\rarchived_only\x18\a \x01(\bH\x03R\farchivedOnly\x88\x01\x01B\x0f\n" +
+	"\r_include_readB\x13\n" +
+	"\x11_include_archivedB\x0f\n" +
+	"\r_starred_onlyB\x10\n" +
+	"\x0e_archived_only\"\xbc\x01\n" +
 	"\x18GetNotificationsResponse\x12M\n" +
 	"\n" +
 	"pagination\x18\x01 \x01(\v2-.resources.common.database.PaginationResponseR\n" +
@@ -996,7 +1552,30 @@ const file_services_notifications_notifications_proto_rawDesc = "" +
 	"\x04_all\"X\n" +
 	"\x19MarkNotificationsResponse\x12\x18\n" +
 	"\aupdated\x18\x01 \x01(\x03R\aupdated\x12!\n" +
-	"\funread_count\x18\x02 \x01(\x03R\vunreadCount\"i\n" +
+	"\funread_count\x18\x02 \x01(\x03R\vunreadCount\"\xb3\x01\n" +
+	"\x1eUpdateNotificationStateRequest\x12\x10\n" +
+	"\x03ids\x18\x01 \x03(\x03R\x03ids\x12\x1b\n" +
+	"\x06unread\x18\x02 \x01(\bH\x00R\x06unread\x88\x01\x01\x12\x1d\n" +
+	"\astarred\x18\x03 \x01(\bH\x01R\astarred\x88\x01\x01\x12\x1f\n" +
+	"\barchived\x18\x04 \x01(\bH\x02R\barchived\x88\x01\x01B\t\n" +
+	"\a_unreadB\n" +
+	"\n" +
+	"\b_starredB\v\n" +
+	"\t_archived\"^\n" +
+	"\x1fUpdateNotificationStateResponse\x12\x18\n" +
+	"\aupdated\x18\x01 \x01(\x03R\aupdated\x12!\n" +
+	"\funread_count\x18\x02 \x01(\x03R\vunreadCount\"#\n" +
+	"!GetNotificationPreferencesRequest\"}\n" +
+	"\"GetNotificationPreferencesResponse\x12W\n" +
+	"\vpreferences\x18\x01 \x03(\v2/.resources.notifications.NotificationPreferenceB\x04\xc8\xf3\x18\x01R\vpreferences\"\x9b\x01\n" +
+	"#UpdateNotificationPreferenceRequest\x12O\n" +
+	"\n" +
+	"preference\x18\x01 \x01(\v2/.resources.notifications.NotificationPreferenceR\n" +
+	"preference\x12\x19\n" +
+	"\x05reset\x18\x02 \x01(\bH\x00R\x05reset\x88\x01\x01B\b\n" +
+	"\x06_reset\"\x7f\n" +
+	"$UpdateNotificationPreferenceResponse\x12W\n" +
+	"\vpreferences\x18\x01 \x03(\v2/.resources.notifications.NotificationPreferenceB\x04\xc8\xf3\x18\x01R\vpreferences\"i\n" +
 	"\rStreamRequest\x12P\n" +
 	"\n" +
 	"clientview\x18\x01 \x01(\v2..resources.notifications.clientview.ClientViewH\x00R\n" +
@@ -1015,55 +1594,76 @@ const file_services_notifications_notifications_proto_rawDesc = "" +
 	"\x12notification_state\x18\t \x01(\bH\x00R\x11notificationStateB\x06\n" +
 	"\x04dataB\n" +
 	"\n" +
-	"\b_restart2\x8d\x03\n" +
+	"\b_restart2\xf3\x06\n" +
 	"\x14NotificationsService\x12\x82\x01\n" +
 	"\x10GetNotifications\x12/.services.notifications.GetNotificationsRequest\x1a0.services.notifications.GetNotificationsResponse\"\v\xd2\xf3\x18\a\b\x01\"\x03Any\x12\x85\x01\n" +
-	"\x11MarkNotifications\x120.services.notifications.MarkNotificationsRequest\x1a1.services.notifications.MarkNotificationsResponse\"\v\xd2\xf3\x18\a\b\x01\"\x03Any\x12h\n" +
+	"\x11MarkNotifications\x120.services.notifications.MarkNotificationsRequest\x1a1.services.notifications.MarkNotificationsResponse\"\v\xd2\xf3\x18\a\b\x01\"\x03Any\x12\x97\x01\n" +
+	"\x17UpdateNotificationState\x126.services.notifications.UpdateNotificationStateRequest\x1a7.services.notifications.UpdateNotificationStateResponse\"\v\xd2\xf3\x18\a\b\x01\"\x03Any\x12\xa0\x01\n" +
+	"\x1aGetNotificationPreferences\x129.services.notifications.GetNotificationPreferencesRequest\x1a:.services.notifications.GetNotificationPreferencesResponse\"\v\xd2\xf3\x18\a\b\x01\"\x03Any\x12\xa6\x01\n" +
+	"\x1cUpdateNotificationPreference\x12;.services.notifications.UpdateNotificationPreferenceRequest\x1a<.services.notifications.UpdateNotificationPreferenceResponse\"\v\xd2\xf3\x18\a\b\x01\"\x03Any\x12h\n" +
 	"\x06Stream\x12%.services.notifications.StreamRequest\x1a&.services.notifications.StreamResponse\"\v\xd2\xf3\x18\a\b\x01\"\x03Any(\x010\x01BXZVgithub.com/fivenet-app/fivenet/v2026/gen/go/proto/services/notifications;notificationsb\x06proto3"
 
-var file_services_notifications_notifications_proto_msgTypes = make([]protoimpl.MessageInfo, 6)
+var file_services_notifications_notifications_proto_msgTypes = make([]protoimpl.MessageInfo, 12)
 var file_services_notifications_notifications_proto_goTypes = []any{
-	(*GetNotificationsRequest)(nil),         // 0: services.notifications.GetNotificationsRequest
-	(*GetNotificationsResponse)(nil),        // 1: services.notifications.GetNotificationsResponse
-	(*MarkNotificationsRequest)(nil),        // 2: services.notifications.MarkNotificationsRequest
-	(*MarkNotificationsResponse)(nil),       // 3: services.notifications.MarkNotificationsResponse
-	(*StreamRequest)(nil),                   // 4: services.notifications.StreamRequest
-	(*StreamResponse)(nil),                  // 5: services.notifications.StreamResponse
-	(*database.PaginationRequest)(nil),      // 6: resources.common.database.PaginationRequest
-	(notifications.NotificationCategory)(0), // 7: resources.notifications.NotificationCategory
-	(*database.PaginationResponse)(nil),     // 8: resources.common.database.PaginationResponse
-	(*notifications.Notification)(nil),      // 9: resources.notifications.Notification
-	(*clientview.ClientView)(nil),           // 10: resources.notifications.clientview.ClientView
-	(*events.UserEvent)(nil),                // 11: resources.notifications.events.UserEvent
-	(*events.JobEvent)(nil),                 // 12: resources.notifications.events.JobEvent
-	(*events.JobGradeEvent)(nil),            // 13: resources.notifications.events.JobGradeEvent
-	(*events.SystemEvent)(nil),              // 14: resources.notifications.events.SystemEvent
-	(*events1.MailerEvent)(nil),             // 15: resources.mailer.events.MailerEvent
-	(*clientview.ObjectEvent)(nil),          // 16: resources.notifications.clientview.ObjectEvent
+	(*GetNotificationsRequest)(nil),              // 0: services.notifications.GetNotificationsRequest
+	(*GetNotificationsResponse)(nil),             // 1: services.notifications.GetNotificationsResponse
+	(*MarkNotificationsRequest)(nil),             // 2: services.notifications.MarkNotificationsRequest
+	(*MarkNotificationsResponse)(nil),            // 3: services.notifications.MarkNotificationsResponse
+	(*UpdateNotificationStateRequest)(nil),       // 4: services.notifications.UpdateNotificationStateRequest
+	(*UpdateNotificationStateResponse)(nil),      // 5: services.notifications.UpdateNotificationStateResponse
+	(*GetNotificationPreferencesRequest)(nil),    // 6: services.notifications.GetNotificationPreferencesRequest
+	(*GetNotificationPreferencesResponse)(nil),   // 7: services.notifications.GetNotificationPreferencesResponse
+	(*UpdateNotificationPreferenceRequest)(nil),  // 8: services.notifications.UpdateNotificationPreferenceRequest
+	(*UpdateNotificationPreferenceResponse)(nil), // 9: services.notifications.UpdateNotificationPreferenceResponse
+	(*StreamRequest)(nil),                        // 10: services.notifications.StreamRequest
+	(*StreamResponse)(nil),                       // 11: services.notifications.StreamResponse
+	(*database.PaginationRequest)(nil),           // 12: resources.common.database.PaginationRequest
+	(notifications.NotificationCategory)(0),      // 13: resources.notifications.NotificationCategory
+	(notifications.NotificationKind)(0),          // 14: resources.notifications.NotificationKind
+	(*database.PaginationResponse)(nil),          // 15: resources.common.database.PaginationResponse
+	(*notifications.Notification)(nil),           // 16: resources.notifications.Notification
+	(*notifications.NotificationPreference)(nil), // 17: resources.notifications.NotificationPreference
+	(*clientview.ClientView)(nil),                // 18: resources.notifications.clientview.ClientView
+	(*events.UserEvent)(nil),                     // 19: resources.notifications.events.UserEvent
+	(*events.JobEvent)(nil),                      // 20: resources.notifications.events.JobEvent
+	(*events.JobGradeEvent)(nil),                 // 21: resources.notifications.events.JobGradeEvent
+	(*events.SystemEvent)(nil),                   // 22: resources.notifications.events.SystemEvent
+	(*events1.MailerEvent)(nil),                  // 23: resources.mailer.events.MailerEvent
+	(*clientview.ObjectEvent)(nil),               // 24: resources.notifications.clientview.ObjectEvent
 }
 var file_services_notifications_notifications_proto_depIdxs = []int32{
-	6,  // 0: services.notifications.GetNotificationsRequest.pagination:type_name -> resources.common.database.PaginationRequest
-	7,  // 1: services.notifications.GetNotificationsRequest.categories:type_name -> resources.notifications.NotificationCategory
-	8,  // 2: services.notifications.GetNotificationsResponse.pagination:type_name -> resources.common.database.PaginationResponse
-	9,  // 3: services.notifications.GetNotificationsResponse.notifications:type_name -> resources.notifications.Notification
-	10, // 4: services.notifications.StreamRequest.clientview:type_name -> resources.notifications.clientview.ClientView
-	11, // 5: services.notifications.StreamResponse.user_event:type_name -> resources.notifications.events.UserEvent
-	12, // 6: services.notifications.StreamResponse.job_event:type_name -> resources.notifications.events.JobEvent
-	13, // 7: services.notifications.StreamResponse.job_grade_event:type_name -> resources.notifications.events.JobGradeEvent
-	14, // 8: services.notifications.StreamResponse.system_event:type_name -> resources.notifications.events.SystemEvent
-	15, // 9: services.notifications.StreamResponse.mailer_event:type_name -> resources.mailer.events.MailerEvent
-	16, // 10: services.notifications.StreamResponse.object_event:type_name -> resources.notifications.clientview.ObjectEvent
-	0,  // 11: services.notifications.NotificationsService.GetNotifications:input_type -> services.notifications.GetNotificationsRequest
-	2,  // 12: services.notifications.NotificationsService.MarkNotifications:input_type -> services.notifications.MarkNotificationsRequest
-	4,  // 13: services.notifications.NotificationsService.Stream:input_type -> services.notifications.StreamRequest
-	1,  // 14: services.notifications.NotificationsService.GetNotifications:output_type -> services.notifications.GetNotificationsResponse
-	3,  // 15: services.notifications.NotificationsService.MarkNotifications:output_type -> services.notifications.MarkNotificationsResponse
-	5,  // 16: services.notifications.NotificationsService.Stream:output_type -> services.notifications.StreamResponse
-	14, // [14:17] is the sub-list for method output_type
-	11, // [11:14] is the sub-list for method input_type
-	11, // [11:11] is the sub-list for extension type_name
-	11, // [11:11] is the sub-list for extension extendee
-	0,  // [0:11] is the sub-list for field type_name
+	12, // 0: services.notifications.GetNotificationsRequest.pagination:type_name -> resources.common.database.PaginationRequest
+	13, // 1: services.notifications.GetNotificationsRequest.categories:type_name -> resources.notifications.NotificationCategory
+	14, // 2: services.notifications.GetNotificationsRequest.kinds:type_name -> resources.notifications.NotificationKind
+	15, // 3: services.notifications.GetNotificationsResponse.pagination:type_name -> resources.common.database.PaginationResponse
+	16, // 4: services.notifications.GetNotificationsResponse.notifications:type_name -> resources.notifications.Notification
+	17, // 5: services.notifications.GetNotificationPreferencesResponse.preferences:type_name -> resources.notifications.NotificationPreference
+	17, // 6: services.notifications.UpdateNotificationPreferenceRequest.preference:type_name -> resources.notifications.NotificationPreference
+	17, // 7: services.notifications.UpdateNotificationPreferenceResponse.preferences:type_name -> resources.notifications.NotificationPreference
+	18, // 8: services.notifications.StreamRequest.clientview:type_name -> resources.notifications.clientview.ClientView
+	19, // 9: services.notifications.StreamResponse.user_event:type_name -> resources.notifications.events.UserEvent
+	20, // 10: services.notifications.StreamResponse.job_event:type_name -> resources.notifications.events.JobEvent
+	21, // 11: services.notifications.StreamResponse.job_grade_event:type_name -> resources.notifications.events.JobGradeEvent
+	22, // 12: services.notifications.StreamResponse.system_event:type_name -> resources.notifications.events.SystemEvent
+	23, // 13: services.notifications.StreamResponse.mailer_event:type_name -> resources.mailer.events.MailerEvent
+	24, // 14: services.notifications.StreamResponse.object_event:type_name -> resources.notifications.clientview.ObjectEvent
+	0,  // 15: services.notifications.NotificationsService.GetNotifications:input_type -> services.notifications.GetNotificationsRequest
+	2,  // 16: services.notifications.NotificationsService.MarkNotifications:input_type -> services.notifications.MarkNotificationsRequest
+	4,  // 17: services.notifications.NotificationsService.UpdateNotificationState:input_type -> services.notifications.UpdateNotificationStateRequest
+	6,  // 18: services.notifications.NotificationsService.GetNotificationPreferences:input_type -> services.notifications.GetNotificationPreferencesRequest
+	8,  // 19: services.notifications.NotificationsService.UpdateNotificationPreference:input_type -> services.notifications.UpdateNotificationPreferenceRequest
+	10, // 20: services.notifications.NotificationsService.Stream:input_type -> services.notifications.StreamRequest
+	1,  // 21: services.notifications.NotificationsService.GetNotifications:output_type -> services.notifications.GetNotificationsResponse
+	3,  // 22: services.notifications.NotificationsService.MarkNotifications:output_type -> services.notifications.MarkNotificationsResponse
+	5,  // 23: services.notifications.NotificationsService.UpdateNotificationState:output_type -> services.notifications.UpdateNotificationStateResponse
+	7,  // 24: services.notifications.NotificationsService.GetNotificationPreferences:output_type -> services.notifications.GetNotificationPreferencesResponse
+	9,  // 25: services.notifications.NotificationsService.UpdateNotificationPreference:output_type -> services.notifications.UpdateNotificationPreferenceResponse
+	11, // 26: services.notifications.NotificationsService.Stream:output_type -> services.notifications.StreamResponse
+	21, // [21:27] is the sub-list for method output_type
+	15, // [15:21] is the sub-list for method input_type
+	15, // [15:15] is the sub-list for extension type_name
+	15, // [15:15] is the sub-list for extension extendee
+	0,  // [0:15] is the sub-list for field type_name
 }
 
 func init() { file_services_notifications_notifications_proto_init() }
@@ -1073,10 +1673,12 @@ func file_services_notifications_notifications_proto_init() {
 	}
 	file_services_notifications_notifications_proto_msgTypes[0].OneofWrappers = []any{}
 	file_services_notifications_notifications_proto_msgTypes[2].OneofWrappers = []any{}
-	file_services_notifications_notifications_proto_msgTypes[4].OneofWrappers = []any{
+	file_services_notifications_notifications_proto_msgTypes[4].OneofWrappers = []any{}
+	file_services_notifications_notifications_proto_msgTypes[8].OneofWrappers = []any{}
+	file_services_notifications_notifications_proto_msgTypes[10].OneofWrappers = []any{
 		(*StreamRequest_Clientview)(nil),
 	}
-	file_services_notifications_notifications_proto_msgTypes[5].OneofWrappers = []any{
+	file_services_notifications_notifications_proto_msgTypes[11].OneofWrappers = []any{
 		(*StreamResponse_UserEvent)(nil),
 		(*StreamResponse_JobEvent)(nil),
 		(*StreamResponse_JobGradeEvent)(nil),
@@ -1091,7 +1693,7 @@ func file_services_notifications_notifications_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_services_notifications_notifications_proto_rawDesc), len(file_services_notifications_notifications_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   6,
+			NumMessages:   12,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

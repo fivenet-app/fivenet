@@ -6380,6 +6380,44 @@ Policy snapshot applied to a specific version
 | `category` | [NotificationCategory](#resourcesnotificationsNotificationCategory) |  |  |
 | `data` | [Data](#resourcesnotificationsData) | optional |  |
 | `starred` | [bool](#bool) | optional |  |
+| `kind` | [NotificationKind](#resourcesnotificationsNotificationKind) |  |  |
+| `actor_user_id` | [int32](#int32) | optional |  |
+| `entity_type` | [string](#string) | optional |  |
+| `entity_id` | [int64](#int64) | optional |  |
+| `archived_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) |  |  |
+| `delivery` | [NotificationDelivery](#resourcesnotificationsNotificationDelivery) | optional |  |
+
+
+
+
+
+### resources.notifications.NotificationDelivery
+Delivery instructions are resolved server-side and are only attached to a live notification event. They are never persisted with the notification.
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `inbox_enabled` | [bool](#bool) |  |  |
+| `toast_enabled` | [bool](#bool) |  |  |
+| `sound_enabled` | [bool](#bool) |  |  |
+
+
+
+
+
+### resources.notifications.NotificationPreference
+A per-user override for notification delivery. An unspecified category and kind form the global default; a category with an unspecified kind is a category default; and both set is a kind-specific override. Optional fields intentionally inherit from the less specific scope when absent.
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `category` | [NotificationCategory](#resourcesnotificationsNotificationCategory) |  |  |
+| `kind` | [NotificationKind](#resourcesnotificationsNotificationKind) |  |  |
+| `inbox_enabled` | [bool](#bool) | optional |  |
+| `toast_enabled` | [bool](#bool) | optional |  |
+| `sound_enabled` | [bool](#bool) | optional |  |
 
 
 
@@ -6395,6 +6433,23 @@ Policy snapshot applied to a specific version
 | `NOTIFICATION_CATEGORY_GENERAL` | 1 |  |
 | `NOTIFICATION_CATEGORY_DOCUMENT` | 2 |  |
 | `NOTIFICATION_CATEGORY_CALENDAR` | 3 |  |
+| `NOTIFICATION_CATEGORY_JOBS` | 4 |  |
+| `NOTIFICATION_CATEGORY_QUALIFICATIONS` | 5 |  |
+| `NOTIFICATION_CATEGORY_MAILER` | 6 |  |
+| `NOTIFICATION_CATEGORY_DISPATCH` | 7 |  |
+| `NOTIFICATION_CATEGORY_SYSTEM` | 8 |  |
+
+
+
+### resources.notifications.NotificationKind
+A precise, typed event within a notification category. Categories remain intentionally broad so clients can provide consistent filtering and UI.
+
+
+| Name | Number | Description |
+| ---- | ------ | ----------- |
+| `NOTIFICATION_KIND_UNSPECIFIED` | 0 |  |
+| `NOTIFICATION_KIND_JOBS_GROUP_LEADERSHIP_ADDED` | 1 |  |
+| `NOTIFICATION_KIND_JOBS_GROUP_LEADERSHIP_REMOVED` | 2 |  |
 
 
 
@@ -6565,9 +6620,10 @@ User related events
 | ----- | ---- | ----- | ----------- |
 | `refresh_token` | [bool](#bool) |  |  |
 | `notification` | [resources.notifications.Notification](#resourcesnotificationsNotification) |  | Notifications |
-| `notifications_read_count` | [int64](#int64) |  |  |
+| `notifications_read_count` | [int64](#int64) |  | Deprecated delta kept for wire compatibility with older clients. |
 | `user_info_changed` | [resources.userinfo.UserInfoChanged](#resourcesuserinfoUserInfoChanged) |  |  |
 | `account_groups_changed` | [resources.userinfo.AccountGroupsChanged](#resourcesuserinfoAccountGroupsChanged) |  |  |
+| `notifications_unread_count` | [int64](#int64) |  | The authoritative unread count after a notification-state mutation. |
 
 
 
@@ -11450,6 +11506,7 @@ Upsert = insert missing PENDING tasks/slots; will NOT delete existing tasks. Ide
 | `group_id` | [int64](#int64) |  |  |
 | `user_id` | [int32](#int32) |  |  |
 | `reason` | [string](#string) | optional |  |
+| `skip_notification` | [bool](#bool) |  | Suppresses the inbox notification normally sent to the affected user. |
 
 
 
@@ -11879,6 +11936,7 @@ Upsert = insert missing PENDING tasks/slots; will NOT delete existing tasks. Ide
 | `group_id` | [int64](#int64) |  |  |
 | `user_id` | [int32](#int32) |  |  |
 | `reason` | [string](#string) | optional |  |
+| `skip_notification` | [bool](#bool) |  | Suppresses the inbox notification normally sent to the affected user. |
 
 
 
@@ -13009,6 +13067,23 @@ A roll-up of the entire USERLOC bucket. Published every N seconds on `$KV.user_l
 ## services/notifications/notifications.proto
 
 
+### services.notifications.GetNotificationPreferencesRequest
+
+
+
+
+
+### services.notifications.GetNotificationPreferencesResponse
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `preferences` | [resources.notifications.NotificationPreference](#resourcesnotificationsNotificationPreference) | repeated |  |
+
+
+
+
+
 ### services.notifications.GetNotificationsRequest
 
 
@@ -13017,6 +13092,10 @@ A roll-up of the entire USERLOC bucket. Published every N seconds on `$KV.user_l
 | `pagination` | [resources.common.database.PaginationRequest](#resourcescommondatabasePaginationRequest) |  |  |
 | `include_read` | [bool](#bool) | optional |  |
 | `categories` | [resources.notifications.NotificationCategory](#resourcesnotificationsNotificationCategory) | repeated |  |
+| `kinds` | [resources.notifications.NotificationKind](#resourcesnotificationsNotificationKind) | repeated |  |
+| `include_archived` | [bool](#bool) | optional |  |
+| `starred_only` | [bool](#bool) | optional |  |
+| `archived_only` | [bool](#bool) | optional |  |
 
 
 
@@ -13088,6 +13167,57 @@ A roll-up of the entire USERLOC bucket. Published every N seconds on `$KV.user_l
 
 
 
+
+### services.notifications.UpdateNotificationPreferenceRequest
+Updates one preference scope. Fields omitted from preference inherit from a less-specific scope. reset removes the complete override for this scope.
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `preference` | [resources.notifications.NotificationPreference](#resourcesnotificationsNotificationPreference) |  |  |
+| `reset` | [bool](#bool) | optional |  |
+
+
+
+
+
+### services.notifications.UpdateNotificationPreferenceResponse
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `preferences` | [resources.notifications.NotificationPreference](#resourcesnotificationsNotificationPreference) | repeated |  |
+
+
+
+
+
+### services.notifications.UpdateNotificationStateRequest
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `ids` | [int64](#int64) | repeated |  |
+| `unread` | [bool](#bool) | optional |  |
+| `starred` | [bool](#bool) | optional |  |
+| `archived` | [bool](#bool) | optional |  |
+
+
+
+
+
+### services.notifications.UpdateNotificationStateResponse
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `updated` | [int64](#int64) |  |  |
+| `unread_count` | [int64](#int64) |  |  |
+
+
+
+
  <!-- end messages -->
 
  <!-- end enums -->
@@ -13101,6 +13231,9 @@ A roll-up of the entire USERLOC bucket. Published every N seconds on `$KV.user_l
 | ----------- | ------------ | ------------- | ------------|
 | `GetNotifications` | [GetNotificationsRequest](#servicesnotificationsGetNotificationsRequest) | [GetNotificationsResponse](#servicesnotificationsGetNotificationsResponse) | |
 | `MarkNotifications` | [MarkNotificationsRequest](#servicesnotificationsMarkNotificationsRequest) | [MarkNotificationsResponse](#servicesnotificationsMarkNotificationsResponse) | |
+| `UpdateNotificationState` | [UpdateNotificationStateRequest](#servicesnotificationsUpdateNotificationStateRequest) | [UpdateNotificationStateResponse](#servicesnotificationsUpdateNotificationStateResponse) | |
+| `GetNotificationPreferences` | [GetNotificationPreferencesRequest](#servicesnotificationsGetNotificationPreferencesRequest) | [GetNotificationPreferencesResponse](#servicesnotificationsGetNotificationPreferencesResponse) | |
+| `UpdateNotificationPreference` | [UpdateNotificationPreferenceRequest](#servicesnotificationsUpdateNotificationPreferenceRequest) | [UpdateNotificationPreferenceResponse](#servicesnotificationsUpdateNotificationPreferenceResponse) | |
 | `Stream` | [StreamRequest](#servicesnotificationsStreamRequest) stream | [StreamResponse](#servicesnotificationsStreamResponse) stream | |
 
  <!-- end services -->
