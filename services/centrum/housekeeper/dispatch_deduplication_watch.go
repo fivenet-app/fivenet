@@ -19,6 +19,7 @@ func (s *Housekeeper) runDispatchWatch(ctx context.Context) {
 	for {
 		if err := s.watchDispatches(ctx); err != nil {
 			if !errors.Is(err, context.Canceled) {
+				s.recordWatcherRestart("dispatch_deduplication", err)
 				s.logger.Error("dispatch watcher stopped", zap.Error(err))
 			}
 		}
@@ -44,7 +45,10 @@ func (s *Housekeeper) watchDispatches(ctx context.Context) error {
 		case <-ctx.Done():
 			return nil
 
-		case e := <-watch.Updates():
+		case e, ok := <-watch.Updates():
+			if !ok {
+				return errWatcherUpdatesClosed
+			}
 			if e == nil { // heartbeat
 				continue
 			}
