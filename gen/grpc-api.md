@@ -13053,6 +13053,7 @@ A roll-up of the entire USERLOC bucket. Published every N seconds on `$KV.user_l
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | `updated` | [int64](#int64) |  |  |
+| `unread_count` | [int64](#int64) |  | The authoritative unread count after the mutation. |
 
 
 
@@ -13082,6 +13083,7 @@ A roll-up of the entire USERLOC bucket. Published every N seconds on `$KV.user_l
 | `system_event` | [resources.notifications.events.SystemEvent](#resourcesnotificationseventsSystemEvent) |  |  |
 | `mailer_event` | [resources.mailer.events.MailerEvent](#resourcesmailereventsMailerEvent) |  |  |
 | `object_event` | [resources.notifications.clientview.ObjectEvent](#resourcesnotificationsclientviewObjectEvent) |  |  |
+| `notification_state` | [bool](#bool) |  | Sent immediately after a stream is established so clients can render notification state without waiting for a later event. |
 
 
 

@@ -71,9 +71,12 @@ func (s *Store) List(
 
 func (s *Store) MarkNotifications(ctx context.Context, q MarkQuery) (int64, error) {
 	tNotifications := tNotifications
-	condition := tNotifications.UserID.EQ(mysql.Int32(q.UserID)).AND(
-		tNotifications.ReadAt.IS_NULL(),
-	)
+	condition := tNotifications.UserID.EQ(mysql.Int32(q.UserID))
+	if q.Unread {
+		condition = condition.AND(tNotifications.ReadAt.IS_NOT_NULL())
+	} else {
+		condition = condition.AND(tNotifications.ReadAt.IS_NULL())
+	}
 
 	if len(q.IDs) > 0 {
 		ids := make([]mysql.Expression, len(q.IDs))

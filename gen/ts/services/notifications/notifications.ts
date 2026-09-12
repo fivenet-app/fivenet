@@ -78,6 +78,12 @@ export interface MarkNotificationsResponse {
      * @generated from protobuf field: int64 updated = 1
      */
     updated: number;
+    /**
+     * The authoritative unread count after the mutation.
+     *
+     * @generated from protobuf field: int64 unread_count = 2
+     */
+    unreadCount: number;
 }
 /**
  * @generated from protobuf message services.notifications.StreamRequest
@@ -147,6 +153,15 @@ export interface StreamResponse {
          * @generated from protobuf field: resources.notifications.clientview.ObjectEvent object_event = 8
          */
         objectEvent: ObjectEvent;
+    } | {
+        oneofKind: "notificationState";
+        /**
+         * Sent immediately after a stream is established so clients can render
+         * notification state without waiting for a later event.
+         *
+         * @generated from protobuf field: bool notification_state = 9
+         */
+        notificationState: boolean;
     } | {
         oneofKind: undefined;
     };
@@ -348,12 +363,14 @@ export const MarkNotificationsRequest = new MarkNotificationsRequest$Type();
 class MarkNotificationsResponse$Type extends MessageType<MarkNotificationsResponse> {
     constructor() {
         super("services.notifications.MarkNotificationsResponse", [
-            { no: 1, name: "updated", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ }
+            { no: 1, name: "updated", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ },
+            { no: 2, name: "unread_count", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ }
         ]);
     }
     create(value?: PartialMessage<MarkNotificationsResponse>): MarkNotificationsResponse {
         const message = globalThis.Object.create((this.messagePrototype!));
         message.updated = 0;
+        message.unreadCount = 0;
         if (value !== undefined)
             reflectionMergePartial<MarkNotificationsResponse>(this, message, value);
         return message;
@@ -365,6 +382,9 @@ class MarkNotificationsResponse$Type extends MessageType<MarkNotificationsRespon
             switch (fieldNo) {
                 case /* int64 updated */ 1:
                     message.updated = reader.int64().toNumber();
+                    break;
+                case /* int64 unread_count */ 2:
+                    message.unreadCount = reader.int64().toNumber();
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -381,6 +401,9 @@ class MarkNotificationsResponse$Type extends MessageType<MarkNotificationsRespon
         /* int64 updated = 1; */
         if (message.updated !== 0)
             writer.tag(1, WireType.Varint).int64(message.updated);
+        /* int64 unread_count = 2; */
+        if (message.unreadCount !== 0)
+            writer.tag(2, WireType.Varint).int64(message.unreadCount);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -452,7 +475,8 @@ class StreamResponse$Type extends MessageType<StreamResponse> {
             { no: 5, name: "job_grade_event", kind: "message", oneof: "data", T: () => JobGradeEvent },
             { no: 6, name: "system_event", kind: "message", oneof: "data", T: () => SystemEvent },
             { no: 7, name: "mailer_event", kind: "message", oneof: "data", T: () => MailerEvent },
-            { no: 8, name: "object_event", kind: "message", oneof: "data", T: () => ObjectEvent }
+            { no: 8, name: "object_event", kind: "message", oneof: "data", T: () => ObjectEvent },
+            { no: 9, name: "notification_state", kind: "scalar", oneof: "data", T: 8 /*ScalarType.BOOL*/ }
         ]);
     }
     create(value?: PartialMessage<StreamResponse>): StreamResponse {
@@ -510,6 +534,12 @@ class StreamResponse$Type extends MessageType<StreamResponse> {
                         objectEvent: ObjectEvent.internalBinaryRead(reader, reader.uint32(), options, (message.data as any).objectEvent)
                     };
                     break;
+                case /* bool notification_state */ 9:
+                    message.data = {
+                        oneofKind: "notificationState",
+                        notificationState: reader.bool()
+                    };
+                    break;
                 default:
                     let u = options.readUnknownField;
                     if (u === "throw")
@@ -546,6 +576,9 @@ class StreamResponse$Type extends MessageType<StreamResponse> {
         /* resources.notifications.clientview.ObjectEvent object_event = 8; */
         if (message.data.oneofKind === "objectEvent")
             ObjectEvent.internalBinaryWrite(message.data.objectEvent, writer.tag(8, WireType.LengthDelimited).fork(), options).join();
+        /* bool notification_state = 9; */
+        if (message.data.oneofKind === "notificationState")
+            writer.tag(9, WireType.Varint).bool(message.data.notificationState);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);

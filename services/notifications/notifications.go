@@ -78,6 +78,11 @@ func (s *Server) MarkNotifications(
 		return nil, errswrap.NewError(err, ErrFailedRequest)
 	}
 
+	unreadCount, err := s.store.CountUnread(ctx, userInfo.GetUserId())
+	if err != nil {
+		return nil, errswrap.NewError(err, ErrFailedRequest)
+	}
+
 	if updated > 0 {
 		if req.GetUnread() {
 			updated = -updated
@@ -95,6 +100,7 @@ func (s *Server) MarkNotifications(
 	}
 
 	return &pbnotifications.MarkNotificationsResponse{
-		Updated: updated,
+		Updated:     updated,
+		UnreadCount: unreadCount,
 	}, nil
 }

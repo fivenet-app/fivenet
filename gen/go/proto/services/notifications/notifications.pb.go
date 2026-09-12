@@ -315,8 +315,10 @@ func (b0 MarkNotificationsRequest_builder) Build() *MarkNotificationsRequest {
 }
 
 type MarkNotificationsResponse struct {
-	state         protoimpl.MessageState `protogen:"hybrid.v1"`
-	Updated       int64                  `protobuf:"varint,1,opt,name=updated,proto3" json:"updated,omitempty"`
+	state   protoimpl.MessageState `protogen:"hybrid.v1"`
+	Updated int64                  `protobuf:"varint,1,opt,name=updated,proto3" json:"updated,omitempty"`
+	// The authoritative unread count after the mutation.
+	UnreadCount   int64 `protobuf:"varint,2,opt,name=unread_count,json=unreadCount,proto3" json:"unread_count,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -353,14 +355,27 @@ func (x *MarkNotificationsResponse) GetUpdated() int64 {
 	return 0
 }
 
+func (x *MarkNotificationsResponse) GetUnreadCount() int64 {
+	if x != nil {
+		return x.UnreadCount
+	}
+	return 0
+}
+
 func (x *MarkNotificationsResponse) SetUpdated(v int64) {
 	x.Updated = v
+}
+
+func (x *MarkNotificationsResponse) SetUnreadCount(v int64) {
+	x.UnreadCount = v
 }
 
 type MarkNotificationsResponse_builder struct {
 	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
 
 	Updated int64
+	// The authoritative unread count after the mutation.
+	UnreadCount int64
 }
 
 func (b0 MarkNotificationsResponse_builder) Build() *MarkNotificationsResponse {
@@ -368,6 +383,7 @@ func (b0 MarkNotificationsResponse_builder) Build() *MarkNotificationsResponse {
 	b, x := &b0, m0
 	_, _ = b, x
 	x.Updated = b.Updated
+	x.UnreadCount = b.UnreadCount
 	return m0
 }
 
@@ -520,6 +536,7 @@ type StreamResponse struct {
 	//	*StreamResponse_SystemEvent
 	//	*StreamResponse_MailerEvent
 	//	*StreamResponse_ObjectEvent
+	//	*StreamResponse_NotificationState
 	Data          isStreamResponse_Data `protobuf_oneof:"data"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -625,6 +642,15 @@ func (x *StreamResponse) GetObjectEvent() *clientview.ObjectEvent {
 	return nil
 }
 
+func (x *StreamResponse) GetNotificationState() bool {
+	if x != nil {
+		if x, ok := x.Data.(*StreamResponse_NotificationState); ok {
+			return x.NotificationState
+		}
+	}
+	return false
+}
+
 func (x *StreamResponse) SetNotificationCount(v int64) {
 	x.NotificationCount = v
 }
@@ -679,6 +705,10 @@ func (x *StreamResponse) SetObjectEvent(v *clientview.ObjectEvent) {
 		return
 	}
 	x.Data = &StreamResponse_ObjectEvent{v}
+}
+
+func (x *StreamResponse) SetNotificationState(v bool) {
+	x.Data = &StreamResponse_NotificationState{v}
 }
 
 func (x *StreamResponse) HasRestart() bool {
@@ -743,6 +773,14 @@ func (x *StreamResponse) HasObjectEvent() bool {
 	return ok
 }
 
+func (x *StreamResponse) HasNotificationState() bool {
+	if x == nil {
+		return false
+	}
+	_, ok := x.Data.(*StreamResponse_NotificationState)
+	return ok
+}
+
 func (x *StreamResponse) ClearRestart() {
 	x.Restart = nil
 }
@@ -787,6 +825,12 @@ func (x *StreamResponse) ClearObjectEvent() {
 	}
 }
 
+func (x *StreamResponse) ClearNotificationState() {
+	if _, ok := x.Data.(*StreamResponse_NotificationState); ok {
+		x.Data = nil
+	}
+}
+
 const StreamResponse_Data_not_set_case case_StreamResponse_Data = 0
 const StreamResponse_UserEvent_case case_StreamResponse_Data = 3
 const StreamResponse_JobEvent_case case_StreamResponse_Data = 4
@@ -794,6 +838,7 @@ const StreamResponse_JobGradeEvent_case case_StreamResponse_Data = 5
 const StreamResponse_SystemEvent_case case_StreamResponse_Data = 6
 const StreamResponse_MailerEvent_case case_StreamResponse_Data = 7
 const StreamResponse_ObjectEvent_case case_StreamResponse_Data = 8
+const StreamResponse_NotificationState_case case_StreamResponse_Data = 9
 
 func (x *StreamResponse) WhichData() case_StreamResponse_Data {
 	if x == nil {
@@ -812,6 +857,8 @@ func (x *StreamResponse) WhichData() case_StreamResponse_Data {
 		return StreamResponse_MailerEvent_case
 	case *StreamResponse_ObjectEvent:
 		return StreamResponse_ObjectEvent_case
+	case *StreamResponse_NotificationState:
+		return StreamResponse_NotificationState_case
 	default:
 		return StreamResponse_Data_not_set_case
 	}
@@ -829,6 +876,9 @@ type StreamResponse_builder struct {
 	SystemEvent   *events.SystemEvent
 	MailerEvent   *events1.MailerEvent
 	ObjectEvent   *clientview.ObjectEvent
+	// Sent immediately after a stream is established so clients can render
+	// notification state without waiting for a later event.
+	NotificationState *bool
 	// -- end of Data
 }
 
@@ -855,6 +905,9 @@ func (b0 StreamResponse_builder) Build() *StreamResponse {
 	}
 	if b.ObjectEvent != nil {
 		x.Data = &StreamResponse_ObjectEvent{b.ObjectEvent}
+	}
+	if b.NotificationState != nil {
+		x.Data = &StreamResponse_NotificationState{*b.NotificationState}
 	}
 	return m0
 }
@@ -897,6 +950,12 @@ type StreamResponse_ObjectEvent struct {
 	ObjectEvent *clientview.ObjectEvent `protobuf:"bytes,8,opt,name=object_event,json=objectEvent,proto3,oneof"`
 }
 
+type StreamResponse_NotificationState struct {
+	// Sent immediately after a stream is established so clients can render
+	// notification state without waiting for a later event.
+	NotificationState bool `protobuf:"varint,9,opt,name=notification_state,json=notificationState,proto3,oneof"`
+}
+
 func (*StreamResponse_UserEvent) isStreamResponse_Data() {}
 
 func (*StreamResponse_JobEvent) isStreamResponse_Data() {}
@@ -908,6 +967,8 @@ func (*StreamResponse_SystemEvent) isStreamResponse_Data() {}
 func (*StreamResponse_MailerEvent) isStreamResponse_Data() {}
 
 func (*StreamResponse_ObjectEvent) isStreamResponse_Data() {}
+
+func (*StreamResponse_NotificationState) isStreamResponse_Data() {}
 
 var File_services_notifications_notifications_proto protoreflect.FileDescriptor
 
@@ -932,14 +993,15 @@ const file_services_notifications_notifications_proto_rawDesc = "" +
 	"\x06unread\x18\x01 \x01(\bR\x06unread\x12\x10\n" +
 	"\x03ids\x18\x02 \x03(\x03R\x03ids\x12\x15\n" +
 	"\x03all\x18\x03 \x01(\bH\x00R\x03all\x88\x01\x01B\x06\n" +
-	"\x04_all\"5\n" +
+	"\x04_all\"X\n" +
 	"\x19MarkNotificationsResponse\x12\x18\n" +
-	"\aupdated\x18\x01 \x01(\x03R\aupdated\"i\n" +
+	"\aupdated\x18\x01 \x01(\x03R\aupdated\x12!\n" +
+	"\funread_count\x18\x02 \x01(\x03R\vunreadCount\"i\n" +
 	"\rStreamRequest\x12P\n" +
 	"\n" +
 	"clientview\x18\x01 \x01(\v2..resources.notifications.clientview.ClientViewH\x00R\n" +
 	"clientviewB\x06\n" +
-	"\x04data\"\xd3\x04\n" +
+	"\x04data\"\x84\x05\n" +
 	"\x0eStreamResponse\x12-\n" +
 	"\x12notification_count\x18\x01 \x01(\x03R\x11notificationCount\x12\x1d\n" +
 	"\arestart\x18\x02 \x01(\bH\x01R\arestart\x88\x01\x01\x12J\n" +
@@ -949,7 +1011,8 @@ const file_services_notifications_notifications_proto_rawDesc = "" +
 	"\x0fjob_grade_event\x18\x05 \x01(\v2-.resources.notifications.events.JobGradeEventH\x00R\rjobGradeEvent\x12P\n" +
 	"\fsystem_event\x18\x06 \x01(\v2+.resources.notifications.events.SystemEventH\x00R\vsystemEvent\x12I\n" +
 	"\fmailer_event\x18\a \x01(\v2$.resources.mailer.events.MailerEventH\x00R\vmailerEvent\x12T\n" +
-	"\fobject_event\x18\b \x01(\v2/.resources.notifications.clientview.ObjectEventH\x00R\vobjectEventB\x06\n" +
+	"\fobject_event\x18\b \x01(\v2/.resources.notifications.clientview.ObjectEventH\x00R\vobjectEvent\x12/\n" +
+	"\x12notification_state\x18\t \x01(\bH\x00R\x11notificationStateB\x06\n" +
 	"\x04dataB\n" +
 	"\n" +
 	"\b_restart2\x8d\x03\n" +
@@ -1020,6 +1083,7 @@ func file_services_notifications_notifications_proto_init() {
 		(*StreamResponse_SystemEvent)(nil),
 		(*StreamResponse_MailerEvent)(nil),
 		(*StreamResponse_ObjectEvent)(nil),
+		(*StreamResponse_NotificationState)(nil),
 	}
 	type x struct{}
 	out := protoimpl.TypeBuilder{

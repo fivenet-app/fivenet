@@ -111,7 +111,7 @@ func TestStoreMarkNotificationsMarksUnread(t *testing.T) {
 
 	expectedQuery := regexp.QuoteMeta(`UPDATE fivenet_notifications SET read_at = NULL WHERE`) +
 		`(?s).*` + regexp.QuoteMeta(`fivenet_notifications.user_id = ?`) +
-		`(?s).*` + regexp.QuoteMeta(`fivenet_notifications.read_at IS NULL`)
+		`(?s).*` + regexp.QuoteMeta(`fivenet_notifications.read_at IS NOT NULL`)
 	mock.ExpectExec(expectedQuery).
 		WithArgs(int32(3)).
 		WillReturnResult(sqlmock.NewResult(0, 1))

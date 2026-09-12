@@ -260,6 +260,15 @@ func (s *Server) Stream(srv pbnotifications.NotificationsService_StreamServer) e
 	defer close(outCh)
 	g, gctx := errgroup.WithContext(ctx)
 
+	// A consumer uses DeliverNew, so no notification event is guaranteed to be
+	// delivered on connection. Send the snapshot explicitly before live events.
+	outCh <- &pbnotifications.StreamResponse{
+		NotificationCount: notificationCount,
+		Data: &pbnotifications.StreamResponse_NotificationState{
+			NotificationState: true,
+		},
+	}
+
 	refreshConsumerSubjects := func() error {
 		info, err := consumer.Info(gctx)
 		if err != nil {

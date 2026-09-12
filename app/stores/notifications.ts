@@ -305,7 +305,9 @@ export const useNotificationsStore = defineStore(
                 const calendarStore = useCalendarStore();
                 handleNotificationEvent(userEvent.data.notification, calendarStore);
             } else if (userEvent.data.oneofKind === 'notificationsReadCount') {
-                notificationCount.value = userEvent.data.notificationsReadCount;
+                // notificationCount on StreamResponse is the authoritative
+                // total. This event contains only the delta used by the
+                // server to update other active streams.
             } else if (userEvent.data.oneofKind === 'userInfoChanged') {
                 await handleUserInfoChangedEvent(userEvent.data.userInfoChanged, authStore, scope);
             } else if (userEvent.data.oneofKind === 'accountGroupsChanged') {
@@ -504,16 +506,11 @@ export const useNotificationsStore = defineStore(
             const notificationsNotificationsClient = await getNotificationsNotificationsClient();
 
             try {
-                await notificationsNotificationsClient.markNotifications(req);
+                const { response } = await notificationsNotificationsClient.markNotifications(req);
+                notificationCount.value = response.unreadCount;
             } catch (e) {
                 handleGRPCError(e as RpcError);
                 throw e;
-            }
-
-            if (req.all === true || req.ids.length >= notificationCount.value) {
-                notificationCount.value = 0;
-            } else {
-                notificationCount.value -= req.ids.length;
             }
         };
 

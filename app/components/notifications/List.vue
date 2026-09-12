@@ -46,7 +46,10 @@ const { validatedQuery, commitValidatedQuery } = useFormSearchValidation<typeof 
 
 const { data, status, refresh, error } = useAuthedLazyAsyncData(
     'userState',
-    () => `notifications-${validatedQuery.value.page}-${validatedQuery.value.includeRead}`,
+    () =>
+        `notifications-${validatedQuery.value.page}-${validatedQuery.value.includeRead}-${[...validatedQuery.value.categories]
+            .sort()
+            .join('-')}`,
     ({ signal }) => getNotifications(validatedQuery.value, signal),
 );
 
@@ -79,12 +82,10 @@ async function markAll(unread: boolean = false): Promise<void> {
         all: true,
     });
 
-    data.value?.notifications.forEach(
-        (v) =>
-            (v.readAt = {
-                timestamp: undefined,
-            }),
-    );
+    const now = toTimestamp(new Date());
+    data.value?.notifications.forEach((v) => {
+        if (!v.readAt) v.readAt = now;
+    });
 }
 
 async function markUnread(unread: boolean, ...ids: number[]): Promise<void> {
@@ -96,7 +97,7 @@ async function markUnread(unread: boolean, ...ids: number[]): Promise<void> {
     const now = toTimestamp(new Date());
     data.value?.notifications.forEach((v) => {
         if (ids.includes(v.id)) {
-            v.readAt = now;
+            v.readAt = unread ? undefined : now;
         }
     });
 }
