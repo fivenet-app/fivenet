@@ -21,6 +21,7 @@ import (
 	"github.com/fivenet-app/fivenet/v2026/pkg/mstlystcdata"
 	"github.com/fivenet-app/fivenet/v2026/pkg/perms"
 	"github.com/fivenet-app/fivenet/v2026/pkg/tracker"
+	pkguserinfo "github.com/fivenet-app/fivenet/v2026/pkg/userinfo"
 	"github.com/fivenet-app/fivenet/v2026/pkg/utils/broker"
 	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
 	"github.com/fivenet-app/fivenet/v2026/services/centrum/dispatchers"
@@ -116,6 +117,8 @@ type Server struct {
 	perms             perms.Permissions
 	js                *events.JSWrapper
 	tracker           tracker.ITracker
+	userinfo          pkguserinfo.UserInfoRetriever
+	userinfoChanges   pkguserinfo.ChangeSubscriber
 	postals           postals.Postals
 	appCfg            appconfig.IConfig
 	enricher          mstlystcdata.IUserAwareEnricher
@@ -143,6 +146,8 @@ type Params struct {
 	Config            *config.Config
 	AppConfig         appconfig.IConfig
 	Tracker           tracker.ITracker
+	UserInfo          pkguserinfo.UserInfoRetriever
+	UserInfoChanges   pkguserinfo.ChangeSubscriber
 	Postals           postals.Postals
 	Enricher          mstlystcdata.IUserAwareEnricher
 	Jobs              mstlystcdata.IJobs
@@ -176,6 +181,8 @@ func NewServer(p Params) Result {
 		perms:             p.Perms,
 		js:                p.JS,
 		tracker:           p.Tracker,
+		userinfo:          p.UserInfo,
+		userinfoChanges:   p.UserInfoChanges,
 		postals:           p.Postals,
 		appCfg:            p.AppConfig,
 		enricher:          p.Enricher,
@@ -245,6 +252,7 @@ func (s *Server) waitForReady(ctx context.Context) error {
 	select {
 	case <-ctx.Done():
 		return ctx.Err()
+
 	case <-s.ready:
 		s.readyMu.RLock()
 		defer s.readyMu.RUnlock()

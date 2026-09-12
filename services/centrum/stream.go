@@ -69,7 +69,10 @@ func (s *Server) sendLatestState(
 	}
 
 	// Own unit ID
-	ownUnitMapping, ok, _ := s.tracker.GetUserMapping(userInfo.GetUserId())
+	ownUnitMapping, ok, err := s.tracker.GetUserMapping(userInfo.GetUserId())
+	if err != nil {
+		return fmt.Errorf("failed to get own unit mapping: %w", err)
+	}
 	var pOwnUnitId *int64
 	if ok && ownUnitMapping != nil && ownUnitMapping.UnitId != nil &&
 		ownUnitMapping.GetUnitId() > 0 {
@@ -108,6 +111,15 @@ func (s *Server) Stream(
 	srv pbcentrum.CentrumService_StreamServer,
 ) error {
 	userInfo := auth.MustGetUserInfoFromContext(srv.Context()).Clone()
+	// Subscribe before reading current state so a change committed during the
+	// database read is queued and forces a follow-up authorization snapshot.
+	userInfoChanges := s.userinfoChanges.SubscribeUserInfoChanges()
+	defer func() {
+		s.userinfoChanges.UnsubscribeUserInfoChanges(userInfoChanges)
+	}()
+	if err := s.refreshStreamUserInfo(srv.Context(), userInfo); err != nil {
+		return errswrap.NewError(err, errorscentrum.ErrFailedQuery)
+	}
 	if err := s.waitForReady(srv.Context()); err != nil {
 		if protoutils.IsContextCanceled(err) {
 			return nil
@@ -118,21 +130,23 @@ func (s *Server) Stream(
 	s.metrics.IncActiveStreams()
 	defer s.metrics.DecActiveStreams()
 
-	// Check if user has access to other job's centrum
-	jobList, acls, err := s.settings.GetAccessList(
-		srv.Context(),
-		userInfo.GetJob(),
-		userInfo.GetJobGrade(),
-	)
-	if err != nil {
-		return errswrap.NewError(err, errorscentrum.ErrFailedQuery)
-	}
 	feed := s.feedBroker.Subscribe()
 	defer func() {
 		s.feedBroker.Unsubscribe(feed)
 	}()
 
 	for {
+		// Recalculate access after a user-info or own-settings change before
+		// sending another snapshot or forwarding any further feed event.
+		jobList, acls, err := s.settings.GetAccessList(
+			srv.Context(),
+			userInfo.GetJob(),
+			userInfo.GetJobGrade(),
+		)
+		if err != nil {
+			return errswrap.NewError(err, errorscentrum.ErrFailedQuery)
+		}
+
 		// Subscribe first, then capture the boundary. Events published while the
 		// snapshot is sent stay queued and are forwarded afterwards.
 		snapshotSequence := s.feedSequence.Load()
@@ -150,7 +164,15 @@ func (s *Server) Stream(
 			return errswrap.NewError(err, errorscentrum.ErrFailedQuery)
 		}
 
-		if err := s.stream(srv.Context(), srv, userInfo, jobList, feed, snapshotSequence); err != nil {
+		if err := s.stream(
+			srv.Context(),
+			srv,
+			userInfo,
+			jobList,
+			feed,
+			userInfoChanges,
+			snapshotSequence,
+		); err != nil {
 			if errors.Is(err, errFeedClosed) {
 				s.metrics.IncFeedResync("slow_subscriber")
 				feed = s.feedBroker.Subscribe()
@@ -158,6 +180,25 @@ func (s *Server) Stream(
 			}
 			if errors.Is(err, errFeedResync) {
 				s.metrics.IncFeedResync("sequence_gap")
+				continue
+			}
+			if errors.Is(err, errAccessChanged) || errors.Is(err, errUserInfoChanged) {
+				if errors.Is(err, errAccessChanged) {
+					s.metrics.IncFeedResync("access_change")
+				} else {
+					s.metrics.IncFeedResync("userinfo_change")
+				}
+				continue
+			}
+			if errors.Is(err, errUserInfoResync) {
+				s.metrics.IncFeedResync("userinfo_subscriber_resync")
+				replacement := s.userinfoChanges.SubscribeUserInfoChanges()
+				if err := s.refreshStreamUserInfo(srv.Context(), userInfo); err != nil {
+					s.userinfoChanges.UnsubscribeUserInfoChanges(replacement)
+					return errswrap.NewError(err, errorscentrum.ErrFailedQuery)
+				}
+				s.userinfoChanges.UnsubscribeUserInfoChanges(userInfoChanges)
+				userInfoChanges = replacement
 				continue
 			}
 			return err
@@ -170,6 +211,17 @@ func (s *Server) Stream(
 		case <-time.After(50 * time.Millisecond):
 		}
 	}
+}
+
+func (s *Server) refreshStreamUserInfo(ctx context.Context, current *userinfo.UserInfo) error {
+	updated, err := s.userinfo.GetUserInfo(ctx, current.GetUserId())
+	if err != nil {
+		return fmt.Errorf("failed to retrieve current user info. %w", err)
+	}
+
+	current.Job = updated.Job
+	current.JobGrade = updated.JobGrade
+	return nil
 }
 
 type feedCfg struct {
