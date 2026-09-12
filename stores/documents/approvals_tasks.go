@@ -21,11 +21,12 @@ func (s *Store) CreateApprovalTasks(
 	documentID int64,
 	snapDate *timestamp.Timestamp,
 	seeds []*pbdocuments.ApprovalTaskSeed,
-) (int32, int32, error) {
+) (int32, int32, []int32, error) {
 	tApprovalTasks := table.FivenetDocumentsApprovalTasks
 
 	created := int32(0)
 	ensured := int32(0)
+	createdUserIDs := []int32{}
 
 	for _, seed := range seeds {
 		isUser := seed.GetUserId() > 0
@@ -48,7 +49,7 @@ func (s *Store) CreateApprovalTasks(
 				)).
 				LIMIT(1).
 				QueryContext(ctx, tx, &cnt); err != nil {
-				return 0, 0, err
+				return 0, 0, nil, err
 			}
 			if cnt.C > 0 {
 				ensured++
@@ -85,9 +86,10 @@ func (s *Store) CreateApprovalTasks(
 					userInfo.GetJob(),
 				).
 				ExecContext(ctx, tx); err != nil {
-				return 0, 0, err
+				return 0, 0, nil, err
 			}
 			created++
+			createdUserIDs = append(createdUserIDs, seed.GetUserId())
 			continue
 		}
 
@@ -120,7 +122,7 @@ func (s *Store) CreateApprovalTasks(
 			)).
 			LIMIT(1).
 			QueryContext(ctx, tx, &have); err != nil {
-			return 0, 0, err
+			return 0, 0, nil, err
 		}
 		if have.C >= slots {
 			ensured++
@@ -154,7 +156,7 @@ func (s *Store) CreateApprovalTasks(
 				tApprovalTasks.SlotNo.BETWEEN(mysql.Int32(1), mysql.Int32(slots)),
 			)).
 			ExecContext(ctx, tx); err != nil {
-			return 0, 0, err
+			return 0, 0, nil, err
 		}
 
 		var existingSlots []struct {
@@ -178,7 +180,7 @@ func (s *Store) CreateApprovalTasks(
 				tApprovalTasks.SlotNo.BETWEEN(mysql.Int32(1), mysql.Int32(slots)),
 			)).
 			QueryContext(ctx, tx, &existingSlots); err != nil {
-			return 0, 0, err
+			return 0, 0, nil, err
 		}
 
 		existing := make(map[int32]struct{}, len(existingSlots))
@@ -222,7 +224,7 @@ func (s *Store) CreateApprovalTasks(
 					userInfo.GetJob(),
 				).
 				ExecContext(ctx, tx); err != nil {
-				return 0, 0, err
+				return 0, 0, nil, err
 			}
 			created++
 			createdThisSeed++
@@ -232,7 +234,7 @@ func (s *Store) CreateApprovalTasks(
 		}
 	}
 
-	return created, ensured, nil
+	return created, ensured, createdUserIDs, nil
 }
 
 func (s *Store) DeleteApprovalTasks(

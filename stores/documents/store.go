@@ -197,7 +197,7 @@ type IStore interface {
 		documentID int64,
 		snapDate *timestamp.Timestamp,
 		seeds []*pbdocuments.ApprovalTaskSeed,
-	) (int32, int32, error)
+	) (int32, int32, []int32, error)
 	DeleteApprovalTasks(
 		ctx context.Context,
 		tx qrm.DB,
