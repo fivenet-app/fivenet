@@ -149,6 +149,16 @@ func (c *Changes) registerSubscription(ctxStartup context.Context, ctx context.C
 }
 
 func (c *Changes) handleMessage(msg jetstream.Msg) {
+	defer func() {
+		if err := msg.Ack(); err != nil {
+			c.logger.Error(
+				"failed to ack user info change",
+				zap.Error(err),
+				zap.String("subject", msg.Subject()),
+			)
+		}
+	}()
+
 	event := &pbuserinfo.UserInfoChanged{}
 	if err := protoutils.UnmarshalPartialJSON(msg.Data(), event); err != nil {
 		c.logger.Error(
@@ -160,11 +170,4 @@ func (c *Changes) handleMessage(msg jetstream.Msg) {
 	}
 
 	c.broker.Publish(event)
-	if err := msg.Ack(); err != nil {
-		c.logger.Error(
-			"failed to ack user info change",
-			zap.Error(err),
-			zap.String("subject", msg.Subject()),
-		)
-	}
 }

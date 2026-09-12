@@ -21,6 +21,9 @@ type feedEvent struct {
 	Sequence uint64
 	Job      string
 	Response *pbcentrum.StreamResponse
+	// Resync tells connected clients that a source-feed interruption may have
+	// skipped updates. They must reload a snapshot before accepting more events.
+	Resync bool
 }
 
 func (s *Server) startFeedHub(ctx context.Context) {
@@ -63,11 +66,28 @@ func (s *Server) publishFeedEvent(
 	s.metrics.IncFeedMessage(feed, "published")
 }
 
+func (s *Server) publishFeedResync(feed string) {
+	s.feedMu.Lock()
+	defer s.feedMu.Unlock()
+	if s.feedBroker.SubCount() == 0 {
+		return
+	}
+
+	s.feedBroker.Publish(&feedEvent{
+		Sequence: s.feedSequence.Add(1),
+		Resync:   true,
+	})
+	s.metrics.IncFeedResync(feed + "_worker_restart")
+}
+
 func (s *Server) runCentrumEventFeed(ctx context.Context) {
 	for {
 		err := s.consumeCentrumEvents(ctx)
-		if err != nil && !protoutils.IsContextCanceled(err) {
-			s.logger.Error("centrum event feed stopped", zap.Error(err))
+		if ctx.Err() == nil && !protoutils.IsContextCanceled(err) {
+			if err != nil {
+				s.logger.Error("centrum event feed stopped", zap.Error(err))
+			}
+			s.publishFeedResync("events")
 		}
 
 		select {
@@ -157,12 +177,15 @@ func (s *Server) consumeCentrumEvents(ctx context.Context) error {
 func (s *Server) runKVFeed(ctx context.Context, feed feedCfg) {
 	for {
 		err := s.consumeKVFeed(ctx, feed)
-		if err != nil && !protoutils.IsContextCanceled(err) {
-			s.logger.Error(
-				"centrum KV feed stopped",
-				zap.Error(err),
-				zap.String("bucket", feed.Bucket),
-			)
+		if ctx.Err() == nil && !protoutils.IsContextCanceled(err) {
+			if err != nil {
+				s.logger.Error(
+					"centrum KV feed stopped",
+					zap.Error(err),
+					zap.String("bucket", feed.Bucket),
+				)
+			}
+			s.publishFeedResync(feed.StreamName)
 		}
 
 		select {

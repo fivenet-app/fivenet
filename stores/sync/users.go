@@ -230,7 +230,7 @@ func (s *Store) DeleteUsers(
 		UPDATE(tUsers.DeletedAt).
 		SET(mysql.CURRENT_TIMESTAMP()).
 		WHERE(condition.AND(tUsers.DeletedAt.IS_NULL())).
-		LIMIT(int64(len(userIDs)))
+		LIMIT(int64(len(userExprs) + len(identifierExprs)))
 
 	res, err := delStmt.ExecContext(ctx, s.db)
 	if err != nil {

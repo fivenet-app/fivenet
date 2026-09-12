@@ -13,6 +13,7 @@ import (
 	"github.com/fivenet-app/fivenet/v2026/pkg/mstlystcdata"
 	"github.com/fivenet-app/fivenet/v2026/pkg/perms"
 	"github.com/fivenet-app/fivenet/v2026/pkg/tracker"
+	pkguserinfo "github.com/fivenet-app/fivenet/v2026/pkg/userinfo"
 	"github.com/fivenet-app/fivenet/v2026/pkg/utils/broker"
 	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
 	citizenshydrator "github.com/fivenet-app/fivenet/v2026/stores/citizens/hydrator"
@@ -61,14 +62,16 @@ type Server struct {
 	logger *zap.Logger
 	jsCons jetstream.ConsumeContext
 
-	tracer   trace.Tracer
-	js       *events.JSWrapper
-	perms    perms.Permissions
-	enricher mstlystcdata.IEnricher
-	tracker  tracker.ITracker
-	postals  postals.Postals
-	hydrator citizenshydrator.IHydrator
-	store    livemapstore.IStore
+	tracer          trace.Tracer
+	js              *events.JSWrapper
+	perms           perms.Permissions
+	enricher        mstlystcdata.IEnricher
+	tracker         tracker.ITracker
+	postals         postals.Postals
+	hydrator        citizenshydrator.IHydrator
+	store           livemapstore.IStore
+	userinfo        pkguserinfo.UserInfoRetriever
+	userinfoChanges pkguserinfo.ChangeSubscriber
 
 	markersCache        *xsync.Map[string, []*livemapmarkers.MarkerMarker]
 	markersDeletedCache *xsync.Map[string, []int64]
@@ -82,15 +85,17 @@ type Params struct {
 
 	LC fx.Lifecycle
 
-	Logger   *zap.Logger
-	TP       *tracesdk.TracerProvider
-	JS       *events.JSWrapper
-	Perms    perms.Permissions
-	Enricher mstlystcdata.IEnricher
-	Tracker  tracker.ITracker
-	Postals  postals.Postals
-	Hydrator citizenshydrator.IHydrator
-	Store    livemapstore.IStore
+	Logger          *zap.Logger
+	TP              *tracesdk.TracerProvider
+	JS              *events.JSWrapper
+	Perms           perms.Permissions
+	Enricher        mstlystcdata.IEnricher
+	Tracker         tracker.ITracker
+	Postals         postals.Postals
+	Hydrator        citizenshydrator.IHydrator
+	Store           livemapstore.IStore
+	UserInfo        pkguserinfo.UserInfoRetriever
+	UserInfoChanges pkguserinfo.ChangeSubscriber
 }
 
 type brokerEvent struct {
@@ -104,20 +109,24 @@ func NewServer(p Params) *Server {
 	s := &Server{
 		logger: p.Logger.Named("services.livemap"),
 
-		tracer:   p.TP.Tracer("livemap"),
-		js:       p.JS,
-		perms:    p.Perms,
-		enricher: p.Enricher,
-		tracker:  p.Tracker,
-		postals:  p.Postals,
-		hydrator: p.Hydrator,
-		store:    p.Store,
+		tracer:          p.TP.Tracer("livemap"),
+		js:              p.JS,
+		perms:           p.Perms,
+		enricher:        p.Enricher,
+		tracker:         p.Tracker,
+		postals:         p.Postals,
+		hydrator:        p.Hydrator,
+		store:           p.Store,
+		userinfo:        p.UserInfo,
+		userinfoChanges: p.UserInfoChanges,
 
 		markersCache:        xsync.NewMap[string, []*livemapmarkers.MarkerMarker](),
 		markersDeletedCache: xsync.NewMap[string, []int64](),
 		markersPublicCache:  newMarkerPublicCache(),
 
-		broker: broker.New[*brokerEvent](),
+		// A slow stream must resync from a snapshot rather than silently miss a
+		// marker update or deletion and retain stale map state.
+		broker: broker.NewWithResyncOnSlowSubscriber[*brokerEvent](512),
 	}
 
 	p.LC.Append(fx.StartHook(func(ctxStartup context.Context) error {

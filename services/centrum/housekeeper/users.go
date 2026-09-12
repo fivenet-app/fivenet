@@ -175,6 +175,37 @@ func (s *Housekeeper) watchUserChanges(
 						)
 						return
 					}
+
+					// userLocStore contains one key per job/grade. A deletion can
+					// therefore be cleanup of an obsolete key rather than an
+					// off-duty transition. Consult the canonical marker before
+					// signing the user out of every dispatcher state we have seen.
+					if marker, found := s.tracker.GetUserMarkerById(userID); found &&
+						marker != nil && !marker.GetHidden() {
+						canonical := userDutyContext{
+							job:    marker.GetJob(),
+							hidden: marker.GetHidden(),
+						}
+						contexts[userID] = canonical
+
+						// The user may have changed jobs, in which case the old
+						// job's dispatcher state must still be removed. A same-job
+						// deletion is normally an obsolete grade key, so retain the
+						// active dispatcher state for the canonical marker.
+						if current.job != "" && current.job != canonical.job {
+							s.removeDispatchersForUser(ctx, userID, []string{current.job})
+						}
+
+						if err := s.syncUserUnitMapping(ctx, userID); err != nil {
+							s.logger.Error(
+								"failed to sync user unit mapping for stale usermarker delete event",
+								zap.Int32("user_id", userID),
+								zap.Error(err),
+							)
+						}
+						return
+					}
+
 					previous, seen := contexts[userID]
 					delete(contexts, userID)
 					s.removeDispatchersForUser(

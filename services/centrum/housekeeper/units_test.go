@@ -121,6 +121,7 @@ func (s *unitAssignmentsStub) UpdateUnitAssignments(
 type housekeeperTrackerStub struct {
 	mappings        map[int32]*tracker.UserMapping
 	onDuty          map[int32]bool
+	markers         map[int32]*livemapmarkers.UserMarker
 	userMarkerStore *store.Store[livemapmarkers.UserMarker, *livemapmarkers.UserMarker]
 	watchReady      chan struct{}
 }
@@ -128,6 +129,10 @@ type housekeeperTrackerStub struct {
 func (t *housekeeperTrackerStub) ListTrackedJobs() []string { return nil }
 
 func (t *housekeeperTrackerStub) GetUserMarkerById(id int32) (*livemapmarkers.UserMarker, bool) {
+	if t.markers != nil {
+		marker, ok := t.markers[id]
+		return marker, ok && marker != nil
+	}
 	return &livemapmarkers.UserMarker{UserId: id, Job: "ambulance"}, true
 }
 
@@ -139,10 +144,11 @@ func (t *housekeeperTrackerStub) Subscribe(
 	ctx context.Context,
 ) (store.IKVWatcher[livemapmarkers.UserMarker, *livemapmarkers.UserMarker], error) {
 	if t.userMarkerStore != nil {
+		watcher, err := t.userMarkerStore.WatchAll(ctx)
 		if t.watchReady != nil {
 			close(t.watchReady)
 		}
-		return t.userMarkerStore.WatchAll(ctx)
+		return watcher, err
 	}
 
 	return nil, nil
@@ -435,6 +441,7 @@ func TestUserMarkerDeleteReconcilesParsedUserID(t *testing.T) {
 	trackerStub := &housekeeperTrackerStub{
 		mappings:        map[int32]*tracker.UserMapping{},
 		onDuty:          map[int32]bool{},
+		markers:         map[int32]*livemapmarkers.UserMarker{},
 		userMarkerStore: userMarkerStore,
 		watchReady:      make(chan struct{}),
 	}
@@ -482,6 +489,155 @@ func TestUserMarkerDeleteReconcilesParsedUserID(t *testing.T) {
 	assert.Equal(t, "ambulance", removal.job)
 	assert.Equal(t, userID, removal.userID)
 	assert.False(t, removal.active)
+
+	cancel()
+	require.NoError(t, <-done)
+}
+
+func TestUserMarkerDeleteRetainsCanonicalDispatcherState(t *testing.T) {
+	t.Parallel()
+
+	_, js, shutdown, err := nats.NewInProcessNATSServer()
+	require.NoError(t, err)
+	t.Cleanup(func() { require.NoError(t, shutdown()) })
+
+	ctx, cancel := context.WithCancel(t.Context())
+	t.Cleanup(cancel)
+	userMarkerStore, err := store.New[livemapmarkers.UserMarker](
+		ctx,
+		zap.NewNop(),
+		js,
+		"test_user_marker_stale_job_delete_watch",
+		store.WithLocks[livemapmarkers.UserMarker](nil),
+	)
+	require.NoError(t, err)
+
+	const userID int32 = 42
+	trackerStub := &housekeeperTrackerStub{
+		mappings: map[int32]*tracker.UserMapping{},
+		onDuty:   map[int32]bool{userID: true},
+		markers: map[int32]*livemapmarkers.UserMarker{
+			userID: {UserId: userID, Job: "ambulance"},
+		},
+		userMarkerStore: userMarkerStore,
+		watchReady:      make(chan struct{}),
+	}
+	dispatcherRemovals := make(chan string, 2)
+	syncedUsers := make(chan int32, 2)
+	h := &Housekeeper{
+		logger:  zap.NewNop(),
+		metrics: centrummetrics.Get(),
+		tracer:  noop.NewTracerProvider().Tracer("test"),
+		tracker: trackerStub,
+		syncUserUnitMapping: func(_ context.Context, id int32) error {
+			syncedUsers <- id
+			return nil
+		},
+		setDispatcherState: func(_ context.Context, job string, _ int32, active bool) error {
+			assert.False(t, active)
+			dispatcherRemovals <- job
+			return nil
+		},
+	}
+	// Seed the stale location key before subscribing; it represents state left
+	// behind by an earlier tracker refresh.
+	require.NoError(t, userMarkerStore.Put(ctx, "police.4.42", &livemapmarkers.UserMarker{
+		UserId: userID,
+		Job:    "police",
+	}))
+
+	done := make(chan error, 1)
+	go func() { done <- h.watchUserChanges(ctx, map[int32]userDutyContext{}) }()
+	<-trackerStub.watchReady
+	// This post-subscription update is a barrier that also establishes the
+	// live canonical context in the watcher.
+	require.NoError(t, userMarkerStore.Put(ctx, "ambulance.3.42", &livemapmarkers.UserMarker{
+		UserId: userID,
+		Job:    "ambulance",
+	}))
+	require.Equal(t, userID, <-syncedUsers)
+
+	// Cleanup removes a leftover police key after ambulance became the
+	// canonical marker.
+	require.NoError(t, userMarkerStore.Delete(ctx, "police.4.42"))
+
+	assert.Equal(t, "police", <-dispatcherRemovals)
+	select {
+	case job := <-dispatcherRemovals:
+		t.Fatalf("unexpected dispatcher removal for current marker job %q", job)
+	case <-time.After(100 * time.Millisecond):
+	}
+
+	cancel()
+	require.NoError(t, <-done)
+}
+
+func TestUserMarkerDeleteRetainsSameJobDispatcherStateAcrossGradeChange(t *testing.T) {
+	t.Parallel()
+
+	_, js, shutdown, err := nats.NewInProcessNATSServer()
+	require.NoError(t, err)
+	t.Cleanup(func() { require.NoError(t, shutdown()) })
+
+	ctx, cancel := context.WithCancel(t.Context())
+	t.Cleanup(cancel)
+	userMarkerStore, err := store.New[livemapmarkers.UserMarker](
+		ctx,
+		zap.NewNop(),
+		js,
+		"test_user_marker_stale_grade_delete_watch",
+		store.WithLocks[livemapmarkers.UserMarker](nil),
+	)
+	require.NoError(t, err)
+
+	const userID int32 = 42
+	trackerStub := &housekeeperTrackerStub{
+		mappings: map[int32]*tracker.UserMapping{},
+		onDuty:   map[int32]bool{userID: true},
+		markers: map[int32]*livemapmarkers.UserMarker{
+			userID: {UserId: userID, Job: "police"},
+		},
+		userMarkerStore: userMarkerStore,
+		watchReady:      make(chan struct{}),
+	}
+	dispatcherRemovals := make(chan string, 1)
+	syncedUsers := make(chan int32, 2)
+	h := &Housekeeper{
+		logger:  zap.NewNop(),
+		metrics: centrummetrics.Get(),
+		tracer:  noop.NewTracerProvider().Tracer("test"),
+		tracker: trackerStub,
+		syncUserUnitMapping: func(_ context.Context, id int32) error {
+			syncedUsers <- id
+			return nil
+		},
+		setDispatcherState: func(_ context.Context, job string, _ int32, _ bool) error {
+			dispatcherRemovals <- job
+			return nil
+		},
+	}
+	// The old-grade key is stale location state, not a new duty transition.
+	require.NoError(t, userMarkerStore.Put(ctx, "police.3.42", &livemapmarkers.UserMarker{
+		UserId: userID,
+		Job:    "police",
+	}))
+
+	done := make(chan error, 1)
+	go func() { done <- h.watchUserChanges(ctx, map[int32]userDutyContext{}) }()
+	<-trackerStub.watchReady
+	require.NoError(t, userMarkerStore.Put(ctx, "police.4.42", &livemapmarkers.UserMarker{
+		UserId: userID,
+		Job:    "police",
+	}))
+	require.Equal(t, userID, <-syncedUsers)
+
+	require.NoError(t, userMarkerStore.Delete(ctx, "police.3.42"))
+
+	select {
+	case job := <-dispatcherRemovals:
+		t.Fatalf("unexpected dispatcher removal for active job %q", job)
+	case <-time.After(100 * time.Millisecond):
+	}
 
 	cancel()
 	require.NoError(t, <-done)

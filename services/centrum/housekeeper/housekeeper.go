@@ -227,6 +227,22 @@ func (s *Housekeeper) start(ctx context.Context) {
 	s.wg.Go(func() {
 		s.runTTLWatcher(ctx)
 	})
+
+	// Watchers use updates-only subscriptions, so a leadership handoff can miss
+	// changes that occurred while this process was not leader. Reconcile the
+	// session-bound projections immediately; concurrent watcher updates are
+	// idempotent and keep the result current while this sweep runs.
+	s.wg.Go(func() {
+		if _, _, _, _, err := s.cleanupDispatchers(ctx); err != nil {
+			s.logger.Error("failed to reconcile dispatchers on leadership start", zap.Error(err))
+		}
+		if _, _, err := s.checkUnitUsers(ctx); err != nil {
+			s.logger.Error(
+				"failed to reconcile unit membership on leadership start",
+				zap.Error(err),
+			)
+		}
+	})
 }
 
 func (s *Housekeeper) recordWatcherRestart(watcher string, err error) {
