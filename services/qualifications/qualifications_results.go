@@ -294,7 +294,7 @@ func (s *Server) createOrUpdateQualificationResult(
 					"title":        quali.GetTitle(),
 				},
 			},
-			Category: notifications.NotificationCategory_NOTIFICATION_CATEGORY_GENERAL,
+			Category: notifications.NotificationCategory_NOTIFICATION_CATEGORY_QUALIFICATIONS,
 			Type:     notifications.NotificationType_NOTIFICATION_TYPE_INFO,
 			Data: &notifications.Data{
 				Link: &notifications.Link{

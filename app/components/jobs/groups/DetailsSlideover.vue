@@ -29,11 +29,13 @@ import {
 } from './helpers';
 
 const props = defineProps<{
-    group: Group;
+    group?: Group;
+    groupId?: number;
 }>();
 
 const emit = defineEmits<{
     changed: [];
+    close: [boolean];
 }>();
 
 const { t } = useI18n();
@@ -85,18 +87,19 @@ const tabs = computed(() => [
     },
 ]);
 
-const detailKey = computed(() => `jobs-group-details-${props.group.id}`);
+const requestedGroupID = computed(() => props.groupId ?? props.group?.id ?? 0);
+const detailKey = computed(() => `jobs-group-details-${requestedGroupID.value}`);
 
 const {
     data: detail,
     status: detailStatus,
     error: detailError,
     refresh: refreshDetail,
-} = useAuthedLazyAsyncData('userState', detailKey, ({ signal }) => getGroupDetails(props.group.id, signal), {
-    watch: [() => props.group.id],
+} = useAuthedLazyAsyncData('userState', detailKey, ({ signal }) => getGroupDetails(requestedGroupID.value, signal), {
+    watch: [requestedGroupID],
 });
 
-const currentGroup = computed(() => detail.value?.group ?? props.group);
+const currentGroup = computed<Group>(() => detail.value?.group ?? props.group ?? ({ id: requestedGroupID.value } as Group));
 const groupIsArchived = computed(() => currentGroup.value.state === GroupState.ARCHIVED);
 const legacyPolicyState = computed(() => isLegacyGroupPolicyState(currentGroup.value));
 const currentGroupAccess = computed(() => detail.value?.access);
@@ -188,7 +191,12 @@ async function handlePanelChanged(): Promise<void> {
 </script>
 
 <template>
-    <USlideover :title="slideoverTitle" :overlay="false" :ui="{ content: 'max-w-5xl' }">
+    <USlideover
+        :title="slideoverTitle"
+        :overlay="false"
+        :close="{ onClick: () => emit('close', false) }"
+        :ui="{ content: 'max-w-5xl' }"
+    >
         <template #body>
             <div class="flex flex-col gap-4">
                 <DataPendingBlock v-if="isRequestPending(detailStatus)" :message="$t('common.loading', [$t('common.group')])" />
@@ -359,6 +367,10 @@ async function handlePanelChanged(): Promise<void> {
                 </template>
                 <DataNoDataBlock v-else :message="$t('common.no_access')" icon="i-mdi-lock" :padded="false" />
             </div>
+        </template>
+
+        <template #footer>
+            <UButton class="flex-1" color="neutral" block :label="$t('common.close', 1)" @click="emit('close', false)" />
         </template>
     </USlideover>
 </template>

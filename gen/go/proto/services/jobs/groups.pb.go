@@ -3343,12 +3343,14 @@ func (b0 RemoveGroupMemberExclusionResponse_builder) Build() *RemoveGroupMemberE
 }
 
 type AddGroupLeaderRequest struct {
-	state         protoimpl.MessageState `protogen:"hybrid.v1"`
-	GroupId       int64                  `protobuf:"varint,1,opt,name=group_id,json=groupId,proto3" json:"group_id,omitempty"`
-	UserId        int32                  `protobuf:"varint,2,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
-	Reason        *string                `protobuf:"bytes,3,opt,name=reason,proto3,oneof" json:"reason,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
+	state   protoimpl.MessageState `protogen:"hybrid.v1"`
+	GroupId int64                  `protobuf:"varint,1,opt,name=group_id,json=groupId,proto3" json:"group_id,omitempty"`
+	UserId  int32                  `protobuf:"varint,2,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	Reason  *string                `protobuf:"bytes,3,opt,name=reason,proto3,oneof" json:"reason,omitempty"`
+	// Suppresses the inbox notification normally sent to the affected user.
+	SkipNotification bool `protobuf:"varint,4,opt,name=skip_notification,json=skipNotification,proto3" json:"skip_notification,omitempty"`
+	unknownFields    protoimpl.UnknownFields
+	sizeCache        protoimpl.SizeCache
 }
 
 func (x *AddGroupLeaderRequest) Reset() {
@@ -3397,6 +3399,13 @@ func (x *AddGroupLeaderRequest) GetReason() string {
 	return ""
 }
 
+func (x *AddGroupLeaderRequest) GetSkipNotification() bool {
+	if x != nil {
+		return x.SkipNotification
+	}
+	return false
+}
+
 func (x *AddGroupLeaderRequest) SetGroupId(v int64) {
 	x.GroupId = v
 }
@@ -3407,6 +3416,10 @@ func (x *AddGroupLeaderRequest) SetUserId(v int32) {
 
 func (x *AddGroupLeaderRequest) SetReason(v string) {
 	x.Reason = &v
+}
+
+func (x *AddGroupLeaderRequest) SetSkipNotification(v bool) {
+	x.SkipNotification = v
 }
 
 func (x *AddGroupLeaderRequest) HasReason() bool {
@@ -3426,6 +3439,8 @@ type AddGroupLeaderRequest_builder struct {
 	GroupId int64
 	UserId  int32
 	Reason  *string
+	// Suppresses the inbox notification normally sent to the affected user.
+	SkipNotification bool
 }
 
 func (b0 AddGroupLeaderRequest_builder) Build() *AddGroupLeaderRequest {
@@ -3435,6 +3450,7 @@ func (b0 AddGroupLeaderRequest_builder) Build() *AddGroupLeaderRequest {
 	x.GroupId = b.GroupId
 	x.UserId = b.UserId
 	x.Reason = b.Reason
+	x.SkipNotification = b.SkipNotification
 	return m0
 }
 
@@ -3532,12 +3548,14 @@ func (b0 AddGroupLeaderResponse_builder) Build() *AddGroupLeaderResponse {
 }
 
 type RemoveGroupLeaderRequest struct {
-	state         protoimpl.MessageState `protogen:"hybrid.v1"`
-	GroupId       int64                  `protobuf:"varint,1,opt,name=group_id,json=groupId,proto3" json:"group_id,omitempty"`
-	UserId        int32                  `protobuf:"varint,2,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
-	Reason        *string                `protobuf:"bytes,3,opt,name=reason,proto3,oneof" json:"reason,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
+	state   protoimpl.MessageState `protogen:"hybrid.v1"`
+	GroupId int64                  `protobuf:"varint,1,opt,name=group_id,json=groupId,proto3" json:"group_id,omitempty"`
+	UserId  int32                  `protobuf:"varint,2,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	Reason  *string                `protobuf:"bytes,3,opt,name=reason,proto3,oneof" json:"reason,omitempty"`
+	// Suppresses the inbox notification normally sent to the affected user.
+	SkipNotification bool `protobuf:"varint,4,opt,name=skip_notification,json=skipNotification,proto3" json:"skip_notification,omitempty"`
+	unknownFields    protoimpl.UnknownFields
+	sizeCache        protoimpl.SizeCache
 }
 
 func (x *RemoveGroupLeaderRequest) Reset() {
@@ -3586,6 +3604,13 @@ func (x *RemoveGroupLeaderRequest) GetReason() string {
 	return ""
 }
 
+func (x *RemoveGroupLeaderRequest) GetSkipNotification() bool {
+	if x != nil {
+		return x.SkipNotification
+	}
+	return false
+}
+
 func (x *RemoveGroupLeaderRequest) SetGroupId(v int64) {
 	x.GroupId = v
 }
@@ -3596,6 +3621,10 @@ func (x *RemoveGroupLeaderRequest) SetUserId(v int32) {
 
 func (x *RemoveGroupLeaderRequest) SetReason(v string) {
 	x.Reason = &v
+}
+
+func (x *RemoveGroupLeaderRequest) SetSkipNotification(v bool) {
+	x.SkipNotification = v
 }
 
 func (x *RemoveGroupLeaderRequest) HasReason() bool {
@@ -3615,6 +3644,8 @@ type RemoveGroupLeaderRequest_builder struct {
 	GroupId int64
 	UserId  int32
 	Reason  *string
+	// Suppresses the inbox notification normally sent to the affected user.
+	SkipNotification bool
 }
 
 func (b0 RemoveGroupLeaderRequest_builder) Build() *RemoveGroupLeaderRequest {
@@ -3624,6 +3655,7 @@ func (b0 RemoveGroupLeaderRequest_builder) Build() *RemoveGroupLeaderRequest {
 	x.GroupId = b.GroupId
 	x.UserId = b.UserId
 	x.Reason = b.Reason
+	x.SkipNotification = b.SkipNotification
 	return m0
 }
 
@@ -4953,19 +4985,21 @@ const file_services_jobs_groups_proto_rawDesc = "" +
 	"\x06reason\x18\x03 \x01(\tH\x00R\x06reason\x88\x01\x01B\t\n" +
 	"\a_reason\"X\n" +
 	"\"RemoveGroupMemberExclusionResponse\x122\n" +
-	"\x05group\x18\x01 \x01(\v2\x1c.resources.jobs.groups.GroupR\x05group\"s\n" +
+	"\x05group\x18\x01 \x01(\v2\x1c.resources.jobs.groups.GroupR\x05group\"\xa0\x01\n" +
 	"\x15AddGroupLeaderRequest\x12\x19\n" +
 	"\bgroup_id\x18\x01 \x01(\x03R\agroupId\x12\x17\n" +
 	"\auser_id\x18\x02 \x01(\x05R\x06userId\x12\x1b\n" +
-	"\x06reason\x18\x03 \x01(\tH\x00R\x06reason\x88\x01\x01B\t\n" +
+	"\x06reason\x18\x03 \x01(\tH\x00R\x06reason\x88\x01\x01\x12+\n" +
+	"\x11skip_notification\x18\x04 \x01(\bR\x10skipNotificationB\t\n" +
 	"\a_reason\"\x88\x01\n" +
 	"\x16AddGroupLeaderResponse\x12:\n" +
 	"\x06leader\x18\x01 \x01(\v2\".resources.jobs.groups.GroupLeaderR\x06leader\x122\n" +
-	"\x05group\x18\x02 \x01(\v2\x1c.resources.jobs.groups.GroupR\x05group\"v\n" +
+	"\x05group\x18\x02 \x01(\v2\x1c.resources.jobs.groups.GroupR\x05group\"\xa3\x01\n" +
 	"\x18RemoveGroupLeaderRequest\x12\x19\n" +
 	"\bgroup_id\x18\x01 \x01(\x03R\agroupId\x12\x17\n" +
 	"\auser_id\x18\x02 \x01(\x05R\x06userId\x12\x1b\n" +
-	"\x06reason\x18\x03 \x01(\tH\x00R\x06reason\x88\x01\x01B\t\n" +
+	"\x06reason\x18\x03 \x01(\tH\x00R\x06reason\x88\x01\x01\x12+\n" +
+	"\x11skip_notification\x18\x04 \x01(\bR\x10skipNotificationB\t\n" +
 	"\a_reason\"O\n" +
 	"\x19RemoveGroupLeaderResponse\x122\n" +
 	"\x05group\x18\x01 \x01(\v2\x1c.resources.jobs.groups.GroupR\x05group\"\xd9\x01\n" +
