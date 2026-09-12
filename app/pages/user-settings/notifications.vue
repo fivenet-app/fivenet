@@ -1,12 +1,112 @@
 <script lang="ts" setup>
 import type { SelectMenuItem } from '@nuxt/ui';
 import { deleteSound, putSound } from '~/composables/useSounds';
+import { notificationCategoryToIcon } from '~/components/notifications/helpers';
 import { reminderTimes } from '~/types/calendar';
+import { getNotificationsNotificationsClient } from '~~/gen/ts/clients';
+import {
+    NotificationCategory,
+    NotificationKind,
+    type NotificationPreference,
+} from '~~/gen/ts/resources/notifications/notifications';
 
 const { t } = useI18n();
 
 const settingsStore = useSettingsStore();
 const { audio, calendar } = storeToRefs(settingsStore);
+const { activeChar } = useAuth();
+const notificationsClient = await getNotificationsNotificationsClient();
+
+const notificationCategories = [
+    NotificationCategory.GENERAL,
+    NotificationCategory.DOCUMENT,
+    NotificationCategory.CALENDAR,
+    NotificationCategory.JOBS,
+    NotificationCategory.QUALIFICATIONS,
+    NotificationCategory.MAILER,
+    NotificationCategory.SYSTEM,
+];
+const notificationDeliveryScopes = [
+    { category: NotificationCategory.UNSPECIFIED, labelKey: 'components.auth.user_settings.notification_delivery.all' },
+    ...notificationCategories.map((category) => ({
+        category,
+        labelKey: `enums.notifications.NotificationCategory.${NotificationCategory[category]}`,
+    })),
+];
+
+type DeliverySetting = 'inboxEnabled' | 'toastEnabled' | 'soundEnabled';
+const pendingPreferenceCategories = ref<Set<NotificationCategory>>(new Set());
+
+const { data: notificationPreferences } = useAuthedLazyAsyncData(
+    'userState',
+    'notification-preferences',
+    async ({ signal }) => (await notificationsClient.getNotificationPreferences({}, { abort: signal })).response.preferences,
+    {
+        default: () => [],
+        enabled: computed(() => activeChar.value !== null),
+    },
+);
+
+function notificationPreference(category: NotificationCategory): NotificationPreference | undefined {
+    return notificationPreferences.value.find(
+        (preference) => preference.category === category && preference.kind === NotificationKind.UNSPECIFIED,
+    );
+}
+
+function deliverySetting(category: NotificationCategory, setting: DeliverySetting): boolean {
+    return (
+        notificationPreference(category)?.[setting] ??
+        notificationPreference(NotificationCategory.UNSPECIFIED)?.[setting] ??
+        true
+    );
+}
+
+function isPreferencePending(category: NotificationCategory): boolean {
+    return pendingPreferenceCategories.value.has(category);
+}
+
+async function updateDeliverySetting(category: NotificationCategory, setting: DeliverySetting, value: boolean): Promise<void> {
+    if (isPreferencePending(category)) return;
+
+    pendingPreferenceCategories.value = new Set(pendingPreferenceCategories.value).add(category);
+    const current = notificationPreference(category);
+    const preference: NotificationPreference = {
+        category,
+        kind: NotificationKind.UNSPECIFIED,
+        ...current,
+        [setting]: value,
+    };
+
+    try {
+        const { response } = await notificationsClient.updateNotificationPreference({ preference });
+        notificationPreferences.value = response.preferences;
+    } catch (e) {
+        handleGRPCError(e as RpcError);
+    } finally {
+        const pending = new Set(pendingPreferenceCategories.value);
+        pending.delete(category);
+        pendingPreferenceCategories.value = pending;
+    }
+}
+
+async function resetDeliveryCategory(category: NotificationCategory): Promise<void> {
+    if (isPreferencePending(category)) return;
+
+    pendingPreferenceCategories.value = new Set(pendingPreferenceCategories.value).add(category);
+    try {
+        const { response } = await notificationsClient.updateNotificationPreference({
+            preference: { category, kind: NotificationKind.UNSPECIFIED },
+            reset: true,
+        });
+        notificationPreferences.value = response.preferences;
+    } catch (e) {
+        handleGRPCError(e as RpcError);
+    } finally {
+        const pending = new Set(pendingPreferenceCategories.value);
+        pending.delete(category);
+        pendingPreferenceCategories.value = pending;
+    }
+}
 
 async function updateSound(key: SoundKeys, value: NotificationSound): Promise<void> {
     if (value.value === 'custom') {
@@ -100,6 +200,59 @@ const sounds = computed<
 
 <template>
     <div class="space-y-4">
+        <UPageCard
+            v-if="activeChar"
+            :title="$t('components.auth.user_settings.notification_delivery.title')"
+            :description="$t('components.auth.user_settings.notification_delivery.description')"
+        >
+            <div class="space-y-2">
+                <div
+                    v-for="scope in notificationDeliveryScopes"
+                    :key="scope.category"
+                    class="grid gap-2 rounded-lg border border-default p-2 lg:grid-cols-[minmax(12rem,1fr)_auto_auto_auto_auto] lg:items-center"
+                >
+                    <div class="flex items-center gap-2">
+                        <UIcon :name="notificationCategoryToIcon(scope.category)" class="size-5 text-muted" />
+                        <span class="font-medium">
+                            {{ $t(scope.labelKey) }}
+                        </span>
+                    </div>
+
+                    <div class="min-w-20">
+                        <UTooltip v-if="notificationPreference(scope.category)" :text="$t('common.reset')">
+                            <UButton
+                                color="neutral"
+                                variant="ghost"
+                                icon="i-mdi-restore"
+                                class="!size-4 !p-0"
+                                :loading="isPreferencePending(scope.category)"
+                                @click="resetDeliveryCategory(scope.category)"
+                            />
+                        </UTooltip>
+                    </div>
+
+                    <UCheckbox
+                        :model-value="deliverySetting(scope.category, 'inboxEnabled')"
+                        :label="$t('components.auth.user_settings.notification_delivery.inbox')"
+                        :disabled="isPreferencePending(scope.category)"
+                        @update:model-value="(value) => updateDeliverySetting(scope.category, 'inboxEnabled', value === true)"
+                    />
+                    <UCheckbox
+                        :model-value="deliverySetting(scope.category, 'toastEnabled')"
+                        :label="$t('components.auth.user_settings.notification_delivery.toast')"
+                        :disabled="isPreferencePending(scope.category)"
+                        @update:model-value="(value) => updateDeliverySetting(scope.category, 'toastEnabled', value === true)"
+                    />
+                    <UCheckbox
+                        :model-value="deliverySetting(scope.category, 'soundEnabled')"
+                        :label="$t('components.auth.user_settings.notification_delivery.sound')"
+                        :disabled="isPreferencePending(scope.category)"
+                        @update:model-value="(value) => updateDeliverySetting(scope.category, 'soundEnabled', value === true)"
+                    />
+                </div>
+            </div>
+        </UPageCard>
+
         <UPageCard
             :description="$t('components.auth.user_settings.volumes.subtitle')"
             :ui="{ body: 'w-full', wrapper: 'w-full', title: 'flex w-full flex-row' }"

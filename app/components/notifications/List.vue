@@ -3,14 +3,13 @@ import { z } from 'zod';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
-import GenericTime from '~/components/partials/elements/GenericTime.vue';
 import Pagination from '~/components/partials/Pagination.vue';
 import type { Form } from '@nuxt/ui';
 import { getNotificationsNotificationsClient } from '~~/gen/ts/clients';
-import { NotificationCategory } from '~~/gen/ts/resources/notifications/notifications';
+import { NotificationCategory, type Notification } from '~~/gen/ts/resources/notifications/notifications';
 import type { GetNotificationsResponse } from '~~/gen/ts/services/notifications/notifications';
 import DNBToggle from './DNBToggle.vue';
-import { notificationCategoryToIcon } from './helpers';
+import { notificationEntryComponent } from './entries/registry';
 
 defineProps<{
     hideHeader?: boolean;
@@ -18,11 +17,11 @@ defineProps<{
     scrollable?: boolean;
 }>();
 
-defineEmits<{
+const emit = defineEmits<{
     (e: 'clicked'): void;
 }>();
 
-const notifications = useNotificationsStore();
+const notificationCenter = useNotificationCenterStore();
 
 const notificationsNotificationsClient = await getNotificationsNotificationsClient();
 
@@ -30,26 +29,30 @@ const categories: { mode: NotificationCategory }[] = [
     { mode: NotificationCategory.GENERAL },
     { mode: NotificationCategory.DOCUMENT },
     { mode: NotificationCategory.CALENDAR },
+    { mode: NotificationCategory.JOBS },
+    { mode: NotificationCategory.QUALIFICATIONS },
+    { mode: NotificationCategory.MAILER },
+    { mode: NotificationCategory.SYSTEM },
 ];
 
+const scopes = ['all', 'unread', 'starred', 'archived'] as const;
+type Scope = (typeof scopes)[number];
+
 const schema = z.object({
-    includeRead: z.coerce.boolean().default(false),
-    categories: z.enum(NotificationCategory).array().max(4).default([]),
+    categories: z.enum(NotificationCategory).array().max(categories.length).default([]),
     page: pageNumberSchema,
 });
 
 type Schema = z.output<typeof schema>;
 
 const query = reactive<Schema>(schema.parse({}));
+const scope = ref<Scope>('all');
 const formRef = useTemplateRef<Form<typeof schema>>('formRef');
 const { validatedQuery, commitValidatedQuery } = useFormSearchValidation<typeof schema>(query, formRef);
 
 const { data, status, refresh, error } = useAuthedLazyAsyncData(
     'userState',
-    () =>
-        `notifications-${validatedQuery.value.page}-${validatedQuery.value.includeRead}-${[...validatedQuery.value.categories]
-            .sort()
-            .join('-')}`,
+    () => `notifications-${scope.value}-${validatedQuery.value.page}-${[...validatedQuery.value.categories].sort().join('-')}`,
     ({ signal }) => getNotifications(validatedQuery.value, signal),
 );
 
@@ -60,8 +63,12 @@ async function getNotifications(values: Schema, signal: AbortSignal): Promise<Ge
                 pagination: {
                     offset: calculateOffset(values.page, data.value?.pagination),
                 },
-                includeRead: values.includeRead,
+                includeRead: scope.value !== 'unread',
                 categories: values.categories,
+                kinds: [],
+                includeArchived: scope.value === 'archived',
+                archivedOnly: scope.value === 'archived',
+                starredOnly: scope.value === 'starred',
             },
             { abort: signal },
         );
@@ -75,12 +82,8 @@ async function getNotifications(values: Schema, signal: AbortSignal): Promise<Ge
     }
 }
 
-async function markAll(unread: boolean = false): Promise<void> {
-    await notifications.markNotifications({
-        unread: unread,
-        ids: [],
-        all: true,
-    });
+async function markAllRead(): Promise<void> {
+    await notificationCenter.markAllRead();
 
     const now = toTimestamp(new Date());
     data.value?.notifications.forEach((v) => {
@@ -88,26 +91,30 @@ async function markAll(unread: boolean = false): Promise<void> {
     });
 }
 
-async function markUnread(unread: boolean, ...ids: number[]): Promise<void> {
-    await notifications.markNotifications({
-        unread: unread,
-        ids: ids,
-    });
+function setScope(value: Scope): void {
+    scope.value = value;
+    query.page = 1;
+    commitValidatedQuery();
+}
 
-    const now = toTimestamp(new Date());
-    data.value?.notifications.forEach((v) => {
-        if (ids.includes(v.id)) {
-            v.readAt = unread ? undefined : now;
-        }
-    });
+function navigate(notification: Notification): void {
+    if (!notification.readAt) {
+        void notificationCenter.updateState({ ids: [notification.id], unread: false });
+    }
+    emit('clicked');
+}
+
+function handleStateChanged(): void {
+    void refresh();
 }
 
 defineShortcuts({
     shift_r: () =>
+        scope.value !== 'archived' &&
         canSubmit.value &&
         data.value?.notifications !== undefined &&
         data.value?.notifications.length > 0 &&
-        markAll().finally(timeoutFn),
+        markAllRead().finally(timeoutFn),
 });
 
 const { start: timeoutFn } = useTimeoutFn(() => (canSubmit.value = true), 400, { immediate: false });
@@ -133,20 +140,18 @@ const canSubmit = ref<boolean>(true);
             </UDashboardNavbar>
 
             <UDashboardToolbar>
+                <UTabs
+                    class="min-w-0 flex-1"
+                    :model-value="scope"
+                    :items="scopes.map((value) => ({ value, label: $t(`components.notifications.${value}`) }))"
+                    @update:model-value="($event) => setScope($event as Scope)"
+                />
+            </UDashboardToolbar>
+
+            <UDashboardToolbar>
                 <template #default>
                     <UForm ref="formRef" class="my-2 flex-1" :schema="schema" :state="query" @submit="commitValidatedQuery">
                         <div class="flex flex-row gap-2">
-                            <UFormField
-                                class="flex flex-initial flex-col"
-                                name="includeRead"
-                                :label="$t('components.notifications.include_read')"
-                                :ui="{ container: 'flex-1 flex' }"
-                            >
-                                <div class="flex flex-1 items-center">
-                                    <USwitch v-model="query.includeRead" />
-                                </div>
-                            </UFormField>
-
                             <UFormField class="flex-1" name="categories" :label="$t('common.category', 2)">
                                 <ClientOnly>
                                     <USelectMenu
@@ -182,7 +187,7 @@ const canSubmit = ref<boolean>(true);
                                 </ClientOnly>
                             </UFormField>
 
-                            <UFormField class="flex-initial" label="&nbsp;">
+                            <UFormField v-if="scope !== 'archived'" class="flex-initial" label="&nbsp;">
                                 <UTooltip :text="$t('components.notifications.mark_all_read')" :kbds="['shift', 'R']">
                                     <UButton
                                         icon="i-mdi-notification-clear-all"
@@ -190,7 +195,7 @@ const canSubmit = ref<boolean>(true);
                                             !canSubmit || data?.notifications === undefined || data?.notifications.length === 0
                                         "
                                         :label="$t('components.notifications.mark_all_read')"
-                                        @click="() => markAll().finally(timeoutFn)"
+                                        @click="() => markAllRead().finally(timeoutFn)"
                                     />
                                 </UTooltip>
                             </UFormField>
@@ -215,84 +220,15 @@ const canSubmit = ref<boolean>(true);
             />
 
             <ul v-else class="min-w-full divide-y divide-default" :class="scrollable ? 'pb-2' : ''" role="list">
-                <li
-                    v-for="not in data?.notifications"
-                    :key="not.id"
-                    class="relative flex flex-row items-center justify-between gap-2 border-default p-2 hover:border-primary-500/25 hover:bg-primary-100/50 sm:px-4 dark:hover:border-primary-400/25 dark:hover:bg-primary-900/10"
-                >
-                    <UIcon class="size-6" :name="notificationCategoryToIcon(not.category)" />
-
-                    <div class="flex flex-1 gap-x-2">
-                        <div class="min-w-0 flex-auto gap-y-1">
-                            <h3 class="text-base leading-6 font-semibold">
-                                <UButton
-                                    v-if="not.data && not.data.link"
-                                    class="w-full pr-1 pl-0"
-                                    variant="link"
-                                    :color="!not.readAt ? 'primary' : 'neutral'"
-                                    :to="not.data.link.to"
-                                    trailing-icon="i-mdi-link-variant"
-                                    :label="$t(not.title!.key, not.title?.parameters ?? {})"
-                                    @click="
-                                        markUnread(false, not.id);
-                                        $emit('clicked');
-                                    "
-                                />
-                                <span v-else>
-                                    {{ $t(not.title!.key, not.title?.parameters ?? {}) }}
-                                </span>
-                            </h3>
-
-                            <p class="flex text-sm leading-6 break-words text-gray-200">
-                                {{ $t(not.content!.key, not.content?.parameters ?? {}) }}
-                            </p>
-                        </div>
-                    </div>
-
-                    <div class="flex items-center gap-x-2">
-                        <div class="hidden gap-y-1 sm:flex sm:flex-col sm:items-end">
-                            <p class="text-xs">
-                                {{ $t('common.received') }}
-                                <GenericTime :value="not.createdAt" ago />
-                            </p>
-
-                            <div class="flex items-center gap-x-2">
-                                <p v-if="not.readAt" class="text-xs leading-5">
-                                    {{ $t('common.read') }}
-                                    <GenericTime :value="not.readAt" ago />
-                                </p>
-                                <template v-else>
-                                    <div class="flex-none rounded-full bg-error-500/20 p-1">
-                                        <div class="size-1.5 rounded-full bg-error-500" />
-                                    </div>
-                                    <p class="text-xs leading-5">
-                                        {{ $t('components.notifications.unread') }}
-                                    </p>
-                                </template>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="flex">
-                        <UTooltip v-if="!not.readAt" :text="$t('components.notifications.mark_read')">
-                            <UButton
-                                class="flex shrink items-center rounded-r-md p-1 text-sm font-semibold"
-                                :disabled="!canSubmit"
-                                icon="i-mdi-check"
-                                @click="markUnread(false, not.id).finally(timeoutFn)"
-                            />
-                        </UTooltip>
-                        <UTooltip v-else :text="$t('components.notifications.mark_unread')">
-                            <UButton
-                                class="flex shrink items-center rounded-r-md p-1 text-sm font-semibold"
-                                variant="soft"
-                                :disabled="!canSubmit"
-                                icon="i-mdi-read"
-                                @click="markUnread(true, not.id).finally(timeoutFn)"
-                            />
-                        </UTooltip>
-                    </div>
-                </li>
+                <component
+                    :is="notificationEntryComponent(notification)"
+                    v-for="notification in data?.notifications"
+                    :key="notification.id"
+                    :notification="notification"
+                    full
+                    @navigate="navigate"
+                    @state-changed="handleStateChanged"
+                />
             </ul>
         </template>
 

@@ -1460,6 +1460,7 @@
                     "require_completed": "Require completed",
                     "add_manual_member": "Add manual member",
                     "add_exclusion": "Add exclusion",
+                    "notify_user": "Notify user",
                     "rules": {
                         "grade_minimum": "Grade at least {grade}",
                         "grade_exact": "Grade exactly {grade}",
@@ -1515,7 +1516,15 @@
             "unread": "Unread",
             "do_not_disturb": "Do Not Disturb",
             "mark_unread": "Mark as unread",
-            "all_categories": "All Categories"
+            "all_categories": "All Categories",
+            "all": "All",
+            "starred": "Starred",
+            "archived": "Archived",
+            "star": "Star",
+            "unstar": "Unstar",
+            "archive": "Archive",
+            "restore": "Restore",
+            "new_notifications": "New notifications"
         },
         "qualifications": {
             "user_qualifications": "Your Qualifications",
@@ -1638,6 +1647,14 @@
                     "title": "Volume Control",
                     "subtitle": "Control sound volumes.",
                     "notifications_volume": "Notifications Volume"
+                },
+                "notification_delivery": {
+                    "title": "Notification Delivery",
+                    "description": "Choose which notification-center categories reach your inbox, show a toast, or may play the notification sound. Sound files and volume remain specific to this browser.",
+                    "all": "All notifications",
+                    "inbox": "Inbox",
+                    "toast": "Toast",
+                    "sound": "Sound"
                 },
                 "streamer_mode": {
                     "title": "Streamer Mode",
@@ -2291,6 +2308,18 @@
         }
     },
     "notifications": {
+        "jobs": {
+            "groups": {
+                "leadership_added": {
+                    "title": "You are now a group leader",
+                    "content": "You were added as a leader of {group}."
+                },
+                "leadership_removed": {
+                    "title": "Group leadership removed",
+                    "content": "You were removed as a leader of {group}."
+                }
+            }
+        },
         "clipboard": {
             "document_added": {
                 "title": "Clipboard: Document added",
@@ -3415,6 +3444,14 @@
                 "ErrFailedStream": {
                     "title": "Notification stream failed",
                     "content": "Something went wrong while streaming notifications. Please try again."
+                },
+                "ErrInvalidPreference": {
+                    "title": "Invalid notification preference",
+                    "content": "This notification kind does not belong to the selected category."
+                },
+                "ErrEmptyPreference": {
+                    "title": "No notification preference selected",
+                    "content": "Choose at least one delivery setting or reset this preference."
                 }
             }
         }
@@ -3665,7 +3702,12 @@
                 "UNSPECIFIED": "Unspecified",
                 "GENERAL": "General",
                 "DOCUMENT": "Documents",
-                "CALENDAR": "Calendar"
+                "CALENDAR": "Calendar",
+                "JOBS": "Jobs",
+                "QUALIFICATIONS": "Qualifications",
+                "MAILER": "E-mail",
+                "DISPATCH": "Dispatch",
+                "SYSTEM": "System"
             }
         },
         "wiki": {
