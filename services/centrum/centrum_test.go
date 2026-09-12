@@ -3,6 +3,7 @@ package centrum
 import (
 	"context"
 	"database/sql"
+	"errors"
 	"maps"
 	"os"
 	"slices"
@@ -48,8 +49,9 @@ func TestMain(m *testing.M) {
 }
 
 type centrumJoinUnitTestTracker struct {
-	markers  map[int32]*livemapmarkers.UserMarker
-	mappings map[int32]*pbtracker.UserMapping
+	markers    map[int32]*livemapmarkers.UserMarker
+	mappings   map[int32]*pbtracker.UserMapping
+	mappingErr error
 }
 
 func newCentrumJoinUnitTestTracker() *centrumJoinUnitTestTracker {
@@ -97,6 +99,10 @@ func (t *centrumJoinUnitTestTracker) GetFilteredUserMarkers(
 func (t *centrumJoinUnitTestTracker) GetUserMapping(
 	userId int32,
 ) (*pbtracker.UserMapping, bool, error) {
+	if t.mappingErr != nil {
+		return nil, false, t.mappingErr
+	}
+
 	mapping, ok := t.mappings[userId]
 	if !ok {
 		return nil, false, nil
@@ -246,6 +252,22 @@ func newCentrumJoinUnitTestServer(
 	require.NotNil(t, srv)
 
 	return srv, db, trackerStub
+}
+
+func TestSendLatestStateFailsWhenOwnUnitMappingCannotBeRead(t *testing.T) {
+	t.Parallel()
+
+	srv, _, trackerStub := newCentrumJoinUnitTestServer(t)
+	trackerStub.mappingErr = errors.New("tracker unavailable")
+
+	err := srv.sendLatestState(
+		t.Context(),
+		&testCentrumStreamServer{ctx: t.Context()},
+		&pbuserinfo.UserInfo{UserId: 1, Job: "ambulance", JobGrade: 1},
+		&centrumsettings.EffectiveAccess{},
+		nil,
+	)
+	require.ErrorContains(t, err, "failed to get own unit mapping")
 }
 
 func createUnitForTest(
@@ -605,6 +627,29 @@ func TestSyncUnitMembershipPreservesValidMappingAndClearsStaleOnes(t *testing.T)
 	assertUnitCacheHasUser(t, srv, ctx, unit.GetId(), 2, false)
 }
 
+func TestSyncUnitMembershipDoesNotRestoreOffDutyUserMapping(t *testing.T) {
+	t.Parallel()
+
+	srv, db, trackerStub := newCentrumJoinUnitTestServer(t)
+	ctx := auth.ContextWithUserInfo(t.Context(), &pbuserinfo.UserInfo{
+		UserId:   1,
+		Job:      "ambulance",
+		JobGrade: 17,
+	})
+
+	unit := createUnitForTest(t, srv, ctx, "Alpha-Off-Duty-Recovery")
+	insertAssignmentRowForTest(t, db, unit.GetId(), 1)
+	require.NoError(t, trackerStub.SetUserMappingForUser(ctx, 1, &unit.Id))
+	delete(trackerStub.markers, 1)
+
+	require.NoError(t, srv.units.SyncUnitMembership(ctx, unit.GetId()))
+
+	_, ok, err := trackerStub.GetUserMapping(1)
+	require.NoError(t, err)
+	assert.False(t, ok)
+	assert.Equal(t, 1, unitAssignmentCountForTest(t, db, unit.GetId(), 1))
+}
+
 func TestSyncUserUnitMappingDeletesMappingForOffDutyUserWithoutAssignment(t *testing.T) {
 	t.Parallel()
 
@@ -695,7 +740,17 @@ func TestUpdateUnitStatusResponseContainsPersistedStatus(t *testing.T) {
 	})
 	unit := createUnitForTest(t, srv, ctx, "Alpha-Status-Response")
 	userID := int32(1)
-	require.NoError(t, srv.units.UpdateUnitAssignments(ctx, "ambulance", &userID, unit.GetId(), []int32{userID}, nil))
+	require.NoError(
+		t,
+		srv.units.UpdateUnitAssignments(
+			ctx,
+			"ambulance",
+			&userID,
+			unit.GetId(),
+			[]int32{userID},
+			nil,
+		),
+	)
 
 	first, err := srv.UpdateUnitStatus(ctx, &pbcentrum.UpdateUnitStatusRequest{
 		UnitId: unit.GetId(),
@@ -1038,5 +1093,5 @@ func TestUpdateDispatchStatusAllowsMissingTrackerMapping(t *testing.T) {
 	require.NotNil(t, resp)
 	require.True(t, resp.GetUpdated())
 	require.NotNil(t, resp.GetStatus())
-	assert.Greater(t, resp.GetStatus().GetId(), int64(0))
+	assert.Positive(t, resp.GetStatus().GetId())
 }

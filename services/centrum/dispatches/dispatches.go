@@ -147,7 +147,7 @@ func New(p Params) *DispatchDB {
 	p.LC.Append(fx.StartHook(func(ctxStartup context.Context) error {
 		idleKV, err := d.js.CreateOrUpdateKeyValue(ctxStartup, jetstream.KeyValueConfig{
 			Bucket:         "centrum_dispatches_idle",
-			Description:    "Timer keys that expire when a dispatch is inactive",
+			Description:    "Timer keys for inactive and completed dispatches",
 			Storage:        jetstream.MemoryStorage,
 			History:        1,
 			MaxBytes:       0,
@@ -856,6 +856,22 @@ func (s *DispatchDB) UpdateStatus(
 
 	if err := s.updateStatusInKV(ctx, in.GetDispatchId(), in); err != nil {
 		return nil, err
+	}
+
+	if centrumutils.IsStatusDispatchComplete(in.GetStatus()) {
+		if err := s.ScheduleCleanup(ctx, in.GetDispatchId()); err != nil {
+			s.logger.Warn(
+				"failed to schedule completed dispatch cleanup; recovery audit will retry",
+				zap.Int64("dispatch_id", in.GetDispatchId()),
+				zap.Error(err),
+			)
+		}
+	} else if err := s.CancelScheduledCleanup(ctx, in.GetDispatchId()); err != nil {
+		s.logger.Warn(
+			"failed to cancel completed dispatch cleanup",
+			zap.Int64("dispatch_id", in.GetDispatchId()),
+			zap.Error(err),
+		)
 	}
 
 	if err := s.publishDispatchStatus(ctx, in, dsp.GetJobs().GetJobStrings()); err != nil {

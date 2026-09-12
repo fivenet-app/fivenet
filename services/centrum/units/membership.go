@@ -46,7 +46,13 @@ func (s *UnitDB) SyncUserUnitMapping(ctx context.Context, userId int32) error {
 		// retain an old-job or off-duty assignment until the periodic audit runs.
 		if !markerFound || marker == nil || marker.GetHidden() ||
 			!s.tracker.IsUserOnDuty(userId) || marker.GetJob() != unit.GetJob() || !inJob {
-			if err := s.RemoveUnitAssignments(ctx, "", &userId, unitId, []int32{userId}); err != nil {
+			if err := s.RemoveUnitAssignments(
+				ctx,
+				"",
+				&userId,
+				unitId,
+				[]int32{userId},
+			); err != nil {
 				return err
 			}
 			unitId = 0
@@ -123,6 +129,16 @@ func (s *UnitDB) syncLoadedUnitMembership(ctx context.Context, unit *centrumunit
 			continue
 		}
 
+		eligible, err := s.isEligibleUnitMember(ctx, unit.GetJob(), userId)
+		if err != nil {
+			errs = errors.Join(errs, err)
+			continue
+		}
+		if !eligible {
+			errs = errors.Join(errs, s.clearTrackerMappingForUnit(ctx, userId, unitId))
+			continue
+		}
+
 		userIds[userId] = struct{}{}
 		if err := s.tracker.SetUserMappingForUser(ctx, userId, &unit.Id); err != nil {
 			s.logger.Error(
@@ -135,7 +151,22 @@ func (s *UnitDB) syncLoadedUnitMembership(ctx context.Context, unit *centrumunit
 		}
 	}
 
-	return errors.Join(errs, s.clearRemovedTrackerMappingsForUnit(ctx, unitId, previous.GetUsers(), userIds))
+	return errors.Join(
+		errs,
+		s.clearRemovedTrackerMappingsForUnit(ctx, unitId, previous.GetUsers(), userIds),
+	)
+}
+
+// isEligibleUnitMember keeps tracker mappings tied to the active duty
+// context. Durable membership is reconciled separately by user changes.
+func (s *UnitDB) isEligibleUnitMember(ctx context.Context, job string, userId int32) (bool, error) {
+	marker, found := s.tracker.GetUserMarkerById(userId)
+	if !found || marker == nil || marker.GetHidden() || !s.tracker.IsUserOnDuty(userId) ||
+		marker.GetJob() != job {
+		return false, nil
+	}
+
+	return s.UserInJob(ctx, s.db, job, userId)
 }
 
 func (s *UnitDB) syncMissingUnitMembership(ctx context.Context, unitId int64) error {
@@ -149,7 +180,10 @@ func (s *UnitDB) syncMissingUnitMembership(ctx context.Context, unitId int64) er
 		errs = errors.Join(errs, err)
 	}
 
-	return errors.Join(errs, s.clearRemovedTrackerMappingsForUnit(ctx, unitId, previous.GetUsers(), nil))
+	return errors.Join(
+		errs,
+		s.clearRemovedTrackerMappingsForUnit(ctx, unitId, previous.GetUsers(), nil),
+	)
 }
 
 func (s *UnitDB) clearRemovedTrackerMappingsForUnit(
@@ -169,19 +203,20 @@ func (s *UnitDB) clearRemovedTrackerMappingsForUnit(
 			continue
 		}
 
-		mapping, ok, err := s.tracker.GetUserMapping(userId)
-		if err != nil {
-			errs = errors.Join(errs, err)
-			continue
-		}
-		if !ok || mapping == nil || mapping.UnitId == nil || mapping.GetUnitId() != unitId {
-			continue
-		}
-
-		if err := s.tracker.DeleteUserMapping(ctx, userId); err != nil {
-			errs = errors.Join(errs, err)
-		}
+		errs = errors.Join(errs, s.clearTrackerMappingForUnit(ctx, userId, unitId))
 	}
 
 	return errs
+}
+
+func (s *UnitDB) clearTrackerMappingForUnit(ctx context.Context, userId int32, unitId int64) error {
+	mapping, ok, err := s.tracker.GetUserMapping(userId)
+	if err != nil {
+		return err
+	}
+	if !ok || mapping == nil || mapping.UnitId == nil || mapping.GetUnitId() != unitId {
+		return nil
+	}
+
+	return s.tracker.DeleteUserMapping(ctx, userId)
 }

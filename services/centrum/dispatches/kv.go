@@ -8,9 +8,11 @@ import (
 	"time"
 
 	centrumdispatches "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/centrum/dispatches"
+	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/timestamp"
 	"github.com/fivenet-app/fivenet/v2026/pkg/nats/store"
 	centrumutils "github.com/fivenet-app/fivenet/v2026/services/centrum/utils"
 	"github.com/nats-io/nats.go/jetstream"
+	"go.uber.org/zap"
 	"google.golang.org/protobuf/proto"
 )
 
@@ -44,6 +46,15 @@ func (s *DispatchDB) updateInKV(
 		},
 	); err != nil {
 		return err
+	}
+	if err := s.ScheduleProjectionCleanup(ctx, id, dsp.GetCreatedAt()); err != nil {
+		// The weekly recovery audit covers failed timer creation. Do not turn a
+		// successful database/KV projection write into a failed API operation.
+		s.logger.Warn(
+			"failed to schedule dispatch projection cleanup",
+			zap.Int64("dispatch_id", id),
+			zap.Error(err),
+		)
 	}
 
 	return nil
@@ -165,8 +176,17 @@ func (s *DispatchDB) updateStatusInKV(
 const (
 	InactiveTTL            = 60 * time.Minute // How long a Dispatch may stay idle/quiet
 	InactiveLimitMarkerTTL = 2 * time.Hour    // How long tombstones live
-
+	CompletedTTL           = 15 * time.Minute // How long completed dispatches remain visible
+	ProjectionTTL          = 3 * time.Hour    // Maximum time a dispatch projection remains in KV
 )
+
+func cleanupKey(id int64) string {
+	return "cleanup." + centrumutils.IdKey(id)
+}
+
+func projectionCleanupKey(id int64) string {
+	return "projection." + centrumutils.IdKey(id)
+}
 
 // TouchActivity updates the idle timer for a Dispatch.
 func (d *DispatchDB) TouchActivity(ctx context.Context, id int64) error {
@@ -195,4 +215,57 @@ func (d *DispatchDB) TouchActivity(ctx context.Context, id int64) error {
 	}
 
 	return nil
+}
+
+// ScheduleCleanup removes a completed dispatch from the live projection after CompletedTTL.
+func (d *DispatchDB) ScheduleCleanup(ctx context.Context, id int64) error {
+	_, err := d.idleKV.Create(ctx, cleanupKey(id), nil, jetstream.KeyTTL(CompletedTTL))
+	if errors.Is(err, jetstream.ErrKeyExists) {
+		return nil
+	}
+
+	return err
+}
+
+func (d *DispatchDB) CancelScheduledCleanup(ctx context.Context, id int64) error {
+	key := cleanupKey(id)
+	if _, err := d.idleKV.Get(ctx, key); err != nil {
+		if errors.Is(err, jetstream.ErrKeyNotFound) {
+			return nil
+		}
+
+		return err
+	}
+
+	err := d.idleKV.Delete(ctx, key)
+	if errors.Is(err, jetstream.ErrKeyNotFound) {
+		return nil
+	}
+
+	return err
+}
+
+// ScheduleProjectionCleanup bounds the lifetime of a dispatch in the live KV
+// projection. It deliberately does not refresh on updates: retention is based
+// on the original dispatch creation time.
+func (d *DispatchDB) ScheduleProjectionCleanup(
+	ctx context.Context,
+	id int64,
+	createdAt *timestamp.Timestamp,
+) error {
+	if createdAt == nil {
+		return nil
+	}
+
+	ttl := time.Until(createdAt.AsTime().Add(ProjectionTTL))
+	if ttl <= 0 {
+		ttl = time.Second
+	}
+
+	_, err := d.idleKV.Create(ctx, projectionCleanupKey(id), nil, jetstream.KeyTTL(ttl))
+	if errors.Is(err, jetstream.ErrKeyExists) {
+		return nil
+	}
+
+	return err
 }

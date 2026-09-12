@@ -3,23 +3,28 @@ package housekeeper
 import (
 	"context"
 	"database/sql"
+	"errors"
 	"fmt"
 	"sync"
 	"time"
 
+	centrumdispatches "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/centrum/dispatches"
+	centrumunits "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/centrum/units"
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/cron"
+	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/timestamp"
 	"github.com/fivenet-app/fivenet/v2026/pkg/config"
 	"github.com/fivenet-app/fivenet/v2026/pkg/croner"
 	"github.com/fivenet-app/fivenet/v2026/pkg/events"
 	"github.com/fivenet-app/fivenet/v2026/pkg/nats/leaderelection"
+	"github.com/fivenet-app/fivenet/v2026/pkg/nats/store"
 	"github.com/fivenet-app/fivenet/v2026/pkg/tracker"
 	"github.com/fivenet-app/fivenet/v2026/pkg/utils/instance"
 	"github.com/fivenet-app/fivenet/v2026/services/centrum/dispatchers"
 	"github.com/fivenet-app/fivenet/v2026/services/centrum/dispatches"
-	"github.com/fivenet-app/fivenet/v2026/services/centrum/helpers"
 	centrummetrics "github.com/fivenet-app/fivenet/v2026/services/centrum/metrics"
 	"github.com/fivenet-app/fivenet/v2026/services/centrum/settings"
 	"github.com/fivenet-app/fivenet/v2026/services/centrum/units"
+	centrumutils "github.com/fivenet-app/fivenet/v2026/services/centrum/utils"
 	"github.com/go-jet/jet/v2/qrm"
 	tracesdk "go.opentelemetry.io/otel/sdk/trace"
 	"go.opentelemetry.io/otel/trace"
@@ -33,12 +38,17 @@ const (
 
 	DeleteDispatchDays = 14
 	DeleteUnitDays     = 14
+
+	cancelOldDispatchesSchedule   = "0 */5 * * * *"
+	deleteOldDispatchesKVSchedule = "0 15 2,14 * * *"
 )
 
 var Module = fx.Module("centrum_housekeeper",
 	fx.Provide(
 		New,
 	))
+
+var errWatcherUpdatesClosed = errors.New("watcher updates channel closed")
 
 type Housekeeper struct {
 	ctx    context.Context //nolint:containedctx // Housekeeper retains lifecycle context for watcher loops across files.
@@ -51,12 +61,20 @@ type Housekeeper struct {
 	tracker tracker.ITracker
 	le      *leaderelection.LeaderElector
 
-	helpers         *helpers.Helpers
-	settings        *settings.SettingsDB
-	dispatchers     *dispatchers.DispatchersDB
-	units           *units.UnitDB
-	unitAssignments unitAssignments
-	dispatches      *dispatches.DispatchDB
+	settings                  *settings.SettingsDB
+	dispatchers               *dispatchers.DispatchersDB
+	units                     *units.UnitDB
+	unitAssignments           unitAssignments
+	unitAssignmentWatchSource unitAssignmentWatchSource
+	removeEmptyUnit           func(context.Context, *centrumunits.Unit) (int, error)
+	syncUserUnitMapping       func(context.Context, int32) error
+	setDispatcherState        func(context.Context, string, int32, bool) error
+	getDispatchProjection     func(context.Context, int64) (*centrumdispatches.Dispatch, error)
+	updateDispatchStatus      func(context.Context, int64, *centrumdispatches.DispatchStatus) (*centrumdispatches.DispatchStatus, error)
+	addDispatchAttribute      func(context.Context, *centrumdispatches.Dispatch, centrumdispatches.DispatchAttribute) error
+	deleteDispatch            func(context.Context, int64, bool) error
+	scheduleProjectionCleanup func(context.Context, int64, *timestamp.Timestamp) error
+	dispatches                *dispatches.DispatchDB
 }
 
 type unitAssignments interface {
@@ -71,6 +89,12 @@ type unitAssignments interface {
 	) error
 }
 
+type unitAssignmentWatchSource interface {
+	WatchAll(
+		ctx context.Context,
+	) (store.IKVWatcher[centrumunits.Unit, *centrumunits.Unit], error)
+}
+
 type Params struct {
 	fx.In
 
@@ -83,7 +107,6 @@ type Params struct {
 	Config  *config.Config
 	Tracker tracker.ITracker
 
-	Helpers     *helpers.Helpers
 	Settings    *settings.SettingsDB
 	Dispatchers *dispatchers.DispatchersDB
 	Units       *units.UnitDB
@@ -110,13 +133,23 @@ func New(p Params) Result {
 		db:      p.DB,
 		tracker: p.Tracker,
 
-		helpers:         p.Helpers,
 		settings:        p.Settings,
 		dispatchers:     p.Dispatchers,
 		units:           p.Units,
 		unitAssignments: p.Units,
 		dispatches:      p.Dispatches,
 	}
+	s.unitAssignmentWatchSource = p.Units.Store()
+	s.removeEmptyUnit = s.removeDispatchesFromEmptyUnit
+	s.syncUserUnitMapping = p.Units.SyncUserUnitMapping
+	s.setDispatcherState = p.Dispatchers.SetUserState
+	s.getDispatchProjection = func(ctx context.Context, id int64) (*centrumdispatches.Dispatch, error) {
+		return p.Dispatches.Store().Get(centrumutils.IdKey(id))
+	}
+	s.updateDispatchStatus = p.Dispatches.UpdateStatus
+	s.addDispatchAttribute = p.Dispatches.AddAttributeToDispatch
+	s.deleteDispatch = p.Dispatches.Delete
+	s.scheduleProjectionCleanup = p.Dispatches.ScheduleProjectionCleanup
 
 	p.LC.Append(fx.StartHook(func(ctxStartup context.Context) error {
 		nodeName := instance.ID() + "_centrum_housekeeper"
@@ -141,12 +174,6 @@ func New(p Params) Result {
 
 		s.le.Start()
 
-		s.wg.Go(func() {
-			if err := s.runDeleteOldDispatches(ctxCancel, nil); err != nil {
-				s.logger.Error("failed to delete old dispatches on startup", zap.Error(err))
-			}
-		})
-
 		return nil
 	}))
 
@@ -166,8 +193,19 @@ func New(p Params) Result {
 }
 
 func (s *Housekeeper) start(ctx context.Context) {
+	// This sweep mutates durable state and must run only while elected leader.
+	s.wg.Go(func() {
+		if err := s.runDeleteOldDispatches(ctx, nil); err != nil {
+			s.logger.Error("failed to delete old dispatches on leadership start", zap.Error(err))
+		}
+	})
+
 	s.wg.Go(func() {
 		s.runUserChangesWatch(ctx)
+	})
+
+	s.wg.Go(func() {
+		s.runUnitAssignmentWatch(ctx)
 	})
 
 	s.wg.Go(func() {
@@ -179,8 +217,24 @@ func (s *Housekeeper) start(ctx context.Context) {
 	})
 
 	s.wg.Go(func() {
+		s.runDispatchCleanupWatcher(ctx)
+	})
+
+	s.wg.Go(func() {
+		s.runProjectionCleanupWatcher(ctx)
+	})
+
+	s.wg.Go(func() {
 		s.runTTLWatcher(ctx)
 	})
+}
+
+func (s *Housekeeper) recordWatcherRestart(watcher string, err error) {
+	outcome := "restart"
+	if errors.Is(err, errWatcherUpdatesClosed) {
+		outcome = "updates_closed"
+	}
+	s.metrics.IncHousekeeperEvent(watcher, outcome)
 }
 
 func (s *Housekeeper) RegisterCronjobs(ctx context.Context, registry croner.IRegistry) error {
@@ -190,6 +244,7 @@ func (s *Housekeeper) RegisterCronjobs(ctx context.Context, registry croner.IReg
 		"centrum.manager_housekeeper.dispatch_assignment_expiration",
 		"centrum.manager_housekeeper.cleanup_units",
 		"centrum.manager_housekeeper.audit_unit_membership",
+		"centrum.manager_housekeeper.audit_empty_unit_dispatches",
 		"centrum.manager_housekeeper.cancel_old_dispatches",
 		"centrum.manager_housekeeper.delete_old_dispatches",
 		"centrum.manager_housekeeper.delete_old_dispatches_from_kv",
@@ -199,6 +254,11 @@ func (s *Housekeeper) RegisterCronjobs(ctx context.Context, registry croner.IReg
 		}
 	}
 
+	// Once legacy FiveM plugins create dispatches through the Centrum API, remove
+	// the registration below and enable this replacement instead.
+	// if err := registry.UnregisterCronjob(ctx, "centrum.housekeeper.load_new_dispatches"); err != nil {
+	// 	return err
+	// }
 	if err := registry.RegisterCronjob(ctx, &cron.Cronjob{
 		Name:     "centrum.housekeeper.load_new_dispatches",
 		Schedule: "*/4 * * * * * *", // Every 4 seconds
@@ -224,6 +284,14 @@ func (s *Housekeeper) RegisterCronjobs(ctx context.Context, registry croner.IReg
 	}
 
 	if err := registry.RegisterCronjob(ctx, &cron.Cronjob{
+		Name:     "centrum.housekeeper.audit_empty_unit_dispatches",
+		Schedule: "15 4 * * *", // Recovery audit for the targeted unit watcher.
+		Timeout:  durationpb.New(30 * time.Second),
+	}); err != nil {
+		return err
+	}
+
+	if err := registry.RegisterCronjob(ctx, &cron.Cronjob{
 		Name:     "centrum.housekeeper.audit_unit_membership",
 		Schedule: "30 3 * * *", // Daily at 03:30
 		Timeout:  durationpb.New(30 * time.Second),
@@ -233,7 +301,7 @@ func (s *Housekeeper) RegisterCronjobs(ctx context.Context, registry croner.IReg
 
 	if err := registry.RegisterCronjob(ctx, &cron.Cronjob{
 		Name:     "centrum.housekeeper.cancel_old_dispatches",
-		Schedule: "*/12 * * * * * *", // Every 12 hours
+		Schedule: cancelOldDispatchesSchedule, // Every five minutes; targeted SQL recovery query.
 		Timeout:  durationpb.New(30 * time.Second),
 	}); err != nil {
 		return err
@@ -249,7 +317,7 @@ func (s *Housekeeper) RegisterCronjobs(ctx context.Context, registry croner.IReg
 
 	if err := registry.RegisterCronjob(ctx, &cron.Cronjob{
 		Name:     "centrum.housekeeper.delete_old_dispatches_from_kv",
-		Schedule: "@always", // Every minute
+		Schedule: deleteOldDispatchesKVSchedule, // Twelve-hour recovery audit; targeted timers handle normal cleanup.
 		Timeout:  durationpb.New(30 * time.Second),
 	}); err != nil {
 		return err
@@ -257,7 +325,7 @@ func (s *Housekeeper) RegisterCronjobs(ctx context.Context, registry croner.IReg
 
 	if err := registry.RegisterCronjob(ctx, &cron.Cronjob{
 		Name:     "centrum.housekeeper.cleanup_dispatchers",
-		Schedule: "@always", // Every minute
+		Schedule: "45 3 * * *", // Daily audit; tracker changes handle normal cleanup.
 		Timeout:  durationpb.New(30 * time.Second),
 	}); err != nil {
 		return err
@@ -274,6 +342,7 @@ func (s *Housekeeper) RegisterCronjobHandlers(h *croner.Handlers) error {
 	)
 	h.Add("centrum.housekeeper.cleanup_units", s.runCleanupUnits)
 	h.Add("centrum.housekeeper.audit_unit_membership", s.runAuditUnitMembership)
+	h.Add("centrum.housekeeper.audit_empty_unit_dispatches", s.runAuditEmptyUnitDispatches)
 	h.Add("centrum.housekeeper.cancel_old_dispatches", s.runCancelOldDispatches)
 	h.Add("centrum.housekeeper.delete_old_dispatches", s.runDeleteOldDispatches)
 	h.Add("centrum.housekeeper.delete_old_dispatches_from_kv", s.runDeleteOldDispatchesFromKV)

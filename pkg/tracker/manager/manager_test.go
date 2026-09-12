@@ -355,17 +355,6 @@ func dbInsertTestUser(ctx context.Context, db *sql.DB, userID int32, job string)
 	return err
 }
 
-func dbInsertDispatcher(ctx context.Context, db *sql.DB, job string, userID int32) error {
-	_, err := db.ExecContext(
-		ctx,
-		"INSERT INTO fivenet_centrum_dispatchers (job, user_id) VALUES (?, ?)",
-		job,
-		userID,
-	)
-
-	return err
-}
-
 func removeUserLocations(ctx context.Context, db *sql.DB) error {
 	stmt := tLocs.
 		DELETE().
