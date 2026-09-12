@@ -125,6 +125,18 @@ func TestValidPreferenceScope(t *testing.T) {
 		Category: resourcesnotifications.NotificationCategory_NOTIFICATION_CATEGORY_JOBS,
 		Kind:     resourcesnotifications.NotificationKind_NOTIFICATION_KIND_JOBS_GROUP_LEADERSHIP_ADDED,
 	}))
+	assert.True(t, validPreferenceScope(&resourcesnotifications.NotificationPreference{
+		Category: resourcesnotifications.NotificationCategory_NOTIFICATION_CATEGORY_JOBS,
+		Kind:     resourcesnotifications.NotificationKind_NOTIFICATION_KIND_JOBS_GROUP_MEMBER_ADDED,
+	}))
+	assert.True(t, validPreferenceScope(&resourcesnotifications.NotificationPreference{
+		Category: resourcesnotifications.NotificationCategory_NOTIFICATION_CATEGORY_DOCUMENT,
+		Kind:     resourcesnotifications.NotificationKind_NOTIFICATION_KIND_DOCUMENT_APPROVAL_ASSIGNED,
+	}))
+	assert.True(t, validPreferenceScope(&resourcesnotifications.NotificationPreference{
+		Category: resourcesnotifications.NotificationCategory_NOTIFICATION_CATEGORY_DOCUMENT,
+		Kind:     resourcesnotifications.NotificationKind_NOTIFICATION_KIND_DOCUMENT_REQUEST_DECIDED,
+	}))
 	assert.False(t, validPreferenceScope(&resourcesnotifications.NotificationPreference{
 		Category: resourcesnotifications.NotificationCategory_NOTIFICATION_CATEGORY_DOCUMENT,
 		Kind:     resourcesnotifications.NotificationKind_NOTIFICATION_KIND_JOBS_GROUP_LEADERSHIP_ADDED,
@@ -140,5 +152,10 @@ func TestHasDeliveryPreferenceOverride(t *testing.T) {
 
 	assert.False(t, hasDeliveryPreferenceOverride(nil))
 	assert.False(t, hasDeliveryPreferenceOverride(&resourcesnotifications.NotificationPreference{}))
-	assert.True(t, hasDeliveryPreferenceOverride(&resourcesnotifications.NotificationPreference{InboxEnabled: new(true)}))
+	assert.True(
+		t,
+		hasDeliveryPreferenceOverride(
+			&resourcesnotifications.NotificationPreference{InboxEnabled: new(true)},
+		),
+	)
 }

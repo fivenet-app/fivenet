@@ -2308,18 +2308,6 @@
         }
     },
     "notifications": {
-        "jobs": {
-            "groups": {
-                "leadership_added": {
-                    "title": "You are now a group leader",
-                    "content": "You were added as a leader of {group}."
-                },
-                "leadership_removed": {
-                    "title": "Group leadership removed",
-                    "content": "You were removed as a leader of {group}."
-                }
-            }
-        },
         "clipboard": {
             "document_added": {
                 "title": "Clipboard: Document added",
@@ -2721,13 +2709,49 @@
                 "title": "Document: You have been mentioned",
                 "content": "You have been mentioned in \"{title}\" document. Click here to go to the document."
             },
-            "document_request_added": {
-                "title": "Document: Request has been created",
-                "content": "A request against your \"{title}\" document has been added."
+            "document_request_created_access": {
+                "title": "Document: Access requested",
+                "content": "Access was requested for your \"{title}\" document."
+            },
+            "document_request_created_closure": {
+                "title": "Document: Closure requested",
+                "content": "Closing your \"{title}\" document was requested."
+            },
+            "document_request_created_opening": {
+                "title": "Document: Reopening requested",
+                "content": "Reopening your \"{title}\" document was requested."
+            },
+            "document_request_created_update": {
+                "title": "Document: Update requested",
+                "content": "An update to your \"{title}\" document was requested."
+            },
+            "document_request_created_owner_change": {
+                "title": "Document: Ownership transfer requested",
+                "content": "A transfer of your \"{title}\" document was requested."
+            },
+            "document_request_created_deletion": {
+                "title": "Document: Deletion requested",
+                "content": "Deletion of your \"{title}\" document was requested."
+            },
+            "document_request_accepted": {
+                "title": "Document request accepted",
+                "content": "Your request for \"{title}\" was accepted."
+            },
+            "document_request_declined": {
+                "title": "Document request declined",
+                "content": "Your request for \"{title}\" was declined."
+            },
+            "document_request_cancelled": {
+                "title": "Document request cancelled",
+                "content": "Your request for \"{title}\" was cancelled."
             },
             "document_comment_added": {
                 "title": "Document: New comment",
                 "content": "A new comment has been posted on \"{title}\" document."
+            },
+            "document_approval_assigned": {
+                "title": "Document: Approval requested",
+                "content": "You have been asked to approve \"{title}\"."
             },
             "document_take_ownership": {
                 "title": "Document Owner changed",
@@ -2795,6 +2819,24 @@
                 "clientview_update": {
                     "title": "Conduct entry updated",
                     "content": "Conduct entry has been updated by another user. Click here to reload the conduct entry's data."
+                }
+            },
+            "groups": {
+                "leadership_added": {
+                    "title": "You are now a group leader",
+                    "content": "You were added as a leader of {group}."
+                },
+                "leadership_removed": {
+                    "title": "Group leadership removed",
+                    "content": "You were removed as a leader of {group}."
+                },
+                "membership_added": {
+                    "title": "Added to group",
+                    "content": "You were added to {group}."
+                },
+                "membership_removed": {
+                    "title": "Removed from group",
+                    "content": "You were removed from {group}."
                 }
             }
         },

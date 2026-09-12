@@ -2308,18 +2308,6 @@
         }
     },
     "notifications": {
-        "jobs": {
-            "groups": {
-                "leadership_added": {
-                    "title": "Du bist jetzt Gruppenleitung",
-                    "content": "Du wurdest als Leitung der Gruppe {group} hinzugefügt."
-                },
-                "leadership_removed": {
-                    "title": "Gruppenleitung entfernt",
-                    "content": "Du wurdest als Leitung der Gruppe {group} entfernt."
-                }
-            }
-        },
         "clipboard": {
             "document_added": {
                 "title": "Zwischenablage: Dokument hinzugefügt",
@@ -2721,13 +2709,49 @@
                 "title": "Dokument: Sie wurden erwähnt",
                 "content": "Sie wurden in Dokument \\\"{title}\\\" erwähnt. Klicke hier um zum Dokument zu gelangen."
             },
-            "document_request_added": {
-                "title": "Dokument: Anfrage wurde erstellt",
-                "content": "Eine Anfrage an ihr Dokument \\\"{title}\\\" wurde erstellt."
+            "document_request_created_access": {
+                "title": "Dokument: Zugriff angefordert",
+                "content": "Zugriff auf dein Dokument \"{title}\" wurde angefordert."
+            },
+            "document_request_created_closure": {
+                "title": "Dokument: Schließung angefordert",
+                "content": "Die Schließung deines Dokuments \"{title}\" wurde angefordert."
+            },
+            "document_request_created_opening": {
+                "title": "Dokument: Wiedereröffnung angefordert",
+                "content": "Die Wiedereröffnung deines Dokuments \"{title}\" wurde angefordert."
+            },
+            "document_request_created_update": {
+                "title": "Dokument: Aktualisierung angefordert",
+                "content": "Eine Aktualisierung deines Dokuments \"{title}\" wurde angefordert."
+            },
+            "document_request_created_owner_change": {
+                "title": "Dokument: Besitzerwechsel angefordert",
+                "content": "Ein Besitzerwechsel für dein Dokument \"{title}\" wurde angefordert."
+            },
+            "document_request_created_deletion": {
+                "title": "Dokument: Löschung angefordert",
+                "content": "Die Löschung deines Dokuments \"{title}\" wurde angefordert."
+            },
+            "document_request_accepted": {
+                "title": "Dokumentenanfrage angenommen",
+                "content": "Deine Anfrage für \"{title}\" wurde angenommen."
+            },
+            "document_request_declined": {
+                "title": "Dokumentenanfrage abgelehnt",
+                "content": "Deine Anfrage für \"{title}\" wurde abgelehnt."
+            },
+            "document_request_cancelled": {
+                "title": "Dokumentenanfrage abgebrochen",
+                "content": "Deine Anfrage für \"{title}\" wurde abgebrochen."
             },
             "document_comment_added": {
                 "title": "Dokument: Neuer Kommentar",
                 "content": "Ein neuer Kommentar wurde im Dokument \\\"{title}\\\" veröffentlicht."
+            },
+            "document_approval_assigned": {
+                "title": "Dokument: Freigabe angefordert",
+                "content": "Du wurdest gebeten, \"{title}\" freizugeben."
             },
             "document_take_ownership": {
                 "title": "Dokument-Besitzer geändert",
@@ -2795,6 +2819,24 @@
                 "clientview_update": {
                     "title": "Führungsregister-Eintrag wurde aktualisiert",
                     "content": "Der Führungsregister-Eintrag wurde von einem anderen Benutzer aktualisiert. Klicken Sie hier, um den Führungsregister-Eintrag neu zu laden."
+                }
+            },
+            "groups": {
+                "leadership_added": {
+                    "title": "Du bist jetzt Gruppenleitung",
+                    "content": "Du wurdest als Leitung der Gruppe {group} hinzugefügt."
+                },
+                "leadership_removed": {
+                    "title": "Gruppenleitung entfernt",
+                    "content": "Du wurdest als Leitung der Gruppe {group} entfernt."
+                },
+                "membership_added": {
+                    "title": "Gruppe beigetreten",
+                    "content": "Du wurdest zu {group} hinzugefügt."
+                },
+                "membership_removed": {
+                    "title": "Aus Gruppe entfernt",
+                    "content": "Du wurdest aus {group} entfernt."
                 }
             }
         },

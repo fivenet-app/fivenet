@@ -462,7 +462,10 @@ func (s *Server) Stream(srv pbnotifications.NotificationsService_StreamServer) e
 					// here so notifications that arrive near stream startup cannot make
 					// the snapshot count drift.
 					if topic == notifi.UserTopic && d.Notification.GetId() > 0 {
-						notificationCount, err = s.store.CountUnread(gctx, currentUserInfo.GetUserId())
+						notificationCount, err = s.store.CountUnread(
+							gctx,
+							currentUserInfo.GetUserId(),
+						)
 						if err != nil {
 							return errswrap.NewError(err, ErrFailedStream)
 						}

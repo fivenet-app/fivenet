@@ -52,7 +52,9 @@ func TestStoreListAppliesNotificationFiltersAndPaging(t *testing.T) {
 		},
 	}
 
-	expectedQuery := regexp.QuoteMeta(`ORDER BY notification.created_at DESC, notification.id DESC LIMIT ? OFFSET ?;`)
+	expectedQuery := regexp.QuoteMeta(
+		`ORDER BY notification.created_at DESC, notification.id DESC LIMIT ? OFFSET ?;`,
+	)
 	mock.ExpectQuery(expectedQuery).
 		WithArgs(int32(3), int32(resourcesnotifications.NotificationCategory_NOTIFICATION_CATEGORY_GENERAL), int64(20), int64(10)).
 		WillReturnRows(sqlmock.NewRows([]string{"notification.id", "notification.user_id"}).AddRow(int64(42), int32(3)))
