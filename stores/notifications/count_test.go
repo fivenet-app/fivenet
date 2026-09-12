@@ -16,7 +16,8 @@ func TestStoreCountUnread(t *testing.T) {
 
 	expectedQuery := regexp.QuoteMeta(`FROM fivenet_notifications`) +
 		`(?s).*` + regexp.QuoteMeta(`fivenet_notifications.user_id = ?`) +
-		`(?s).*` + regexp.QuoteMeta(`fivenet_notifications.read_at IS NULL`)
+		`(?s).*` + regexp.QuoteMeta(`fivenet_notifications.read_at IS NULL`) +
+		`(?s).*` + regexp.QuoteMeta(`fivenet_notifications.archived_at IS NULL`)
 	mock.ExpectQuery(expectedQuery).
 		WithArgs(int32(3)).
 		WillReturnRows(sqlmock.NewRows([]string{"count"}).AddRow(int64(4)))

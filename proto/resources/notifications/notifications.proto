@@ -24,6 +24,39 @@ enum NotificationCategory {
   NOTIFICATION_CATEGORY_GENERAL = 1;
   NOTIFICATION_CATEGORY_DOCUMENT = 2;
   NOTIFICATION_CATEGORY_CALENDAR = 3;
+  NOTIFICATION_CATEGORY_JOBS = 4;
+  NOTIFICATION_CATEGORY_QUALIFICATIONS = 5;
+  NOTIFICATION_CATEGORY_MAILER = 6;
+  NOTIFICATION_CATEGORY_DISPATCH = 7;
+  NOTIFICATION_CATEGORY_SYSTEM = 8;
+}
+
+// A precise, typed event within a notification category. Categories remain
+// intentionally broad so clients can provide consistent filtering and UI.
+enum NotificationKind {
+  NOTIFICATION_KIND_UNSPECIFIED = 0;
+  NOTIFICATION_KIND_JOBS_GROUP_LEADERSHIP_ADDED = 1;
+  NOTIFICATION_KIND_JOBS_GROUP_LEADERSHIP_REMOVED = 2;
+}
+
+// A per-user override for notification delivery. An unspecified category and
+// kind form the global default; a category with an unspecified kind is a
+// category default; and both set is a kind-specific override. Optional fields
+// intentionally inherit from the less specific scope when absent.
+message NotificationPreference {
+  NotificationCategory category = 1 [(buf.validate.field).enum.defined_only = true];
+  NotificationKind kind = 2 [(buf.validate.field).enum.defined_only = true];
+  optional bool inbox_enabled = 3;
+  optional bool toast_enabled = 4;
+  optional bool sound_enabled = 5;
+}
+
+// Delivery instructions are resolved server-side and are only attached to a
+// live notification event. They are never persisted with the notification.
+message NotificationDelivery {
+  bool inbox_enabled = 1;
+  bool toast_enabled = 2;
+  bool sound_enabled = 3;
 }
 
 message Notification {
@@ -37,6 +70,12 @@ message Notification {
   NotificationCategory category = 8 [(buf.validate.field).enum.defined_only = true];
   optional Data data = 9;
   optional bool starred = 10;
+  NotificationKind kind = 11 [(buf.validate.field).enum.defined_only = true];
+  optional int32 actor_user_id = 12 [(buf.validate.field).int32.gte = 0];
+  optional string entity_type = 13 [(buf.validate.field).string.max_len = 64];
+  optional int64 entity_id = 14 [(buf.validate.field).int64.gte = 0];
+  resources.timestamp.Timestamp archived_at = 15;
+  optional NotificationDelivery delivery = 16;
 }
 
 message Data {

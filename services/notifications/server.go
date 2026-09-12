@@ -11,6 +11,7 @@ import (
 	"github.com/fivenet-app/fivenet/v2026/pkg/housekeeper"
 	"github.com/fivenet-app/fivenet/v2026/pkg/server/admin"
 	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
+	citizenshydrator "github.com/fivenet-app/fivenet/v2026/stores/citizens/hydrator"
 	mailerstore "github.com/fivenet-app/fivenet/v2026/stores/mailer"
 	notificationsstore "github.com/fivenet-app/fivenet/v2026/stores/notifications"
 	"github.com/prometheus/client_golang/prometheus"
@@ -38,6 +39,7 @@ type Server struct {
 	js          *events.JSWrapper
 	auth        *grpcauth.GRPCAuth
 	store       notificationsstore.IStore
+	hydrator    citizenshydrator.IHydrator
 	mailerStore mailerstore.IStore
 	metrics     *notificationMetrics
 }
@@ -88,6 +90,7 @@ type Params struct {
 	JS          *events.JSWrapper
 	Auth        *grpcauth.GRPCAuth
 	Store       notificationsstore.IStore
+	Hydrator    citizenshydrator.IHydrator
 	MailerStore mailerstore.IStore
 }
 
@@ -101,6 +104,7 @@ func NewServer(p Params) *Server {
 		js:          p.JS,
 		auth:        p.Auth,
 		store:       p.Store,
+		hydrator:    p.Hydrator,
 		mailerStore: p.MailerStore,
 		metrics:     getNotificationMetrics(),
 	}

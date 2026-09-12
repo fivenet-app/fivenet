@@ -11,7 +11,29 @@ type IStore interface {
 	Count(ctx context.Context, q ListQuery) (int64, error)
 	List(ctx context.Context, q ListQuery) ([]*resourcesnotifications.Notification, error)
 	MarkNotifications(ctx context.Context, q MarkQuery) (int64, error)
+	UpdateNotificationState(ctx context.Context, q StateQuery) (int64, error)
 	CountUnread(ctx context.Context, userID int32) (int64, error)
+	ListPreferences(
+		ctx context.Context,
+		userID int32,
+	) ([]*resourcesnotifications.NotificationPreference, error)
+	UpsertPreference(
+		ctx context.Context,
+		userID int32,
+		preference *resourcesnotifications.NotificationPreference,
+	) error
+	DeletePreference(
+		ctx context.Context,
+		userID int32,
+		category resourcesnotifications.NotificationCategory,
+		kind resourcesnotifications.NotificationKind,
+	) error
+	ResolveDelivery(
+		ctx context.Context,
+		userID int32,
+		category resourcesnotifications.NotificationCategory,
+		kind resourcesnotifications.NotificationKind,
+	) (*resourcesnotifications.NotificationDelivery, error)
 }
 
 type Store struct {
@@ -19,11 +41,23 @@ type Store struct {
 }
 
 type ListQuery struct {
-	UserID     int32
-	UnreadOnly bool
-	Categories []resourcesnotifications.NotificationCategory
-	Offset     int64
-	Limit      int64
+	UserID       int32
+	UnreadOnly   bool
+	Categories   []resourcesnotifications.NotificationCategory
+	Kinds        []resourcesnotifications.NotificationKind
+	Archived     bool
+	ArchivedOnly bool
+	Starred      bool
+	Offset       int64
+	Limit        int64
+}
+
+type StateQuery struct {
+	UserID   int32
+	IDs      []int64
+	Unread   *bool
+	Starred  *bool
+	Archived *bool
 }
 
 type MarkQuery struct {

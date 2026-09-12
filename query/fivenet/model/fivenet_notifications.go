@@ -12,15 +12,20 @@ import (
 )
 
 type FivenetNotifications struct {
-	ID        int64      `sql:"primary_key" json:"id"`
-	CreatedAt *time.Time `json:"created_at"`
-	ReadAt    *time.Time `json:"read_at"`
-	UserID    *int32     `json:"user_id"`
-	Job       *string    `json:"job"`
-	Title     string     `json:"title"`
-	Type      int16      `json:"type"`
-	Content   *string    `json:"content"`
-	Category  int16      `json:"category"`
-	Data      *string    `json:"data"`
-	Starred   *bool      `json:"starred"`
+	ID          int64      `sql:"primary_key" json:"id"`
+	CreatedAt   *time.Time `json:"created_at"`
+	ReadAt      *time.Time `json:"read_at"`
+	ArchivedAt  *time.Time `json:"archived_at"`
+	UserID      *int32     `json:"user_id"`
+	ActorUserID *int32     `json:"actor_user_id"`
+	EntityType  *string    `json:"entity_type"`
+	EntityID    *int64     `json:"entity_id"`
+	Job         *string    `json:"job"`
+	Title       string     `json:"title"`
+	Type        int16      `json:"type"`
+	Content     *string    `json:"content"`
+	Category    int16      `json:"category"`
+	Kind        int16      `json:"kind"`
+	Data        *string    `json:"data"`
+	Starred     *bool      `json:"starred"`
 }

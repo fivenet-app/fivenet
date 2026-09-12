@@ -467,6 +467,9 @@ var PermsRemap = map[string][]perms.PermissionRef{
 	},
 
 	// Service: notifications.NotificationsService
+	"notifications.NotificationsService/GetNotificationPreferences": {
+		perms.PermAnyRef,
+	},
 	"notifications.NotificationsService/GetNotifications": {
 		perms.PermAnyRef,
 	},
@@ -474,6 +477,12 @@ var PermsRemap = map[string][]perms.PermissionRef{
 		perms.PermAnyRef,
 	},
 	"notifications.NotificationsService/Stream": {
+		perms.PermAnyRef,
+	},
+	"notifications.NotificationsService/UpdateNotificationPreference": {
+		perms.PermAnyRef,
+	},
+	"notifications.NotificationsService/UpdateNotificationState": {
 		perms.PermAnyRef,
 	},
 

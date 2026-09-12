@@ -17,6 +17,7 @@ import (
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/users"
 	"github.com/fivenet-app/fivenet/v2026/pkg/config"
 	"github.com/fivenet-app/fivenet/v2026/pkg/config/appconfig"
+	"github.com/go-jet/jet/v2/qrm"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"go.uber.org/zap"
@@ -46,6 +47,14 @@ type recordingNotifi struct {
 
 func (n *recordingNotifi) NotifyUser(context.Context, *notifications.Notification) error {
 	return nil
+}
+
+func (n *recordingNotifi) PrepareUserNotification(
+	context.Context,
+	qrm.DB,
+	*notifications.Notification,
+) (func(context.Context) error, error) {
+	return nil, nil
 }
 
 func (n *recordingNotifi) SendObjectEvent(

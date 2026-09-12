@@ -42,6 +42,8 @@ export interface UserEvent {
     } | {
         oneofKind: "notificationsReadCount";
         /**
+         * Deprecated delta kept for wire compatibility with older clients.
+         *
          * @generated from protobuf field: int64 notifications_read_count = 3
          */
         notificationsReadCount: number;
@@ -57,6 +59,14 @@ export interface UserEvent {
          * @generated from protobuf field: resources.userinfo.AccountGroupsChanged account_groups_changed = 5
          */
         accountGroupsChanged: AccountGroupsChanged;
+    } | {
+        oneofKind: "notificationsUnreadCount";
+        /**
+         * The authoritative unread count after a notification-state mutation.
+         *
+         * @generated from protobuf field: int64 notifications_unread_count = 6
+         */
+        notificationsUnreadCount: number;
     } | {
         oneofKind: undefined;
     };
@@ -136,7 +146,8 @@ class UserEvent$Type extends MessageType<UserEvent> {
             { no: 2, name: "notification", kind: "message", oneof: "data", T: () => Notification },
             { no: 3, name: "notifications_read_count", kind: "scalar", oneof: "data", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ },
             { no: 4, name: "user_info_changed", kind: "message", oneof: "data", T: () => UserInfoChanged },
-            { no: 5, name: "account_groups_changed", kind: "message", oneof: "data", T: () => AccountGroupsChanged }
+            { no: 5, name: "account_groups_changed", kind: "message", oneof: "data", T: () => AccountGroupsChanged },
+            { no: 6, name: "notifications_unread_count", kind: "scalar", oneof: "data", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ }
         ]);
     }
     create(value?: PartialMessage<UserEvent>): UserEvent {
@@ -181,6 +192,12 @@ class UserEvent$Type extends MessageType<UserEvent> {
                         accountGroupsChanged: AccountGroupsChanged.internalBinaryRead(reader, reader.uint32(), options, (message.data as any).accountGroupsChanged)
                     };
                     break;
+                case /* int64 notifications_unread_count */ 6:
+                    message.data = {
+                        oneofKind: "notificationsUnreadCount",
+                        notificationsUnreadCount: reader.int64().toNumber()
+                    };
+                    break;
                 default:
                     let u = options.readUnknownField;
                     if (u === "throw")
@@ -208,6 +225,9 @@ class UserEvent$Type extends MessageType<UserEvent> {
         /* resources.userinfo.AccountGroupsChanged account_groups_changed = 5; */
         if (message.data.oneofKind === "accountGroupsChanged")
             AccountGroupsChanged.internalBinaryWrite(message.data.accountGroupsChanged, writer.tag(5, WireType.LengthDelimited).fork(), options).join();
+        /* int64 notifications_unread_count = 6; */
+        if (message.data.oneofKind === "notificationsUnreadCount")
+            writer.tag(6, WireType.Varint).int64(message.data.notificationsUnreadCount);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);

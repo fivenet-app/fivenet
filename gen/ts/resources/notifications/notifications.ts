@@ -15,6 +15,56 @@ import { UserShort } from "../users/short/user";
 import { I18NItem } from "../common/i18n";
 import { Timestamp } from "../timestamp/timestamp";
 /**
+ * A per-user override for notification delivery. An unspecified category and
+ * kind form the global default; a category with an unspecified kind is a
+ * category default; and both set is a kind-specific override. Optional fields
+ * intentionally inherit from the less specific scope when absent.
+ *
+ * @generated from protobuf message resources.notifications.NotificationPreference
+ */
+export interface NotificationPreference {
+    /**
+     * @generated from protobuf field: resources.notifications.NotificationCategory category = 1
+     */
+    category: NotificationCategory;
+    /**
+     * @generated from protobuf field: resources.notifications.NotificationKind kind = 2
+     */
+    kind: NotificationKind;
+    /**
+     * @generated from protobuf field: optional bool inbox_enabled = 3
+     */
+    inboxEnabled?: boolean;
+    /**
+     * @generated from protobuf field: optional bool toast_enabled = 4
+     */
+    toastEnabled?: boolean;
+    /**
+     * @generated from protobuf field: optional bool sound_enabled = 5
+     */
+    soundEnabled?: boolean;
+}
+/**
+ * Delivery instructions are resolved server-side and are only attached to a
+ * live notification event. They are never persisted with the notification.
+ *
+ * @generated from protobuf message resources.notifications.NotificationDelivery
+ */
+export interface NotificationDelivery {
+    /**
+     * @generated from protobuf field: bool inbox_enabled = 1
+     */
+    inboxEnabled: boolean;
+    /**
+     * @generated from protobuf field: bool toast_enabled = 2
+     */
+    toastEnabled: boolean;
+    /**
+     * @generated from protobuf field: bool sound_enabled = 3
+     */
+    soundEnabled: boolean;
+}
+/**
  * @generated from protobuf message resources.notifications.Notification
  */
 export interface Notification {
@@ -58,6 +108,30 @@ export interface Notification {
      * @generated from protobuf field: optional bool starred = 10
      */
     starred?: boolean;
+    /**
+     * @generated from protobuf field: resources.notifications.NotificationKind kind = 11
+     */
+    kind: NotificationKind;
+    /**
+     * @generated from protobuf field: optional int32 actor_user_id = 12
+     */
+    actorUserId?: number;
+    /**
+     * @generated from protobuf field: optional string entity_type = 13
+     */
+    entityType?: string;
+    /**
+     * @generated from protobuf field: optional int64 entity_id = 14
+     */
+    entityId?: number;
+    /**
+     * @generated from protobuf field: resources.timestamp.Timestamp archived_at = 15
+     */
+    archivedAt?: Timestamp;
+    /**
+     * @generated from protobuf field: optional resources.notifications.NotificationDelivery delivery = 16
+     */
+    delivery?: NotificationDelivery;
 }
 /**
  * @generated from protobuf message resources.notifications.Data
@@ -150,8 +224,187 @@ export enum NotificationCategory {
     /**
      * @generated from protobuf enum value: NOTIFICATION_CATEGORY_CALENDAR = 3;
      */
-    CALENDAR = 3
+    CALENDAR = 3,
+    /**
+     * @generated from protobuf enum value: NOTIFICATION_CATEGORY_JOBS = 4;
+     */
+    JOBS = 4,
+    /**
+     * @generated from protobuf enum value: NOTIFICATION_CATEGORY_QUALIFICATIONS = 5;
+     */
+    QUALIFICATIONS = 5,
+    /**
+     * @generated from protobuf enum value: NOTIFICATION_CATEGORY_MAILER = 6;
+     */
+    MAILER = 6,
+    /**
+     * @generated from protobuf enum value: NOTIFICATION_CATEGORY_DISPATCH = 7;
+     */
+    DISPATCH = 7,
+    /**
+     * @generated from protobuf enum value: NOTIFICATION_CATEGORY_SYSTEM = 8;
+     */
+    SYSTEM = 8
 }
+/**
+ * A precise, typed event within a notification category. Categories remain
+ * intentionally broad so clients can provide consistent filtering and UI.
+ *
+ * @generated from protobuf enum resources.notifications.NotificationKind
+ */
+export enum NotificationKind {
+    /**
+     * @generated from protobuf enum value: NOTIFICATION_KIND_UNSPECIFIED = 0;
+     */
+    UNSPECIFIED = 0,
+    /**
+     * @generated from protobuf enum value: NOTIFICATION_KIND_JOBS_GROUP_LEADERSHIP_ADDED = 1;
+     */
+    JOBS_GROUP_LEADERSHIP_ADDED = 1,
+    /**
+     * @generated from protobuf enum value: NOTIFICATION_KIND_JOBS_GROUP_LEADERSHIP_REMOVED = 2;
+     */
+    JOBS_GROUP_LEADERSHIP_REMOVED = 2
+}
+// @generated message type with reflection information, may provide speed optimized methods
+class NotificationPreference$Type extends MessageType<NotificationPreference> {
+    constructor() {
+        super("resources.notifications.NotificationPreference", [
+            { no: 1, name: "category", kind: "enum", T: () => ["resources.notifications.NotificationCategory", NotificationCategory, "NOTIFICATION_CATEGORY_"], options: { "buf.validate.field": { enum: { definedOnly: true } } } },
+            { no: 2, name: "kind", kind: "enum", T: () => ["resources.notifications.NotificationKind", NotificationKind, "NOTIFICATION_KIND_"], options: { "buf.validate.field": { enum: { definedOnly: true } } } },
+            { no: 3, name: "inbox_enabled", kind: "scalar", opt: true, T: 8 /*ScalarType.BOOL*/ },
+            { no: 4, name: "toast_enabled", kind: "scalar", opt: true, T: 8 /*ScalarType.BOOL*/ },
+            { no: 5, name: "sound_enabled", kind: "scalar", opt: true, T: 8 /*ScalarType.BOOL*/ }
+        ]);
+    }
+    create(value?: PartialMessage<NotificationPreference>): NotificationPreference {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        message.category = 0;
+        message.kind = 0;
+        if (value !== undefined)
+            reflectionMergePartial<NotificationPreference>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: NotificationPreference): NotificationPreference {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* resources.notifications.NotificationCategory category */ 1:
+                    message.category = reader.int32();
+                    break;
+                case /* resources.notifications.NotificationKind kind */ 2:
+                    message.kind = reader.int32();
+                    break;
+                case /* optional bool inbox_enabled */ 3:
+                    message.inboxEnabled = reader.bool();
+                    break;
+                case /* optional bool toast_enabled */ 4:
+                    message.toastEnabled = reader.bool();
+                    break;
+                case /* optional bool sound_enabled */ 5:
+                    message.soundEnabled = reader.bool();
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: NotificationPreference, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* resources.notifications.NotificationCategory category = 1; */
+        if (message.category !== 0)
+            writer.tag(1, WireType.Varint).int32(message.category);
+        /* resources.notifications.NotificationKind kind = 2; */
+        if (message.kind !== 0)
+            writer.tag(2, WireType.Varint).int32(message.kind);
+        /* optional bool inbox_enabled = 3; */
+        if (message.inboxEnabled !== undefined)
+            writer.tag(3, WireType.Varint).bool(message.inboxEnabled);
+        /* optional bool toast_enabled = 4; */
+        if (message.toastEnabled !== undefined)
+            writer.tag(4, WireType.Varint).bool(message.toastEnabled);
+        /* optional bool sound_enabled = 5; */
+        if (message.soundEnabled !== undefined)
+            writer.tag(5, WireType.Varint).bool(message.soundEnabled);
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message resources.notifications.NotificationPreference
+ */
+export const NotificationPreference = new NotificationPreference$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class NotificationDelivery$Type extends MessageType<NotificationDelivery> {
+    constructor() {
+        super("resources.notifications.NotificationDelivery", [
+            { no: 1, name: "inbox_enabled", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
+            { no: 2, name: "toast_enabled", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
+            { no: 3, name: "sound_enabled", kind: "scalar", T: 8 /*ScalarType.BOOL*/ }
+        ]);
+    }
+    create(value?: PartialMessage<NotificationDelivery>): NotificationDelivery {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        message.inboxEnabled = false;
+        message.toastEnabled = false;
+        message.soundEnabled = false;
+        if (value !== undefined)
+            reflectionMergePartial<NotificationDelivery>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: NotificationDelivery): NotificationDelivery {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* bool inbox_enabled */ 1:
+                    message.inboxEnabled = reader.bool();
+                    break;
+                case /* bool toast_enabled */ 2:
+                    message.toastEnabled = reader.bool();
+                    break;
+                case /* bool sound_enabled */ 3:
+                    message.soundEnabled = reader.bool();
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: NotificationDelivery, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* bool inbox_enabled = 1; */
+        if (message.inboxEnabled !== false)
+            writer.tag(1, WireType.Varint).bool(message.inboxEnabled);
+        /* bool toast_enabled = 2; */
+        if (message.toastEnabled !== false)
+            writer.tag(2, WireType.Varint).bool(message.toastEnabled);
+        /* bool sound_enabled = 3; */
+        if (message.soundEnabled !== false)
+            writer.tag(3, WireType.Varint).bool(message.soundEnabled);
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message resources.notifications.NotificationDelivery
+ */
+export const NotificationDelivery = new NotificationDelivery$Type();
 // @generated message type with reflection information, may provide speed optimized methods
 class Notification$Type extends MessageType<Notification> {
     constructor() {
@@ -165,7 +418,13 @@ class Notification$Type extends MessageType<Notification> {
             { no: 7, name: "content", kind: "message", T: () => I18NItem, options: { "codegen.sanitizer.sanitizer": { enabled: true } } },
             { no: 8, name: "category", kind: "enum", T: () => ["resources.notifications.NotificationCategory", NotificationCategory, "NOTIFICATION_CATEGORY_"], options: { "buf.validate.field": { enum: { definedOnly: true } } } },
             { no: 9, name: "data", kind: "message", T: () => Data },
-            { no: 10, name: "starred", kind: "scalar", opt: true, T: 8 /*ScalarType.BOOL*/ }
+            { no: 10, name: "starred", kind: "scalar", opt: true, T: 8 /*ScalarType.BOOL*/ },
+            { no: 11, name: "kind", kind: "enum", T: () => ["resources.notifications.NotificationKind", NotificationKind, "NOTIFICATION_KIND_"], options: { "buf.validate.field": { enum: { definedOnly: true } } } },
+            { no: 12, name: "actor_user_id", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/, options: { "buf.validate.field": { int32: { gte: 0 } } } },
+            { no: 13, name: "entity_type", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "64" } } } },
+            { no: 14, name: "entity_id", kind: "scalar", opt: true, T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/, options: { "buf.validate.field": { int64: { gte: "0" } } } },
+            { no: 15, name: "archived_at", kind: "message", T: () => Timestamp },
+            { no: 16, name: "delivery", kind: "message", T: () => NotificationDelivery }
         ]);
     }
     create(value?: PartialMessage<Notification>): Notification {
@@ -174,6 +433,7 @@ class Notification$Type extends MessageType<Notification> {
         message.userId = 0;
         message.type = 0;
         message.category = 0;
+        message.kind = 0;
         if (value !== undefined)
             reflectionMergePartial<Notification>(this, message, value);
         return message;
@@ -212,6 +472,24 @@ class Notification$Type extends MessageType<Notification> {
                     break;
                 case /* optional bool starred */ 10:
                     message.starred = reader.bool();
+                    break;
+                case /* resources.notifications.NotificationKind kind */ 11:
+                    message.kind = reader.int32();
+                    break;
+                case /* optional int32 actor_user_id */ 12:
+                    message.actorUserId = reader.int32();
+                    break;
+                case /* optional string entity_type */ 13:
+                    message.entityType = reader.string();
+                    break;
+                case /* optional int64 entity_id */ 14:
+                    message.entityId = reader.int64().toNumber();
+                    break;
+                case /* resources.timestamp.Timestamp archived_at */ 15:
+                    message.archivedAt = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.archivedAt);
+                    break;
+                case /* optional resources.notifications.NotificationDelivery delivery */ 16:
+                    message.delivery = NotificationDelivery.internalBinaryRead(reader, reader.uint32(), options, message.delivery);
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -255,6 +533,24 @@ class Notification$Type extends MessageType<Notification> {
         /* optional bool starred = 10; */
         if (message.starred !== undefined)
             writer.tag(10, WireType.Varint).bool(message.starred);
+        /* resources.notifications.NotificationKind kind = 11; */
+        if (message.kind !== 0)
+            writer.tag(11, WireType.Varint).int32(message.kind);
+        /* optional int32 actor_user_id = 12; */
+        if (message.actorUserId !== undefined)
+            writer.tag(12, WireType.Varint).int32(message.actorUserId);
+        /* optional string entity_type = 13; */
+        if (message.entityType !== undefined)
+            writer.tag(13, WireType.LengthDelimited).string(message.entityType);
+        /* optional int64 entity_id = 14; */
+        if (message.entityId !== undefined)
+            writer.tag(14, WireType.Varint).int64(message.entityId);
+        /* resources.timestamp.Timestamp archived_at = 15; */
+        if (message.archivedAt)
+            Timestamp.internalBinaryWrite(message.archivedAt, writer.tag(15, WireType.LengthDelimited).fork(), options).join();
+        /* optional resources.notifications.NotificationDelivery delivery = 16; */
+        if (message.delivery)
+            NotificationDelivery.internalBinaryWrite(message.delivery, writer.tag(16, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);

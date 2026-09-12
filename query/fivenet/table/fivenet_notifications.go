@@ -17,17 +17,22 @@ type fivenetNotificationsTable struct {
 	mysql.Table
 
 	// Columns
-	ID        mysql.ColumnInteger
-	CreatedAt mysql.ColumnTimestamp
-	ReadAt    mysql.ColumnTimestamp
-	UserID    mysql.ColumnInteger
-	Job       mysql.ColumnString
-	Title     mysql.ColumnString
-	Type      mysql.ColumnInteger
-	Content   mysql.ColumnString
-	Category  mysql.ColumnInteger
-	Data      mysql.ColumnString
-	Starred   mysql.ColumnBool
+	ID          mysql.ColumnInteger
+	CreatedAt   mysql.ColumnTimestamp
+	ReadAt      mysql.ColumnTimestamp
+	ArchivedAt  mysql.ColumnTimestamp
+	UserID      mysql.ColumnInteger
+	ActorUserID mysql.ColumnInteger
+	EntityType  mysql.ColumnString
+	EntityID    mysql.ColumnInteger
+	Job         mysql.ColumnString
+	Title       mysql.ColumnString
+	Type        mysql.ColumnInteger
+	Content     mysql.ColumnString
+	Category    mysql.ColumnInteger
+	Kind        mysql.ColumnInteger
+	Data        mysql.ColumnString
+	Starred     mysql.ColumnBool
 
 	AllColumns     mysql.ColumnList
 	MutableColumns mysql.ColumnList
@@ -69,37 +74,47 @@ func newFivenetNotificationsTable(schemaName, tableName, alias string) *FivenetN
 
 func newFivenetNotificationsTableImpl(schemaName, tableName, alias string) fivenetNotificationsTable {
 	var (
-		IDColumn        = mysql.IntegerColumn("id")
-		CreatedAtColumn = mysql.TimestampColumn("created_at")
-		ReadAtColumn    = mysql.TimestampColumn("read_at")
-		UserIDColumn    = mysql.IntegerColumn("user_id")
-		JobColumn       = mysql.StringColumn("job")
-		TitleColumn     = mysql.StringColumn("title")
-		TypeColumn      = mysql.IntegerColumn("type")
-		ContentColumn   = mysql.StringColumn("content")
-		CategoryColumn  = mysql.IntegerColumn("category")
-		DataColumn      = mysql.StringColumn("data")
-		StarredColumn   = mysql.BoolColumn("starred")
-		allColumns      = mysql.ColumnList{IDColumn, CreatedAtColumn, ReadAtColumn, UserIDColumn, JobColumn, TitleColumn, TypeColumn, ContentColumn, CategoryColumn, DataColumn, StarredColumn}
-		mutableColumns  = mysql.ColumnList{CreatedAtColumn, ReadAtColumn, UserIDColumn, JobColumn, TitleColumn, TypeColumn, ContentColumn, CategoryColumn, DataColumn, StarredColumn}
-		defaultColumns  = mysql.ColumnList{CreatedAtColumn, StarredColumn}
+		IDColumn          = mysql.IntegerColumn("id")
+		CreatedAtColumn   = mysql.TimestampColumn("created_at")
+		ReadAtColumn      = mysql.TimestampColumn("read_at")
+		ArchivedAtColumn  = mysql.TimestampColumn("archived_at")
+		UserIDColumn      = mysql.IntegerColumn("user_id")
+		ActorUserIDColumn = mysql.IntegerColumn("actor_user_id")
+		EntityTypeColumn  = mysql.StringColumn("entity_type")
+		EntityIDColumn    = mysql.IntegerColumn("entity_id")
+		JobColumn         = mysql.StringColumn("job")
+		TitleColumn       = mysql.StringColumn("title")
+		TypeColumn        = mysql.IntegerColumn("type")
+		ContentColumn     = mysql.StringColumn("content")
+		CategoryColumn    = mysql.IntegerColumn("category")
+		KindColumn        = mysql.IntegerColumn("kind")
+		DataColumn        = mysql.StringColumn("data")
+		StarredColumn     = mysql.BoolColumn("starred")
+		allColumns        = mysql.ColumnList{IDColumn, CreatedAtColumn, ReadAtColumn, ArchivedAtColumn, UserIDColumn, ActorUserIDColumn, EntityTypeColumn, EntityIDColumn, JobColumn, TitleColumn, TypeColumn, ContentColumn, CategoryColumn, KindColumn, DataColumn, StarredColumn}
+		mutableColumns    = mysql.ColumnList{CreatedAtColumn, ReadAtColumn, ArchivedAtColumn, UserIDColumn, ActorUserIDColumn, EntityTypeColumn, EntityIDColumn, JobColumn, TitleColumn, TypeColumn, ContentColumn, CategoryColumn, KindColumn, DataColumn, StarredColumn}
+		defaultColumns    = mysql.ColumnList{CreatedAtColumn, KindColumn, StarredColumn}
 	)
 
 	return fivenetNotificationsTable{
 		Table: mysql.NewTable(schemaName, tableName, alias, allColumns...),
 
 		//Columns
-		ID:        IDColumn,
-		CreatedAt: CreatedAtColumn,
-		ReadAt:    ReadAtColumn,
-		UserID:    UserIDColumn,
-		Job:       JobColumn,
-		Title:     TitleColumn,
-		Type:      TypeColumn,
-		Content:   ContentColumn,
-		Category:  CategoryColumn,
-		Data:      DataColumn,
-		Starred:   StarredColumn,
+		ID:          IDColumn,
+		CreatedAt:   CreatedAtColumn,
+		ReadAt:      ReadAtColumn,
+		ArchivedAt:  ArchivedAtColumn,
+		UserID:      UserIDColumn,
+		ActorUserID: ActorUserIDColumn,
+		EntityType:  EntityTypeColumn,
+		EntityID:    EntityIDColumn,
+		Job:         JobColumn,
+		Title:       TitleColumn,
+		Type:        TypeColumn,
+		Content:     ContentColumn,
+		Category:    CategoryColumn,
+		Kind:        KindColumn,
+		Data:        DataColumn,
+		Starred:     StarredColumn,
 
 		AllColumns:     allColumns,
 		MutableColumns: mutableColumns,
