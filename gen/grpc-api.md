@@ -13402,6 +13402,7 @@ Updates one preference scope. Fields omitted from preference inherit from a less
 | ----- | ---- | ----- | ----------- |
 | `result` | [resources.qualifications.QualificationResult](#resourcesqualificationsQualificationResult) |  |  |
 | `grading` | [resources.qualifications.exam.ExamGrading](#resourcesqualificationsexamExamGrading) | optional |  |
+| `skip_notification` | [bool](#bool) |  | Suppresses the inbox notification normally sent to the affected user. |
 
 
 
@@ -13447,6 +13448,7 @@ Updates one preference scope. Fields omitted from preference inherit from a less
 | ----- | ---- | ----- | ----------- |
 | `qualification_id` | [int64](#int64) |  |  |
 | `user_id` | [int32](#int32) |  |  |
+| `skip_notification` | [bool](#bool) |  | Suppresses the inbox notification normally sent to the affected user. |
 
 
 
@@ -13481,6 +13483,7 @@ Updates one preference scope. Fields omitted from preference inherit from a less
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | `result_id` | [int64](#int64) |  |  |
+| `skip_notification` | [bool](#bool) |  | Suppresses the inbox notification normally sent to the affected user. |
 
 
 

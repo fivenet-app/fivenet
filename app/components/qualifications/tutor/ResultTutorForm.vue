@@ -54,6 +54,7 @@ const schema = z.object({
     status: z.enum(ResultStatus),
     score: z.coerce.number().min(0).max(1000),
     summary: z.coerce.string().max(255),
+    notifyUser: z.coerce.boolean().default(true),
 });
 
 type Schema = z.output<typeof schema>;
@@ -62,12 +63,14 @@ const state = reactive<Schema>({
     status: ResultStatus.SUCCESSFUL,
     score: props.score ?? 0,
     summary: '',
+    notifyUser: true,
 });
 
 const formSnapshot = computed(() => ({
     status: state.status,
     score: state.score,
     summary: state.summary,
+    notifyUser: state.notifyUser,
     selectedUserId: selectedUser.value?.userId ?? null,
 }));
 
@@ -90,6 +93,7 @@ async function createOrUpdateQualificationResult(
                 creatorJob: activeChar.value!.job,
             },
             grading: props.grading,
+            skipNotification: !values.notifyUser,
         });
         const { response } = await call;
 
@@ -244,6 +248,8 @@ async function closeModal(): Promise<void> {
                             :placeholder="$t('common.summary')"
                         />
                     </UFormField>
+
+                    <USwitch v-model="state.notifyUser" :label="$t('components.jobs.groups.details.notify_user')" />
                 </template>
             </UForm>
         </template>

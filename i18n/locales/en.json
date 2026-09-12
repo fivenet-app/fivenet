@@ -2627,9 +2627,17 @@
                 "title": "Qualification Result available",
                 "content": "A qualification result has been created for you."
             },
+            "result_deleted": {
+                "title": "Qualification revoked",
+                "content": "Your qualification result has been revoked."
+            },
             "request_updated": {
                 "title": "Qualification Request updated",
                 "content": "Your qualification request has been updated."
+            },
+            "request_deleted": {
+                "title": "Qualification Request cancelled",
+                "content": "Your qualification request has been cancelled."
             },
             "time_low": {
                 "title": "Your exam time is almost up!",

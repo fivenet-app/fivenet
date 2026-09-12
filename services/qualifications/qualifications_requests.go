@@ -2,7 +2,6 @@ package qualifications
 
 import (
 	"context"
-	"fmt"
 
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/audit"
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/common"
@@ -140,9 +139,23 @@ func (s *Server) CreateOrUpdateQualificationRequest(
 		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 	}
 	defer tx.Rollback()
+	var publishNotification func(context.Context) error
 
 	// If user can grade a qualification, they are treated as an "approver" of requests
 	if canGrade && req.GetRequest().GetUserId() > 0 {
+		previousRequest, err := s.getQualificationRequest(
+			ctx,
+			req.GetRequest().GetQualificationId(),
+			req.GetRequest().GetUserId(),
+			userInfo,
+		)
+		if err != nil {
+			return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
+		}
+		previousStatus := qualifications.RequestStatus_REQUEST_STATUS_UNSPECIFIED
+		if previousRequest != nil {
+			previousStatus = previousRequest.GetStatus()
+		}
 		if err := s.store.ApproveQualificationRequest(
 			ctx,
 			tx,
@@ -162,10 +175,16 @@ func (s *Server) CreateOrUpdateQualificationRequest(
 			return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 		}
 
-		// Only send notification when it wasn't already in the same status
-		if request == nil || request.Status == nil ||
-			request.GetStatus().Enum() != req.GetRequest().GetStatus().Enum() {
-			if err := s.notif.NotifyUser(ctx, &notifications.Notification{
+		// Only send notification when the status actually changed.
+		if request != nil && previousStatus != request.GetStatus() && request.GetUserId() != userInfo.GetUserId() {
+			requestID := request.GetQualificationId()
+			actorID := userInfo.GetUserId()
+			entityType := "qualifications.request"
+			notificationData, err := s.qualificationNotificationData(ctx, request.GetUserId(), requestID)
+			if err != nil {
+				return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
+			}
+			publishNotification, err = s.notif.PrepareUserNotification(ctx, tx, &notifications.Notification{
 				UserId: request.GetUserId(),
 				Title: &common.I18NItem{
 					Key: "notifications.qualifications.request_updated.title",
@@ -177,14 +196,14 @@ func (s *Server) CreateOrUpdateQualificationRequest(
 						"title":        quali.GetTitle(),
 					},
 				},
-				Category: notifications.NotificationCategory_NOTIFICATION_CATEGORY_QUALIFICATIONS,
-				Type:     notifications.NotificationType_NOTIFICATION_TYPE_INFO,
-				Data: &notifications.Data{
-					Link: &notifications.Link{
-						To: fmt.Sprintf("/qualifications/%d", request.GetQualificationId()),
-					},
-				},
-			}); err != nil {
+				Category:    notifications.NotificationCategory_NOTIFICATION_CATEGORY_QUALIFICATIONS,
+				Type:        notifications.NotificationType_NOTIFICATION_TYPE_INFO,
+				ActorUserId: &actorID,
+				EntityType:  &entityType,
+				EntityId:    &requestID,
+				Data:        notificationData,
+			})
+			if err != nil {
 				return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 			}
 		}
@@ -241,6 +260,11 @@ func (s *Server) CreateOrUpdateQualificationRequest(
 
 	if err := tx.Commit(); err != nil {
 		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
+	}
+	if publishNotification != nil {
+		if err := publishNotification(ctx); err != nil {
+			return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
+		}
 	}
 
 	request, err := s.getQualificationRequest(
@@ -328,13 +352,53 @@ func (s *Server) DeleteQualificationReq(
 		return nil, errorsqualifications.ErrFailedQuery
 	}
 
+	tx, err := s.db.BeginTx(ctx, nil)
+	if err != nil {
+		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
+	}
+	defer tx.Rollback()
+
 	if err := s.deleteQualificationRequest(
 		ctx,
-		s.db,
+		tx,
 		re.GetQualificationId(),
 		re.GetUserId(),
 	); err != nil {
 		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
+	}
+
+	var publishNotification func(context.Context) error
+	if !req.GetSkipNotification() && re.GetUserId() != userInfo.GetUserId() {
+		qualificationID := re.GetQualificationId()
+		actorID := userInfo.GetUserId()
+		entityType := "qualifications.request"
+		notificationData, err := s.qualificationNotificationData(ctx, re.GetUserId(), qualificationID)
+		if err != nil {
+			return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
+		}
+		publishNotification, err = s.notif.PrepareUserNotification(ctx, tx, &notifications.Notification{
+			UserId:      re.GetUserId(),
+			Title:       &common.I18NItem{Key: "notifications.qualifications.request_deleted.title"},
+			Content:     &common.I18NItem{Key: "notifications.qualifications.request_deleted.content"},
+			Category:    notifications.NotificationCategory_NOTIFICATION_CATEGORY_QUALIFICATIONS,
+			Type:        notifications.NotificationType_NOTIFICATION_TYPE_INFO,
+			ActorUserId: &actorID,
+			EntityType:  &entityType,
+			EntityId:    &qualificationID,
+			Data:        notificationData,
+		})
+		if err != nil {
+			return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
+		}
+	}
+
+	if err := tx.Commit(); err != nil {
+		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
+	}
+	if publishNotification != nil {
+		if err := publishNotification(ctx); err != nil {
+			return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
+		}
 	}
 
 	grpc_audit.SetAction(ctx, audit.EventAction_EVENT_ACTION_DELETED)

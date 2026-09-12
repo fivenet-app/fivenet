@@ -2627,9 +2627,17 @@
                 "title": "Qualifizierungsergebnis verfügbar",
                 "content": "Ein Qualifizierungsergebnis wurde für Sie erstellt."
             },
+            "result_deleted": {
+                "title": "Qualifikation entzogen",
+                "content": "Dein Qualifizierungsergebnis wurde entzogen."
+            },
             "request_updated": {
                 "title": "Qualifizierungsanfrage wurde aktualisiert",
                 "content": "Deine Qualifizierungsanfrage wurde aktualisiert."
+            },
+            "request_deleted": {
+                "title": "Qualifizierungsanfrage abgebrochen",
+                "content": "Deine Qualifizierungsanfrage wurde abgebrochen."
             },
             "time_low": {
                 "title": "Ihre Prüfungszeit ist fast vorbei!",

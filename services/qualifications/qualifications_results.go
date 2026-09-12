@@ -114,6 +114,12 @@ func (s *Server) CreateOrUpdateQualificationResult(
 		},
 	)
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
+	tx, err := s.db.BeginTx(ctx, nil)
+	if err != nil {
+		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
+	}
+	defer tx.Rollback()
+	publishNotifications := make([]func(context.Context) error, 0, 1)
 
 	check, err := s.access.CanUserAccessTarget(
 		ctx,
@@ -130,7 +136,7 @@ func (s *Server) CreateOrUpdateQualificationResult(
 
 	resultId, err := s.createOrUpdateQualificationResult(
 		ctx,
-		s.db,
+		tx,
 		req.GetResult().GetQualificationId(),
 		req.GetResult().GetId(),
 		userInfo,
@@ -140,9 +146,19 @@ func (s *Server) CreateOrUpdateQualificationResult(
 		req.GetResult().Score,
 		req.GetResult().GetSummary(),
 		req.GetGrading(),
+		req.GetSkipNotification(),
+		&publishNotifications,
 	)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
+	}
+	if err := tx.Commit(); err != nil {
+		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
+	}
+	for _, publish := range publishNotifications {
+		if err := publish(ctx); err != nil {
+			return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
+		}
 	}
 
 	result, err := s.getQualificationResult(
@@ -173,7 +189,20 @@ func (s *Server) createOrUpdateQualificationResult(
 	score *float32,
 	summary string,
 	grading *qualificationsexam.ExamGrading,
+	skipNotification bool,
+	publishNotifications *[]func(context.Context) error,
 ) (int64, error) {
+	previousResult, err := s.getQualificationResult(
+		ctx,
+		qualificationId,
+		resultId,
+		nil,
+		userInfo,
+		userId,
+	)
+	if err != nil {
+		return 0, err
+	}
 	currentResult, err := s.getQualificationResult(
 		ctx,
 		qualificationId,
@@ -281,8 +310,17 @@ func (s *Server) createOrUpdateQualificationResult(
 
 	// Only send notification when the original result had no score and wasn't in pending status
 	if status != qualifications.ResultStatus_RESULT_STATUS_PENDING &&
-		(currentResult == nil || (currentResult.GetStatus() == qualifications.ResultStatus_RESULT_STATUS_PENDING || (currentResult.Score == nil && score != nil))) {
-		if err := s.notif.NotifyUser(ctx, &notifications.Notification{
+		(previousResult == nil || previousResult.GetStatus() != status) &&
+		!skipNotification &&
+		userId != userInfo.GetUserId() {
+		resultEntityID := resultId
+		actorID := userInfo.GetUserId()
+		entityType := "qualifications.result"
+		notificationData, err := s.qualificationNotificationData(ctx, userId, qualificationId)
+		if err != nil {
+			return 0, err
+		}
+		publish, err := s.notif.PrepareUserNotification(ctx, tx, &notifications.Notification{
 			UserId: userId,
 			Title: &common.I18NItem{
 				Key: "notifications.qualifications.result_updated.title",
@@ -294,15 +332,18 @@ func (s *Server) createOrUpdateQualificationResult(
 					"title":        quali.GetTitle(),
 				},
 			},
-			Category: notifications.NotificationCategory_NOTIFICATION_CATEGORY_QUALIFICATIONS,
-			Type:     notifications.NotificationType_NOTIFICATION_TYPE_INFO,
-			Data: &notifications.Data{
-				Link: &notifications.Link{
-					To: fmt.Sprintf("/qualifications/%d", qualificationId),
-				},
-			},
-		}); err != nil {
+			Category:    notifications.NotificationCategory_NOTIFICATION_CATEGORY_QUALIFICATIONS,
+			Type:        notifications.NotificationType_NOTIFICATION_TYPE_INFO,
+			ActorUserId: &actorID,
+			EntityType:  &entityType,
+			EntityId:    &resultEntityID,
+			Data:        notificationData,
+		})
+		if err != nil {
 			return 0, err
+		}
+		if publish != nil {
+			*publishNotifications = append(*publishNotifications, publish)
 		}
 	}
 
@@ -435,9 +476,40 @@ func (s *Server) DeleteQualificationResult(
 		}
 	}
 
+	var publishNotification func(context.Context) error
+	if !req.GetSkipNotification() && result.GetUserId() != userInfo.GetUserId() {
+		resultID := result.GetId()
+		actorID := userInfo.GetUserId()
+		entityType := "qualifications.result"
+		notificationData, err := s.qualificationNotificationData(ctx, result.GetUserId(), result.GetQualificationId())
+		if err != nil {
+			return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
+		}
+		publishNotification, err = s.notif.PrepareUserNotification(ctx, tx, &notifications.Notification{
+			UserId:      result.GetUserId(),
+			Title:       &common.I18NItem{Key: "notifications.qualifications.result_deleted.title"},
+			Content:     &common.I18NItem{Key: "notifications.qualifications.result_deleted.content"},
+			Category:    notifications.NotificationCategory_NOTIFICATION_CATEGORY_QUALIFICATIONS,
+			Type:        notifications.NotificationType_NOTIFICATION_TYPE_WARNING,
+			ActorUserId: &actorID,
+			EntityType:  &entityType,
+			EntityId:    &resultID,
+			Data:        notificationData,
+		})
+		if err != nil {
+			return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
+		}
+	}
+
 	// Commit the transaction
 	if err := tx.Commit(); err != nil {
 		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
+	}
+
+	if publishNotification != nil {
+		if err := publishNotification(ctx); err != nil {
+			return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
+		}
 	}
 
 	grpc_audit.SetAction(ctx, audit.EventAction_EVENT_ACTION_DELETED)
