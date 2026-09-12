@@ -24,17 +24,33 @@ const { livemap, livemapLayers } = storeToRefs(settingsStore);
 const dispatchQueryRaw = ref<string>('');
 const dispatchQuery = computed(() => dispatchQueryRaw.value.trim().toLowerCase());
 
-const dispatchesFiltered = computedAsync(
-    async () =>
-        [...(props.dispatchList ?? dispatches.value.values() ?? [])].filter(
-            (m) =>
-                !ownDispatches.value.includes(m.id) &&
-                (m.id.toString().startsWith(dispatchQuery.value) ||
-                    m.message.toLowerCase().includes(dispatchQuery.value) ||
-                    (m.creator?.firstname + ' ' + m.creator?.lastname).toLowerCase().includes(dispatchQuery.value)),
-        ),
-    [],
+const dispatchesFiltered = computed(() =>
+    [...(props.dispatchList ?? dispatches.value.values() ?? [])].filter(
+        (m) =>
+            !ownDispatches.value.includes(m.id) &&
+            (m.id.toString().startsWith(dispatchQuery.value) ||
+                m.message.toLowerCase().includes(dispatchQuery.value) ||
+                (m.creator?.firstname + ' ' + m.creator?.lastname).toLowerCase().includes(dispatchQuery.value)),
+    ),
 );
+
+const dispatchesByJob = computed(() => {
+    const byJob = new Map<string, Dispatch[]>();
+    dispatchesFiltered.value.forEach((dispatch) => {
+        dispatch.jobs?.jobs.forEach((job) => {
+            if (!job.name) return;
+
+            const jobDispatches = byJob.get(job.name);
+            if (jobDispatches) {
+                jobDispatches.push(dispatch);
+            } else {
+                byJob.set(job.name, [dispatch]);
+            }
+        });
+    });
+
+    return byJob;
+});
 
 watch(settings, () => {
     if (!settings.value?.enabled) return;
@@ -102,7 +118,7 @@ const dispatchDetailsSlideover = overlay.create(DispatchDetailsSlideover);
         :options="{ name: `dispatches_job_${job.job}` }"
     >
         <DispatchMarker
-            v-for="dispatch in [...dispatchesFiltered?.values()].filter((d) => d.jobs?.jobs.some((j) => j.name === job.job))"
+            v-for="dispatch in dispatchesByJob.get(job.job ?? '') ?? []"
             :key="dispatch.id"
             :dispatch="dispatch"
             :size="livemap.markerSize"

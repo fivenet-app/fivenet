@@ -8,6 +8,7 @@ import { type Dispatch, StatusDispatch } from '~~/gen/ts/resources/centrum/dispa
 
 const props = defineProps<{
     dispatch: Dispatch;
+    now: Date;
 }>();
 
 const modelValue = defineModel<number | undefined>({ required: true });
@@ -25,16 +26,13 @@ const dispatchDetailsSlideover = overlay.create(DispatchDetailsSlideover, {
     },
 });
 
-const dispatchTimeStyle = ref<{ ping: boolean; class: string }>({ ping: false, class: '' });
-
-useIntervalFn(
-    () =>
-        (dispatchTimeStyle.value = dispatchTimeToTextColorSidebar(
-            props.dispatch.createdAt,
-            props.dispatch.status?.status,
-            settings.value?.timings?.dispatchMaxWait,
-        )),
-    1000,
+const dispatchTimeStyle = computed(() =>
+    dispatchTimeToTextColorSidebar(
+        props.dispatch.createdAt,
+        props.dispatch.status?.status,
+        settings.value?.timings?.dispatchMaxWait,
+        props.now.getTime(),
+    ),
 );
 </script>
 
