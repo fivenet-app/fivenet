@@ -1460,6 +1460,7 @@
                     "require_completed": "Abgeschlossen voraussetzen",
                     "add_manual_member": "Manuelles Mitglied hinzufügen",
                     "add_exclusion": "Ausschluss hinzufügen",
+                    "notify_user": "Benutzer benachrichtigen",
                     "rules": {
                         "grade_minimum": "Mindestens Rang {grade}",
                         "grade_exact": "Genau Rang {grade}",
@@ -1515,7 +1516,15 @@
             "unread": "Ungelesen",
             "do_not_disturb": "Bitte nicht stören",
             "mark_unread": "Als ungelesen markieren",
-            "all_categories": "Alle Kategorien"
+            "all_categories": "Alle Kategorien",
+            "all": "Alle",
+            "starred": "Markiert",
+            "archived": "Archiviert",
+            "star": "Markieren",
+            "unstar": "Markierung entfernen",
+            "archive": "Archivieren",
+            "restore": "Wiederherstellen",
+            "new_notifications": "Neue Benachrichtigungen"
         },
         "qualifications": {
             "user_qualifications": "Ihre Qualifizierungen",
@@ -1638,6 +1647,14 @@
                     "title": "Lautstärke-Einstellungen",
                     "subtitle": "Stelle die Lautstärke von Sounds ein.",
                     "notifications_volume": "Benachrichtungsvolumen"
+                },
+                "notification_delivery": {
+                    "title": "Benachrichtigungszustellung",
+                    "description": "Lege fest, welche Kategorien in der Benachrichtigungszentrale erscheinen, einen Hinweis anzeigen oder einen Ton abspielen dürfen. Audiodateien und Lautstärke bleiben browserspezifisch.",
+                    "all": "Alle Benachrichtigungen",
+                    "inbox": "Benachrichtigungszentrale",
+                    "toast": "Hinweis",
+                    "sound": "Ton"
                 },
                 "streamer_mode": {
                     "title": "Streamer-Modus",
@@ -2291,6 +2308,18 @@
         }
     },
     "notifications": {
+        "jobs": {
+            "groups": {
+                "leadership_added": {
+                    "title": "Du bist jetzt Gruppenleitung",
+                    "content": "Du wurdest als Leitung der Gruppe {group} hinzugefügt."
+                },
+                "leadership_removed": {
+                    "title": "Gruppenleitung entfernt",
+                    "content": "Du wurdest als Leitung der Gruppe {group} entfernt."
+                }
+            }
+        },
         "clipboard": {
             "document_added": {
                 "title": "Zwischenablage: Dokument hinzugefügt",
@@ -3415,6 +3444,14 @@
                 "ErrFailedStream": {
                     "title": "Benachrichtigungs-Stream fehlgeschlagen",
                     "content": "Beim Streamen der Benachrichtigungen ist etwas schiefgelaufen. Bitte versuchen Sie es erneut."
+                },
+                "ErrInvalidPreference": {
+                    "title": "Ungültige Benachrichtigungseinstellung",
+                    "content": "Diese Benachrichtigungsart gehört nicht zur ausgewählten Kategorie."
+                },
+                "ErrEmptyPreference": {
+                    "title": "Keine Benachrichtigungseinstellung ausgewählt",
+                    "content": "Wähle mindestens eine Zustellungseinstellung aus oder setze diese Einstellung zurück."
                 }
             }
         }
@@ -3665,7 +3702,12 @@
                 "UNSPECIFIED": "Unbestimmt",
                 "GENERAL": "Allgemein",
                 "DOCUMENT": "Dokumente",
-                "CALENDAR": "Kalender"
+                "CALENDAR": "Kalender",
+                "JOBS": "Jobs",
+                "QUALIFICATIONS": "Qualifikationen",
+                "MAILER": "E-Mail",
+                "DISPATCH": "Dispatch",
+                "SYSTEM": "System"
             }
         },
         "wiki": {

@@ -168,6 +168,7 @@ export const useNotificationsStore = defineStore(
         const reset = (): void => {
             notificationCount.value = 0;
             notifications.value = [];
+            useNotificationCenterStore().reset();
         };
 
         // Stream
@@ -199,7 +200,21 @@ export const useNotificationsStore = defineStore(
          * @param calendarStore - The calendar store instance for handling calendar-related notifications.
          */
         const handleNotificationEvent = (n: ProtoNotification, calendarStore: ReturnType<typeof useCalendarStore>): void => {
+            // A durable notification belongs in the inbox even if the user has
+            // muted transient delivery through Do Not Disturb.
+            if (n.id > 0) {
+                useNotificationCenterStore().notifyNewNotification();
+            }
+
             if (doNotDisturb.value) return;
+
+            // Sound and toast are deliberately independent delivery channels.
+            // A user may opt into an audible cue without a visual toast.
+            if (n.delivery?.soundEnabled !== false) {
+                notificationSound.play();
+            }
+
+            if (n.delivery?.toastEnabled === false) return;
 
             const nType = n.type !== NotificationType.UNSPECIFIED ? n.type : NotificationType.INFO;
 
@@ -223,8 +238,6 @@ export const useNotificationsStore = defineStore(
             }
 
             if (n.category === NotificationCategory.CALENDAR) {
-                notificationSound.play();
-
                 if (n.data?.calendar !== undefined) {
                     try {
                         if (n.data.calendar.calendarId !== undefined) {
@@ -308,6 +321,9 @@ export const useNotificationsStore = defineStore(
                 // notificationCount on StreamResponse is the authoritative
                 // total. This event contains only the delta used by the
                 // server to update other active streams.
+            } else if (userEvent.data.oneofKind === 'notificationsUnreadCount') {
+                // notificationCount on StreamResponse is the authoritative
+                // total after a notification-state mutation.
             } else if (userEvent.data.oneofKind === 'userInfoChanged') {
                 await handleUserInfoChangedEvent(userEvent.data.userInfoChanged, authStore, scope);
             } else if (userEvent.data.oneofKind === 'accountGroupsChanged') {
@@ -359,6 +375,7 @@ export const useNotificationsStore = defineStore(
 
                 for await (const resp of currentStream.responses) {
                     notificationCount.value = resp.notificationCount;
+                    useNotificationCenterStore().setUnreadCount(resp.notificationCount);
 
                     if (!resp || !resp.data || resp.data.oneofKind === undefined) continue;
 
@@ -508,6 +525,7 @@ export const useNotificationsStore = defineStore(
             try {
                 const { response } = await notificationsNotificationsClient.markNotifications(req);
                 notificationCount.value = response.unreadCount;
+                useNotificationCenterStore().setUnreadCount(response.unreadCount);
             } catch (e) {
                 handleGRPCError(e as RpcError);
                 throw e;
