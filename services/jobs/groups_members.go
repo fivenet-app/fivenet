@@ -9,10 +9,12 @@ import (
 	"strconv"
 
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/audit"
+	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/common"
 	database "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/common/database"
 	jobscolleagues "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/jobs/colleagues"
 	jobsgroups "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/jobs/groups"
 	groupsaccess "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/jobs/groups/access"
+	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/notifications"
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/userinfo"
 	pbjobs "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/jobs"
 	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/auth"
@@ -24,6 +26,7 @@ import (
 	groupspolicy "github.com/fivenet-app/fivenet/v2026/stores/jobs/groupspolicy"
 	"github.com/go-jet/jet/v2/qrm"
 	"github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/logging"
+	"go.uber.org/zap"
 )
 
 type groupMemberBundle struct {
@@ -1011,7 +1014,6 @@ func (s *Server) AddGroupMember(
 	if err := tx.Commit(); err != nil {
 		return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
 	}
-
 	grpc_audit.AddMeta(ctx, "jobs.group.id", strconv.FormatInt(req.GetGroupId(), 10))
 	grpc_audit.AddMeta(ctx, "jobs.group.user_id", strconv.FormatInt(int64(req.GetUserId()), 10))
 	if req.HasReason() {
@@ -1101,7 +1103,6 @@ func (s *Server) RemoveGroupMember(
 	if err := tx.Commit(); err != nil {
 		return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
 	}
-
 	grpc_audit.AddMeta(ctx, "jobs.group.id", strconv.FormatInt(req.GetGroupId(), 10))
 	grpc_audit.AddMeta(ctx, "jobs.group.user_id", strconv.FormatInt(int64(req.GetUserId()), 10))
 	if req.HasReason() {
@@ -1199,7 +1200,6 @@ func (s *Server) ExcludeGroupMember(
 	if err := tx.Commit(); err != nil {
 		return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
 	}
-
 	grpc_audit.AddMeta(ctx, "jobs.group.id", strconv.FormatInt(req.GetGroupId(), 10))
 	grpc_audit.AddMeta(ctx, "jobs.group.user_id", strconv.FormatInt(int64(req.GetUserId()), 10))
 	if req.HasReason() {
@@ -1290,7 +1290,6 @@ func (s *Server) RemoveGroupMemberExclusion(
 	if err := tx.Commit(); err != nil {
 		return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
 	}
-
 	grpc_audit.AddMeta(ctx, "jobs.group.id", strconv.FormatInt(req.GetGroupId(), 10))
 	grpc_audit.AddMeta(ctx, "jobs.group.user_id", strconv.FormatInt(int64(req.GetUserId()), 10))
 	if req.HasReason() {
@@ -1374,8 +1373,27 @@ func (s *Server) AddGroupLeader(
 	if err != nil {
 		return nil, err
 	}
+	var publishNotification func(context.Context) error
+	if created && !req.GetSkipNotification() && req.GetUserId() != userInfo.GetUserId() {
+		publishNotification, err = s.prepareGroupLeadershipNotification(
+			ctx,
+			tx,
+			updated,
+			req.GetUserId(),
+			userInfo.GetUserId(),
+			notifications.NotificationKind_NOTIFICATION_KIND_JOBS_GROUP_LEADERSHIP_ADDED,
+		)
+		if err != nil {
+			return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
+		}
+	}
 	if err := tx.Commit(); err != nil {
 		return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
+	}
+	if publishNotification != nil {
+		if err := publishNotification(ctx); err != nil {
+			s.logger.Warn("failed to publish group leadership notification", zap.Error(err))
+		}
 	}
 
 	grpc_audit.AddMeta(ctx, "jobs.group.id", strconv.FormatInt(req.GetGroupId(), 10))
@@ -1457,8 +1475,27 @@ func (s *Server) RemoveGroupLeader(
 	if err != nil {
 		return nil, err
 	}
+	var publishNotification func(context.Context) error
+	if !req.GetSkipNotification() && req.GetUserId() != userInfo.GetUserId() {
+		publishNotification, err = s.prepareGroupLeadershipNotification(
+			ctx,
+			tx,
+			updated,
+			req.GetUserId(),
+			userInfo.GetUserId(),
+			notifications.NotificationKind_NOTIFICATION_KIND_JOBS_GROUP_LEADERSHIP_REMOVED,
+		)
+		if err != nil {
+			return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
+		}
+	}
 	if err := tx.Commit(); err != nil {
 		return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
+	}
+	if publishNotification != nil {
+		if err := publishNotification(ctx); err != nil {
+			s.logger.Warn("failed to publish group leadership notification", zap.Error(err))
+		}
 	}
 
 	grpc_audit.AddMeta(ctx, "jobs.group.id", strconv.FormatInt(req.GetGroupId(), 10))
@@ -1473,4 +1510,52 @@ func (s *Server) RemoveGroupLeader(
 	}
 
 	return &pbjobs.RemoveGroupLeaderResponse{Group: updated}, nil
+}
+
+func (s *Server) prepareGroupLeadershipNotification(
+	ctx context.Context,
+	db qrm.DB,
+	group *jobsgroups.Group,
+	targetUserID int32,
+	actorUserID int32,
+	kind notifications.NotificationKind,
+) (func(context.Context) error, error) {
+	change := "added"
+	if kind == notifications.NotificationKind_NOTIFICATION_KIND_JOBS_GROUP_LEADERSHIP_REMOVED {
+		change = "removed"
+	}
+
+	groupID := group.GetId()
+	entityType := "jobs.group"
+	notification := &notifications.Notification{
+		UserId:      targetUserID,
+		Type:        notifications.NotificationType_NOTIFICATION_TYPE_INFO,
+		Category:    notifications.NotificationCategory_NOTIFICATION_CATEGORY_JOBS,
+		Kind:        kind,
+		ActorUserId: &actorUserID,
+		EntityType:  &entityType,
+		EntityId:    &groupID,
+		Title: &common.I18NItem{
+			Key: "notifications.jobs.groups.leadership_" + change + ".title",
+		},
+		Content: &common.I18NItem{
+			Key:        "notifications.jobs.groups.leadership_" + change + ".content",
+			Parameters: map[string]string{"group": group.GetName()},
+		},
+	}
+	if s.ui != nil {
+		targetUserInfo, err := s.ui.GetUserInfo(ctx, targetUserID)
+		if err != nil {
+			return nil, err
+		}
+		if s.perms.CanServiceMethod(targetUserInfo, "jobs.GroupsService/ListGroups") {
+			notification.Data = &notifications.Data{
+				Link: &notifications.Link{
+					To: "/jobs/groups?group=" + strconv.FormatInt(groupID, 10),
+				},
+			}
+		}
+	}
+
+	return s.notifi.PrepareUserNotification(ctx, db, notification)
 }

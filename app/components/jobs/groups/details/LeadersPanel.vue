@@ -37,11 +37,12 @@ const confirmModal = overlay.create(ConfirmModal);
 
 const schema = z.object({
     leader: z.custom<UserShort>().optional(),
+    notifyUser: z.boolean().default(true),
 });
 
 type Schema = z.output<typeof schema>;
 
-const state = reactive<Schema>({ leader: undefined });
+const state = reactive<Schema>({ leader: undefined, notifyUser: true });
 
 const page = ref(1);
 const pendingAction = ref<string>();
@@ -101,6 +102,7 @@ async function addLeader(): Promise<void> {
         await jobsGroupsClient.addGroupLeader({
             groupId: props.groupId,
             userId: state.leader!.userId,
+            skipNotification: !state.notifyUser,
         });
         resetLeaderForm();
     });
@@ -116,6 +118,7 @@ async function removeLeader(userId: number): Promise<void> {
                 await jobsGroupsClient.removeGroupLeader({
                     groupId: props.groupId,
                     userId,
+                    skipNotification: !state.notifyUser,
                 });
                 if (state.leader?.userId === userId) resetLeaderForm();
             }),
@@ -185,6 +188,12 @@ watch(
                             @click="resetLeaderForm"
                         />
                     </UFieldGroup>
+
+                    <USwitch
+                        v-model="state.notifyUser"
+                        :label="$t('components.jobs.groups.details.notify_user')"
+                        :disabled="isMutating || !canManageLeaders"
+                    />
                 </UForm>
             </div>
         </UCard>
