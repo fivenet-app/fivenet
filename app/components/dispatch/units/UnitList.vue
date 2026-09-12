@@ -10,7 +10,7 @@ const { can } = useAuth();
 const centrumStore = useCentrumStore();
 const { getSortedUnits, abort, stopping } = storeToRefs(centrumStore);
 
-const grouped = computedAsync(async () => {
+const grouped = computed(() => {
     const groups: GroupedUnits = [];
     getSortedUnits.value.forEach((e) => {
         const idx = groups.findIndex((g) => g.key === e.status?.status.toString());
