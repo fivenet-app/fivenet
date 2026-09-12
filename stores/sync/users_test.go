@@ -14,6 +14,7 @@ import (
 	notificationsevents "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/notifications/events"
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/settings"
 	syncdata "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/sync/data"
+	pbuserinfo "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/userinfo"
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/users"
 	"github.com/fivenet-app/fivenet/v2026/pkg/config"
 	"github.com/fivenet-app/fivenet/v2026/pkg/config/appconfig"
@@ -42,6 +43,18 @@ func (labelEnricher) GetJobGrade(string, int32) (*jobs.Job, *jobs.JobGrade) {
 
 type recordingNotifi struct {
 	events []*notificationsevents.UserEvent
+}
+
+type recordingUserInfoChanges struct {
+	events []*pbuserinfo.UserInfoChanged
+}
+
+func (r *recordingUserInfoChanges) PublishUserInfoChanged(
+	_ context.Context,
+	event *pbuserinfo.UserInfoChanged,
+) error {
+	r.events = append(r.events, event)
+	return nil
 }
 
 func (n *recordingNotifi) NotifyUser(context.Context, *notifications.Notification) error {
@@ -482,7 +495,7 @@ func newTestStore(t *testing.T) (*Store, sqlmock.Sqlmock) {
 	db, mock, err := sqlmock.New()
 	require.NoError(t, err)
 
-	store := New(db, zap.NewNop(), &config.Config{}, &appconfig.TestConfig{}, nil, nil, nil, nil, nil, nil, nil).(*Store)
+	store := New(db, zap.NewNop(), &config.Config{}, &appconfig.TestConfig{}, nil, nil, nil, nil, nil, nil, nil, nil).(*Store)
 	t.Cleanup(func() {
 		_ = db.Close()
 	})
@@ -545,6 +558,27 @@ func TestHandleUserJobsPublishesPrimaryJobChange(t *testing.T) {
 	require.NotNil(t, evt.GetChangedAt())
 
 	require.NoError(t, mock.ExpectationsWereMet())
+}
+
+func TestPublishUserInfoChangedUsesCanonicalPublisher(t *testing.T) {
+	t.Parallel()
+
+	store, _ := newTestStore(t)
+	store.enricher = labelEnricher{}
+	store.notifi = &recordingNotifi{}
+	publisher := &recordingUserInfoChanges{}
+	store.userInfoChanges = publisher
+	accountID := int64(42)
+
+	store.publishUserInfoChanged(t.Context(), &accountID, 11, &userJobChange{
+		job:   "sheriff",
+		grade: 1,
+	})
+
+	require.Len(t, publisher.events, 1)
+	assert.Equal(t, int32(11), publisher.events[0].GetUserId())
+	assert.Equal(t, "sheriff", publisher.events[0].GetNewJob())
+	assert.Empty(t, store.notifi.(*recordingNotifi).events)
 }
 
 func TestHandleUserJobsPublishesPrimaryGradeChange(t *testing.T) {

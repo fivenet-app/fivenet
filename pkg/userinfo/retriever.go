@@ -6,7 +6,6 @@ import (
 	"errors"
 	"fmt"
 	"slices"
-	"strings"
 	"time"
 
 	accounts "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/accounts"
@@ -19,7 +18,6 @@ import (
 	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/errswrap"
 	"github.com/fivenet-app/fivenet/v2026/pkg/mstlystcdata"
 	"github.com/fivenet-app/fivenet/v2026/pkg/notifi"
-	"github.com/fivenet-app/fivenet/v2026/pkg/utils/instance"
 	"github.com/fivenet-app/fivenet/v2026/pkg/utils/protoutils"
 	"github.com/fivenet-app/fivenet/v2026/query/fivenet/model"
 	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
@@ -33,6 +31,7 @@ var ErrAccountError = errors.New("failed to retrieve account data")
 
 var RetrieverModule = fx.Module(
 	"userinfo.retriever",
+	ChangesModule,
 	fx.Provide(
 		NewRetriever,
 	),
@@ -103,7 +102,7 @@ func NewRetriever(p Params) UserInfoRetriever {
 	}
 
 	p.LC.Append(fx.StartHook(func(ctxStartup context.Context) error {
-		if err := registerStreams(ctxCancel, p.JS); err != nil {
+		if err := registerUserInfoStream(ctxCancel, p.JS); err != nil {
 			return fmt.Errorf("failed to register user info stream. %w", err)
 		}
 
@@ -137,9 +136,11 @@ func (r *Retriever) registerSubscriptions(
 		ctxStartup,
 		UserInfoStreamName,
 		jetstream.ConsumerConfig{
-			Durable:           instance.ID() + "_ui_retriever",
+			// A shared durable distributes each canonical change to exactly one
+			// notification forwarder across all application processes.
+			Durable:           "userinfo_notifications",
 			AckPolicy:         jetstream.AckExplicitPolicy,
-			FilterSubjects:    []string{UserInfoSubject, UserGroupsSubject},
+			FilterSubject:     UserInfoSubject,
 			InactiveThreshold: 1 * time.Minute, // Close consumer if inactive for 1 minute
 		},
 	)
@@ -170,72 +171,31 @@ func (r *Retriever) handleMsg(m jetstream.Msg) {
 		r.logger.Error("failed to ack message", zap.Error(err), zap.String("subject", m.Subject()))
 	}
 
-	parts := strings.Split(m.Subject(), ".")
-	if len(parts) < 3 {
-		r.logger.Error("failed to parse userinfo subject",
+	var evt pbuserinfo.UserInfoChanged
+	if err := protoutils.UnmarshalPartialJSON(m.Data(), &evt); err != nil {
+		r.logger.Error("failed to unmarshal user info changed event",
+			zap.Error(err),
 			zap.String("subject", m.Subject()),
 		)
 		return
 	}
 
-	switch parts[2] {
-	case "changes":
-		var evt pbuserinfo.UserInfoChanged
-		if err := protoutils.UnmarshalPartialJSON(m.Data(), &evt); err != nil {
-			r.logger.Error("failed to unmarshal user info changed event",
-				zap.Error(err),
-				zap.String("subject", m.Subject()),
-			)
-			return
-		}
+	r.logger.Debug(
+		"User info changed, notifying user",
+		zap.Int32("userId", evt.GetUserId()),
+		zap.Int64("accountId", evt.GetAccountId()),
+	)
 
-		r.logger.Debug(
-			"User info changed, notifying user",
+	if err := r.notifi.SendUserEvent(r.ctx, evt.GetUserId(), &notificationsevents.UserEvent{
+		Data: &notificationsevents.UserEvent_UserInfoChanged{
+			UserInfoChanged: &evt,
+		},
+	}); err != nil {
+		r.logger.Error("failed to send user info change event",
+			zap.Error(err),
 			zap.Int32("userId", evt.GetUserId()),
 			zap.Int64("accountId", evt.GetAccountId()),
 		)
-
-		if err := r.notifi.SendUserEvent(r.ctx, evt.GetUserId(), &notificationsevents.UserEvent{
-			Data: &notificationsevents.UserEvent_UserInfoChanged{
-				UserInfoChanged: &evt,
-			},
-		}); err != nil {
-			r.logger.Error("failed to send user info change event",
-				zap.Error(err),
-				zap.Int32("userId", evt.GetUserId()),
-				zap.Int64("accountId", evt.GetAccountId()),
-			)
-		}
-
-	case "groups":
-		var evt pbuserinfo.AccountGroupsChanged
-		if err := protoutils.UnmarshalPartialJSON(m.Data(), &evt); err != nil {
-			r.logger.Error("failed to unmarshal user groups changed event",
-				zap.Error(err),
-				zap.String("subject", m.Subject()),
-			)
-			return
-		}
-
-		r.logger.Debug(
-			"User groups changed, notifying account",
-			zap.Int64("accountId", evt.GetAccountId()),
-		)
-
-		if err := r.notifi.SendAccountEvent(
-			r.ctx,
-			evt.GetAccountId(),
-			&notificationsevents.UserEvent{
-				Data: &notificationsevents.UserEvent_AccountGroupsChanged{
-					AccountGroupsChanged: &evt,
-				},
-			},
-		); err != nil {
-			r.logger.Error("failed to send user groups change event",
-				zap.Error(err),
-				zap.Int64("accountId", evt.GetAccountId()),
-			)
-		}
 	}
 }
 

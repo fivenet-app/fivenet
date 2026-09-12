@@ -9,7 +9,6 @@ import (
 	"github.com/fivenet-app/fivenet/v2026/pkg/server"
 	"github.com/fivenet-app/fivenet/v2026/pkg/server/admin"
 	"github.com/fivenet-app/fivenet/v2026/pkg/tracker/manager"
-	"github.com/fivenet-app/fivenet/v2026/pkg/userinfo"
 	pbcalendar "github.com/fivenet-app/fivenet/v2026/services/calendar"
 	centrumbot "github.com/fivenet-app/fivenet/v2026/services/centrum/bot"
 	centrumhousekeeper "github.com/fivenet-app/fivenet/v2026/services/centrum/housekeeper"
@@ -50,12 +49,6 @@ func FxReadinessOpts() []fx.Option {
 func FxDemoOpts() []fx.Option {
 	return []fx.Option{
 		fx.Invoke(func(*demo.Demo) {}),
-	}
-}
-
-func FxUserInfoPollerOpts() []fx.Option {
-	return []fx.Option{
-		fx.Invoke(func(*userinfo.Poller) {}),
 	}
 }
 

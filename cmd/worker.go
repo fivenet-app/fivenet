@@ -8,10 +8,9 @@ import (
 )
 
 type WorkerCmd struct {
-	ModuleCentrum        bool `default:"true" help:"Start Centrum bot and housekeeper module"`
-	ModuleUserTracker    bool `default:"true" help:"Start User tracker module"`
-	ModuleHousekeeper    bool `default:"true" help:"Start Housekeepr modules"`
-	ModuleUserInfoPoller bool `default:"true" help:"Start UserInfo poller module"`
+	ModuleCentrum     bool `default:"true" help:"Start Centrum bot and housekeeper module"`
+	ModuleUserTracker bool `default:"true" help:"Start User tracker module"`
+	ModuleHousekeeper bool `default:"true" help:"Start Housekeepr modules"`
 }
 
 func (c *WorkerCmd) Run(cli *CLI) error {
@@ -30,9 +29,6 @@ func (c *WorkerCmd) Run(cli *CLI) error {
 		fxOpts = append(fxOpts, fxopts.FxServiceHousekeeperOpts()...)
 		fxOpts = append(fxOpts, fxopts.FxHousekeeperOpts()...)
 		fxOpts = append(fxOpts, fx.Invoke(func(*storage.MetricsCollector) {}))
-	}
-	if c.ModuleUserInfoPoller {
-		fxOpts = append(fxOpts, fxopts.FxUserInfoPollerOpts()...)
 	}
 	fxOpts = append(fxOpts, fxopts.FxReadinessOpts()...)
 

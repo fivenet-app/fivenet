@@ -22,7 +22,6 @@ import (
 	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/grpcws"
 	natsutils "github.com/fivenet-app/fivenet/v2026/pkg/nats"
 	"github.com/fivenet-app/fivenet/v2026/pkg/notifi"
-	"github.com/fivenet-app/fivenet/v2026/pkg/userinfo"
 	"github.com/fivenet-app/fivenet/v2026/pkg/utils/protoutils"
 	"github.com/go-jet/jet/v2/qrm"
 	"github.com/grpc-ecosystem/go-grpc-middleware/v2/metadata"
@@ -200,19 +199,6 @@ func (s *Server) Stream(srv pbnotifications.NotificationsService_StreamServer) e
 	// Track changes to user info, so we can send an updated user info to the user
 	currentUserInfo := userInfo.Clone()
 	accountOnly := currentUserInfo.GetUserId() == 0
-
-	if !accountOnly {
-		if _, err := s.js.PublishAsyncProto(ctx, userinfo.PollSubject, &pbuserinfo.PollReq{
-			AccountId: currentUserInfo.GetAccountId(),
-			UserId:    currentUserInfo.GetUserId(),
-		}); err != nil {
-			s.logger.Error(
-				"failed to publish userinfo.poll.request",
-				zap.Int32("user_id", currentUserInfo.GetUserId()),
-				zap.Error(err),
-			)
-		}
-	}
 
 	subjectsMu := &sync.Mutex{}
 	baseSubjects, additionalSubjects, err := s.buildSubjects(ctx, currentUserInfo)
