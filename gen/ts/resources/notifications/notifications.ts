@@ -264,7 +264,31 @@ export enum NotificationKind {
     /**
      * @generated from protobuf enum value: NOTIFICATION_KIND_JOBS_GROUP_LEADERSHIP_REMOVED = 2;
      */
-    JOBS_GROUP_LEADERSHIP_REMOVED = 2
+    JOBS_GROUP_LEADERSHIP_REMOVED = 2,
+    /**
+     * @generated from protobuf enum value: NOTIFICATION_KIND_JOBS_GROUP_MEMBER_ADDED = 3;
+     */
+    JOBS_GROUP_MEMBER_ADDED = 3,
+    /**
+     * @generated from protobuf enum value: NOTIFICATION_KIND_JOBS_GROUP_MEMBER_REMOVED = 4;
+     */
+    JOBS_GROUP_MEMBER_REMOVED = 4,
+    /**
+     * @generated from protobuf enum value: NOTIFICATION_KIND_DOCUMENT_APPROVAL_ASSIGNED = 5;
+     */
+    DOCUMENT_APPROVAL_ASSIGNED = 5,
+    /**
+     * @generated from protobuf enum value: NOTIFICATION_KIND_DOCUMENT_REQUEST_CREATED = 6;
+     */
+    DOCUMENT_REQUEST_CREATED = 6,
+    /**
+     * @generated from protobuf enum value: NOTIFICATION_KIND_DOCUMENT_REQUEST_DECIDED = 7;
+     */
+    DOCUMENT_REQUEST_DECIDED = 7,
+    /**
+     * @generated from protobuf enum value: NOTIFICATION_KIND_DOCUMENT_REQUEST_CANCELLED = 8;
+     */
+    DOCUMENT_REQUEST_CANCELLED = 8
 }
 // @generated message type with reflection information, may provide speed optimized methods
 class NotificationPreference$Type extends MessageType<NotificationPreference> {
