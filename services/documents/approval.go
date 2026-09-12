@@ -536,7 +536,9 @@ func (s *Server) prepareApprovalTaskNotifications(
 				ActorUserId: &actorUserID,
 				EntityType:  &entityType,
 				EntityId:    &documentID,
-				Title:       &common.I18NItem{Key: "notifications.documents.document_approval_assigned.title"},
+				Title: &common.I18NItem{
+					Key: "notifications.documents.document_approval_assigned.title",
+				},
 				Content: &common.I18NItem{
 					Key:        "notifications.documents.document_approval_assigned.content",
 					Parameters: map[string]string{"title": documentTitle},

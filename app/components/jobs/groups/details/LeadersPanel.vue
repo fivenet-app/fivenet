@@ -37,12 +37,15 @@ const confirmModal = overlay.create(ConfirmModal);
 
 const schema = z.object({
     leader: z.custom<UserShort>().optional(),
-    notifyUser: z.boolean().default(true),
+    notifyUser: z.coerce.boolean().default(true),
 });
 
 type Schema = z.output<typeof schema>;
 
-const state = reactive<Schema>({ leader: undefined, notifyUser: true });
+const state = reactive<Schema>({
+    leader: undefined,
+    notifyUser: true,
+});
 
 const page = ref(1);
 const pendingAction = ref<string>();

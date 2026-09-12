@@ -1012,7 +1012,7 @@ func (s *Server) AddGroupMember(
 		return nil, err
 	}
 	var publishNotification func(context.Context) error
-	if created && req.GetUserId() != userInfo.GetUserId() {
+	if created && !req.GetSkipNotification() && req.GetUserId() != userInfo.GetUserId() {
 		publishNotification, err = s.prepareGroupUserNotification(
 			ctx,
 			tx,
@@ -1120,7 +1120,7 @@ func (s *Server) RemoveGroupMember(
 		return nil, err
 	}
 	var publishNotification func(context.Context) error
-	if req.GetUserId() != userInfo.GetUserId() {
+	if !req.GetSkipNotification() && req.GetUserId() != userInfo.GetUserId() {
 		publishNotification, err = s.prepareGroupUserNotification(
 			ctx,
 			tx,

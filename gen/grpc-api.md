@@ -11538,6 +11538,7 @@ Upsert = insert missing PENDING tasks/slots; will NOT delete existing tasks. Ide
 | `group_id` | [int64](#int64) |  |  |
 | `user_id` | [int32](#int32) |  |  |
 | `reason` | [string](#string) | optional |  |
+| `skip_notification` | [bool](#bool) |  | Suppresses the inbox notification normally sent to the affected user. |
 
 
 
@@ -11991,6 +11992,7 @@ Upsert = insert missing PENDING tasks/slots; will NOT delete existing tasks. Ide
 | `group_id` | [int64](#int64) |  |  |
 | `user_id` | [int32](#int32) |  |  |
 | `reason` | [string](#string) | optional |  |
+| `skip_notification` | [bool](#bool) |  | Suppresses the inbox notification normally sent to the affected user. |
 
 
 

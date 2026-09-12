@@ -40,11 +40,16 @@ const confirmModal = overlay.create(ConfirmModal);
 const schema = z.object({
     member: z.custom<UserShort>().optional(),
     reason: z.coerce.string().max(255).default(''),
+    notifyUser: z.coerce.boolean().default(true),
 });
 
 type Schema = z.output<typeof schema>;
 
-const state = reactive<Schema>({ member: undefined, reason: '' });
+const state = reactive<Schema>({
+    member: undefined,
+    reason: '',
+    notifyUser: true,
+});
 
 const page = ref(1);
 const editingManualMemberId = ref<number>();
@@ -129,6 +134,7 @@ async function addManualMember(): Promise<void> {
             groupId: props.groupId,
             userId: state.member!.userId,
             reason: state.reason.trim() || undefined,
+            skipNotification: !state.notifyUser,
         });
         resetManualMemberForm();
     });
@@ -143,7 +149,8 @@ async function removeManualMember(userId: number): Promise<void> {
             await runMutation(`manual-member-${userId}`, async () => {
                 await jobsGroupsClient.removeGroupMember({
                     groupId: props.groupId,
-                    userId,
+                    userId: userId,
+                    skipNotification: !state.notifyUser,
                 });
                 if (editingManualMemberId.value === userId) resetManualMemberForm();
             }),
@@ -218,6 +225,7 @@ watch(
                             "
                             type="submit"
                         />
+
                         <UButton
                             v-if="editingManualMemberId"
                             color="neutral"
@@ -228,6 +236,12 @@ watch(
                             @click="resetManualMemberForm"
                         />
                     </UFieldGroup>
+
+                    <USwitch
+                        v-model="state.notifyUser"
+                        :label="$t('components.jobs.groups.details.notify_user')"
+                        :disabled="isMutating || !canManageMembers"
+                    />
                 </div>
 
                 <UFormField :label="$t('common.reason', 1)">
