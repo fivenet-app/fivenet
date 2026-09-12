@@ -81,3 +81,22 @@ func TestStreamRequestsSnapshotAfterOwnSettingsChange(t *testing.T) {
 
 	require.ErrorIs(t, err, errAccessChanged)
 }
+
+func TestStreamRequestsSnapshotAfterFeedWorkerRestart(t *testing.T) {
+	t.Parallel()
+
+	feed := make(chan *feedEvent, 1)
+	feed <- &feedEvent{Sequence: 1, Resync: true}
+
+	err := (&Server{}).stream(
+		t.Context(),
+		&testCentrumStreamServer{ctx: t.Context()},
+		&pbuserinfo.UserInfo{UserId: 42, Job: "ambulance", JobGrade: 1},
+		nil,
+		feed,
+		make(chan *pbuserinfo.UserInfoChanged),
+		0,
+	)
+
+	require.ErrorIs(t, err, errFeedResync)
+}
