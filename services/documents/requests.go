@@ -25,10 +25,21 @@ import (
 	citizenshydrator "github.com/fivenet-app/fivenet/v2026/stores/citizens/hydrator"
 	documentsstore "github.com/fivenet-app/fivenet/v2026/stores/documents"
 	"github.com/go-jet/jet/v2/mysql"
+	"github.com/go-jet/jet/v2/qrm"
 	"github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/logging"
+	"go.uber.org/zap"
 )
 
 const DocRequestMinimumWaitTime = 24 * time.Hour
+
+type documentRequestNotificationEvent int
+
+const (
+	documentRequestNotificationCreated documentRequestNotificationEvent = iota
+	documentRequestNotificationAccepted
+	documentRequestNotificationDeclined
+	documentRequestNotificationCancelled
+)
 
 var tDocRequest = table.FivenetDocumentsRequests.AS("doc_request")
 
@@ -225,6 +236,22 @@ func (s *Server) CreateDocumentReq(
 		}
 	}
 
+	var publishNotification func(context.Context) error
+	if doc.CreatorId != nil {
+		publishNotification, err = s.prepareDocumentRequestNotification(
+			ctx,
+			tx,
+			doc,
+			userInfo.GetUserId(),
+			doc.GetCreatorId(),
+			req.GetRequestType(),
+			documentRequestNotificationCreated,
+		)
+		if err != nil {
+			return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
+		}
+	}
+
 	// Commit the transaction
 	if err := tx.Commit(); err != nil {
 		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
@@ -236,15 +263,9 @@ func (s *Server) CreateDocumentReq(
 		Request: request,
 	}
 
-	// If the document has no creator anymore, nothing we can do here
-	if doc.CreatorId != nil {
-		if err := s.notifyUserAboutRequest(
-			ctx,
-			doc,
-			userInfo.GetUserId(),
-			doc.GetCreatorId(),
-		); err != nil {
-			return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
+	if publishNotification != nil {
+		if err := publishNotification(ctx); err != nil {
+			s.logger.Warn("failed to publish document request notification", zap.Error(err))
 		}
 	}
 
@@ -419,12 +440,37 @@ func (s *Server) UpdateDocumentReq(
 		}
 	}
 
+	var publishNotification func(context.Context) error
+	if request.CreatorId != nil {
+		event := documentRequestNotificationDeclined
+		if request.GetAccepted() {
+			event = documentRequestNotificationAccepted
+		}
+		publishNotification, err = s.prepareDocumentRequestNotification(
+			ctx,
+			tx,
+			doc,
+			userInfo.GetUserId(),
+			request.GetCreatorId(),
+			request.GetRequestType(),
+			event,
+		)
+		if err != nil {
+			return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
+		}
+	}
+
 	// Commit the transaction
 	if err := tx.Commit(); err != nil {
 		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 	}
 
 	grpc_audit.SetAction(ctx, audit.EventAction_EVENT_ACTION_UPDATED)
+	if publishNotification != nil {
+		if err := publishNotification(ctx); err != nil {
+			s.logger.Warn("failed to publish document request notification", zap.Error(err))
+		}
+	}
 
 	return &pbdocuments.UpdateDocumentReqResponse{
 		Request: request,
@@ -465,11 +511,53 @@ func (s *Server) DeleteDocumentReq(
 		return nil, errorsdocuments.ErrDocViewDenied
 	}
 
-	if err := s.store.DeleteDocumentReq(ctx, s.db, req.GetRequestId()); err != nil {
+	doc, err := s.getDocument(
+		ctx,
+		tDocument.ID.EQ(mysql.Int64(request.GetDocumentId())),
+		userInfo,
+		false,
+	)
+	if err != nil {
+		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
+	}
+	if doc == nil {
+		return nil, errorsdocuments.ErrFailedQuery
+	}
+
+	tx, err := s.db.BeginTx(ctx, nil)
+	if err != nil {
+		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
+	}
+	defer tx.Rollback()
+
+	if err := s.store.DeleteDocumentReq(ctx, tx, req.GetRequestId()); err != nil {
+		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
+	}
+	var publishNotification func(context.Context) error
+	if request.CreatorId != nil {
+		publishNotification, err = s.prepareDocumentRequestNotification(
+			ctx,
+			tx,
+			doc,
+			userInfo.GetUserId(),
+			request.GetCreatorId(),
+			request.GetRequestType(),
+			documentRequestNotificationCancelled,
+		)
+		if err != nil {
+			return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
+		}
+	}
+	if err := tx.Commit(); err != nil {
 		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 	}
 
 	grpc_audit.SetAction(ctx, audit.EventAction_EVENT_ACTION_DELETED)
+	if publishNotification != nil {
+		if err := publishNotification(ctx); err != nil {
+			s.logger.Warn("failed to publish document request notification", zap.Error(err))
+		}
+	}
 
 	return &pbdocuments.DeleteDocumentReqResponse{}, nil
 }
@@ -497,42 +585,71 @@ func (s *Server) hydrateDocumentReqs(
 	return s.hydrator.HydrateBasicTargetsSafeFunc(userInfo)(ctx, nil, targets)
 }
 
-func (s *Server) notifyUserAboutRequest(
+func (s *Server) prepareDocumentRequestNotification(
 	ctx context.Context,
+	db qrm.DB,
 	doc *documents.Document,
 	sourceUserId int32,
 	targetUserId int32,
-) error {
-	userInfo, err := s.ui.GetUserInfo(ctx, targetUserId)
-	if err != nil {
-		return err
+	requestType documentsactivity.DocActivityType,
+	event documentRequestNotificationEvent,
+) (func(context.Context) error, error) {
+	if sourceUserId == targetUserId {
+		return nil, nil
 	}
 
-	// Make sure target user has access to document
-	check, err := s.canUserAccessDocument(
-		ctx,
-		doc.GetId(),
-		userInfo,
-		documentsaccess.AccessLevel_ACCESS_LEVEL_VIEW,
-	)
-	if err != nil {
-		return err
+	key := "notifications.documents.document_request_"
+	var kind notifications.NotificationKind
+	switch event {
+	case documentRequestNotificationCreated:
+		userInfo, err := s.ui.GetUserInfo(ctx, targetUserId)
+		if err != nil {
+			return nil, err
+		}
+		check, err := s.canUserAccessDocument(
+			ctx,
+			doc.GetId(),
+			userInfo,
+			documentsaccess.AccessLevel_ACCESS_LEVEL_VIEW,
+		)
+		if err != nil {
+			return nil, err
+		}
+		if !check {
+			return nil, nil
+		}
+		key += "created_" + documentRequestNotificationAction(requestType)
+		kind = notifications.NotificationKind_NOTIFICATION_KIND_DOCUMENT_REQUEST_CREATED
+	case documentRequestNotificationAccepted:
+		key += "accepted"
+		kind = notifications.NotificationKind_NOTIFICATION_KIND_DOCUMENT_REQUEST_DECIDED
+	case documentRequestNotificationDeclined:
+		key += "declined"
+		kind = notifications.NotificationKind_NOTIFICATION_KIND_DOCUMENT_REQUEST_DECIDED
+	case documentRequestNotificationCancelled:
+		key += "cancelled"
+		kind = notifications.NotificationKind_NOTIFICATION_KIND_DOCUMENT_REQUEST_CANCELLED
+	default:
+		return nil, fmt.Errorf("unknown document request notification event: %d", event)
 	}
-	if !check {
-		return nil
-	}
+	documentID := doc.GetId()
+	entityType := "documents.document"
 
 	not := &notifications.Notification{
 		UserId: targetUserId,
 		Title: &common.I18NItem{
-			Key: "notifications.documents.document_request_added.title",
+			Key: key + ".title",
 		},
 		Content: &common.I18NItem{
-			Key:        "notifications.documents.document_request_added.content",
+			Key:        key + ".content",
 			Parameters: map[string]string{"title": doc.GetTitle()},
 		},
-		Type:     notifications.NotificationType_NOTIFICATION_TYPE_INFO,
-		Category: notifications.NotificationCategory_NOTIFICATION_CATEGORY_DOCUMENT,
+		Type:        notifications.NotificationType_NOTIFICATION_TYPE_INFO,
+		Category:    notifications.NotificationCategory_NOTIFICATION_CATEGORY_DOCUMENT,
+		Kind:        kind,
+		ActorUserId: &sourceUserId,
+		EntityType:  &entityType,
+		EntityId:    &documentID,
 		Data: &notifications.Data{
 			Link: &notifications.Link{
 				To: fmt.Sprintf("/documents/%d#requests", doc.GetId()),
@@ -542,9 +659,24 @@ func (s *Server) notifyUserAboutRequest(
 			},
 		},
 	}
-	if err := s.notifi.NotifyUser(ctx, not); err != nil {
-		return err
-	}
+	return s.notifi.PrepareUserNotification(ctx, db, not)
+}
 
-	return nil
+func documentRequestNotificationAction(requestType documentsactivity.DocActivityType) string {
+	switch requestType {
+	case documentsactivity.DocActivityType_DOC_ACTIVITY_TYPE_REQUESTED_ACCESS:
+		return "access"
+	case documentsactivity.DocActivityType_DOC_ACTIVITY_TYPE_REQUESTED_CLOSURE:
+		return "closure"
+	case documentsactivity.DocActivityType_DOC_ACTIVITY_TYPE_REQUESTED_OPENING:
+		return "opening"
+	case documentsactivity.DocActivityType_DOC_ACTIVITY_TYPE_REQUESTED_UPDATE:
+		return "update"
+	case documentsactivity.DocActivityType_DOC_ACTIVITY_TYPE_REQUESTED_OWNER_CHANGE:
+		return "owner_change"
+	case documentsactivity.DocActivityType_DOC_ACTIVITY_TYPE_REQUESTED_DELETION:
+		return "deletion"
+	default:
+		return "created"
+	}
 }

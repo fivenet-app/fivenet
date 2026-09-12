@@ -6,11 +6,13 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/common"
 	database "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/common/database"
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/documents"
 	documentsaccess "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/documents/access"
 	documentsactivity "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/documents/activity"
 	documentsapproval "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/documents/approval"
+	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/notifications"
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/timestamp"
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/userinfo"
 	usershort "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/users/short"
@@ -25,6 +27,7 @@ import (
 	"github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
 	"github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/logging"
+	"go.uber.org/zap"
 )
 
 func (s *Server) ListApprovalTasksInbox(
@@ -462,7 +465,7 @@ func (s *Server) UpsertApprovalTasks(
 	}
 	defer tx.Rollback()
 
-	created, ensured, err := s.store.CreateApprovalTasks(
+	created, ensured, createdUserIDs, err := s.store.CreateApprovalTasks(
 		ctx,
 		tx,
 		userInfo,
@@ -473,12 +476,18 @@ func (s *Server) UpsertApprovalTasks(
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 	}
+	userId := userInfo.GetUserId()
+	publishNotifications, err := s.prepareApprovalTaskNotifications(
+		ctx, tx, req.GetDocumentId(), doc.GetTitle(), userId, createdUserIDs,
+	)
+	if err != nil {
+		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
+	}
 
 	if err := s.recomputeApprovalPolicyTx(ctx, tx, req.GetDocumentId(), docSnap); err != nil {
 		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 	}
 
-	userId := userInfo.GetUserId()
 	userJob := userInfo.GetJob()
 	if _, err := addDocumentActivity(ctx, tx, &documentsactivity.DocActivity{
 		DocumentId:   req.GetDocumentId(),
@@ -492,12 +501,58 @@ func (s *Server) UpsertApprovalTasks(
 	if err := tx.Commit(); err != nil {
 		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 	}
+	for _, publishNotification := range publishNotifications {
+		if err := publishNotification(ctx); err != nil {
+			s.logger.Warn("failed to publish document approval notification", zap.Error(err))
+		}
+	}
 
 	return &pbdocuments.UpsertApprovalTasksResponse{
 		TasksCreated: created,
 		TasksEnsured: ensured,
 		Policy:       pol,
 	}, nil
+}
+
+func (s *Server) prepareApprovalTaskNotifications(
+	ctx context.Context,
+	db qrm.DB,
+	documentID int64,
+	documentTitle string,
+	actorUserID int32,
+	targetUserIDs []int32,
+) ([]func(context.Context) error, error) {
+	publishNotifications := make([]func(context.Context) error, 0, len(targetUserIDs))
+	entityType := "documents.document"
+	for _, targetUserID := range targetUserIDs {
+		publishNotification, err := s.notifi.PrepareUserNotification(
+			ctx,
+			db,
+			&notifications.Notification{
+				UserId:      targetUserID,
+				Type:        notifications.NotificationType_NOTIFICATION_TYPE_INFO,
+				Category:    notifications.NotificationCategory_NOTIFICATION_CATEGORY_DOCUMENT,
+				Kind:        notifications.NotificationKind_NOTIFICATION_KIND_DOCUMENT_APPROVAL_ASSIGNED,
+				ActorUserId: &actorUserID,
+				EntityType:  &entityType,
+				EntityId:    &documentID,
+				Title:       &common.I18NItem{Key: "notifications.documents.document_approval_assigned.title"},
+				Content: &common.I18NItem{
+					Key:        "notifications.documents.document_approval_assigned.content",
+					Parameters: map[string]string{"title": documentTitle},
+				},
+				Data: &notifications.Data{Link: &notifications.Link{
+					To: fmt.Sprintf("/documents/%d#approvals", documentID),
+				}},
+			},
+		)
+		if err != nil {
+			return nil, err
+		}
+		publishNotifications = append(publishNotifications, publishNotification)
+	}
+
+	return publishNotifications, nil
 }
 
 func (s *Server) DeleteApprovalTasks(
