@@ -828,7 +828,9 @@ func (s *Server) UpdateDocument(
 				if err != nil {
 					return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 				}
-				publishApprovalNotifications = append(publishApprovalNotifications, notifications...)
+				publishApprovalNotifications = append(
+					publishApprovalNotifications,
+					notifications...)
 			}
 		}
 

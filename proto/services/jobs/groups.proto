@@ -195,6 +195,8 @@ message AddGroupMemberRequest {
   int64 group_id = 1;
   int32 user_id = 2;
   optional string reason = 3;
+  // Suppresses the inbox notification normally sent to the affected user.
+  bool skip_notification = 4;
 }
 
 message AddGroupMemberResponse {
@@ -206,6 +208,8 @@ message RemoveGroupMemberRequest {
   int64 group_id = 1;
   int32 user_id = 2;
   optional string reason = 3;
+  // Suppresses the inbox notification normally sent to the affected user.
+  bool skip_notification = 4;
 }
 
 message RemoveGroupMemberResponse {

@@ -50,6 +50,8 @@ func TestDocumentRequestNotificationAction(t *testing.T) {
 	assert.Equal(
 		t,
 		"created",
-		documentRequestNotificationAction(documentsactivity.DocActivityType_DOC_ACTIVITY_TYPE_UNSPECIFIED),
+		documentRequestNotificationAction(
+			documentsactivity.DocActivityType_DOC_ACTIVITY_TYPE_UNSPECIFIED,
+		),
 	)
 }
