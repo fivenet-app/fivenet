@@ -1011,8 +1011,27 @@ func (s *Server) AddGroupMember(
 	if err != nil {
 		return nil, err
 	}
+	var publishNotification func(context.Context) error
+	if created && req.GetUserId() != userInfo.GetUserId() {
+		publishNotification, err = s.prepareGroupUserNotification(
+			ctx,
+			tx,
+			updated,
+			req.GetUserId(),
+			userInfo.GetUserId(),
+			notifications.NotificationKind_NOTIFICATION_KIND_JOBS_GROUP_MEMBER_ADDED,
+		)
+		if err != nil {
+			return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
+		}
+	}
 	if err := tx.Commit(); err != nil {
 		return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
+	}
+	if publishNotification != nil {
+		if err := publishNotification(ctx); err != nil {
+			s.logger.Warn("failed to publish group membership notification", zap.Error(err))
+		}
 	}
 	grpc_audit.AddMeta(ctx, "jobs.group.id", strconv.FormatInt(req.GetGroupId(), 10))
 	grpc_audit.AddMeta(ctx, "jobs.group.user_id", strconv.FormatInt(int64(req.GetUserId()), 10))
@@ -1100,8 +1119,27 @@ func (s *Server) RemoveGroupMember(
 	if err != nil {
 		return nil, err
 	}
+	var publishNotification func(context.Context) error
+	if req.GetUserId() != userInfo.GetUserId() {
+		publishNotification, err = s.prepareGroupUserNotification(
+			ctx,
+			tx,
+			updated,
+			req.GetUserId(),
+			userInfo.GetUserId(),
+			notifications.NotificationKind_NOTIFICATION_KIND_JOBS_GROUP_MEMBER_REMOVED,
+		)
+		if err != nil {
+			return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
+		}
+	}
 	if err := tx.Commit(); err != nil {
 		return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
+	}
+	if publishNotification != nil {
+		if err := publishNotification(ctx); err != nil {
+			s.logger.Warn("failed to publish group membership notification", zap.Error(err))
+		}
 	}
 	grpc_audit.AddMeta(ctx, "jobs.group.id", strconv.FormatInt(req.GetGroupId(), 10))
 	grpc_audit.AddMeta(ctx, "jobs.group.user_id", strconv.FormatInt(int64(req.GetUserId()), 10))
@@ -1375,7 +1413,7 @@ func (s *Server) AddGroupLeader(
 	}
 	var publishNotification func(context.Context) error
 	if created && !req.GetSkipNotification() && req.GetUserId() != userInfo.GetUserId() {
-		publishNotification, err = s.prepareGroupLeadershipNotification(
+		publishNotification, err = s.prepareGroupUserNotification(
 			ctx,
 			tx,
 			updated,
@@ -1477,7 +1515,7 @@ func (s *Server) RemoveGroupLeader(
 	}
 	var publishNotification func(context.Context) error
 	if !req.GetSkipNotification() && req.GetUserId() != userInfo.GetUserId() {
-		publishNotification, err = s.prepareGroupLeadershipNotification(
+		publishNotification, err = s.prepareGroupUserNotification(
 			ctx,
 			tx,
 			updated,
@@ -1512,7 +1550,7 @@ func (s *Server) RemoveGroupLeader(
 	return &pbjobs.RemoveGroupLeaderResponse{Group: updated}, nil
 }
 
-func (s *Server) prepareGroupLeadershipNotification(
+func (s *Server) prepareGroupUserNotification(
 	ctx context.Context,
 	db qrm.DB,
 	group *jobsgroups.Group,
@@ -1520,8 +1558,15 @@ func (s *Server) prepareGroupLeadershipNotification(
 	actorUserID int32,
 	kind notifications.NotificationKind,
 ) (func(context.Context) error, error) {
+	scope := "leadership"
 	change := "added"
-	if kind == notifications.NotificationKind_NOTIFICATION_KIND_JOBS_GROUP_LEADERSHIP_REMOVED {
+	switch kind {
+	case notifications.NotificationKind_NOTIFICATION_KIND_JOBS_GROUP_LEADERSHIP_REMOVED:
+		change = "removed"
+	case notifications.NotificationKind_NOTIFICATION_KIND_JOBS_GROUP_MEMBER_ADDED:
+		scope = "membership"
+	case notifications.NotificationKind_NOTIFICATION_KIND_JOBS_GROUP_MEMBER_REMOVED:
+		scope = "membership"
 		change = "removed"
 	}
 
@@ -1536,10 +1581,10 @@ func (s *Server) prepareGroupLeadershipNotification(
 		EntityType:  &entityType,
 		EntityId:    &groupID,
 		Title: &common.I18NItem{
-			Key: "notifications.jobs.groups.leadership_" + change + ".title",
+			Key: "notifications.jobs.groups." + scope + "_" + change + ".title",
 		},
 		Content: &common.I18NItem{
-			Key:        "notifications.jobs.groups.leadership_" + change + ".content",
+			Key:        "notifications.jobs.groups." + scope + "_" + change + ".content",
 			Parameters: map[string]string{"group": group.GetName()},
 		},
 	}
