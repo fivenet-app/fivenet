@@ -43,7 +43,7 @@ export function notificationCategoryToIcon(category: NotificationCategory): stri
         case NotificationCategory.JOBS:
             return 'i-mdi-briefcase-outline';
         case NotificationCategory.QUALIFICATIONS:
-            return 'i-mdi-certificate-outline';
+            return 'i-mdi-school-outline';
         case NotificationCategory.MAILER:
             return 'i-mdi-email-outline';
         case NotificationCategory.SYSTEM:

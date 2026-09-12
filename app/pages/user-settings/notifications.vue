@@ -29,7 +29,7 @@ const notificationCategories = [
 const notificationDeliveryScopes = [
     { category: NotificationCategory.UNSPECIFIED, labelKey: 'components.auth.user_settings.notification_delivery.all' },
     ...notificationCategories.map((category) => ({
-        category,
+        category: category,
         labelKey: `enums.notifications.NotificationCategory.${NotificationCategory[category]}`,
     })),
 ];

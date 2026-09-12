@@ -383,12 +383,16 @@ defineShortcuts(extractShortcuts(quickAccessButtons.value, '-'));
             <template #header="{ collapsed }">
                 <div class="flex w-full min-w-0 items-center gap-1">
                     <TopLogoDropdown class="min-w-0 flex-1" :collapsed="collapsed" />
-                    <NotificationsNotificationPopover class="shrink-0" />
+                    <NotificationsNotificationPopover v-if="!collapsed" class="shrink-0" />
                 </div>
             </template>
 
             <template #default="{ collapsed }">
                 <UDashboardSearchButton :collapsed="collapsed" :label="$t('common.search_field')" />
+
+                <div v-if="collapsed" class="flex w-full justify-center">
+                    <NotificationsNotificationPopover />
+                </div>
 
                 <UNavigationMenu orientation="vertical" tooltip popover :items="items" :collapsed="collapsed" />
 
