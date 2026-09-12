@@ -134,9 +134,12 @@ func (s *DispatchersDB) SetUserState(
 				existing = &centrumdispatchers.Dispatchers{Job: job}
 			}
 
-			idx := slices.IndexFunc(existing.GetDispatchers(), func(candidate *jobscolleagues.Colleague) bool {
-				return candidate.GetUserId() == userId
-			})
+			idx := slices.IndexFunc(
+				existing.GetDispatchers(),
+				func(candidate *jobscolleagues.Colleague) bool {
+					return candidate.GetUserId() == userId
+				},
+			)
 			if signon {
 				if idx >= 0 {
 					return existing, false, nil

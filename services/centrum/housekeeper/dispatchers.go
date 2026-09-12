@@ -21,7 +21,12 @@ const (
 
 func (s *Housekeeper) runCleanupDispatchers(ctx context.Context, data *cron.CronjobData) error {
 	startedAt := time.Now()
-	defer s.metrics.ObserveHousekeeperDuration("cleanup_dispatchers", time.Since(startedAt).Seconds())
+	defer func() {
+		s.metrics.ObserveHousekeeperDuration(
+			"cleanup_dispatchers",
+			time.Since(startedAt).Seconds(),
+		)
+	}()
 
 	ctx, span := s.tracer.Start(ctx, "centrum.dispatchers_cleanup")
 	defer span.End()

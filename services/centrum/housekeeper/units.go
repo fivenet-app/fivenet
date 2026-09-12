@@ -26,7 +26,9 @@ const (
 
 func (s *Housekeeper) runCleanupUnits(ctx context.Context, data *cron.CronjobData) error {
 	startedAt := time.Now()
-	defer s.metrics.ObserveHousekeeperDuration("cleanup_units", time.Since(startedAt).Seconds())
+	defer func() {
+		s.metrics.ObserveHousekeeperDuration("cleanup_units", time.Since(startedAt).Seconds())
+	}()
 
 	ctx, span := s.tracer.Start(ctx, "centrum.units-cleanup")
 	defer span.End()
@@ -38,21 +40,12 @@ func (s *Housekeeper) runCleanupUnits(ctx context.Context, data *cron.CronjobDat
 		s.logger.Warn("failed to unmarshal cleanup units cron data", zap.Error(err))
 	}
 
-	dispatchesUnassigned, emptyUnitsRemoved, err := s.removeDispatchesFromEmptyUnits(ctx)
-	if err != nil {
-		s.logger.Error("failed to clean empty units from dispatches", zap.Error(err))
-	}
-
 	unitStatusesUpdated, err := s.cleanupUnitStatus(ctx)
 	if err != nil {
-		s.logger.Error("failed to clean up unit status", zap.Error(err))
+		return fmt.Errorf("failed to clean up unit status: %w", err)
 	}
-	s.metrics.SetHousekeeperWork("cleanup_units", "dispatches_unassigned", dispatchesUnassigned)
-	s.metrics.SetHousekeeperWork("cleanup_units", "empty_units_removed", emptyUnitsRemoved)
 	s.metrics.SetHousekeeperWork("cleanup_units", "unit_statuses_updated", unitStatusesUpdated)
 
-	dest.SetAttribute(cleanupUnitsDispatchesUnassignedAttr, strconv.Itoa(dispatchesUnassigned))
-	dest.SetAttribute(cleanupUnitsEmptyUnitsRemovedAttr, strconv.Itoa(emptyUnitsRemoved))
 	dest.SetAttribute(cleanupUnitsStatusesUpdatedAttr, strconv.Itoa(unitStatusesUpdated))
 
 	if err := data.MarshalFrom(dest); err != nil {
@@ -62,9 +55,55 @@ func (s *Housekeeper) runCleanupUnits(ctx context.Context, data *cron.CronjobDat
 	return nil
 }
 
+func (s *Housekeeper) runAuditEmptyUnitDispatches(
+	ctx context.Context,
+	data *cron.CronjobData,
+) error {
+	startedAt := time.Now()
+	defer func() {
+		s.metrics.ObserveHousekeeperDuration(
+			"audit_empty_unit_dispatches",
+			time.Since(startedAt).Seconds(),
+		)
+	}()
+
+	dest := &cron.GenericCronData{Attributes: map[string]string{}}
+	if err := data.Unmarshal(dest); err != nil {
+		s.logger.Warn("failed to unmarshal empty unit dispatch audit cron data", zap.Error(err))
+	}
+
+	dispatchesUnassigned, emptyUnitsRemoved, err := s.removeDispatchesFromEmptyUnits(ctx)
+	if err != nil {
+		return fmt.Errorf("failed to audit empty units in dispatches. %w", err)
+	}
+	s.metrics.SetHousekeeperWork(
+		"audit_empty_unit_dispatches",
+		"dispatches_unassigned",
+		dispatchesUnassigned,
+	)
+	s.metrics.SetHousekeeperWork(
+		"audit_empty_unit_dispatches",
+		"empty_units_removed",
+		emptyUnitsRemoved,
+	)
+
+	dest.SetAttribute(cleanupUnitsDispatchesUnassignedAttr, strconv.Itoa(dispatchesUnassigned))
+	dest.SetAttribute(cleanupUnitsEmptyUnitsRemovedAttr, strconv.Itoa(emptyUnitsRemoved))
+	if err := data.MarshalFrom(dest); err != nil {
+		return fmt.Errorf("failed to marshal empty unit dispatch audit cron data. %w", err)
+	}
+
+	return nil
+}
+
 func (s *Housekeeper) runAuditUnitMembership(ctx context.Context, data *cron.CronjobData) error {
 	startedAt := time.Now()
-	defer s.metrics.ObserveHousekeeperDuration("audit_unit_membership", time.Since(startedAt).Seconds())
+	defer func() {
+		s.metrics.ObserveHousekeeperDuration(
+			"audit_unit_membership",
+			time.Since(startedAt).Seconds(),
+		)
+	}()
 
 	ctx, span := s.tracer.Start(ctx, "centrum.unit-membership-audit")
 	defer span.End()
@@ -78,9 +117,13 @@ func (s *Housekeeper) runAuditUnitMembership(ctx context.Context, data *cron.Cro
 
 	offDutyUsersRemoved, mappingsRepaired, err := s.checkUnitUsers(ctx)
 	if err != nil {
-		s.logger.Error("failed to audit unit membership", zap.Error(err))
+		return fmt.Errorf("failed to audit unit membership: %w", err)
 	}
-	s.metrics.SetHousekeeperWork("audit_unit_membership", "off_duty_users_removed", offDutyUsersRemoved)
+	s.metrics.SetHousekeeperWork(
+		"audit_unit_membership",
+		"off_duty_users_removed",
+		offDutyUsersRemoved,
+	)
 	s.metrics.SetHousekeeperWork("audit_unit_membership", "mappings_repaired", mappingsRepaired)
 
 	dest.SetAttribute(cleanupUnitsOffDutyRemovedAttr, strconv.Itoa(offDutyUsersRemoved))

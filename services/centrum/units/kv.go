@@ -6,9 +6,14 @@ import (
 	"strings"
 
 	centrumunits "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/centrum/units"
+	"github.com/fivenet-app/fivenet/v2026/pkg/nats/store"
 	centrumutils "github.com/fivenet-app/fivenet/v2026/services/centrum/utils"
 	"google.golang.org/protobuf/proto"
 )
+
+func (s *UnitDB) Store() *store.Store[centrumunits.Unit, *centrumunits.Unit] {
+	return s.store
+}
 
 func (s *UnitDB) updateInKV(ctx context.Context, id int64, unit *centrumunits.Unit) error {
 	if err := s.store.ComputeUpdate(
