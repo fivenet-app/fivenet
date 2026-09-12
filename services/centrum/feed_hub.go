@@ -35,10 +35,16 @@ func (s *Server) startFeedHub(ctx context.Context) {
 	}
 }
 
-func (s *Server) publishFeedEvent(feed string, job string, response *pbcentrum.StreamResponse) {
+func (s *Server) publishFeedEvent(
+	feed string,
+	job string,
+	response *pbcentrum.StreamResponse,
+	kvRevision uint64,
+) {
 	if response == nil {
 		return
 	}
+	response.KvRevision = kvRevision
 
 	// Feed workers run concurrently. Keep sequence allocation and broker enqueue
 	// ordered so clients never mistake concurrent publications for a gap.
@@ -114,10 +120,16 @@ func (s *Server) consumeCentrumEvents(ctx context.Context) error {
 			status := &centrumdispatches.DispatchStatus{}
 			if err := proto.Unmarshal(msg.Data(), status); err != nil {
 				s.metrics.IncFeedDecodeFailure("dispatch_status")
-				s.logger.Warn("failed to unmarshal dispatch status feed event", zap.Error(err), zap.String("subject", msg.Subject()))
+				s.logger.Warn(
+					"failed to unmarshal dispatch status feed event",
+					zap.Error(err),
+					zap.String("subject", msg.Subject()),
+				)
 				continue
 			}
-			response = &pbcentrum.StreamResponse{Change: &pbcentrum.StreamResponse_DispatchStatus{DispatchStatus: status}}
+			response = &pbcentrum.StreamResponse{
+				Change: &pbcentrum.StreamResponse_DispatchStatus{DispatchStatus: status},
+			}
 
 		case eventscentrum.TopicUnit:
 			if eventType != eventscentrum.TypeUnitStatus {
@@ -126,13 +138,19 @@ func (s *Server) consumeCentrumEvents(ctx context.Context) error {
 			status := &centrumunits.UnitStatus{}
 			if err := proto.Unmarshal(msg.Data(), status); err != nil {
 				s.metrics.IncFeedDecodeFailure("unit_status")
-				s.logger.Warn("failed to unmarshal unit status feed event", zap.Error(err), zap.String("subject", msg.Subject()))
+				s.logger.Warn(
+					"failed to unmarshal unit status feed event",
+					zap.Error(err),
+					zap.String("subject", msg.Subject()),
+				)
 				continue
 			}
-			response = &pbcentrum.StreamResponse{Change: &pbcentrum.StreamResponse_UnitStatus{UnitStatus: status}}
+			response = &pbcentrum.StreamResponse{
+				Change: &pbcentrum.StreamResponse_UnitStatus{UnitStatus: status},
+			}
 		}
 
-		s.publishFeedEvent("events", job, response)
+		s.publishFeedEvent("events", job, response, 0)
 	}
 }
 
@@ -140,7 +158,11 @@ func (s *Server) runKVFeed(ctx context.Context, feed feedCfg) {
 	for {
 		err := s.consumeKVFeed(ctx, feed)
 		if err != nil && !protoutils.IsContextCanceled(err) {
-			s.logger.Error("centrum KV feed stopped", zap.Error(err), zap.String("bucket", feed.Bucket))
+			s.logger.Error(
+				"centrum KV feed stopped",
+				zap.Error(err),
+				zap.String("bucket", feed.Bucket),
+			)
 		}
 
 		select {
@@ -181,13 +203,18 @@ func (s *Server) consumeKVFeed(ctx context.Context, feed feedCfg) error {
 		}
 
 		key := strings.TrimPrefix(msg.Subject(), "$KV."+feed.Bucket+".")
+		metadata, err := msg.Metadata()
+		if err != nil {
+			return fmt.Errorf("failed to read KV feed message metadata. %w", err)
+		}
+		kvRevision := metadata.Sequence.Stream
 		job := key
 		if !feed.NoWildcard {
 			job, _, _ = strings.Cut(key, ".")
 		}
 
 		if op := msg.Headers().Get("KV-Operation"); op == "DEL" || op == "PURGE" {
-			s.publishFeedEvent(feed.StreamName, job, feed.WrapDelete(key))
+			s.publishFeedEvent(feed.StreamName, job, feed.WrapDelete(key), kvRevision)
 			continue
 		}
 		if s.feedBroker.SubCount() == 0 {
@@ -198,10 +225,15 @@ func (s *Server) consumeKVFeed(ctx context.Context, feed feedCfg) error {
 		obj, err := feed.Unmarshal(ctx, s, msg.Data())
 		if err != nil {
 			s.metrics.IncFeedDecodeFailure(feed.StreamName)
-			s.logger.Warn("failed to unmarshal KV feed message", zap.Error(err), zap.String("bucket", feed.Bucket), zap.String("subject", msg.Subject()))
+			s.logger.Warn(
+				"failed to unmarshal KV feed message",
+				zap.Error(err),
+				zap.String("bucket", feed.Bucket),
+				zap.String("subject", msg.Subject()),
+			)
 			continue
 		}
 
-		s.publishFeedEvent(feed.StreamName, job, feed.WrapPut(obj))
+		s.publishFeedEvent(feed.StreamName, job, feed.WrapPut(obj), kvRevision)
 	}
 }

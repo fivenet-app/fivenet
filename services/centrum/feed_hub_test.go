@@ -73,7 +73,11 @@ func waitForFeedHubConsumer(t *testing.T, srv *Server, streamName string) {
 	}, 2*time.Second, 10*time.Millisecond)
 }
 
-func waitForFeedEvent(t *testing.T, feed <-chan *feedEvent, match func(*feedEvent) bool) *feedEvent {
+func waitForFeedEvent(
+	t *testing.T,
+	feed <-chan *feedEvent,
+	match func(*feedEvent) bool,
+) *feedEvent {
 	t.Helper()
 
 	timeout := time.NewTimer(2 * time.Second)
@@ -101,16 +105,29 @@ func TestFeedHubForwardsJetStreamEventsAndKVUpdates(t *testing.T) {
 	feed := srv.feedBroker.Subscribe()
 	defer srv.feedBroker.Unsubscribe(feed)
 
-	status := &centrumunits.UnitStatus{Id: 42, UnitId: 7, Status: centrumunits.StatusUnit_STATUS_UNIT_BUSY}
+	status := &centrumunits.UnitStatus{
+		Id:     42,
+		UnitId: 7,
+		Status: centrumunits.StatusUnit_STATUS_UNIT_BUSY,
+	}
 	data, err := proto.Marshal(status)
 	require.NoError(t, err)
-	_, err = srv.js.Publish(t.Context(), eventscentrum.BuildSubject(eventscentrum.TopicUnit, eventscentrum.TypeUnitStatus, "ambulance"), data)
+	_, err = srv.js.Publish(
+		t.Context(),
+		eventscentrum.BuildSubject(
+			eventscentrum.TopicUnit,
+			eventscentrum.TypeUnitStatus,
+			"ambulance",
+		),
+		data,
+	)
 	require.NoError(t, err)
 
 	event := waitForFeedEvent(t, feed, func(event *feedEvent) bool {
 		return event.Job == "ambulance" && event.Response.GetUnitStatus().GetId() == status.GetId()
 	})
 	assert.Equal(t, status.GetUnitId(), event.Response.GetUnitStatus().GetUnitId())
+	assert.Zero(t, event.Response.GetKvRevision())
 
 	settingsKV, err := srv.js.KeyValue(t.Context(), "centrum_settings")
 	require.NoError(t, err)
@@ -123,4 +140,5 @@ func TestFeedHubForwardsJetStreamEventsAndKVUpdates(t *testing.T) {
 		return event.Job == "police" && event.Response.GetSettings().GetJob() == "police"
 	})
 	assert.True(t, event.Response.GetSettings().GetEnabled())
+	assert.NotZero(t, event.Response.GetKvRevision())
 }

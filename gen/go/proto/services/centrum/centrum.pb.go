@@ -926,6 +926,9 @@ func (b0 StreamRequest_builder) Build() *StreamRequest {
 
 type StreamResponse struct {
 	state protoimpl.MessageState `protogen:"hybrid.v1"`
+	// Monotonic JetStream sequence of the source KV stream. It orders aggregate
+	// updates and delete tombstones for a single KV-backed resource.
+	KvRevision uint64 `protobuf:"varint,13,opt,name=kv_revision,json=kvRevision,proto3" json:"kv_revision,omitempty"`
 	// Types that are valid to be assigned to Change:
 	//
 	//	*StreamResponse_Handshake
@@ -968,6 +971,13 @@ func (x *StreamResponse) ProtoReflect() protoreflect.Message {
 		return ms
 	}
 	return mi.MessageOf(x)
+}
+
+func (x *StreamResponse) GetKvRevision() uint64 {
+	if x != nil {
+		return x.KvRevision
+	}
+	return 0
 }
 
 func (x *StreamResponse) GetChange() isStreamResponse_Change {
@@ -1083,6 +1093,10 @@ func (x *StreamResponse) GetSettingsDeleted() string {
 		}
 	}
 	return ""
+}
+
+func (x *StreamResponse) SetKvRevision(v uint64) {
+	x.KvRevision = v
 }
 
 func (x *StreamResponse) SetHandshake(v *StreamHandshake) {
@@ -1399,6 +1413,9 @@ func (x *StreamResponse) WhichChange() case_StreamResponse_Change {
 type StreamResponse_builder struct {
 	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
 
+	// Monotonic JetStream sequence of the source KV stream. It orders aggregate
+	// updates and delete tombstones for a single KV-backed resource.
+	KvRevision uint64
 	// Fields of oneof Change:
 	Handshake       *StreamHandshake
 	LatestState     *LatestState
@@ -1419,6 +1436,7 @@ func (b0 StreamResponse_builder) Build() *StreamResponse {
 	m0 := &StreamResponse{}
 	b, x := &b0, m0
 	_, _ = b, x
+	x.KvRevision = b.KvRevision
 	if b.Handshake != nil {
 		x.Change = &StreamResponse_Handshake{b.Handshake}
 	}
@@ -1582,8 +1600,10 @@ const file_services_centrum_centrum_proto_rawDesc = "" +
 	"dispatches\x18\x04 \x03(\v2&.resources.centrum.dispatches.DispatchR\n" +
 	"dispatchesB\x0e\n" +
 	"\f_own_unit_id\"\x0f\n" +
-	"\rStreamRequest\"\xb5\x06\n" +
-	"\x0eStreamResponse\x12A\n" +
+	"\rStreamRequest\"\xd6\x06\n" +
+	"\x0eStreamResponse\x12\x1f\n" +
+	"\vkv_revision\x18\r \x01(\x04R\n" +
+	"kvRevision\x12A\n" +
 	"\thandshake\x18\x01 \x01(\v2!.services.centrum.StreamHandshakeH\x00R\thandshake\x12B\n" +
 	"\flatest_state\x18\x02 \x01(\v2\x1d.services.centrum.LatestStateH\x00R\vlatestState\x12B\n" +
 	"\bsettings\x18\x03 \x01(\v2$.resources.centrum.settings.SettingsH\x00R\bsettings\x12E\n" +

@@ -8598,6 +8598,7 @@ Auth Service handles user authentication, character selection and oauth2 connect
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
+| `kv_revision` | [uint64](#uint64) |  | Monotonic JetStream sequence of the source KV stream. It orders aggregate updates and delete tombstones for a single KV-backed resource. |
 | `handshake` | [StreamHandshake](#servicescentrumStreamHandshake) |  |  |
 | `latest_state` | [LatestState](#servicescentrumLatestState) |  |  |
 | `settings` | [resources.centrum.settings.Settings](#resourcescentrumsettingsSettings) |  |  |
