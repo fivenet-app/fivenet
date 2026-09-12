@@ -48,7 +48,7 @@ const { centrum } = storeToRefs(settingsStore);
 
 type GroupedDispatches = { date: Date; key: string; dispatches: Dispatch[] }[];
 
-const grouped = computedAsync(async () => {
+const grouped = computed(() => {
     const groups: GroupedDispatches = [];
     (props.dispatches ?? getSortedDispatches.value).forEach((e) => {
         const date = toDate(e.createdAt);

@@ -10,7 +10,7 @@ defineProps<{
 const centrumStore = useCentrumStore();
 const { dispatches } = storeToRefs(centrumStore);
 
-const counts = computedAsync(() => {
+const counts = computed(() => {
     const count = {
         unassigned: 0,
         enRoute: 0,

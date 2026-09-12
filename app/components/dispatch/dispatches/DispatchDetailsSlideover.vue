@@ -36,6 +36,8 @@ const centrumStore = useCentrumStore();
 const { dispatches, timeCorrection } = storeToRefs(centrumStore);
 const { canDo, selfAssign } = centrumStore;
 const notifications = useNotificationsStore();
+const now = useSecondClock();
+const formatTimeAgo = useLocaleTimeAgoFormatter();
 
 const centrumDispatchesClient = await getCentrumDispatchesClient();
 
@@ -210,10 +212,7 @@ const dispatchStatusUpdateModal = overlay.create(DispatchStatusUpdateModal);
                                                 >
                                                     -
                                                     {{
-                                                        useLocaleTimeAgo(toDate(unit.expiresAt, timeCorrection), {
-                                                            showSecond: true,
-                                                            updateInterval: 1_000,
-                                                        }).value
+                                                        formatTimeAgo(toDate(unit.expiresAt, timeCorrection), { showSecond: true }, now)
                                                     }}
                                                 </span>
                                             </div>

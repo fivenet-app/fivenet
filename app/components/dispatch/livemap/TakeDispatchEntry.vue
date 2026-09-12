@@ -13,6 +13,7 @@ const props = withDefaults(
     defineProps<{
         dispatch: Dispatch;
         preselected?: boolean;
+        now: Date;
     }>(),
     {
         preselected: true,
@@ -24,6 +25,7 @@ const emit = defineEmits<{
 }>();
 
 const { gotoCoords } = useLivemapStore();
+const formatTimeAgo = useLocaleTimeAgoFormatter();
 
 const centrumStore = useCentrumStore();
 const { ownUnitId, timeCorrection } = storeToRefs(centrumStore);
@@ -70,14 +72,13 @@ onBeforeMount(() => {
             <div v-if="expiresAt" class="flex flex-col text-sm">
                 <span class="font-semibold">{{ $t('common.expires_in') }}:</span>
                 <span>{{
-                    useLocaleTimeAgo(toDate(expiresAt, timeCorrection), { showSecond: true, updateInterval: 1_000 }).value
+                    formatTimeAgo(toDate(expiresAt, timeCorrection), { showSecond: true }, now)
                 }}</span>
             </div>
             <div v-if="expiresAt" class="flex flex-col text-sm">
                 <span class="font-semibold">{{ $t('common.created') }}:</span>
                 <span>{{
-                    useLocaleTimeAgo(toDate(dispatch.createdAt, timeCorrection), { showSecond: true, updateInterval: 1_000 })
-                        .value
+                    formatTimeAgo(toDate(dispatch.createdAt, timeCorrection), { showSecond: true }, now)
                 }}</span>
             </div>
         </dt>

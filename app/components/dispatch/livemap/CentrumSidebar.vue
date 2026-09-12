@@ -209,6 +209,10 @@ const { pause, resume } = useIntervalFn(
     },
 );
 
+const { pause: pauseCheckup, resume: resumeCheckup } = useIntervalFn(() => checkup(), 1 * 60 * 1000, {
+    immediate: false,
+});
+
 function toggleRequireUnitNotification(): void {
     if (canStream.value && settings.value?.enabled) {
         if (settings.value?.timings?.requireUnit === true && getOwnUnit.value === undefined) {
@@ -250,6 +254,7 @@ const onSubmitDispatchStatusThrottle = useThrottleFn(async (dispatchId?: number,
 }, 1000);
 
 const ownUnitStatus = computed(() => unitStatusToBadgeColor(getOwnUnit.value?.status?.status));
+const dispatchTimeNow = useSecondClock();
 
 function ensureOwnDispatchSelected(): void {
     if (getSortedOwnDispatches.value.length === 0) {
@@ -304,18 +309,22 @@ watchDebounced(
     },
 );
 
-watchDebounced(getSortedOwnDispatches.value, () => ensureOwnDispatchSelected(), {
+watchDebounced(getSortedOwnDispatches, () => ensureOwnDispatchSelected(), {
     debounce: 75,
     maxWait: 200,
 });
 
 watch(settings, () => {
-    if (!settings.value?.enabled) return;
+    if (!settings.value?.enabled) {
+        pauseCheckup();
+        pause();
+        return;
+    }
 
-    useIntervalFn(() => checkup(), 1 * 60 * 1000);
+    resumeCheckup();
     toggleSidebarBasedOnUnit();
     toggleRequireUnitNotification();
-});
+}, { immediate: true });
 
 onBeforeMount(async () => {
     if (!canStream.value) return;
@@ -711,6 +720,7 @@ defineShortcuts({
                                                         v-if="dispatches.get(dispatch) !== undefined"
                                                         v-model="selectedDispatch"
                                                         :dispatch="dispatches.get(dispatch)!"
+                                                        :now="dispatchTimeNow"
                                                     />
                                                 </template>
                                             </div>

@@ -286,13 +286,14 @@ export function dispatchTimeToTextColorSidebar(
     date: Timestamp | undefined,
     status: StatusDispatch = StatusDispatch.UNSPECIFIED,
     maxTime: number = 900,
+    now: number = Date.now(),
 ): { ping: boolean; class: string } {
     if (isStatusDispatchCompleted(status)) {
         return { ping: false, class: '' };
     }
 
     // elapsed time in seconds since dispatch
-    const elapsed = (Date.now() - toDate(date).getTime()) / 1000;
+    const elapsed = (now - toDate(date).getTime()) / 1000;
     // fraction of max elapsed (clamped 0…1)
     const over = Math.min(Math.max(elapsed / maxTime, 0), 1);
 
