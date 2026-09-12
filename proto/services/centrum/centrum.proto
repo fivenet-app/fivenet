@@ -72,6 +72,10 @@ message LatestState {
 message StreamRequest {}
 
 message StreamResponse {
+	// Monotonic JetStream sequence of the source KV stream. It orders aggregate
+	// updates and delete tombstones for a single KV-backed resource.
+	uint64 kv_revision = 13;
+
   oneof change {
     option (buf.validate.oneof).required = true;
 

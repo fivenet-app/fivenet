@@ -13,8 +13,11 @@ import (
 )
 
 var (
-	errFeedResync = errors.New("centrum stream feed gap")
-	errFeedClosed = errors.New("centrum stream feed closed")
+	errFeedResync      = errors.New("centrum stream feed gap")
+	errFeedClosed      = errors.New("centrum stream feed closed")
+	errAccessChanged   = errors.New("centrum stream access changed")
+	errUserInfoChanged = errors.New("centrum stream user info changed")
+	errUserInfoResync  = errors.New("centrum stream user info resync")
 )
 
 func (s *Server) stream(
@@ -23,6 +26,7 @@ func (s *Server) stream(
 	userInfo *userinfo.UserInfo,
 	additionalJobs []string,
 	feed <-chan *feedEvent,
+	userInfoChanges <-chan *userinfo.UserInfoChanged,
 	snapshotSequence uint64,
 ) error {
 	jobs := append([]string{userInfo.GetJob()}, additionalJobs...)
@@ -35,6 +39,16 @@ func (s *Server) stream(
 			select {
 			case <-gctx.Done():
 				return nil
+			case change, ok := <-userInfoChanges:
+				if !ok {
+					return errUserInfoResync
+				}
+				if change == nil || change.GetUserId() != userInfo.GetUserId() {
+					continue
+				}
+				userInfo.Job = change.GetNewJob()
+				userInfo.JobGrade = change.GetNewJobGrade()
+				return errUserInfoChanged
 			case event, ok := <-feed:
 				if !ok {
 					return errFeedClosed
@@ -43,9 +57,21 @@ func (s *Server) stream(
 					continue
 				}
 				if event.Sequence != lastSequence+1 {
-					return fmt.Errorf("%w: expected %d, received %d", errFeedResync, lastSequence+1, event.Sequence)
+					return fmt.Errorf(
+						"%w: expected %d, received %d",
+						errFeedResync,
+						lastSequence+1,
+						event.Sequence,
+					)
 				}
 				lastSequence = event.Sequence
+				if settings := event.Response.GetSettings(); settings != nil &&
+					settings.GetJob() == userInfo.GetJob() {
+					return errAccessChanged
+				}
+				if event.Response.GetSettingsDeleted() == userInfo.GetJob() {
+					return errAccessChanged
+				}
 				if !slices.Contains(jobs, event.Job) {
 					continue
 				}
