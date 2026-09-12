@@ -33,7 +33,6 @@ import (
 	"github.com/stretchr/testify/suite"
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapgrpc"
-	"golang.org/x/net/http2"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/credentials"
@@ -184,7 +183,7 @@ func (s *GrpcWebWrapperTestSuite) makeRequest(
 	req.Header.Set("content-type", contentType)
 	client := &http.Client{
 		Timeout:   1 * time.Second,
-		Transport: &http2.Transport{TLSClientConfig: &tls.Config{InsecureSkipVerify: true}},
+		Transport: &http.Transport{TLSClientConfig: &tls.Config{InsecureSkipVerify: true}},
 	}
 	if s.httpMajorVersion < 2 {
 		client.Transport = &http.Transport{TLSClientConfig: &tls.Config{InsecureSkipVerify: true}}
