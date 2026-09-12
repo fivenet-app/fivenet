@@ -936,7 +936,7 @@ func (s *Store) publishUserInfoChanged(
 	userID int32,
 	jobChange *userJobChange,
 ) {
-	if jobChange == nil || accountID == nil || s.notifi == nil {
+	if jobChange == nil || accountID == nil {
 		return
 	}
 
@@ -949,10 +949,24 @@ func (s *Store) publishUserInfoChanged(
 		s.enricher,
 	)
 
+	if s.userInfoChanges != nil {
+		if err := s.userInfoChanges.PublishUserInfoChanged(ctx, event); err != nil {
+			s.logger.Warn(
+				"failed to publish user info change event",
+				zap.Int32("user_id", userID),
+				zap.Error(err),
+			)
+		}
+		return
+	}
+
+	// Keep direct notification delivery for tests and deployments that have not
+	// yet wired the canonical user-info change publisher.
+	if s.notifi == nil {
+		return
+	}
 	if err := s.notifi.SendUserEvent(ctx, userID, &notificationsevents.UserEvent{
-		Data: &notificationsevents.UserEvent_UserInfoChanged{
-			UserInfoChanged: event,
-		},
+		Data: &notificationsevents.UserEvent_UserInfoChanged{UserInfoChanged: event},
 	}); err != nil {
 		s.logger.Warn(
 			"failed to publish user info change event",

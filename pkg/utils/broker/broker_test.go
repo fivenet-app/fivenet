@@ -109,5 +109,10 @@ func TestBrokerClosesSlowResyncSubscriber(t *testing.T) {
 	assert.Equal(t, 1, <-sub)
 	_, ok := <-sub
 	assert.False(t, ok)
-	assert.Eventually(t, func() bool { return broker.SubCount() == 0 }, time.Second, 10*time.Millisecond)
+	assert.Eventually(
+		t,
+		func() bool { return broker.SubCount() == 0 },
+		time.Second,
+		10*time.Millisecond,
+	)
 }

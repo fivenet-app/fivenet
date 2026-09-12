@@ -99,6 +99,7 @@ func runMigrations(
 
 func init() {
 	registerMigration(Migration{ID: "001_remove_user_locations", Fn: migrate001})
+	registerMigration(Migration{ID: "002_remove_userinfo_poller", Fn: migrate002})
 }
 
 func migrate001(ctx context.Context, js *JSWrapper) error {
@@ -148,6 +149,20 @@ func migrate001(ctx context.Context, js *JSWrapper) error {
 		if !errors.Is(err, jetstream.ErrStreamNotFound) {
 			return fmt.Errorf("failed to delete userinfo stream. %w", err)
 		}
+	}
+
+	return nil
+}
+
+func migrate002(ctx context.Context, js *JSWrapper) error {
+	if err := js.DeleteKeyValue(ctx, "userinfo_poll_ttl"); err != nil &&
+		!errors.Is(err, jetstream.ErrBucketNotFound) {
+		return fmt.Errorf("failed to delete user info poller ttl bucket. %w", err)
+	}
+
+	if err := js.DeleteStream(ctx, "POLL_REQUESTS"); err != nil &&
+		!errors.Is(err, jetstream.ErrStreamNotFound) {
+		return fmt.Errorf("failed to delete user info poll request stream. %w", err)
 	}
 
 	return nil
