@@ -53,7 +53,7 @@ func (s *Server) stream(
 				if !ok {
 					return errFeedClosed
 				}
-				if event == nil || event.Response == nil || event.Sequence <= snapshotSequence {
+				if event == nil || event.Sequence <= snapshotSequence {
 					continue
 				}
 				if event.Sequence != lastSequence+1 {
@@ -65,6 +65,12 @@ func (s *Server) stream(
 					)
 				}
 				lastSequence = event.Sequence
+				if event.Resync {
+					return errFeedResync
+				}
+				if event.Response == nil {
+					continue
+				}
 				if settings := event.Response.GetSettings(); settings != nil &&
 					settings.GetJob() == userInfo.GetJob() {
 					return errAccessChanged
