@@ -20,6 +20,7 @@ import (
 	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/auth"
 	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/errswrap"
 	grpc_audit "github.com/fivenet-app/fivenet/v2026/pkg/grpc/interceptors/audit"
+	"github.com/fivenet-app/fivenet/v2026/pkg/notifi"
 	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
 	errorsdocuments "github.com/fivenet-app/fivenet/v2026/services/documents/errors"
 	citizenshydrator "github.com/fivenet-app/fivenet/v2026/stores/citizens/hydrator"
@@ -27,7 +28,6 @@ import (
 	"github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
 	"github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/logging"
-	"go.uber.org/zap"
 )
 
 const DocRequestMinimumWaitTime = 24 * time.Hour
@@ -263,11 +263,7 @@ func (s *Server) CreateDocumentReq(
 		Request: request,
 	}
 
-	if publishNotification != nil {
-		if err := publishNotification(ctx); err != nil {
-			s.logger.Warn("failed to publish document request notification", zap.Error(err))
-		}
-	}
+	notifi.PublishAfterCommit(ctx, s.logger, "document_request_created", publishNotification)
 
 	return resp, nil
 }
@@ -466,11 +462,7 @@ func (s *Server) UpdateDocumentReq(
 	}
 
 	grpc_audit.SetAction(ctx, audit.EventAction_EVENT_ACTION_UPDATED)
-	if publishNotification != nil {
-		if err := publishNotification(ctx); err != nil {
-			s.logger.Warn("failed to publish document request notification", zap.Error(err))
-		}
-	}
+	notifi.PublishAfterCommit(ctx, s.logger, "document_request_decided", publishNotification)
 
 	return &pbdocuments.UpdateDocumentReqResponse{
 		Request: request,
@@ -553,11 +545,7 @@ func (s *Server) DeleteDocumentReq(
 	}
 
 	grpc_audit.SetAction(ctx, audit.EventAction_EVENT_ACTION_DELETED)
-	if publishNotification != nil {
-		if err := publishNotification(ctx); err != nil {
-			s.logger.Warn("failed to publish document request notification", zap.Error(err))
-		}
-	}
+	notifi.PublishAfterCommit(ctx, s.logger, "document_request_cancelled", publishNotification)
 
 	return &pbdocuments.DeleteDocumentReqResponse{}, nil
 }
@@ -635,8 +623,8 @@ func (s *Server) prepareDocumentRequestNotification(
 	documentID := doc.GetId()
 	entityType := "documents.document"
 
-	not := &notifications.Notification{
-		UserId: targetUserId,
+	not := notifi.NewUserNotification(notifi.UserNotificationParams{
+		UserID: targetUserId,
 		Title: &common.I18NItem{
 			Key: key + ".title",
 		},
@@ -647,9 +635,9 @@ func (s *Server) prepareDocumentRequestNotification(
 		Type:        notifications.NotificationType_NOTIFICATION_TYPE_INFO,
 		Category:    notifications.NotificationCategory_NOTIFICATION_CATEGORY_DOCUMENT,
 		Kind:        kind,
-		ActorUserId: &sourceUserId,
+		ActorUserID: &sourceUserId,
 		EntityType:  &entityType,
-		EntityId:    &documentID,
+		EntityID:    &documentID,
 		Data: &notifications.Data{
 			Link: &notifications.Link{
 				To: fmt.Sprintf("/documents/%d#requests", doc.GetId()),
@@ -658,7 +646,7 @@ func (s *Server) prepareDocumentRequestNotification(
 				UserId: sourceUserId,
 			},
 		},
-	}
+	})
 	return s.notifi.PrepareUserNotification(ctx, db, not)
 }
 

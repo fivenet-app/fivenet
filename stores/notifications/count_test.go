@@ -27,3 +27,17 @@ func TestStoreCountUnread(t *testing.T) {
 	assert.Equal(t, int64(4), total)
 	require.NoError(t, mock.ExpectationsWereMet())
 }
+
+func TestStoreCountUnreadExcludesArchivedNotifications(t *testing.T) {
+	t.Parallel()
+
+	store, mock := newTestStore(t)
+	mock.ExpectQuery(`(?s)SELECT COUNT\(fivenet_notifications.id\) AS "count".*fivenet_notifications.user_id = \?.*fivenet_notifications.read_at IS NULL.*fivenet_notifications.archived_at IS NULL`).
+		WithArgs(int32(3)).
+		WillReturnRows(sqlmock.NewRows([]string{"count"}).AddRow(int64(4)))
+
+	count, err := store.CountUnread(t.Context(), 3)
+	require.NoError(t, err)
+	assert.Equal(t, int64(4), count)
+	require.NoError(t, mock.ExpectationsWereMet())
+}

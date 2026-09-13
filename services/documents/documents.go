@@ -28,6 +28,7 @@ import (
 	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/auth"
 	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/errswrap"
 	grpc_audit "github.com/fivenet-app/fivenet/v2026/pkg/grpc/interceptors/audit"
+	"github.com/fivenet-app/fivenet/v2026/pkg/notifi"
 	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
 	errorsdocuments "github.com/fivenet-app/fivenet/v2026/services/documents/errors"
 	citizenshydrator "github.com/fivenet-app/fivenet/v2026/stores/citizens/hydrator"
@@ -843,11 +844,7 @@ func (s *Server) UpdateDocument(
 	if err := tx.Commit(); err != nil {
 		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 	}
-	for _, publishNotification := range publishApprovalNotifications {
-		if err := publishNotification(ctx); err != nil {
-			s.logger.Warn("failed to publish document approval notification", zap.Error(err))
-		}
-	}
+	notifi.PublishAfterCommit(ctx, s.logger, "document_approval_assigned", publishApprovalNotifications...)
 
 	grpc_audit.SetAction(ctx, audit.EventAction_EVENT_ACTION_UPDATED)
 

@@ -21,13 +21,13 @@ import (
 	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/auth"
 	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/errswrap"
 	grpc_audit "github.com/fivenet-app/fivenet/v2026/pkg/grpc/interceptors/audit"
+	"github.com/fivenet-app/fivenet/v2026/pkg/notifi"
 	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
 	errorsdocuments "github.com/fivenet-app/fivenet/v2026/services/documents/errors"
 	citizenshydrator "github.com/fivenet-app/fivenet/v2026/stores/citizens/hydrator"
 	"github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
 	"github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/logging"
-	"go.uber.org/zap"
 )
 
 const (
@@ -169,14 +169,7 @@ func (s *Server) PostComment(
 	if err := tx.Commit(); err != nil {
 		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 	}
-	for _, publishNotification := range publishNotifications {
-		if publishNotification == nil {
-			continue
-		}
-		if err := publishNotification(ctx); err != nil {
-			s.logger.Warn("failed to publish document comment notification", zap.Error(err))
-		}
-	}
+	notifi.PublishAfterCommit(ctx, s.logger, "document_comment_added", publishNotifications...)
 
 	grpc_audit.SetAction(ctx, audit.EventAction_EVENT_ACTION_CREATED)
 
@@ -477,8 +470,13 @@ func (s *Server) notifyUsersNewComment(
 			continue
 		}
 
-		not := &notifications.Notification{
-			UserId: targetUserId,
+		entityType := "documents.document"
+		documentID := doc.GetId()
+		not := notifi.NewUserNotification(notifi.UserNotificationParams{
+			UserID:      targetUserId,
+			ActorUserID: &sourceUserId,
+			EntityType:  &entityType,
+			EntityID:    &documentID,
 			Title: &common.I18NItem{
 				Key: "notifications.documents.document_comment_added.title",
 			},
@@ -496,7 +494,7 @@ func (s *Server) notifyUsersNewComment(
 					UserId: sourceUserId,
 				},
 			},
-		}
+		})
 		publishNotification, err := s.notifi.PrepareUserNotification(ctx, tx, not)
 		if err != nil {
 			return nil, err

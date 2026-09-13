@@ -135,21 +135,9 @@ func (s *Server) MarkNotifications(
 		return nil, errswrap.NewError(err, ErrFailedRequest)
 	}
 
-	unreadCount, err := s.store.CountUnread(ctx, userInfo.GetUserId())
+	unreadCount, err := s.syncUnreadCount(ctx, userInfo.GetUserId(), updated)
 	if err != nil {
 		return nil, errswrap.NewError(err, ErrFailedRequest)
-	}
-
-	if updated > 0 {
-		s.js.PublishProto(
-			ctx,
-			fmt.Sprintf("%s.%s.%d", notifi.BaseSubject, notifi.UserTopic, userInfo.GetUserId()),
-			&notificationsevents.UserEvent{
-				Data: &notificationsevents.UserEvent_NotificationsUnreadCount{
-					NotificationsUnreadCount: unreadCount,
-				},
-			},
-		)
 	}
 
 	return &pbnotifications.MarkNotificationsResponse{
@@ -179,15 +167,29 @@ func (s *Server) UpdateNotificationState(
 		return nil, errswrap.NewError(err, ErrFailedRequest)
 	}
 
-	unreadCount, err := s.store.CountUnread(ctx, userInfo.GetUserId())
+	unreadCount, err := s.syncUnreadCount(ctx, userInfo.GetUserId(), updated)
 	if err != nil {
 		return nil, errswrap.NewError(err, ErrFailedRequest)
+	}
+
+	return &pbnotifications.UpdateNotificationStateResponse{
+		Updated:     updated,
+		UnreadCount: unreadCount,
+	}, nil
+}
+
+// syncUnreadCount reads the authoritative count and notifies other active
+// clients only after a mutation changed at least one notification.
+func (s *Server) syncUnreadCount(ctx context.Context, userID int32, updated int64) (int64, error) {
+	unreadCount, err := s.store.CountUnread(ctx, userID)
+	if err != nil {
+		return 0, err
 	}
 
 	if updated > 0 {
 		s.js.PublishProto(
 			ctx,
-			fmt.Sprintf("%s.%s.%d", notifi.BaseSubject, notifi.UserTopic, userInfo.GetUserId()),
+			fmt.Sprintf("%s.%s.%d", notifi.BaseSubject, notifi.UserTopic, userID),
 			&notificationsevents.UserEvent{
 				Data: &notificationsevents.UserEvent_NotificationsUnreadCount{
 					NotificationsUnreadCount: unreadCount,
@@ -196,10 +198,7 @@ func (s *Server) UpdateNotificationState(
 		)
 	}
 
-	return &pbnotifications.UpdateNotificationStateResponse{
-		Updated:     updated,
-		UnreadCount: unreadCount,
-	}, nil
+	return unreadCount, nil
 }
 
 func (s *Server) GetNotificationPreferences(
@@ -251,6 +250,10 @@ func (s *Server) UpdateNotificationPreference(
 	return &pbnotifications.UpdateNotificationPreferenceResponse{Preferences: preferences}, nil
 }
 
+// validPreferenceScope is the backend authority for accepted category/kind
+// combinations. Keep app/components/user-settings/NotificationPreferences.vue
+// and app/components/notifications/{List.vue,entries/registry.ts} in sync when
+// adding or changing a notification category or kind.
 func validPreferenceScope(preference *resourcesnotifications.NotificationPreference) bool {
 	if preference == nil {
 		return false

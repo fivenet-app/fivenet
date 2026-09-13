@@ -149,3 +149,24 @@ func TestStoreMarkNotificationsSkipsWhenNothingSelected(t *testing.T) {
 	assert.Equal(t, int64(0), affected)
 	require.NoError(t, mock.ExpectationsWereMet())
 }
+
+func TestStoreUpdateNotificationStateUpdatesReadAndArchivedState(t *testing.T) {
+	t.Parallel()
+
+	store, mock := newTestStore(t)
+	unread := false
+	archived := true
+	mock.ExpectExec(`(?s)UPDATE fivenet_notifications SET read_at = CURRENT_TIMESTAMP, archived_at = CURRENT_TIMESTAMP WHERE.*fivenet_notifications.user_id = \?.*fivenet_notifications.id IN \(\?, \?\).*LIMIT \?`).
+		WithArgs(int32(3), int64(10), int64(11), int64(2)).
+		WillReturnResult(sqlmock.NewResult(0, 2))
+
+	updated, err := store.UpdateNotificationState(t.Context(), StateQuery{
+		UserID:   3,
+		IDs:      []int64{10, 11},
+		Unread:   &unread,
+		Archived: &archived,
+	})
+	require.NoError(t, err)
+	assert.Equal(t, int64(2), updated)
+	require.NoError(t, mock.ExpectationsWereMet())
+}

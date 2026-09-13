@@ -20,6 +20,7 @@ import (
 	qualificationsstore "github.com/fivenet-app/fivenet/v2026/stores/qualifications"
 	"github.com/go-jet/jet/v2/mysql"
 	"go.uber.org/fx"
+	"go.uber.org/zap"
 	"google.golang.org/grpc"
 )
 
@@ -70,6 +71,7 @@ type Server struct {
 	pbqualifications.QualificationsServiceServer
 	pbqualifications.ExamServiceServer
 
+	logger   *zap.Logger
 	db       *sql.DB
 	perms    perms.Permissions
 	enricher mstlystcdata.IUserAwareEnricher
@@ -87,6 +89,7 @@ type Server struct {
 type Params struct {
 	fx.In
 
+	Logger            *zap.Logger
 	DB                *sql.DB
 	Perms             perms.Permissions
 	UserAwareEnricher mstlystcdata.IUserAwareEnricher
@@ -116,6 +119,7 @@ func NewServer(p Params) *Server {
 	).WithUploadFilter(filestore.NewImageUploadFilter())
 
 	s := &Server{
+		logger:   p.Logger.Named("qualifications"),
 		db:       p.DB,
 		perms:    p.Perms,
 		enricher: p.UserAwareEnricher,

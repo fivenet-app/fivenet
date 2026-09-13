@@ -14,6 +14,7 @@ import (
 	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/auth"
 	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/errswrap"
 	grpc_audit "github.com/fivenet-app/fivenet/v2026/pkg/grpc/interceptors/audit"
+	"github.com/fivenet-app/fivenet/v2026/pkg/notifi"
 	"github.com/fivenet-app/fivenet/v2026/pkg/utils"
 	errorscalendar "github.com/fivenet-app/fivenet/v2026/services/calendar/errors"
 	"github.com/go-jet/jet/v2/mysql"
@@ -115,9 +116,14 @@ func (s *Server) sendShareNotifications(
 	sourceUser.ClearJobGradeLabel()
 	sourceUser.ClearPhoneNumber()
 
+	entityType := "calendar.entry"
+	entryID := entry.GetId()
 	for _, newUser := range targetCitizens {
-		if err := s.notif.NotifyUser(ctx, &notifications.Notification{
-			UserId: newUser,
+		if err := s.notif.NotifyUser(ctx, notifi.NewUserNotification(notifi.UserNotificationParams{
+			UserID:      newUser,
+			ActorUserID: &sourceUserId,
+			EntityType:  &entityType,
+			EntityID:    &entryID,
 			Title: &common.I18NItem{
 				Key: "notifications.calendar.entry_shared_with_you.title",
 				Parameters: map[string]string{
@@ -144,7 +150,7 @@ func (s *Server) sendShareNotifications(
 					CalendarEntryId: &entry.Id,
 				},
 			},
-		}); err != nil {
+		})); err != nil {
 			return errswrap.NewError(err, errorscalendar.ErrFailedQuery)
 		}
 	}

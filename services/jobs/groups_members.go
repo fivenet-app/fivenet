@@ -20,13 +20,13 @@ import (
 	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/auth"
 	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/errswrap"
 	grpc_audit "github.com/fivenet-app/fivenet/v2026/pkg/grpc/interceptors/audit"
+	"github.com/fivenet-app/fivenet/v2026/pkg/notifi"
 	errorsjobs "github.com/fivenet-app/fivenet/v2026/services/jobs/errors"
 	jobsstore "github.com/fivenet-app/fivenet/v2026/stores/jobs"
 	colleaguehydrator "github.com/fivenet-app/fivenet/v2026/stores/jobs/colleagues/hydrator"
 	groupspolicy "github.com/fivenet-app/fivenet/v2026/stores/jobs/groupspolicy"
 	"github.com/go-jet/jet/v2/qrm"
 	"github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/logging"
-	"go.uber.org/zap"
 )
 
 type groupMemberBundle struct {
@@ -1028,11 +1028,7 @@ func (s *Server) AddGroupMember(
 	if err := tx.Commit(); err != nil {
 		return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
 	}
-	if publishNotification != nil {
-		if err := publishNotification(ctx); err != nil {
-			s.logger.Warn("failed to publish group membership notification", zap.Error(err))
-		}
-	}
+	notifi.PublishAfterCommit(ctx, s.logger, "jobs_group_member_added", publishNotification)
 	grpc_audit.AddMeta(ctx, "jobs.group.id", strconv.FormatInt(req.GetGroupId(), 10))
 	grpc_audit.AddMeta(ctx, "jobs.group.user_id", strconv.FormatInt(int64(req.GetUserId()), 10))
 	if req.HasReason() {
@@ -1136,11 +1132,7 @@ func (s *Server) RemoveGroupMember(
 	if err := tx.Commit(); err != nil {
 		return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
 	}
-	if publishNotification != nil {
-		if err := publishNotification(ctx); err != nil {
-			s.logger.Warn("failed to publish group membership notification", zap.Error(err))
-		}
-	}
+	notifi.PublishAfterCommit(ctx, s.logger, "jobs_group_member_removed", publishNotification)
 	grpc_audit.AddMeta(ctx, "jobs.group.id", strconv.FormatInt(req.GetGroupId(), 10))
 	grpc_audit.AddMeta(ctx, "jobs.group.user_id", strconv.FormatInt(int64(req.GetUserId()), 10))
 	if req.HasReason() {
@@ -1428,11 +1420,7 @@ func (s *Server) AddGroupLeader(
 	if err := tx.Commit(); err != nil {
 		return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
 	}
-	if publishNotification != nil {
-		if err := publishNotification(ctx); err != nil {
-			s.logger.Warn("failed to publish group leadership notification", zap.Error(err))
-		}
-	}
+	notifi.PublishAfterCommit(ctx, s.logger, "jobs_group_leadership_added", publishNotification)
 
 	grpc_audit.AddMeta(ctx, "jobs.group.id", strconv.FormatInt(req.GetGroupId(), 10))
 	grpc_audit.AddMeta(ctx, "jobs.group.user_id", strconv.FormatInt(int64(req.GetUserId()), 10))
@@ -1530,11 +1518,7 @@ func (s *Server) RemoveGroupLeader(
 	if err := tx.Commit(); err != nil {
 		return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
 	}
-	if publishNotification != nil {
-		if err := publishNotification(ctx); err != nil {
-			s.logger.Warn("failed to publish group leadership notification", zap.Error(err))
-		}
-	}
+	notifi.PublishAfterCommit(ctx, s.logger, "jobs_group_leadership_removed", publishNotification)
 
 	grpc_audit.AddMeta(ctx, "jobs.group.id", strconv.FormatInt(req.GetGroupId(), 10))
 	grpc_audit.AddMeta(ctx, "jobs.group.user_id", strconv.FormatInt(int64(req.GetUserId()), 10))
@@ -1572,14 +1556,14 @@ func (s *Server) prepareGroupUserNotification(
 
 	groupID := group.GetId()
 	entityType := "jobs.group"
-	notification := &notifications.Notification{
-		UserId:      targetUserID,
+	notification := notifi.NewUserNotification(notifi.UserNotificationParams{
+		UserID:      targetUserID,
 		Type:        notifications.NotificationType_NOTIFICATION_TYPE_INFO,
 		Category:    notifications.NotificationCategory_NOTIFICATION_CATEGORY_JOBS,
 		Kind:        kind,
-		ActorUserId: &actorUserID,
+		ActorUserID: &actorUserID,
 		EntityType:  &entityType,
-		EntityId:    &groupID,
+		EntityID:    &groupID,
 		Title: &common.I18NItem{
 			Key: "notifications.jobs.groups." + scope + "_" + change + ".title",
 		},
@@ -1587,7 +1571,7 @@ func (s *Server) prepareGroupUserNotification(
 			Key:        "notifications.jobs.groups." + scope + "_" + change + ".content",
 			Parameters: map[string]string{"group": group.GetName()},
 		},
-	}
+	})
 	if s.ui != nil {
 		targetUserInfo, err := s.ui.GetUserInfo(ctx, targetUserID)
 		if err != nil {

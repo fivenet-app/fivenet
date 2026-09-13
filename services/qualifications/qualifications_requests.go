@@ -14,6 +14,7 @@ import (
 	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/auth"
 	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/errswrap"
 	grpc_audit "github.com/fivenet-app/fivenet/v2026/pkg/grpc/interceptors/audit"
+	"github.com/fivenet-app/fivenet/v2026/pkg/notifi"
 	errorsqualifications "github.com/fivenet-app/fivenet/v2026/services/qualifications/errors"
 	citizenshydrator "github.com/fivenet-app/fivenet/v2026/stores/citizens/hydrator"
 	qualificationsstore "github.com/fivenet-app/fivenet/v2026/stores/qualifications"
@@ -192,8 +193,8 @@ func (s *Server) CreateOrUpdateQualificationRequest(
 			publishNotification, err = s.notif.PrepareUserNotification(
 				ctx,
 				tx,
-				&notifications.Notification{
-					UserId: request.GetUserId(),
+				notifi.NewUserNotification(notifi.UserNotificationParams{
+					UserID: request.GetUserId(),
 					Title: &common.I18NItem{
 						Key: "notifications.qualifications.request_updated.title",
 					},
@@ -206,11 +207,11 @@ func (s *Server) CreateOrUpdateQualificationRequest(
 					},
 					Category:    notifications.NotificationCategory_NOTIFICATION_CATEGORY_QUALIFICATIONS,
 					Type:        notifications.NotificationType_NOTIFICATION_TYPE_INFO,
-					ActorUserId: &actorID,
+					ActorUserID: &actorID,
 					EntityType:  &entityType,
-					EntityId:    &requestID,
+					EntityID:    &requestID,
 					Data:        notificationData,
-				},
+				}),
 			)
 			if err != nil {
 				return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
@@ -270,11 +271,7 @@ func (s *Server) CreateOrUpdateQualificationRequest(
 	if err := tx.Commit(); err != nil {
 		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 	}
-	if publishNotification != nil {
-		if err := publishNotification(ctx); err != nil {
-			return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
-		}
-	}
+	notifi.PublishAfterCommit(ctx, s.logger, "qualification_request_updated", publishNotification)
 
 	request, err := s.getQualificationRequest(
 		ctx,
@@ -392,8 +389,8 @@ func (s *Server) DeleteQualificationReq(
 		publishNotification, err = s.notif.PrepareUserNotification(
 			ctx,
 			tx,
-			&notifications.Notification{
-				UserId: re.GetUserId(),
+			notifi.NewUserNotification(notifi.UserNotificationParams{
+				UserID: re.GetUserId(),
 				Title: &common.I18NItem{
 					Key: "notifications.qualifications.request_deleted.title",
 				},
@@ -402,11 +399,11 @@ func (s *Server) DeleteQualificationReq(
 				},
 				Category:    notifications.NotificationCategory_NOTIFICATION_CATEGORY_QUALIFICATIONS,
 				Type:        notifications.NotificationType_NOTIFICATION_TYPE_INFO,
-				ActorUserId: &actorID,
+				ActorUserID: &actorID,
 				EntityType:  &entityType,
-				EntityId:    &qualificationID,
+				EntityID:    &qualificationID,
 				Data:        notificationData,
-			},
+			}),
 		)
 		if err != nil {
 			return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
@@ -416,11 +413,7 @@ func (s *Server) DeleteQualificationReq(
 	if err := tx.Commit(); err != nil {
 		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 	}
-	if publishNotification != nil {
-		if err := publishNotification(ctx); err != nil {
-			return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
-		}
-	}
+	notifi.PublishAfterCommit(ctx, s.logger, "qualification_request_deleted", publishNotification)
 
 	grpc_audit.SetAction(ctx, audit.EventAction_EVENT_ACTION_DELETED)
 

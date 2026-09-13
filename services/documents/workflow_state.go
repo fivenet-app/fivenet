@@ -561,8 +561,10 @@ func (w *Workflow) autoCloseDocument(
 		return nil
 	}
 
-	not := &notifications.Notification{
-		UserId: userInfo.GetUserId(),
+	entityType := "documents.document"
+	documentID := state.GetDocumentId()
+	not := notifi.NewUserNotification(notifi.UserNotificationParams{
+		UserID: userInfo.GetUserId(),
 		Title: &common.I18NItem{
 			Key:        "notifications.documents.document_auto_closed.title",
 			Parameters: map[string]string{"id": strconv.FormatInt(state.GetDocumentId(), 10)},
@@ -575,14 +577,16 @@ func (w *Workflow) autoCloseDocument(
 				"message": message,
 			},
 		},
-		Type:     notifications.NotificationType_NOTIFICATION_TYPE_INFO,
-		Category: notifications.NotificationCategory_NOTIFICATION_CATEGORY_DOCUMENT,
+		Type:       notifications.NotificationType_NOTIFICATION_TYPE_INFO,
+		Category:   notifications.NotificationCategory_NOTIFICATION_CATEGORY_DOCUMENT,
+		EntityType: &entityType,
+		EntityID:   &documentID,
 		Data: &notifications.Data{
 			Link: &notifications.Link{
 				To: fmt.Sprintf("/documents/%d", state.GetDocumentId()),
 			},
 		},
-	}
+	})
 
 	if err := w.notif.NotifyUser(ctx, not); err != nil {
 		return err
@@ -623,8 +627,9 @@ func (w *Workflow) sendDocumentReminder(
 		return nil
 	}
 
-	not := &notifications.Notification{
-		UserId: userId,
+	entityType := "documents.document"
+	not := notifi.NewUserNotification(notifi.UserNotificationParams{
+		UserID: userId,
 		Title: &common.I18NItem{
 			Key:        "notifications.documents.document_reminder.title",
 			Parameters: map[string]string{"id": strconv.FormatInt(documentId, 10)},
@@ -636,14 +641,16 @@ func (w *Workflow) sendDocumentReminder(
 				"title": doc.GetTitle(),
 			},
 		},
-		Type:     notifications.NotificationType_NOTIFICATION_TYPE_INFO,
-		Category: notifications.NotificationCategory_NOTIFICATION_CATEGORY_DOCUMENT,
+		Type:       notifications.NotificationType_NOTIFICATION_TYPE_INFO,
+		Category:   notifications.NotificationCategory_NOTIFICATION_CATEGORY_DOCUMENT,
+		EntityType: &entityType,
+		EntityID:   &documentId,
 		Data: &notifications.Data{
 			Link: &notifications.Link{
 				To: fmt.Sprintf("/documents/%d", documentId),
 			},
 		},
-	}
+	})
 	if message != "" {
 		not.Title.Key = "notifications.documents.document_reminder_with_message.title"
 

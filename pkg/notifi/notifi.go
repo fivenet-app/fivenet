@@ -6,6 +6,7 @@ import (
 	"errors"
 	"fmt"
 
+	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/common"
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/notifications"
 	notificationsclientview "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/notifications/clientview"
 	notificationsevents "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/notifications/events"
@@ -43,6 +44,63 @@ type INotifi interface {
 	SendUserEvent(ctx context.Context, userId int32, event *notificationsevents.UserEvent) error
 	// SendSystemEvent publishes a system-wide event notification to the event system.
 	SendSystemEvent(ctx context.Context, event *notificationsevents.SystemEvent) error
+}
+
+// UserNotificationParams contains the standard metadata shared by durable and
+// transient user notifications.
+type UserNotificationParams struct {
+	UserID      int32
+	Type        notifications.NotificationType
+	Category    notifications.NotificationCategory
+	Kind        notifications.NotificationKind
+	ActorUserID *int32
+	EntityType  *string
+	EntityID    *int64
+	Title       *common.I18NItem
+	Content     *common.I18NItem
+	Data        *notifications.Data
+}
+
+func NewUserNotification(p UserNotificationParams) *notifications.Notification {
+	return &notifications.Notification{
+		UserId:      p.UserID,
+		Type:        p.Type,
+		Category:    p.Category,
+		Kind:        p.Kind,
+		ActorUserId: p.ActorUserID,
+		EntityType:  p.EntityType,
+		EntityId:    p.EntityID,
+		Title:       p.Title,
+		Content:     p.Content,
+		Data:        p.Data,
+	}
+}
+
+// PublishAfterCommit runs callbacks prepared inside a successfully committed
+// transaction. Publishing is best-effort: a failure cannot roll back the
+// already-persisted mutation, so it is logged rather than returned to callers.
+func PublishAfterCommit(
+	ctx context.Context,
+	logger *zap.Logger,
+	operation string,
+	callbacks ...func(context.Context) error,
+) {
+	for _, publish := range callbacks {
+		if publish == nil {
+			continue
+		}
+		if err := publish(ctx); err != nil {
+			logger.Warn(
+				"failed to publish notification",
+				zap.String("notification_operation", operation),
+				zap.Error(err),
+			)
+		}
+	}
+}
+
+func noopPublish(context.Context) error {
+	return nil
 }
 
 // Notifi implements the INotifi interface for managing user notifications.
@@ -91,7 +149,7 @@ func New(p Params) INotifi {
 // NotifyUser inserts a notification for a user and publishes it asynchronously.
 func (n *Notifi) NotifyUser(ctx context.Context, not *notifications.Notification) error {
 	publish, err := n.PrepareUserNotification(ctx, n.db, not)
-	if err != nil || publish == nil {
+	if err != nil {
 		return err
 	}
 	return publish(ctx)
@@ -128,17 +186,37 @@ func (n *Notifi) PrepareUserNotification(
 	}
 
 	if !delivery.GetInboxEnabled() && !delivery.GetToastEnabled() && !delivery.GetSoundEnabled() {
-		return nil, nil
+		// Keep the post-commit callback contract total: callers can always invoke
+		// the returned function, even when this notification has no delivery path.
+		return noopPublish, nil
 	}
 
-	return func(ctx context.Context) error { return n.publishUserNotification(ctx, not) }, nil
+	return func(ctx context.Context) error {
+		var unreadCount *int64
+		if delivery.GetInboxEnabled() {
+			count, err := n.preferences.CountUnread(ctx, not.GetUserId())
+			if err != nil {
+				n.logger.Warn(
+					"failed to count unread notifications for event",
+					zap.Int32("user_id", not.GetUserId()),
+					zap.Error(err),
+				)
+			} else {
+				unreadCount = &count
+			}
+		}
+
+		return n.publishUserNotification(ctx, not, unreadCount)
+	}, nil
 }
 
 func (n *Notifi) publishUserNotification(
 	ctx context.Context,
 	not *notifications.Notification,
+	unreadCount *int64,
 ) error {
 	data, err := proto.Marshal(&notificationsevents.UserEvent{
+		UnreadCount: unreadCount,
 		Data: &notificationsevents.UserEvent_Notification{
 			Notification: not,
 		},
