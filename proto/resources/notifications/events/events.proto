@@ -12,6 +12,10 @@ option go_package = "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources
 
 // User related events
 message UserEvent {
+  // Present on durable notification events to let streams update their badge
+  // count, provided per stream on best-effort basis.
+  optional int64 unread_count = 7;
+
   oneof data {
     option (buf.validate.oneof).required = true;
 

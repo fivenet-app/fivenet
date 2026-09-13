@@ -244,9 +244,8 @@ func (s *Server) Stream(srv pbnotifications.NotificationsService_StreamServer) e
 		return fmt.Errorf("failed to create consumer (%v). %w", consCfg.FilterSubjects, err)
 	}
 
-	// Count only after the consumer boundary exists. Any notification persisted
-	// before this snapshot is included here; later live events re-read the
-	// durable count instead of incrementing a potentially stale local value.
+	// Count only after the consumer boundary exists. Durable notification events
+	// carry an updated unread count, so this is the stream's only count lookup.
 	var notificationCount int64
 	if !accountOnly {
 		notificationCount, err = s.store.CountUnread(ctx, userInfo.GetUserId())
@@ -458,17 +457,10 @@ func (s *Server) Stream(srv pbnotifications.NotificationsService_StreamServer) e
 					); err != nil {
 						return errswrap.NewError(err, ErrFailedStream)
 					}
-					// The database is authoritative for inbox notifications. Re-read it
-					// here so notifications that arrive near stream startup cannot make
-					// the snapshot count drift.
-					if topic == notifi.UserTopic && d.Notification.GetId() > 0 {
-						notificationCount, err = s.store.CountUnread(
-							gctx,
-							currentUserInfo.GetUserId(),
-						)
-						if err != nil {
-							return errswrap.NewError(err, ErrFailedStream)
-						}
+					if topic == notifi.UserTopic && d.Notification.GetId() > 0 && dest.UnreadCount != nil {
+						// This is intentionally eventually consistent: concurrent
+						// publishers can observe and deliver counts out of order.
+						notificationCount = *dest.UnreadCount
 					}
 
 				case *notificationsevents.UserEvent_NotificationsReadCount:

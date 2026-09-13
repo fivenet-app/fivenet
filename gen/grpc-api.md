@@ -6624,6 +6624,7 @@ User related events
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
+| `unread_count` | [int64](#int64) | optional | Present on durable notification events to let streams update their badge count, provided per stream on best-effort basis. |
 | `refresh_token` | [bool](#bool) |  |  |
 | `notification` | [resources.notifications.Notification](#resourcesnotificationsNotification) |  | Notifications |
 | `notifications_read_count` | [int64](#int64) |  | Deprecated delta kept for wire compatibility with older clients. |

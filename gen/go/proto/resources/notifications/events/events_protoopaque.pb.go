@@ -28,10 +28,13 @@ const (
 
 // User related events
 type UserEvent struct {
-	state           protoimpl.MessageState `protogen:"opaque.v1"`
-	xxx_hidden_Data isUserEvent_Data       `protobuf_oneof:"data"`
-	unknownFields   protoimpl.UnknownFields
-	sizeCache       protoimpl.SizeCache
+	state                  protoimpl.MessageState `protogen:"opaque.v1"`
+	xxx_hidden_UnreadCount int64                  `protobuf:"varint,7,opt,name=unread_count,json=unreadCount,proto3,oneof"`
+	xxx_hidden_Data        isUserEvent_Data       `protobuf_oneof:"data"`
+	XXX_raceDetectHookData protoimpl.RaceDetectHookData
+	XXX_presence           [1]uint32
+	unknownFields          protoimpl.UnknownFields
+	sizeCache              protoimpl.SizeCache
 }
 
 func (x *UserEvent) Reset() {
@@ -57,6 +60,13 @@ func (x *UserEvent) ProtoReflect() protoreflect.Message {
 		return ms
 	}
 	return mi.MessageOf(x)
+}
+
+func (x *UserEvent) GetUnreadCount() int64 {
+	if x != nil {
+		return x.xxx_hidden_UnreadCount
+	}
+	return 0
 }
 
 func (x *UserEvent) GetRefreshToken() bool {
@@ -113,6 +123,11 @@ func (x *UserEvent) GetNotificationsUnreadCount() int64 {
 	return 0
 }
 
+func (x *UserEvent) SetUnreadCount(v int64) {
+	x.xxx_hidden_UnreadCount = v
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 0, 2)
+}
+
 func (x *UserEvent) SetRefreshToken(v bool) {
 	x.xxx_hidden_Data = &userEvent_RefreshToken{v}
 }
@@ -147,6 +162,13 @@ func (x *UserEvent) SetAccountGroupsChanged(v *userinfo.AccountGroupsChanged) {
 
 func (x *UserEvent) SetNotificationsUnreadCount(v int64) {
 	x.xxx_hidden_Data = &userEvent_NotificationsUnreadCount{v}
+}
+
+func (x *UserEvent) HasUnreadCount() bool {
+	if x == nil {
+		return false
+	}
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 0)
 }
 
 func (x *UserEvent) HasData() bool {
@@ -202,6 +224,11 @@ func (x *UserEvent) HasNotificationsUnreadCount() bool {
 	}
 	_, ok := x.xxx_hidden_Data.(*userEvent_NotificationsUnreadCount)
 	return ok
+}
+
+func (x *UserEvent) ClearUnreadCount() {
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 0)
+	x.xxx_hidden_UnreadCount = 0
 }
 
 func (x *UserEvent) ClearData() {
@@ -277,6 +304,9 @@ func (x *UserEvent) WhichData() case_UserEvent_Data {
 type UserEvent_builder struct {
 	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
 
+	// Present on durable notification events to let streams update their badge
+	// count, provided per stream on best-effort basis.
+	UnreadCount *int64
 	// Fields of oneof xxx_hidden_Data:
 	RefreshToken *bool
 	// Notifications
@@ -294,6 +324,10 @@ func (b0 UserEvent_builder) Build() *UserEvent {
 	m0 := &UserEvent{}
 	b, x := &b0, m0
 	_, _ = b, x
+	if b.UnreadCount != nil {
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 0, 2)
+		x.xxx_hidden_UnreadCount = *b.UnreadCount
+	}
 	if b.RefreshToken != nil {
 		x.xxx_hidden_Data = &userEvent_RefreshToken{*b.RefreshToken}
 	}
@@ -796,15 +830,17 @@ var File_resources_notifications_events_events_proto protoreflect.FileDescriptor
 
 const file_resources_notifications_events_events_proto_rawDesc = "" +
 	"\n" +
-	"+resources/notifications/events/events.proto\x12\x1eresources.notifications.events\x1a)resources/clientconfig/clientconfig.proto\x1a resources/jobs/props/props.proto\x1a+resources/notifications/notifications.proto\x1a!resources/userinfo/userinfo.proto\"\xb8\x03\n" +
-	"\tUserEvent\x12%\n" +
+	"+resources/notifications/events/events.proto\x12\x1eresources.notifications.events\x1a)resources/clientconfig/clientconfig.proto\x1a resources/jobs/props/props.proto\x1a+resources/notifications/notifications.proto\x1a!resources/userinfo/userinfo.proto\"\xf1\x03\n" +
+	"\tUserEvent\x12&\n" +
+	"\funread_count\x18\a \x01(\x03H\x01R\vunreadCount\x88\x01\x01\x12%\n" +
 	"\rrefresh_token\x18\x01 \x01(\bH\x00R\frefreshToken\x12K\n" +
 	"\fnotification\x18\x02 \x01(\v2%.resources.notifications.NotificationH\x00R\fnotification\x12:\n" +
 	"\x18notifications_read_count\x18\x03 \x01(\x03H\x00R\x16notificationsReadCount\x12Q\n" +
 	"\x11user_info_changed\x18\x04 \x01(\v2#.resources.userinfo.UserInfoChangedH\x00R\x0fuserInfoChanged\x12`\n" +
 	"\x16account_groups_changed\x18\x05 \x01(\v2(.resources.userinfo.AccountGroupsChangedH\x00R\x14accountGroupsChanged\x12>\n" +
 	"\x1anotifications_unread_count\x18\x06 \x01(\x03H\x00R\x18notificationsUnreadCountB\x06\n" +
-	"\x04data\"Q\n" +
+	"\x04dataB\x0f\n" +
+	"\r_unread_count\"Q\n" +
 	"\bJobEvent\x12=\n" +
 	"\tjob_props\x18\x01 \x01(\v2\x1e.resources.jobs.props.JobPropsH\x00R\bjobPropsB\x06\n" +
 	"\x04data\">\n" +
