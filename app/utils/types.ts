@@ -5,7 +5,7 @@ export type CardElement = {
     label: string;
     description?: string;
     to?: string;
-    permission?: Perms;
+    permission?: Perms | Perms[];
     icon?: string;
     color?: string;
     deletedAt?: Timestamp;

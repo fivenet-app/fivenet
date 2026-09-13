@@ -16,7 +16,7 @@ definePageMeta({
 
 const { t } = useI18n();
 
-const items = useOverviewFeatures();
+const { overviewItems: items } = useAppFeatures();
 
 const settingsStore = useSettingsStore();
 const { isOverviewQuickAccess, toggleOverviewQuickAccess } = settingsStore;
