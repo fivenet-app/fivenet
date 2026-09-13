@@ -1685,6 +1685,14 @@
                     "description": "Set the sounds used for notifications and other events. You can also set custom sounds to use for notifications in your FiveNet. Please note that the sounds are stored locally in your browser and will not be available on other devices or browsers. If you clear your browser data, the custom sounds will be removed and you will have to set them up again.",
                     "custom_sound": "Custom Sound",
                     "select_custom_sound": "Select Custom Sound File",
+                    "custom_sound_success": {
+                        "title": "Sound updated",
+                        "content": "The notification sound was updated successfully."
+                    },
+                    "custom_sound_failed": {
+                        "title": "Sound update failed",
+                        "content": "The notification sound could not be updated."
+                    },
                     "notification": "Notification Sound",
                     "dispatch": {
                         "attention": "Attention Sound",
@@ -3758,6 +3766,17 @@
                 "MAILER": "E-mail",
                 "DISPATCH": "Dispatch",
                 "SYSTEM": "System"
+            },
+            "NotificationKind": {
+                "UNSPECIFIED": "Unspecified",
+                "JOBS_GROUP_LEADERSHIP_ADDED": "Added as group leadership",
+                "JOBS_GROUP_LEADERSHIP_REMOVED": "Removed from group leadership",
+                "JOBS_GROUP_MEMBER_ADDED": "Added to group",
+                "JOBS_GROUP_MEMBER_REMOVED": "Removed from group",
+                "DOCUMENT_APPROVAL_ASSIGNED": "Document approval assigned",
+                "DOCUMENT_REQUEST_CREATED": "Document request created",
+                "DOCUMENT_REQUEST_DECIDED": "Document request decided",
+                "DOCUMENT_REQUEST_CANCELLED": "Document request cancelled"
             }
         },
         "wiki": {

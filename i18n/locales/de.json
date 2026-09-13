@@ -1685,6 +1685,14 @@
                     "description": "Legen Sie die Sounds fest, die für Benachrichtigungen und andere Ereignisse verwendet werden. Sie können auch benutzerdefinierte Sounds für Benachrichtigungen in Ihrem FiveNet festlegen. Bitte beachten Sie, dass die Sounds lokal in Ihrem Browser gespeichert werden und auf anderen Geräten oder Browsern nicht verfügbar sind. Wenn Sie Ihre Browserdaten löschen, werden die benutzerdefinierten Sounds entfernt und Sie müssen sie erneut einrichten.",
                     "custom_sound": "Benutzerdefinierter Sound",
                     "select_custom_sound": "Wählen Sie einen benutzerdefinierten Sound aus",
+                    "custom_sound_success": {
+                        "title": "Sound aktualisiert",
+                        "content": "Der Benachrichtigungs-Sound wurde erfolgreich aktualisiert."
+                    },
+                    "custom_sound_failed": {
+                        "title": "Sound konnte nicht aktualisiert werden",
+                        "content": "Der Benachrichtigungs-Sound konnte nicht aktualisiert werden."
+                    },
                     "notification": "Benachrichtigungs-Sounds",
                     "dispatch": {
                         "attention": "Aufmerksamkeits-Sound",
@@ -3758,6 +3766,17 @@
                 "MAILER": "E-Mail",
                 "DISPATCH": "Dispatch",
                 "SYSTEM": "System"
+            },
+            "NotificationKind": {
+                "UNSPECIFIED": "Unbestimmt",
+                "JOBS_GROUP_LEADERSHIP_ADDED": "Zur Gruppenleitung hinzugefügt",
+                "JOBS_GROUP_LEADERSHIP_REMOVED": "Aus der Gruppenleitung entfernt",
+                "JOBS_GROUP_MEMBER_ADDED": "Zur Gruppe hinzugefügt",
+                "JOBS_GROUP_MEMBER_REMOVED": "Aus der Gruppe entfernt",
+                "DOCUMENT_APPROVAL_ASSIGNED": "Dokumentenfreigabe zugewiesen",
+                "DOCUMENT_REQUEST_CREATED": "Dokumentenanfrage erstellt",
+                "DOCUMENT_REQUEST_DECIDED": "Dokumentenanfrage entschieden",
+                "DOCUMENT_REQUEST_CANCELLED": "Dokumentenanfrage abgebrochen"
             }
         },
         "wiki": {
