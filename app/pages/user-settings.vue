@@ -12,6 +12,8 @@ definePageMeta({
 
 const { t } = useI18n();
 
+const route = useRoute();
+
 const items = computed(() => [
     {
         label: t('common.settings'),
@@ -23,6 +25,7 @@ const items = computed(() => [
         label: t('common.notification', 2),
         icon: 'i-mdi-notification-settings',
         to: '/user-settings/notifications',
+        active: isRoute(route.path, '/user-settings/notifications'),
     },
 ]);
 </script>

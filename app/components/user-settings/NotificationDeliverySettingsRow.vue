@@ -9,8 +9,8 @@ const props = defineProps<{
 }>();
 
 const emit = defineEmits<{
-    update: [setting: NotificationDeliverySetting, value: boolean];
-    reset: [];
+    (e: 'update', setting: NotificationDeliverySetting, value: boolean): void;
+    (e: 'reset'): void;
 }>();
 
 const settingLabels = {
@@ -18,13 +18,16 @@ const settingLabels = {
     toastEnabled: 'toast',
     soundEnabled: 'sound',
 } as const;
+
+const settingKeys = Object.keys(settingLabels) as NotificationDeliverySetting[];
 </script>
 
 <template>
     <div :class="props.label ? 'grid gap-2 lg:grid-cols-[minmax(12rem,1fr)_auto_auto_auto_auto] lg:items-center' : undefined">
         <div v-if="props.label" class="flex items-center gap-2 pl-7">
-            <span class="text-default">{{ props.label }}</span>
+            <span class="text-sm text-default">{{ props.label }}</span>
         </div>
+
         <div class="flex flex-wrap items-center gap-x-4 gap-y-2" :class="{ 'lg:col-span-4': props.label }">
             <UTooltip v-if="props.canReset" :text="$t('common.reset')">
                 <UButton
@@ -40,7 +43,7 @@ const settingLabels = {
             </UTooltip>
 
             <UCheckbox
-                v-for="setting in Object.keys(settingLabels) as NotificationDeliverySetting[]"
+                v-for="setting in settingKeys"
                 :key="setting"
                 :model-value="props.settings[setting]"
                 :label="$t(`components.auth.user_settings.notification_delivery.${settingLabels[setting]}`)"

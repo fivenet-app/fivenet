@@ -6,10 +6,13 @@ import {
     NotificationKind,
     type NotificationPreference,
 } from '~~/gen/ts/resources/notifications/notifications';
-import type { NotificationDeliverySetting } from '~/components/user-settings/NotificationDeliverySettingsRow.vue';
+import NotificationDeliverySettingsRow, {
+    type NotificationDeliverySetting,
+} from '~/components/user-settings/NotificationDeliverySettingsRow.vue';
 
 const { activeChar } = useAuth();
-const notificationsClient = await getNotificationsNotificationsClient();
+
+const { t } = useI18n();
 
 const notificationCategories = [
     NotificationCategory.GENERAL,
@@ -21,10 +24,10 @@ const notificationCategories = [
     NotificationCategory.SYSTEM,
 ];
 const notificationDeliveryScopes = [
-    { category: NotificationCategory.UNSPECIFIED, labelKey: 'components.auth.user_settings.notification_delivery.all' },
+    { category: NotificationCategory.UNSPECIFIED, label: t('components.auth.user_settings.notification_delivery.all') },
     ...notificationCategories.map((category) => ({
         category,
-        labelKey: `enums.notifications.NotificationCategory.${NotificationCategory[category]}`,
+        label: t(`enums.notifications.NotificationCategory.${NotificationCategory[category]}`),
     })),
 ];
 const notificationKindDefinitions = [
@@ -37,6 +40,8 @@ const notificationKindDefinitions = [
     { kind: NotificationKind.DOCUMENT_REQUEST_DECIDED, category: NotificationCategory.DOCUMENT },
     { kind: NotificationKind.DOCUMENT_REQUEST_CANCELLED, category: NotificationCategory.DOCUMENT },
 ] as const;
+
+const notificationsClient = await getNotificationsNotificationsClient();
 
 const pendingPreferenceScopes = ref<Set<string>>(new Set());
 
@@ -63,6 +68,10 @@ function preferenceScopeKey(category: NotificationCategory, kind: NotificationKi
 
 function notificationKindsForCategory(category: NotificationCategory) {
     return notificationKindDefinitions.filter((definition) => definition.category === category);
+}
+
+function hasNotificationKinds(category: NotificationCategory): boolean {
+    return notificationKindsForCategory(category).length > 0;
 }
 
 function deliverySetting(
@@ -145,49 +154,66 @@ async function resetDeliveryPreference(category: NotificationCategory, kind = No
     >
         <div class="space-y-2">
             <div v-for="scope in notificationDeliveryScopes" :key="scope.category" class="rounded-lg border border-default p-2">
-                <div class="grid gap-2 lg:grid-cols-[minmax(12rem,1fr)_auto_auto_auto_auto] lg:items-center">
-                    <UCollapsible
-                        v-if="notificationKindsForCategory(scope.category).length > 0"
-                        class="contents"
-                        :unmount-on-hide="false"
-                    >
-                        <div class="flex items-center gap-2">
+                <UCollapsible
+                    v-if="hasNotificationKinds(scope.category)"
+                    class="w-full"
+                    :unmount-on-hide="false"
+                    :ui="{ root: 'w-full', content: 'w-full' }"
+                >
+                    <div class="grid gap-2 lg:grid-cols-[minmax(12rem,1fr)_auto_auto_auto_auto] lg:items-center">
+                        <div class="flex h-5 items-center gap-1.5">
                             <UIcon :name="notificationCategoryToIcon(scope.category)" class="size-5 text-muted" />
                             <UButton
-                                class="group min-w-0 flex-1 justify-start px-0 py-0"
+                                class="group h-5 min-w-0 flex-1 justify-start px-0 py-0"
                                 color="neutral"
                                 variant="link"
                                 trailing-icon="i-mdi-chevron-down"
-                                :label="$t(scope.labelKey)"
+                                :label="scope.label"
                                 :ui="{
                                     label: 'font-medium truncate text-highlighted',
-                                    trailingIcon: 'group-data-[state=open]:rotate-180 transition-transform duration-200',
+                                    trailingIcon: 'size-4 group-data-[state=open]:rotate-180 transition-transform duration-200',
                                 }"
                             />
                         </div>
-                        <template #content>
-                            <div class="col-span-full mt-2 space-y-2 border-t border-default pt-2">
-                                <NotificationDeliverySettingsRow
-                                    v-for="definition in notificationKindsForCategory(scope.category)"
-                                    :key="definition.kind"
-                                    class="grid gap-2 lg:grid-cols-[minmax(12rem,1fr)_auto_auto_auto_auto] lg:items-center"
-                                    :label="$t(`enums.notifications.NotificationKind.${NotificationKind[definition.kind]}`)"
-                                    :settings="deliverySettings(scope.category, definition.kind)"
-                                    :pending="isPreferencePending(scope.category, definition.kind)"
-                                    :can-reset="notificationPreference(scope.category, definition.kind) !== undefined"
-                                    @update="
-                                        (setting, value) =>
-                                            updateDeliverySetting(scope.category, definition.kind, setting, value)
-                                    "
-                                    @reset="resetDeliveryPreference(scope.category, definition.kind)"
-                                />
-                            </div>
-                        </template>
-                    </UCollapsible>
-                    <div v-else class="flex items-center gap-2">
-                        <UIcon :name="notificationCategoryToIcon(scope.category)" class="size-5 text-muted" />
-                        <span class="font-medium">{{ $t(scope.labelKey) }}</span>
+
+                        <NotificationDeliverySettingsRow
+                            class="lg:col-span-4"
+                            :settings="deliverySettings(scope.category, NotificationKind.UNSPECIFIED)"
+                            :pending="isPreferencePending(scope.category)"
+                            :can-reset="notificationPreference(scope.category) !== undefined"
+                            @update="
+                                (setting, value) =>
+                                    updateDeliverySetting(scope.category, NotificationKind.UNSPECIFIED, setting, value)
+                            "
+                            @reset="resetDeliveryPreference(scope.category)"
+                        />
                     </div>
+
+                    <template #content>
+                        <div class="mt-2 w-full space-y-2 border-t border-default pt-2">
+                            <NotificationDeliverySettingsRow
+                                v-for="definition in notificationKindsForCategory(scope.category)"
+                                :key="definition.kind"
+                                class="grid gap-2 lg:grid-cols-[minmax(12rem,1fr)_auto_auto_auto_auto] lg:items-center"
+                                :label="$t(`enums.notifications.NotificationKind.${NotificationKind[definition.kind]}`)"
+                                :settings="deliverySettings(scope.category, definition.kind)"
+                                :pending="isPreferencePending(scope.category, definition.kind)"
+                                :can-reset="notificationPreference(scope.category, definition.kind) !== undefined"
+                                @update="
+                                    (setting, value) => updateDeliverySetting(scope.category, definition.kind, setting, value)
+                                "
+                                @reset="resetDeliveryPreference(scope.category, definition.kind)"
+                            />
+                        </div>
+                    </template>
+                </UCollapsible>
+
+                <div v-else class="grid gap-2 lg:grid-cols-[minmax(12rem,1fr)_auto_auto_auto_auto] lg:items-center">
+                    <div class="flex h-5 items-center gap-2">
+                        <UIcon :name="notificationCategoryToIcon(scope.category)" class="size-5 text-muted" />
+                        <span class="font-medium">{{ scope.label }}</span>
+                    </div>
+
                     <NotificationDeliverySettingsRow
                         class="lg:col-span-4"
                         :settings="deliverySettings(scope.category, NotificationKind.UNSPECIFIED)"
