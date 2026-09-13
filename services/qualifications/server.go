@@ -150,8 +150,13 @@ func (s *Server) qualificationNotificationData(
 	if err != nil {
 		return nil, err
 	}
-	if !s.perms.CanServiceMethod(targetUserInfo, "qualifications.QualificationsService/ListQualifications") {
+	if !s.perms.CanServiceMethod(
+		targetUserInfo,
+		"qualifications.QualificationsService/ListQualifications",
+	) {
 		return nil, nil
 	}
-	return &notifications.Data{Link: &notifications.Link{To: fmt.Sprintf("/qualifications/%d", qualificationID)}}, nil
+	return &notifications.Data{
+		Link: &notifications.Link{To: fmt.Sprintf("/qualifications/%d", qualificationID)},
+	}, nil
 }

@@ -481,21 +481,31 @@ func (s *Server) DeleteQualificationResult(
 		resultID := result.GetId()
 		actorID := userInfo.GetUserId()
 		entityType := "qualifications.result"
-		notificationData, err := s.qualificationNotificationData(ctx, result.GetUserId(), result.GetQualificationId())
+		notificationData, err := s.qualificationNotificationData(
+			ctx,
+			result.GetUserId(),
+			result.GetQualificationId(),
+		)
 		if err != nil {
 			return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 		}
-		publishNotification, err = s.notif.PrepareUserNotification(ctx, tx, &notifications.Notification{
-			UserId:      result.GetUserId(),
-			Title:       &common.I18NItem{Key: "notifications.qualifications.result_deleted.title"},
-			Content:     &common.I18NItem{Key: "notifications.qualifications.result_deleted.content"},
-			Category:    notifications.NotificationCategory_NOTIFICATION_CATEGORY_QUALIFICATIONS,
-			Type:        notifications.NotificationType_NOTIFICATION_TYPE_WARNING,
-			ActorUserId: &actorID,
-			EntityType:  &entityType,
-			EntityId:    &resultID,
-			Data:        notificationData,
-		})
+		publishNotification, err = s.notif.PrepareUserNotification(
+			ctx,
+			tx,
+			&notifications.Notification{
+				UserId: result.GetUserId(),
+				Title:  &common.I18NItem{Key: "notifications.qualifications.result_deleted.title"},
+				Content: &common.I18NItem{
+					Key: "notifications.qualifications.result_deleted.content",
+				},
+				Category:    notifications.NotificationCategory_NOTIFICATION_CATEGORY_QUALIFICATIONS,
+				Type:        notifications.NotificationType_NOTIFICATION_TYPE_WARNING,
+				ActorUserId: &actorID,
+				EntityType:  &entityType,
+				EntityId:    &resultID,
+				Data:        notificationData,
+			},
+		)
 		if err != nil {
 			return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 		}
