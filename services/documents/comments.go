@@ -1,4 +1,3 @@
-//nolint:goconst // Mainly for "title".
 package documents
 
 import (
@@ -470,19 +469,18 @@ func (s *Server) notifyUsersNewComment(
 			continue
 		}
 
-		entityType := "documents.document"
 		documentID := doc.GetId()
 		not := notifi.NewUserNotification(notifi.UserNotificationParams{
 			UserID:      targetUserId,
-			ActorUserID: &sourceUserId,
-			EntityType:  &entityType,
-			EntityID:    &documentID,
+			ActorUserID: new(sourceUserId),
+			EntityType:  new(entityType),
+			EntityID:    new(documentID),
 			Title: &common.I18NItem{
 				Key: "notifications.documents.document_comment_added.title",
 			},
 			Content: &common.I18NItem{
 				Key:        "notifications.documents.document_comment_added.content",
-				Parameters: map[string]string{"title": doc.GetTitle()},
+				Parameters: map[string]string{notificationParameterTitle: doc.GetTitle()},
 			},
 			Type:     notifications.NotificationType_NOTIFICATION_TYPE_INFO,
 			Category: notifications.NotificationCategory_NOTIFICATION_CATEGORY_DOCUMENT,

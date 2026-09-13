@@ -1,4 +1,3 @@
-//nolint:goconst // Mainly for "title".
 package documents
 
 import (
@@ -459,18 +458,17 @@ func (s *Server) notifyMentionedUser(
 		return nil
 	}
 
-	entityType := "documents.document"
 	not := notifi.NewUserNotification(notifi.UserNotificationParams{
 		UserID:      targetUserId,
-		ActorUserID: &sourceUserId,
-		EntityType:  &entityType,
-		EntityID:    &documentId,
+		ActorUserID: new(sourceUserId),
+		EntityType:  new(entityType),
+		EntityID:    new(documentId),
 		Title: &common.I18NItem{
 			Key: "notifications.documents.document_relation_mentioned.title",
 		},
 		Content: &common.I18NItem{
 			Key:        "notifications.documents.document_relation_mentioned.content",
-			Parameters: map[string]string{"title": doc.GetTitle()},
+			Parameters: map[string]string{notificationParameterTitle: doc.GetTitle()},
 		},
 		Type:     notifications.NotificationType_NOTIFICATION_TYPE_INFO,
 		Category: notifications.NotificationCategory_NOTIFICATION_CATEGORY_DOCUMENT,

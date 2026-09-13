@@ -1,8 +1,8 @@
 import type { ToastProps } from '@nuxt/ui';
 import {
-    NotificationCategory,
     NotificationType,
     type Notification,
+    type NotificationCategory,
 } from '~~/gen/ts/resources/notifications/notifications';
 import { notificationCategoryDefinition, notificationKindDefinition } from './definitions';
 

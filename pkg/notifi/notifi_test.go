@@ -22,15 +22,24 @@ func (s notificationStoreStub) Count(context.Context, notificationsstore.ListQue
 	return 0, nil
 }
 
-func (s notificationStoreStub) List(context.Context, notificationsstore.ListQuery) ([]*notifications.Notification, error) {
+func (s notificationStoreStub) List(
+	context.Context,
+	notificationsstore.ListQuery,
+) ([]*notifications.Notification, error) {
 	return nil, nil
 }
 
-func (s notificationStoreStub) MarkNotifications(context.Context, notificationsstore.MarkQuery) (int64, error) {
+func (s notificationStoreStub) MarkNotifications(
+	context.Context,
+	notificationsstore.MarkQuery,
+) (int64, error) {
 	return 0, nil
 }
 
-func (s notificationStoreStub) UpdateNotificationState(context.Context, notificationsstore.StateQuery) (int64, error) {
+func (s notificationStoreStub) UpdateNotificationState(
+	context.Context,
+	notificationsstore.StateQuery,
+) (int64, error) {
 	return 0, nil
 }
 
@@ -38,11 +47,18 @@ func (s notificationStoreStub) CountUnread(context.Context, int32) (int64, error
 	return 0, nil
 }
 
-func (s notificationStoreStub) ListPreferences(context.Context, int32) ([]*notifications.NotificationPreference, error) {
+func (s notificationStoreStub) ListPreferences(
+	context.Context,
+	int32,
+) ([]*notifications.NotificationPreference, error) {
 	return nil, nil
 }
 
-func (s notificationStoreStub) UpsertPreference(context.Context, int32, *notifications.NotificationPreference) error {
+func (s notificationStoreStub) UpsertPreference(
+	context.Context,
+	int32,
+	*notifications.NotificationPreference,
+) error {
 	return nil
 }
 
@@ -90,9 +106,21 @@ func TestNewUserNotification(t *testing.T) {
 	})
 
 	assert.Equal(t, int32(3), notification.GetUserId())
-	assert.Equal(t, notifications.NotificationType_NOTIFICATION_TYPE_WARNING, notification.GetType())
-	assert.Equal(t, notifications.NotificationCategory_NOTIFICATION_CATEGORY_DOCUMENT, notification.GetCategory())
-	assert.Equal(t, notifications.NotificationKind_NOTIFICATION_KIND_DOCUMENT_REQUEST_CREATED, notification.GetKind())
+	assert.Equal(
+		t,
+		notifications.NotificationType_NOTIFICATION_TYPE_WARNING,
+		notification.GetType(),
+	)
+	assert.Equal(
+		t,
+		notifications.NotificationCategory_NOTIFICATION_CATEGORY_DOCUMENT,
+		notification.GetCategory(),
+	)
+	assert.Equal(
+		t,
+		notifications.NotificationKind_NOTIFICATION_KIND_DOCUMENT_REQUEST_CREATED,
+		notification.GetKind(),
+	)
 	assert.Equal(t, int32(4), notification.GetActorUserId())
 	assert.Equal(t, "documents.document", notification.GetEntityType())
 	assert.Equal(t, int64(9), notification.GetEntityId())
@@ -103,13 +131,15 @@ func TestNewUserNotification(t *testing.T) {
 func TestPrepareUserNotificationReturnsNoopWhenDeliveryDisabled(t *testing.T) {
 	t.Parallel()
 
-	notifier := &Notifi{preferences: notificationStoreStub{delivery: &notifications.NotificationDelivery{}}}
+	notifier := &Notifi{
+		preferences: notificationStoreStub{delivery: &notifications.NotificationDelivery{}},
+	}
 	notification := &notifications.Notification{UserId: 3}
 	publish, err := notifier.PrepareUserNotification(t.Context(), nil, notification)
 
 	require.NoError(t, err)
 	require.NotNil(t, publish)
-	assert.NoError(t, publish(t.Context()))
+	require.NoError(t, publish(t.Context()))
 	assert.NotNil(t, notification.GetCreatedAt())
 	assert.Equal(t, int64(0), notification.GetId())
 }

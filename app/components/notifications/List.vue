@@ -26,7 +26,9 @@ const notificationCenter = useNotificationCenterStore();
 
 const notificationsNotificationsClient = await getNotificationsNotificationsClient();
 
-const categories: { mode: NotificationCategory }[] = notificationCategoryDefinitions.map(({ category }) => ({ mode: category }));
+const categories: { mode: NotificationCategory }[] = notificationCategoryDefinitions.map(({ category }) => ({
+    mode: category,
+}));
 
 const scopes = ['all', 'unread', 'starred', 'archived'] as const;
 type Scope = (typeof scopes)[number];

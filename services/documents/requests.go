@@ -1,4 +1,3 @@
-//nolint:goconst // Mainly for "title".
 package documents
 
 import (
@@ -620,9 +619,8 @@ func (s *Server) prepareDocumentRequestNotification(
 	default:
 		return nil, fmt.Errorf("unknown document request notification event: %d", event)
 	}
-	documentID := doc.GetId()
-	entityType := "documents.document"
 
+	documentID := doc.GetId()
 	not := notifi.NewUserNotification(notifi.UserNotificationParams{
 		UserID: targetUserId,
 		Title: &common.I18NItem{
@@ -630,14 +628,14 @@ func (s *Server) prepareDocumentRequestNotification(
 		},
 		Content: &common.I18NItem{
 			Key:        key + ".content",
-			Parameters: map[string]string{"title": doc.GetTitle()},
+			Parameters: map[string]string{notificationParameterTitle: doc.GetTitle()},
 		},
 		Type:        notifications.NotificationType_NOTIFICATION_TYPE_INFO,
 		Category:    notifications.NotificationCategory_NOTIFICATION_CATEGORY_DOCUMENT,
 		Kind:        kind,
-		ActorUserID: &sourceUserId,
-		EntityType:  &entityType,
-		EntityID:    &documentID,
+		ActorUserID: new(sourceUserId),
+		EntityType:  new(entityType),
+		EntityID:    new(documentID),
 		Data: &notifications.Data{
 			Link: &notifications.Link{
 				To: fmt.Sprintf("/documents/%d#requests", doc.GetId()),

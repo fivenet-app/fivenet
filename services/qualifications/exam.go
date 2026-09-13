@@ -304,7 +304,11 @@ func (s *Server) SubmitExam(
 	if err := tx.Commit(); err != nil {
 		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 	}
-	notifi.PublishAfterCommit(ctx, s.logger, "qualification_result_updated", publishNotifications...)
+	notifi.PublishAfterCommit(
+		ctx,
+		s.logger,
+		"qualification_result_updated",
+		publishNotifications...)
 
 	grpc_audit.SetAction(ctx, audit.EventAction_EVENT_ACTION_UPDATED)
 

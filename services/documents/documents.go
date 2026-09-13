@@ -844,7 +844,11 @@ func (s *Server) UpdateDocument(
 	if err := tx.Commit(); err != nil {
 		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 	}
-	notifi.PublishAfterCommit(ctx, s.logger, "document_approval_assigned", publishApprovalNotifications...)
+	notifi.PublishAfterCommit(
+		ctx,
+		s.logger,
+		"document_approval_assigned",
+		publishApprovalNotifications...)
 
 	grpc_audit.SetAction(ctx, audit.EventAction_EVENT_ACTION_UPDATED)
 

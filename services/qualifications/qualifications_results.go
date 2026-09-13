@@ -156,7 +156,11 @@ func (s *Server) CreateOrUpdateQualificationResult(
 	if err := tx.Commit(); err != nil {
 		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 	}
-	notifi.PublishAfterCommit(ctx, s.logger, "qualification_result_updated", publishNotifications...)
+	notifi.PublishAfterCommit(
+		ctx,
+		s.logger,
+		"qualification_result_updated",
+		publishNotifications...)
 
 	result, err := s.getQualificationResult(
 		ctx,
@@ -317,25 +321,29 @@ func (s *Server) createOrUpdateQualificationResult(
 		if err != nil {
 			return 0, err
 		}
-		publish, err := s.notif.PrepareUserNotification(ctx, tx, notifi.NewUserNotification(notifi.UserNotificationParams{
-			UserID: userId,
-			Title: &common.I18NItem{
-				Key: "notifications.qualifications.result_updated.title",
-			},
-			Content: &common.I18NItem{
-				Key: "notifications.qualifications.result_updated.content",
-				Parameters: map[string]string{
-					"abbreviation": quali.GetAbbreviation(),
-					"title":        quali.GetTitle(),
+		publish, err := s.notif.PrepareUserNotification(
+			ctx,
+			tx,
+			notifi.NewUserNotification(notifi.UserNotificationParams{
+				UserID: userId,
+				Title: &common.I18NItem{
+					Key: "notifications.qualifications.result_updated.title",
 				},
-			},
-			Category:    notifications.NotificationCategory_NOTIFICATION_CATEGORY_QUALIFICATIONS,
-			Type:        notifications.NotificationType_NOTIFICATION_TYPE_INFO,
-			ActorUserID: &actorID,
-			EntityType:  &entityType,
-			EntityID:    &resultEntityID,
-			Data:        notificationData,
-		}))
+				Content: &common.I18NItem{
+					Key: "notifications.qualifications.result_updated.content",
+					Parameters: map[string]string{
+						"abbreviation": quali.GetAbbreviation(),
+						"title":        quali.GetTitle(),
+					},
+				},
+				Category:    notifications.NotificationCategory_NOTIFICATION_CATEGORY_QUALIFICATIONS,
+				Type:        notifications.NotificationType_NOTIFICATION_TYPE_INFO,
+				ActorUserID: &actorID,
+				EntityType:  &entityType,
+				EntityID:    &resultEntityID,
+				Data:        notificationData,
+			}),
+		)
 		if err != nil {
 			return 0, err
 		}

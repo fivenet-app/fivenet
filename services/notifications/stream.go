@@ -457,7 +457,8 @@ func (s *Server) Stream(srv pbnotifications.NotificationsService_StreamServer) e
 					); err != nil {
 						return errswrap.NewError(err, ErrFailedStream)
 					}
-					if topic == notifi.UserTopic && d.Notification.GetId() > 0 && dest.UnreadCount != nil {
+					if topic == notifi.UserTopic && d.Notification.GetId() > 0 &&
+						dest.UnreadCount != nil {
 						// This is intentionally eventually consistent: concurrent
 						// publishers can observe and deliver counts out of order.
 						notificationCount = *dest.UnreadCount

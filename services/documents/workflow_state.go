@@ -1,4 +1,3 @@
-//nolint:goconst // Mainly for "title".
 package documents
 
 import (
@@ -561,7 +560,6 @@ func (w *Workflow) autoCloseDocument(
 		return nil
 	}
 
-	entityType := "documents.document"
 	documentID := state.GetDocumentId()
 	not := notifi.NewUserNotification(notifi.UserNotificationParams{
 		UserID: userInfo.GetUserId(),
@@ -572,15 +570,15 @@ func (w *Workflow) autoCloseDocument(
 		Content: &common.I18NItem{
 			Key: "notifications.documents.document_auto_closed.content",
 			Parameters: map[string]string{
-				"id":      strconv.FormatInt(state.GetDocumentId(), 10),
-				"title":   doc.GetTitle(),
-				"message": message,
+				"id":                       strconv.FormatInt(state.GetDocumentId(), 10),
+				notificationParameterTitle: doc.GetTitle(),
+				"message":                  message,
 			},
 		},
 		Type:       notifications.NotificationType_NOTIFICATION_TYPE_INFO,
 		Category:   notifications.NotificationCategory_NOTIFICATION_CATEGORY_DOCUMENT,
-		EntityType: &entityType,
-		EntityID:   &documentID,
+		EntityType: new(entityType),
+		EntityID:   new(documentID),
 		Data: &notifications.Data{
 			Link: &notifications.Link{
 				To: fmt.Sprintf("/documents/%d", state.GetDocumentId()),
@@ -627,7 +625,6 @@ func (w *Workflow) sendDocumentReminder(
 		return nil
 	}
 
-	entityType := "documents.document"
 	not := notifi.NewUserNotification(notifi.UserNotificationParams{
 		UserID: userId,
 		Title: &common.I18NItem{
@@ -637,14 +634,14 @@ func (w *Workflow) sendDocumentReminder(
 		Content: &common.I18NItem{
 			Key: "notifications.documents.document_reminder.content",
 			Parameters: map[string]string{
-				"id":    strconv.FormatInt(documentId, 10),
-				"title": doc.GetTitle(),
+				"id":                       strconv.FormatInt(documentId, 10),
+				notificationParameterTitle: doc.GetTitle(),
 			},
 		},
 		Type:       notifications.NotificationType_NOTIFICATION_TYPE_INFO,
 		Category:   notifications.NotificationCategory_NOTIFICATION_CATEGORY_DOCUMENT,
-		EntityType: &entityType,
-		EntityID:   &documentId,
+		EntityType: new(entityType),
+		EntityID:   new(documentId),
 		Data: &notifications.Data{
 			Link: &notifications.Link{
 				To: fmt.Sprintf("/documents/%d", documentId),

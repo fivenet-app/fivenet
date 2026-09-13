@@ -17,6 +17,7 @@ const entryComponents: Record<NotificationEntry, Component> = {
  * add their own actions without modifying the inbox shell.
  */
 export function notificationEntryComponent(notification: Notification): Component {
-    const entry = notificationKindDefinition(notification.kind)?.entry ?? notificationCategoryDefinition(notification.category)?.entry;
+    const entry =
+        notificationKindDefinition(notification.kind)?.entry ?? notificationCategoryDefinition(notification.category)?.entry;
     return entry ? entryComponents[entry] : DefaultEntry;
 }

@@ -519,7 +519,6 @@ func (s *Server) prepareApprovalTaskNotifications(
 	targetUserIDs []int32,
 ) ([]func(context.Context) error, error) {
 	publishNotifications := make([]func(context.Context) error, 0, len(targetUserIDs))
-	entityType := "documents.document"
 	for _, targetUserID := range targetUserIDs {
 		publishNotification, err := s.notifi.PrepareUserNotification(
 			ctx,
@@ -529,15 +528,15 @@ func (s *Server) prepareApprovalTaskNotifications(
 				Type:        notifications.NotificationType_NOTIFICATION_TYPE_INFO,
 				Category:    notifications.NotificationCategory_NOTIFICATION_CATEGORY_DOCUMENT,
 				Kind:        notifications.NotificationKind_NOTIFICATION_KIND_DOCUMENT_APPROVAL_ASSIGNED,
-				ActorUserID: &actorUserID,
-				EntityType:  &entityType,
-				EntityID:    &documentID,
+				ActorUserID: new(actorUserID),
+				EntityType:  new(entityType),
+				EntityID:    new(documentID),
 				Title: &common.I18NItem{
 					Key: "notifications.documents.document_approval_assigned.title",
 				},
 				Content: &common.I18NItem{
 					Key:        "notifications.documents.document_approval_assigned.content",
-					Parameters: map[string]string{"title": documentTitle},
+					Parameters: map[string]string{notificationParameterTitle: documentTitle},
 				},
 				Data: &notifications.Data{Link: &notifications.Link{
 					To: fmt.Sprintf("/documents/%d#approvals", documentID),
