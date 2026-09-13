@@ -451,7 +451,7 @@ func (s *Server) notifyUsersNewComment(
 		}
 
 		// Make sure user has access to document
-		userInfo, err := s.ui.GetUserInfo(ctx, sourceUserId)
+		userInfo, err := s.ui.GetUserInfo(ctx, targetUserId)
 		if err != nil {
 			return nil, err
 		}
