@@ -2824,14 +2824,15 @@ func (b0 ListGroupLeadersResponse_builder) Build() *ListGroupLeadersResponse {
 }
 
 type AddGroupMemberRequest struct {
-	state                  protoimpl.MessageState `protogen:"opaque.v1"`
-	xxx_hidden_GroupId     int64                  `protobuf:"varint,1,opt,name=group_id,json=groupId,proto3"`
-	xxx_hidden_UserId      int32                  `protobuf:"varint,2,opt,name=user_id,json=userId,proto3"`
-	xxx_hidden_Reason      *string                `protobuf:"bytes,3,opt,name=reason,proto3,oneof"`
-	XXX_raceDetectHookData protoimpl.RaceDetectHookData
-	XXX_presence           [1]uint32
-	unknownFields          protoimpl.UnknownFields
-	sizeCache              protoimpl.SizeCache
+	state                       protoimpl.MessageState `protogen:"opaque.v1"`
+	xxx_hidden_GroupId          int64                  `protobuf:"varint,1,opt,name=group_id,json=groupId,proto3"`
+	xxx_hidden_UserId           int32                  `protobuf:"varint,2,opt,name=user_id,json=userId,proto3"`
+	xxx_hidden_Reason           *string                `protobuf:"bytes,3,opt,name=reason,proto3,oneof"`
+	xxx_hidden_SkipNotification bool                   `protobuf:"varint,4,opt,name=skip_notification,json=skipNotification,proto3"`
+	XXX_raceDetectHookData      protoimpl.RaceDetectHookData
+	XXX_presence                [1]uint32
+	unknownFields               protoimpl.UnknownFields
+	sizeCache                   protoimpl.SizeCache
 }
 
 func (x *AddGroupMemberRequest) Reset() {
@@ -2883,6 +2884,13 @@ func (x *AddGroupMemberRequest) GetReason() string {
 	return ""
 }
 
+func (x *AddGroupMemberRequest) GetSkipNotification() bool {
+	if x != nil {
+		return x.xxx_hidden_SkipNotification
+	}
+	return false
+}
+
 func (x *AddGroupMemberRequest) SetGroupId(v int64) {
 	x.xxx_hidden_GroupId = v
 }
@@ -2893,7 +2901,11 @@ func (x *AddGroupMemberRequest) SetUserId(v int32) {
 
 func (x *AddGroupMemberRequest) SetReason(v string) {
 	x.xxx_hidden_Reason = &v
-	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 2, 3)
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 2, 4)
+}
+
+func (x *AddGroupMemberRequest) SetSkipNotification(v bool) {
+	x.xxx_hidden_SkipNotification = v
 }
 
 func (x *AddGroupMemberRequest) HasReason() bool {
@@ -2914,6 +2926,8 @@ type AddGroupMemberRequest_builder struct {
 	GroupId int64
 	UserId  int32
 	Reason  *string
+	// Suppresses the inbox notification normally sent to the affected user.
+	SkipNotification bool
 }
 
 func (b0 AddGroupMemberRequest_builder) Build() *AddGroupMemberRequest {
@@ -2923,9 +2937,10 @@ func (b0 AddGroupMemberRequest_builder) Build() *AddGroupMemberRequest {
 	x.xxx_hidden_GroupId = b.GroupId
 	x.xxx_hidden_UserId = b.UserId
 	if b.Reason != nil {
-		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 2, 3)
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 2, 4)
 		x.xxx_hidden_Reason = b.Reason
 	}
+	x.xxx_hidden_SkipNotification = b.SkipNotification
 	return m0
 }
 
@@ -3023,14 +3038,15 @@ func (b0 AddGroupMemberResponse_builder) Build() *AddGroupMemberResponse {
 }
 
 type RemoveGroupMemberRequest struct {
-	state                  protoimpl.MessageState `protogen:"opaque.v1"`
-	xxx_hidden_GroupId     int64                  `protobuf:"varint,1,opt,name=group_id,json=groupId,proto3"`
-	xxx_hidden_UserId      int32                  `protobuf:"varint,2,opt,name=user_id,json=userId,proto3"`
-	xxx_hidden_Reason      *string                `protobuf:"bytes,3,opt,name=reason,proto3,oneof"`
-	XXX_raceDetectHookData protoimpl.RaceDetectHookData
-	XXX_presence           [1]uint32
-	unknownFields          protoimpl.UnknownFields
-	sizeCache              protoimpl.SizeCache
+	state                       protoimpl.MessageState `protogen:"opaque.v1"`
+	xxx_hidden_GroupId          int64                  `protobuf:"varint,1,opt,name=group_id,json=groupId,proto3"`
+	xxx_hidden_UserId           int32                  `protobuf:"varint,2,opt,name=user_id,json=userId,proto3"`
+	xxx_hidden_Reason           *string                `protobuf:"bytes,3,opt,name=reason,proto3,oneof"`
+	xxx_hidden_SkipNotification bool                   `protobuf:"varint,4,opt,name=skip_notification,json=skipNotification,proto3"`
+	XXX_raceDetectHookData      protoimpl.RaceDetectHookData
+	XXX_presence                [1]uint32
+	unknownFields               protoimpl.UnknownFields
+	sizeCache                   protoimpl.SizeCache
 }
 
 func (x *RemoveGroupMemberRequest) Reset() {
@@ -3082,6 +3098,13 @@ func (x *RemoveGroupMemberRequest) GetReason() string {
 	return ""
 }
 
+func (x *RemoveGroupMemberRequest) GetSkipNotification() bool {
+	if x != nil {
+		return x.xxx_hidden_SkipNotification
+	}
+	return false
+}
+
 func (x *RemoveGroupMemberRequest) SetGroupId(v int64) {
 	x.xxx_hidden_GroupId = v
 }
@@ -3092,7 +3115,11 @@ func (x *RemoveGroupMemberRequest) SetUserId(v int32) {
 
 func (x *RemoveGroupMemberRequest) SetReason(v string) {
 	x.xxx_hidden_Reason = &v
-	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 2, 3)
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 2, 4)
+}
+
+func (x *RemoveGroupMemberRequest) SetSkipNotification(v bool) {
+	x.xxx_hidden_SkipNotification = v
 }
 
 func (x *RemoveGroupMemberRequest) HasReason() bool {
@@ -3113,6 +3140,8 @@ type RemoveGroupMemberRequest_builder struct {
 	GroupId int64
 	UserId  int32
 	Reason  *string
+	// Suppresses the inbox notification normally sent to the affected user.
+	SkipNotification bool
 }
 
 func (b0 RemoveGroupMemberRequest_builder) Build() *RemoveGroupMemberRequest {
@@ -3122,9 +3151,10 @@ func (b0 RemoveGroupMemberRequest_builder) Build() *RemoveGroupMemberRequest {
 	x.xxx_hidden_GroupId = b.GroupId
 	x.xxx_hidden_UserId = b.UserId
 	if b.Reason != nil {
-		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 2, 3)
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 2, 4)
 		x.xxx_hidden_Reason = b.Reason
 	}
+	x.xxx_hidden_SkipNotification = b.SkipNotification
 	return m0
 }
 
@@ -3584,14 +3614,15 @@ func (b0 RemoveGroupMemberExclusionResponse_builder) Build() *RemoveGroupMemberE
 }
 
 type AddGroupLeaderRequest struct {
-	state                  protoimpl.MessageState `protogen:"opaque.v1"`
-	xxx_hidden_GroupId     int64                  `protobuf:"varint,1,opt,name=group_id,json=groupId,proto3"`
-	xxx_hidden_UserId      int32                  `protobuf:"varint,2,opt,name=user_id,json=userId,proto3"`
-	xxx_hidden_Reason      *string                `protobuf:"bytes,3,opt,name=reason,proto3,oneof"`
-	XXX_raceDetectHookData protoimpl.RaceDetectHookData
-	XXX_presence           [1]uint32
-	unknownFields          protoimpl.UnknownFields
-	sizeCache              protoimpl.SizeCache
+	state                       protoimpl.MessageState `protogen:"opaque.v1"`
+	xxx_hidden_GroupId          int64                  `protobuf:"varint,1,opt,name=group_id,json=groupId,proto3"`
+	xxx_hidden_UserId           int32                  `protobuf:"varint,2,opt,name=user_id,json=userId,proto3"`
+	xxx_hidden_Reason           *string                `protobuf:"bytes,3,opt,name=reason,proto3,oneof"`
+	xxx_hidden_SkipNotification bool                   `protobuf:"varint,4,opt,name=skip_notification,json=skipNotification,proto3"`
+	XXX_raceDetectHookData      protoimpl.RaceDetectHookData
+	XXX_presence                [1]uint32
+	unknownFields               protoimpl.UnknownFields
+	sizeCache                   protoimpl.SizeCache
 }
 
 func (x *AddGroupLeaderRequest) Reset() {
@@ -3643,6 +3674,13 @@ func (x *AddGroupLeaderRequest) GetReason() string {
 	return ""
 }
 
+func (x *AddGroupLeaderRequest) GetSkipNotification() bool {
+	if x != nil {
+		return x.xxx_hidden_SkipNotification
+	}
+	return false
+}
+
 func (x *AddGroupLeaderRequest) SetGroupId(v int64) {
 	x.xxx_hidden_GroupId = v
 }
@@ -3653,7 +3691,11 @@ func (x *AddGroupLeaderRequest) SetUserId(v int32) {
 
 func (x *AddGroupLeaderRequest) SetReason(v string) {
 	x.xxx_hidden_Reason = &v
-	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 2, 3)
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 2, 4)
+}
+
+func (x *AddGroupLeaderRequest) SetSkipNotification(v bool) {
+	x.xxx_hidden_SkipNotification = v
 }
 
 func (x *AddGroupLeaderRequest) HasReason() bool {
@@ -3674,6 +3716,8 @@ type AddGroupLeaderRequest_builder struct {
 	GroupId int64
 	UserId  int32
 	Reason  *string
+	// Suppresses the inbox notification normally sent to the affected user.
+	SkipNotification bool
 }
 
 func (b0 AddGroupLeaderRequest_builder) Build() *AddGroupLeaderRequest {
@@ -3683,9 +3727,10 @@ func (b0 AddGroupLeaderRequest_builder) Build() *AddGroupLeaderRequest {
 	x.xxx_hidden_GroupId = b.GroupId
 	x.xxx_hidden_UserId = b.UserId
 	if b.Reason != nil {
-		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 2, 3)
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 2, 4)
 		x.xxx_hidden_Reason = b.Reason
 	}
+	x.xxx_hidden_SkipNotification = b.SkipNotification
 	return m0
 }
 
@@ -3783,14 +3828,15 @@ func (b0 AddGroupLeaderResponse_builder) Build() *AddGroupLeaderResponse {
 }
 
 type RemoveGroupLeaderRequest struct {
-	state                  protoimpl.MessageState `protogen:"opaque.v1"`
-	xxx_hidden_GroupId     int64                  `protobuf:"varint,1,opt,name=group_id,json=groupId,proto3"`
-	xxx_hidden_UserId      int32                  `protobuf:"varint,2,opt,name=user_id,json=userId,proto3"`
-	xxx_hidden_Reason      *string                `protobuf:"bytes,3,opt,name=reason,proto3,oneof"`
-	XXX_raceDetectHookData protoimpl.RaceDetectHookData
-	XXX_presence           [1]uint32
-	unknownFields          protoimpl.UnknownFields
-	sizeCache              protoimpl.SizeCache
+	state                       protoimpl.MessageState `protogen:"opaque.v1"`
+	xxx_hidden_GroupId          int64                  `protobuf:"varint,1,opt,name=group_id,json=groupId,proto3"`
+	xxx_hidden_UserId           int32                  `protobuf:"varint,2,opt,name=user_id,json=userId,proto3"`
+	xxx_hidden_Reason           *string                `protobuf:"bytes,3,opt,name=reason,proto3,oneof"`
+	xxx_hidden_SkipNotification bool                   `protobuf:"varint,4,opt,name=skip_notification,json=skipNotification,proto3"`
+	XXX_raceDetectHookData      protoimpl.RaceDetectHookData
+	XXX_presence                [1]uint32
+	unknownFields               protoimpl.UnknownFields
+	sizeCache                   protoimpl.SizeCache
 }
 
 func (x *RemoveGroupLeaderRequest) Reset() {
@@ -3842,6 +3888,13 @@ func (x *RemoveGroupLeaderRequest) GetReason() string {
 	return ""
 }
 
+func (x *RemoveGroupLeaderRequest) GetSkipNotification() bool {
+	if x != nil {
+		return x.xxx_hidden_SkipNotification
+	}
+	return false
+}
+
 func (x *RemoveGroupLeaderRequest) SetGroupId(v int64) {
 	x.xxx_hidden_GroupId = v
 }
@@ -3852,7 +3905,11 @@ func (x *RemoveGroupLeaderRequest) SetUserId(v int32) {
 
 func (x *RemoveGroupLeaderRequest) SetReason(v string) {
 	x.xxx_hidden_Reason = &v
-	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 2, 3)
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 2, 4)
+}
+
+func (x *RemoveGroupLeaderRequest) SetSkipNotification(v bool) {
+	x.xxx_hidden_SkipNotification = v
 }
 
 func (x *RemoveGroupLeaderRequest) HasReason() bool {
@@ -3873,6 +3930,8 @@ type RemoveGroupLeaderRequest_builder struct {
 	GroupId int64
 	UserId  int32
 	Reason  *string
+	// Suppresses the inbox notification normally sent to the affected user.
+	SkipNotification bool
 }
 
 func (b0 RemoveGroupLeaderRequest_builder) Build() *RemoveGroupLeaderRequest {
@@ -3882,9 +3941,10 @@ func (b0 RemoveGroupLeaderRequest_builder) Build() *RemoveGroupLeaderRequest {
 	x.xxx_hidden_GroupId = b.GroupId
 	x.xxx_hidden_UserId = b.UserId
 	if b.Reason != nil {
-		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 2, 3)
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 2, 4)
 		x.xxx_hidden_Reason = b.Reason
 	}
+	x.xxx_hidden_SkipNotification = b.SkipNotification
 	return m0
 }
 
@@ -5217,19 +5277,21 @@ const file_services_jobs_groups_proto_rawDesc = "" +
 	"\n" +
 	"pagination\x18\x01 \x01(\v2-.resources.common.database.PaginationResponseR\n" +
 	"pagination\x12B\n" +
-	"\aleaders\x18\x02 \x03(\v2\".resources.jobs.groups.GroupLeaderB\x04\xc8\xf3\x18\x01R\aleaders\"s\n" +
+	"\aleaders\x18\x02 \x03(\v2\".resources.jobs.groups.GroupLeaderB\x04\xc8\xf3\x18\x01R\aleaders\"\xa0\x01\n" +
 	"\x15AddGroupMemberRequest\x12\x19\n" +
 	"\bgroup_id\x18\x01 \x01(\x03R\agroupId\x12\x17\n" +
 	"\auser_id\x18\x02 \x01(\x05R\x06userId\x12\x1b\n" +
-	"\x06reason\x18\x03 \x01(\tH\x00R\x06reason\x88\x01\x01B\t\n" +
+	"\x06reason\x18\x03 \x01(\tH\x00R\x06reason\x88\x01\x01\x12+\n" +
+	"\x11skip_notification\x18\x04 \x01(\bR\x10skipNotificationB\t\n" +
 	"\a_reason\"\x8e\x01\n" +
 	"\x16AddGroupMemberResponse\x12@\n" +
 	"\x06member\x18\x01 \x01(\v2(.resources.jobs.groups.GroupManualMemberR\x06member\x122\n" +
-	"\x05group\x18\x02 \x01(\v2\x1c.resources.jobs.groups.GroupR\x05group\"v\n" +
+	"\x05group\x18\x02 \x01(\v2\x1c.resources.jobs.groups.GroupR\x05group\"\xa3\x01\n" +
 	"\x18RemoveGroupMemberRequest\x12\x19\n" +
 	"\bgroup_id\x18\x01 \x01(\x03R\agroupId\x12\x17\n" +
 	"\auser_id\x18\x02 \x01(\x05R\x06userId\x12\x1b\n" +
-	"\x06reason\x18\x03 \x01(\tH\x00R\x06reason\x88\x01\x01B\t\n" +
+	"\x06reason\x18\x03 \x01(\tH\x00R\x06reason\x88\x01\x01\x12+\n" +
+	"\x11skip_notification\x18\x04 \x01(\bR\x10skipNotificationB\t\n" +
 	"\a_reason\"O\n" +
 	"\x19RemoveGroupMemberResponse\x122\n" +
 	"\x05group\x18\x01 \x01(\v2\x1c.resources.jobs.groups.GroupR\x05group\"\xc5\x01\n" +
@@ -5249,19 +5311,21 @@ const file_services_jobs_groups_proto_rawDesc = "" +
 	"\x06reason\x18\x03 \x01(\tH\x00R\x06reason\x88\x01\x01B\t\n" +
 	"\a_reason\"X\n" +
 	"\"RemoveGroupMemberExclusionResponse\x122\n" +
-	"\x05group\x18\x01 \x01(\v2\x1c.resources.jobs.groups.GroupR\x05group\"s\n" +
+	"\x05group\x18\x01 \x01(\v2\x1c.resources.jobs.groups.GroupR\x05group\"\xa0\x01\n" +
 	"\x15AddGroupLeaderRequest\x12\x19\n" +
 	"\bgroup_id\x18\x01 \x01(\x03R\agroupId\x12\x17\n" +
 	"\auser_id\x18\x02 \x01(\x05R\x06userId\x12\x1b\n" +
-	"\x06reason\x18\x03 \x01(\tH\x00R\x06reason\x88\x01\x01B\t\n" +
+	"\x06reason\x18\x03 \x01(\tH\x00R\x06reason\x88\x01\x01\x12+\n" +
+	"\x11skip_notification\x18\x04 \x01(\bR\x10skipNotificationB\t\n" +
 	"\a_reason\"\x88\x01\n" +
 	"\x16AddGroupLeaderResponse\x12:\n" +
 	"\x06leader\x18\x01 \x01(\v2\".resources.jobs.groups.GroupLeaderR\x06leader\x122\n" +
-	"\x05group\x18\x02 \x01(\v2\x1c.resources.jobs.groups.GroupR\x05group\"v\n" +
+	"\x05group\x18\x02 \x01(\v2\x1c.resources.jobs.groups.GroupR\x05group\"\xa3\x01\n" +
 	"\x18RemoveGroupLeaderRequest\x12\x19\n" +
 	"\bgroup_id\x18\x01 \x01(\x03R\agroupId\x12\x17\n" +
 	"\auser_id\x18\x02 \x01(\x05R\x06userId\x12\x1b\n" +
-	"\x06reason\x18\x03 \x01(\tH\x00R\x06reason\x88\x01\x01B\t\n" +
+	"\x06reason\x18\x03 \x01(\tH\x00R\x06reason\x88\x01\x01\x12+\n" +
+	"\x11skip_notification\x18\x04 \x01(\bR\x10skipNotificationB\t\n" +
 	"\a_reason\"O\n" +
 	"\x19RemoveGroupLeaderResponse\x122\n" +
 	"\x05group\x18\x01 \x01(\v2\x1c.resources.jobs.groups.GroupR\x05group\"\xd9\x01\n" +

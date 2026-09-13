@@ -12,15 +12,22 @@ option go_package = "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources
 
 // User related events
 message UserEvent {
+  // Present on durable notification events to let streams update their badge
+  // count, provided per stream on best-effort basis.
+  optional int64 unread_count = 7;
+
   oneof data {
     option (buf.validate.oneof).required = true;
 
     bool refresh_token = 1;
     // Notifications
     resources.notifications.Notification notification = 2;
+    // Deprecated delta kept for wire compatibility with older clients.
     int64 notifications_read_count = 3;
     resources.userinfo.UserInfoChanged user_info_changed = 4;
     resources.userinfo.AccountGroupsChanged account_groups_changed = 5;
+    // The authoritative unread count after a notification-state mutation.
+    int64 notifications_unread_count = 6;
   }
 }
 

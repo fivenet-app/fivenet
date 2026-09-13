@@ -28,6 +28,7 @@ import (
 	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/auth"
 	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/errswrap"
 	grpc_audit "github.com/fivenet-app/fivenet/v2026/pkg/grpc/interceptors/audit"
+	"github.com/fivenet-app/fivenet/v2026/pkg/notifi"
 	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
 	errorsdocuments "github.com/fivenet-app/fivenet/v2026/services/documents/errors"
 	citizenshydrator "github.com/fivenet-app/fivenet/v2026/stores/citizens/hydrator"
@@ -765,6 +766,7 @@ func (s *Server) UpdateDocument(
 		}
 	}
 
+	publishApprovalNotifications := []func(context.Context) error{}
 	if contentChanged || statusChanged {
 		diff, err := s.generateDocumentDiff(oldDoc, &documents.Document{
 			Title:   req.GetTitle(),
@@ -822,9 +824,14 @@ func (s *Server) UpdateDocument(
 			}
 
 			if tmpl != nil && !req.GetMeta().GetDraft() {
-				if err := s.handleDocumentPublish(ctx, tx, userInfo, oldDoc, tmpl); err != nil {
+				var notifications []func(context.Context) error
+				notifications, err = s.handleDocumentPublish(ctx, tx, userInfo, oldDoc, tmpl)
+				if err != nil {
 					return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 				}
+				publishApprovalNotifications = append(
+					publishApprovalNotifications,
+					notifications...)
 			}
 		}
 
@@ -837,6 +844,11 @@ func (s *Server) UpdateDocument(
 	if err := tx.Commit(); err != nil {
 		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 	}
+	notifi.PublishAfterCommit(
+		ctx,
+		s.logger,
+		"document_approval_assigned",
+		publishApprovalNotifications...)
 
 	grpc_audit.SetAction(ctx, audit.EventAction_EVENT_ACTION_UPDATED)
 
@@ -877,10 +889,10 @@ func (s *Server) handleDocumentPublish(
 	userInfo *userinfo.UserInfo,
 	doc *documents.Document,
 	tmpl *documentstemplates.Template,
-) error {
+) ([]func(context.Context) error, error) {
 	apr := tmpl.GetApproval()
 	if apr == nil || !apr.GetEnabled() {
-		return nil
+		return nil, nil
 	}
 
 	pol, err := s.store.GetApprovalPolicy(
@@ -893,11 +905,11 @@ func (s *Server) handleDocumentPublish(
 		),
 	)
 	if err != nil {
-		return errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
+		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 	}
 	if pol != nil {
 		// A policy already exists, don't update the existing one
-		return nil
+		return nil, nil
 	}
 
 	now := timestamp.New(time.Now().Truncate(time.Second))
@@ -934,7 +946,7 @@ func (s *Server) handleDocumentPublish(
 	newPol.Default()
 
 	if err = s.store.CreateApprovalPolicy(ctx, tx, doc.GetId(), newPol); err != nil {
-		return errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
+		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 	}
 
 	seeds := []*pbdocuments.ApprovalTaskSeed{}
@@ -962,18 +974,26 @@ func (s *Server) handleDocumentPublish(
 		})
 	}
 
-	if _, _, err := s.store.CreateApprovalTasks(
+	_, _, createdUserIDs, err := s.store.CreateApprovalTasks(
 		ctx,
 		tx,
 		userInfo,
 		doc.GetId(),
 		now,
 		seeds,
-	); err != nil {
-		return errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
+	)
+	if err != nil {
+		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 	}
 
-	return nil
+	publishNotifications, err := s.prepareApprovalTaskNotifications(
+		ctx, tx, doc.GetId(), doc.GetTitle(), userInfo.GetUserId(), createdUserIDs,
+	)
+	if err != nil {
+		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
+	}
+
+	return publishNotifications, nil
 }
 
 func (s *Server) DeleteDocument(

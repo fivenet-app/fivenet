@@ -2,14 +2,14 @@
 import { useDraggable } from 'vue-draggable-plus';
 import { storeToRefs } from 'pinia';
 import DraggableHandle from '~/components/partials/DraggableHandle.vue';
-import type { OverviewFeature } from '~/composables/useOverviewFeatures';
+import type { AppOverviewFeature } from '~/composables/useAppFeatures';
 import ReorderButtons from '~/components/partials/ReorderButtons.vue';
 
 const settingsStore = useSettingsStore();
 const { overviewQuickAccess } = storeToRefs(settingsStore);
 const { reorderOverviewQuickAccess } = settingsStore;
 
-const items = useOverviewFeatures();
+const { overviewItems: items } = useAppFeatures();
 
 const quickAccessItems = computed(() => {
     const seen = new Set<string>();
@@ -24,7 +24,7 @@ const quickAccessItems = computed(() => {
 });
 
 const reorderMode = ref<boolean>(false);
-const sortableQuickAccessItems = ref<OverviewFeature[]>([]);
+const sortableQuickAccessItems = ref<AppOverviewFeature[]>([]);
 const listRef = useTemplateRef('listRef');
 const activeDraggableRoot = shallowRef<HTMLElement | null>(null);
 

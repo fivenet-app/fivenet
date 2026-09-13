@@ -19,8 +19,8 @@ func (s *Store) CountUnread(ctx context.Context, userID int32) (int64, error) {
 		WHERE(mysql.AND(
 			tNotifications.UserID.EQ(mysql.Int32(userID)),
 			tNotifications.ReadAt.IS_NULL(),
-		)).
-		ORDER_BY(tNotifications.ID.DESC())
+			tNotifications.ArchivedAt.IS_NULL(),
+		))
 
 	var dest struct {
 		Count int64

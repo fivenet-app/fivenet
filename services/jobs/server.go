@@ -14,6 +14,7 @@ import (
 	"github.com/fivenet-app/fivenet/v2026/pkg/perms"
 	"github.com/fivenet-app/fivenet/v2026/pkg/stats"
 	"github.com/fivenet-app/fivenet/v2026/pkg/storage"
+	userinfo "github.com/fivenet-app/fivenet/v2026/pkg/userinfo"
 	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
 	jobsstore "github.com/fivenet-app/fivenet/v2026/stores/jobs"
 	colleaguehydrator "github.com/fivenet-app/fivenet/v2026/stores/jobs/colleagues/hydrator"
@@ -109,6 +110,7 @@ type Server struct {
 	groupLogoFileHandler *filestore.Handler[int64]
 
 	userSel usersel.IResolver
+	ui      userinfo.UserInfoRetriever
 }
 
 type Params struct {
@@ -127,6 +129,7 @@ type Params struct {
 	Store               jobsstore.IStore
 	ColleagueHydrator   colleaguehydrator.IHydrator
 	UserSel             usersel.IResolver
+	UI                  userinfo.UserInfoRetriever
 	GroupAccess         *access.JobGroupsObjectAccess
 	QualificationAccess *access.QualificationsObjectAccess
 }
@@ -183,6 +186,7 @@ func NewServer(p Params) *Server {
 		groupAccess:          p.GroupAccess,
 		groupAccessResolver:  access.NewSubjectResolver(p.DB),
 		qualificationAccess:  p.QualificationAccess,
+		ui:                   p.UI,
 
 		userSel: p.UserSel,
 	}

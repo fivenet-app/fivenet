@@ -12,6 +12,7 @@ import (
 
 	accounts "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/accounts"
 	mailerevents "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/mailer/events"
+	resourcesnotifications "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/notifications"
 	notificationsclientview "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/notifications/clientview"
 	notificationsevents "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/notifications/events"
 	pbuserinfo "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/userinfo"
@@ -222,14 +223,6 @@ func (s *Server) Stream(srv pbnotifications.NotificationsService_StreamServer) e
 	clientViewSubjects := []string{}
 	var currentClientView *notificationsclientview.ClientView
 
-	var notificationCount int64
-	if !accountOnly {
-		notificationCount, err = s.store.CountUnread(ctx, userInfo.GetUserId())
-		if err != nil {
-			return errswrap.NewError(err, ErrFailedStream)
-		}
-	}
-
 	meta := metadata.ExtractIncoming(ctx)
 	connId := meta.Get(grpcws.ConnectionIdHeader)
 
@@ -249,6 +242,16 @@ func (s *Server) Stream(srv pbnotifications.NotificationsService_StreamServer) e
 	consumer, err := s.js.CreateOrUpdateConsumer(ctx, notifi.StreamName, consCfg)
 	if err != nil {
 		return fmt.Errorf("failed to create consumer (%v). %w", consCfg.FilterSubjects, err)
+	}
+
+	// Count only after the consumer boundary exists. Durable notification events
+	// carry an updated unread count, so this is the stream's only count lookup.
+	var notificationCount int64
+	if !accountOnly {
+		notificationCount, err = s.store.CountUnread(ctx, userInfo.GetUserId())
+		if err != nil {
+			return errswrap.NewError(err, ErrFailedStream)
+		}
 	}
 	// Keep the durable consumer alive across websocket stream restarts on the
 	// same connection. The consumer will expire via InactiveThreshold once the
@@ -447,9 +450,18 @@ func (s *Server) Stream(srv pbnotifications.NotificationsService_StreamServer) e
 				needsSubjectRefresh := false
 				switch d := dest.GetData().(type) {
 				case *notificationsevents.UserEvent_Notification:
-					// Only increment notification count for "database stored" notifications
-					if topic == notifi.UserTopic && d.Notification.GetId() > 0 {
-						notificationCount++
+					if err := s.hydrateNotifications(
+						gctx,
+						currentUserInfo,
+						[]*resourcesnotifications.Notification{d.Notification},
+					); err != nil {
+						return errswrap.NewError(err, ErrFailedStream)
+					}
+					if topic == notifi.UserTopic && d.Notification.GetId() > 0 &&
+						dest.UnreadCount != nil {
+						// This is intentionally eventually consistent: concurrent
+						// publishers can observe and deliver counts out of order.
+						notificationCount = *dest.UnreadCount
 					}
 
 				case *notificationsevents.UserEvent_NotificationsReadCount:
@@ -459,6 +471,11 @@ func (s *Server) Stream(srv pbnotifications.NotificationsService_StreamServer) e
 						} else {
 							notificationCount -= d.NotificationsReadCount
 						}
+					}
+
+				case *notificationsevents.UserEvent_NotificationsUnreadCount:
+					if topic == notifi.UserTopic {
+						notificationCount = d.NotificationsUnreadCount
 					}
 
 				case *notificationsevents.UserEvent_UserInfoChanged:

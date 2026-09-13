@@ -476,6 +476,12 @@ export interface AddGroupMemberRequest {
      * @generated from protobuf field: optional string reason = 3
      */
     reason?: string;
+    /**
+     * Suppresses the inbox notification normally sent to the affected user.
+     *
+     * @generated from protobuf field: bool skip_notification = 4
+     */
+    skipNotification: boolean;
 }
 /**
  * @generated from protobuf message services.jobs.AddGroupMemberResponse
@@ -506,6 +512,12 @@ export interface RemoveGroupMemberRequest {
      * @generated from protobuf field: optional string reason = 3
      */
     reason?: string;
+    /**
+     * Suppresses the inbox notification normally sent to the affected user.
+     *
+     * @generated from protobuf field: bool skip_notification = 4
+     */
+    skipNotification: boolean;
 }
 /**
  * @generated from protobuf message services.jobs.RemoveGroupMemberResponse
@@ -592,6 +604,12 @@ export interface AddGroupLeaderRequest {
      * @generated from protobuf field: optional string reason = 3
      */
     reason?: string;
+    /**
+     * Suppresses the inbox notification normally sent to the affected user.
+     *
+     * @generated from protobuf field: bool skip_notification = 4
+     */
+    skipNotification: boolean;
 }
 /**
  * @generated from protobuf message services.jobs.AddGroupLeaderResponse
@@ -622,6 +640,12 @@ export interface RemoveGroupLeaderRequest {
      * @generated from protobuf field: optional string reason = 3
      */
     reason?: string;
+    /**
+     * Suppresses the inbox notification normally sent to the affected user.
+     *
+     * @generated from protobuf field: bool skip_notification = 4
+     */
+    skipNotification: boolean;
 }
 /**
  * @generated from protobuf message services.jobs.RemoveGroupLeaderResponse
@@ -2340,13 +2364,15 @@ class AddGroupMemberRequest$Type extends MessageType<AddGroupMemberRequest> {
         super("services.jobs.AddGroupMemberRequest", [
             { no: 1, name: "group_id", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ },
             { no: 2, name: "user_id", kind: "scalar", T: 5 /*ScalarType.INT32*/ },
-            { no: 3, name: "reason", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/ }
+            { no: 3, name: "reason", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/ },
+            { no: 4, name: "skip_notification", kind: "scalar", T: 8 /*ScalarType.BOOL*/ }
         ]);
     }
     create(value?: PartialMessage<AddGroupMemberRequest>): AddGroupMemberRequest {
         const message = globalThis.Object.create((this.messagePrototype!));
         message.groupId = 0;
         message.userId = 0;
+        message.skipNotification = false;
         if (value !== undefined)
             reflectionMergePartial<AddGroupMemberRequest>(this, message, value);
         return message;
@@ -2364,6 +2390,9 @@ class AddGroupMemberRequest$Type extends MessageType<AddGroupMemberRequest> {
                     break;
                 case /* optional string reason */ 3:
                     message.reason = reader.string();
+                    break;
+                case /* bool skip_notification */ 4:
+                    message.skipNotification = reader.bool();
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -2386,6 +2415,9 @@ class AddGroupMemberRequest$Type extends MessageType<AddGroupMemberRequest> {
         /* optional string reason = 3; */
         if (message.reason !== undefined)
             writer.tag(3, WireType.LengthDelimited).string(message.reason);
+        /* bool skip_notification = 4; */
+        if (message.skipNotification !== false)
+            writer.tag(4, WireType.Varint).bool(message.skipNotification);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -2455,13 +2487,15 @@ class RemoveGroupMemberRequest$Type extends MessageType<RemoveGroupMemberRequest
         super("services.jobs.RemoveGroupMemberRequest", [
             { no: 1, name: "group_id", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ },
             { no: 2, name: "user_id", kind: "scalar", T: 5 /*ScalarType.INT32*/ },
-            { no: 3, name: "reason", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/ }
+            { no: 3, name: "reason", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/ },
+            { no: 4, name: "skip_notification", kind: "scalar", T: 8 /*ScalarType.BOOL*/ }
         ]);
     }
     create(value?: PartialMessage<RemoveGroupMemberRequest>): RemoveGroupMemberRequest {
         const message = globalThis.Object.create((this.messagePrototype!));
         message.groupId = 0;
         message.userId = 0;
+        message.skipNotification = false;
         if (value !== undefined)
             reflectionMergePartial<RemoveGroupMemberRequest>(this, message, value);
         return message;
@@ -2479,6 +2513,9 @@ class RemoveGroupMemberRequest$Type extends MessageType<RemoveGroupMemberRequest
                     break;
                 case /* optional string reason */ 3:
                     message.reason = reader.string();
+                    break;
+                case /* bool skip_notification */ 4:
+                    message.skipNotification = reader.bool();
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -2501,6 +2538,9 @@ class RemoveGroupMemberRequest$Type extends MessageType<RemoveGroupMemberRequest
         /* optional string reason = 3; */
         if (message.reason !== undefined)
             writer.tag(3, WireType.LengthDelimited).string(message.reason);
+        /* bool skip_notification = 4; */
+        if (message.skipNotification !== false)
+            writer.tag(4, WireType.Varint).bool(message.skipNotification);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -2794,13 +2834,15 @@ class AddGroupLeaderRequest$Type extends MessageType<AddGroupLeaderRequest> {
         super("services.jobs.AddGroupLeaderRequest", [
             { no: 1, name: "group_id", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ },
             { no: 2, name: "user_id", kind: "scalar", T: 5 /*ScalarType.INT32*/ },
-            { no: 3, name: "reason", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/ }
+            { no: 3, name: "reason", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/ },
+            { no: 4, name: "skip_notification", kind: "scalar", T: 8 /*ScalarType.BOOL*/ }
         ]);
     }
     create(value?: PartialMessage<AddGroupLeaderRequest>): AddGroupLeaderRequest {
         const message = globalThis.Object.create((this.messagePrototype!));
         message.groupId = 0;
         message.userId = 0;
+        message.skipNotification = false;
         if (value !== undefined)
             reflectionMergePartial<AddGroupLeaderRequest>(this, message, value);
         return message;
@@ -2818,6 +2860,9 @@ class AddGroupLeaderRequest$Type extends MessageType<AddGroupLeaderRequest> {
                     break;
                 case /* optional string reason */ 3:
                     message.reason = reader.string();
+                    break;
+                case /* bool skip_notification */ 4:
+                    message.skipNotification = reader.bool();
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -2840,6 +2885,9 @@ class AddGroupLeaderRequest$Type extends MessageType<AddGroupLeaderRequest> {
         /* optional string reason = 3; */
         if (message.reason !== undefined)
             writer.tag(3, WireType.LengthDelimited).string(message.reason);
+        /* bool skip_notification = 4; */
+        if (message.skipNotification !== false)
+            writer.tag(4, WireType.Varint).bool(message.skipNotification);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -2909,13 +2957,15 @@ class RemoveGroupLeaderRequest$Type extends MessageType<RemoveGroupLeaderRequest
         super("services.jobs.RemoveGroupLeaderRequest", [
             { no: 1, name: "group_id", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ },
             { no: 2, name: "user_id", kind: "scalar", T: 5 /*ScalarType.INT32*/ },
-            { no: 3, name: "reason", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/ }
+            { no: 3, name: "reason", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/ },
+            { no: 4, name: "skip_notification", kind: "scalar", T: 8 /*ScalarType.BOOL*/ }
         ]);
     }
     create(value?: PartialMessage<RemoveGroupLeaderRequest>): RemoveGroupLeaderRequest {
         const message = globalThis.Object.create((this.messagePrototype!));
         message.groupId = 0;
         message.userId = 0;
+        message.skipNotification = false;
         if (value !== undefined)
             reflectionMergePartial<RemoveGroupLeaderRequest>(this, message, value);
         return message;
@@ -2933,6 +2983,9 @@ class RemoveGroupLeaderRequest$Type extends MessageType<RemoveGroupLeaderRequest
                     break;
                 case /* optional string reason */ 3:
                     message.reason = reader.string();
+                    break;
+                case /* bool skip_notification */ 4:
+                    message.skipNotification = reader.bool();
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -2955,6 +3008,9 @@ class RemoveGroupLeaderRequest$Type extends MessageType<RemoveGroupLeaderRequest
         /* optional string reason = 3; */
         if (message.reason !== undefined)
             writer.tag(3, WireType.LengthDelimited).string(message.reason);
+        /* bool skip_notification = 4; */
+        if (message.skipNotification !== false)
+            writer.tag(4, WireType.Varint).bool(message.skipNotification);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);

@@ -1,4 +1,3 @@
-//nolint:goconst // Mainly for "title".
 package documents
 
 import (
@@ -561,8 +560,9 @@ func (w *Workflow) autoCloseDocument(
 		return nil
 	}
 
-	not := &notifications.Notification{
-		UserId: userInfo.GetUserId(),
+	documentID := state.GetDocumentId()
+	not := notifi.NewUserNotification(notifi.UserNotificationParams{
+		UserID: userInfo.GetUserId(),
 		Title: &common.I18NItem{
 			Key:        "notifications.documents.document_auto_closed.title",
 			Parameters: map[string]string{"id": strconv.FormatInt(state.GetDocumentId(), 10)},
@@ -570,19 +570,21 @@ func (w *Workflow) autoCloseDocument(
 		Content: &common.I18NItem{
 			Key: "notifications.documents.document_auto_closed.content",
 			Parameters: map[string]string{
-				"id":      strconv.FormatInt(state.GetDocumentId(), 10),
-				"title":   doc.GetTitle(),
-				"message": message,
+				"id":                       strconv.FormatInt(state.GetDocumentId(), 10),
+				notificationParameterTitle: doc.GetTitle(),
+				"message":                  message,
 			},
 		},
-		Type:     notifications.NotificationType_NOTIFICATION_TYPE_INFO,
-		Category: notifications.NotificationCategory_NOTIFICATION_CATEGORY_DOCUMENT,
+		Type:       notifications.NotificationType_NOTIFICATION_TYPE_INFO,
+		Category:   notifications.NotificationCategory_NOTIFICATION_CATEGORY_DOCUMENT,
+		EntityType: new(entityType),
+		EntityID:   new(documentID),
 		Data: &notifications.Data{
 			Link: &notifications.Link{
 				To: fmt.Sprintf("/documents/%d", state.GetDocumentId()),
 			},
 		},
-	}
+	})
 
 	if err := w.notif.NotifyUser(ctx, not); err != nil {
 		return err
@@ -623,8 +625,8 @@ func (w *Workflow) sendDocumentReminder(
 		return nil
 	}
 
-	not := &notifications.Notification{
-		UserId: userId,
+	not := notifi.NewUserNotification(notifi.UserNotificationParams{
+		UserID: userId,
 		Title: &common.I18NItem{
 			Key:        "notifications.documents.document_reminder.title",
 			Parameters: map[string]string{"id": strconv.FormatInt(documentId, 10)},
@@ -632,18 +634,20 @@ func (w *Workflow) sendDocumentReminder(
 		Content: &common.I18NItem{
 			Key: "notifications.documents.document_reminder.content",
 			Parameters: map[string]string{
-				"id":    strconv.FormatInt(documentId, 10),
-				"title": doc.GetTitle(),
+				"id":                       strconv.FormatInt(documentId, 10),
+				notificationParameterTitle: doc.GetTitle(),
 			},
 		},
-		Type:     notifications.NotificationType_NOTIFICATION_TYPE_INFO,
-		Category: notifications.NotificationCategory_NOTIFICATION_CATEGORY_DOCUMENT,
+		Type:       notifications.NotificationType_NOTIFICATION_TYPE_INFO,
+		Category:   notifications.NotificationCategory_NOTIFICATION_CATEGORY_DOCUMENT,
+		EntityType: new(entityType),
+		EntityID:   new(documentId),
 		Data: &notifications.Data{
 			Link: &notifications.Link{
 				To: fmt.Sprintf("/documents/%d", documentId),
 			},
 		},
-	}
+	})
 	if message != "" {
 		not.Title.Key = "notifications.documents.document_reminder_with_message.title"
 

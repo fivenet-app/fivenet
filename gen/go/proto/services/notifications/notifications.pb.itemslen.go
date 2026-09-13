@@ -3,10 +3,26 @@
 
 package notifications
 
+// ItemsLen returns the length of Preferences.
+func (m *GetNotificationPreferencesResponse) ItemsLen() int {
+	if m == nil {
+		return 0
+	}
+	return len(m.GetPreferences())
+}
+
 // ItemsLen returns the length of Notifications.
 func (m *GetNotificationsResponse) ItemsLen() int {
 	if m == nil {
 		return 0
 	}
 	return len(m.GetNotifications())
+}
+
+// ItemsLen returns the length of Preferences.
+func (m *UpdateNotificationPreferenceResponse) ItemsLen() int {
+	if m == nil {
+		return 0
+	}
+	return len(m.GetPreferences())
 }

@@ -1,8 +1,11 @@
 package qualifications
 
 import (
+	"context"
 	"database/sql"
+	"fmt"
 
+	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/notifications"
 	pbqualifications "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/qualifications"
 	"github.com/fivenet-app/fivenet/v2026/pkg/access"
 	"github.com/fivenet-app/fivenet/v2026/pkg/filestore"
@@ -11,11 +14,13 @@ import (
 	"github.com/fivenet-app/fivenet/v2026/pkg/notifi"
 	"github.com/fivenet-app/fivenet/v2026/pkg/perms"
 	"github.com/fivenet-app/fivenet/v2026/pkg/storage"
+	userinfo "github.com/fivenet-app/fivenet/v2026/pkg/userinfo"
 	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
 	citizenshydrator "github.com/fivenet-app/fivenet/v2026/stores/citizens/hydrator"
 	qualificationsstore "github.com/fivenet-app/fivenet/v2026/stores/qualifications"
 	"github.com/go-jet/jet/v2/mysql"
 	"go.uber.org/fx"
+	"go.uber.org/zap"
 	"google.golang.org/grpc"
 )
 
@@ -66,11 +71,13 @@ type Server struct {
 	pbqualifications.QualificationsServiceServer
 	pbqualifications.ExamServiceServer
 
+	logger   *zap.Logger
 	db       *sql.DB
 	perms    perms.Permissions
 	enricher mstlystcdata.IUserAwareEnricher
 	hydrator citizenshydrator.IHydrator
 	notif    notifi.INotifi
+	ui       userinfo.UserInfoRetriever
 
 	access         *access.QualificationsObjectAccess
 	accessResolver *access.SubjectResolver
@@ -82,11 +89,13 @@ type Server struct {
 type Params struct {
 	fx.In
 
+	Logger            *zap.Logger
 	DB                *sql.DB
 	Perms             perms.Permissions
 	UserAwareEnricher mstlystcdata.IUserAwareEnricher
 	Hydrator          citizenshydrator.IHydrator
 	Notif             notifi.INotifi
+	UI                userinfo.UserInfoRetriever
 	Storage           storage.IStorage
 	Store             qualificationsstore.IStore
 	Access            *access.QualificationsObjectAccess
@@ -110,11 +119,13 @@ func NewServer(p Params) *Server {
 	).WithUploadFilter(filestore.NewImageUploadFilter())
 
 	s := &Server{
+		logger:   p.Logger.Named("qualifications"),
 		db:       p.DB,
 		perms:    p.Perms,
 		enricher: p.UserAwareEnricher,
 		hydrator: p.Hydrator,
 		notif:    p.Notif,
+		ui:       p.UI,
 
 		access:         p.Access,
 		accessResolver: access.NewSubjectResolver(p.DB),
@@ -129,4 +140,27 @@ func NewServer(p Params) *Server {
 func (s *Server) RegisterServer(srv *grpc.Server) {
 	pbqualifications.RegisterQualificationsServiceServer(srv, s)
 	pbqualifications.RegisterExamServiceServer(srv, s)
+}
+
+func (s *Server) qualificationNotificationData(
+	ctx context.Context,
+	targetUserID int32,
+	qualificationID int64,
+) (*notifications.Data, error) {
+	if s.ui == nil {
+		return nil, nil
+	}
+	targetUserInfo, err := s.ui.GetUserInfo(ctx, targetUserID)
+	if err != nil {
+		return nil, err
+	}
+	if !s.perms.CanServiceMethod(
+		targetUserInfo,
+		"qualifications.QualificationsService/ListQualifications",
+	) {
+		return nil, nil
+	}
+	return &notifications.Data{
+		Link: &notifications.Link{To: fmt.Sprintf("/qualifications/%d", qualificationID)},
+	}, nil
 }

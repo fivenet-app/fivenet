@@ -23,6 +23,13 @@ import { Notification } from "../notifications";
  */
 export interface UserEvent {
     /**
+     * Present on durable notification events to let streams update their badge
+     * count, provided per stream on best-effort basis.
+     *
+     * @generated from protobuf field: optional int64 unread_count = 7
+     */
+    unreadCount?: number;
+    /**
      * @generated from protobuf oneof: data
      */
     data: {
@@ -42,6 +49,8 @@ export interface UserEvent {
     } | {
         oneofKind: "notificationsReadCount";
         /**
+         * Deprecated delta kept for wire compatibility with older clients.
+         *
          * @generated from protobuf field: int64 notifications_read_count = 3
          */
         notificationsReadCount: number;
@@ -57,6 +66,14 @@ export interface UserEvent {
          * @generated from protobuf field: resources.userinfo.AccountGroupsChanged account_groups_changed = 5
          */
         accountGroupsChanged: AccountGroupsChanged;
+    } | {
+        oneofKind: "notificationsUnreadCount";
+        /**
+         * The authoritative unread count after a notification-state mutation.
+         *
+         * @generated from protobuf field: int64 notifications_unread_count = 6
+         */
+        notificationsUnreadCount: number;
     } | {
         oneofKind: undefined;
     };
@@ -132,11 +149,13 @@ export interface SystemEvent {
 class UserEvent$Type extends MessageType<UserEvent> {
     constructor() {
         super("resources.notifications.events.UserEvent", [
+            { no: 7, name: "unread_count", kind: "scalar", opt: true, T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ },
             { no: 1, name: "refresh_token", kind: "scalar", oneof: "data", T: 8 /*ScalarType.BOOL*/ },
             { no: 2, name: "notification", kind: "message", oneof: "data", T: () => Notification },
             { no: 3, name: "notifications_read_count", kind: "scalar", oneof: "data", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ },
             { no: 4, name: "user_info_changed", kind: "message", oneof: "data", T: () => UserInfoChanged },
-            { no: 5, name: "account_groups_changed", kind: "message", oneof: "data", T: () => AccountGroupsChanged }
+            { no: 5, name: "account_groups_changed", kind: "message", oneof: "data", T: () => AccountGroupsChanged },
+            { no: 6, name: "notifications_unread_count", kind: "scalar", oneof: "data", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ }
         ]);
     }
     create(value?: PartialMessage<UserEvent>): UserEvent {
@@ -151,6 +170,9 @@ class UserEvent$Type extends MessageType<UserEvent> {
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
+                case /* optional int64 unread_count */ 7:
+                    message.unreadCount = reader.int64().toNumber();
+                    break;
                 case /* bool refresh_token */ 1:
                     message.data = {
                         oneofKind: "refreshToken",
@@ -181,6 +203,12 @@ class UserEvent$Type extends MessageType<UserEvent> {
                         accountGroupsChanged: AccountGroupsChanged.internalBinaryRead(reader, reader.uint32(), options, (message.data as any).accountGroupsChanged)
                     };
                     break;
+                case /* int64 notifications_unread_count */ 6:
+                    message.data = {
+                        oneofKind: "notificationsUnreadCount",
+                        notificationsUnreadCount: reader.int64().toNumber()
+                    };
+                    break;
                 default:
                     let u = options.readUnknownField;
                     if (u === "throw")
@@ -208,6 +236,12 @@ class UserEvent$Type extends MessageType<UserEvent> {
         /* resources.userinfo.AccountGroupsChanged account_groups_changed = 5; */
         if (message.data.oneofKind === "accountGroupsChanged")
             AccountGroupsChanged.internalBinaryWrite(message.data.accountGroupsChanged, writer.tag(5, WireType.LengthDelimited).fork(), options).join();
+        /* int64 notifications_unread_count = 6; */
+        if (message.data.oneofKind === "notificationsUnreadCount")
+            writer.tag(6, WireType.Varint).int64(message.data.notificationsUnreadCount);
+        /* optional int64 unread_count = 7; */
+        if (message.unreadCount !== undefined)
+            writer.tag(7, WireType.Varint).int64(message.unreadCount);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);

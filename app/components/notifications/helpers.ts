@@ -1,5 +1,10 @@
 import type { ToastProps } from '@nuxt/ui';
-import { NotificationCategory, NotificationType } from '~~/gen/ts/resources/notifications/notifications';
+import {
+    NotificationType,
+    type Notification,
+    type NotificationCategory,
+} from '~~/gen/ts/resources/notifications/notifications';
+import { notificationCategoryDefinition, notificationKindDefinition } from './definitions';
 
 export function notificationTypeToIcon(t?: NotificationType): string {
     switch (t) {
@@ -30,12 +35,13 @@ export function notificationTypeToColor(t?: NotificationType): ToastProps['color
 }
 
 export function notificationCategoryToIcon(category: NotificationCategory): string {
-    switch (category) {
-        case NotificationCategory.DOCUMENT:
-            return 'i-mdi-file-document-box-multiple-outline';
-        case NotificationCategory.CALENDAR:
-            return 'i-mdi-calendar-outline';
-        default:
-            return 'i-mdi-information-outline';
-    }
+    return notificationCategoryDefinition(category)?.icon ?? 'i-mdi-information-outline';
+}
+
+/**
+ * Kinds are more specific than categories. Unknown future kinds deliberately
+ * fall back to their category so old clients still render a useful cue.
+ */
+export function notificationToIcon(notification: Pick<Notification, 'kind' | 'category'>): string {
+    return notificationKindDefinition(notification.kind)?.icon ?? notificationCategoryToIcon(notification.category);
 }

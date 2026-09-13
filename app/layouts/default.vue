@@ -9,8 +9,6 @@ import PenaltyCalculatorDrawer from '~/components/quickbuttons/penaltycalculator
 import TopLogoDropdown from '~/components/TopLogoDropdown.vue';
 import UserMenu from '~/components/UserMenu.vue';
 import { useMailerStore } from '~/stores/mailer';
-import { isRoute } from '~/utils/route';
-import type { Perms } from '~~/gen/ts/perms';
 
 const { t } = useI18n();
 
@@ -25,242 +23,16 @@ const { website } = useAppConfig();
 const mailerStore = useMailerStore();
 const { unreadCount } = storeToRefs(mailerStore);
 
-const route = useRoute();
-
-const items = computed<NavigationMenuItem[]>(() =>
-    [
-        {
-            label: t('common.overview'),
-            icon: 'i-mdi-home-outline',
-            to: '/overview',
-            tooltip: {
-                text: t('common.overview'),
-                kbds: ['G', 'H'],
-            },
-            kbds: ['G', 'H'],
-        },
-        {
-            label: t('common.mail'),
-            icon: 'i-mdi-inbox-full-outline',
-            to: '/mail',
-            badge: unreadCount.value > 0 ? (unreadCount.value <= 9 ? unreadCount.value.toString() : '9+') : undefined,
-            tooltip: {
-                text: t('common.mail'),
-                kbds: ['G', 'E'],
-            },
-            kbds: ['G', 'E'],
-            permission: 'mailer.MailerService/ListEmails' as Perms,
-            active: isRoute(route.path, '/mail'),
-        },
-        {
-            label: t('common.citizen', 1),
-            icon: 'i-mdi-account-multiple-outline',
-            to: '/citizens',
-            tooltip: {
-                text: t('common.citizen', 1),
-                kbds: ['G', 'C'],
-            },
-            kbds: ['G', 'C'],
-            permission: 'citizens.CitizensService/ListCitizens' as Perms,
-            active: isRoute(route.path, '/citizens'),
-        },
-        {
-            label: t('common.vehicle', 2),
-            icon: 'i-mdi-car-outline',
-            to: '/vehicles',
-            tooltip: {
-                text: t('common.vehicle', 2),
-                kbds: ['G', 'V'],
-            },
-            kbds: ['G', 'V'],
-            permission: 'vehicles.VehiclesService/ListVehicles' as Perms,
-        },
-        {
-            label: t('common.document', 2),
-            icon: 'i-mdi-file-document-box-multiple-outline',
-            to: '/documents',
-            tooltip: {
-                text: t('common.document', 2),
-                kbds: ['G', 'D'],
-            },
-            kbds: ['G', 'D'],
-            defaultOpen: false,
-            children: [
-                {
-                    label: t('common.approvals', 2),
-                    icon: 'i-mdi-approval',
-                    to: '/documents/approvals',
-                },
-                {
-                    label: t('common.stats'),
-                    icon: 'i-mdi-graph-box-outline',
-                    to: '/documents/stats',
-                    permission: 'documents.StatsService/GetStats' as Perms,
-                },
-            ].flatMap((item) => (item.permission === undefined || can(item.permission).value ? [item] : [])),
-            permission: 'documents.DocumentsService/ListDocuments' as Perms,
-            active: isRoute(route.path, '/documents'),
-        },
-        {
-            label: t('common.job'),
-            icon: 'i-mdi-briefcase-outline',
-            to: '/jobs/overview',
-            tooltip: {
-                text: t('common.job'),
-                kbds: ['G', 'J'],
-            },
-            kbds: ['G', 'J'],
-            defaultOpen: false,
-            children: [
-                {
-                    label: t('common.overview'),
-                    icon: 'i-mdi-briefcase-outline',
-                    to: '/jobs/overview',
-                },
-                {
-                    label: t('common.colleague', 2),
-                    icon: 'i-mdi-account-group',
-                    to: '/jobs/colleagues',
-                    permission: 'jobs.ColleaguesService/ListColleagues' as Perms,
-                    active: isRoute(route.path, '/jobs/colleagues'),
-                    children: [
-                        {
-                            label: t('pages.jobs.colleagues.stats.title'),
-                            icon: 'i-mdi-chart-timeline-variant-shimmer',
-                            to: '/jobs/colleagues/stats',
-                            permission: 'jobs.StatsService/GetStats' as Perms,
-                        },
-                        {
-                            label: t('pages.jobs.colleagues.labels.title'),
-                            icon: 'i-mdi-label-multiple',
-                            to: '/jobs/colleagues/labels',
-                            permission: ['jobs.ColleaguesService/CreateOrUpdateLabel'] as Perms[],
-                        },
-                    ].flatMap((item) => (item.permission === undefined || can(item.permission).value ? [item] : [])),
-                },
-                {
-                    label: t('common.activity'),
-                    icon: 'i-mdi-pulse',
-                    to: '/jobs/activity',
-                    permission: 'jobs.ColleaguesService/ListColleagueActivity' as Perms,
-                },
-                {
-                    label: t('common.timeclock'),
-                    icon: 'i-mdi-timeline-clock',
-                    to: '/jobs/timeclock',
-                    permission: 'jobs.TimeclockService/ListTimeclock' as Perms,
-                    active: isRoute(route.path, '/jobs/timeclock'),
-                    children: [
-                        {
-                            label: t('common.inactive_colleagues'),
-                            icon: 'i-mdi-account-remove',
-                            to: '/jobs/timeclock/inactive',
-                            permission: 'jobs.TimeclockService/ListInactiveEmployees' as Perms,
-                        },
-                    ].flatMap((item) => (item.permission === undefined || can(item.permission).value ? [item] : [])),
-                },
-                {
-                    label: t('common.conduct_register', 2),
-                    icon: 'i-mdi-list-status',
-                    to: '/jobs/conduct',
-                    permission: 'jobs.ConductService/ListConductEntries' as Perms,
-                },
-                {
-                    label: t('common.group', 2),
-                    icon: 'i-mdi-users-group-outline',
-                    to: '/jobs/groups',
-                    permission: 'jobs.GroupsService/ListGroups' as Perms,
-                },
-            ].flatMap((item) => (item.permission === undefined || can(item.permission).value ? [item] : [])),
-            permission: 'jobs.ColleaguesService/ListColleagues' as Perms,
-            active: isRoute(route.path, '/jobs'),
-        },
-        {
-            label: t('common.calendar'),
-            icon: 'i-mdi-calendar-outline',
-            to: '/calendar',
-            tooltip: {
-                text: t('common.calendar'),
-                kbds: ['G', 'K'],
-            },
-            kbds: ['G', 'K'],
-            active: isRoute(route.path, '/calendar'),
-        },
-        {
-            label: t('common.qualification', 2),
-            icon: 'i-mdi-school-outline',
-            to: '/qualifications',
-            tooltip: {
-                text: t('common.qualification', 2),
-                kbds: ['G', 'Q'],
-            },
-            kbds: ['G', 'Q'],
-            permission: 'qualifications.QualificationsService/ListQualifications' as Perms,
-            active: isRoute(route.path, '/qualifications'),
-        },
-        {
-            label: t('common.livemap'),
-            icon: 'i-mdi-map-outline',
-            to: '/livemap',
-            tooltip: {
-                text: t('common.livemap'),
-                kbds: ['G', 'M'],
-            },
-            kbds: ['G', 'M'],
-            permission: 'livemap.LivemapService/Stream' as Perms,
-        },
-        {
-            label: t('common.dispatch_center'),
-            icon: 'i-mdi-car-emergency',
-            to: '/dispatch',
-            tooltip: {
-                text: t('common.dispatch_center'),
-                kbds: ['G', 'W'],
-            },
-            kbds: ['G', 'W'],
-            permission: 'centrum.CentrumService/TakeControl' as Perms,
-            active: isRoute(route.path, '/dispatch') || isRoute(route.path, '/centrum'),
-        },
-        {
-            label: t('common.wiki'),
-            icon: 'i-mdi-brain',
-            to: '/wiki',
-            tooltip: {
-                text: t('common.wiki'),
-                kbds: ['G', 'L'],
-            },
-            kbds: ['G', 'L'],
-            permission: 'wiki.WikiService/ListPages' as Perms,
-            active: isRoute(route.path, '/wiki'),
-        },
-        {
-            label: t('common.control_panel'),
-            icon: 'i-mdi-cog-outline',
-            to: '/settings',
-            tooltip: {
-                text: t('common.control_panel'),
-                kbds: ['G', 'P'],
-            },
-            kbds: ['G', 'P'],
-            defaultOpen: false,
-            children: [
-                {
-                    label: t('components.settings.job_props.job_properties'),
-                    icon: 'i-mdi-tune',
-                    to: '/settings/props',
-                    permission: 'settings.SettingsService/SetJobProps' as Perms,
-                },
-                {
-                    label: t('common.role', 2),
-                    icon: 'i-mdi-account-group',
-                    to: '/settings/roles',
-                    permission: 'settings.SettingsService/GetRoles' as Perms,
-                },
-            ].flatMap((item) => (item.permission === undefined || can(item.permission).value ? [item] : [])),
-            permission: 'settings.SettingsService/GetJobProps' as Perms,
-            active: isRoute(route.path, '/settings'),
-        },
-    ].flatMap((item) => (item.permission === undefined || can(item.permission).value ? [item] : [])),
+const { navigationItems } = useAppFeatures();
+const items = computed(() =>
+    navigationItems.value.map((item) =>
+        item.to === '/mail'
+            ? {
+                  ...item,
+                  badge: unreadCount.value > 0 ? (unreadCount.value <= 9 ? unreadCount.value.toString() : '9+') : undefined,
+              }
+            : item,
+    ),
 );
 
 const footerLinks = computed(() =>
@@ -381,11 +153,18 @@ defineShortcuts(extractShortcuts(quickAccessButtons.value, '-'));
             :ui="{ footer: 'lg:border-t lg:border-default' }"
         >
             <template #header="{ collapsed }">
-                <TopLogoDropdown :collapsed="collapsed" />
+                <div class="flex w-full min-w-0 items-center gap-1">
+                    <TopLogoDropdown class="min-w-0 flex-1" :collapsed="collapsed" />
+                    <NotificationsNotificationPopover v-if="!collapsed" class="shrink-0" />
+                </div>
             </template>
 
             <template #default="{ collapsed }">
                 <UDashboardSearchButton :collapsed="collapsed" :label="$t('common.search_field')" />
+
+                <div v-if="collapsed" class="flex w-full justify-center">
+                    <NotificationsNotificationPopover />
+                </div>
 
                 <UNavigationMenu orientation="vertical" tooltip popover :items="items" :collapsed="collapsed" />
 

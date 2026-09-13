@@ -17,11 +17,20 @@ message GetNotificationsRequest {
   resources.common.database.PaginationRequest pagination = 1 [(buf.validate.field).required = true];
   optional bool include_read = 2;
   repeated resources.notifications.NotificationCategory categories = 3 [(buf.validate.field).repeated = {
-    max_items: 4
+    max_items: 8
     items: {
       enum: {defined_only: true}
     }
   }];
+  repeated resources.notifications.NotificationKind kinds = 4 [(buf.validate.field).repeated = {
+    max_items: 32
+    items: {
+      enum: {defined_only: true}
+    }
+  }];
+  optional bool include_archived = 5;
+  optional bool starred_only = 6;
+  optional bool archived_only = 7;
 }
 
 message GetNotificationsResponse {
@@ -45,6 +54,38 @@ message MarkNotificationsResponse {
   int64 updated = 1;
   // The authoritative unread count after the mutation.
   int64 unread_count = 2;
+}
+
+message UpdateNotificationStateRequest {
+  repeated int64 ids = 1 [(buf.validate.field).repeated = {
+    min_items: 1
+    max_items: 20
+  }];
+  optional bool unread = 2;
+  optional bool starred = 3;
+  optional bool archived = 4;
+}
+
+message UpdateNotificationStateResponse {
+  int64 updated = 1;
+  int64 unread_count = 2;
+}
+
+message GetNotificationPreferencesRequest {}
+
+message GetNotificationPreferencesResponse {
+  repeated resources.notifications.NotificationPreference preferences = 1 [(codegen.itemslen.enabled) = true];
+}
+
+// Updates one preference scope. Fields omitted from preference inherit from a
+// less-specific scope. reset removes the complete override for this scope.
+message UpdateNotificationPreferenceRequest {
+  resources.notifications.NotificationPreference preference = 1 [(buf.validate.field).required = true];
+  optional bool reset = 2;
+}
+
+message UpdateNotificationPreferenceResponse {
+  repeated resources.notifications.NotificationPreference preferences = 1 [(codegen.itemslen.enabled) = true];
 }
 
 message StreamRequest {
@@ -82,6 +123,24 @@ service NotificationsService {
     };
   }
   rpc MarkNotifications(MarkNotificationsRequest) returns (MarkNotificationsResponse) {
+    option (codegen.perms.perms) = {
+      enabled: true
+      name: "Any"
+    };
+  }
+  rpc UpdateNotificationState(UpdateNotificationStateRequest) returns (UpdateNotificationStateResponse) {
+    option (codegen.perms.perms) = {
+      enabled: true
+      name: "Any"
+    };
+  }
+  rpc GetNotificationPreferences(GetNotificationPreferencesRequest) returns (GetNotificationPreferencesResponse) {
+    option (codegen.perms.perms) = {
+      enabled: true
+      name: "Any"
+    };
+  }
+  rpc UpdateNotificationPreference(UpdateNotificationPreferenceRequest) returns (UpdateNotificationPreferenceResponse) {
     option (codegen.perms.perms) = {
       enabled: true
       name: "Any"

@@ -107,7 +107,7 @@ func TestStoreApprovalTaskWrites(t *testing.T) {
 		WithArgs(int64(42), sqlmock.AnyArg(), sqlmock.AnyArg(), sqlmock.AnyArg(), "Reviewer", true, sqlmock.AnyArg(), sqlmock.AnyArg(), "seed comment", int32(3), "doj").
 		WillReturnResult(sqlmock.NewResult(7, 1))
 
-	created, ensured, err := store.CreateApprovalTasks(
+	created, ensured, createdUserIDs, err := store.CreateApprovalTasks(
 		t.Context(),
 		db,
 		userInfo,
@@ -118,6 +118,7 @@ func TestStoreApprovalTaskWrites(t *testing.T) {
 	require.NoError(t, err)
 	assert.Equal(t, int32(1), created)
 	assert.Equal(t, int32(0), ensured)
+	assert.Equal(t, []int32{9}, createdUserIDs)
 
 	mock.ExpectExec(regexp.QuoteMeta(`DELETE FROM fivenet_documents_approval_tasks`)).
 		WithArgs(int64(42), sqlmock.AnyArg(), int64(7), int64(1)).

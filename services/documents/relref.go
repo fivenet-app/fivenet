@@ -1,4 +1,3 @@
-//nolint:goconst // Mainly for "title".
 package documents
 
 import (
@@ -18,6 +17,7 @@ import (
 	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/auth"
 	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/errswrap"
 	grpc_audit "github.com/fivenet-app/fivenet/v2026/pkg/grpc/interceptors/audit"
+	"github.com/fivenet-app/fivenet/v2026/pkg/notifi"
 	errorsdocuments "github.com/fivenet-app/fivenet/v2026/services/documents/errors"
 	citizenshydrator "github.com/fivenet-app/fivenet/v2026/stores/citizens/hydrator"
 	"github.com/go-jet/jet/v2/mysql"
@@ -458,14 +458,17 @@ func (s *Server) notifyMentionedUser(
 		return nil
 	}
 
-	not := &notifications.Notification{
-		UserId: targetUserId,
+	not := notifi.NewUserNotification(notifi.UserNotificationParams{
+		UserID:      targetUserId,
+		ActorUserID: new(sourceUserId),
+		EntityType:  new(entityType),
+		EntityID:    new(documentId),
 		Title: &common.I18NItem{
 			Key: "notifications.documents.document_relation_mentioned.title",
 		},
 		Content: &common.I18NItem{
 			Key:        "notifications.documents.document_relation_mentioned.content",
-			Parameters: map[string]string{"title": doc.GetTitle()},
+			Parameters: map[string]string{notificationParameterTitle: doc.GetTitle()},
 		},
 		Type:     notifications.NotificationType_NOTIFICATION_TYPE_INFO,
 		Category: notifications.NotificationCategory_NOTIFICATION_CATEGORY_DOCUMENT,
@@ -477,7 +480,7 @@ func (s *Server) notifyMentionedUser(
 				UserId: sourceUserId,
 			},
 		},
-	}
+	})
 	if err := s.notifi.NotifyUser(ctx, not); err != nil {
 		return err
 	}

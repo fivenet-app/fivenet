@@ -247,6 +247,12 @@ export interface DeleteQualificationReqRequest {
      * @generated from protobuf field: int32 user_id = 2
      */
     userId: number;
+    /**
+     * Suppresses the inbox notification normally sent to the affected user.
+     *
+     * @generated from protobuf field: bool skip_notification = 3
+     */
+    skipNotification: boolean;
 }
 /**
  * @generated from protobuf message services.qualifications.DeleteQualificationReqResponse
@@ -311,6 +317,12 @@ export interface CreateOrUpdateQualificationResultRequest {
      * @generated from protobuf field: optional resources.qualifications.exam.ExamGrading grading = 2
      */
     grading?: ExamGrading;
+    /**
+     * Suppresses the inbox notification normally sent to the affected user.
+     *
+     * @generated from protobuf field: bool skip_notification = 3
+     */
+    skipNotification: boolean;
 }
 /**
  * @generated from protobuf message services.qualifications.CreateOrUpdateQualificationResultResponse
@@ -329,6 +341,12 @@ export interface DeleteQualificationResultRequest {
      * @generated from protobuf field: int64 result_id = 1
      */
     resultId: number;
+    /**
+     * Suppresses the inbox notification normally sent to the affected user.
+     *
+     * @generated from protobuf field: bool skip_notification = 2
+     */
+    skipNotification: boolean;
 }
 /**
  * @generated from protobuf message services.qualifications.DeleteQualificationResultResponse
@@ -1263,13 +1281,15 @@ class DeleteQualificationReqRequest$Type extends MessageType<DeleteQualification
     constructor() {
         super("services.qualifications.DeleteQualificationReqRequest", [
             { no: 1, name: "qualification_id", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ },
-            { no: 2, name: "user_id", kind: "scalar", T: 5 /*ScalarType.INT32*/, options: { "buf.validate.field": { int32: { gt: 0 } } } }
+            { no: 2, name: "user_id", kind: "scalar", T: 5 /*ScalarType.INT32*/, options: { "buf.validate.field": { int32: { gt: 0 } } } },
+            { no: 3, name: "skip_notification", kind: "scalar", T: 8 /*ScalarType.BOOL*/ }
         ]);
     }
     create(value?: PartialMessage<DeleteQualificationReqRequest>): DeleteQualificationReqRequest {
         const message = globalThis.Object.create((this.messagePrototype!));
         message.qualificationId = 0;
         message.userId = 0;
+        message.skipNotification = false;
         if (value !== undefined)
             reflectionMergePartial<DeleteQualificationReqRequest>(this, message, value);
         return message;
@@ -1284,6 +1304,9 @@ class DeleteQualificationReqRequest$Type extends MessageType<DeleteQualification
                     break;
                 case /* int32 user_id */ 2:
                     message.userId = reader.int32();
+                    break;
+                case /* bool skip_notification */ 3:
+                    message.skipNotification = reader.bool();
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -1303,6 +1326,9 @@ class DeleteQualificationReqRequest$Type extends MessageType<DeleteQualification
         /* int32 user_id = 2; */
         if (message.userId !== 0)
             writer.tag(2, WireType.Varint).int32(message.userId);
+        /* bool skip_notification = 3; */
+        if (message.skipNotification !== false)
+            writer.tag(3, WireType.Varint).bool(message.skipNotification);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -1509,11 +1535,13 @@ class CreateOrUpdateQualificationResultRequest$Type extends MessageType<CreateOr
     constructor() {
         super("services.qualifications.CreateOrUpdateQualificationResultRequest", [
             { no: 1, name: "result", kind: "message", T: () => QualificationResult, options: { "buf.validate.field": { required: true } } },
-            { no: 2, name: "grading", kind: "message", T: () => ExamGrading }
+            { no: 2, name: "grading", kind: "message", T: () => ExamGrading },
+            { no: 3, name: "skip_notification", kind: "scalar", T: 8 /*ScalarType.BOOL*/ }
         ]);
     }
     create(value?: PartialMessage<CreateOrUpdateQualificationResultRequest>): CreateOrUpdateQualificationResultRequest {
         const message = globalThis.Object.create((this.messagePrototype!));
+        message.skipNotification = false;
         if (value !== undefined)
             reflectionMergePartial<CreateOrUpdateQualificationResultRequest>(this, message, value);
         return message;
@@ -1528,6 +1556,9 @@ class CreateOrUpdateQualificationResultRequest$Type extends MessageType<CreateOr
                     break;
                 case /* optional resources.qualifications.exam.ExamGrading grading */ 2:
                     message.grading = ExamGrading.internalBinaryRead(reader, reader.uint32(), options, message.grading);
+                    break;
+                case /* bool skip_notification */ 3:
+                    message.skipNotification = reader.bool();
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -1547,6 +1578,9 @@ class CreateOrUpdateQualificationResultRequest$Type extends MessageType<CreateOr
         /* optional resources.qualifications.exam.ExamGrading grading = 2; */
         if (message.grading)
             ExamGrading.internalBinaryWrite(message.grading, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
+        /* bool skip_notification = 3; */
+        if (message.skipNotification !== false)
+            writer.tag(3, WireType.Varint).bool(message.skipNotification);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -1607,12 +1641,14 @@ export const CreateOrUpdateQualificationResultResponse = new CreateOrUpdateQuali
 class DeleteQualificationResultRequest$Type extends MessageType<DeleteQualificationResultRequest> {
     constructor() {
         super("services.qualifications.DeleteQualificationResultRequest", [
-            { no: 1, name: "result_id", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ }
+            { no: 1, name: "result_id", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ },
+            { no: 2, name: "skip_notification", kind: "scalar", T: 8 /*ScalarType.BOOL*/ }
         ]);
     }
     create(value?: PartialMessage<DeleteQualificationResultRequest>): DeleteQualificationResultRequest {
         const message = globalThis.Object.create((this.messagePrototype!));
         message.resultId = 0;
+        message.skipNotification = false;
         if (value !== undefined)
             reflectionMergePartial<DeleteQualificationResultRequest>(this, message, value);
         return message;
@@ -1624,6 +1660,9 @@ class DeleteQualificationResultRequest$Type extends MessageType<DeleteQualificat
             switch (fieldNo) {
                 case /* int64 result_id */ 1:
                     message.resultId = reader.int64().toNumber();
+                    break;
+                case /* bool skip_notification */ 2:
+                    message.skipNotification = reader.bool();
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -1640,6 +1679,9 @@ class DeleteQualificationResultRequest$Type extends MessageType<DeleteQualificat
         /* int64 result_id = 1; */
         if (message.resultId !== 0)
             writer.tag(1, WireType.Varint).int64(message.resultId);
+        /* bool skip_notification = 2; */
+        if (message.skipNotification !== false)
+            writer.tag(2, WireType.Varint).bool(message.skipNotification);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);

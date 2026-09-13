@@ -1460,6 +1460,7 @@
                     "require_completed": "Require completed",
                     "add_manual_member": "Add manual member",
                     "add_exclusion": "Add exclusion",
+                    "notify_user": "Notify user",
                     "rules": {
                         "grade_minimum": "Grade at least {grade}",
                         "grade_exact": "Grade exactly {grade}",
@@ -1515,7 +1516,15 @@
             "unread": "Unread",
             "do_not_disturb": "Do Not Disturb",
             "mark_unread": "Mark as unread",
-            "all_categories": "All Categories"
+            "all_categories": "All Categories",
+            "all": "All",
+            "starred": "Starred",
+            "archived": "Archived",
+            "star": "Star",
+            "unstar": "Unstar",
+            "archive": "Archive",
+            "restore": "Restore",
+            "new_notifications": "New notifications"
         },
         "qualifications": {
             "user_qualifications": "Your Qualifications",
@@ -1639,6 +1648,14 @@
                     "subtitle": "Control sound volumes.",
                     "notifications_volume": "Notifications Volume"
                 },
+                "notification_delivery": {
+                    "title": "Notification Delivery",
+                    "description": "Choose which notification-center categories reach your inbox, show a toast, or may play the notification sound. Sound files and volume remain specific to this browser.",
+                    "all": "All notifications",
+                    "inbox": "Inbox",
+                    "toast": "Toast",
+                    "sound": "Sound"
+                },
                 "streamer_mode": {
                     "title": "Streamer Mode",
                     "description": "Blur images by default and hide other information."
@@ -1668,6 +1685,14 @@
                     "description": "Set the sounds used for notifications and other events. You can also set custom sounds to use for notifications in your FiveNet. Please note that the sounds are stored locally in your browser and will not be available on other devices or browsers. If you clear your browser data, the custom sounds will be removed and you will have to set them up again.",
                     "custom_sound": "Custom Sound",
                     "select_custom_sound": "Select Custom Sound File",
+                    "custom_sound_success": {
+                        "title": "Sound updated",
+                        "content": "The notification sound was updated successfully."
+                    },
+                    "custom_sound_failed": {
+                        "title": "Sound update failed",
+                        "content": "The notification sound could not be updated."
+                    },
                     "notification": "Notification Sound",
                     "dispatch": {
                         "attention": "Attention Sound",
@@ -2610,9 +2635,17 @@
                 "title": "Qualification Result available",
                 "content": "A qualification result has been created for you."
             },
+            "result_deleted": {
+                "title": "Qualification revoked",
+                "content": "Your qualification result has been revoked."
+            },
             "request_updated": {
                 "title": "Qualification Request updated",
                 "content": "Your qualification request has been updated."
+            },
+            "request_deleted": {
+                "title": "Qualification Request cancelled",
+                "content": "Your qualification request has been cancelled."
             },
             "time_low": {
                 "title": "Your exam time is almost up!",
@@ -2692,13 +2725,49 @@
                 "title": "Document: You have been mentioned",
                 "content": "You have been mentioned in \"{title}\" document. Click here to go to the document."
             },
-            "document_request_added": {
-                "title": "Document: Request has been created",
-                "content": "A request against your \"{title}\" document has been added."
+            "document_request_created_access": {
+                "title": "Document: Access requested",
+                "content": "Access was requested for your \"{title}\" document."
+            },
+            "document_request_created_closure": {
+                "title": "Document: Closure requested",
+                "content": "Closing your \"{title}\" document was requested."
+            },
+            "document_request_created_opening": {
+                "title": "Document: Reopening requested",
+                "content": "Reopening your \"{title}\" document was requested."
+            },
+            "document_request_created_update": {
+                "title": "Document: Update requested",
+                "content": "An update to your \"{title}\" document was requested."
+            },
+            "document_request_created_owner_change": {
+                "title": "Document: Ownership transfer requested",
+                "content": "A transfer of your \"{title}\" document was requested."
+            },
+            "document_request_created_deletion": {
+                "title": "Document: Deletion requested",
+                "content": "Deletion of your \"{title}\" document was requested."
+            },
+            "document_request_accepted": {
+                "title": "Document request accepted",
+                "content": "Your request for \"{title}\" was accepted."
+            },
+            "document_request_declined": {
+                "title": "Document request declined",
+                "content": "Your request for \"{title}\" was declined."
+            },
+            "document_request_cancelled": {
+                "title": "Document request cancelled",
+                "content": "Your request for \"{title}\" was cancelled."
             },
             "document_comment_added": {
                 "title": "Document: New comment",
                 "content": "A new comment has been posted on \"{title}\" document."
+            },
+            "document_approval_assigned": {
+                "title": "Document: Approval requested",
+                "content": "You have been asked to approve \"{title}\"."
             },
             "document_take_ownership": {
                 "title": "Document Owner changed",
@@ -2766,6 +2835,24 @@
                 "clientview_update": {
                     "title": "Conduct entry updated",
                     "content": "Conduct entry has been updated by another user. Click here to reload the conduct entry's data."
+                }
+            },
+            "groups": {
+                "leadership_added": {
+                    "title": "You are now a group leader",
+                    "content": "You were added as a leader of {group}."
+                },
+                "leadership_removed": {
+                    "title": "Group leadership removed",
+                    "content": "You were removed as a leader of {group}."
+                },
+                "membership_added": {
+                    "title": "Added to group",
+                    "content": "You were added to {group}."
+                },
+                "membership_removed": {
+                    "title": "Removed from group",
+                    "content": "You were removed from {group}."
                 }
             }
         },
@@ -3415,6 +3502,14 @@
                 "ErrFailedStream": {
                     "title": "Notification stream failed",
                     "content": "Something went wrong while streaming notifications. Please try again."
+                },
+                "ErrInvalidPreference": {
+                    "title": "Invalid notification preference",
+                    "content": "This notification kind does not belong to the selected category."
+                },
+                "ErrEmptyPreference": {
+                    "title": "No notification preference selected",
+                    "content": "Choose at least one delivery setting or reset this preference."
                 }
             }
         }
@@ -3665,7 +3760,23 @@
                 "UNSPECIFIED": "Unspecified",
                 "GENERAL": "General",
                 "DOCUMENT": "Documents",
-                "CALENDAR": "Calendar"
+                "CALENDAR": "Calendar",
+                "JOBS": "Jobs",
+                "QUALIFICATIONS": "Qualifications",
+                "MAILER": "E-mail",
+                "DISPATCH": "Dispatch",
+                "SYSTEM": "System"
+            },
+            "NotificationKind": {
+                "UNSPECIFIED": "Unspecified",
+                "JOBS_GROUP_LEADERSHIP_ADDED": "Added as group leadership",
+                "JOBS_GROUP_LEADERSHIP_REMOVED": "Removed from group leadership",
+                "JOBS_GROUP_MEMBER_ADDED": "Added to group",
+                "JOBS_GROUP_MEMBER_REMOVED": "Removed from group",
+                "DOCUMENT_APPROVAL_ASSIGNED": "Document approval assigned",
+                "DOCUMENT_REQUEST_CREATED": "Document request created",
+                "DOCUMENT_REQUEST_DECIDED": "Document request decided",
+                "DOCUMENT_REQUEST_CANCELLED": "Document request cancelled"
             }
         },
         "wiki": {

@@ -1,4 +1,3 @@
-//nolint:goconst // Mainly for "title".
 package documents
 
 import (
@@ -21,6 +20,7 @@ import (
 	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/auth"
 	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/errswrap"
 	grpc_audit "github.com/fivenet-app/fivenet/v2026/pkg/grpc/interceptors/audit"
+	"github.com/fivenet-app/fivenet/v2026/pkg/notifi"
 	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
 	errorsdocuments "github.com/fivenet-app/fivenet/v2026/services/documents/errors"
 	citizenshydrator "github.com/fivenet-app/fivenet/v2026/stores/citizens/hydrator"
@@ -150,12 +150,13 @@ func (s *Server) PostComment(
 		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 	}
 
-	if err := s.notifyUsersNewComment(
+	publishNotifications, err := s.notifyUsersNewComment(
 		ctx,
 		tx,
 		req.GetComment().GetDocumentId(),
 		userInfo.GetUserId(),
-	); err != nil {
+	)
+	if err != nil {
 		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 	}
 
@@ -167,6 +168,7 @@ func (s *Server) PostComment(
 	if err := tx.Commit(); err != nil {
 		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 	}
+	notifi.PublishAfterCommit(ctx, s.logger, "document_comment_added", publishNotifications...)
 
 	grpc_audit.SetAction(ctx, audit.EventAction_EVENT_ACTION_CREATED)
 
@@ -374,18 +376,19 @@ func (s *Server) notifyUsersNewComment(
 	tx qrm.DB,
 	documentId int64,
 	sourceUserId int32,
-) error {
+) ([]func(context.Context) error, error) {
+	publishNotifications := make([]func(context.Context) error, 0)
 	userInfo, err := s.ui.GetUserInfo(ctx, sourceUserId)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
 	doc, err := s.getDocument(ctx, tDocument.ID.EQ(mysql.Int64(documentId)), userInfo, false)
 	if err != nil {
-		return err
+		return nil, err
 	}
 	if doc == nil || doc.GetDeletedAt() != nil {
-		return nil
+		return nil, nil
 	}
 
 	lastPerCreator := table.FivenetDocumentsComments.
@@ -415,7 +418,7 @@ func (s *Server) notifyUsersNewComment(
 	var targetUserIds []int32
 	if err := stmt.QueryContext(ctx, tx, &targetUserIds); err != nil {
 		if !errors.Is(err, qrm.ErrNoRows) {
-			return err
+			return nil, err
 		}
 	}
 
@@ -424,7 +427,7 @@ func (s *Server) notifyUsersNewComment(
 		!slices.Contains(targetUserIds, doc.GetCreatorId()) {
 		userInfo, err := s.ui.GetUserInfo(ctx, sourceUserId)
 		if err != nil {
-			return err
+			return nil, err
 		}
 
 		check, err := s.canUserAccessDocument(
@@ -434,7 +437,7 @@ func (s *Server) notifyUsersNewComment(
 			documentsaccess.AccessLevel_ACCESS_LEVEL_VIEW,
 		)
 		if err != nil {
-			return err
+			return nil, err
 		}
 		if check {
 			targetUserIds = append(targetUserIds, doc.GetCreatorId())
@@ -448,9 +451,9 @@ func (s *Server) notifyUsersNewComment(
 		}
 
 		// Make sure user has access to document
-		userInfo, err := s.ui.GetUserInfo(ctx, sourceUserId)
+		userInfo, err := s.ui.GetUserInfo(ctx, targetUserId)
 		if err != nil {
-			return err
+			return nil, err
 		}
 
 		check, err := s.canUserAccessDocument(
@@ -460,20 +463,24 @@ func (s *Server) notifyUsersNewComment(
 			documentsaccess.AccessLevel_ACCESS_LEVEL_VIEW,
 		)
 		if err != nil {
-			return err
+			return nil, err
 		}
 		if !check {
 			continue
 		}
 
-		not := &notifications.Notification{
-			UserId: targetUserId,
+		documentID := doc.GetId()
+		not := notifi.NewUserNotification(notifi.UserNotificationParams{
+			UserID:      targetUserId,
+			ActorUserID: new(sourceUserId),
+			EntityType:  new(entityType),
+			EntityID:    new(documentID),
 			Title: &common.I18NItem{
 				Key: "notifications.documents.document_comment_added.title",
 			},
 			Content: &common.I18NItem{
 				Key:        "notifications.documents.document_comment_added.content",
-				Parameters: map[string]string{"title": doc.GetTitle()},
+				Parameters: map[string]string{notificationParameterTitle: doc.GetTitle()},
 			},
 			Type:     notifications.NotificationType_NOTIFICATION_TYPE_INFO,
 			Category: notifications.NotificationCategory_NOTIFICATION_CATEGORY_DOCUMENT,
@@ -485,11 +492,13 @@ func (s *Server) notifyUsersNewComment(
 					UserId: sourceUserId,
 				},
 			},
+		})
+		publishNotification, err := s.notifi.PrepareUserNotification(ctx, tx, not)
+		if err != nil {
+			return nil, err
 		}
-		if err := s.notifi.NotifyUser(ctx, not); err != nil {
-			return err
-		}
+		publishNotifications = append(publishNotifications, publishNotification)
 	}
 
-	return nil
+	return publishNotifications, nil
 }

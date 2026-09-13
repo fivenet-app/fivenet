@@ -1,35 +1,19 @@
 <script lang="ts" setup>
-import type { RoutePathSchema } from '@typed-router';
 import ThemePickerButton from '~/components/partials/ThemePickerButton.vue';
-import type { Perms } from '~~/gen/ts/perms';
 
-const { t } = useI18n();
-
-const { can, activeChar } = useAuth();
+const { activeChar } = useAuth();
 
 const settingsStore = useSettingsStore();
 const { startpage, design, streamerMode, eventsDisabled } = storeToRefs(settingsStore);
 
-const startpages: { label: string; path: RoutePathSchema; permission?: Perms }[] = [
-    { label: t('common.overview'), path: '/overview' },
-    { label: t('common.mail'), path: '/mail/:thread?', permission: 'mailer.MailerService/ListEmails' },
-    { label: t('pages.citizens.title'), path: '/citizens', permission: 'citizens.CitizensService/ListCitizens' },
-    { label: t('pages.vehicles.title'), path: '/vehicles', permission: 'vehicles.VehiclesService/ListVehicles' },
-    { label: t('pages.documents.title'), path: '/documents/', permission: 'documents.DocumentsService/ListDocuments' },
-    { label: t('pages.jobs.overview.title'), path: '/jobs/overview', permission: 'jobs.ColleaguesService/ListColleagues' },
-    { label: t('common.calendar'), path: '/calendar' },
-    {
-        label: t('common.qualification', 2),
-        path: '/qualifications',
-        permission: 'qualifications.QualificationsService/ListQualifications',
-    },
-    { label: t('common.livemap'), path: '/livemap', permission: 'livemap.LivemapService/Stream' },
-    { label: t('common.dispatch_center'), path: '/dispatch', permission: 'centrum.CentrumService/TakeControl' },
-    { label: t('common.wiki'), path: '/wiki', permission: 'wiki.WikiService/ListPages' },
-];
+const { startpageItems } = useAppFeatures();
 
-const selectedHomepage = ref<(typeof startpages)[0]>();
-watch(selectedHomepage, () => (startpage.value = selectedHomepage.value?.path ?? '/overview'));
+const selectedHomepage = computed<(typeof startpageItems.value)[number] | undefined>({
+    get: () => startpageItems.value.find((item) => item.path === startpage.value),
+    set: (item) => {
+        startpage.value = item?.path ?? '/overview';
+    },
+});
 
 const designDocumentListStyle = ref(design.value.documents.listStyle === 'double');
 
@@ -112,7 +96,7 @@ watch(designDocumentListStyle, async () => {
                 <USelectMenu
                     v-model="selectedHomepage"
                     class="w-full"
-                    :items="startpages.filter((h) => h.permission === undefined || can(h.permission).value)"
+                    :items="startpageItems"
                     :search-input="{ placeholder: $t('common.search_field') }"
                 />
             </ClientOnly>

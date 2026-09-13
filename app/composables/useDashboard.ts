@@ -1,4 +1,4 @@
-import { LazyHelpSlideover, LazyNotificationsNotificationSlideover } from '#components';
+import { LazyHelpSlideover } from '#components';
 
 const _useDashboard = () => {
     const route = useRoute();
@@ -10,19 +10,10 @@ const _useDashboard = () => {
 
     const overlay = useOverlay();
 
-    const notificationsSlideover = overlay.create(LazyNotificationsNotificationSlideover);
     const helpSlideover = overlay.create(LazyHelpSlideover);
 
     defineShortcuts({
         b: () => (isNotificationSlideoverOpen.value = true),
-    });
-
-    watch(isNotificationSlideoverOpen, (value) => {
-        if (value) {
-            notificationsSlideover.open();
-        } else {
-            notificationsSlideover.close();
-        }
     });
 
     watch(isHelpSlideoverOpen, (value) => {

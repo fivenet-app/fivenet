@@ -41,6 +41,10 @@ const (
 
 	documentIDLogFieldKey = "fivenet.documents.id"
 	templateIDLogFieldKey = "fivenet.documents.template_id"
+
+	entityType = "documents.document"
+
+	notificationParameterTitle = "title"
 )
 
 func init() {

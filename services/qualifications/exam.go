@@ -14,6 +14,7 @@ import (
 	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/auth"
 	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/errswrap"
 	grpc_audit "github.com/fivenet-app/fivenet/v2026/pkg/grpc/interceptors/audit"
+	"github.com/fivenet-app/fivenet/v2026/pkg/notifi"
 	errorsqualifications "github.com/fivenet-app/fivenet/v2026/services/qualifications/errors"
 	"github.com/go-jet/jet/v2/qrm"
 	logging "github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/logging"
@@ -258,6 +259,7 @@ func (s *Server) SubmitExam(
 	}
 	// Defer a rollback in case anything fails
 	defer tx.Rollback()
+	publishNotifications := make([]func(context.Context) error, 0, 1)
 
 	if err := s.store.UpsertExamResponses(
 		ctx,
@@ -292,6 +294,7 @@ func (s *Server) SubmitExam(
 			userInfo.GetUserId(),
 			quali,
 			req.GetResponses(),
+			&publishNotifications,
 		); err != nil {
 			return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 		}
@@ -301,6 +304,11 @@ func (s *Server) SubmitExam(
 	if err := tx.Commit(); err != nil {
 		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 	}
+	notifi.PublishAfterCommit(
+		ctx,
+		s.logger,
+		"qualification_result_updated",
+		publishNotifications...)
 
 	grpc_audit.SetAction(ctx, audit.EventAction_EVENT_ACTION_UPDATED)
 
@@ -316,6 +324,7 @@ func (s *Server) gradeExam(
 	userId int32,
 	quali *qualifications.Qualification,
 	responses *qualificationsexam.ExamResponses,
+	publishNotifications *[]func(context.Context) error,
 ) error {
 	if quali.GetExamSettings() != nil && quali.GetExamSettings().GetAutoGrade() {
 		exam, err := s.store.GetExamQuestions(ctx, tx, qualificationId, true)
@@ -350,6 +359,8 @@ func (s *Server) gradeExam(
 				&score,
 				"",
 				grading,
+				false,
+				publishNotifications,
 			); err != nil {
 				return err
 			}

@@ -9,15 +9,18 @@ import (
 	"strconv"
 
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/audit"
+	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/common"
 	database "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/common/database"
 	jobscolleagues "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/jobs/colleagues"
 	jobsgroups "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/jobs/groups"
 	groupsaccess "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/jobs/groups/access"
+	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/notifications"
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/userinfo"
 	pbjobs "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/jobs"
 	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/auth"
 	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/errswrap"
 	grpc_audit "github.com/fivenet-app/fivenet/v2026/pkg/grpc/interceptors/audit"
+	"github.com/fivenet-app/fivenet/v2026/pkg/notifi"
 	errorsjobs "github.com/fivenet-app/fivenet/v2026/services/jobs/errors"
 	jobsstore "github.com/fivenet-app/fivenet/v2026/stores/jobs"
 	colleaguehydrator "github.com/fivenet-app/fivenet/v2026/stores/jobs/colleagues/hydrator"
@@ -1008,10 +1011,24 @@ func (s *Server) AddGroupMember(
 	if err != nil {
 		return nil, err
 	}
+	var publishNotification func(context.Context) error
+	if created && !req.GetSkipNotification() && req.GetUserId() != userInfo.GetUserId() {
+		publishNotification, err = s.prepareGroupUserNotification(
+			ctx,
+			tx,
+			updated,
+			req.GetUserId(),
+			userInfo.GetUserId(),
+			notifications.NotificationKind_NOTIFICATION_KIND_JOBS_GROUP_MEMBER_ADDED,
+		)
+		if err != nil {
+			return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
+		}
+	}
 	if err := tx.Commit(); err != nil {
 		return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
 	}
-
+	notifi.PublishAfterCommit(ctx, s.logger, "jobs_group_member_added", publishNotification)
 	grpc_audit.AddMeta(ctx, "jobs.group.id", strconv.FormatInt(req.GetGroupId(), 10))
 	grpc_audit.AddMeta(ctx, "jobs.group.user_id", strconv.FormatInt(int64(req.GetUserId()), 10))
 	if req.HasReason() {
@@ -1098,10 +1115,24 @@ func (s *Server) RemoveGroupMember(
 	if err != nil {
 		return nil, err
 	}
+	var publishNotification func(context.Context) error
+	if !req.GetSkipNotification() && req.GetUserId() != userInfo.GetUserId() {
+		publishNotification, err = s.prepareGroupUserNotification(
+			ctx,
+			tx,
+			updated,
+			req.GetUserId(),
+			userInfo.GetUserId(),
+			notifications.NotificationKind_NOTIFICATION_KIND_JOBS_GROUP_MEMBER_REMOVED,
+		)
+		if err != nil {
+			return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
+		}
+	}
 	if err := tx.Commit(); err != nil {
 		return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
 	}
-
+	notifi.PublishAfterCommit(ctx, s.logger, "jobs_group_member_removed", publishNotification)
 	grpc_audit.AddMeta(ctx, "jobs.group.id", strconv.FormatInt(req.GetGroupId(), 10))
 	grpc_audit.AddMeta(ctx, "jobs.group.user_id", strconv.FormatInt(int64(req.GetUserId()), 10))
 	if req.HasReason() {
@@ -1199,7 +1230,6 @@ func (s *Server) ExcludeGroupMember(
 	if err := tx.Commit(); err != nil {
 		return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
 	}
-
 	grpc_audit.AddMeta(ctx, "jobs.group.id", strconv.FormatInt(req.GetGroupId(), 10))
 	grpc_audit.AddMeta(ctx, "jobs.group.user_id", strconv.FormatInt(int64(req.GetUserId()), 10))
 	if req.HasReason() {
@@ -1290,7 +1320,6 @@ func (s *Server) RemoveGroupMemberExclusion(
 	if err := tx.Commit(); err != nil {
 		return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
 	}
-
 	grpc_audit.AddMeta(ctx, "jobs.group.id", strconv.FormatInt(req.GetGroupId(), 10))
 	grpc_audit.AddMeta(ctx, "jobs.group.user_id", strconv.FormatInt(int64(req.GetUserId()), 10))
 	if req.HasReason() {
@@ -1374,9 +1403,24 @@ func (s *Server) AddGroupLeader(
 	if err != nil {
 		return nil, err
 	}
+	var publishNotification func(context.Context) error
+	if created && !req.GetSkipNotification() && req.GetUserId() != userInfo.GetUserId() {
+		publishNotification, err = s.prepareGroupUserNotification(
+			ctx,
+			tx,
+			updated,
+			req.GetUserId(),
+			userInfo.GetUserId(),
+			notifications.NotificationKind_NOTIFICATION_KIND_JOBS_GROUP_LEADERSHIP_ADDED,
+		)
+		if err != nil {
+			return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
+		}
+	}
 	if err := tx.Commit(); err != nil {
 		return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
 	}
+	notifi.PublishAfterCommit(ctx, s.logger, "jobs_group_leadership_added", publishNotification)
 
 	grpc_audit.AddMeta(ctx, "jobs.group.id", strconv.FormatInt(req.GetGroupId(), 10))
 	grpc_audit.AddMeta(ctx, "jobs.group.user_id", strconv.FormatInt(int64(req.GetUserId()), 10))
@@ -1457,9 +1501,24 @@ func (s *Server) RemoveGroupLeader(
 	if err != nil {
 		return nil, err
 	}
+	var publishNotification func(context.Context) error
+	if !req.GetSkipNotification() && req.GetUserId() != userInfo.GetUserId() {
+		publishNotification, err = s.prepareGroupUserNotification(
+			ctx,
+			tx,
+			updated,
+			req.GetUserId(),
+			userInfo.GetUserId(),
+			notifications.NotificationKind_NOTIFICATION_KIND_JOBS_GROUP_LEADERSHIP_REMOVED,
+		)
+		if err != nil {
+			return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
+		}
+	}
 	if err := tx.Commit(); err != nil {
 		return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
 	}
+	notifi.PublishAfterCommit(ctx, s.logger, "jobs_group_leadership_removed", publishNotification)
 
 	grpc_audit.AddMeta(ctx, "jobs.group.id", strconv.FormatInt(req.GetGroupId(), 10))
 	grpc_audit.AddMeta(ctx, "jobs.group.user_id", strconv.FormatInt(int64(req.GetUserId()), 10))
@@ -1473,4 +1532,59 @@ func (s *Server) RemoveGroupLeader(
 	}
 
 	return &pbjobs.RemoveGroupLeaderResponse{Group: updated}, nil
+}
+
+func (s *Server) prepareGroupUserNotification(
+	ctx context.Context,
+	db qrm.DB,
+	group *jobsgroups.Group,
+	targetUserID int32,
+	actorUserID int32,
+	kind notifications.NotificationKind,
+) (func(context.Context) error, error) {
+	scope := "leadership"
+	change := "added"
+	switch kind {
+	case notifications.NotificationKind_NOTIFICATION_KIND_JOBS_GROUP_LEADERSHIP_REMOVED:
+		change = "removed"
+	case notifications.NotificationKind_NOTIFICATION_KIND_JOBS_GROUP_MEMBER_ADDED:
+		scope = "membership"
+	case notifications.NotificationKind_NOTIFICATION_KIND_JOBS_GROUP_MEMBER_REMOVED:
+		scope = "membership"
+		change = "removed"
+	}
+
+	groupID := group.GetId()
+	entityType := "jobs.group"
+	notification := notifi.NewUserNotification(notifi.UserNotificationParams{
+		UserID:      targetUserID,
+		Type:        notifications.NotificationType_NOTIFICATION_TYPE_INFO,
+		Category:    notifications.NotificationCategory_NOTIFICATION_CATEGORY_JOBS,
+		Kind:        kind,
+		ActorUserID: &actorUserID,
+		EntityType:  &entityType,
+		EntityID:    &groupID,
+		Title: &common.I18NItem{
+			Key: "notifications.jobs.groups." + scope + "_" + change + ".title",
+		},
+		Content: &common.I18NItem{
+			Key:        "notifications.jobs.groups." + scope + "_" + change + ".content",
+			Parameters: map[string]string{"group": group.GetName()},
+		},
+	})
+	if s.ui != nil {
+		targetUserInfo, err := s.ui.GetUserInfo(ctx, targetUserID)
+		if err != nil {
+			return nil, err
+		}
+		if s.perms.CanServiceMethod(targetUserInfo, "jobs.GroupsService/ListGroups") {
+			notification.Data = &notifications.Data{
+				Link: &notifications.Link{
+					To: "/jobs/groups?group=" + strconv.FormatInt(groupID, 10),
+				},
+			}
+		}
+	}
+
+	return s.notifi.PrepareUserNotification(ctx, db, notification)
 }

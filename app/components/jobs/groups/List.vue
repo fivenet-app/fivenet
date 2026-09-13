@@ -30,6 +30,8 @@ import {
 const { t } = useI18n();
 
 const overlay = useOverlay();
+const route = useRoute();
+const router = useRouter();
 
 const { can } = useAuth();
 
@@ -239,6 +241,43 @@ function openGroupDetails(group: Group): void {
     detailsSlideover.open({
         group,
         onChanged: async () => refresh(),
+        onClose: clearGroupDeepLink,
+    });
+}
+
+const groupIDFromDeepLink = computed(() => {
+    const value = route.query.group;
+    if (typeof value !== 'string') return undefined;
+
+    const groupID = Number(value);
+    return Number.isSafeInteger(groupID) && groupID > 0 ? groupID : undefined;
+});
+
+watch(
+    groupIDFromDeepLink,
+    (groupID) => {
+        if (groupID === undefined) return;
+        void openGroupDetailsByID(groupID);
+    },
+    { immediate: true },
+);
+
+async function openGroupDetailsByID(groupID: number): Promise<void> {
+    detailsSlideover.open({
+        groupId: groupID,
+        onChanged: async () => refresh(),
+        onClose: clearGroupDeepLink,
+    });
+}
+
+async function clearGroupDeepLink(): Promise<void> {
+    if (route.query.group === undefined) return;
+
+    await router.replace({
+        query: {
+            ...route.query,
+            group: undefined,
+        },
     });
 }
 </script>

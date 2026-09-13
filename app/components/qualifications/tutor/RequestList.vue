@@ -82,6 +82,7 @@ const query = reactive<Schema>({
     },
     page: 1,
 });
+const notifyUser = ref(true);
 
 const { data, status, refresh, error } = useAuthedLazyAsyncData(
     'userState',
@@ -129,6 +130,7 @@ async function deleteQualificationRequest(qualificationId: number, userId: numbe
         const call = qualificationsQualificationsClient.deleteQualificationReq({
             qualificationId: qualificationId,
             userId,
+            skipNotification: !notifyUser.value,
         });
         const { response } = await call;
 
@@ -306,6 +308,9 @@ const examViewResultModal = overlay.create(ExamViewResultModal);
         />
 
         <template v-else>
+            <div class="mb-3 flex justify-end">
+                <USwitch v-model="notifyUser" :label="$t('components.jobs.groups.details.notify_user')" />
+            </div>
             <UTable
                 v-model:sorting="query.sorting.columns"
                 :columns="columns"

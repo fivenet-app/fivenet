@@ -16,7 +16,8 @@ func TestStoreCountUnread(t *testing.T) {
 
 	expectedQuery := regexp.QuoteMeta(`FROM fivenet_notifications`) +
 		`(?s).*` + regexp.QuoteMeta(`fivenet_notifications.user_id = ?`) +
-		`(?s).*` + regexp.QuoteMeta(`fivenet_notifications.read_at IS NULL`)
+		`(?s).*` + regexp.QuoteMeta(`fivenet_notifications.read_at IS NULL`) +
+		`(?s).*` + regexp.QuoteMeta(`fivenet_notifications.archived_at IS NULL`)
 	mock.ExpectQuery(expectedQuery).
 		WithArgs(int32(3)).
 		WillReturnRows(sqlmock.NewRows([]string{"count"}).AddRow(int64(4)))
@@ -24,5 +25,19 @@ func TestStoreCountUnread(t *testing.T) {
 	total, err := store.CountUnread(t.Context(), 3)
 	require.NoError(t, err)
 	assert.Equal(t, int64(4), total)
+	require.NoError(t, mock.ExpectationsWereMet())
+}
+
+func TestStoreCountUnreadExcludesArchivedNotifications(t *testing.T) {
+	t.Parallel()
+
+	store, mock := newTestStore(t)
+	mock.ExpectQuery(`(?s)SELECT COUNT\(fivenet_notifications.id\) AS "count".*fivenet_notifications.user_id = \?.*fivenet_notifications.read_at IS NULL.*fivenet_notifications.archived_at IS NULL`).
+		WithArgs(int32(3)).
+		WillReturnRows(sqlmock.NewRows([]string{"count"}).AddRow(int64(4)))
+
+	count, err := store.CountUnread(t.Context(), 3)
+	require.NoError(t, err)
+	assert.Equal(t, int64(4), count)
 	require.NoError(t, mock.ExpectationsWereMet())
 }

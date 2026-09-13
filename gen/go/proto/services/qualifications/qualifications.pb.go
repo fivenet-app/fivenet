@@ -1391,8 +1391,10 @@ type DeleteQualificationReqRequest struct {
 	state           protoimpl.MessageState `protogen:"hybrid.v1"`
 	QualificationId int64                  `protobuf:"varint,1,opt,name=qualification_id,json=qualificationId,proto3" json:"qualification_id,omitempty"`
 	UserId          int32                  `protobuf:"varint,2,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
-	unknownFields   protoimpl.UnknownFields
-	sizeCache       protoimpl.SizeCache
+	// Suppresses the inbox notification normally sent to the affected user.
+	SkipNotification bool `protobuf:"varint,3,opt,name=skip_notification,json=skipNotification,proto3" json:"skip_notification,omitempty"`
+	unknownFields    protoimpl.UnknownFields
+	sizeCache        protoimpl.SizeCache
 }
 
 func (x *DeleteQualificationReqRequest) Reset() {
@@ -1434,6 +1436,13 @@ func (x *DeleteQualificationReqRequest) GetUserId() int32 {
 	return 0
 }
 
+func (x *DeleteQualificationReqRequest) GetSkipNotification() bool {
+	if x != nil {
+		return x.SkipNotification
+	}
+	return false
+}
+
 func (x *DeleteQualificationReqRequest) SetQualificationId(v int64) {
 	x.QualificationId = v
 }
@@ -1442,11 +1451,17 @@ func (x *DeleteQualificationReqRequest) SetUserId(v int32) {
 	x.UserId = v
 }
 
+func (x *DeleteQualificationReqRequest) SetSkipNotification(v bool) {
+	x.SkipNotification = v
+}
+
 type DeleteQualificationReqRequest_builder struct {
 	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
 
 	QualificationId int64
 	UserId          int32
+	// Suppresses the inbox notification normally sent to the affected user.
+	SkipNotification bool
 }
 
 func (b0 DeleteQualificationReqRequest_builder) Build() *DeleteQualificationReqRequest {
@@ -1455,6 +1470,7 @@ func (b0 DeleteQualificationReqRequest_builder) Build() *DeleteQualificationReqR
 	_, _ = b, x
 	x.QualificationId = b.QualificationId
 	x.UserId = b.UserId
+	x.SkipNotification = b.SkipNotification
 	return m0
 }
 
@@ -1757,11 +1773,13 @@ func (b0 ListQualificationsResultsResponse_builder) Build() *ListQualificationsR
 }
 
 type CreateOrUpdateQualificationResultRequest struct {
-	state         protoimpl.MessageState              `protogen:"hybrid.v1"`
-	Result        *qualifications.QualificationResult `protobuf:"bytes,1,opt,name=result,proto3" json:"result,omitempty"`
-	Grading       *exam.ExamGrading                   `protobuf:"bytes,2,opt,name=grading,proto3,oneof" json:"grading,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
+	state   protoimpl.MessageState              `protogen:"hybrid.v1"`
+	Result  *qualifications.QualificationResult `protobuf:"bytes,1,opt,name=result,proto3" json:"result,omitempty"`
+	Grading *exam.ExamGrading                   `protobuf:"bytes,2,opt,name=grading,proto3,oneof" json:"grading,omitempty"`
+	// Suppresses the inbox notification normally sent to the affected user.
+	SkipNotification bool `protobuf:"varint,3,opt,name=skip_notification,json=skipNotification,proto3" json:"skip_notification,omitempty"`
+	unknownFields    protoimpl.UnknownFields
+	sizeCache        protoimpl.SizeCache
 }
 
 func (x *CreateOrUpdateQualificationResultRequest) Reset() {
@@ -1803,12 +1821,23 @@ func (x *CreateOrUpdateQualificationResultRequest) GetGrading() *exam.ExamGradin
 	return nil
 }
 
+func (x *CreateOrUpdateQualificationResultRequest) GetSkipNotification() bool {
+	if x != nil {
+		return x.SkipNotification
+	}
+	return false
+}
+
 func (x *CreateOrUpdateQualificationResultRequest) SetResult(v *qualifications.QualificationResult) {
 	x.Result = v
 }
 
 func (x *CreateOrUpdateQualificationResultRequest) SetGrading(v *exam.ExamGrading) {
 	x.Grading = v
+}
+
+func (x *CreateOrUpdateQualificationResultRequest) SetSkipNotification(v bool) {
+	x.SkipNotification = v
 }
 
 func (x *CreateOrUpdateQualificationResultRequest) HasResult() bool {
@@ -1838,6 +1867,8 @@ type CreateOrUpdateQualificationResultRequest_builder struct {
 
 	Result  *qualifications.QualificationResult
 	Grading *exam.ExamGrading
+	// Suppresses the inbox notification normally sent to the affected user.
+	SkipNotification bool
 }
 
 func (b0 CreateOrUpdateQualificationResultRequest_builder) Build() *CreateOrUpdateQualificationResultRequest {
@@ -1846,6 +1877,7 @@ func (b0 CreateOrUpdateQualificationResultRequest_builder) Build() *CreateOrUpda
 	_, _ = b, x
 	x.Result = b.Result
 	x.Grading = b.Grading
+	x.SkipNotification = b.SkipNotification
 	return m0
 }
 
@@ -1918,10 +1950,12 @@ func (b0 CreateOrUpdateQualificationResultResponse_builder) Build() *CreateOrUpd
 }
 
 type DeleteQualificationResultRequest struct {
-	state         protoimpl.MessageState `protogen:"hybrid.v1"`
-	ResultId      int64                  `protobuf:"varint,1,opt,name=result_id,json=resultId,proto3" json:"result_id,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
+	state    protoimpl.MessageState `protogen:"hybrid.v1"`
+	ResultId int64                  `protobuf:"varint,1,opt,name=result_id,json=resultId,proto3" json:"result_id,omitempty"`
+	// Suppresses the inbox notification normally sent to the affected user.
+	SkipNotification bool `protobuf:"varint,2,opt,name=skip_notification,json=skipNotification,proto3" json:"skip_notification,omitempty"`
+	unknownFields    protoimpl.UnknownFields
+	sizeCache        protoimpl.SizeCache
 }
 
 func (x *DeleteQualificationResultRequest) Reset() {
@@ -1956,14 +1990,27 @@ func (x *DeleteQualificationResultRequest) GetResultId() int64 {
 	return 0
 }
 
+func (x *DeleteQualificationResultRequest) GetSkipNotification() bool {
+	if x != nil {
+		return x.SkipNotification
+	}
+	return false
+}
+
 func (x *DeleteQualificationResultRequest) SetResultId(v int64) {
 	x.ResultId = v
+}
+
+func (x *DeleteQualificationResultRequest) SetSkipNotification(v bool) {
+	x.SkipNotification = v
 }
 
 type DeleteQualificationResultRequest_builder struct {
 	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
 
 	ResultId int64
+	// Suppresses the inbox notification normally sent to the affected user.
+	SkipNotification bool
 }
 
 func (b0 DeleteQualificationResultRequest_builder) Build() *DeleteQualificationResultRequest {
@@ -1971,6 +2018,7 @@ func (b0 DeleteQualificationResultRequest_builder) Build() *DeleteQualificationR
 	b, x := &b0, m0
 	_, _ = b, x
 	x.ResultId = b.ResultId
+	x.SkipNotification = b.SkipNotification
 	return m0
 }
 
@@ -2083,10 +2131,11 @@ const file_services_qualifications_qualifications_proto_rawDesc = "" +
 	")CreateOrUpdateQualificationRequestRequest\x12H\n" +
 	"\arequest\x18\x01 \x01(\v2..resources.qualifications.QualificationRequestR\arequest\"v\n" +
 	"*CreateOrUpdateQualificationRequestResponse\x12H\n" +
-	"\arequest\x18\x01 \x01(\v2..resources.qualifications.QualificationRequestR\arequest\"c\n" +
+	"\arequest\x18\x01 \x01(\v2..resources.qualifications.QualificationRequestR\arequest\"\x90\x01\n" +
 	"\x1dDeleteQualificationReqRequest\x12)\n" +
 	"\x10qualification_id\x18\x01 \x01(\x03R\x0fqualificationId\x12\x17\n" +
-	"\auser_id\x18\x02 \x01(\x05R\x06userId\" \n" +
+	"\auser_id\x18\x02 \x01(\x05R\x06userId\x12+\n" +
+	"\x11skip_notification\x18\x03 \x01(\bR\x10skipNotification\" \n" +
 	"\x1eDeleteQualificationReqResponse\"\xfb\x02\n" +
 	" ListQualificationsResultsRequest\x12L\n" +
 	"\n" +
@@ -2104,16 +2153,18 @@ const file_services_qualifications_qualifications_proto_rawDesc = "" +
 	"\n" +
 	"pagination\x18\x01 \x01(\v2-.resources.common.database.PaginationResponseR\n" +
 	"pagination\x12M\n" +
-	"\aresults\x18\x02 \x03(\v2-.resources.qualifications.QualificationResultB\x04\xc8\xf3\x18\x01R\aresults\"\xc8\x01\n" +
+	"\aresults\x18\x02 \x03(\v2-.resources.qualifications.QualificationResultB\x04\xc8\xf3\x18\x01R\aresults\"\xf5\x01\n" +
 	"(CreateOrUpdateQualificationResultRequest\x12E\n" +
 	"\x06result\x18\x01 \x01(\v2-.resources.qualifications.QualificationResultR\x06result\x12I\n" +
-	"\agrading\x18\x02 \x01(\v2*.resources.qualifications.exam.ExamGradingH\x00R\agrading\x88\x01\x01B\n" +
+	"\agrading\x18\x02 \x01(\v2*.resources.qualifications.exam.ExamGradingH\x00R\agrading\x88\x01\x01\x12+\n" +
+	"\x11skip_notification\x18\x03 \x01(\bR\x10skipNotificationB\n" +
 	"\n" +
 	"\b_grading\"r\n" +
 	")CreateOrUpdateQualificationResultResponse\x12E\n" +
-	"\x06result\x18\x01 \x01(\v2-.resources.qualifications.QualificationResultR\x06result\"?\n" +
+	"\x06result\x18\x01 \x01(\v2-.resources.qualifications.QualificationResultR\x06result\"l\n" +
 	" DeleteQualificationResultRequest\x12\x1b\n" +
-	"\tresult_id\x18\x01 \x01(\x03R\bresultId\"#\n" +
+	"\tresult_id\x18\x01 \x01(\x03R\bresultId\x12+\n" +
+	"\x11skip_notification\x18\x02 \x01(\bR\x10skipNotification\"#\n" +
 	"!DeleteQualificationResultResponse2\xbb\x10\n" +
 	"\x15QualificationsService\x12\x85\x01\n" +
 	"\x12ListQualifications\x122.services.qualifications.ListQualificationsRequest\x1a3.services.qualifications.ListQualificationsResponse\"\x06\xd2\xf3\x18\x02\b\x01\x12\x93\x01\n" +
