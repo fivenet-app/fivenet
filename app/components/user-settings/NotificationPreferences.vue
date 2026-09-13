@@ -9,37 +9,19 @@ import {
 import NotificationDeliverySettingsRow, {
     type NotificationDeliverySetting,
 } from '~/components/user-settings/NotificationDeliverySettingsRow.vue';
+import { notificationCategoryDefinitions, notificationKindDefinitions } from '~/components/notifications/definitions';
 
 const { activeChar } = useAuth();
 
 const { t } = useI18n();
 
-const notificationCategories = [
-    NotificationCategory.GENERAL,
-    NotificationCategory.DOCUMENT,
-    NotificationCategory.CALENDAR,
-    NotificationCategory.JOBS,
-    NotificationCategory.QUALIFICATIONS,
-    NotificationCategory.MAILER,
-    NotificationCategory.SYSTEM,
-];
 const notificationDeliveryScopes = [
     { category: NotificationCategory.UNSPECIFIED, label: t('components.auth.user_settings.notification_delivery.all') },
-    ...notificationCategories.map((category) => ({
+    ...notificationCategoryDefinitions.map(({ category }) => ({
         category,
         label: t(`enums.notifications.NotificationCategory.${NotificationCategory[category]}`),
     })),
 ];
-const notificationKindDefinitions = [
-    { kind: NotificationKind.JOBS_GROUP_LEADERSHIP_ADDED, category: NotificationCategory.JOBS },
-    { kind: NotificationKind.JOBS_GROUP_LEADERSHIP_REMOVED, category: NotificationCategory.JOBS },
-    { kind: NotificationKind.JOBS_GROUP_MEMBER_ADDED, category: NotificationCategory.JOBS },
-    { kind: NotificationKind.JOBS_GROUP_MEMBER_REMOVED, category: NotificationCategory.JOBS },
-    { kind: NotificationKind.DOCUMENT_APPROVAL_ASSIGNED, category: NotificationCategory.DOCUMENT },
-    { kind: NotificationKind.DOCUMENT_REQUEST_CREATED, category: NotificationCategory.DOCUMENT },
-    { kind: NotificationKind.DOCUMENT_REQUEST_DECIDED, category: NotificationCategory.DOCUMENT },
-    { kind: NotificationKind.DOCUMENT_REQUEST_CANCELLED, category: NotificationCategory.DOCUMENT },
-] as const;
 
 const notificationsClient = await getNotificationsNotificationsClient();
 

@@ -9,6 +9,7 @@ import { getNotificationsNotificationsClient } from '~~/gen/ts/clients';
 import { NotificationCategory, type Notification } from '~~/gen/ts/resources/notifications/notifications';
 import type { GetNotificationsResponse } from '~~/gen/ts/services/notifications/notifications';
 import DNBToggle from './DNBToggle.vue';
+import { notificationCategoryDefinitions } from './definitions';
 import { notificationEntryComponent } from './entries/registry';
 
 defineProps<{
@@ -25,15 +26,7 @@ const notificationCenter = useNotificationCenterStore();
 
 const notificationsNotificationsClient = await getNotificationsNotificationsClient();
 
-const categories: { mode: NotificationCategory }[] = [
-    { mode: NotificationCategory.GENERAL },
-    { mode: NotificationCategory.DOCUMENT },
-    { mode: NotificationCategory.CALENDAR },
-    { mode: NotificationCategory.JOBS },
-    { mode: NotificationCategory.QUALIFICATIONS },
-    { mode: NotificationCategory.MAILER },
-    { mode: NotificationCategory.SYSTEM },
-];
+const categories: { mode: NotificationCategory }[] = notificationCategoryDefinitions.map(({ category }) => ({ mode: category }));
 
 const scopes = ['all', 'unread', 'starred', 'archived'] as const;
 type Scope = (typeof scopes)[number];
