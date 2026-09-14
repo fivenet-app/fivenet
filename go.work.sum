@@ -1296,6 +1296,7 @@ github.com/felixge/fgprof v0.9.3/go.mod h1:RdbpDgzqYVh/T9fPELJyV7EYJuHB55UTEULNu
 github.com/firefart/nonamedreturns v1.0.6/go.mod h1:R8NisJnSIpvPWheCq0mNRXJok6D8h7fagJTF8EMEwCo=
 github.com/fivenet-app/fivenet/v2026 v2026.3.2/go.mod h1:ToRBJtWAFilzPWek5dvdPyzZ3f6/CLz/IAil8bwO2u8=
 github.com/fivenet-app/fivenet/v2026 v2026.6.2/go.mod h1:BKTi3/tiIfCFW/i/jvO7J4k2T3EJV5KRoEUXO51/NTk=
+github.com/fivenet-app/fivenet/v2026 v2026.9.2/go.mod h1:ZbONZwCVY/BdYaCkANSQrwlR+YlATdedMi624lDBvaU=
 github.com/flosch/pongo2/v4 v4.0.2/go.mod h1:B5ObFANs/36VwxxlgKpdchIJHMvHB562PW+BWPhwZD8=
 github.com/flynn/go-shlex v0.0.0-20150515145356-3f9db97f8568/go.mod h1:xEzjJPgXI435gkrCt3MPfRiAkVrwSbHsst4LCFVfpJc=
 github.com/form3tech-oss/jwt-go v3.2.5+incompatible/go.mod h1:pbq4aXjuKjdthFRnoDwaVPLA+WlJuPGy+QneDUgJi2k=
@@ -1308,8 +1309,6 @@ github.com/gabriel-vasile/mimetype v1.4.3/go.mod h1:d8uq/6HKRL6CGdk+aubisF/M5GcP
 github.com/gabriel-vasile/mimetype v1.4.8/go.mod h1:ByKUIKGjh1ODkGM1asKUbQZOLGrPjydw3hYPU2YU9t8=
 github.com/gabriel-vasile/mimetype v1.4.11/go.mod h1:d+9Oxyo1wTzWdyVUPMmXFvp4F9tea18J8ufA774AB3s=
 github.com/gabriel-vasile/mimetype v1.4.12/go.mod h1:d+9Oxyo1wTzWdyVUPMmXFvp4F9tea18J8ufA774AB3s=
-github.com/galexrt/go-grpc-middleware/v2 v2.0.0-20260414203341-0eb9f84a034b h1:p7tGVCJDLt0zhYvKh1VSyTgHikjnTbbhZhKDiRfIKBk=
-github.com/galexrt/go-grpc-middleware/v2 v2.0.0-20260414203341-0eb9f84a034b/go.mod h1:NbCUVmiS4foBGBHOYlCT25+YmGpJ32dZPi75pGEUpj4=
 github.com/galexrt/jet/v2 v2.0.0-20260617125839-18b39c5882d8 h1:gqjB4s1iT0cs6qq8Yt8FiSsvGem5U+ndfif9fWkQWls=
 github.com/galexrt/jet/v2 v2.0.0-20260617125839-18b39c5882d8/go.mod h1:+WUK1HdnzxYLpwYO24SjHGRSlD04+PFPG/GRMLiT24M=
 github.com/ghostiam/protogetter v0.3.20/go.mod h1:FjIu5Yfs6FT391m+Fjp3fbAYJ6rkL/J6ySpZBfnODuI=
