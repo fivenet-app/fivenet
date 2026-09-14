@@ -1,7 +1,7 @@
 import { createPinia, setActivePinia } from 'pinia';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { toTimestamp } from '~/utils/time';
-import { type Dispatchers } from '~~/gen/ts/resources/centrum/dispatchers/dispatchers';
+import type { Dispatchers } from '~~/gen/ts/resources/centrum/dispatchers/dispatchers';
 import {
     type Dispatch,
     type DispatchAssignment,
@@ -112,6 +112,15 @@ describe('useCentrumStore', () => {
         store.addOrUpdateDispatch(dispatch({ id: 11 }), 2);
 
         expect(store.dispatches.has(11)).toBe(true);
+    });
+
+    it('applies dispatch deletions without a KV revision', () => {
+        const store = useCentrumStore();
+        store.addOrUpdateDispatch(dispatch({ id: 11 }));
+
+        store.removeDispatch(11, 0);
+
+        expect(store.dispatches.has(11)).toBe(false);
     });
 
     it('keeps unit and dispatch revision state separate for matching IDs', () => {
