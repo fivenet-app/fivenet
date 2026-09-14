@@ -10,6 +10,7 @@ import (
 	"sync/atomic"
 
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/settings"
+	serverconfig "github.com/fivenet-app/fivenet/v2026/pkg/config"
 	"github.com/fivenet-app/fivenet/v2026/pkg/utils/broker"
 	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
 	"github.com/go-jet/jet/v2/mysql"
@@ -45,11 +46,12 @@ var Module = fx.Module("app_config",
 type Config struct {
 	IConfig
 
-	logger *zap.Logger
-	db     *sql.DB
-	tracer trace.Tracer
-	nc     *nats.Conn
-	ncSub  *nats.Subscription
+	logger       *zap.Logger
+	db           *sql.DB
+	tracer       trace.Tracer
+	nc           *nats.Conn
+	ncSub        *nats.Subscription
+	serverConfig *serverconfig.Config
 
 	jsCons jetstream.ConsumeContext
 
@@ -63,18 +65,20 @@ type Params struct {
 
 	LC fx.Lifecycle
 
-	Logger *zap.Logger
-	NC     *nats.Conn
-	TP     *tracesdk.TracerProvider
-	DB     *sql.DB
+	Logger       *zap.Logger
+	NC           *nats.Conn
+	TP           *tracesdk.TracerProvider
+	DB           *sql.DB
+	ServerConfig *serverconfig.Config
 }
 
 func New(p Params) (IConfig, error) {
 	cfg := &Config{
-		logger: p.Logger.Named("appconfig"),
-		db:     p.DB,
-		tracer: p.TP.Tracer("appconfig"),
-		nc:     p.NC,
+		logger:       p.Logger.Named("appconfig"),
+		db:           p.DB,
+		tracer:       p.TP.Tracer("appconfig"),
+		nc:           p.NC,
+		serverConfig: p.ServerConfig,
 
 		cfg: atomic.Pointer[Cfg]{},
 
@@ -173,6 +177,26 @@ func (c *Config) updateConfigInDB(ctx context.Context, cfg *Cfg) error {
 	return nil
 }
 
+// insertInitialConfig inserts an initial app config without replacing a value created by another replica.
+func (c *Config) insertInitialConfig(ctx context.Context, cfg *Cfg) error {
+	tConfig := table.FivenetConfig
+	stmt := tConfig.
+		INSERT(
+			tConfig.Key,
+			tConfig.AppConfig,
+		).
+		VALUES(
+			1,
+			cfg,
+		).
+		ON_DUPLICATE_KEY_UPDATE(
+			tConfig.Key.SET(tConfig.Key),
+		)
+
+	_, err := stmt.ExecContext(ctx, c.db)
+	return err
+}
+
 func (c *Config) Reload(ctx context.Context) (*Cfg, error) {
 	ctx, span := c.tracer.Start(ctx, "appconfig.reload")
 	defer span.End()
@@ -198,15 +222,18 @@ func (c *Config) Reload(ctx context.Context) (*Cfg, error) {
 		} else {
 			// No app config found in database? Insert into database.
 			dest.AppConfig.Default()
-			if err := c.updateConfigInDB(ctx, dest.AppConfig); err != nil {
+			c.applyInitialConfig(dest.AppConfig)
+			if err := c.insertInitialConfig(ctx, dest.AppConfig); err != nil {
 				return nil, err
 			}
-			dest.SetupComplete = false
+			// Always load the persisted row: another replica may have created it first.
+			return c.Reload(ctx)
 		}
 	}
 	dest.AppConfig.Default()
 	dest.AppConfig.Migrate()
 	dest.AppConfig.SetSetupComplete(dest.SetupComplete)
+	c.applyStartupOverride(dest.AppConfig)
 
 	if slices.ContainsFunc(dest.AppConfig.Perms.GetDefault(), func(p *settings.Perm) bool {
 		return !strings.Contains(p.GetCategory(), ".")
@@ -217,4 +244,40 @@ func (c *Config) Reload(ctx context.Context) (*Cfg, error) {
 	}
 
 	return dest.AppConfig, nil
+}
+
+func (c *Config) applyInitialConfig(cfg *Cfg) {
+	if c.serverConfig == nil {
+		return
+	}
+
+	applyWebsiteLinks(cfg, c.serverConfig.AppConfig.Initial.Website.Links)
+}
+
+func (c *Config) applyStartupOverride(cfg *Cfg) {
+	if c.serverConfig == nil || !c.serverConfig.AppConfig.Override.Enabled {
+		return
+	}
+
+	applyWebsiteLinks(cfg, c.serverConfig.AppConfig.Override.Website.Links)
+}
+
+func applyWebsiteLinks(cfg *Cfg, links *serverconfig.AppConfigLinks) {
+	if cfg == nil || links == nil {
+		return
+	}
+
+	if cfg.Website == nil {
+		cfg.Website = &settings.Website{}
+	}
+	if cfg.Website.Links == nil {
+		cfg.Website.Links = &settings.Links{}
+	}
+
+	if links.PrivacyPolicy != nil {
+		cfg.Website.Links.SetPrivacyPolicy(*links.PrivacyPolicy)
+	}
+	if links.Imprint != nil {
+		cfg.Website.Links.SetImprint(*links.Imprint)
+	}
 }

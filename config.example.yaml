@@ -53,12 +53,6 @@ http:
   adminListen: ":7070"
   # PublicURL is the canonical public base URL, including scheme and host.
   publicURL: "https://fivenet.example.com"
-  # Links configures optional legal links displayed by the frontend.
-  links:
-    # PrivacyPolicy is an optional URL to the privacy policy.
-    privacyPolicy: "https://fivenet.example.com/privacy"
-    # Imprint is an optional URL to the legal notice.
-    imprint: "https://fivenet.example.com/imprint"
   origins:
     # Origins lists browser origins allowed to access the frontend and API.
     - "https://fivenet.example.com"
@@ -72,6 +66,26 @@ http:
     cookieSecret: "your_generated_cookie_secret"
     # Domain is the cookie domain.
     domain: "fivenet.example.com"
+
+appConfig:
+  # Initial is applied and persisted only when the application configuration is first created.
+  initial:
+    # Website configures website settings.
+    website:
+      # Links configures optional legal links.
+      links:
+        privacyPolicy: ""
+        imprint: ""
+  # Override is applied in memory at every startup when enabled. It does not modify the database-backed configuration.
+  override:
+    # Enabled controls whether the override is applied.
+    enabled: false
+    # Website configures website settings.
+    website:
+      # Links configures optional legal links.
+      links: {}
+        #privacyPolicy: ""
+        #imprint: ""
 
 database:
   # Use either a DSN string or the individual host/port/username/password fields below.

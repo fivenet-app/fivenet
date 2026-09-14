@@ -41,6 +41,8 @@ type Config struct {
 	JWT JWT `yaml:"jwt"`
 	// HTTP configures the public and administration HTTP servers.
 	HTTP HTTP `yaml:"http"`
+	// AppConfig configures initial values and startup overrides for the database-backed application configuration.
+	AppConfig AppConfig `yaml:"appConfig"`
 	// Database configures the MySQL connection.
 	Database Database `yaml:"database"`
 	// NATS configures the NATS and JetStream connection.
@@ -155,8 +157,6 @@ type HTTP struct {
 	AdminListen string `default:":7070" yaml:"adminListen"`
 	// Sessions configures session cookies.
 	Sessions Sessions `yaml:"sessions"`
-	// Links configures optional legal links displayed by the frontend.
-	Links Links `yaml:"links"`
 	// PublicURL is the canonical public base URL, including scheme and host.
 	PublicURL string `yaml:"publicURL"`
 	// Origins lists browser origins allowed to access the frontend and API.
@@ -172,7 +172,36 @@ type Sessions struct {
 	Domain string `yaml:"domain" default:"localhost"`
 }
 
-type Links struct {
+// AppConfig configures database-backed application settings from the server configuration file.
+type AppConfig struct {
+	// Initial is applied and persisted only when the application configuration is first created.
+	Initial AppConfigInitial `yaml:"initial"`
+	// Override is applied in memory at every startup when enabled. It does not modify the database-backed configuration.
+	Override AppConfigOverride `yaml:"override"`
+}
+
+// AppConfigInitial contains values used to seed the application configuration.
+type AppConfigInitial struct {
+	// Website configures website settings.
+	Website AppConfigWebsite `yaml:"website"`
+}
+
+// AppConfigOverride contains values that can be enforced at startup.
+type AppConfigOverride struct {
+	// Enabled controls whether the override is applied.
+	Enabled bool `default:"false" yaml:"enabled"`
+	// Website configures website settings.
+	Website AppConfigWebsite `yaml:"website"`
+}
+
+// AppConfigWebsite configures website settings in the database-backed application configuration.
+type AppConfigWebsite struct {
+	// Links configures optional legal links.
+	Links *AppConfigLinks `yaml:"links"`
+}
+
+// AppConfigLinks configures optional legal links in the database-backed application configuration.
+type AppConfigLinks struct {
 	// PrivacyPolicy is an optional URL to the privacy policy.
 	PrivacyPolicy *string `yaml:"privacyPolicy"`
 	// Imprint is an optional URL to the legal notice.

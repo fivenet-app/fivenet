@@ -1,9 +1,11 @@
 package config
 
 import (
+	"strings"
 	"testing"
 
 	"github.com/creasty/defaults"
+	"github.com/spf13/viper"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
@@ -37,4 +39,40 @@ func TestDemoDefaults(t *testing.T) {
 		"expected demo.fakeUsers.count default 50, got %d",
 		cfg.Demo.FakeUsers.Count,
 	)
+}
+
+func TestAppConfigLinksFromYAML(t *testing.T) {
+	t.Parallel()
+
+	v := viper.NewWithOptions(viper.ExperimentalBindStruct())
+	v.SetConfigType("yaml")
+	require.NoError(t, v.ReadConfig(strings.NewReader(`
+appConfig:
+  initial:
+    website:
+      links:
+        privacyPolicy: "https://example.com/privacy"
+        imprint: "https://example.com/imprint"
+  override:
+    enabled: true
+    website:
+      links:
+        privacyPolicy: "https://override.example.com/privacy"
+`)))
+
+	cfg := &Config{}
+	require.NoError(t, defaults.Set(cfg))
+	require.NoError(t, v.Unmarshal(cfg))
+
+	require.NotNil(t, cfg.AppConfig.Initial.Website.Links)
+	assert.Equal(t, "https://example.com/privacy", *cfg.AppConfig.Initial.Website.Links.PrivacyPolicy)
+	assert.Equal(t, "https://example.com/imprint", *cfg.AppConfig.Initial.Website.Links.Imprint)
+	assert.True(t, cfg.AppConfig.Override.Enabled)
+	require.NotNil(t, cfg.AppConfig.Override.Website.Links)
+	assert.Equal(
+		t,
+		"https://override.example.com/privacy",
+		*cfg.AppConfig.Override.Website.Links.PrivacyPolicy,
+	)
+	assert.Nil(t, cfg.AppConfig.Override.Website.Links.Imprint)
 }
