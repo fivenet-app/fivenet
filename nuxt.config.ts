@@ -433,6 +433,9 @@ export default defineNuxtConfig({
     tiptap: {},
 
     leaflet: {
+        // Disable global css injection
+        injectCss: false,
+        // Plugins
         heat: true,
     },
 

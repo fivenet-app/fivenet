@@ -1,4 +1,5 @@
 <script lang="ts" setup>
+import 'leaflet/dist/leaflet.css';
 import type { LeafletMouseEvent, Map, PointExpression, LatLngBoundsExpression } from 'leaflet';
 import { customMapCRS, getMapBackgroundColor, mapBounds, mapMaxBounds } from '~/composables/livemap/useMapProjection';
 import MapCayoPerico from './MapCayoPerico.vue';
