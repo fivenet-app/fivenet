@@ -720,6 +720,67 @@ func TestReconcileUserJobChangeRemovesOnlyCrossJobAssignment(t *testing.T) {
 	assertUnitCacheHasUser(t, srv, ctx, unit.GetId(), 1, false)
 }
 
+func TestJobChangeRemovesUnitAndDispatcherStateTogether(t *testing.T) {
+	t.Parallel()
+
+	srv, db, trackerStub := newCentrumJoinUnitTestServer(t)
+	ctx := auth.ContextWithUserInfo(t.Context(), &pbuserinfo.UserInfo{
+		UserId:   1,
+		Job:      "ambulance",
+		JobGrade: 1,
+	})
+
+	unit := createUnitForTest(t, srv, ctx, "Alpha-Combined-Job-Change")
+	seedAssignmentForTest(t, db, trackerStub, unit.GetId(), 1)
+	require.NoError(t, srv.units.SyncUnitMembership(ctx, unit.GetId()))
+	require.NoError(t, srv.dispatchers.SetUserState(ctx, "ambulance", 1, true))
+
+	trackerStub.markers[1].Job = "police"
+
+	removed, err := srv.units.ReconcileUserJobChange(ctx, 1, "police")
+	require.NoError(t, err)
+	assert.True(t, removed)
+	require.NoError(t, srv.dispatchers.SetUserState(ctx, "ambulance", 1, false))
+
+	assert.Zero(t, unitAssignmentCountForTest(t, db, unit.GetId(), 1))
+	assertUnitCacheHasUser(t, srv, ctx, unit.GetId(), 1, false)
+
+	mapping, ok, err := trackerStub.GetUserMapping(1)
+	require.NoError(t, err)
+	require.True(t, ok)
+	assert.Nil(t, mapping.GetUnitId())
+
+	dispatchers, err := srv.dispatchers.Get(ctx, "ambulance")
+	require.NoError(t, err)
+	assert.Empty(t, dispatchers.GetDispatchers())
+}
+
+func TestJobChangeReconciliationIsIdempotentAndPreservesCurrentJobState(t *testing.T) {
+	t.Parallel()
+
+	srv, db, trackerStub := newCentrumJoinUnitTestServer(t)
+	ctx := auth.ContextWithUserInfo(t.Context(), &pbuserinfo.UserInfo{
+		UserId:   1,
+		Job:      "ambulance",
+		JobGrade: 1,
+	})
+
+	unit := createUnitForTest(t, srv, ctx, "Alpha-Idempotent-Job-Change")
+	seedAssignmentForTest(t, db, trackerStub, unit.GetId(), 1)
+	require.NoError(t, srv.units.SyncUnitMembership(ctx, unit.GetId()))
+
+	removed, err := srv.units.ReconcileUserJobChange(ctx, 1, "ambulance")
+	require.NoError(t, err)
+	assert.False(t, removed)
+	assert.Equal(t, 1, unitAssignmentCountForTest(t, db, unit.GetId(), 1))
+
+	require.NoError(t, srv.dispatchers.SetUserState(ctx, "ambulance", 1, true))
+	require.NoError(t, srv.dispatchers.SetUserState(ctx, "ambulance", 1, true))
+	dispatchers, err := srv.dispatchers.Get(ctx, "ambulance")
+	require.NoError(t, err)
+	assert.Len(t, dispatchers.GetDispatchers(), 1)
+}
+
 func TestUpdateUnitStatusPersistsChangedReasonForSameStatus(t *testing.T) {
 	t.Parallel()
 

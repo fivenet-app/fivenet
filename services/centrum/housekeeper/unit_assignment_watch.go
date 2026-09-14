@@ -58,7 +58,7 @@ func (s *Housekeeper) watchUnitAssignments(ctx context.Context) error {
 			}
 
 			s.metrics.IncHousekeeperEvent("unit_assignments", "empty_unit")
-			removed, err := s.removeEmptyUnit(ctx, unit)
+			removed, err := s.emptyUnitCleaner.Remove(ctx, unit)
 			if err != nil {
 				s.metrics.IncHousekeeperEvent(
 					"unit_assignments",

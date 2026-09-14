@@ -26,7 +26,6 @@ import (
 	centrummetrics "github.com/fivenet-app/fivenet/v2026/services/centrum/metrics"
 	"github.com/fivenet-app/fivenet/v2026/services/centrum/settings"
 	"github.com/fivenet-app/fivenet/v2026/services/centrum/units"
-	centrumutils "github.com/fivenet-app/fivenet/v2026/services/centrum/utils"
 	"github.com/go-jet/jet/v2/qrm"
 	"github.com/nats-io/nats.go/jetstream"
 	tracesdk "go.opentelemetry.io/otel/sdk/trace"
@@ -69,22 +68,16 @@ type Housekeeper struct {
 	userInfoReconcileConsumer jetstream.Consumer
 	le                        *leaderelection.LeaderElector
 
-	settings                   *settings.SettingsDB
-	dispatchers                *dispatchers.DispatchersDB
-	units                      *units.UnitDB
-	unitAssignments            unitAssignments
-	unitAssignmentWatchSource  unitAssignmentWatchSource
-	removeEmptyUnit            func(context.Context, *centrumunits.Unit) (int, error)
-	syncUserUnitMapping        func(context.Context, int32) error
-	reconcileUserUnitJobChange func(context.Context, int32, string) (bool, error)
-	setDispatcherState         func(context.Context, string, int32, bool) error
-	rangeDispatchers           func(func(string, *centrumdispatchers.Dispatchers) bool)
-	getDispatchProjection      func(context.Context, int64) (*centrumdispatches.Dispatch, error)
-	updateDispatchStatus       func(context.Context, int64, *centrumdispatches.DispatchStatus) (*centrumdispatches.DispatchStatus, error)
-	addDispatchAttribute       func(context.Context, *centrumdispatches.Dispatch, centrumdispatches.DispatchAttribute) error
-	deleteDispatch             func(context.Context, int64, bool) error
-	scheduleProjectionCleanup  func(context.Context, int64, *timestamp.Timestamp) error
-	dispatches                 *dispatches.DispatchDB
+	settings                  *settings.SettingsDB
+	dispatchers               *dispatchers.DispatchersDB
+	units                     *units.UnitDB
+	unitAssignments           unitAssignments
+	unitAssignmentWatchSource unitAssignmentWatchSource
+	dispatches                *dispatches.DispatchDB
+	unitUserState             unitUserState
+	dispatcherUserState       dispatcherUserState
+	dispatchLifecycle         dispatchLifecycle
+	emptyUnitCleaner          emptyUnitCleaner
 }
 
 type unitAssignments interface {
@@ -103,6 +96,48 @@ type unitAssignmentWatchSource interface {
 	WatchAll(
 		ctx context.Context,
 	) (store.IKVWatcher[centrumunits.Unit, *centrumunits.Unit], error)
+}
+
+type unitUserState interface {
+	SyncUserUnitMapping(context.Context, int32) error
+	ReconcileUserJobChange(context.Context, int32, string) (bool, error)
+	Range(func(string, *centrumunits.Unit) bool)
+}
+
+type dispatcherUserState interface {
+	SetUserState(context.Context, string, int32, bool) error
+	Range(func(string, *centrumdispatchers.Dispatchers) bool)
+}
+
+type dispatchLifecycle interface {
+	Get(context.Context, int64) (*centrumdispatches.Dispatch, error)
+	UpdateStatus(
+		context.Context,
+		int64,
+		*centrumdispatches.DispatchStatus,
+	) (*centrumdispatches.DispatchStatus, error)
+	AddAttributeToDispatch(
+		context.Context,
+		*centrumdispatches.Dispatch,
+		centrumdispatches.DispatchAttribute,
+	) error
+	Delete(context.Context, int64, bool) error
+	ScheduleProjectionCleanup(context.Context, int64, *timestamp.Timestamp) error
+}
+
+type emptyUnitCleaner interface {
+	Remove(context.Context, *centrumunits.Unit) (int, error)
+}
+
+type dispatchAssignmentCleaner struct {
+	housekeeper *Housekeeper
+}
+
+func (c dispatchAssignmentCleaner) Remove(
+	ctx context.Context,
+	unit *centrumunits.Unit,
+) (int, error) {
+	return c.housekeeper.removeDispatchesFromEmptyUnit(ctx, unit)
 }
 
 type Params struct {
@@ -152,19 +187,12 @@ func New(p Params) Result {
 		unitAssignments: p.Units,
 		dispatches:      p.Dispatches,
 	}
+	// For testing, we can override these functions to use mocks or fakes.
 	s.unitAssignmentWatchSource = p.Units.Store()
-	s.removeEmptyUnit = s.removeDispatchesFromEmptyUnit
-	s.syncUserUnitMapping = p.Units.SyncUserUnitMapping
-	s.reconcileUserUnitJobChange = p.Units.ReconcileUserJobChange
-	s.setDispatcherState = p.Dispatchers.SetUserState
-	s.rangeDispatchers = p.Dispatchers.Range
-	s.getDispatchProjection = func(ctx context.Context, id int64) (*centrumdispatches.Dispatch, error) {
-		return p.Dispatches.Store().Get(centrumutils.IdKey(id))
-	}
-	s.updateDispatchStatus = p.Dispatches.UpdateStatus
-	s.addDispatchAttribute = p.Dispatches.AddAttributeToDispatch
-	s.deleteDispatch = p.Dispatches.Delete
-	s.scheduleProjectionCleanup = p.Dispatches.ScheduleProjectionCleanup
+	s.unitUserState = p.Units
+	s.dispatcherUserState = p.Dispatchers
+	s.dispatchLifecycle = p.Dispatches
+	s.emptyUnitCleaner = dispatchAssignmentCleaner{housekeeper: s}
 
 	p.LC.Append(fx.StartHook(func(ctxStartup context.Context) error {
 		if err := s.ensureUserInfoReconcileConsumer(ctxStartup); err != nil {
@@ -252,7 +280,6 @@ func (s *Housekeeper) start(ctx context.Context) {
 	s.wg.Go(func() {
 		s.runTTLWatcher(ctx)
 	})
-
 }
 
 // runLeadershipRecovery repairs projections that updates-only watchers could

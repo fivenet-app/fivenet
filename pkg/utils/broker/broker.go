@@ -19,6 +19,8 @@ type Broker[T any] struct {
 	subCh chan subscription[T]
 	// channel for unsubscriptions
 	unsubCh chan chan T
+	// closed when the broker event loop exits
+	done chan struct{}
 }
 
 type subscription[T any] struct {
@@ -55,12 +57,14 @@ func newBroker[T any](subscriberBuffer int, closeSlowSubscribers bool) *Broker[T
 		publishCh:            make(chan T, 1),
 		subCh:                make(chan subscription[T], 1),
 		unsubCh:              make(chan chan T, 1),
+		done:                 make(chan struct{}),
 	}
 }
 
 // Start runs the broker event loop, handling subscriptions, unsubscriptions, and publishing.
 func (b *Broker[T]) Start(ctx context.Context) {
 	subs := map[chan T]struct{}{}
+	defer close(b.done)
 	for {
 		select {
 		case <-ctx.Done():
@@ -68,6 +72,7 @@ func (b *Broker[T]) Start(ctx context.Context) {
 			for msgCh := range subs {
 				close(msgCh)
 			}
+			b.subs.Store(0)
 			return
 
 		case sub := <-b.subCh:
@@ -103,19 +108,37 @@ func (b *Broker[T]) Start(ctx context.Context) {
 func (b *Broker[T]) Subscribe() chan T {
 	msgCh := make(chan T, b.subscriberBuffer)
 	ready := make(chan struct{})
-	b.subCh <- subscription[T]{channel: msgCh, ready: ready}
-	<-ready
+	select {
+	case <-b.done:
+		close(msgCh)
+		return msgCh
+	case b.subCh <- subscription[T]{channel: msgCh, ready: ready}:
+	}
+	select {
+	case <-b.done:
+		// The broker owns channel closure if it accepted the subscription.
+		return msgCh
+	case <-ready:
+	}
 	return msgCh
 }
 
 // Unsubscribe removes a subscriber and closes its channel.
 func (b *Broker[T]) Unsubscribe(msgCh chan T) {
-	b.unsubCh <- msgCh
+	select {
+	case <-b.done:
+		return
+	case b.unsubCh <- msgCh:
+	}
 }
 
 // Publish sends a message to all subscribers.
 func (b *Broker[T]) Publish(msg T) {
-	b.publishCh <- msg
+	select {
+	case <-b.done:
+		return
+	case b.publishCh <- msg:
+	}
 }
 
 // SubCount returns the current number of subscribers.

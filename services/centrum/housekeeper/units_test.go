@@ -287,14 +287,16 @@ func TestWatchUnitAssignmentsRecoversAfterCleanupFailure(t *testing.T) {
 		logger:                    zap.NewNop(),
 		metrics:                   centrummetrics.Get(),
 		unitAssignmentWatchSource: source,
-		removeEmptyUnit: func(_ context.Context, _ *centrumunits.Unit) (int, error) {
-			cleanupCalls++
-			attempts <- cleanupCalls
-			if cleanupCalls == 1 {
-				return 0, errors.New("temporary cleanup failure")
-			}
+		emptyUnitCleaner: fakeEmptyUnitCleaner{
+			remove: func(_ context.Context, _ *centrumunits.Unit) (int, error) {
+				cleanupCalls++
+				attempts <- cleanupCalls
+				if cleanupCalls == 1 {
+					return 0, errors.New("temporary cleanup failure")
+				}
 
-			return 1, nil
+				return 1, nil
+			},
 		},
 	}
 
@@ -466,17 +468,19 @@ func TestUserMarkerDeleteReconcilesParsedUserID(t *testing.T) {
 		metrics: centrummetrics.Get(),
 		tracer:  noop.NewTracerProvider().Tracer("test"),
 		tracker: trackerStub,
-		syncUserUnitMapping: func(_ context.Context, userID int32) error {
+		unitUserState: fakeUnitUserState{sync: func(_ context.Context, userID int32) error {
 			syncedUsers <- userID
 			return nil
-		},
-		setDispatcherState: func(_ context.Context, job string, userID int32, active bool) error {
-			dispatcherRemovals <- struct {
-				job    string
-				userID int32
-				active bool
-			}{job: job, userID: userID, active: active}
-			return nil
+		}},
+		dispatcherUserState: fakeDispatcherUserState{
+			set: func(_ context.Context, job string, userID int32, active bool) error {
+				dispatcherRemovals <- struct {
+					job    string
+					userID int32
+					active bool
+				}{job: job, userID: userID, active: active}
+				return nil
+			},
 		},
 	}
 
@@ -539,14 +543,16 @@ func TestUserMarkerDeleteRetainsCanonicalDispatcherState(t *testing.T) {
 		metrics: centrummetrics.Get(),
 		tracer:  noop.NewTracerProvider().Tracer("test"),
 		tracker: trackerStub,
-		syncUserUnitMapping: func(_ context.Context, id int32) error {
+		unitUserState: fakeUnitUserState{sync: func(_ context.Context, id int32) error {
 			syncedUsers <- id
 			return nil
-		},
-		setDispatcherState: func(_ context.Context, job string, _ int32, active bool) error {
-			assert.False(t, active)
-			dispatcherRemovals <- job
-			return nil
+		}},
+		dispatcherUserState: fakeDispatcherUserState{
+			set: func(_ context.Context, job string, _ int32, active bool) error {
+				assert.False(t, active)
+				dispatcherRemovals <- job
+				return nil
+			},
 		},
 	}
 	// Seed the stale location key before subscribing; it represents state left
@@ -617,13 +623,15 @@ func TestUserMarkerDeleteRetainsSameJobDispatcherStateAcrossGradeChange(t *testi
 		metrics: centrummetrics.Get(),
 		tracer:  noop.NewTracerProvider().Tracer("test"),
 		tracker: trackerStub,
-		syncUserUnitMapping: func(_ context.Context, id int32) error {
+		unitUserState: fakeUnitUserState{sync: func(_ context.Context, id int32) error {
 			syncedUsers <- id
 			return nil
-		},
-		setDispatcherState: func(_ context.Context, job string, _ int32, _ bool) error {
-			dispatcherRemovals <- job
-			return nil
+		}},
+		dispatcherUserState: fakeDispatcherUserState{
+			set: func(_ context.Context, job string, _ int32, _ bool) error {
+				dispatcherRemovals <- job
+				return nil
+			},
 		},
 	}
 	// The old-grade key is stale location state, not a new duty transition.
@@ -660,16 +668,18 @@ func TestCancelDispatchRetainsProjectionWhenStatusPersistenceFails(t *testing.T)
 	h := &Housekeeper{
 		logger:  zap.NewNop(),
 		metrics: centrummetrics.Get(),
-		updateDispatchStatus: func(
-			context.Context,
-			int64,
-			*centrumdispatches.DispatchStatus,
-		) (*centrumdispatches.DispatchStatus, error) {
-			return nil, errors.New("database unavailable")
-		},
-		deleteDispatch: func(context.Context, int64, bool) error {
-			deleted = true
-			return nil
+		dispatchLifecycle: fakeDispatchLifecycle{
+			update: func(
+				context.Context,
+				int64,
+				*centrumdispatches.DispatchStatus,
+			) (*centrumdispatches.DispatchStatus, error) {
+				return nil, errors.New("database unavailable")
+			},
+			delete: func(context.Context, int64, bool) error {
+				deleted = true
+				return nil
+			},
 		},
 	}
 
@@ -705,19 +715,21 @@ func TestHandleProjectionCleanup(t *testing.T) {
 			h := &Housekeeper{
 				logger:  zap.NewNop(),
 				metrics: centrummetrics.Get(),
-				getDispatchProjection: func(context.Context, int64) (*centrumdispatches.Dispatch, error) {
-					return &centrumdispatches.Dispatch{
-						Id:        42,
-						CreatedAt: timestamp.New(test.createdAt),
-					}, nil
-				},
-				scheduleProjectionCleanup: func(context.Context, int64, *timestamp.Timestamp) error {
-					rescheduled = true
-					return nil
-				},
-				deleteDispatch: func(context.Context, int64, bool) error {
-					deleted = true
-					return nil
+				dispatchLifecycle: fakeDispatchLifecycle{
+					get: func(context.Context, int64) (*centrumdispatches.Dispatch, error) {
+						return &centrumdispatches.Dispatch{
+							Id:        42,
+							CreatedAt: timestamp.New(test.createdAt),
+						}, nil
+					},
+					schedule: func(context.Context, int64, *timestamp.Timestamp) error {
+						rescheduled = true
+						return nil
+					},
+					delete: func(context.Context, int64, bool) error {
+						deleted = true
+						return nil
+					},
 				},
 			}
 
