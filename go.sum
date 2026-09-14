@@ -472,8 +472,10 @@ github.com/lightstep/lightstep-tracer-common/golang/gogo v0.0.0-20190605223551-b
 github.com/lightstep/lightstep-tracer-go v0.18.1/go.mod h1:jlF1pusYV4pidLvZ+XD0UBX0ZE6WURAspgAczcDHrL4=
 github.com/lyft/protoc-gen-star/v2 v2.0.3/go.mod h1:amey7yeodaJhXSbf/TlLvWiqQfLOSpEk//mLlc+axEk=
 github.com/lyft/protoc-gen-validate v0.0.13/go.mod h1:XbGvPuh87YZc5TdIa2/I4pLk0QoUACkjt2znoq26NVQ=
-github.com/markusmobius/go-dateparser v1.4.5 h1:Y34+feJSV/d7QGMbLFlQSfdPDVdhQS5qVL8/sHJ9eKk=
-github.com/markusmobius/go-dateparser v1.4.5/go.mod h1:I01flUSk65Hu32jRDsxzxmW3SCk1EsW8kB7e0IpYgm4=
+github.com/markusmobius/go-dateparser v1.4.7 h1:6FKj6XaDki5AJMRXXd+T4KKkyC98XnknD5cSXTfiutU=
+github.com/markusmobius/go-dateparser v1.4.7/go.mod h1:AFKAJe/24XvJ1Eo0o585ymdhZhtbkUyqXjLA2ClnJXM=
+github.com/markusmobius/go-dateutil/v2 v2.9.1 h1:5g4V8s1vg/EAmhu/g14VQcHgocNf8H8VD4IzOfZg+1Y=
+github.com/markusmobius/go-dateutil/v2 v2.9.1/go.mod h1:tlyvoaa3NOU816xi0DdGURMafFV6VPfEyZoBl17Tzqs=
 github.com/maruel/natural v1.3.0 h1:VsmCsBmEyrR46RomtgHs5hbKADGRVtliHTyCOLFBpsg=
 github.com/maruel/natural v1.3.0/go.mod h1:v+Rfd79xlw1AgVBjbO0BEQmptqb5HvL/k9GRHB7ZKEg=
 github.com/mattn/go-colorable v0.0.9/go.mod h1:9vuHe8Xs5qXnSaW/c/ABM9alt+Vo+STaOChaDxuIBZU=
