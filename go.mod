@@ -48,7 +48,7 @@ require (
 	github.com/improbable-eng/grpc-web v0.15.0
 	github.com/jinzhu/now v1.1.5
 	github.com/kardianos/service v1.3.0
-	github.com/markusmobius/go-dateparser v1.4.3
+	github.com/markusmobius/go-dateparser v1.4.5
 	github.com/maruel/natural v1.3.0
 	github.com/microcosm-cc/bluemonday v1.0.27
 	github.com/minio/minio-go/v7 v7.3.0
@@ -172,12 +172,9 @@ require (
 	github.com/gosimple/unidecode v1.0.1 // indirect
 	github.com/gregjones/httpcache v0.0.0-20190611155906-901d90724c79 // indirect
 	github.com/grpc-ecosystem/grpc-gateway/v2 v2.30.0 // indirect
-	github.com/hablullah/go-hijri v1.0.2 // indirect
-	github.com/hablullah/go-juliandays v1.0.0 // indirect
 	github.com/hashicorp/go-cleanhttp v0.5.2 // indirect
 	github.com/hashicorp/go-retryablehttp v0.7.8 // indirect
 	github.com/hashicorp/go-version v1.9.0 // indirect
-	github.com/jalaali/go-jalaali v0.1.0 // indirect
 	github.com/json-iterator/go v1.1.12 // indirect
 	github.com/klauspost/compress v1.19.2 // indirect
 	github.com/klauspost/cpuid/v2 v2.4.0 // indirect
