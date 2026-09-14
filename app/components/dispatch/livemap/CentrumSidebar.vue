@@ -391,10 +391,11 @@ defineShortcuts({
 </script>
 
 <template>
-    <div :class="['flex h-full min-h-0 w-full', sidebarPlacementClassMap.container]">
+    <div class="flex h-full min-h-0 w-full pb-(--page-content-bottom-offset)" :class="sidebarPlacementClassMap.container">
         <UDashboardPanel
-            :class="['min-h-0 min-w-0 flex-1', isSidebarFirst ? 'order-2' : 'order-1']"
-            :ui="{ root: isSidebarFirst ? 'pb-(--page-content-bottom-offset)' : '', body: 'p-0 sm:p-0 gap-0 sm:gap-0' }"
+            class="min-h-0 min-w-0 flex-1"
+            :class="isSidebarFirst ? 'order-2' : 'order-1'"
+            :ui="{ body: 'p-0 sm:p-0 gap-0 sm:gap-0' }"
         >
             <template #header>
                 <UDashboardNavbar :title="$t('common.livemap')">
@@ -506,7 +507,6 @@ defineShortcuts({
             :max-size="isVerticalSidebarPlacement ? undefined : 26"
             :default-size="isVerticalSidebarPlacement ? undefined : 16"
             :ui="{
-                root: !isSidebarFirst ? 'pb-(--page-content-bottom-offset)' : '',
                 body: ['p-0 sm:p-0 gap-0 sm:gap-0', sidebarPlacementClassMap.panelBodyBorder].join(' '),
             }"
         >
