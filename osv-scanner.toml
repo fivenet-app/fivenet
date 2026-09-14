@@ -2,11 +2,3 @@
 id = "GO-2026-5932"
 reason = "Repository does not import golang.org/x/crypto/openpgp; this advisory only affects the unmaintained OpenPGP packages."
 ignoreUntil = 2027-01-01
-
-[[IgnoredVulns]]
-id = "CVE-2026-56864"
-reason = "golang.org/x/mod/sumdb is only used indirectly by our protoc-gen-* tooling by the protoc-gen-star dependency; the application does not use it directly nor at runtime."
-
-[[IgnoredVulns]]
-id = "CVE-2026-56865"
-reason = "golang.org/x/mod/sumdb/tlog is only used indirectly by our protoc-gen-* tooling by the protoc-gen-star dependency; the application does not use it directly nor at runtime."
