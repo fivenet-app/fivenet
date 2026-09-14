@@ -235,4 +235,4 @@ require (
 
 replace github.com/paulmach/orb => github.com/galexrt/orb v0.0.0-20260401093544-6bd5b3eed9dc
 
-replace github.com/grpc-ecosystem/go-grpc-middleware/v2 v2.3.3 => github.com/galexrt/go-grpc-middleware/v2 v2.0.0-20260414203341-0eb9f84a034b
+replace github.com/grpc-ecosystem/go-grpc-middleware/v2 v2.3.4 => github.com/galexrt/go-grpc-middleware/v2 v2.0.0-20260414203341-0eb9f84a034b
