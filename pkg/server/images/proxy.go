@@ -3,6 +3,7 @@ package images
 import (
 	"bufio"
 	"context"
+	"errors"
 	"fmt"
 	"io"
 	"mime"
@@ -82,10 +83,10 @@ func (p *ImageProxy) handle(c *gin.Context) {
 		Transport: transport,
 		CheckRedirect: func(req *http.Request, via []*http.Request) error {
 			if len(via) >= maxRedirects {
-				return fmt.Errorf("too many redirects")
+				return errors.New("too many redirects")
 			}
 			if !p.allowedURL(req.URL) {
-				return fmt.Errorf("redirect host is not allowed")
+				return errors.New("redirect host is not allowed")
 			}
 			return nil
 		},
@@ -137,7 +138,7 @@ func (p *ImageProxy) handle(c *gin.Context) {
 	if contentType == "" || contentType == "application/octet-stream" ||
 		contentType == "binary/octet-stream" {
 		peek, peekErr := reader.Peek(512)
-		if peekErr != nil && peekErr != io.EOF && peekErr != bufio.ErrBufferFull {
+		if peekErr != nil && peekErr != io.EOF && !errors.Is(peekErr, bufio.ErrBufferFull) {
 			c.String(http.StatusBadGateway, "could not inspect image")
 			return
 		}
@@ -173,7 +174,7 @@ func targetURL(request *http.Request) (*url.URL, error) {
 	path := strings.TrimPrefix(request.URL.EscapedPath(), Path)
 	path = strings.TrimPrefix(path, "/")
 	if path == "" {
-		return nil, fmt.Errorf("missing target URL")
+		return nil, errors.New("missing target URL")
 	}
 	decoded, err := url.PathUnescape(path)
 	if err != nil {
@@ -181,13 +182,13 @@ func targetURL(request *http.Request) (*url.URL, error) {
 	}
 	target, err := url.Parse(decoded)
 	if err != nil || target.Scheme == "" || target.Hostname() == "" {
-		return nil, fmt.Errorf("target is not an absolute URL")
+		return nil, errors.New("target is not an absolute URL")
 	}
 	if target.Scheme != "http" && target.Scheme != "https" {
-		return nil, fmt.Errorf("unsupported target scheme")
+		return nil, errors.New("unsupported target scheme")
 	}
 	if target.User != nil {
-		return nil, fmt.Errorf("target credentials are not allowed")
+		return nil, errors.New("target credentials are not allowed")
 	}
 	return target, nil
 }
@@ -248,7 +249,7 @@ func safeDialContext(ctx context.Context, network, address string) (net.Conn, er
 		err = dialErr
 	}
 	if err == nil {
-		err = fmt.Errorf("target resolves to a non-public IP")
+		err = errors.New("target resolves to a non-public IP")
 	}
 	return nil, err
 }

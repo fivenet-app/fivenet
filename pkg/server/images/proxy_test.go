@@ -33,7 +33,9 @@ func TestTargetURLRejectsCredentialsAndUnsupportedSchemes(t *testing.T) {
 		{path: "file:///etc/passwd", rawPath: "file%3A%2F%2F%2Fetc%2Fpasswd"},
 		{path: "https://user:pass@example.com/image.png", rawPath: "https%3A%2F%2Fuser%3Apass%40example.com%2Fimage.png"},
 	} {
-		request := &http.Request{URL: &url.URL{Path: Path + "/" + target.path, RawPath: Path + "/" + target.rawPath}}
+		request := &http.Request{
+			URL: &url.URL{Path: Path + "/" + target.path, RawPath: Path + "/" + target.rawPath},
+		}
 		_, err := targetURL(request)
 		require.Error(t, err)
 	}
