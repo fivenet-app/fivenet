@@ -307,30 +307,22 @@ func (s *Housekeeper) checkUnitUsers(ctx context.Context) (int, int, error) {
 	foundUserIds := map[int32]struct{}{}
 	offDutyRemoved := 0
 
-	for _, settings := range s.settings.List(ctx) {
-		job := settings.GetJob()
-
-		units := s.units.List(ctx, []string{job})
-		for _, u := range units {
-			unit, err := s.units.Get(ctx, u.GetId())
-			if err != nil {
-				continue
-			}
-
-			if len(unit.GetUsers()) == 0 {
-				continue
-			}
-
-			foundUids, removed, err := s.checkAndUpdateUnitUsers(ctx, unit)
-			if err != nil {
-				s.logger.Error("failed to check users in unit", zap.Error(err))
-			}
-			for _, userId := range foundUids {
-				foundUserIds[userId] = struct{}{}
-			}
-			offDutyRemoved += removed
+	s.units.Range(func(_ string, unit *centrumunits.Unit) bool {
+		if unit == nil || len(unit.GetUsers()) == 0 {
+			return true
 		}
-	}
+
+		foundUids, removed, err := s.checkAndUpdateUnitUsers(ctx, unit)
+		if err != nil {
+			s.logger.Error("failed to check users in unit", zap.Error(err))
+		}
+		for _, userId := range foundUids {
+			foundUserIds[userId] = struct{}{}
+		}
+		offDutyRemoved += removed
+
+		return true
+	})
 
 	userUnitIds, err := s.tracker.ListUserMappings(ctx)
 	if err != nil {

@@ -35,6 +35,27 @@ func registerUserInfoStream(ctx context.Context, js *events.JSWrapper) error {
 	return nil
 }
 
+// CreateOrUpdateChangeConsumer creates a durable consumer for canonical user
+// info changes. The stream and subject remain owned by this package; callers
+// own delivery, acknowledgement, and lifecycle policy.
+func CreateOrUpdateChangeConsumer(
+	ctx context.Context,
+	js *events.JSWrapper,
+	cfg jetstream.ConsumerConfig,
+) (jetstream.Consumer, error) {
+	if err := registerUserInfoStream(ctx, js); err != nil {
+		return nil, err
+	}
+
+	cfg.FilterSubject = UserInfoSubject
+	consumer, err := js.CreateOrUpdateConsumer(ctx, UserInfoStreamName, cfg)
+	if err != nil {
+		return nil, fmt.Errorf("failed to create/update user info change consumer: %w", err)
+	}
+
+	return consumer, nil
+}
+
 // BuildUserInfoChangedEvent constructs the live user info change payload and enriches labels.
 func BuildUserInfoChangedEvent(
 	accountID int64,

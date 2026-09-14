@@ -67,10 +67,6 @@ func NewChanges(p ChangesParams) ChangesResult {
 	}
 
 	p.LC.Append(fx.StartHook(func(ctxStartup context.Context) error {
-		if err := registerUserInfoStream(ctxStartup, c.js); err != nil {
-			return fmt.Errorf("failed to register user info streams. %w", err)
-		}
-
 		c.wg.Go(func() {
 			c.broker.Start(ctx)
 		})
@@ -125,13 +121,12 @@ func (c *Changes) UnsubscribeUserInfoChanges(ch chan *pbuserinfo.UserInfoChanged
 }
 
 func (c *Changes) registerSubscription(ctxStartup context.Context, ctx context.Context) error {
-	consumer, err := c.js.CreateOrUpdateConsumer(
+	consumer, err := CreateOrUpdateChangeConsumer(
 		ctxStartup,
-		UserInfoStreamName,
+		c.js,
 		jetstream.ConsumerConfig{
 			Durable:           instance.ID() + "_ui_changes",
 			AckPolicy:         jetstream.AckExplicitPolicy,
-			FilterSubject:     UserInfoSubject,
 			InactiveThreshold: time.Minute,
 		},
 	)
