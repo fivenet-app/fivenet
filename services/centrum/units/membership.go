@@ -11,6 +11,8 @@ import (
 	"go.uber.org/zap"
 )
 
+// SyncUserUnitMapping reconciles membership and mappings from tracker duty
+// state. Unlike ReconcileUserJobChange, it may repair a matching assignment.
 func (s *UnitDB) SyncUserUnitMapping(ctx context.Context, userId int32) error {
 	if userId <= 0 {
 		return fmt.Errorf("invalid user ID: %d", userId)
@@ -88,6 +90,42 @@ func (s *UnitDB) SyncUserUnitMapping(ctx context.Context, userId int32) error {
 	}
 
 	return errs
+}
+
+// ReconcileUserJobChange removes a durable unit assignment when its job no
+// longer matches the authoritative primary-job event. Unlike
+// SyncUserUnitMapping, it does not decide duty state or rebuild a matching
+// assignment from tracker state.
+func (s *UnitDB) ReconcileUserJobChange(
+	ctx context.Context,
+	userId int32,
+	job string,
+) (bool, error) {
+	if userId <= 0 {
+		return false, fmt.Errorf("invalid user ID: %d", userId)
+	}
+
+	unitId, err := s.LoadUnitIDForUserID(ctx, userId)
+	if err != nil {
+		return false, err
+	}
+	if unitId <= 0 {
+		return false, nil
+	}
+
+	unit, err := s.Get(ctx, unitId)
+	if err != nil {
+		return false, err
+	}
+	if unit == nil || unit.GetJob() == job {
+		return false, nil
+	}
+
+	if err := s.UpdateUnitAssignments(ctx, "", nil, unitId, nil, []int32{userId}); err != nil {
+		return false, err
+	}
+
+	return true, nil
 }
 
 func (s *UnitDB) SyncUnitMembership(ctx context.Context, unitId int64) error {

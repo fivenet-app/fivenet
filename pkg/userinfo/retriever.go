@@ -102,10 +102,6 @@ func NewRetriever(p Params) UserInfoRetriever {
 	}
 
 	p.LC.Append(fx.StartHook(func(ctxStartup context.Context) error {
-		if err := registerUserInfoStream(ctxCancel, p.JS); err != nil {
-			return fmt.Errorf("failed to register user info stream. %w", err)
-		}
-
 		if err := r.registerSubscriptions(ctxStartup, ctxCancel); err != nil {
 			return fmt.Errorf("failed to register subscriptions for user info retriever. %w", err)
 		}
@@ -132,15 +128,14 @@ func (r *Retriever) registerSubscriptions(
 	ctxCancel context.Context,
 ) error {
 	// Subscribe to the userinfo diffs stream
-	consumer, err := r.js.CreateOrUpdateConsumer(
+	consumer, err := CreateOrUpdateChangeConsumer(
 		ctxStartup,
-		UserInfoStreamName,
+		r.js,
 		jetstream.ConsumerConfig{
 			// A shared durable distributes each canonical change to exactly one
 			// notification forwarder across all application processes.
 			Durable:           "userinfo_notifications",
 			AckPolicy:         jetstream.AckExplicitPolicy,
-			FilterSubject:     UserInfoSubject,
 			InactiveThreshold: 1 * time.Minute, // Close consumer if inactive for 1 minute
 		},
 	)

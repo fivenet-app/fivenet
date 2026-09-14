@@ -695,6 +695,31 @@ func TestSyncUserUnitMappingRemovesAssignmentForUserOnDifferentJob(t *testing.T)
 	assertUnitCacheHasUser(t, srv, ctx, unit.GetId(), 1, false)
 }
 
+func TestReconcileUserJobChangeRemovesOnlyCrossJobAssignment(t *testing.T) {
+	t.Parallel()
+
+	srv, db, trackerStub := newCentrumJoinUnitTestServer(t)
+	ctx := auth.ContextWithUserInfo(t.Context(), &pbuserinfo.UserInfo{
+		UserId:   1,
+		Job:      "ambulance",
+		JobGrade: 17,
+	})
+
+	unit := createUnitForTest(t, srv, ctx, "Alpha-Job-Change-Event")
+	seedAssignmentForTest(t, db, trackerStub, unit.GetId(), 1)
+
+	removed, err := srv.units.ReconcileUserJobChange(ctx, 1, "ambulance")
+	require.NoError(t, err)
+	assert.False(t, removed)
+	assert.Equal(t, 1, unitAssignmentCountForTest(t, db, unit.GetId(), 1))
+
+	removed, err = srv.units.ReconcileUserJobChange(ctx, 1, "police")
+	require.NoError(t, err)
+	assert.True(t, removed)
+	assert.Zero(t, unitAssignmentCountForTest(t, db, unit.GetId(), 1))
+	assertUnitCacheHasUser(t, srv, ctx, unit.GetId(), 1, false)
+}
+
 func TestUpdateUnitStatusPersistsChangedReasonForSameStatus(t *testing.T) {
 	t.Parallel()
 

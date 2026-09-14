@@ -55,9 +55,19 @@ func TestDispatchHousekeeperSchedules(t *testing.T) {
 			want:     time.Date(2026, time.January, 1, 0, 5, 0, 0, time.UTC),
 		},
 		{
+			name:     "empty unit dispatch recovery",
+			schedule: auditEmptyUnitDispatchesSchedule,
+			want:     time.Date(2026, time.January, 1, 0, 5, 0, 0, time.UTC),
+		},
+		{
 			name:     "kv recovery audit",
 			schedule: deleteOldDispatchesKVSchedule,
 			want:     time.Date(2026, time.January, 1, 2, 15, 0, 0, time.UTC),
+		},
+		{
+			name:     "authoritative user info recovery audit",
+			schedule: reconcileUserInfoStateSchedule,
+			want:     time.Date(2026, time.January, 1, 4, 0, 0, 0, time.UTC),
 		},
 	} {
 		t.Run(test.name, func(t *testing.T) {

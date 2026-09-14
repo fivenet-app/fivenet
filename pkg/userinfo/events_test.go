@@ -9,11 +9,41 @@ import (
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/common"
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/jobs"
 	pbtimestamp "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/timestamp"
+	"github.com/fivenet-app/fivenet/v2026/internal/tests/nats"
+	"github.com/nats-io/nats.go/jetstream"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
 
 type labelEnricher struct{}
+
+func TestCreateOrUpdateChangeConsumerUsesCanonicalStreamAndSubject(t *testing.T) {
+	_, js, shutdown, err := nats.NewInProcessNATSServer()
+	require.NoError(t, err)
+	t.Cleanup(func() { require.NoError(t, shutdown()) })
+
+	consumer, err := CreateOrUpdateChangeConsumer(
+		t.Context(),
+		js,
+		jetstream.ConsumerConfig{
+			Durable:       "test_userinfo_change_consumer",
+			DeliverPolicy: jetstream.DeliverNewPolicy,
+			AckPolicy:     jetstream.AckExplicitPolicy,
+			FilterSubject: "wrong.subject",
+		},
+	)
+	require.NoError(t, err)
+
+	info, err := consumer.Info(t.Context())
+	require.NoError(t, err)
+	assert.Equal(t, UserInfoSubject, info.Config.FilterSubject)
+
+	stream, err := js.Stream(t.Context(), UserInfoStreamName)
+	require.NoError(t, err)
+	streamInfo, err := stream.Info(t.Context())
+	require.NoError(t, err)
+	assert.Equal(t, jetstream.InterestPolicy, streamInfo.Config.Retention)
+}
 
 func (labelEnricher) EnrichJobInfo(user common.IJobInfo) {
 	user.SetJobLabel(user.GetJob())

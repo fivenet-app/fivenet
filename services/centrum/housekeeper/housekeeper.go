@@ -8,6 +8,7 @@ import (
 	"sync"
 	"time"
 
+	centrumdispatchers "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/centrum/dispatchers"
 	centrumdispatches "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/centrum/dispatches"
 	centrumunits "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/centrum/units"
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/cron"
@@ -18,6 +19,7 @@ import (
 	"github.com/fivenet-app/fivenet/v2026/pkg/nats/leaderelection"
 	"github.com/fivenet-app/fivenet/v2026/pkg/nats/store"
 	"github.com/fivenet-app/fivenet/v2026/pkg/tracker"
+	pkguserinfo "github.com/fivenet-app/fivenet/v2026/pkg/userinfo"
 	"github.com/fivenet-app/fivenet/v2026/pkg/utils/instance"
 	"github.com/fivenet-app/fivenet/v2026/services/centrum/dispatchers"
 	"github.com/fivenet-app/fivenet/v2026/services/centrum/dispatches"
@@ -26,6 +28,7 @@ import (
 	"github.com/fivenet-app/fivenet/v2026/services/centrum/units"
 	centrumutils "github.com/fivenet-app/fivenet/v2026/services/centrum/utils"
 	"github.com/go-jet/jet/v2/qrm"
+	"github.com/nats-io/nats.go/jetstream"
 	tracesdk "go.opentelemetry.io/otel/sdk/trace"
 	"go.opentelemetry.io/otel/trace"
 	"go.uber.org/fx"
@@ -39,8 +42,10 @@ const (
 	DeleteDispatchDays = 14
 	DeleteUnitDays     = 14
 
-	cancelOldDispatchesSchedule   = "0 */5 * * * *"
-	deleteOldDispatchesKVSchedule = "0 15 2,14 * * *"
+	cancelOldDispatchesSchedule      = "0 */5 * * * *"
+	auditEmptyUnitDispatchesSchedule = "0 */5 * * * *"
+	deleteOldDispatchesKVSchedule    = "0 15 2,14 * * *"
+	reconcileUserInfoStateSchedule   = "0 0 4,16 * * *"
 )
 
 var Module = fx.Module("centrum_housekeeper",
@@ -55,26 +60,31 @@ type Housekeeper struct {
 	logger *zap.Logger
 	wg     sync.WaitGroup
 
-	tracer  trace.Tracer
-	metrics *centrummetrics.Metrics
-	db      *sql.DB
-	tracker tracker.ITracker
-	le      *leaderelection.LeaderElector
+	tracer                    trace.Tracer
+	metrics                   *centrummetrics.Metrics
+	db                        *sql.DB
+	tracker                   tracker.ITracker
+	userinfo                  pkguserinfo.UserInfoRetriever
+	js                        *events.JSWrapper
+	userInfoReconcileConsumer jetstream.Consumer
+	le                        *leaderelection.LeaderElector
 
-	settings                  *settings.SettingsDB
-	dispatchers               *dispatchers.DispatchersDB
-	units                     *units.UnitDB
-	unitAssignments           unitAssignments
-	unitAssignmentWatchSource unitAssignmentWatchSource
-	removeEmptyUnit           func(context.Context, *centrumunits.Unit) (int, error)
-	syncUserUnitMapping       func(context.Context, int32) error
-	setDispatcherState        func(context.Context, string, int32, bool) error
-	getDispatchProjection     func(context.Context, int64) (*centrumdispatches.Dispatch, error)
-	updateDispatchStatus      func(context.Context, int64, *centrumdispatches.DispatchStatus) (*centrumdispatches.DispatchStatus, error)
-	addDispatchAttribute      func(context.Context, *centrumdispatches.Dispatch, centrumdispatches.DispatchAttribute) error
-	deleteDispatch            func(context.Context, int64, bool) error
-	scheduleProjectionCleanup func(context.Context, int64, *timestamp.Timestamp) error
-	dispatches                *dispatches.DispatchDB
+	settings                   *settings.SettingsDB
+	dispatchers                *dispatchers.DispatchersDB
+	units                      *units.UnitDB
+	unitAssignments            unitAssignments
+	unitAssignmentWatchSource  unitAssignmentWatchSource
+	removeEmptyUnit            func(context.Context, *centrumunits.Unit) (int, error)
+	syncUserUnitMapping        func(context.Context, int32) error
+	reconcileUserUnitJobChange func(context.Context, int32, string) (bool, error)
+	setDispatcherState         func(context.Context, string, int32, bool) error
+	rangeDispatchers           func(func(string, *centrumdispatchers.Dispatchers) bool)
+	getDispatchProjection      func(context.Context, int64) (*centrumdispatches.Dispatch, error)
+	updateDispatchStatus       func(context.Context, int64, *centrumdispatches.DispatchStatus) (*centrumdispatches.DispatchStatus, error)
+	addDispatchAttribute       func(context.Context, *centrumdispatches.Dispatch, centrumdispatches.DispatchAttribute) error
+	deleteDispatch             func(context.Context, int64, bool) error
+	scheduleProjectionCleanup  func(context.Context, int64, *timestamp.Timestamp) error
+	dispatches                 *dispatches.DispatchDB
 }
 
 type unitAssignments interface {
@@ -100,12 +110,13 @@ type Params struct {
 
 	LC fx.Lifecycle
 
-	Logger  *zap.Logger
-	TP      *tracesdk.TracerProvider
-	DB      *sql.DB
-	JS      *events.JSWrapper
-	Config  *config.Config
-	Tracker tracker.ITracker
+	Logger   *zap.Logger
+	TP       *tracesdk.TracerProvider
+	DB       *sql.DB
+	JS       *events.JSWrapper
+	Config   *config.Config
+	Tracker  tracker.ITracker
+	UserInfo pkguserinfo.UserInfoRetriever
 
 	Settings    *settings.SettingsDB
 	Dispatchers *dispatchers.DispatchersDB
@@ -128,10 +139,12 @@ func New(p Params) Result {
 		logger: p.Logger.Named("centrum.manager.housekeeper"),
 		wg:     sync.WaitGroup{},
 
-		tracer:  p.TP.Tracer("centrum.manager.housekeeper"),
-		metrics: centrummetrics.Get(),
-		db:      p.DB,
-		tracker: p.Tracker,
+		tracer:   p.TP.Tracer("centrum.manager.housekeeper"),
+		metrics:  centrummetrics.Get(),
+		db:       p.DB,
+		tracker:  p.Tracker,
+		userinfo: p.UserInfo,
+		js:       p.JS,
 
 		settings:        p.Settings,
 		dispatchers:     p.Dispatchers,
@@ -142,7 +155,9 @@ func New(p Params) Result {
 	s.unitAssignmentWatchSource = p.Units.Store()
 	s.removeEmptyUnit = s.removeDispatchesFromEmptyUnit
 	s.syncUserUnitMapping = p.Units.SyncUserUnitMapping
+	s.reconcileUserUnitJobChange = p.Units.ReconcileUserJobChange
 	s.setDispatcherState = p.Dispatchers.SetUserState
+	s.rangeDispatchers = p.Dispatchers.Range
 	s.getDispatchProjection = func(ctx context.Context, id int64) (*centrumdispatches.Dispatch, error) {
 		return p.Dispatches.Store().Get(centrumutils.IdKey(id))
 	}
@@ -152,6 +167,10 @@ func New(p Params) Result {
 	s.scheduleProjectionCleanup = p.Dispatches.ScheduleProjectionCleanup
 
 	p.LC.Append(fx.StartHook(func(ctxStartup context.Context) error {
+		if err := s.ensureUserInfoReconcileConsumer(ctxStartup); err != nil {
+			return fmt.Errorf("failed to register user info reconciliation consumer: %w", err)
+		}
+
 		nodeName := instance.ID() + "_centrum_housekeeper"
 
 		var err error
@@ -204,6 +223,12 @@ func (s *Housekeeper) start(ctx context.Context) {
 		s.runUserChangesWatch(ctx)
 	})
 
+	// Start durable delivery before the recovery sweep. An event arriving while
+	// the sweep runs is safe because the per-user correction is idempotent.
+	s.wg.Go(func() {
+		s.maintainUserInfoReconcileConsumer(ctx, s.runLeadershipRecovery)
+	})
+
 	s.wg.Go(func() {
 		s.runUnitAssignmentWatch(ctx)
 	})
@@ -228,21 +253,30 @@ func (s *Housekeeper) start(ctx context.Context) {
 		s.runTTLWatcher(ctx)
 	})
 
-	// Watchers use updates-only subscriptions, so a leadership handoff can miss
-	// changes that occurred while this process was not leader. Reconcile the
-	// session-bound projections immediately; concurrent watcher updates are
-	// idempotent and keep the result current while this sweep runs.
-	s.wg.Go(func() {
-		if _, _, _, _, err := s.cleanupDispatchers(ctx); err != nil {
-			s.logger.Error("failed to reconcile dispatchers on leadership start", zap.Error(err))
-		}
-		if _, _, err := s.checkUnitUsers(ctx); err != nil {
-			s.logger.Error(
-				"failed to reconcile unit membership on leadership start",
-				zap.Error(err),
-			)
-		}
-	})
+}
+
+// runLeadershipRecovery repairs projections that updates-only watchers could
+// miss during a leader handoff. It starts only after durable user-info delivery
+// is attached, so an overlapping event cannot be lost before the sweep.
+func (s *Housekeeper) runLeadershipRecovery(ctx context.Context) {
+	if _, _, _, _, err := s.cleanupDispatchers(ctx); err != nil {
+		s.logger.Error("failed to reconcile dispatchers on leadership start", zap.Error(err))
+	}
+	if _, _, err := s.checkUnitUsers(ctx); err != nil {
+		s.logger.Error(
+			"failed to reconcile unit membership on leadership start",
+			zap.Error(err),
+		)
+	}
+	if _, _, err := s.removeDispatchesFromEmptyUnits(ctx); err != nil {
+		s.logger.Error(
+			"failed to reconcile empty unit dispatch assignments on leadership start",
+			zap.Error(err),
+		)
+	}
+	if _, _, err := s.reconcileUserInfoState(ctx); err != nil {
+		s.logger.Error("failed to reconcile user info state on leadership start", zap.Error(err))
+	}
 }
 
 func (s *Housekeeper) recordWatcherRestart(watcher string, err error) {
@@ -264,6 +298,7 @@ func (s *Housekeeper) RegisterCronjobs(ctx context.Context, registry croner.IReg
 		"centrum.manager_housekeeper.cancel_old_dispatches",
 		"centrum.manager_housekeeper.delete_old_dispatches",
 		"centrum.manager_housekeeper.delete_old_dispatches_from_kv",
+		"centrum.manager_housekeeper.reconcile_userinfo_state",
 	} {
 		if err := registry.UnregisterCronjob(ctx, c); err != nil {
 			return err
@@ -300,8 +335,16 @@ func (s *Housekeeper) RegisterCronjobs(ctx context.Context, registry croner.IReg
 	}
 
 	if err := registry.RegisterCronjob(ctx, &cron.Cronjob{
+		Name:     "centrum.housekeeper.reconcile_userinfo_state",
+		Schedule: reconcileUserInfoStateSchedule, // Twelve-hour authoritative recovery audit; also manually runnable.
+		Timeout:  durationpb.New(2 * time.Minute),
+	}); err != nil {
+		return err
+	}
+
+	if err := registry.RegisterCronjob(ctx, &cron.Cronjob{
 		Name:     "centrum.housekeeper.audit_empty_unit_dispatches",
-		Schedule: "15 4 * * *", // Recovery audit for the targeted unit watcher.
+		Schedule: auditEmptyUnitDispatchesSchedule, // Five-minute recovery audit for the targeted unit watcher.
 		Timeout:  durationpb.New(30 * time.Second),
 	}); err != nil {
 		return err
@@ -362,6 +405,7 @@ func (s *Housekeeper) RegisterCronjobHandlers(h *croner.Handlers) error {
 	h.Add("centrum.housekeeper.cancel_old_dispatches", s.runCancelOldDispatches)
 	h.Add("centrum.housekeeper.delete_old_dispatches", s.runDeleteOldDispatches)
 	h.Add("centrum.housekeeper.delete_old_dispatches_from_kv", s.runDeleteOldDispatchesFromKV)
+	h.Add("centrum.housekeeper.reconcile_userinfo_state", s.runReconcileUserInfoState)
 	h.Add("centrum.housekeeper.cleanup_dispatchers", s.runCleanupDispatchers)
 
 	return nil

@@ -15,6 +15,12 @@ func (s *UnitDB) Store() *store.Store[centrumunits.Unit, *centrumunits.Unit] {
 	return s.store
 }
 
+// Range iterates the current unit projections, including units whose job no
+// longer has a Centrum settings entry.
+func (s *UnitDB) Range(fn func(string, *centrumunits.Unit) bool) {
+	s.store.Range(fn)
+}
+
 func (s *UnitDB) updateInKV(ctx context.Context, id int64, unit *centrumunits.Unit) error {
 	if err := s.store.ComputeUpdate(
 		ctx,
