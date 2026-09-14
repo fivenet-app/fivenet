@@ -1,0 +1,4 @@
+[[IgnoredVulns]]
+id = "GO-2026-5932"
+reason = "Repository does not import golang.org/x/crypto/openpgp; this advisory only affects the unmaintained OpenPGP packages."
+ignoreUntil = 2027-01-01

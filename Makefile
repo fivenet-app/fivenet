@@ -122,3 +122,12 @@ gen-licenses-go:
 	go-licenses report ./... --ignore $$($(GO) list -m) --include_tests \
 		--ignore $$($(GO) list std | awk 'NR > 1 { printf(",") } { printf("%s",$$0) } END { print "" }') \
 		--template internal/scripts/go-licenses-backend.txt.tpl > ./public/licenses/backend.txt
+
+.PHONY: osv-scanner
+osv-scanner:
+	docker run \
+		--rm \
+		-v "$$PWD:/src:ro" \
+		ghcr.io/google/osv-scanner:latest \
+		scan \
+			source --recursive /src
