@@ -133,19 +133,6 @@ func (s *Config) LoadConfig() error {
 		return fmt.Errorf("failed to read config file data into the system. %w", err)
 	}
 
-	// If the destination URL or token is set, populate the API config for backward
-	// compatibility with older config versions
-	if c.Destination.URL != "" || c.Destination.Token != "" {
-		c.Destination.API = DBSyncDestinationAPI{
-			URL:      c.Destination.URL,
-			Token:    c.Destination.Token,
-			Insecure: c.Destination.Insecure,
-		}
-
-		c.Destination.URL = ""
-		c.Destination.Token = ""
-	}
-
 	if err := c.Init(); err != nil {
 		return fmt.Errorf("failed to initialize config. %w", err)
 	}
@@ -183,6 +170,11 @@ func (s *Config) LoadConfig() error {
 }
 
 func (s *Config) SetupWatch(logger *zap.Logger, restartFn func() error) {
+	if !s.Load().WatchConfig {
+		logger.Info("config file watching is disabled")
+		return
+	}
+
 	watchSetupOnce.Do(func() {
 		s.setupWatch(logger, restartFn)
 	})
@@ -213,6 +205,7 @@ type DBSyncConfig struct {
 	LogLevel string     `default:"INFO" yaml:"logLevel" enum:"DEBUG,INFO,WARN,ERROR,PANIC,FATAL"`
 	Log      config.Log `               yaml:"log"`
 
+	// WatchConfig enables reloading the configuration and restarting DBSync when its file changes.
 	WatchConfig bool `default:"true" yaml:"watchConfig"`
 
 	StateFile string `default:"dbsync.state.yaml" yaml:"stateFile"`
@@ -245,8 +238,6 @@ const (
 )
 
 type DBSyncDestination struct {
-	DBSyncDestinationAPI `yaml:",inline" mapstructure:",squash"`
-
 	Method DBSyncMethod `default:"api" yaml:"method"`
 
 	API DBSyncDestinationAPI `yaml:"api"`
@@ -321,9 +312,12 @@ const (
 )
 
 type Filter struct {
-	Pattern     string       `yaml:"pattern"`
-	Action      FilterAction `yaml:"action"      default:"replace"`
-	Replacement string       `yaml:"replacement"`
+	// Pattern is the regular expression matched against the job name.
+	Pattern string `yaml:"pattern"`
+	// Action either replaces matching text or drops the entire record.
+	Action FilterAction `yaml:"action" default:"replace"`
+	// Replacement is the replacement text used when Action is "replace". It may contain regular-expression capture references such as $1.
+	Replacement string `yaml:"replacement"`
 
 	// Compiled regex pattern for internal use (compiled during config load)
 	CompiledPattern *regexp.Regexp `yaml:"-"`
@@ -532,7 +526,7 @@ type UsersColumns struct {
 
 type DateOfBirthNormalizer struct {
 	Formats      []string `yaml:"formats"`
-	OutputFormat string   `yaml:"output"  default:""`
+	OutputFormat string   `yaml:"outputFormat" default:""`
 }
 
 type UsersValueMappings struct {
@@ -802,10 +796,15 @@ type TableManagerConfig struct {
 // SyncLimits defines limits for the sync process, such as maximum number of records to sync per table.
 // Accounts, Users and Vehicles split the data into multiple requests if they exceed the API limits.
 type SyncLimits struct {
-	Jobs     int64 `default:"200" yaml:"jobs"     validate:"omitempty,gte=1,lte=200"`
+	// Jobs is the maximum number of jobs per request. It must be between 1 and 200.
+	Jobs int64 `default:"200" yaml:"jobs"     validate:"omitempty,gte=1,lte=200"`
+	// Licenses is the maximum number of licenses per request. It must be between 1 and 200.
 	Licenses int64 `default:"200" yaml:"licenses" validate:"omitempty,gte=1,lte=200"`
 
+	// Accounts is the maximum number of accounts per request. It must be between 1 and 1000.
 	Accounts int64 `default:"200" yaml:"accounts" validate:"omitempty,gte=1,lte=1000"`
-	Users    int64 `default:"150" yaml:"users"    validate:"omitempty,gte=1,lte=1000"`
+	// Users is the maximum number of users per request. It must be between 1 and 1000.
+	Users int64 `default:"150" yaml:"users"    validate:"omitempty,gte=1,lte=1000"`
+	// Vehicles is the maximum number of vehicles per request. It must be between 1 and 1500.
 	Vehicles int64 `default:"500" yaml:"vehicles" validate:"omitempty,gte=1,lte=1500"`
 }

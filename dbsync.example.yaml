@@ -29,7 +29,7 @@ log:
       # Rotation interval for log rotation (e.g., daily rotation).
       rotationInterval: 24h
 
-# Watch the config file for changes and restart dbsync after reload.
+# WatchConfig enables reloading the configuration and restarting DBSync when its file changes.
 watchConfig: true
 
 # Stores incremental sync cursors and last-processed timestamps per table.
@@ -50,11 +50,13 @@ source:
   # Or use individual parameters instead. Comment out `dsn:` if you use these.
   # Hint: you can set these via environment variables as well, e.g., FIVENET_DATABASE_HOST, FIVENET_DATABASE_PORT,
   # FIVENET_DATABASE_USERNAME, FIVENET_DATABASE_PASSWORD, FIVENET_DATABASE_DATABASE
+  #net: "tcp"
   #host: "localhost"
   #port: 3306
   #username: "fivenet"
   #password: "changeme"
   #database: "fivenet"
+  #collation: "utf8mb4_unicode_ci"
 
   # Advanced connection settings
   maxOpenConns: 12
@@ -73,27 +75,25 @@ destination:
   method: "api"
   # Your FiveNet Sync API details.
   api:
-    # FiveNet hostname only, with port if needed. Do not include the protocol or a trailing slash.
-    # The target FiveNet instance must be reachable over HTTPS.
-    # Do not include the protocol (http:// or https://) here!
-    # Do not include a trailing slash!
-    #
-    # Example:
-    # 'https://demo.fivenet.app'   -> 'demo.fivenet.app:443'
-    # 'https://fivenet.example.com' -> 'fivenet.example.com:443'
+    # Address of the target FiveNet Sync API. It uses gRPC, FiveNet's internal service connection.
+    # Enter only a hostname or IP address, optionally followed by a port; do not include `http://`, `https://`, or a path.
+    # For a normal HTTPS deployment, the hostname is usually enough. Specify a port only when your setup uses a non-default port.
+    # Examples: `fivenet.example.com`, `fivenet.example.com:443`, or `192.0.2.10:8443`.
     url: "fivenet.example.com"
     # Sync API token issued by the target FiveNet instance.
     token: "YOUR_SYNC_API_TOKEN"
     # Timeout for API requests.
     timeout: 5s
 
-    # Disable TLS verification. Only use this for testing or self-signed setups.
+    # Use an unencrypted connection. Only use this for trusted local development or testing.
     insecure: false
-    # Disable transport security entirely. Keep this enabled unless you have a very specific reason not to.
+    # Require a secure connection before sending the API token. Keep this enabled unless `insecure` is intentionally enabled.
     transportSecurity: true
 
   # Default sync interval. Individual tables can override this in the `tables:` section.
   syncInterval: 3s
+  # Interval for publishing DBSync state updates to FiveNet.
+  #syncStateInterval: 45s
   # Log the data that would be synced instead of sending it to FiveNet.
   dryRun: false
 
@@ -120,6 +120,8 @@ tables:
     #    `jobs`
     #  ORDER BY `name`
     #  LIMIT $limit;
+    # Filters apply regular-expression rules to job names before they are sent to FiveNet.
+    # A matching rule either replaces the matching text (`action: replace`) or drops the entire job (`action: drop`).
     filters: []
       # Example filter to drop jobs starting with "off_". Useful if off-duty jobs should be rewritten elsewhere.
       #- pattern: '^off_'
@@ -257,7 +259,9 @@ tables:
           #'male': 'm'
     # Drop the user entirely if firstname or lastname is empty/null.
     ignoreEmptyNames: true
-    # Filters rewrite selected values before they are sent to FiveNet.
+    # Filters apply regular-expression rules to user job names before they are sent to FiveNet.
+    # Use `action: replace` with `replacement` to rewrite matching text; an empty replacement removes the match.
+    # Use `action: drop` to omit the entire user record. Replacements may use capture references such as `$1`.
     filters:
       jobs: []
         # Example: `off_police` -> `police`
@@ -409,12 +413,15 @@ tableManager:
   # Automatically create missing `updated_at` columns for tables that configure `updatedTimeColumn`.
   enabled: true
 
-# Per-query sync limits. Lower these if you hit performance issues or timeouts; do not raise them above the sync API maximums.
+# Per-query sync limits. Lower these if you hit performance issues or timeouts.
 limits:
-  # Base data limits.
+  # Jobs per request. Allowed range: 1–200.
   jobs: 200
+  # Licenses per request. Allowed range: 1–200.
   licenses: 200
-  # Main data limits.
+  # Accounts per request. Allowed range: 1–1000.
   accounts: 200
+  # Users per request. Allowed range: 1–1000.
   users: 150
+  # Vehicles per request. Allowed range: 1–1500.
   vehicles: 400
