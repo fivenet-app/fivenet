@@ -48,7 +48,7 @@ import (
 	pbcalendar "github.com/fivenet-app/fivenet/v2026/services/calendar"
 	pbcentrum "github.com/fivenet-app/fivenet/v2026/services/centrum"
 	centrumbot "github.com/fivenet-app/fivenet/v2026/services/centrum/bot"
-	"github.com/fivenet-app/fivenet/v2026/services/centrum/converter"
+	centrumconverter "github.com/fivenet-app/fivenet/v2026/services/centrum/converter"
 	"github.com/fivenet-app/fivenet/v2026/services/centrum/dispatchers"
 	"github.com/fivenet-app/fivenet/v2026/services/centrum/dispatches"
 	"github.com/fivenet-app/fivenet/v2026/services/centrum/helpers"
@@ -139,7 +139,7 @@ func GetFxBaseOpts(
 		tiptapsanitizer.Module,
 		i18n.Module,
 		fx.Provide(
-			converter.New,
+			centrumconverter.New,
 			dispatchers.New,
 			dispatches.New,
 			settings.New,

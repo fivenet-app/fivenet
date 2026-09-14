@@ -2,21 +2,21 @@
 # Be sure to checkout the Config file reference: <https://fivenet.app/getting-started/configuration/config-reference>
 #
 
-# Debug or release mode (affects performance)
+# Mode `debug` or `release` mode. `debug` mode affects performance and logging; `release` mode is the default and should be used in production.
 mode: "release"
 
-# Can be "DEBUG", "INFO", "WARN", "ERROR", "FATAL"
+# LogLevel controls the minimum severity emitted by the application logger.
 logLevel: "INFO"
 log:
   # If enabled logs are sent to stderr instead of stdout.
   logToStderr: true
-  # Indicates whether to log to a file instead of stdout.
+  # LogToFile enables logging to a file instead of stdout.
   logToFile: false
   # Contains the configuration for file logging (if LogToFile is true, make sure to configure this).
   file:
     # Path to the log file.
     path: "fivenet.log"
-    # Contains the configuration for log rotation.
+    # Rotation contains the configuration for log rotation.
     rotation:
       # MaxSize is the maximum size in megabytes of the log file before it gets rotated.
       maxSize: 100 # MB
@@ -29,41 +29,48 @@ log:
       # Rotation interval for log rotation (e.g., daily rotation).
       rotationInterval: 24h
 
+  # LevelOverrides overrides LogLevel for individual components. Empty values use LogLevel.
   levelOverrides:
     kvstore: "INFO"
     locks: "INFO"
     cron: "INFO"
     perms: "INFO"
 
-# App-wide secret used to encrypt/decrypt stored data. Must be exactly 32 chars (bytes) long and separate from `jwt.secret`.
+# Secret is the app-wide secret used to encrypt and decrypt stored data. It must be exactly 32 bytes and must differ from JWT.Secret.
 secret: "your_generated_db_secret_32_char"
 
 # Skips startup checks for database and NATS connectivity. Use only when those services are intentionally unavailable at boot.
 ignoreRequirements: false
 
 jwt:
-  # JWT signing secret. Keep this separate from the root `secret` value and make it at least 32 characters long.
+  # Secret is the JWT signing secret. It must differ from the app-wide Secret.
   secret: "your_generated_jwt_secret"
 
 http:
+  # Listen is the address for the public HTTP server.
   listen: ":8080"
-  # Admin port for metrics and Go debug endpoints. Keep it bound to localhost or leave it empty to disable the admin server.
+  # AdminListen is the address for metrics and Go debug endpoints. Leave it empty to disable the admin server.
   adminListen: ":7070"
-  # Canonical public base URL for the FiveNet instance, including the scheme and host.
+  # PublicURL is the canonical public base URL, including scheme and host.
   publicURL: "https://fivenet.example.com"
+  # Links configures optional legal links displayed by the frontend.
+  links:
+    # PrivacyPolicy is an optional URL to the privacy policy.
+    privacyPolicy: "https://fivenet.example.com/privacy"
+    # Imprint is an optional URL to the legal notice.
+    imprint: "https://fivenet.example.com/imprint"
   origins:
-    # Allowed browser origins for the frontend and API. Add each origin explicitly.
+    # Origins lists browser origins allowed to access the frontend and API.
     - "https://fivenet.example.com"
     #- "http://localhost:3000" # Only for development
-  # Reverse-proxy IPs or CIDRs that are allowed to forward client IP and protocol headers.
-  # In Kubernetes, it is often easier to allow the cluster range, e.g. `10.0.0.0/8`.
+  # TrustedProxies lists reverse-proxy IPs or CIDRs trusted to forward client IP and protocol headers.
   trustedProxies: []
     #- "10.0.0.0/8" # Common Kubernetes cluster IP range
     #- "127.0.0.1" # For development
   sessions:
-    # Secret used to sign and encrypt session cookies. Keep it random and unique to this deployment.
+    # CookieSecret signs and encrypts session cookies.
     cookieSecret: "your_generated_cookie_secret"
-    # Cookie domain used for session cookies. Set this to your app's root domain when sharing across subdomains.
+    # Domain is the cookie domain.
     domain: "fivenet.example.com"
 
 database:
@@ -83,67 +90,91 @@ database:
   #password: "changeme"
   #database: "fivenet"
 
-  # Advanced connection settings
+  # MaxOpenConns defines the maximum number of open connections to the database.
   maxOpenConns: 32
+  # MaxIdleConns defines the maximum number of idle connections to the database.
   maxIdleConns: 5
+  # ConnMaxIdleTime specifies the maximum time a connection may remain idle.
   connMaxIdleTime: 15m
+  # ConnMaxLifetime specifies the maximum time a connection may remain open.
   connMaxLifetime: 60m
+  # DisableLocking disables table locking, mainly for migrations.
   disableLocking: false
   # Skip database migrations on startup. Only enable this if migrations are managed externally.
   skipMigrations: false
   custom:
-    # To disable a column, set it to `"-"`
+    # Columns maps FiveNet fields to custom database column names. Set a column to "-" to disable it.
     columns:
       user:
         visum: "visum"
         playtime: "playtime"
       vehicle:
         model: "model"
+    # Conditions configures custom database query conditions.
     conditions:
       user:
         filterEmptyName: false
 
 nats:
-  # Default URL for the NATS server used by the bundled docker-compose setup.
-  # Replace this when connecting to an external NATS instance.
+  # URL is the NATS server URL.
   url: "nats://fivenet:fivenet_topsecret@nats:4222"
+  # Replicas is the number of JetStream replicas.
   replicas: 1
-  # Prefer these over embedding credentials in the URL when using external auth:
+  # NKey is an optional NATS NKey seed used for authentication.
   #nKey: null
+  # Creds is an optional path to a NATS credentials file.
   #creds: null
+  # PublishAsyncMaxPending is the NATS JetStream asynchronous-publish pending limit. NATS defaults to 4000.
+  publishAsyncMaxPending: 2000
 
 storage:
-  # Select one storage backend. Only the matching subsection is used.
+  # Type selects the storage backend: "filesystem", "s3", or "noop". Only the matching backend configuration is used.
   type: "filesystem"
+  # Filesystem configures local filesystem storage.
   filesystem:
-    # Local filesystem root and optional key prefix.
+    # Path is the local filesystem root.
     path: "/data"
+    # Prefix is an optional relative key prefix.
     prefix: ""
   s3:
-    # S3-compatible object storage settings.
+    # S3 configures S3-compatible object storage.
+    # Endpoint is the S3-compatible API endpoint.
     endpoint: ""
+    # Region is the S3 region.
     region: "us-east-1"
+    # AccessKeyID is the S3 access key ID.
     accessKeyID: ""
+    # SecretAccessKey is the S3 secret access key.
     secretAccessKey: ""
+    # UseSSL controls whether the S3 endpoint is contacted over TLS.
     useSSL: true
+    # BucketName is the target S3 bucket.
     bucketName: ""
+    # Prefix is an optional relative key prefix.
     prefix: ""
+    # Retries is the number of storage operation retries.
     retries: 3
+    # CheckOnStartup verifies S3 access during startup.
     checkOnStartup: false
+  # MetricsEnabled enables periodic collection of storage metrics.
   metricsEnabled: true
+  # MetricsInterval is the period between storage metric collections.
   metricsInterval: 10m
 
 imageProxy:
-  options:
-    # Hosts allowed or denied by the image proxy. Deny rules take precedence.
-    allowHosts: []
-    denyHosts: []
-    # Minimum time an image response should stay cached.
-    minimumCacheDuration: 30m
+  # AllowHosts is a list of hostnames or wildcard patterns that are allowed to be proxied. If empty, all hostnames are allowed.
+  # Deny rules take precedence over allow rules.
+  allowHosts: []
+  # DenyHosts is a list of hostnames or wildcard patterns that are denied from being proxied. If empty, no hostnames are denied.
+  denyHosts: []
+  # Whether literal public IP addresses may be used as image hosts.
+  allowIPs: false
+  # MinimumCacheDuration is the minimum duration for which proxied images should be cached. If not set, defaults to 60 minutes.
+  minimumCacheDuration: 30m
 
 audit:
-  # Number of days to keep audit entries before cleanup.
-  retentionDays: 90
+  # RetentionDays specifies the number of days to retain audit logs before they are purged. Must be greater than or equal to 1.
+  retentionDays: 180
 
 oauth2:
   # List of OAuth2 Providers
@@ -217,79 +248,113 @@ oauth2:
         # Avatar URL claim.
         avatar: "picture"
 
+# PostalsFile is the path to the postals data file.
 postalsFile: ".output/public/data/postals.json"
 
 auth:
-  # List of groups that will have access to superuser mode with job admin permissions.
+  # SuperuserGroups is used as a legacy fallback if ConfigAdminGroups is empty.
+  #superuserGroups: []
+  # SuperuserUsers is used as a legacy fallback if ConfigAdminUsers is empty.
+  #superuserUsers: []
+
+  # JobAdminGroups defines groups with basic administrative privileges for managing jobs.
   jobAdminGroups: []
-  # List of users that will have access to superuser mode with job admin permissions.
+  # JobAdminUsers defines users with basic administrative privileges for managing jobs.
   jobAdminUsers: []
 
-  # List of groups that will have access to superuser mode with config admin permissions.
+  # ConfigAdminGroups defines groups with full administrative privileges for managing jobs and configuration.
   configAdminGroups:
     - projektleiter
     - teamleitung
-  # List of users that will have access to superuser mode with config admin permissions.
+  # ConfigAdminUsers defines users with full administrative privileges for managing jobs and configuration.
   configAdminUsers: []
+  # PermsCacheSize is the maximum number of permission entries cached in memory. Set it to 0 to disable caching.
   #permsCacheSize: 1024
+  # PermsCacheTTL is the time-to-live for cached permission entries. It must be at least one second.
   #permsCacheTTL: 30s
 
 dispatchCenter:
+  # Enabled enables dispatch-center integration for phone plugin dispatch systems.
+  enabled: false
+  # Type is the dispatch-center implementation to use.
   type: "gksphone"
+  # ConvertJobs lists jobs whose dispatches should be converted.
   convertJobs: []
     #- police
 
 discord:
+  # Enabled enables the Discord integration.
   enabled: true
-  # If true, the bot will not make any changes to Discord roles or send messages. Useful for testing.
+  # DryRun prevents role changes and messages, for testing.
   dryRun: false
-  # Discord bot token. Keep this secret and do not share it publicly.
+  # Token is the Discord bot token.
   token: "your_discord_bot_token"
-  # If any sync activity is performed at all.
+  # Sync controls whether any Discord synchronization is performed.
   sync: true
 
-  # Sync server groups to Discord roles.
+  # GroupSync configures synchronization of server groups to Discord roles.
   groupSync:
+    # Enabled enables group-to-role synchronization.
     enabled: true
+    # Mapping maps server group names to Discord role settings.
     mapping:
       fraktionsverwaltung:
+        # RoleName is the Discord role name.
         roleName: "Fraktionsverwaltung"
+        # Permissions optionally sets the Discord permission bitset for the role.
         #permissions: 0
+        # Color is the Discord role color as a hexadecimal value.
         #color: "#9B59B6"
+        # NotSameJob only assigns this role when the user's job differs from the group's job.
         notSameJob: true
       teamleitung:
+        # RoleName is the Discord role name.
         roleName: "Teamleitung"
+        # Permissions optionally sets the Discord permission bitset for the role.
         #permissions: 0
+        # Color is the Discord role color as a hexadecimal value.
         #color: "#9B59B6"
-  # Sync job, grade, and qualification data to Discord roles.
+  # UserInfoSync configures synchronization of job, grade, and qualification information to Discord roles.
   userInfoSync:
+    # Enabled enables user-information role synchronization.
     enabled: true
+    # GradeRoleFormat formats job-grade role names. It supports %grade% and %grade_label%.
     gradeRoleFormat: "[%grade%] %grade_label%"
+    # EmployeeRoleFormat formats employee-count role names. It receives the employee count via %s.
     employeeRoleFormat: "%s Employees"
+    # UnemployedRoleName is the role assigned to unemployed users.
     unemployedRoleName: "Citizen"
+    # JobsAbsceneRoleName is the role assigned to users absent from their job.
     jobsAbsceneRoleName: "Absent"
-  # Sync qualifications to Discord roles.
+  # Qualifications configures synchronization of qualifications to Discord roles.
   qualifications:
+    # Enabled enables qualification-to-role synchronization.
     enabled: true
-  # Enable or disable Discord command registration.
+  # Commands configures Discord command registration and availability.
   commands:
+    # Enabled enables Discord command registration.
     enabled: true
 
-    # Toggle individual commands.
+    # Absent enables the absent command.
     absent: true
+    # Fivenet enables the fivenet command.
     fivenet: true
+    # Help enables the help command.
     help: true
+    # Sync enables the sync command.
     sync: true
 
-  # Send calendar reminders in Discord.
+  # CalendarReminders enables calendar reminders in Discord.
   calendarReminders: true
 
+# Game configures game-server conventions.
 game:
   # First grade number/id. Some servers start at 0, others at 1.
   startJobGrade: 0
   # Automatically delete roles for jobs that no longer exist.
   cleanupRolesForMissingJobs: false
 
+# Sync configures the external synchronization API.
 sync:
   # Enable or disable the sync API endpoint. Required for the FiveNet plugin and DBSync function.
   enabled: false
@@ -297,6 +362,7 @@ sync:
   apiTokens: []
     #- LONG_RANDOM_API_TOKEN_FOR_DBSYNC
 
+# UpdateCheck configures periodic update checks.
 updateCheck:
   # If enabled, it will check for updates every interval.
   enabled: true
@@ -313,6 +379,7 @@ icons:
   # The `./icons` path works with the official FiveNet container images.
   path: ./icons
 
+# OTLP configures OpenTelemetry tracing.
 otlp:
   # Enable OTLP tracing.
   enabled: false

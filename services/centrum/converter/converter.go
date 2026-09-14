@@ -1,4 +1,4 @@
-package converter
+package centrumconverter
 
 import (
 	"context"
@@ -43,6 +43,11 @@ type Params struct {
 }
 
 func New(p Params) *Converter {
+	if !p.Config.DispatchCenter.Enabled {
+		p.Logger.Debug("dispatch center converter is disabled")
+		return nil
+	}
+
 	ctxCancel, cancel := context.WithCancel(context.Background())
 
 	c := &Converter{

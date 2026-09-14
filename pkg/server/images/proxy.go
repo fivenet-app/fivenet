@@ -1,7 +1,6 @@
 package images
 
 import (
-	"bufio"
 	"context"
 	"errors"
 	"fmt"
@@ -33,6 +32,22 @@ const (
 	maxRedirects = 10
 )
 
+var nonPublicIPPrefixes = []netip.Prefix{
+	netip.MustParsePrefix("0.0.0.0/8"),
+	netip.MustParsePrefix("100.64.0.0/10"),
+	netip.MustParsePrefix("192.0.0.0/24"),
+	netip.MustParsePrefix("192.0.2.0/24"),
+	netip.MustParsePrefix("198.18.0.0/15"),
+	netip.MustParsePrefix("198.51.100.0/24"),
+	netip.MustParsePrefix("203.0.113.0/24"),
+	netip.MustParsePrefix("240.0.0.0/4"),
+	netip.MustParsePrefix("2001::/23"),
+	netip.MustParsePrefix("2002::/16"),
+	netip.MustParsePrefix("2001:db8::/32"),
+}
+
+var publicIPv6Prefix = netip.MustParsePrefix("2000::/3")
+
 // ImageProxy provides a small HTTP image proxy for remote images.
 type ImageProxy struct {
 	// logger is used for logging proxy activity and errors.
@@ -40,26 +55,45 @@ type ImageProxy struct {
 
 	// config holds the image proxy configuration options.
 	config config.ImageProxy
+
+	client *http.Client
 }
 
 // New creates a new ImageProxy instance with the provided logger and configuration.
 func New(logger *zap.Logger, cfg *config.Config) *ImageProxy {
-	ip := &ImageProxy{
+	return &ImageProxy{
 		logger: logger,
 		config: cfg.ImageProxy,
+		client: newHTTPClient(cfg.ImageProxy),
 	}
-
-	return ip
 }
 
 // RegisterHTTP registers the image proxy HTTP handler on the provided Gin engine.
-// If the proxy is not enabled in the config, this function does nothing.
 // The handler proxies image requests and applies restrictions from the config.
 func (p *ImageProxy) RegisterHTTP(e *gin.Engine) {
 	// Example URLs for the image proxy:
 	// - Plain URL: http://localhost:3000/api/image_proxy/https://octodex.github.com/images/codercat.jpg
-	// - Base64 encoded URL: http://localhost:3000/api/image_proxy/aHR0cHM6Ly9vY3RvZGV4LmdpdGh1Yi5jb20vaW1hZ2VzL2NvZGVyY2F0LmpwZw
 	e.GET(Path+"/*url", p.handle)
+}
+
+func newHTTPClient(options config.ImageProxy) *http.Client {
+	transport := http.DefaultTransport.(*http.Transport).Clone()
+	transport.Proxy = nil
+	transport.DialContext = safeDialContext
+
+	return &http.Client{
+		Timeout:   proxyTimeout,
+		Transport: transport,
+		CheckRedirect: func(req *http.Request, via []*http.Request) error {
+			if len(via) >= maxRedirects {
+				return errors.New("too many redirects")
+			}
+			if !isAllowedURL(options, req.URL) {
+				return errors.New("redirect host is not allowed")
+			}
+			return nil
+		},
+	}
 }
 
 func (p *ImageProxy) handle(c *gin.Context) {
@@ -75,23 +109,6 @@ func (p *ImageProxy) handle(c *gin.Context) {
 		return
 	}
 
-	transport := http.DefaultTransport.(*http.Transport).Clone()
-	transport.Proxy = nil
-	transport.DialContext = safeDialContext
-	client := &http.Client{
-		Timeout:   proxyTimeout,
-		Transport: transport,
-		CheckRedirect: func(req *http.Request, via []*http.Request) error {
-			if len(via) >= maxRedirects {
-				return errors.New("too many redirects")
-			}
-			if !p.allowedURL(req.URL) {
-				return errors.New("redirect host is not allowed")
-			}
-			return nil
-		},
-	}
-
 	upstreamRequest, err := http.NewRequestWithContext(
 		c.Request.Context(),
 		http.MethodGet,
@@ -105,7 +122,7 @@ func (p *ImageProxy) handle(c *gin.Context) {
 	upstreamRequest.Header.Set("Accept", "image/*")
 	upstreamRequest.Header.Set("User-Agent", UserAgentPrefix+version.Version)
 
-	response, err := client.Do(upstreamRequest)
+	response, err := p.client.Do(upstreamRequest)
 	if err != nil {
 		p.logger.Warn(
 			"failed to fetch proxied image",
@@ -130,26 +147,17 @@ func (p *ImageProxy) handle(c *gin.Context) {
 		return
 	}
 
-	reader := bufio.NewReader(io.LimitReader(response.Body, maxImageSize+1))
 	contentType := response.Header.Get("Content-Type")
 	if parsed, _, parseErr := mime.ParseMediaType(contentType); parseErr == nil {
 		contentType = parsed
 	}
-	if contentType == "" || contentType == "application/octet-stream" ||
-		contentType == "binary/octet-stream" {
-		peek, peekErr := reader.Peek(512)
-		if peekErr != nil && peekErr != io.EOF && !errors.Is(peekErr, bufio.ErrBufferFull) {
-			c.String(http.StatusBadGateway, "could not inspect image")
-			return
-		}
-		contentType = http.DetectContentType(peek)
-	}
-	if !strings.HasPrefix(contentType, "image/") {
+	if contentType != "" && contentType != "application/octet-stream" &&
+		contentType != "binary/octet-stream" && !strings.HasPrefix(contentType, "image/") {
 		c.String(http.StatusForbidden, "remote resource is not an image")
 		return
 	}
 
-	body, err := io.ReadAll(reader)
+	body, err := io.ReadAll(io.LimitReader(response.Body, maxImageSize+1))
 	if err != nil {
 		c.String(http.StatusBadGateway, "failed to read image")
 		return
@@ -158,9 +166,17 @@ func (p *ImageProxy) handle(c *gin.Context) {
 		c.String(http.StatusRequestEntityTooLarge, "image is too large")
 		return
 	}
+	if contentType == "" || contentType == "application/octet-stream" ||
+		contentType == "binary/octet-stream" {
+		contentType = http.DetectContentType(body)
+	}
+	if !strings.HasPrefix(contentType, "image/") {
+		c.String(http.StatusForbidden, "remote resource is not an image")
+		return
+	}
 
 	copyResponseHeaders(c.Writer.Header(), response.Header)
-	setMinimumCacheDuration(c.Writer.Header(), p.config.Options.MinimumCacheDuration)
+	setMinimumCacheDuration(c.Writer.Header(), p.config.MinimumCacheDuration)
 	c.Header("Content-Type", contentType)
 	c.Header("Content-Length", strconv.Itoa(len(body)))
 	c.Header("Access-Control-Allow-Origin", "*")
@@ -194,15 +210,25 @@ func targetURL(request *http.Request) (*url.URL, error) {
 }
 
 func (p *ImageProxy) allowedURL(target *url.URL) bool {
+	return isAllowedURL(p.config, target)
+}
+
+func isAllowedURL(options config.ImageProxy, target *url.URL) bool {
 	host := strings.ToLower(strings.TrimSuffix(target.Hostname(), "."))
-	for _, denied := range p.config.Options.DenyHosts {
+	if address, err := netip.ParseAddr(host); err == nil {
+		return options.AllowIPs && isPublicIP(address.AsSlice())
+	}
+	if strings.Contains(host, ":") {
+		return false
+	}
+	for _, denied := range options.DenyHosts {
 		if hostMatches(host, denied) {
 			return false
 		}
 	}
-	if len(p.config.Options.AllowHosts) > 0 {
+	if len(options.AllowHosts) > 0 {
 		allowed := false
-		for _, candidate := range p.config.Options.AllowHosts {
+		for _, candidate := range options.AllowHosts {
 			if hostMatches(host, candidate) {
 				allowed = true
 				break
@@ -254,8 +280,24 @@ func safeDialContext(ctx context.Context, network, address string) (net.Conn, er
 }
 
 func isPublicIP(ip net.IP) bool {
-	address, err := netip.ParseAddr(ip.String())
-	return err == nil && address.IsGlobalUnicast() && !address.IsPrivate()
+	address, ok := netip.AddrFromSlice(ip)
+	if !ok {
+		return false
+	}
+	address = address.Unmap()
+	if !address.IsGlobalUnicast() || address.IsPrivate() || address.IsLoopback() ||
+		address.IsLinkLocalUnicast() || address.IsLinkLocalMulticast() || address.IsMulticast() {
+		return false
+	}
+	if address.Is6() && !publicIPv6Prefix.Contains(address) {
+		return false
+	}
+	for _, prefix := range nonPublicIPPrefixes {
+		if prefix.Contains(address) {
+			return false
+		}
+	}
+	return true
 }
 
 func copyResponseHeaders(dst, src http.Header) {
@@ -271,24 +313,25 @@ func setMinimumCacheDuration(header http.Header, minimum time.Duration) {
 		return
 	}
 	cacheControl := header.Get("Cache-Control")
-	lowerCacheControl := strings.ToLower(cacheControl)
-	if strings.Contains(lowerCacheControl, "no-store") ||
-		strings.Contains(lowerCacheControl, "private") {
-		return
-	}
-
 	maxAge := int64(minimum.Seconds())
 	directives := strings.Split(cacheControl, ",")
 	foundMaxAge := false
 	for index, directive := range directives {
-		parts := strings.SplitN(strings.TrimSpace(directive), "=", 2)
-		if len(parts) == 2 && strings.EqualFold(parts[0], "max-age") {
+		directives[index] = strings.TrimSpace(directive)
+		parts := strings.SplitN(directives[index], "=", 2)
+		name := strings.ToLower(parts[0])
+		if name == "no-store" || name == "private" || name == "no-cache" {
+			return
+		}
+		if len(parts) == 2 && (name == "max-age" || name == "s-maxage") {
 			if value, err := strconv.ParseInt(strings.Trim(parts[1], "\" "), 10, 64); err == nil {
-				foundMaxAge = true
+				if name == "max-age" {
+					foundMaxAge = true
+				}
 				if value > maxAge {
 					maxAge = value
 				} else {
-					directives[index] = fmt.Sprintf("max-age=%d", maxAge)
+					directives[index] = fmt.Sprintf("%s=%d", name, maxAge)
 				}
 			}
 		}
@@ -301,5 +344,5 @@ func setMinimumCacheDuration(header http.Header, minimum time.Duration) {
 	if !foundMaxAge {
 		directives = append(directives, fmt.Sprintf("max-age=%d", maxAge))
 	}
-	header.Set("Cache-Control", strings.Join(directives, ","))
+	header.Set("Cache-Control", strings.Join(directives, ", "))
 }
