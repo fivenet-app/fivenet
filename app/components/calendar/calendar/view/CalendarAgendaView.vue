@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { nextTick } from 'vue';
-import { addDays, isToday, startOfDay } from 'date-fns';
+import { addDays, isSameDay, startOfDay } from 'date-fns';
 import type { CalendarEntry } from '~~/gen/ts/resources/calendar/entries/entries';
 import { dateToDateString } from '~/utils/time';
 import { isCalendarEntryPast, getCalendarEntryRangeEnd } from '~/utils/calendar-view';
@@ -20,6 +20,11 @@ const emit = defineEmits<{
 }>();
 
 const scrollContainer = useTemplateRef('scrollContainer');
+const minuteClock = useMinuteClock();
+
+function isToday(date: Date): boolean {
+    return isSameDay(date, minuteClock.value);
+}
 
 const groupedEntries = computed(() => {
     const groups = new Map<string, { date: Date; past: CalendarEntry[]; upcoming: CalendarEntry[] }>();

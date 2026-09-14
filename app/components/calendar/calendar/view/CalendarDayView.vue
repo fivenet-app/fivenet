@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { format, isToday, startOfDay } from 'date-fns';
+import { format, isSameDay, startOfDay } from 'date-fns';
 import type { CalendarEntry } from '~~/gen/ts/resources/calendar/entries/entries';
 import { HOUR_HEIGHT, getCalendarCreateRangeFromClick, layoutAllDayEntries, layoutDayEntries } from '~/utils/calendar-view';
 import { isCalendarEntryAllDay } from '~/utils/calendar';
@@ -24,6 +24,11 @@ const emit = defineEmits<{
 }>();
 
 const day = computed(() => startOfDay(props.date));
+const minuteClock = useMinuteClock();
+
+function isToday(date: Date): boolean {
+    return isSameDay(date, minuteClock.value);
+}
 const allDayBaseEntries = computed(() => props.entries.filter((entry) => isCalendarEntryAllDay(entry)));
 const timedBaseEntries = computed(() => props.entries.filter((entry) => !isCalendarEntryAllDay(entry)));
 

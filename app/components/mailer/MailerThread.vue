@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { FormSubmitEvent } from '@nuxt/ui';
 import type { JSONContent } from '@tiptap/core';
-import { isToday } from 'date-fns';
+import { isSameDay } from 'date-fns';
 import { z } from 'zod';
 import ConfirmModal from '~/components/partials/ConfirmModal.vue';
 import TiptapEditor from '~/components/partials/editor/TiptapEditor.vue';
@@ -33,6 +33,12 @@ const emit = defineEmits<{
     (e: 'close', v: boolean): void;
     (e: 'refresh'): void;
 }>();
+
+const minuteClock = useMinuteClock();
+
+function isToday(date: Date): boolean {
+    return isSameDay(date, minuteClock.value);
+}
 
 const overlay = useOverlay();
 

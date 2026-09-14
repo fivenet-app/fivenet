@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { addDays, format, isToday } from 'date-fns';
+import { addDays, format, isSameDay } from 'date-fns';
 import type { CalendarEntry } from '~~/gen/ts/resources/calendar/entries/entries';
 import {
     HOUR_HEIGHT,
@@ -51,6 +51,11 @@ const allDayHeight = computed(() =>
         : 0,
 );
 const isEntryPopoverOpen = ref(false);
+const minuteClock = useMinuteClock();
+
+function isToday(date: Date): boolean {
+    return isSameDay(date, minuteClock.value);
+}
 
 function openCreateAt(day: Date, event: MouseEvent): void {
     if (!props.canCreate) return;

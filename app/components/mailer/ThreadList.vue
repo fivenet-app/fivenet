@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { isToday } from 'date-fns';
+import { isSameDay } from 'date-fns';
 import { computed, ref, watch } from 'vue';
 import type { Thread } from '~~/gen/ts/resources/mailer/threads/thread';
 
@@ -19,6 +19,11 @@ const emit = defineEmits<{
 }>();
 
 const threadRefs = ref(new Map<number, Element>());
+const minuteClock = useMinuteClock();
+
+function isToday(date: Date): boolean {
+    return isSameDay(date, minuteClock.value);
+}
 
 const routeParams = useRouteParams('thread');
 

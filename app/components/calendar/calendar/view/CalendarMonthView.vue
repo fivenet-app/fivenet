@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { addDays, addHours, isSameMonth, isToday, startOfDay, startOfMonth, startOfWeek } from 'date-fns';
+import { addDays, addHours, isSameDay, isSameMonth, startOfDay, startOfMonth, startOfWeek } from 'date-fns';
 import type { CalendarEntry } from '~~/gen/ts/resources/calendar/entries/entries';
 import { dateToDateString, getWeekNumber } from '~/utils/time';
 import { groupEntriesByDay } from '~/utils/calendar-view';
@@ -31,6 +31,11 @@ const weekNumbers = computed(() => weeks.value.map((week) => getWeekNumber(week[
 
 const entriesByDay = computed(() => groupEntriesByDay(props.entries));
 const isEntryPopoverOpen = ref(false);
+const minuteClock = useMinuteClock();
+
+function isToday(date: Date): boolean {
+    return isSameDay(date, minuteClock.value);
+}
 
 function dayEntries(day: Date): CalendarEntry[] {
     return sortCalendarEntriesForDisplay(entriesByDay.value.get(dateToDateString(day)) ?? []);
