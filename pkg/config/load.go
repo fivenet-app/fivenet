@@ -141,6 +141,7 @@ func Load() (Result, error) {
 		return name
 	})
 	validate.RegisterStructValidation(ValidateStorage, Storage{})
+	validate.RegisterStructValidation(ValidateConfigSecrets, Config{})
 
 	if err := validate.Struct(c); err != nil {
 		// Build detailed validation error message

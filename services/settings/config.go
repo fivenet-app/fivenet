@@ -51,10 +51,6 @@ func (s *Server) UpdateAppConfig(
 		)
 	}
 
-	if err := s.store.UpdateAppConfig(ctx, req.GetConfig()); err != nil {
-		return nil, err
-	}
-
 	// Update default perms
 	cfgDefaultperms := req.GetConfig().GetPerms().GetDefault()
 	defaultPerms := make([]string, len(req.GetConfig().GetPerms().GetDefault()))

@@ -18,6 +18,8 @@ const (
 	CwdConfigDir       = "."
 	ContainerConfigDir = "/config"
 	SystemConfigDir    = "/etc/fivenet"
+
+	secretLengthBytes = 32
 )
 
 type Config struct {
@@ -28,7 +30,7 @@ type Config struct {
 	LogLevel string `default:"INFO" yaml:"logLevel" enum:"DEBUG,INFO,WARN,ERROR,PANIC,FATAL"`
 	Log      Log    `               yaml:"log"`
 
-	// Secret is the app-wide secret used to encrypt and decrypt stored data. It must be exactly 32 bytes and must differ from JWT.Secret.
+	// Secret is the app-wide secret used to encrypt and decrypt stored data. It must contain exactly 32 random bytes and differ from JWT.Secret.
 	Secret string `yaml:"secret"`
 
 	// IgnoreRequirements skips startup checks for database and NATS connectivity. Use only when those services are intentionally unavailable at boot.
@@ -101,8 +103,6 @@ type LogRotation struct {
 	MaxBackups int `default:"7" yaml:"maxBackups"`
 	// MaxAge is the maximum number of days to retain old log files based on the timestamp.
 	MaxAge int `default:"14" yaml:"maxAge"`
-	// Deprecated: Use `Compression` instead. This field is kept for backward compatibility.
-	Compress bool `default:"true" yaml:"compress"`
 	// Compression determines the compression algorithm to use for rotated log files. It can be "none", "gzip", or "zstd".
 	Compression string `default:"zstd" yaml:"compress"`
 	// Rotation interval for log rotation (e.g., daily rotation).
@@ -166,7 +166,7 @@ type HTTP struct {
 }
 
 type Sessions struct {
-	// CookieSecret signs and encrypts session cookies.
+	// CookieSecret signs and encrypts session cookies. It must contain at least 32 random bytes and be unique to this deployment.
 	CookieSecret string `yaml:"cookieSecret"`
 	// Domain is the cookie domain.
 	Domain string `yaml:"domain" default:"localhost"`
@@ -274,8 +274,32 @@ type NATS struct {
 }
 
 type JWT struct {
-	// Secret is the JWT signing secret. It must differ from the app-wide Secret.
+	// Secret is the JWT signing secret. It must contain at least 32 random bytes and differ from the app-wide Secret.
 	Secret string `yaml:"secret"`
+}
+
+// ValidateConfigSecrets validates the configured secret lengths in bytes.
+func ValidateConfigSecrets(fl validator.StructLevel) {
+	cfg, ok := fl.Current().Interface().(Config)
+	if !ok {
+		return
+	}
+
+	if len([]byte(cfg.Secret)) != secretLengthBytes {
+		fl.ReportError(cfg.Secret, "Secret", "secret", "secretbytes", "32")
+	}
+	if len([]byte(cfg.JWT.Secret)) < secretLengthBytes {
+		fl.ReportError(cfg.JWT.Secret, "JWT.Secret", "jwt.secret", "minsecretbytes", "32")
+	}
+	if len([]byte(cfg.HTTP.Sessions.CookieSecret)) < secretLengthBytes {
+		fl.ReportError(
+			cfg.HTTP.Sessions.CookieSecret,
+			"HTTP.Sessions.CookieSecret",
+			"http.sessions.cookieSecret",
+			"minsecretbytes",
+			"32",
+		)
+	}
 }
 
 type StorageType string

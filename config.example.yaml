@@ -36,15 +36,15 @@ log:
     cron: "INFO"
     perms: "INFO"
 
-# Secret is the app-wide secret used to encrypt and decrypt stored data. It must be exactly 32 bytes and must differ from JWT.Secret.
+# Secret is the app-wide secret used to encrypt and decrypt stored data. It must contain exactly 32 random bytes and differ from JWT.Secret.
 secret: "your_generated_db_secret_32_char"
 
 # Skips startup checks for database and NATS connectivity. Use only when those services are intentionally unavailable at boot.
 ignoreRequirements: false
 
 jwt:
-  # Secret is the JWT signing secret. It must differ from the app-wide Secret.
-  secret: "your_generated_jwt_secret"
+  # Secret is the JWT signing secret. It must contain at least 32 random bytes and differ from the app-wide Secret.
+  secret: "your_generated_jwt_secret_32char"
 
 http:
   # Listen is the address for the public HTTP server.
@@ -62,8 +62,8 @@ http:
     #- "10.0.0.0/8" # Common Kubernetes cluster IP range
     #- "127.0.0.1" # For development
   sessions:
-    # CookieSecret signs and encrypts session cookies.
-    cookieSecret: "your_generated_cookie_secret"
+    # CookieSecret signs and encrypts session cookies. It must contain at least 32 random bytes and be unique to this deployment.
+    cookieSecret: "your_generated_cookie_secret_32c"
     # Domain is the cookie domain.
     domain: "fivenet.example.com"
 

@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"slices"
 	"strings"
+	"sync"
 	"sync/atomic"
 
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/settings"
@@ -53,7 +54,8 @@ type Config struct {
 	ncSub        *nats.Subscription
 	serverConfig *serverconfig.Config
 
-	jsCons jetstream.ConsumeContext
+	jsCons          jetstream.ConsumeContext
+	overrideLogOnce sync.Once
 
 	cfg atomic.Pointer[Cfg]
 
@@ -123,6 +125,10 @@ func (c *Config) Update(ctx context.Context, val *Cfg) error {
 		val.SetSetupComplete(current.GetSetupComplete())
 	}
 
+	if err := c.updateConfigInDB(ctx, val); err != nil {
+		return err
+	}
+
 	c.Set(val)
 
 	// Send update message to inform components
@@ -160,13 +166,16 @@ func (c *Config) updateConfigInDB(ctx context.Context, cfg *Cfg) error {
 	stmt := tConfig.
 		INSERT(
 			tConfig.Key,
+			tConfig.SetupComplete,
 			tConfig.AppConfig,
 		).
 		VALUES(
 			1,
+			true,
 			cfg,
 		).
 		ON_DUPLICATE_KEY_UPDATE(
+			tConfig.SetupComplete.SET(mysql.Bool(true)),
 			tConfig.AppConfig.SET(mysql.RawString("VALUES(`app_config`)")),
 		)
 
@@ -207,6 +216,7 @@ func (c *Config) Reload(ctx context.Context) (*Cfg, error) {
 			tConfig.SetupComplete.AS("setup_complete"),
 		).
 		FROM(tConfig).
+		WHERE(tConfig.Key.EQ(mysql.Int(1))).
 		LIMIT(1)
 
 	dest := struct {
@@ -222,7 +232,9 @@ func (c *Config) Reload(ctx context.Context) (*Cfg, error) {
 		} else {
 			// No app config found in database? Insert into database.
 			dest.AppConfig.Default()
-			c.applyInitialConfig(dest.AppConfig)
+			if fields := c.applyInitialConfig(dest.AppConfig); len(fields) > 0 {
+				c.logger.Info("applied initial app config", zap.Strings("fields", fields))
+			}
 			if err := c.insertInitialConfig(ctx, dest.AppConfig); err != nil {
 				return nil, err
 			}
@@ -246,12 +258,12 @@ func (c *Config) Reload(ctx context.Context) (*Cfg, error) {
 	return dest.AppConfig, nil
 }
 
-func (c *Config) applyInitialConfig(cfg *Cfg) {
+func (c *Config) applyInitialConfig(cfg *Cfg) []string {
 	if c.serverConfig == nil {
-		return
+		return nil
 	}
 
-	applyWebsiteLinks(cfg, c.serverConfig.AppConfig.Initial.Website.Links)
+	return applyWebsiteLinks(cfg, c.serverConfig.AppConfig.Initial.Website.Links)
 }
 
 func (c *Config) applyStartupOverride(cfg *Cfg) {
@@ -259,12 +271,15 @@ func (c *Config) applyStartupOverride(cfg *Cfg) {
 		return
 	}
 
-	applyWebsiteLinks(cfg, c.serverConfig.AppConfig.Override.Website.Links)
+	fields := applyWebsiteLinks(cfg, c.serverConfig.AppConfig.Override.Website.Links)
+	c.overrideLogOnce.Do(func() {
+		c.logger.Info("app config startup override is enabled", zap.Strings("fields", fields))
+	})
 }
 
-func applyWebsiteLinks(cfg *Cfg, links *serverconfig.AppConfigLinks) {
+func applyWebsiteLinks(cfg *Cfg, links *serverconfig.AppConfigLinks) []string {
 	if cfg == nil || links == nil {
-		return
+		return nil
 	}
 
 	if cfg.Website == nil {
@@ -274,10 +289,15 @@ func applyWebsiteLinks(cfg *Cfg, links *serverconfig.AppConfigLinks) {
 		cfg.Website.Links = &settings.Links{}
 	}
 
+	fields := make([]string, 0, 2)
 	if links.PrivacyPolicy != nil {
 		cfg.Website.Links.SetPrivacyPolicy(*links.PrivacyPolicy)
+		fields = append(fields, "website.links.privacyPolicy")
 	}
 	if links.Imprint != nil {
 		cfg.Website.Links.SetImprint(*links.Imprint)
+		fields = append(fields, "website.links.imprint")
 	}
+
+	return fields
 }

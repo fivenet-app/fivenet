@@ -30,10 +30,6 @@ func (d *Demo) seedDemoBanner(ctx context.Context) error {
 	if d.appCfg == nil {
 		return errors.New("failed to seed demo banner: app config is not available")
 	}
-	if d.settingsStore == nil {
-		return errors.New("failed to seed demo banner: settings store is not available")
-	}
-
 	cfg := d.appCfg.Get()
 	if cfg == nil {
 		return errors.New("failed to seed demo banner: app config is not loaded")
@@ -43,12 +39,8 @@ func (d *Demo) seedDemoBanner(ctx context.Context) error {
 	cfg.GetSystem().BannerMessageEnabled = true
 	cfg.GetSystem().BannerMessage = d.buildDemoBannerMessage()
 
-	if err := d.settingsStore.UpdateAppConfig(ctx, cfg); err != nil {
-		return fmt.Errorf("failed to persist demo banner config. %w", err)
-	}
-
 	if err := d.appCfg.Update(ctx, cfg); err != nil {
-		return fmt.Errorf("failed to publish demo banner config update. %w", err)
+		return fmt.Errorf("failed to update demo banner config. %w", err)
 	}
 
 	d.logger.Info(

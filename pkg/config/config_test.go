@@ -5,6 +5,7 @@ import (
 	"testing"
 
 	"github.com/creasty/defaults"
+	"github.com/go-playground/validator/v10"
 	"github.com/spf13/viper"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -65,7 +66,11 @@ appConfig:
 	require.NoError(t, v.Unmarshal(cfg))
 
 	require.NotNil(t, cfg.AppConfig.Initial.Website.Links)
-	assert.Equal(t, "https://example.com/privacy", *cfg.AppConfig.Initial.Website.Links.PrivacyPolicy)
+	assert.Equal(
+		t,
+		"https://example.com/privacy",
+		*cfg.AppConfig.Initial.Website.Links.PrivacyPolicy,
+	)
 	assert.Equal(t, "https://example.com/imprint", *cfg.AppConfig.Initial.Website.Links.Imprint)
 	assert.True(t, cfg.AppConfig.Override.Enabled)
 	require.NotNil(t, cfg.AppConfig.Override.Website.Links)
@@ -75,4 +80,50 @@ appConfig:
 		*cfg.AppConfig.Override.Website.Links.PrivacyPolicy,
 	)
 	assert.Nil(t, cfg.AppConfig.Override.Website.Links.Imprint)
+}
+
+func TestValidateConfigSecrets(t *testing.T) {
+	t.Parallel()
+
+	validConfig := Config{
+		Secret: strings.Repeat("a", secretLengthBytes),
+		JWT: JWT{
+			Secret: strings.Repeat("b", secretLengthBytes),
+		},
+		HTTP: HTTP{
+			Sessions: Sessions{CookieSecret: strings.Repeat("c", secretLengthBytes)},
+		},
+	}
+
+	validate := validator.New()
+	validate.SetTagName("secretvalidate")
+	validate.RegisterStructValidation(ValidateConfigSecrets, Config{})
+	require.NoError(t, validate.Struct(validConfig))
+
+	invalidConfigs := []Config{
+		{
+			Secret: strings.Repeat("a", secretLengthBytes-1),
+			JWT:    JWT{Secret: strings.Repeat("b", secretLengthBytes)},
+			HTTP:   HTTP{Sessions: Sessions{CookieSecret: strings.Repeat("c", secretLengthBytes)}},
+		},
+		{
+			Secret: strings.Repeat("é", secretLengthBytes), // 32 runes but 64 bytes
+			JWT:    JWT{Secret: strings.Repeat("b", secretLengthBytes)},
+			HTTP:   HTTP{Sessions: Sessions{CookieSecret: strings.Repeat("c", secretLengthBytes)}},
+		},
+		{
+			Secret: strings.Repeat("a", secretLengthBytes),
+			JWT:    JWT{Secret: strings.Repeat("b", secretLengthBytes-1)},
+			HTTP:   HTTP{Sessions: Sessions{CookieSecret: strings.Repeat("c", secretLengthBytes)}},
+		},
+		{
+			Secret: strings.Repeat("a", secretLengthBytes),
+			JWT:    JWT{Secret: strings.Repeat("b", secretLengthBytes)},
+			HTTP:   HTTP{Sessions: Sessions{CookieSecret: strings.Repeat("c", secretLengthBytes-1)}},
+		},
+	}
+
+	for _, cfg := range invalidConfigs {
+		assert.Error(t, validate.Struct(cfg))
+	}
 }

@@ -23,7 +23,6 @@ import (
 	"github.com/fivenet-app/fivenet/v2026/services/centrum/dispatches"
 	calendarstore "github.com/fivenet-app/fivenet/v2026/stores/calendar"
 	livemapstore "github.com/fivenet-app/fivenet/v2026/stores/livemap"
-	settingsstore "github.com/fivenet-app/fivenet/v2026/stores/settings"
 	"github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
 	"go.uber.org/fx"
@@ -114,7 +113,6 @@ type Demo struct {
 	calendarAccess *access.CalendarObjectAccess
 	accessResolver *access.SubjectResolver
 	perms          perms.Permissions
-	settingsStore  settingsstore.IStore
 	livemapStore   livemapstore.IStore
 	wg             sync.WaitGroup
 
@@ -143,7 +141,6 @@ type Params struct {
 	Jobs           mstlystcdata.IJobs
 	AppConfig      appconfig.IConfig
 	Perms          perms.Permissions
-	SettingsStore  settingsstore.IStore
 	LivemapStore   livemapstore.IStore
 }
 
@@ -166,7 +163,6 @@ func New(p Params) *Demo {
 		calendarAccess: p.CalendarAccess,
 		accessResolver: access.NewSubjectResolver(p.DB),
 		perms:          p.Perms,
-		settingsStore:  p.SettingsStore,
 		livemapStore:   p.LivemapStore,
 		wg:             sync.WaitGroup{},
 	}

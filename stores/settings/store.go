@@ -9,7 +9,6 @@ import (
 	database "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/common/database"
 	jobsprops "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/jobs/props"
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/laws"
-	resourcesettings "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/settings"
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/timestamp"
 	pbsettings "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/settings"
 	"github.com/go-jet/jet/v2/mysql"
@@ -63,7 +62,6 @@ type IStore interface {
 		accountID int64,
 		deletedAtTime *timestamp.Timestamp,
 	) (*pbsettings.DeleteAccountResponse, error)
-	UpdateAppConfig(ctx context.Context, cfg *resourcesettings.AppConfig) error
 	ListLawBooks(ctx context.Context, superuser bool) (*pbsettings.ListLawBooksResponse, error)
 	CreateOrUpdateLawBook(
 		ctx context.Context,
