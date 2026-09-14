@@ -217,8 +217,7 @@ func (p *ImageProxy) allowedURL(target *url.URL) bool {
 
 func hostMatches(host, candidate string) bool {
 	candidate = strings.ToLower(strings.TrimSuffix(strings.TrimSpace(candidate), "."))
-	if strings.HasPrefix(candidate, "*.") {
-		suffix := strings.TrimPrefix(candidate, "*.")
+	if suffix, ok := strings.CutPrefix(candidate, "*."); ok {
 		return strings.HasSuffix(host, "."+suffix)
 	}
 	return host == candidate
