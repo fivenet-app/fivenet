@@ -21,7 +21,7 @@ require (
 	github.com/brianvoe/gofakeit/v7 v7.17.0
 	github.com/cespare/xxhash/v2 v2.3.0
 	github.com/coder/websocket v1.8.15
-	github.com/creasty/defaults v1.9.0
+	github.com/creasty/defaults v1.10.0
 	github.com/creativeprojects/go-selfupdate v1.6.0
 	github.com/desertbit/timer v1.0.1
 	github.com/diamondburned/arikawa/v3 v3.6.0
