@@ -408,11 +408,6 @@ type Icons struct {
 	Path string `default:"./icons" yaml:"path"`
 }
 
-type Cache struct {
-	// RefreshTime specifies the duration after which cached data should be refreshed. Must be greater than or equal to 1 second.
-	RefreshTime time.Duration `default:"2m" yaml:"refreshTime" validate:"gte=1"`
-}
-
 type Audit struct {
 	// RetentionDays specifies the number of days to retain audit logs before they are purged. Must be greater than or equal to 1.
 	RetentionDays int `default:"180" yaml:"retentionDays" validate:"gte=1"`
@@ -544,7 +539,7 @@ type Discord struct {
 	// Token is the Discord bot token.
 	Token string `yaml:"token"`
 
-	// UserInfoSync configures synchronization of job, grade, and qualification information to Discord roles.
+	// UserInfoSync configures synchronization of nickname, job and grade information.
 	UserInfoSync DiscordUserInfoSync `yaml:"userInfoSync"`
 	// GroupSync configures synchronization of server groups to Discord roles.
 	GroupSync DiscordGroupSync `yaml:"groupSync"`
@@ -560,25 +555,9 @@ func (c *Discord) IsAnyEnabled() bool {
 	return c.Enabled || c.Sync || c.Commands.Enabled
 }
 
-type DiscordPresence struct {
-	GameStatus         *string `yaml:"gameStatus"`
-	ListeningStatus    *string `yaml:"listeningStatus"`
-	StreamingStatus    *string `yaml:"streamingStatus"`
-	StreamingStatusUrl *string `yaml:"streamingStatusUrl"`
-	WatchStatus        *string `yaml:"watchStatus"`
-}
-
 type DiscordUserInfoSync struct {
 	// Enabled enables user-information role synchronization.
 	Enabled bool `default:"false" yaml:"enabled"`
-	// GradeRoleFormat formats job-grade role names. It supports %grade% and %grade_label%.
-	GradeRoleFormat string `default:"[%grade%] %grade_label%" yaml:"gradeRoleFormat"`
-	// EmployeeRoleFormat formats employee-count role names. It receives the employee count via %s.
-	EmployeeRoleFormat string `default:"%s Personal" yaml:"employeeRoleFormat"`
-	// UnemployedRoleName is the role assigned to unemployed users.
-	UnemployedRoleName string `default:"Citizen" yaml:"unemployedRoleName"`
-	// JobsAbsceneRoleName is the role assigned to users absent from their job.
-	JobsAbsceneRoleName string `default:"Absent" yaml:"jobsAbsceneRoleName"`
 }
 
 type DiscordGroupSync struct {

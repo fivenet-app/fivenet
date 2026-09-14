@@ -797,14 +797,14 @@ type TableManagerConfig struct {
 // Accounts, Users and Vehicles split the data into multiple requests if they exceed the API limits.
 type SyncLimits struct {
 	// Jobs is the maximum number of jobs per request. It must be between 1 and 200.
-	Jobs int64 `default:"200" yaml:"jobs"     validate:"omitempty,gte=1,lte=200"`
+	Jobs int64 `default:"200" yaml:"jobs" validate:"omitempty,gte=1,lte=200"`
 	// Licenses is the maximum number of licenses per request. It must be between 1 and 200.
 	Licenses int64 `default:"200" yaml:"licenses" validate:"omitempty,gte=1,lte=200"`
 
 	// Accounts is the maximum number of accounts per request. It must be between 1 and 1000.
 	Accounts int64 `default:"200" yaml:"accounts" validate:"omitempty,gte=1,lte=1000"`
 	// Users is the maximum number of users per request. It must be between 1 and 1000.
-	Users int64 `default:"150" yaml:"users"    validate:"omitempty,gte=1,lte=1000"`
+	Users int64 `default:"150" yaml:"users" validate:"omitempty,gte=1,lte=1000"`
 	// Vehicles is the maximum number of vehicles per request. It must be between 1 and 1500.
 	Vehicles int64 `default:"500" yaml:"vehicles" validate:"omitempty,gte=1,lte=1500"`
 }

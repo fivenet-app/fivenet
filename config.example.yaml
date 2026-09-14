@@ -184,7 +184,7 @@ imageProxy:
   # Whether literal public IP addresses may be used as image hosts.
   allowIPs: false
   # MinimumCacheDuration is the minimum duration for which proxied images should be cached. If not set, defaults to 60 minutes.
-  minimumCacheDuration: 30m
+  minimumCacheDuration: 60m
 
 audit:
   # RetentionDays specifies the number of days to retain audit logs before they are purged. Must be greater than or equal to 1.
@@ -328,18 +328,10 @@ discord:
         #permissions: 0
         # Color is the Discord role color as a hexadecimal value.
         #color: "#9B59B6"
-  # UserInfoSync configures synchronization of job, grade, and qualification information to Discord roles.
+  # UserInfoSync configures synchronization of nickname, job and grade information.
   userInfoSync:
     # Enabled enables user-information role synchronization.
     enabled: true
-    # GradeRoleFormat formats job-grade role names. It supports %grade% and %grade_label%.
-    gradeRoleFormat: "[%grade%] %grade_label%"
-    # EmployeeRoleFormat formats employee-count role names. It receives the employee count via %s.
-    employeeRoleFormat: "%s Employees"
-    # UnemployedRoleName is the role assigned to unemployed users.
-    unemployedRoleName: "Citizen"
-    # JobsAbsceneRoleName is the role assigned to users absent from their job.
-    jobsAbsceneRoleName: "Absent"
   # Qualifications configures synchronization of qualifications to Discord roles.
   qualifications:
     # Enabled enables qualification-to-role synchronization.

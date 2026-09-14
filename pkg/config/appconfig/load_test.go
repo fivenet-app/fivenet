@@ -20,7 +20,13 @@ func TestUpdateConfigInDBUpsertsConfigAndMarksSetupComplete(t *testing.T) {
 	t.Cleanup(func() { _ = db.Close() })
 
 	mock.ExpectExec(
-		regexp.QuoteMeta(`INSERT INTO fivenet_config`) + `(?s).*` + regexp.QuoteMeta(`setup_complete`) + `(?s).*` + regexp.QuoteMeta(`ON DUPLICATE KEY UPDATE`),
+		regexp.QuoteMeta(
+			`INSERT INTO fivenet_config`,
+		) + `(?s).*` + regexp.QuoteMeta(
+			`setup_complete`,
+		) + `(?s).*` + regexp.QuoteMeta(
+			`ON DUPLICATE KEY UPDATE`,
+		),
 	).WillReturnResult(sqlmock.NewResult(0, 1))
 
 	c := &Config{db: db}

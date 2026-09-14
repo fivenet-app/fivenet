@@ -119,7 +119,9 @@ func TestValidateConfigSecrets(t *testing.T) {
 		{
 			Secret: strings.Repeat("a", secretLengthBytes),
 			JWT:    JWT{Secret: strings.Repeat("b", secretLengthBytes)},
-			HTTP:   HTTP{Sessions: Sessions{CookieSecret: strings.Repeat("c", secretLengthBytes-1)}},
+			HTTP: HTTP{
+				Sessions: Sessions{CookieSecret: strings.Repeat("c", secretLengthBytes-1)},
+			},
 		},
 	}
 
