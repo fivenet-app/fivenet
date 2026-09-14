@@ -40,5 +40,5 @@
     "nix": {
         "enabled": true
     },
-    "minimumReleaseAge": "1 day"
+    "minimumReleaseAge": "16 hours"
 }

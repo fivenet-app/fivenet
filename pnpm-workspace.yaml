@@ -35,7 +35,8 @@ allowBuilds:
   v-code-diff: true
   vue-demi: true
 
-minimumReleaseAge: 1440 # 1 day in minutes
+minimumReleaseAge: 960 # 16 hours in minutes
 minimumReleaseAgeExclude:
   - nuxt
   - '@nuxt/*'
+  - '@nuxtjs/*'
