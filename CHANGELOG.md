@@ -2,6 +2,89 @@
 
 All notable changes to this project will be documented in this file.
 
+## [2026.9.2] - 2026-09-14
+
+### 🚀 Features
+
+- *(auth)* Transition query context after access validation
+- *(async-data)* Add auth-scoped cancellable data helper
+- *(sync)* Support grouped user sync requests
+- *(sync)* Add multi user id/identifier sync drawer
+- *(error)* Improve "copy error" report contents
+- *(access)* Increase max entries to 15 and fix version number in
+- *(notifications)* Add delivery preferences and inbox state
+- *(notifications)* Add notification center interface
+- *(jobs)* Notify group leadership changes
+- *(notifications)* Add document and group event kinds
+- *(jobs)* Notify group membership changes
+- *(documents)* Notify approval and request updates
+- *(qualifications)* Improve user notifications
+- *(user-settings)* Expand notification preferences
+- *(ci)* Add osv scanner workflow
+- *(config)* Update field comments
+- *(config)* Bootstrap and override app config at startup
+- *(config)* Bootstrap app settings and validate secrets
+
+### 🐛 Bug Fixes
+
+- Use tagged release for helm chart auto update
+- *(ci)* Update both channels on chart updates
+- *(channels)* Update dev channel helm chart
+- *(proto)* Typo in cronjob comment
+- *(app)* Format main.css file
+- *(dbsync)* No rows issues for user sync
+- *(cmd)* Disable cron for discord bot
+- *(citizens)* Translation issue for ErrCitizenNotFound
+- *(discord)* Test formatting and debug user query issue
+- *(discord)* Adjust grade translation
+- *(auth)* Restart streams after context changes
+- *(sync)* Soft-delete missing users
+- *(citizens)* Guard manual user sync
+- *(sync)* Validate OAuth2 activity fields
+- *(documents)* Template var quote issue caused by sanitization logic
+- *(auth)* Causing dos
+- *(documents,clipboard)* Active stack requirements logic and texts
+- Add current url to error page
+- *(auth)* Harden session transitions
+- *(auth)* Sync session state across tabs
+- *(nuxt)* Add setupComplete to default values of app config
+- *(auth)* Further harden cross-tab session transitions
+- *(documents)* Template html entity escape for content title and state
+- *(auth)* Restore superuser mode after page reload
+- *(auth)* Make ChooseCharacter restore options optional
+- *(livemap)* Restart streams after auth context changes
+- *(audit)* Show meta entries
+- *(auth)* Re-add the username taken error
+- *(http)* Send cache-control for _nuxt/ and index.html files
+- *(grpc)* Add current url to copy grpc error action
+- *(documents)* Show template error to users with config admin as well
+- *(jobs)* Add a general limit of 200
+- *(documents)* Preserve template selections
+- *(appconfig)* Client config fields wrong json format from backend
+- *(mailer)* Use same canSubmit delay of 400ms
+- Cleanup colleague set name
+- *(ui,slider)* Remove number array workkaround for USlider bug
+- Run vitest tests to update .nuxtrc test-utils version too
+- *(vitest)* Enable module cache for nuxt tests
+- *(cmd)* Add restart log note to update subcommand
+- *(error)* Add temp route debug info
+- *(auth)* Redirect temporary failures to auth screens
+- *(mstlystcdata)* Increase jobs query limit
+- *(notifications)* Synchronize unread state across stream and inbox
+- *(jobs,groups)* Add notify user toggle for manual members
+- *(documents)* Publish comment notifications after commit
+- *(user-settings)* Notification preference layout
+- *(qualifications)* Notification handling
+- Linter complaints
+- *(notifications)* Check target access for document comments
+- Harden image proxy
+- *(renovate)* Reduce minimum release age to 16 hours
+- *(leaflet)* Disable global css injection
+- Go linter formatting complaints
+- *(image_proxy)* Replace strings.HasPrefix with strings.CutPrefix
+- *(dbsync)* Document config options and honor watchConfig
+- *(channels)* Update dev channel chart version
+
 ## [2026.9.1] - 2026-09-05
 
 ### 🚀 Features
