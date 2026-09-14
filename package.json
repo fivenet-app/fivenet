@@ -161,7 +161,7 @@
         "release-it": "21.0.2",
         "sass": "1.104.0",
         "tailwindcss": "4.3.3",
-        "typescript": "6.0.3",
+        "typescript": "catalog:",
         "vite": "8.3.0",
         "vitest": "5.0.0",
         "vue-router": "5.3.1",

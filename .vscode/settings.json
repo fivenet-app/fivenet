@@ -34,16 +34,17 @@
     },
     "js/ts.preferences.quoteStyle": "single",
     "js/ts.tsdk.path": "node_modules/typescript/lib",
+    "js/ts.tsdk.promptToUseWorkspaceVersion": true,
     "js/ts.updateImportsOnFileMove.enabled": "never",
     "js/ts.preferences.importModuleSpecifier": "non-relative",
     "js/ts.preferences.importModuleSpecifierEnding": "minimal",
+    "prettier.prettierPath": "./node_modules/prettier",
+    "vitest.shellType": "terminal",
     "tailwindCSS.classAttributes": [
         "active-class",
         "inactive-class"
     ],
     "tailwind-fold.foldStyle": "QUOTES",
-    "prettier.prettierPath": "./node_modules/prettier",
-    "vitest.shellType": "terminal",
     "editor.unicodeHighlight.allowedCharacters": {
         "ℹ": true
     }

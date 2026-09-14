@@ -1,6 +1,10 @@
 catalog:
   '@protobuf-ts/plugin': 2.11.1
   google-protobuf: 4.0.2
+  typescript: npm:typescript-native-bridge@v6.0.3-bridge.17.tsgo.7.0.2
+
+overrides:
+  typescript: npm:typescript-native-bridge@v6.0.3-bridge.17.tsgo.7.0.2
 
 onlyBuiltDependencies:
   - '@parcel/watcher'
