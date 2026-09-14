@@ -9,8 +9,8 @@
   "stable": {
     "repoUrl": "https://fivenet.github.io/charts",
     "chartName": "fivenet",
-    "chartVersion": "0.27.2",
+    "chartVersion": "0.28.0",
     "appVersion": "v2026.9.1",
-    "publishedAt": "2026-09-05T20:00:59Z"
+    "publishedAt": "2026-09-14T14:52:06Z"
   }
 }
