@@ -336,7 +336,9 @@ export const useCentrumStore = defineStore(
          */
         const addOrUpdateDispatch = (dispatchObj: Dispatch, kvRevision?: number): void => {
             const currentRevision = dispatchRevisions.get(dispatchObj.id) ?? 0;
-            if (kvRevision !== undefined && kvRevision <= currentRevision) return;
+            if (kvRevision !== undefined && kvRevision > 0 && kvRevision <= currentRevision) {
+                return;
+            }
 
             const existing = dispatches.value.get(dispatchObj.id);
             if (!existing) {
@@ -363,7 +365,7 @@ export const useCentrumStore = defineStore(
 
                 updateDispatchStatus(dispatchObj.status);
             }
-            if (kvRevision !== undefined) dispatchRevisions.set(dispatchObj.id, kvRevision);
+            if (kvRevision !== undefined && kvRevision > 0) dispatchRevisions.set(dispatchObj.id, kvRevision);
             handleDispatchAssignment(dispatchObj);
         };
 
@@ -418,7 +420,9 @@ export const useCentrumStore = defineStore(
          */
         const removeDispatch = (id: number, kvRevision?: number): void => {
             const currentRevision = dispatchRevisions.get(id) ?? 0;
-            if (kvRevision !== undefined && kvRevision <= currentRevision) return;
+            if (kvRevision !== undefined && kvRevision > 0 && kvRevision <= currentRevision) {
+                return;
+            }
 
             removePendingDispatch(id);
             removeOwnDispatch(id);
