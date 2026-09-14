@@ -22,8 +22,6 @@ github.com/davecgh/go-spew v1.1.2-0.20180830191138-d8f796af33cc h1:U9qPSI2PIWSS1
 github.com/davecgh/go-spew v1.1.2-0.20180830191138-d8f796af33cc/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
 github.com/die-net/lrucache v0.0.0-20220628165024-20a71bc65bf1 h1:1nCGINecpltGpOWruhy+Ac2/FRy+p1igMylF+MsijpI=
 github.com/die-net/lrucache v0.0.0-20220628165024-20a71bc65bf1/go.mod h1:NQKJ1XiOlLRLoAeq/5LE3GBlSukAK3zDUUlrvc2rfCQ=
-github.com/disintegration/imaging v1.6.2 h1:w1LecBlG2Lnp8B3jk5zSuNqd7b4DXhcjwek1ei82L+c=
-github.com/disintegration/imaging v1.6.2/go.mod h1:44/5580QXChDfwIclfc/PCwrr44amcmDAg8hxG0Ewe4=
 github.com/fcjr/aia-transport-go v1.2.2 h1:sIZqXcM+YhTd2BDtkV2OJaqbcIVcPv1oKru3VJPIPc8=
 github.com/fcjr/aia-transport-go v1.2.2/go.mod h1:onSqSq3tGkM14WusDx7q9FTheS9R1KBtD+QBWI6zG/w=
 github.com/fivenet-app/fivenet/v2026 v2026.9.1 h1:fLqHZm/uuArkT2ncn3bkW7Op+tAwEEgogSU9EbO7oVc=
@@ -197,5 +195,3 @@ gopkg.in/yaml.v3 v3.0.0-20200313102051-9f266ea9e77c/go.mod h1:K4uyk7z7BCEPqu6E+C
 gopkg.in/yaml.v3 v3.0.1/go.mod h1:K4uyk7z7BCEPqu6E+C64Yfv1cQ7kz7rIZviUmN+EgEM=
 willnorris.com/go/gifresize v1.0.0 h1:GKS68zjNhHMqkgNTv4iFAO/j/sNcVSOHQ7SqmDAIAmM=
 willnorris.com/go/gifresize v1.0.0/go.mod h1:eBM8gogBGCcaH603vxSpnfjwXIpq6nmnj/jauBDKtAk=
-willnorris.com/go/imageproxy v0.13.0 h1:e/KHdsq08N80LtI/Fmk7MAJMMXwMWdureyhqvGhJiNA=
-willnorris.com/go/imageproxy v0.13.0/go.mod h1:01HytV4Q3XYT+LMtw8tuC5oBBSAuNcBR/fKZ2Q0sm24=
