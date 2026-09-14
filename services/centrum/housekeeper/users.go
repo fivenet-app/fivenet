@@ -64,7 +64,7 @@ func (s *Housekeeper) removeDispatchersForUser(
 ) {
 	for _, job := range jobs {
 		s.metrics.IncHousekeeperEvent("user_changes", "dispatcher_removal_attempted")
-		if err := s.setDispatcherState(ctx, job, userID, false); err != nil {
+		if err := s.dispatcherUserState.SetUserState(ctx, job, userID, false); err != nil {
 			s.metrics.IncHousekeeperEvent("user_changes", "dispatcher_removal_failed")
 			s.logger.Error(
 				"failed to remove stale dispatcher state for user marker change",
@@ -151,7 +151,10 @@ func (s *Housekeeper) watchUserChanges(
 						dispatcherJobsToRemove(previous, seen, current),
 					)
 
-					if err := s.syncUserUnitMapping(ctx, userMarker.GetUserId()); err != nil {
+					if err := s.unitUserState.SyncUserUnitMapping(
+						ctx,
+						userMarker.GetUserId(),
+					); err != nil {
 						s.logger.Error(
 							"failed to sync user unit mapping for usermarker put event",
 							zap.Int32("user_id", userMarker.GetUserId()),
@@ -196,7 +199,7 @@ func (s *Housekeeper) watchUserChanges(
 							s.removeDispatchersForUser(ctx, userID, []string{current.job})
 						}
 
-						if err := s.syncUserUnitMapping(ctx, userID); err != nil {
+						if err := s.unitUserState.SyncUserUnitMapping(ctx, userID); err != nil {
 							s.logger.Error(
 								"failed to sync user unit mapping for stale usermarker delete event",
 								zap.Int32("user_id", userID),
@@ -217,7 +220,7 @@ func (s *Housekeeper) watchUserChanges(
 					// A deleted marker means the user is no longer on duty. Reconcile
 					// durable membership immediately instead of waiting for a unit ping
 					// or the daily audit.
-					if err := s.syncUserUnitMapping(ctx, userID); err != nil {
+					if err := s.unitUserState.SyncUserUnitMapping(ctx, userID); err != nil {
 						s.logger.Error(
 							"failed to sync user unit mapping for usermarker delete event",
 							zap.Int32("user_id", userID),

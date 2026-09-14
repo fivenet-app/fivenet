@@ -160,7 +160,10 @@ func (s *Housekeeper) handleUserInfoReconcileMessage(ctx context.Context, msg je
 	job := info.GetJob()
 	if job == "" {
 		s.metrics.IncHousekeeperEvent("userinfo_reconcile", "invalid_authoritative_job")
-		s.logger.Error("current user info has no primary job", zap.Int32("user_id", event.GetUserId()))
+		s.logger.Error(
+			"current user info has no primary job",
+			zap.Int32("user_id", event.GetUserId()),
+		)
 		if err := msg.Term(); err != nil {
 			s.logger.Error("failed to terminate invalid user info event", zap.Error(err))
 		}
@@ -194,7 +197,8 @@ func (s *Housekeeper) handleUserInfoReconcileMessage(ctx context.Context, msg je
 func (s *Housekeeper) retryUserInfoReconcileMessage(msg jetstream.Msg, operation string) {
 	retryDelay := userInfoReconcileRetryDelay
 	metadata, metadataErr := msg.Metadata()
-	if metadataErr == nil && metadata != nil && metadata.NumDelivered >= userInfoReconcileSlowAfter {
+	if metadataErr == nil && metadata != nil &&
+		metadata.NumDelivered >= userInfoReconcileSlowAfter {
 		retryDelay = userInfoReconcileSlowRetry
 		s.metrics.IncHousekeeperEvent("userinfo_reconcile", operation+"_slow_retry")
 		s.logger.Warn("slowing retries for repeatedly failing user info reconciliation event",
@@ -223,7 +227,7 @@ func (s *Housekeeper) reconcileUserJobChangeWithDispatcherJobs(
 	job string,
 	dispatcherJobs map[string]struct{},
 ) error {
-	removedUnit, err := s.reconcileUserUnitJobChange(ctx, userID, job)
+	removedUnit, err := s.unitUserState.ReconcileUserJobChange(ctx, userID, job)
 	var errs error
 	if err != nil {
 		errs = errors.Join(errs, fmt.Errorf("failed to reconcile unit assignment: %w", err))
@@ -233,22 +237,29 @@ func (s *Housekeeper) reconcileUserJobChangeWithDispatcherJobs(
 
 	if dispatcherJobs == nil {
 		dispatcherJobs = map[string]struct{}{}
-		s.rangeDispatchers(func(dispatcherJob string, value *centrumdispatchers.Dispatchers) bool {
-			for _, dispatcher := range value.GetDispatchers() {
-				if dispatcher.GetUserId() == userID {
-					dispatcherJobs[dispatcherJob] = struct{}{}
-					break
+		s.dispatcherUserState.Range(
+			func(dispatcherJob string, value *centrumdispatchers.Dispatchers) bool {
+				for _, dispatcher := range value.GetDispatchers() {
+					if dispatcher.GetUserId() == userID {
+						dispatcherJobs[dispatcherJob] = struct{}{}
+						break
+					}
 				}
-			}
-			return true
-		})
+				return true
+			},
+		)
 	}
 
 	for dispatcherJob := range dispatcherJobs {
 		if dispatcherJob == job {
 			continue
 		}
-		if err := s.setDispatcherState(ctx, dispatcherJob, userID, false); err != nil {
+		if err := s.dispatcherUserState.SetUserState(
+			ctx,
+			dispatcherJob,
+			userID,
+			false,
+		); err != nil {
 			errs = errors.Join(errs, fmt.Errorf(
 				"failed to remove user from %s dispatchers: %w",
 				dispatcherJob,
@@ -268,7 +279,8 @@ func (s *Housekeeper) reconcileUserJobChangeWithDispatcherJobs(
 func (s *Housekeeper) reconcileUserInfoState(ctx context.Context) (int, int, error) {
 	userIDs := map[int32]struct{}{}
 	dispatcherJobsByUser := map[int32]map[string]struct{}{}
-	s.units.Range(func(_ string, unit *centrumunits.Unit) bool {
+
+	s.unitUserState.Range(func(_ string, unit *centrumunits.Unit) bool {
 		if unit == nil {
 			return true
 		}
@@ -279,7 +291,7 @@ func (s *Housekeeper) reconcileUserInfoState(ctx context.Context) (int, int, err
 		}
 		return true
 	})
-	s.rangeDispatchers(func(job string, value *centrumdispatchers.Dispatchers) bool {
+	s.dispatcherUserState.Range(func(job string, value *centrumdispatchers.Dispatchers) bool {
 		for _, dispatcher := range value.GetDispatchers() {
 			if dispatcher.GetUserId() > 0 {
 				userID := dispatcher.GetUserId()
@@ -322,7 +334,10 @@ func (s *Housekeeper) reconcileUserInfoState(ctx context.Context) (int, int, err
 func (s *Housekeeper) runReconcileUserInfoState(ctx context.Context, _ *cron.CronjobData) error {
 	startedAt := time.Now()
 	defer func() {
-		s.metrics.ObserveHousekeeperDuration("reconcile_userinfo_state", time.Since(startedAt).Seconds())
+		s.metrics.ObserveHousekeeperDuration(
+			"reconcile_userinfo_state",
+			time.Since(startedAt).Seconds(),
+		)
 	}()
 
 	processed, discovered, err := s.reconcileUserInfoState(ctx)

@@ -180,12 +180,18 @@ func (s *Server) Stream(
 			continue
 		}
 		if errors.Is(err, errLivemapUserInfoResync) {
+			if ctx.Err() != nil {
+				return nil
+			}
 			replacement := s.userinfoChanges.SubscribeUserInfoChanges()
 			s.userinfoChanges.UnsubscribeUserInfoChanges(userInfoChanges)
 			userInfoChanges = replacement
 			continue
 		}
 		if errors.Is(err, errLivemapMarkerFeedResync) {
+			if ctx.Err() != nil {
+				return nil
+			}
 			continue
 		}
 		if protoutils.IsContextCanceled(err) {

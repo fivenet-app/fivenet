@@ -8,6 +8,7 @@ import (
 
 	centrumsettings "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/centrum/settings"
 	centrumunits "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/centrum/units"
+	pbcentrum "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/centrum"
 	testnats "github.com/fivenet-app/fivenet/v2026/internal/tests/nats"
 	"github.com/fivenet-app/fivenet/v2026/pkg/utils/broker"
 	eventscentrum "github.com/fivenet-app/fivenet/v2026/services/centrum/events"
@@ -58,6 +59,42 @@ func newFeedHubTestServer(t *testing.T) (*Server, context.CancelFunc) {
 	})
 
 	return srv, cancel
+}
+
+func TestFeedHubPublishesResyncEvent(t *testing.T) {
+	t.Parallel()
+
+	ctx, cancel := context.WithCancel(t.Context())
+	defer cancel()
+	srv := &Server{
+		feedBroker: broker.NewWithResyncOnSlowSubscriber[*feedEvent](10),
+		metrics:    centrummetrics.Get(),
+	}
+	go srv.feedBroker.Start(ctx)
+
+	feed := srv.feedBroker.Subscribe()
+	srv.publishFeedResync("events")
+	event := waitForFeedEvent(t, feed, func(event *feedEvent) bool { return event.Resync })
+	assert.Equal(t, uint64(1), event.Sequence)
+}
+
+func TestFeedHubDoesNotAdvanceSequenceWithoutSubscribers(t *testing.T) {
+	t.Parallel()
+
+	ctx, cancel := context.WithCancel(t.Context())
+	defer cancel()
+	srv := &Server{
+		feedBroker: broker.NewWithResyncOnSlowSubscriber[*feedEvent](10),
+		metrics:    centrummetrics.Get(),
+	}
+	srv.publishFeedEvent("events", "", &pbcentrum.StreamResponse{}, 0)
+	assert.Equal(t, uint64(0), srv.feedSequence.Load())
+
+	go srv.feedBroker.Start(ctx)
+	feed := srv.feedBroker.Subscribe()
+	srv.publishFeedEvent("events", "", &pbcentrum.StreamResponse{}, 0)
+	event := waitForFeedEvent(t, feed, func(event *feedEvent) bool { return !event.Resync })
+	assert.Equal(t, uint64(1), event.Sequence)
 }
 
 func waitForFeedHubConsumer(t *testing.T, srv *Server, streamName string) {

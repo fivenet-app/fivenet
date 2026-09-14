@@ -99,7 +99,7 @@ func (s *Housekeeper) idleWatcher(ctx context.Context) error {
 			id, _ := strconv.ParseInt(idStr, 10, 64)
 
 			// double-check it is still open, then cancel & archive
-			dsp, err := s.getDispatchProjection(ctx, id)
+			dsp, err := s.dispatchLifecycle.Get(ctx, id)
 			if err != nil || dsp == nil ||
 				centrumutils.IsStatusDispatchComplete(dsp.GetStatus().GetStatus()) {
 				continue // Already handled elsewhere
@@ -141,13 +141,13 @@ func (s *Housekeeper) dispatchCleanupWatcher(ctx context.Context) error {
 				continue
 			}
 
-			dsp, err := s.getDispatchProjection(ctx, id)
+			dsp, err := s.dispatchLifecycle.Get(ctx, id)
 			if err != nil || dsp == nil ||
 				!centrumutils.IsStatusDispatchComplete(dsp.GetStatus().GetStatus()) {
 				continue
 			}
 
-			if err := s.deleteDispatch(ctx, id, false); err != nil {
+			if err := s.dispatchLifecycle.Delete(ctx, id, false); err != nil {
 				s.logger.Error(
 					"failed to delete completed dispatch",
 					zap.Int64("dispatch_id", id),
@@ -198,14 +198,18 @@ func (s *Housekeeper) projectionCleanupWatcher(ctx context.Context) error {
 }
 
 func (s *Housekeeper) handleProjectionCleanup(ctx context.Context, id int64) {
-	dsp, err := s.getDispatchProjection(ctx, id)
+	dsp, err := s.dispatchLifecycle.Get(ctx, id)
 	if err != nil || dsp == nil {
 		return
 	}
 
 	if dsp.GetCreatedAt() != nil &&
 		time.Until(dsp.GetCreatedAt().AsTime().Add(dispatches.ProjectionTTL)) > 0 {
-		if err := s.scheduleProjectionCleanup(ctx, id, dsp.GetCreatedAt()); err != nil {
+		if err := s.dispatchLifecycle.ScheduleProjectionCleanup(
+			ctx,
+			id,
+			dsp.GetCreatedAt(),
+		); err != nil {
 			s.logger.Error(
 				"failed to reschedule dispatch projection cleanup",
 				zap.Int64("dispatch_id", id),
@@ -215,7 +219,7 @@ func (s *Housekeeper) handleProjectionCleanup(ctx context.Context, id int64) {
 		return
 	}
 
-	if err := s.deleteDispatch(ctx, id, false); err != nil {
+	if err := s.dispatchLifecycle.Delete(ctx, id, false); err != nil {
 		s.logger.Error(
 			"failed to delete expired dispatch projection",
 			zap.Int64("dispatch_id", id),
@@ -228,11 +232,15 @@ func (s *Housekeeper) handleProjectionCleanup(ctx context.Context, id int64) {
 }
 
 func (s *Housekeeper) cancelDispatch(ctx context.Context, dsp *centrumdispatches.Dispatch) {
-	if _, err := s.updateDispatchStatus(ctx, dsp.GetId(), &centrumdispatches.DispatchStatus{
-		CreatedAt:  timestamp.Now(),
-		DispatchId: dsp.GetId(),
-		Status:     centrumdispatches.StatusDispatch_STATUS_DISPATCH_CANCELLED,
-	}); err != nil {
+	if _, err := s.dispatchLifecycle.UpdateStatus(
+		ctx,
+		dsp.GetId(),
+		&centrumdispatches.DispatchStatus{
+			CreatedAt:  timestamp.Now(),
+			DispatchId: dsp.GetId(),
+			Status:     centrumdispatches.StatusDispatch_STATUS_DISPATCH_CANCELLED,
+		},
+	); err != nil {
 		s.logger.Error(
 			"failed to update dispatch status to cancelled",
 			zap.Int64("dispatch_id", dsp.GetId()),
@@ -240,7 +248,7 @@ func (s *Housekeeper) cancelDispatch(ctx context.Context, dsp *centrumdispatches
 		)
 		return
 	}
-	if err := s.addDispatchAttribute(
+	if err := s.dispatchLifecycle.AddAttributeToDispatch(
 		ctx,
 		dsp,
 		centrumdispatches.DispatchAttribute_DISPATCH_ATTRIBUTE_TOO_OLD,
@@ -253,7 +261,7 @@ func (s *Housekeeper) cancelDispatch(ctx context.Context, dsp *centrumdispatches
 	}
 
 	// Remove from kv so the UI gets the event
-	if err := s.deleteDispatch(ctx, dsp.GetId(), false); err != nil {
+	if err := s.dispatchLifecycle.Delete(ctx, dsp.GetId(), false); err != nil {
 		s.logger.Error(
 			"failed to delete idle dispatch",
 			zap.Int64("dispatch_id", dsp.GetId()),

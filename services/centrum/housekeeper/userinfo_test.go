@@ -7,6 +7,7 @@ import (
 	"time"
 
 	centrumdispatchers "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/centrum/dispatchers"
+	centrumunits "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/centrum/units"
 	jobscolleagues "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/jobs/colleagues"
 	pbuserinfo "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/userinfo"
 	pkguserinfo "github.com/fivenet-app/fivenet/v2026/pkg/userinfo"
@@ -76,28 +77,32 @@ func TestReconcileUserJobChangeRemovesOnlyCrossJobState(t *testing.T) {
 		metrics:  centrummetrics.Get(),
 		userinfo: userInfoRetrieverForTest(42, "police"),
 		tracer:   noop.NewTracerProvider().Tracer("test"),
-		reconcileUserUnitJobChange: func(_ context.Context, userID int32, job string) (bool, error) {
-			unitChanges <- struct {
-				userID int32
-				job    string
-			}{userID: userID, job: job}
-			return true, nil
+		unitUserState: fakeUnitUserState{
+			reconcile: func(_ context.Context, userID int32, job string) (bool, error) {
+				unitChanges <- struct {
+					userID int32
+					job    string
+				}{userID: userID, job: job}
+				return true, nil
+			},
 		},
-		rangeDispatchers: func(fn func(string, *centrumdispatchers.Dispatchers) bool) {
-			fn("ambulance", &centrumdispatchers.Dispatchers{
-				Job:         "ambulance",
-				Dispatchers: []*jobscolleagues.Colleague{{UserId: 42}},
-			})
-			fn("police", &centrumdispatchers.Dispatchers{
-				Job:         "police",
-				Dispatchers: []*jobscolleagues.Colleague{{UserId: 42}},
-			})
-		},
-		setDispatcherState: func(_ context.Context, job string, userID int32, active bool) error {
-			assert.Equal(t, int32(42), userID)
-			assert.False(t, active)
-			dispatcherRemovals <- job
-			return nil
+		dispatcherUserState: fakeDispatcherUserState{
+			rangeFn: func(fn func(string, *centrumdispatchers.Dispatchers) bool) {
+				fn("ambulance", &centrumdispatchers.Dispatchers{
+					Job:         "ambulance",
+					Dispatchers: []*jobscolleagues.Colleague{{UserId: 42}},
+				})
+				fn("police", &centrumdispatchers.Dispatchers{
+					Job:         "police",
+					Dispatchers: []*jobscolleagues.Colleague{{UserId: 42}},
+				})
+			},
+			set: func(_ context.Context, job string, userID int32, active bool) error {
+				assert.Equal(t, int32(42), userID)
+				assert.False(t, active)
+				dispatcherRemovals <- job
+				return nil
+			},
 		},
 	}
 
@@ -117,10 +122,12 @@ func TestHandleUserInfoReconcileMessageAcknowledgesOnlyAfterSuccess(t *testing.T
 		logger:   zap.NewNop(),
 		metrics:  centrummetrics.Get(),
 		userinfo: userInfoRetrieverForTest(42, "police"),
-		reconcileUserUnitJobChange: func(context.Context, int32, string) (bool, error) {
-			return false, nil
+		unitUserState: fakeUnitUserState{
+			reconcile: func(context.Context, int32, string) (bool, error) {
+				return false, nil
+			},
 		},
-		rangeDispatchers: func(func(string, *centrumdispatchers.Dispatchers) bool) {},
+		dispatcherUserState: fakeDispatcherUserState{},
 	}
 
 	h.handleUserInfoReconcileMessage(t.Context(), msg)
@@ -137,10 +144,12 @@ func TestHandleUserInfoReconcileMessageRetriesFailure(t *testing.T) {
 		logger:   zap.NewNop(),
 		metrics:  centrummetrics.Get(),
 		userinfo: userInfoRetrieverForTest(42, "police"),
-		reconcileUserUnitJobChange: func(context.Context, int32, string) (bool, error) {
-			return false, errors.New("database unavailable")
+		unitUserState: fakeUnitUserState{
+			reconcile: func(context.Context, int32, string) (bool, error) {
+				return false, errors.New("database unavailable")
+			},
 		},
-		rangeDispatchers: func(func(string, *centrumdispatchers.Dispatchers) bool) {},
+		dispatcherUserState: fakeDispatcherUserState{},
 	}
 
 	h.handleUserInfoReconcileMessage(t.Context(), msg)
@@ -158,10 +167,12 @@ func TestHandleUserInfoReconcileMessageSlowsRepeatedFailure(t *testing.T) {
 		logger:   zap.NewNop(),
 		metrics:  centrummetrics.Get(),
 		userinfo: userInfoRetrieverForTest(42, "police"),
-		reconcileUserUnitJobChange: func(context.Context, int32, string) (bool, error) {
-			return false, errors.New("database unavailable")
+		unitUserState: fakeUnitUserState{
+			reconcile: func(context.Context, int32, string) (bool, error) {
+				return false, errors.New("database unavailable")
+			},
 		},
-		rangeDispatchers: func(func(string, *centrumdispatchers.Dispatchers) bool) {},
+		dispatcherUserState: fakeDispatcherUserState{},
 	}
 
 	h.handleUserInfoReconcileMessage(t.Context(), msg)
@@ -195,17 +206,21 @@ func TestReconcileUserJobChangeUsesKnownDispatcherJobs(t *testing.T) {
 		logger:   zap.NewNop(),
 		metrics:  centrummetrics.Get(),
 		userinfo: userInfoRetrieverForTest(42, "police"),
-		reconcileUserUnitJobChange: func(context.Context, int32, string) (bool, error) {
-			return false, nil
+		unitUserState: fakeUnitUserState{
+			reconcile: func(context.Context, int32, string) (bool, error) {
+				return false, nil
+			},
 		},
-		rangeDispatchers: func(func(string, *centrumdispatchers.Dispatchers) bool) {
-			require.Fail(t, "dispatcher projections must not be scanned when jobs are known")
-		},
-		setDispatcherState: func(_ context.Context, job string, userID int32, active bool) error {
-			assert.Equal(t, int32(42), userID)
-			assert.False(t, active)
-			dispatcherRemovals <- job
-			return nil
+		dispatcherUserState: fakeDispatcherUserState{
+			rangeFn: func(func(string, *centrumdispatchers.Dispatchers) bool) {
+				require.Fail(t, "dispatcher projections must not be scanned when jobs are known")
+			},
+			set: func(_ context.Context, job string, userID int32, active bool) error {
+				assert.Equal(t, int32(42), userID)
+				assert.False(t, active)
+				dispatcherRemovals <- job
+				return nil
+			},
 		},
 	}
 
@@ -218,6 +233,43 @@ func TestReconcileUserJobChangeUsesKnownDispatcherJobs(t *testing.T) {
 	assert.Equal(t, "ambulance", <-dispatcherRemovals)
 }
 
+func TestReconcileUserJobChangeRemovesAllOldDispatcherJobs(t *testing.T) {
+	t.Parallel()
+
+	removed := map[string]bool{}
+	h := &Housekeeper{
+		logger:   zap.NewNop(),
+		metrics:  centrummetrics.Get(),
+		userinfo: userInfoRetrieverForTest(42, "police"),
+		unitUserState: fakeUnitUserState{
+			reconcile: func(context.Context, int32, string) (bool, error) {
+				return false, nil
+			},
+		},
+		dispatcherUserState: fakeDispatcherUserState{
+			set: func(_ context.Context, job string, userID int32, active bool) error {
+				assert.Equal(t, int32(42), userID)
+				assert.False(t, active)
+				removed[job] = true
+				return nil
+			},
+		},
+	}
+
+	require.NoError(t, h.reconcileUserJobChangeWithDispatcherJobs(
+		t.Context(),
+		42,
+		"police",
+		map[string]struct{}{
+			"ambulance": {},
+			"fire":      {},
+			"police":    {},
+		},
+	))
+
+	assert.Equal(t, map[string]bool{"ambulance": true, "fire": true}, removed)
+}
+
 func TestHandleUserInfoReconcileMessageUsesCurrentAuthoritativeJob(t *testing.T) {
 	t.Parallel()
 
@@ -227,14 +279,234 @@ func TestHandleUserInfoReconcileMessageUsesCurrentAuthoritativeJob(t *testing.T)
 		logger:   zap.NewNop(),
 		metrics:  centrummetrics.Get(),
 		userinfo: userInfoRetrieverForTest(42, "fire"),
-		reconcileUserUnitJobChange: func(_ context.Context, _ int32, job string) (bool, error) {
-			reconciledJob = job
-			return false, nil
+		unitUserState: fakeUnitUserState{
+			reconcile: func(_ context.Context, _ int32, job string) (bool, error) {
+				reconciledJob = job
+				return false, nil
+			},
 		},
-		rangeDispatchers: func(func(string, *centrumdispatchers.Dispatchers) bool) {},
+		dispatcherUserState: fakeDispatcherUserState{},
 	}
 
 	h.handleUserInfoReconcileMessage(t.Context(), msg)
 	assert.Equal(t, "fire", reconciledJob)
 	assert.True(t, msg.acked)
+}
+
+func TestHandleUserInfoReconcileMessageRetriesDispatcherCleanupFailure(t *testing.T) {
+	t.Parallel()
+
+	msg := userInfoReconcileMessage(t, 42, "police")
+	h := &Housekeeper{
+		logger:   zap.NewNop(),
+		metrics:  centrummetrics.Get(),
+		userinfo: userInfoRetrieverForTest(42, "police"),
+		unitUserState: fakeUnitUserState{
+			reconcile: func(context.Context, int32, string) (bool, error) {
+				return true, nil
+			},
+		},
+		dispatcherUserState: fakeDispatcherUserState{
+			rangeFn: func(fn func(string, *centrumdispatchers.Dispatchers) bool) {
+				fn("ambulance", &centrumdispatchers.Dispatchers{
+					Job:         "ambulance",
+					Dispatchers: []*jobscolleagues.Colleague{{UserId: 42}},
+				})
+			},
+			set: func(context.Context, string, int32, bool) error {
+				return errors.New("dispatcher store unavailable")
+			},
+		},
+	}
+
+	h.handleUserInfoReconcileMessage(t.Context(), msg)
+	assert.False(t, msg.acked)
+	assert.Equal(t, userInfoReconcileRetryDelay, msg.nakDelay)
+	assert.False(t, msg.terminated)
+}
+
+func TestHandleUserInfoReconcileMessageTerminatesWhenAuthoritativeJobIsEmpty(t *testing.T) {
+	t.Parallel()
+
+	msg := userInfoReconcileMessage(t, 42, "police")
+	h := &Housekeeper{
+		logger:   zap.NewNop(),
+		metrics:  centrummetrics.Get(),
+		userinfo: userInfoRetrieverForTest(42, ""),
+	}
+
+	h.handleUserInfoReconcileMessage(t.Context(), msg)
+	assert.False(t, msg.acked)
+	assert.Zero(t, msg.nakDelay)
+	assert.True(t, msg.terminated)
+}
+
+func TestHandleUserInfoReconcileMessageUsesAuthoritativeJobAcrossStaleEvents(t *testing.T) {
+	t.Parallel()
+
+	jobs := make([]string, 0, 2)
+	h := &Housekeeper{
+		logger:   zap.NewNop(),
+		metrics:  centrummetrics.Get(),
+		userinfo: userInfoRetrieverForTest(42, "fire"),
+		unitUserState: fakeUnitUserState{
+			reconcile: func(_ context.Context, _ int32, job string) (bool, error) {
+				jobs = append(jobs, job)
+				return false, nil
+			},
+		},
+		dispatcherUserState: fakeDispatcherUserState{},
+	}
+
+	first := userInfoReconcileMessage(t, 42, "police")
+	second := userInfoReconcileMessage(t, 42, "ambulance")
+	h.handleUserInfoReconcileMessage(t.Context(), first)
+	h.handleUserInfoReconcileMessage(t.Context(), second)
+
+	assert.Equal(t, []string{"fire", "fire"}, jobs)
+	assert.True(t, first.acked)
+	assert.True(t, second.acked)
+}
+
+func TestHandleUserInfoReconcileMessageDoesNotAckAfterContextCancellation(t *testing.T) {
+	t.Parallel()
+
+	msg := userInfoReconcileMessage(t, 42, "police")
+	ctx, cancel := context.WithCancel(t.Context())
+	cancel()
+
+	h := &Housekeeper{
+		logger:  zap.NewNop(),
+		metrics: centrummetrics.Get(),
+	}
+	h.handleUserInfoReconcileMessage(ctx, msg)
+
+	assert.False(t, msg.acked)
+	assert.Zero(t, msg.nakDelay)
+	assert.False(t, msg.terminated)
+}
+
+func TestHandleUserInfoReconcileMessageTerminatesMalformedEvent(t *testing.T) {
+	t.Parallel()
+
+	msg := &userInfoReconcileTestMsg{data: []byte("not-json")}
+	h := &Housekeeper{
+		logger:  zap.NewNop(),
+		metrics: centrummetrics.Get(),
+	}
+
+	h.handleUserInfoReconcileMessage(t.Context(), msg)
+
+	assert.False(t, msg.acked)
+	assert.Zero(t, msg.nakDelay)
+	assert.True(t, msg.terminated)
+}
+
+func TestHandleUserInfoReconcileMessageTerminatesInvalidEvent(t *testing.T) {
+	t.Parallel()
+
+	msg := userInfoReconcileMessage(t, 0, "police")
+	h := &Housekeeper{
+		logger:  zap.NewNop(),
+		metrics: centrummetrics.Get(),
+	}
+
+	h.handleUserInfoReconcileMessage(t.Context(), msg)
+
+	assert.False(t, msg.acked)
+	assert.Zero(t, msg.nakDelay)
+	assert.True(t, msg.terminated)
+}
+
+func TestReconcileUserInfoStateDiscoversAndDeduplicatesProjectionUsers(t *testing.T) {
+	t.Parallel()
+
+	var reconciled []int32
+	var removedDispatchers []string
+	h := &Housekeeper{
+		logger:   zap.NewNop(),
+		metrics:  centrummetrics.Get(),
+		userinfo: userInfoRetrieverForTest(42, "police"),
+		unitUserState: fakeUnitUserState{rangeFn: func(fn func(string, *centrumunits.Unit) bool) {
+			fn("unit.1", &centrumunits.Unit{
+				Users: []*centrumunits.UnitAssignment{{UserId: 42}},
+			})
+			fn("unit.2", &centrumunits.Unit{
+				Users: []*centrumunits.UnitAssignment{{UserId: 42}},
+			})
+		}, reconcile: func(_ context.Context, userID int32, job string) (bool, error) {
+			reconciled = append(reconciled, userID)
+			assert.Equal(t, "police", job)
+			return false, nil
+		}},
+		dispatcherUserState: fakeDispatcherUserState{
+			rangeFn: func(fn func(string, *centrumdispatchers.Dispatchers) bool) {
+				fn("ambulance", &centrumdispatchers.Dispatchers{
+					Dispatchers: []*jobscolleagues.Colleague{{UserId: 42}},
+				})
+				fn("fire", &centrumdispatchers.Dispatchers{
+					Dispatchers: []*jobscolleagues.Colleague{{UserId: 42}},
+				})
+				fn("police", &centrumdispatchers.Dispatchers{
+					Dispatchers: []*jobscolleagues.Colleague{{UserId: 42}},
+				})
+			},
+			set: func(_ context.Context, job string, userID int32, active bool) error {
+				assert.Equal(t, int32(42), userID)
+				assert.False(t, active)
+				removedDispatchers = append(removedDispatchers, job)
+				return nil
+			},
+		},
+	}
+
+	processed, discovered, err := h.reconcileUserInfoState(t.Context())
+	require.NoError(t, err)
+	assert.Equal(t, 1, processed)
+	assert.Equal(t, 1, discovered)
+	assert.Equal(t, []int32{42}, reconciled)
+	assert.ElementsMatch(t, []string{"ambulance", "fire"}, removedDispatchers)
+}
+
+func TestReconcileUserInfoStateContinuesAfterLookupFailure(t *testing.T) {
+	t.Parallel()
+
+	h := &Housekeeper{
+		logger:   zap.NewNop(),
+		metrics:  centrummetrics.Get(),
+		userinfo: userInfoRetrieverForTest(42, "police"),
+		unitUserState: fakeUnitUserState{rangeFn: func(fn func(string, *centrumunits.Unit) bool) {
+			fn("unit.42", &centrumunits.Unit{Users: []*centrumunits.UnitAssignment{{UserId: 42}}})
+			fn("unit.7", &centrumunits.Unit{Users: []*centrumunits.UnitAssignment{{UserId: 7}}})
+		}, reconcile: func(context.Context, int32, string) (bool, error) {
+			return false, nil
+		}},
+		dispatcherUserState: fakeDispatcherUserState{},
+	}
+
+	processed, discovered, err := h.reconcileUserInfoState(t.Context())
+	require.Error(t, err)
+	assert.Equal(t, 1, processed)
+	assert.Equal(t, 2, discovered)
+}
+
+func TestReconcileUserInfoStateStopsOnCancellation(t *testing.T) {
+	t.Parallel()
+
+	ctx, cancel := context.WithCancel(t.Context())
+	cancel()
+	h := &Housekeeper{
+		logger:   zap.NewNop(),
+		metrics:  centrummetrics.Get(),
+		userinfo: userInfoRetrieverForTest(42, "police"),
+		unitUserState: fakeUnitUserState{rangeFn: func(fn func(string, *centrumunits.Unit) bool) {
+			fn("unit.42", &centrumunits.Unit{Users: []*centrumunits.UnitAssignment{{UserId: 42}}})
+		}},
+		dispatcherUserState: fakeDispatcherUserState{},
+	}
+
+	processed, discovered, err := h.reconcileUserInfoState(ctx)
+	require.ErrorIs(t, err, context.Canceled)
+	assert.Zero(t, processed)
+	assert.Equal(t, 1, discovered)
 }

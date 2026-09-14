@@ -174,6 +174,9 @@ func (s *Server) Stream(
 			snapshotSequence,
 		); err != nil {
 			if errors.Is(err, errFeedClosed) {
+				if srv.Context().Err() != nil {
+					return nil
+				}
 				s.metrics.IncFeedResync("slow_subscriber")
 				feed = s.feedBroker.Subscribe()
 				continue
@@ -191,6 +194,9 @@ func (s *Server) Stream(
 				continue
 			}
 			if errors.Is(err, errUserInfoResync) {
+				if srv.Context().Err() != nil {
+					return nil
+				}
 				s.metrics.IncFeedResync("userinfo_subscriber_resync")
 				replacement := s.userinfoChanges.SubscribeUserInfoChanges()
 				if err := s.refreshStreamUserInfo(srv.Context(), userInfo); err != nil {

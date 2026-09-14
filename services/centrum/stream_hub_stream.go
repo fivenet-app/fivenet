@@ -39,13 +39,16 @@ func (s *Server) stream(
 			select {
 			case <-gctx.Done():
 				return nil
+
 			case change, ok := <-userInfoChanges:
 				if !ok {
 					return errUserInfoResync
 				}
+
 				if change == nil || change.GetUserId() != userInfo.GetUserId() {
 					continue
 				}
+
 				userInfo.Job = change.GetNewJob()
 				userInfo.JobGrade = change.GetNewJobGrade()
 				return errUserInfoChanged
@@ -53,9 +56,11 @@ func (s *Server) stream(
 				if !ok {
 					return errFeedClosed
 				}
+
 				if event == nil || event.Sequence <= snapshotSequence {
 					continue
 				}
+
 				if event.Sequence != lastSequence+1 {
 					return fmt.Errorf(
 						"%w: expected %d, received %d",
@@ -95,10 +100,12 @@ func (s *Server) stream(
 			select {
 			case <-gctx.Done():
 				return nil
+
 			case response := <-out:
 				if response == nil {
 					continue
 				}
+
 				if err := srv.Send(response); err != nil {
 					if protoutils.IsContextCanceled(err) {
 						return nil

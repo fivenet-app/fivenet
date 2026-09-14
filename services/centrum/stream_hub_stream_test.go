@@ -3,6 +3,7 @@ package centrum
 import (
 	"context"
 	"testing"
+	"time"
 
 	centrumsettings "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/centrum/settings"
 	pbuserinfo "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/userinfo"
@@ -99,4 +100,100 @@ func TestStreamRequestsSnapshotAfterFeedWorkerRestart(t *testing.T) {
 	)
 
 	require.ErrorIs(t, err, errFeedResync)
+}
+
+func TestStreamRequestsSnapshotAfterSequenceGap(t *testing.T) {
+	t.Parallel()
+
+	feed := make(chan *feedEvent, 2)
+	feed <- &feedEvent{Sequence: 1}
+	feed <- &feedEvent{Sequence: 3}
+
+	err := (&Server{}).stream(
+		t.Context(),
+		&testCentrumStreamServer{ctx: t.Context()},
+		&pbuserinfo.UserInfo{UserId: 42, Job: "ambulance", JobGrade: 1},
+		nil,
+		feed,
+		make(chan *pbuserinfo.UserInfoChanged),
+		0,
+	)
+
+	require.ErrorIs(t, err, errFeedResync)
+}
+
+func TestStreamIgnoresEventsCoveredBySnapshot(t *testing.T) {
+	t.Parallel()
+
+	ctx, cancel := context.WithTimeout(t.Context(), 20*time.Millisecond)
+	defer cancel()
+	feed := make(chan *feedEvent, 1)
+	feed <- &feedEvent{Sequence: 1, Resync: true}
+
+	err := (&Server{}).stream(
+		ctx,
+		&testCentrumStreamServer{ctx: ctx},
+		&pbuserinfo.UserInfo{UserId: 42, Job: "ambulance", JobGrade: 1},
+		nil,
+		feed,
+		make(chan *pbuserinfo.UserInfoChanged),
+		1,
+	)
+
+	assert.NoError(t, err)
+}
+
+func TestStreamIgnoresEventsOutsideAuthorizedJobs(t *testing.T) {
+	t.Parallel()
+
+	ctx, cancel := context.WithTimeout(t.Context(), 20*time.Millisecond)
+	defer cancel()
+	feed := make(chan *feedEvent, 1)
+	feed <- &feedEvent{
+		Sequence: 1,
+		Job:      "police",
+		Response: &pbcentrum.StreamResponse{
+			Change: &pbcentrum.StreamResponse_Settings{
+				Settings: &centrumsettings.Settings{Job: "police"},
+			},
+		},
+	}
+
+	err := (&Server{}).stream(
+		ctx,
+		&testCentrumStreamServer{ctx: ctx},
+		&pbuserinfo.UserInfo{UserId: 42, Job: "ambulance", JobGrade: 1},
+		[]string{"ambulance"},
+		feed,
+		make(chan *pbuserinfo.UserInfoChanged),
+		0,
+	)
+
+	assert.NoError(t, err)
+}
+
+func TestStreamRequestsSnapshotAfterOwnSettingsDeletion(t *testing.T) {
+	t.Parallel()
+
+	feed := make(chan *feedEvent, 1)
+	feed <- &feedEvent{
+		Sequence: 1,
+		Response: &pbcentrum.StreamResponse{
+			Change: &pbcentrum.StreamResponse_SettingsDeleted{
+				SettingsDeleted: "ambulance",
+			},
+		},
+	}
+
+	err := (&Server{}).stream(
+		t.Context(),
+		&testCentrumStreamServer{ctx: t.Context()},
+		&pbuserinfo.UserInfo{UserId: 42, Job: "ambulance", JobGrade: 1},
+		nil,
+		feed,
+		make(chan *pbuserinfo.UserInfoChanged),
+		0,
+	)
+
+	require.ErrorIs(t, err, errAccessChanged)
 }
