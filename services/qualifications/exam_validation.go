@@ -1,9 +1,11 @@
 package qualifications
 
 import (
+	"errors"
 	"fmt"
 
 	qualificationsexam "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/qualifications/exam"
+	"google.golang.org/protobuf/proto"
 )
 
 // normalizeExamResponses removes client-controlled question snapshots and accepts
@@ -18,7 +20,9 @@ func normalizeExamResponses(
 		questions[question.GetId()] = question
 	}
 
-	normalized := &qualificationsexam.ExamResponses{Responses: make([]*qualificationsexam.ExamResponse, 0, len(responses.GetResponses()))}
+	normalized := &qualificationsexam.ExamResponses{
+		Responses: make([]*qualificationsexam.ExamResponse, 0, len(responses.GetResponses())),
+	}
 	seen := make(map[int64]struct{}, len(responses.GetResponses()))
 	for _, response := range responses.GetResponses() {
 		question, ok := questions[response.GetQuestionId()]
@@ -33,20 +37,26 @@ func normalizeExamResponses(
 		if err := validateExamResponse(question, response.GetResponse(), partial); err != nil {
 			return nil, err
 		}
+		questionCopy := proto.Clone(question).(*qualificationsexam.ExamQuestion)
+		questionCopy.ClearAnswer()
 		normalized.Responses = append(normalized.Responses, &qualificationsexam.ExamResponse{
 			QuestionId: question.GetId(),
-			Question:   question,
+			Question:   questionCopy,
 			Response:   response.GetResponse(),
 		})
 	}
 	if !partial && len(seen) != len(questions) {
-		return nil, fmt.Errorf("missing exam responses")
+		return nil, errors.New("missing exam responses")
 	}
 
 	return normalized, nil
 }
 
-func validateExamResponse(question *qualificationsexam.ExamQuestion, response *qualificationsexam.ExamResponseData, partial bool) error {
+func validateExamResponse(
+	question *qualificationsexam.ExamQuestion,
+	response *qualificationsexam.ExamResponseData,
+	partial bool,
+) error {
 	if response == nil {
 		return fmt.Errorf("missing response for exam question %d", question.GetId())
 	}
@@ -63,22 +73,31 @@ func validateExamResponse(question *qualificationsexam.ExamQuestion, response *q
 		}
 		maxLength := question.GetData().GetFreeText().GetMaxLength()
 		if maxLength > 0 && int32(len([]rune(text.GetText()))) > maxLength {
-			text.Text = string([]rune(text.GetText())[:maxLength])
+			return fmt.Errorf("response for exam question %d is too long", question.GetId())
 		}
-		if !partial && question.GetData().GetFreeText().GetMinLength() > 0 && int32(len([]rune(text.GetText()))) < question.GetData().GetFreeText().GetMinLength() {
+		if !partial && question.GetData().GetFreeText().GetMinLength() > 0 &&
+			int32(len([]rune(text.GetText()))) < question.GetData().GetFreeText().GetMinLength() {
 			return fmt.Errorf("response for exam question %d is too short", question.GetId())
 		}
 	case question.GetData().GetSingleChoice() != nil:
 		choice := response.GetSingleChoice()
-		if choice == nil || !contains(question.GetData().GetSingleChoice().GetChoices(), choice.GetChoice()) {
+		if choice == nil ||
+			!contains(question.GetData().GetSingleChoice().GetChoices(), choice.GetChoice()) {
 			return fmt.Errorf("invalid choice for exam question %d", question.GetId())
 		}
 	case question.GetData().GetMultipleChoice() != nil:
 		choices := response.GetMultipleChoice()
-		if choices == nil || !uniqueSubset(choices.GetChoices(), question.GetData().GetMultipleChoice().GetChoices()) {
+		if choices == nil ||
+			!uniqueSubset(
+				choices.GetChoices(),
+				question.GetData().GetMultipleChoice().GetChoices(),
+			) {
 			return fmt.Errorf("invalid choices for exam question %d", question.GetId())
 		}
-		if limit := question.GetData().GetMultipleChoice().GetLimit(); limit > 0 && int32(len(choices.GetChoices())) > limit {
+		if limit := question.GetData().
+			GetMultipleChoice().
+			GetLimit(); limit > 0 &&
+			int32(len(choices.GetChoices())) > limit {
 			return fmt.Errorf("too many choices for exam question %d", question.GetId())
 		}
 	case question.GetData().GetSeparator() != nil || question.GetData().GetImage() != nil:

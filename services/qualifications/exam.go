@@ -24,6 +24,8 @@ import (
 	"google.golang.org/protobuf/types/known/durationpb"
 )
 
+const examSubmissionGracePeriod = 30 * time.Second
+
 func (s *Server) GetExamInfo(
 	ctx context.Context,
 	req *pbqualifications.GetExamInfoRequest,
@@ -105,7 +107,11 @@ func (s *Server) checkIfUserCanTakeExam(
 		}
 	}
 
-	requirementsMet, err := s.store.CheckRequirementsMetForQualification(ctx, quali.GetId(), userInfo.GetUserId())
+	requirementsMet, err := s.store.CheckRequirementsMetForQualification(
+		ctx,
+		quali.GetId(),
+		userInfo.GetUserId(),
+	)
 	if err != nil {
 		return false, err
 	}
@@ -150,7 +156,8 @@ func (s *Server) TakeExam(
 		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 	}
 	if req.GetCancel() {
-		if examUser == nil || examUser.GetEndedAt() != nil {
+		if examUser == nil || examUser.GetEndedAt() != nil ||
+			examUser.GetEndsAt() == nil || !time.Now().Before(examUser.GetEndsAt().AsTime()) {
 			return nil, errorsqualifications.ErrExamDisabled
 		}
 		tx, err := s.db.BeginTx(ctx, nil)
@@ -158,13 +165,43 @@ func (s *Server) TakeExam(
 			return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 		}
 		defer tx.Rollback()
-		if err := s.store.DeleteExamUser(ctx, tx, req.GetQualificationId(), userInfo.GetUserId()); err != nil {
+		active, err := s.store.ClaimActiveExamUser(
+			ctx,
+			tx,
+			req.GetQualificationId(),
+			userInfo.GetUserId(),
+			false,
+			0,
+		)
+		if err != nil {
 			return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 		}
-		if err := s.store.DeleteExamResponses(ctx, tx, req.GetQualificationId(), userInfo.GetUserId()); err != nil {
+		if !active {
+			return nil, errorsqualifications.ErrExamDisabled
+		}
+		if err := s.store.DeleteExamUser(
+			ctx,
+			tx,
+			req.GetQualificationId(),
+			userInfo.GetUserId(),
+		); err != nil {
 			return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 		}
-		if err := s.store.UpdateRequestStatus(ctx, tx, req.GetQualificationId(), userInfo.GetUserId(), qualifications.RequestStatus_REQUEST_STATUS_ACCEPTED); err != nil {
+		if err := s.store.DeleteExamResponses(
+			ctx,
+			tx,
+			req.GetQualificationId(),
+			userInfo.GetUserId(),
+		); err != nil {
+			return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
+		}
+		if err := s.store.UpdateRequestStatus(
+			ctx,
+			tx,
+			req.GetQualificationId(),
+			userInfo.GetUserId(),
+			qualifications.RequestStatus_REQUEST_STATUS_ACCEPTED,
+		); err != nil {
 			return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 		}
 		if err := tx.Commit(); err != nil {
@@ -184,7 +221,10 @@ func (s *Server) TakeExam(
 	timesUp := examUser != nil && examUser.GetEndsAt() != nil &&
 		!time.Now().Before(examUser.GetEndsAt().AsTime())
 	if examUser != nil && (examUser.GetEndedAt() != nil || timesUp) {
-		return &pbqualifications.TakeExamResponse{ExamUser: publicExamUser(examUser), TimesUp: true}, nil
+		return &pbqualifications.TakeExamResponse{
+			ExamUser: publicExamUser(examUser),
+			TimesUp:  true,
+		}, nil
 	}
 
 	var exam *qualificationsexam.ExamQuestions
@@ -232,7 +272,10 @@ func (s *Server) TakeExam(
 			req.GetQualificationId(),
 			userInfo.GetUserId(),
 			time.Now().Add(examTime),
-			&qualificationsexam.ExamSnapshot{Exam: examWithAnswers, Settings: quali.GetExamSettings()},
+			&qualificationsexam.ExamSnapshot{
+				Exam:     examWithAnswers,
+				Settings: quali.GetExamSettings(),
+			},
 		); err != nil {
 			if !dbutils.IsDuplicateError(err) {
 				return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
@@ -299,7 +342,8 @@ func (s *Server) SubmitExam(
 	if examUser != nil && examUser.GetStartedAt() != nil {
 		duration = endedAt.Sub(examUser.GetStartedAt().AsTime())
 	}
-	if examUser == nil || examUser.GetEndedAt() != nil || examUser.GetEndsAt() == nil || !endedAt.Before(examUser.GetEndsAt().AsTime()) {
+	if examUser == nil || examUser.GetEndedAt() != nil || examUser.GetEndsAt() == nil ||
+		!endedAt.Before(examUser.GetEndsAt().AsTime().Add(examSubmissionGracePeriod)) {
 		return nil, status.Error(codes.FailedPrecondition, "exam attempt is not active")
 	}
 
@@ -323,7 +367,14 @@ func (s *Server) SubmitExam(
 	// Defer a rollback in case anything fails
 	defer tx.Rollback()
 	publishNotifications := make([]func(context.Context) error, 0, 1)
-	active, err := s.store.ClaimActiveExamUser(ctx, tx, req.GetQualificationId(), userInfo.GetUserId(), !req.GetPartial())
+	active, err := s.store.ClaimActiveExamUser(
+		ctx,
+		tx,
+		req.GetQualificationId(),
+		userInfo.GetUserId(),
+		!req.GetPartial(),
+		examSubmissionGracePeriod,
+	)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 	}
@@ -512,18 +563,18 @@ func examForCandidate(exam *qualificationsexam.ExamQuestions) *qualificationsexa
 	if exam == nil {
 		return nil
 	}
-	copy := proto.Clone(exam).(*qualificationsexam.ExamQuestions)
-	for _, question := range copy.GetQuestions() {
-		question.Answer = nil
+	examCopy := proto.Clone(exam).(*qualificationsexam.ExamQuestions)
+	for _, question := range examCopy.GetQuestions() {
+		question.ClearAnswer()
 	}
-	return copy
+	return examCopy
 }
 
 func publicExamUser(examUser *qualificationsexam.ExamUser) *qualificationsexam.ExamUser {
 	if examUser == nil {
 		return nil
 	}
-	copy := proto.Clone(examUser).(*qualificationsexam.ExamUser)
-	copy.Snapshot = nil
-	return copy
+	examUserCopy := proto.Clone(examUser).(*qualificationsexam.ExamUser)
+	examUserCopy.ClearSnapshot()
+	return examUserCopy
 }

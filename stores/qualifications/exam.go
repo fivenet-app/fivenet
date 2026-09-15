@@ -210,7 +210,6 @@ func (s *Store) CreateExamUser(
 			tExamUser.EndsAt,
 			tExamUser.EndedAt,
 			tExamUser.Snapshot,
-			tExamUser.Snapshot,
 		).
 		VALUES(
 			qualificationId,
@@ -233,22 +232,42 @@ func (s *Store) ClaimActiveExamUser(
 	qualificationId int64,
 	userId int32,
 	complete bool,
+	gracePeriod time.Duration,
 ) (bool, error) {
 	tExamUser := table.FivenetQualificationsExamUsers
-	var stmt mysql.Statement
 	conditions := mysql.AND(
 		tExamUser.QualificationID.EQ(mysql.Int64(qualificationId)),
 		tExamUser.UserID.EQ(mysql.Int32(userId)),
 		tExamUser.EndedAt.IS_NULL(),
 		tExamUser.EndsAt.IS_NOT_NULL(),
-		tExamUser.EndsAt.GT(mysql.CURRENT_TIMESTAMP()),
+		tExamUser.EndsAt.GT(mysql.TimestampT(time.Now().Add(-gracePeriod))),
 	)
-	if complete {
-		stmt = tExamUser.UPDATE(tExamUser.EndedAt).SET(mysql.CURRENT_TIMESTAMP()).WHERE(conditions).LIMIT(1)
-	} else {
-		stmt = tExamUser.UPDATE(tExamUser.EndsAt).SET(tExamUser.EndsAt).WHERE(conditions).LIMIT(1)
+	// Lock the attempt before checking or changing its state. In particular,
+	// partial submissions must not rely on RowsAffected from a no-op update:
+	// MySQL reports zero affected rows when the value remains unchanged.
+	var examUser qualificationsexam.ExamUser
+	selectStmt := tExamUser.
+		SELECT(tExamUser.EndedAt, tExamUser.EndsAt).
+		FROM(tExamUser).
+		WHERE(conditions).
+		LIMIT(1).
+		FOR(mysql.UPDATE())
+	if err := selectStmt.QueryContext(ctx, tx, &examUser); err != nil {
+		if errors.Is(err, qrm.ErrNoRows) {
+			return false, nil
+		}
+		return false, err
 	}
-	result, err := stmt.ExecContext(ctx, tx)
+
+	if !complete {
+		return true, nil
+	}
+
+	updateStmt := tExamUser.UPDATE(tExamUser.EndedAt).
+		SET(mysql.CURRENT_TIMESTAMP()).
+		WHERE(conditions).
+		LIMIT(1)
+	result, err := updateStmt.ExecContext(ctx, tx)
 	if err != nil {
 		return false, err
 	}
@@ -283,7 +302,10 @@ func (s *Store) UpsertExamUserEndedAt(
 	return err
 }
 
-func (s *Store) ListExpiredExamUsers(ctx context.Context, limit int64) ([]*qualificationsexam.ExamUser, error) {
+func (s *Store) ListExpiredExamUsers(
+	ctx context.Context,
+	limit int64,
+) ([]*qualificationsexam.ExamUser, error) {
 	tExamUser := table.FivenetQualificationsExamUsers
 	stmt := tExamUser.
 		SELECT(
@@ -293,6 +315,7 @@ func (s *Store) ListExpiredExamUsers(ctx context.Context, limit int64) ([]*quali
 			tExamUser.StartedAt,
 			tExamUser.EndsAt,
 			tExamUser.EndedAt,
+			tExamUser.Snapshot,
 		).
 		FROM(tExamUser).
 		WHERE(mysql.AND(
@@ -304,7 +327,12 @@ func (s *Store) ListExpiredExamUsers(ctx context.Context, limit int64) ([]*quali
 		LIMIT(limit)
 
 	var attempts []*qualificationsexam.ExamUser
-	if err := stmt.QueryContext(ctx, s.db, &attempts); err != nil && !errors.Is(err, qrm.ErrNoRows) {
+	if err := stmt.QueryContext(
+		ctx,
+		s.db,
+		&attempts,
+	); err != nil &&
+		!errors.Is(err, qrm.ErrNoRows) {
 		return nil, err
 	}
 	return attempts, nil
@@ -336,7 +364,12 @@ func (s *Store) ListExamUsersPastRetention(
 		LIMIT(limit)
 
 	var attempts []*qualificationsexam.ExamUser
-	if err := stmt.QueryContext(ctx, s.db, &attempts); err != nil && !errors.Is(err, qrm.ErrNoRows) {
+	if err := stmt.QueryContext(
+		ctx,
+		s.db,
+		&attempts,
+	); err != nil &&
+		!errors.Is(err, qrm.ErrNoRows) {
 		return nil, err
 	}
 	return attempts, nil

@@ -68,7 +68,12 @@ func (h *ExamHousekeeper) RegisterCronjobHandlers(handlers *croner.Handlers) err
 		}
 		for _, attempt := range attempts {
 			if err := h.completeExpiredExam(ctx, attempt); err != nil {
-				h.logger.Error("failed to complete expired exam", zap.Int64("qualification_id", attempt.GetQualificationId()), zap.Int32("user_id", attempt.GetUserId()), zap.Error(err))
+				h.logger.Error(
+					"failed to complete expired exam",
+					zap.Int64("qualification_id", attempt.GetQualificationId()),
+					zap.Int32("user_id", attempt.GetUserId()),
+					zap.Error(err),
+				)
 			}
 		}
 		return nil
@@ -84,7 +89,12 @@ func (h *ExamHousekeeper) RegisterCronjobHandlers(handlers *croner.Handlers) err
 		}
 		for _, attempt := range attempts {
 			if err := h.deleteRetainedExamData(ctx, attempt); err != nil {
-				h.logger.Error("failed to delete retained exam data", zap.Int64("qualification_id", attempt.GetQualificationId()), zap.Int32("user_id", attempt.GetUserId()), zap.Error(err))
+				h.logger.Error(
+					"failed to delete retained exam data",
+					zap.Int64("qualification_id", attempt.GetQualificationId()),
+					zap.Int32("user_id", attempt.GetUserId()),
+					zap.Error(err),
+				)
 			}
 		}
 		return nil
@@ -92,23 +102,44 @@ func (h *ExamHousekeeper) RegisterCronjobHandlers(handlers *croner.Handlers) err
 	return nil
 }
 
-func (h *ExamHousekeeper) deleteRetainedExamData(ctx context.Context, attempt *qualificationsexam.ExamUser) error {
+func (h *ExamHousekeeper) deleteRetainedExamData(
+	ctx context.Context,
+	attempt *qualificationsexam.ExamUser,
+) error {
 	tx, err := h.server.db.BeginTx(ctx, nil)
 	if err != nil {
 		return err
 	}
 	defer tx.Rollback()
-	if err := h.store.DeleteExamResponses(ctx, tx, attempt.GetQualificationId(), attempt.GetUserId()); err != nil {
+	if err := h.store.DeleteExamResponses(
+		ctx,
+		tx,
+		attempt.GetQualificationId(),
+		attempt.GetUserId(),
+	); err != nil {
 		return err
 	}
-	if err := h.store.DeleteExamUser(ctx, tx, attempt.GetQualificationId(), attempt.GetUserId()); err != nil {
+	if err := h.store.DeleteExamUser(
+		ctx,
+		tx,
+		attempt.GetQualificationId(),
+		attempt.GetUserId(),
+	); err != nil {
 		return err
 	}
 	return tx.Commit()
 }
 
-func (h *ExamHousekeeper) completeExpiredExam(ctx context.Context, attempt *qualificationsexam.ExamUser) error {
-	quali, err := h.store.GetQualification(ctx, attempt.GetQualificationId(), &userinfo.UserInfo{Superuser: true}, false)
+func (h *ExamHousekeeper) completeExpiredExam(
+	ctx context.Context,
+	attempt *qualificationsexam.ExamUser,
+) error {
+	quali, err := h.store.GetQualification(
+		ctx,
+		attempt.GetQualificationId(),
+		&userinfo.UserInfo{Superuser: true},
+		false,
+	)
 	if err != nil {
 		return err
 	}
@@ -117,24 +148,46 @@ func (h *ExamHousekeeper) completeExpiredExam(ctx context.Context, attempt *qual
 		return err
 	}
 	defer tx.Rollback()
-	expired, err := h.store.ExpireExamUser(ctx, tx, attempt.GetQualificationId(), attempt.GetUserId())
+	expired, err := h.store.ExpireExamUser(
+		ctx,
+		tx,
+		attempt.GetQualificationId(),
+		attempt.GetUserId(),
+	)
 	if err != nil || !expired {
 		return err
 	}
 	// Expiry holds the attempt row lock, so no partial submission can update the
 	// responses between this read and the grading transaction.
-	responses, _, err := h.store.GetExamResponses(ctx, attempt.GetQualificationId(), attempt.GetUserId())
+	responses, _, err := h.store.GetExamResponses(
+		ctx,
+		attempt.GetQualificationId(),
+		attempt.GetUserId(),
+	)
 	if err != nil {
 		return err
 	}
 	publishNotifications := make([]func(context.Context) error, 0, 1)
-	if err := h.server.gradeExam(ctx, tx, attempt.GetQualificationId(), attempt.GetUserId(), quali, attempt.GetSnapshot(), responses, &publishNotifications); err != nil {
+	if err := h.server.gradeExam(
+		ctx,
+		tx,
+		attempt.GetQualificationId(),
+		attempt.GetUserId(),
+		quali,
+		attempt.GetSnapshot(),
+		responses,
+		&publishNotifications,
+	); err != nil {
 		return err
 	}
 	if err := tx.Commit(); err != nil {
 		return err
 	}
-	notifi.PublishAfterCommit(ctx, h.server.logger, "qualification_result_updated", publishNotifications...)
+	notifi.PublishAfterCommit(
+		ctx,
+		h.server.logger,
+		"qualification_result_updated",
+		publishNotifications...)
 	// A per-user "your exam has expired" notification can be prepared here.
 	return nil
 }

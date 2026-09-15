@@ -28,7 +28,10 @@ func TestCompareExamQuestionsRejectsInvalidPositiveIDs(t *testing.T) {
 	require.Error(t, err)
 	assert.Contains(t, err.Error(), "unknown")
 
-	_, _, _, err = compareExamQuestions(current, []*qualificationsexam.ExamQuestion{{Id: 10}, {Id: 10}})
+	_, _, _, err = compareExamQuestions(
+		current,
+		[]*qualificationsexam.ExamQuestion{{Id: 10}, {Id: 10}},
+	)
 	require.Error(t, err)
 	assert.Contains(t, err.Error(), "duplicate")
 }

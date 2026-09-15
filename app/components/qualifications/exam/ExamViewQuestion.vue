@@ -134,7 +134,12 @@ function enforceMultipleChoiceLimit(choices: string[]): void {
                     </div>
                 </div>
 
-                <UTextarea v-model="response.response.response.freeText.text" :rows="5" :disabled="disabled" />
+                <UTextarea
+                    v-model="response.response.response.freeText.text"
+                    :rows="5"
+                    :maxlength="modelValue?.question.data!.data.freeText.maxLength || undefined"
+                    :disabled="disabled"
+                />
             </div>
 
             <div
