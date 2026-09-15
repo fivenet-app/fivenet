@@ -263,6 +263,30 @@ export interface ExamUser {
      * @generated from protobuf field: optional resources.timestamp.Timestamp ended_at = 6
      */
     endedAt?: Timestamp;
+    /**
+     * @generated from protobuf field: optional resources.qualifications.exam.ExamSnapshot snapshot = 7
+     */
+    snapshot?: ExamSnapshot;
+    /**
+     * @generated from protobuf field: string attempt_id = 8
+     */
+    attemptId: string;
+}
+/**
+ * ExamSnapshot is immutable once an attempt has started. It ensures later
+ * edits to an exam cannot change an in-progress or historical attempt.
+ *
+ * @generated from protobuf message resources.qualifications.exam.ExamSnapshot
+ */
+export interface ExamSnapshot {
+    /**
+     * @generated from protobuf field: resources.qualifications.exam.ExamQuestions exam = 1
+     */
+    exam?: ExamQuestions;
+    /**
+     * @generated from protobuf field: resources.qualifications.exam.QualificationExamSettings settings = 2
+     */
+    settings?: QualificationExamSettings;
 }
 /**
  * @generated from protobuf message resources.qualifications.exam.ExamResponses
@@ -280,6 +304,10 @@ export interface ExamResponses {
      * @generated from protobuf field: repeated resources.qualifications.exam.ExamResponse responses = 3
      */
     responses: ExamResponse[];
+    /**
+     * @generated from protobuf field: string attempt_id = 4
+     */
+    attemptId: string;
 }
 /**
  * @generated from protobuf message resources.qualifications.exam.ExamResponse
@@ -452,10 +480,10 @@ export enum AutoGradeMode {
 class QualificationExamSettings$Type extends MessageType<QualificationExamSettings> {
     constructor() {
         super("resources.qualifications.exam.QualificationExamSettings", [
-            { no: 1, name: "time", kind: "message", T: () => Duration, options: { "buf.validate.field": { required: true, duration: { lt: { seconds: "1036800" }, gte: { seconds: "300" } } } } },
+            { no: 1, name: "time", kind: "message", T: () => Duration, options: { "buf.validate.field": { required: true, duration: { lt: { seconds: "86401" }, gte: { seconds: "300" } } } } },
             { no: 2, name: "auto_grade", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
             { no: 3, name: "auto_grade_mode", kind: "enum", T: () => ["resources.qualifications.exam.AutoGradeMode", AutoGradeMode, "AUTO_GRADE_MODE_"], options: { "buf.validate.field": { enum: { definedOnly: true } } } },
-            { no: 4, name: "minimum_points", kind: "scalar", T: 5 /*ScalarType.INT32*/ }
+            { no: 4, name: "minimum_points", kind: "scalar", T: 5 /*ScalarType.INT32*/, options: { "buf.validate.field": { int32: { lte: 10000, gte: 0 } } } }
         ], { "codegen.dbscanner.dbscanner": { enabled: true } });
     }
     create(value?: PartialMessage<QualificationExamSettings>): QualificationExamSettings {
@@ -1160,13 +1188,16 @@ class ExamUser$Type extends MessageType<ExamUser> {
             { no: 3, name: "created_at", kind: "message", T: () => Timestamp },
             { no: 4, name: "started_at", kind: "message", T: () => Timestamp },
             { no: 5, name: "ends_at", kind: "message", T: () => Timestamp },
-            { no: 6, name: "ended_at", kind: "message", T: () => Timestamp }
+            { no: 6, name: "ended_at", kind: "message", T: () => Timestamp },
+            { no: 7, name: "snapshot", kind: "message", T: () => ExamSnapshot },
+            { no: 8, name: "attempt_id", kind: "scalar", T: 9 /*ScalarType.STRING*/ }
         ]);
     }
     create(value?: PartialMessage<ExamUser>): ExamUser {
         const message = globalThis.Object.create((this.messagePrototype!));
         message.qualificationId = 0;
         message.userId = 0;
+        message.attemptId = "";
         if (value !== undefined)
             reflectionMergePartial<ExamUser>(this, message, value);
         return message;
@@ -1193,6 +1224,12 @@ class ExamUser$Type extends MessageType<ExamUser> {
                     break;
                 case /* optional resources.timestamp.Timestamp ended_at */ 6:
                     message.endedAt = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.endedAt);
+                    break;
+                case /* optional resources.qualifications.exam.ExamSnapshot snapshot */ 7:
+                    message.snapshot = ExamSnapshot.internalBinaryRead(reader, reader.uint32(), options, message.snapshot);
+                    break;
+                case /* string attempt_id */ 8:
+                    message.attemptId = reader.string();
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -1224,6 +1261,12 @@ class ExamUser$Type extends MessageType<ExamUser> {
         /* optional resources.timestamp.Timestamp ended_at = 6; */
         if (message.endedAt)
             Timestamp.internalBinaryWrite(message.endedAt, writer.tag(6, WireType.LengthDelimited).fork(), options).join();
+        /* optional resources.qualifications.exam.ExamSnapshot snapshot = 7; */
+        if (message.snapshot)
+            ExamSnapshot.internalBinaryWrite(message.snapshot, writer.tag(7, WireType.LengthDelimited).fork(), options).join();
+        /* string attempt_id = 8; */
+        if (message.attemptId !== "")
+            writer.tag(8, WireType.LengthDelimited).string(message.attemptId);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -1235,12 +1278,66 @@ class ExamUser$Type extends MessageType<ExamUser> {
  */
 export const ExamUser = new ExamUser$Type();
 // @generated message type with reflection information, may provide speed optimized methods
+class ExamSnapshot$Type extends MessageType<ExamSnapshot> {
+    constructor() {
+        super("resources.qualifications.exam.ExamSnapshot", [
+            { no: 1, name: "exam", kind: "message", T: () => ExamQuestions },
+            { no: 2, name: "settings", kind: "message", T: () => QualificationExamSettings }
+        ], { "codegen.dbscanner.dbscanner": { enabled: true } });
+    }
+    create(value?: PartialMessage<ExamSnapshot>): ExamSnapshot {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        if (value !== undefined)
+            reflectionMergePartial<ExamSnapshot>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: ExamSnapshot): ExamSnapshot {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* resources.qualifications.exam.ExamQuestions exam */ 1:
+                    message.exam = ExamQuestions.internalBinaryRead(reader, reader.uint32(), options, message.exam);
+                    break;
+                case /* resources.qualifications.exam.QualificationExamSettings settings */ 2:
+                    message.settings = QualificationExamSettings.internalBinaryRead(reader, reader.uint32(), options, message.settings);
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: ExamSnapshot, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* resources.qualifications.exam.ExamQuestions exam = 1; */
+        if (message.exam)
+            ExamQuestions.internalBinaryWrite(message.exam, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
+        /* resources.qualifications.exam.QualificationExamSettings settings = 2; */
+        if (message.settings)
+            QualificationExamSettings.internalBinaryWrite(message.settings, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message resources.qualifications.exam.ExamSnapshot
+ */
+export const ExamSnapshot = new ExamSnapshot$Type();
+// @generated message type with reflection information, may provide speed optimized methods
 class ExamResponses$Type extends MessageType<ExamResponses> {
     constructor() {
         super("resources.qualifications.exam.ExamResponses", [
             { no: 1, name: "qualification_id", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ },
             { no: 2, name: "user_id", kind: "scalar", T: 5 /*ScalarType.INT32*/ },
-            { no: 3, name: "responses", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => ExamResponse, options: { "buf.validate.field": { repeated: { maxItems: "100" } } } }
+            { no: 3, name: "responses", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => ExamResponse, options: { "buf.validate.field": { repeated: { maxItems: "100" } } } },
+            { no: 4, name: "attempt_id", kind: "scalar", T: 9 /*ScalarType.STRING*/ }
         ], { "codegen.dbscanner.dbscanner": { enabled: true } });
     }
     create(value?: PartialMessage<ExamResponses>): ExamResponses {
@@ -1248,6 +1345,7 @@ class ExamResponses$Type extends MessageType<ExamResponses> {
         message.qualificationId = 0;
         message.userId = 0;
         message.responses = [];
+        message.attemptId = "";
         if (value !== undefined)
             reflectionMergePartial<ExamResponses>(this, message, value);
         return message;
@@ -1265,6 +1363,9 @@ class ExamResponses$Type extends MessageType<ExamResponses> {
                     break;
                 case /* repeated resources.qualifications.exam.ExamResponse responses */ 3:
                     message.responses.push(ExamResponse.internalBinaryRead(reader, reader.uint32(), options));
+                    break;
+                case /* string attempt_id */ 4:
+                    message.attemptId = reader.string();
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -1287,6 +1388,9 @@ class ExamResponses$Type extends MessageType<ExamResponses> {
         /* repeated resources.qualifications.exam.ExamResponse responses = 3; */
         for (let i = 0; i < message.responses.length; i++)
             ExamResponse.internalBinaryWrite(message.responses[i], writer.tag(3, WireType.LengthDelimited).fork(), options).join();
+        /* string attempt_id = 4; */
+        if (message.attemptId !== "")
+            writer.tag(4, WireType.LengthDelimited).string(message.attemptId);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);

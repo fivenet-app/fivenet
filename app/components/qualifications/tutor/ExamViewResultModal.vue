@@ -105,6 +105,7 @@ const correctCount = computed(() => data.value?.grading?.responses.filter((a) =>
                 :retry="refresh"
             />
             <DataNoDataBlock v-else-if="!data" :type="$t('common.exam')" icon="i-mdi-sigma" />
+            <DataNoDataBlock v-else-if="!data.examUser" :type="$t('common.exam')" icon="i-mdi-sigma" />
 
             <template v-if="data?.responses">
                 <DataNoDataBlock

@@ -1585,6 +1585,8 @@ type ExamUser struct {
 	xxx_hidden_StartedAt       *timestamp.Timestamp   `protobuf:"bytes,4,opt,name=started_at,json=startedAt,proto3,oneof"`
 	xxx_hidden_EndsAt          *timestamp.Timestamp   `protobuf:"bytes,5,opt,name=ends_at,json=endsAt,proto3,oneof"`
 	xxx_hidden_EndedAt         *timestamp.Timestamp   `protobuf:"bytes,6,opt,name=ended_at,json=endedAt,proto3,oneof"`
+	xxx_hidden_Snapshot        *ExamSnapshot          `protobuf:"bytes,7,opt,name=snapshot,proto3,oneof"`
+	xxx_hidden_AttemptId       string                 `protobuf:"bytes,8,opt,name=attempt_id,json=attemptId,proto3"`
 	unknownFields              protoimpl.UnknownFields
 	sizeCache                  protoimpl.SizeCache
 }
@@ -1656,6 +1658,20 @@ func (x *ExamUser) GetEndedAt() *timestamp.Timestamp {
 	return nil
 }
 
+func (x *ExamUser) GetSnapshot() *ExamSnapshot {
+	if x != nil {
+		return x.xxx_hidden_Snapshot
+	}
+	return nil
+}
+
+func (x *ExamUser) GetAttemptId() string {
+	if x != nil {
+		return x.xxx_hidden_AttemptId
+	}
+	return ""
+}
+
 func (x *ExamUser) SetQualificationId(v int64) {
 	x.xxx_hidden_QualificationId = v
 }
@@ -1678,6 +1694,14 @@ func (x *ExamUser) SetEndsAt(v *timestamp.Timestamp) {
 
 func (x *ExamUser) SetEndedAt(v *timestamp.Timestamp) {
 	x.xxx_hidden_EndedAt = v
+}
+
+func (x *ExamUser) SetSnapshot(v *ExamSnapshot) {
+	x.xxx_hidden_Snapshot = v
+}
+
+func (x *ExamUser) SetAttemptId(v string) {
+	x.xxx_hidden_AttemptId = v
 }
 
 func (x *ExamUser) HasCreatedAt() bool {
@@ -1708,6 +1732,13 @@ func (x *ExamUser) HasEndedAt() bool {
 	return x.xxx_hidden_EndedAt != nil
 }
 
+func (x *ExamUser) HasSnapshot() bool {
+	if x == nil {
+		return false
+	}
+	return x.xxx_hidden_Snapshot != nil
+}
+
 func (x *ExamUser) ClearCreatedAt() {
 	x.xxx_hidden_CreatedAt = nil
 }
@@ -1724,6 +1755,10 @@ func (x *ExamUser) ClearEndedAt() {
 	x.xxx_hidden_EndedAt = nil
 }
 
+func (x *ExamUser) ClearSnapshot() {
+	x.xxx_hidden_Snapshot = nil
+}
+
 type ExamUser_builder struct {
 	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
 
@@ -1733,6 +1768,8 @@ type ExamUser_builder struct {
 	StartedAt       *timestamp.Timestamp
 	EndsAt          *timestamp.Timestamp
 	EndedAt         *timestamp.Timestamp
+	Snapshot        *ExamSnapshot
+	AttemptId       string
 }
 
 func (b0 ExamUser_builder) Build() *ExamUser {
@@ -1745,6 +1782,103 @@ func (b0 ExamUser_builder) Build() *ExamUser {
 	x.xxx_hidden_StartedAt = b.StartedAt
 	x.xxx_hidden_EndsAt = b.EndsAt
 	x.xxx_hidden_EndedAt = b.EndedAt
+	x.xxx_hidden_Snapshot = b.Snapshot
+	x.xxx_hidden_AttemptId = b.AttemptId
+	return m0
+}
+
+// ExamSnapshot is immutable once an attempt has started. It ensures later
+// edits to an exam cannot change an in-progress or historical attempt.
+type ExamSnapshot struct {
+	state               protoimpl.MessageState     `protogen:"opaque.v1"`
+	xxx_hidden_Exam     *ExamQuestions             `protobuf:"bytes,1,opt,name=exam,proto3"`
+	xxx_hidden_Settings *QualificationExamSettings `protobuf:"bytes,2,opt,name=settings,proto3"`
+	unknownFields       protoimpl.UnknownFields
+	sizeCache           protoimpl.SizeCache
+}
+
+func (x *ExamSnapshot) Reset() {
+	*x = ExamSnapshot{}
+	mi := &file_resources_qualifications_exam_exam_proto_msgTypes[12]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ExamSnapshot) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ExamSnapshot) ProtoMessage() {}
+
+func (x *ExamSnapshot) ProtoReflect() protoreflect.Message {
+	mi := &file_resources_qualifications_exam_exam_proto_msgTypes[12]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+func (x *ExamSnapshot) GetExam() *ExamQuestions {
+	if x != nil {
+		return x.xxx_hidden_Exam
+	}
+	return nil
+}
+
+func (x *ExamSnapshot) GetSettings() *QualificationExamSettings {
+	if x != nil {
+		return x.xxx_hidden_Settings
+	}
+	return nil
+}
+
+func (x *ExamSnapshot) SetExam(v *ExamQuestions) {
+	x.xxx_hidden_Exam = v
+}
+
+func (x *ExamSnapshot) SetSettings(v *QualificationExamSettings) {
+	x.xxx_hidden_Settings = v
+}
+
+func (x *ExamSnapshot) HasExam() bool {
+	if x == nil {
+		return false
+	}
+	return x.xxx_hidden_Exam != nil
+}
+
+func (x *ExamSnapshot) HasSettings() bool {
+	if x == nil {
+		return false
+	}
+	return x.xxx_hidden_Settings != nil
+}
+
+func (x *ExamSnapshot) ClearExam() {
+	x.xxx_hidden_Exam = nil
+}
+
+func (x *ExamSnapshot) ClearSettings() {
+	x.xxx_hidden_Settings = nil
+}
+
+type ExamSnapshot_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Exam     *ExamQuestions
+	Settings *QualificationExamSettings
+}
+
+func (b0 ExamSnapshot_builder) Build() *ExamSnapshot {
+	m0 := &ExamSnapshot{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.xxx_hidden_Exam = b.Exam
+	x.xxx_hidden_Settings = b.Settings
 	return m0
 }
 
@@ -1753,13 +1887,14 @@ type ExamResponses struct {
 	xxx_hidden_QualificationId int64                  `protobuf:"varint,1,opt,name=qualification_id,json=qualificationId,proto3"`
 	xxx_hidden_UserId          int32                  `protobuf:"varint,2,opt,name=user_id,json=userId,proto3"`
 	xxx_hidden_Responses       *[]*ExamResponse       `protobuf:"bytes,3,rep,name=responses,proto3"`
+	xxx_hidden_AttemptId       string                 `protobuf:"bytes,4,opt,name=attempt_id,json=attemptId,proto3"`
 	unknownFields              protoimpl.UnknownFields
 	sizeCache                  protoimpl.SizeCache
 }
 
 func (x *ExamResponses) Reset() {
 	*x = ExamResponses{}
-	mi := &file_resources_qualifications_exam_exam_proto_msgTypes[12]
+	mi := &file_resources_qualifications_exam_exam_proto_msgTypes[13]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1771,7 +1906,7 @@ func (x *ExamResponses) String() string {
 func (*ExamResponses) ProtoMessage() {}
 
 func (x *ExamResponses) ProtoReflect() protoreflect.Message {
-	mi := &file_resources_qualifications_exam_exam_proto_msgTypes[12]
+	mi := &file_resources_qualifications_exam_exam_proto_msgTypes[13]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1805,6 +1940,13 @@ func (x *ExamResponses) GetResponses() []*ExamResponse {
 	return nil
 }
 
+func (x *ExamResponses) GetAttemptId() string {
+	if x != nil {
+		return x.xxx_hidden_AttemptId
+	}
+	return ""
+}
+
 func (x *ExamResponses) SetQualificationId(v int64) {
 	x.xxx_hidden_QualificationId = v
 }
@@ -1817,12 +1959,17 @@ func (x *ExamResponses) SetResponses(v []*ExamResponse) {
 	x.xxx_hidden_Responses = &v
 }
 
+func (x *ExamResponses) SetAttemptId(v string) {
+	x.xxx_hidden_AttemptId = v
+}
+
 type ExamResponses_builder struct {
 	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
 
 	QualificationId int64
 	UserId          int32
 	Responses       []*ExamResponse
+	AttemptId       string
 }
 
 func (b0 ExamResponses_builder) Build() *ExamResponses {
@@ -1832,6 +1979,7 @@ func (b0 ExamResponses_builder) Build() *ExamResponses {
 	x.xxx_hidden_QualificationId = b.QualificationId
 	x.xxx_hidden_UserId = b.UserId
 	x.xxx_hidden_Responses = &b.Responses
+	x.xxx_hidden_AttemptId = b.AttemptId
 	return m0
 }
 
@@ -1847,7 +1995,7 @@ type ExamResponse struct {
 
 func (x *ExamResponse) Reset() {
 	*x = ExamResponse{}
-	mi := &file_resources_qualifications_exam_exam_proto_msgTypes[13]
+	mi := &file_resources_qualifications_exam_exam_proto_msgTypes[14]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1859,7 +2007,7 @@ func (x *ExamResponse) String() string {
 func (*ExamResponse) ProtoMessage() {}
 
 func (x *ExamResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_resources_qualifications_exam_exam_proto_msgTypes[13]
+	mi := &file_resources_qualifications_exam_exam_proto_msgTypes[14]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1965,7 +2113,7 @@ type ExamResponseData struct {
 
 func (x *ExamResponseData) Reset() {
 	*x = ExamResponseData{}
-	mi := &file_resources_qualifications_exam_exam_proto_msgTypes[14]
+	mi := &file_resources_qualifications_exam_exam_proto_msgTypes[15]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1977,7 +2125,7 @@ func (x *ExamResponseData) String() string {
 func (*ExamResponseData) ProtoMessage() {}
 
 func (x *ExamResponseData) ProtoReflect() protoreflect.Message {
-	mi := &file_resources_qualifications_exam_exam_proto_msgTypes[14]
+	mi := &file_resources_qualifications_exam_exam_proto_msgTypes[15]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2218,7 +2366,7 @@ func (b0 ExamResponseData_builder) Build() *ExamResponseData {
 type case_ExamResponseData_Response protoreflect.FieldNumber
 
 func (x case_ExamResponseData_Response) String() string {
-	md := file_resources_qualifications_exam_exam_proto_msgTypes[14].Descriptor()
+	md := file_resources_qualifications_exam_exam_proto_msgTypes[15].Descriptor()
 	if x == 0 {
 		return "not set"
 	}
@@ -2267,7 +2415,7 @@ type ExamResponseSeparator struct {
 
 func (x *ExamResponseSeparator) Reset() {
 	*x = ExamResponseSeparator{}
-	mi := &file_resources_qualifications_exam_exam_proto_msgTypes[15]
+	mi := &file_resources_qualifications_exam_exam_proto_msgTypes[16]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2279,7 +2427,7 @@ func (x *ExamResponseSeparator) String() string {
 func (*ExamResponseSeparator) ProtoMessage() {}
 
 func (x *ExamResponseSeparator) ProtoReflect() protoreflect.Message {
-	mi := &file_resources_qualifications_exam_exam_proto_msgTypes[15]
+	mi := &file_resources_qualifications_exam_exam_proto_msgTypes[16]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2311,7 +2459,7 @@ type ExamResponseYesNo struct {
 
 func (x *ExamResponseYesNo) Reset() {
 	*x = ExamResponseYesNo{}
-	mi := &file_resources_qualifications_exam_exam_proto_msgTypes[16]
+	mi := &file_resources_qualifications_exam_exam_proto_msgTypes[17]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2323,7 +2471,7 @@ func (x *ExamResponseYesNo) String() string {
 func (*ExamResponseYesNo) ProtoMessage() {}
 
 func (x *ExamResponseYesNo) ProtoReflect() protoreflect.Message {
-	mi := &file_resources_qualifications_exam_exam_proto_msgTypes[16]
+	mi := &file_resources_qualifications_exam_exam_proto_msgTypes[17]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2368,7 +2516,7 @@ type ExamResponseText struct {
 
 func (x *ExamResponseText) Reset() {
 	*x = ExamResponseText{}
-	mi := &file_resources_qualifications_exam_exam_proto_msgTypes[17]
+	mi := &file_resources_qualifications_exam_exam_proto_msgTypes[18]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2380,7 +2528,7 @@ func (x *ExamResponseText) String() string {
 func (*ExamResponseText) ProtoMessage() {}
 
 func (x *ExamResponseText) ProtoReflect() protoreflect.Message {
-	mi := &file_resources_qualifications_exam_exam_proto_msgTypes[17]
+	mi := &file_resources_qualifications_exam_exam_proto_msgTypes[18]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2425,7 +2573,7 @@ type ExamResponseSingleChoice struct {
 
 func (x *ExamResponseSingleChoice) Reset() {
 	*x = ExamResponseSingleChoice{}
-	mi := &file_resources_qualifications_exam_exam_proto_msgTypes[18]
+	mi := &file_resources_qualifications_exam_exam_proto_msgTypes[19]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2437,7 +2585,7 @@ func (x *ExamResponseSingleChoice) String() string {
 func (*ExamResponseSingleChoice) ProtoMessage() {}
 
 func (x *ExamResponseSingleChoice) ProtoReflect() protoreflect.Message {
-	mi := &file_resources_qualifications_exam_exam_proto_msgTypes[18]
+	mi := &file_resources_qualifications_exam_exam_proto_msgTypes[19]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2482,7 +2630,7 @@ type ExamResponseMultipleChoice struct {
 
 func (x *ExamResponseMultipleChoice) Reset() {
 	*x = ExamResponseMultipleChoice{}
-	mi := &file_resources_qualifications_exam_exam_proto_msgTypes[19]
+	mi := &file_resources_qualifications_exam_exam_proto_msgTypes[20]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2494,7 +2642,7 @@ func (x *ExamResponseMultipleChoice) String() string {
 func (*ExamResponseMultipleChoice) ProtoMessage() {}
 
 func (x *ExamResponseMultipleChoice) ProtoReflect() protoreflect.Message {
-	mi := &file_resources_qualifications_exam_exam_proto_msgTypes[19]
+	mi := &file_resources_qualifications_exam_exam_proto_msgTypes[20]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2539,7 +2687,7 @@ type ExamGrading struct {
 
 func (x *ExamGrading) Reset() {
 	*x = ExamGrading{}
-	mi := &file_resources_qualifications_exam_exam_proto_msgTypes[20]
+	mi := &file_resources_qualifications_exam_exam_proto_msgTypes[21]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2551,7 +2699,7 @@ func (x *ExamGrading) String() string {
 func (*ExamGrading) ProtoMessage() {}
 
 func (x *ExamGrading) ProtoReflect() protoreflect.Message {
-	mi := &file_resources_qualifications_exam_exam_proto_msgTypes[20]
+	mi := &file_resources_qualifications_exam_exam_proto_msgTypes[21]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2602,7 +2750,7 @@ type ExamGradingResponse struct {
 
 func (x *ExamGradingResponse) Reset() {
 	*x = ExamGradingResponse{}
-	mi := &file_resources_qualifications_exam_exam_proto_msgTypes[21]
+	mi := &file_resources_qualifications_exam_exam_proto_msgTypes[22]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2614,7 +2762,7 @@ func (x *ExamGradingResponse) String() string {
 func (*ExamGradingResponse) ProtoMessage() {}
 
 func (x *ExamGradingResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_resources_qualifications_exam_exam_proto_msgTypes[21]
+	mi := &file_resources_qualifications_exam_exam_proto_msgTypes[22]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2756,7 +2904,7 @@ const file_resources_qualifications_exam_exam_proto_rawDesc = "" +
 	"\tfree_text\x18\x05 \x01(\v2/.resources.qualifications.exam.ExamResponseTextH\x00R\bfreeText\x12^\n" +
 	"\rsingle_choice\x18\x06 \x01(\v27.resources.qualifications.exam.ExamResponseSingleChoiceH\x00R\fsingleChoice\x12d\n" +
 	"\x0fmultiple_choice\x18\a \x01(\v29.resources.qualifications.exam.ExamResponseMultipleChoiceH\x00R\x0emultipleChoice:\x06\xe2\xf3\x18\x02\b\x01B\b\n" +
-	"\x06answer\"\x8b\x03\n" +
+	"\x06answer\"\x85\x04\n" +
 	"\bExamUser\x12)\n" +
 	"\x10qualification_id\x18\x01 \x01(\x03R\x0fqualificationId\x12\x17\n" +
 	"\auser_id\x18\x02 \x01(\x05R\x06userId\x12B\n" +
@@ -2765,16 +2913,25 @@ const file_resources_qualifications_exam_exam_proto_rawDesc = "" +
 	"\n" +
 	"started_at\x18\x04 \x01(\v2\x1e.resources.timestamp.TimestampH\x01R\tstartedAt\x88\x01\x01\x12<\n" +
 	"\aends_at\x18\x05 \x01(\v2\x1e.resources.timestamp.TimestampH\x02R\x06endsAt\x88\x01\x01\x12>\n" +
-	"\bended_at\x18\x06 \x01(\v2\x1e.resources.timestamp.TimestampH\x03R\aendedAt\x88\x01\x01B\r\n" +
+	"\bended_at\x18\x06 \x01(\v2\x1e.resources.timestamp.TimestampH\x03R\aendedAt\x88\x01\x01\x12L\n" +
+	"\bsnapshot\x18\a \x01(\v2+.resources.qualifications.exam.ExamSnapshotH\x04R\bsnapshot\x88\x01\x01\x12\x1d\n" +
+	"\n" +
+	"attempt_id\x18\b \x01(\tR\tattemptIdB\r\n" +
 	"\v_created_atB\r\n" +
 	"\v_started_atB\n" +
 	"\n" +
 	"\b_ends_atB\v\n" +
-	"\t_ended_at\"\xa6\x01\n" +
+	"\t_ended_atB\v\n" +
+	"\t_snapshot\"\xae\x01\n" +
+	"\fExamSnapshot\x12@\n" +
+	"\x04exam\x18\x01 \x01(\v2,.resources.qualifications.exam.ExamQuestionsR\x04exam\x12T\n" +
+	"\bsettings\x18\x02 \x01(\v28.resources.qualifications.exam.QualificationExamSettingsR\bsettings:\x06\xe2\xf3\x18\x02\b\x01\"\xc5\x01\n" +
 	"\rExamResponses\x12)\n" +
 	"\x10qualification_id\x18\x01 \x01(\x03R\x0fqualificationId\x12\x17\n" +
 	"\auser_id\x18\x02 \x01(\x05R\x06userId\x12I\n" +
-	"\tresponses\x18\x03 \x03(\v2+.resources.qualifications.exam.ExamResponseR\tresponses:\x06\xe2\xf3\x18\x02\b\x01\"\xde\x01\n" +
+	"\tresponses\x18\x03 \x03(\v2+.resources.qualifications.exam.ExamResponseR\tresponses\x12\x1d\n" +
+	"\n" +
+	"attempt_id\x18\x04 \x01(\tR\tattemptId:\x06\xe2\xf3\x18\x02\b\x01\"\xde\x01\n" +
 	"\fExamResponse\x12\x1f\n" +
 	"\vquestion_id\x18\x01 \x01(\x03R\n" +
 	"questionId\x12\x17\n" +
@@ -2818,7 +2975,7 @@ const file_resources_qualifications_exam_exam_proto_rawDesc = "" +
 	"\x1eAUTO_GRADE_MODE_PARTIAL_CREDIT\x10\x02BdZbgithub.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/qualifications/exam;qualificationsexamb\x06proto3"
 
 var file_resources_qualifications_exam_exam_proto_enumTypes = make([]protoimpl.EnumInfo, 2)
-var file_resources_qualifications_exam_exam_proto_msgTypes = make([]protoimpl.MessageInfo, 22)
+var file_resources_qualifications_exam_exam_proto_msgTypes = make([]protoimpl.MessageInfo, 23)
 var file_resources_qualifications_exam_exam_proto_goTypes = []any{
 	(QualificationExamMode)(0),         // 0: resources.qualifications.exam.QualificationExamMode
 	(AutoGradeMode)(0),                 // 1: resources.qualifications.exam.AutoGradeMode
@@ -2834,26 +2991,27 @@ var file_resources_qualifications_exam_exam_proto_goTypes = []any{
 	(*ExamQuestionMultipleChoice)(nil), // 11: resources.qualifications.exam.ExamQuestionMultipleChoice
 	(*ExamQuestionAnswerData)(nil),     // 12: resources.qualifications.exam.ExamQuestionAnswerData
 	(*ExamUser)(nil),                   // 13: resources.qualifications.exam.ExamUser
-	(*ExamResponses)(nil),              // 14: resources.qualifications.exam.ExamResponses
-	(*ExamResponse)(nil),               // 15: resources.qualifications.exam.ExamResponse
-	(*ExamResponseData)(nil),           // 16: resources.qualifications.exam.ExamResponseData
-	(*ExamResponseSeparator)(nil),      // 17: resources.qualifications.exam.ExamResponseSeparator
-	(*ExamResponseYesNo)(nil),          // 18: resources.qualifications.exam.ExamResponseYesNo
-	(*ExamResponseText)(nil),           // 19: resources.qualifications.exam.ExamResponseText
-	(*ExamResponseSingleChoice)(nil),   // 20: resources.qualifications.exam.ExamResponseSingleChoice
-	(*ExamResponseMultipleChoice)(nil), // 21: resources.qualifications.exam.ExamResponseMultipleChoice
-	(*ExamGrading)(nil),                // 22: resources.qualifications.exam.ExamGrading
-	(*ExamGradingResponse)(nil),        // 23: resources.qualifications.exam.ExamGradingResponse
-	(*durationpb.Duration)(nil),        // 24: google.protobuf.Duration
-	(*timestamp.Timestamp)(nil),        // 25: resources.timestamp.Timestamp
-	(*file.File)(nil),                  // 26: resources.file.File
+	(*ExamSnapshot)(nil),               // 14: resources.qualifications.exam.ExamSnapshot
+	(*ExamResponses)(nil),              // 15: resources.qualifications.exam.ExamResponses
+	(*ExamResponse)(nil),               // 16: resources.qualifications.exam.ExamResponse
+	(*ExamResponseData)(nil),           // 17: resources.qualifications.exam.ExamResponseData
+	(*ExamResponseSeparator)(nil),      // 18: resources.qualifications.exam.ExamResponseSeparator
+	(*ExamResponseYesNo)(nil),          // 19: resources.qualifications.exam.ExamResponseYesNo
+	(*ExamResponseText)(nil),           // 20: resources.qualifications.exam.ExamResponseText
+	(*ExamResponseSingleChoice)(nil),   // 21: resources.qualifications.exam.ExamResponseSingleChoice
+	(*ExamResponseMultipleChoice)(nil), // 22: resources.qualifications.exam.ExamResponseMultipleChoice
+	(*ExamGrading)(nil),                // 23: resources.qualifications.exam.ExamGrading
+	(*ExamGradingResponse)(nil),        // 24: resources.qualifications.exam.ExamGradingResponse
+	(*durationpb.Duration)(nil),        // 25: google.protobuf.Duration
+	(*timestamp.Timestamp)(nil),        // 26: resources.timestamp.Timestamp
+	(*file.File)(nil),                  // 27: resources.file.File
 }
 var file_resources_qualifications_exam_exam_proto_depIdxs = []int32{
-	24, // 0: resources.qualifications.exam.QualificationExamSettings.time:type_name -> google.protobuf.Duration
+	25, // 0: resources.qualifications.exam.QualificationExamSettings.time:type_name -> google.protobuf.Duration
 	1,  // 1: resources.qualifications.exam.QualificationExamSettings.auto_grade_mode:type_name -> resources.qualifications.exam.AutoGradeMode
 	4,  // 2: resources.qualifications.exam.ExamQuestions.questions:type_name -> resources.qualifications.exam.ExamQuestion
-	25, // 3: resources.qualifications.exam.ExamQuestion.created_at:type_name -> resources.timestamp.Timestamp
-	25, // 4: resources.qualifications.exam.ExamQuestion.updated_at:type_name -> resources.timestamp.Timestamp
+	26, // 3: resources.qualifications.exam.ExamQuestion.created_at:type_name -> resources.timestamp.Timestamp
+	26, // 4: resources.qualifications.exam.ExamQuestion.updated_at:type_name -> resources.timestamp.Timestamp
 	5,  // 5: resources.qualifications.exam.ExamQuestion.data:type_name -> resources.qualifications.exam.ExamQuestionData
 	12, // 6: resources.qualifications.exam.ExamQuestion.answer:type_name -> resources.qualifications.exam.ExamQuestionAnswerData
 	6,  // 7: resources.qualifications.exam.ExamQuestionData.separator:type_name -> resources.qualifications.exam.ExamQuestionSeparator
@@ -2862,29 +3020,32 @@ var file_resources_qualifications_exam_exam_proto_depIdxs = []int32{
 	9,  // 10: resources.qualifications.exam.ExamQuestionData.free_text:type_name -> resources.qualifications.exam.ExamQuestionText
 	10, // 11: resources.qualifications.exam.ExamQuestionData.single_choice:type_name -> resources.qualifications.exam.ExamQuestionSingleChoice
 	11, // 12: resources.qualifications.exam.ExamQuestionData.multiple_choice:type_name -> resources.qualifications.exam.ExamQuestionMultipleChoice
-	26, // 13: resources.qualifications.exam.ExamQuestionImage.image:type_name -> resources.file.File
-	18, // 14: resources.qualifications.exam.ExamQuestionAnswerData.yesno:type_name -> resources.qualifications.exam.ExamResponseYesNo
-	19, // 15: resources.qualifications.exam.ExamQuestionAnswerData.free_text:type_name -> resources.qualifications.exam.ExamResponseText
-	20, // 16: resources.qualifications.exam.ExamQuestionAnswerData.single_choice:type_name -> resources.qualifications.exam.ExamResponseSingleChoice
-	21, // 17: resources.qualifications.exam.ExamQuestionAnswerData.multiple_choice:type_name -> resources.qualifications.exam.ExamResponseMultipleChoice
-	25, // 18: resources.qualifications.exam.ExamUser.created_at:type_name -> resources.timestamp.Timestamp
-	25, // 19: resources.qualifications.exam.ExamUser.started_at:type_name -> resources.timestamp.Timestamp
-	25, // 20: resources.qualifications.exam.ExamUser.ends_at:type_name -> resources.timestamp.Timestamp
-	25, // 21: resources.qualifications.exam.ExamUser.ended_at:type_name -> resources.timestamp.Timestamp
-	15, // 22: resources.qualifications.exam.ExamResponses.responses:type_name -> resources.qualifications.exam.ExamResponse
-	4,  // 23: resources.qualifications.exam.ExamResponse.question:type_name -> resources.qualifications.exam.ExamQuestion
-	16, // 24: resources.qualifications.exam.ExamResponse.response:type_name -> resources.qualifications.exam.ExamResponseData
-	17, // 25: resources.qualifications.exam.ExamResponseData.separator:type_name -> resources.qualifications.exam.ExamResponseSeparator
-	18, // 26: resources.qualifications.exam.ExamResponseData.yesno:type_name -> resources.qualifications.exam.ExamResponseYesNo
-	19, // 27: resources.qualifications.exam.ExamResponseData.free_text:type_name -> resources.qualifications.exam.ExamResponseText
-	20, // 28: resources.qualifications.exam.ExamResponseData.single_choice:type_name -> resources.qualifications.exam.ExamResponseSingleChoice
-	21, // 29: resources.qualifications.exam.ExamResponseData.multiple_choice:type_name -> resources.qualifications.exam.ExamResponseMultipleChoice
-	23, // 30: resources.qualifications.exam.ExamGrading.responses:type_name -> resources.qualifications.exam.ExamGradingResponse
-	31, // [31:31] is the sub-list for method output_type
-	31, // [31:31] is the sub-list for method input_type
-	31, // [31:31] is the sub-list for extension type_name
-	31, // [31:31] is the sub-list for extension extendee
-	0,  // [0:31] is the sub-list for field type_name
+	27, // 13: resources.qualifications.exam.ExamQuestionImage.image:type_name -> resources.file.File
+	19, // 14: resources.qualifications.exam.ExamQuestionAnswerData.yesno:type_name -> resources.qualifications.exam.ExamResponseYesNo
+	20, // 15: resources.qualifications.exam.ExamQuestionAnswerData.free_text:type_name -> resources.qualifications.exam.ExamResponseText
+	21, // 16: resources.qualifications.exam.ExamQuestionAnswerData.single_choice:type_name -> resources.qualifications.exam.ExamResponseSingleChoice
+	22, // 17: resources.qualifications.exam.ExamQuestionAnswerData.multiple_choice:type_name -> resources.qualifications.exam.ExamResponseMultipleChoice
+	26, // 18: resources.qualifications.exam.ExamUser.created_at:type_name -> resources.timestamp.Timestamp
+	26, // 19: resources.qualifications.exam.ExamUser.started_at:type_name -> resources.timestamp.Timestamp
+	26, // 20: resources.qualifications.exam.ExamUser.ends_at:type_name -> resources.timestamp.Timestamp
+	26, // 21: resources.qualifications.exam.ExamUser.ended_at:type_name -> resources.timestamp.Timestamp
+	14, // 22: resources.qualifications.exam.ExamUser.snapshot:type_name -> resources.qualifications.exam.ExamSnapshot
+	3,  // 23: resources.qualifications.exam.ExamSnapshot.exam:type_name -> resources.qualifications.exam.ExamQuestions
+	2,  // 24: resources.qualifications.exam.ExamSnapshot.settings:type_name -> resources.qualifications.exam.QualificationExamSettings
+	16, // 25: resources.qualifications.exam.ExamResponses.responses:type_name -> resources.qualifications.exam.ExamResponse
+	4,  // 26: resources.qualifications.exam.ExamResponse.question:type_name -> resources.qualifications.exam.ExamQuestion
+	17, // 27: resources.qualifications.exam.ExamResponse.response:type_name -> resources.qualifications.exam.ExamResponseData
+	18, // 28: resources.qualifications.exam.ExamResponseData.separator:type_name -> resources.qualifications.exam.ExamResponseSeparator
+	19, // 29: resources.qualifications.exam.ExamResponseData.yesno:type_name -> resources.qualifications.exam.ExamResponseYesNo
+	20, // 30: resources.qualifications.exam.ExamResponseData.free_text:type_name -> resources.qualifications.exam.ExamResponseText
+	21, // 31: resources.qualifications.exam.ExamResponseData.single_choice:type_name -> resources.qualifications.exam.ExamResponseSingleChoice
+	22, // 32: resources.qualifications.exam.ExamResponseData.multiple_choice:type_name -> resources.qualifications.exam.ExamResponseMultipleChoice
+	24, // 33: resources.qualifications.exam.ExamGrading.responses:type_name -> resources.qualifications.exam.ExamGradingResponse
+	34, // [34:34] is the sub-list for method output_type
+	34, // [34:34] is the sub-list for method input_type
+	34, // [34:34] is the sub-list for extension type_name
+	34, // [34:34] is the sub-list for extension extendee
+	0,  // [0:34] is the sub-list for field type_name
 }
 
 func init() { file_resources_qualifications_exam_exam_proto_init() }
@@ -2910,21 +3071,21 @@ func file_resources_qualifications_exam_exam_proto_init() {
 		(*examQuestionAnswerData_MultipleChoice)(nil),
 	}
 	file_resources_qualifications_exam_exam_proto_msgTypes[11].OneofWrappers = []any{}
-	file_resources_qualifications_exam_exam_proto_msgTypes[14].OneofWrappers = []any{
+	file_resources_qualifications_exam_exam_proto_msgTypes[15].OneofWrappers = []any{
 		(*examResponseData_Separator)(nil),
 		(*examResponseData_Yesno)(nil),
 		(*examResponseData_FreeText)(nil),
 		(*examResponseData_SingleChoice)(nil),
 		(*examResponseData_MultipleChoice)(nil),
 	}
-	file_resources_qualifications_exam_exam_proto_msgTypes[21].OneofWrappers = []any{}
+	file_resources_qualifications_exam_exam_proto_msgTypes[22].OneofWrappers = []any{}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_resources_qualifications_exam_exam_proto_rawDesc), len(file_resources_qualifications_exam_exam_proto_rawDesc)),
 			NumEnums:      2,
-			NumMessages:   22,
+			NumMessages:   23,
 			NumExtensions: 0,
 			NumServices:   0,
 		},

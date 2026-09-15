@@ -106,8 +106,8 @@ type IStore interface {
 	CountExamQuestions(ctx context.Context, qualificationId int64) (int64, error)
 	GetExamResponses(
 		ctx context.Context,
-		qualificationId int64,
-		userId int32,
+		q qrm.DB,
+		attemptId string,
 	) (*qualificationsexam.ExamResponses, *qualificationsexam.ExamGrading, error)
 	CreateQualification(ctx context.Context, tx qrm.DB, userInfo *userinfo.UserInfo) (int64, error)
 	UpdateQualification(
@@ -150,8 +150,7 @@ type IStore interface {
 	UpdateExamResponseGrading(
 		ctx context.Context,
 		tx qrm.DB,
-		qualificationId int64,
-		userId int32,
+		attemptId string,
 		grading *qualificationsexam.ExamGrading,
 	) error
 	ApproveQualificationRequest(
@@ -171,21 +170,39 @@ type IStore interface {
 		qualificationId int64,
 		userId int32,
 		endsAt time.Time,
-	) error
+		snapshot *qualificationsexam.ExamSnapshot,
+	) (string, error)
+	ClaimActiveExamUser(
+		ctx context.Context,
+		tx qrm.DB,
+		qualificationId int64,
+		userId int32,
+		attemptId string,
+		complete bool,
+		gracePeriod time.Duration,
+	) (bool, error)
 	UpsertExamResponses(
 		ctx context.Context,
 		tx qrm.DB,
 		qualificationId int64,
 		userId int32,
+		attemptId string,
 		responses *qualificationsexam.ExamResponses,
 	) error
-	UpsertExamUserEndedAt(
+	ListExpiredExamUsers(ctx context.Context, limit int64) ([]*qualificationsexam.ExamUser, error)
+	ListExamUsersPastRetention(
+		ctx context.Context,
+		olderThan time.Time,
+		limit int64,
+	) ([]*qualificationsexam.ExamUser, error)
+	ExpireExamUser(
 		ctx context.Context,
 		tx qrm.DB,
 		qualificationId int64,
 		userId int32,
-		endedAt time.Time,
-	) error
+		attemptId string,
+	) (bool, error)
+	DeleteExamResponses(ctx context.Context, tx qrm.DB, attemptId string) error
 	HandleExamQuestionsChanges(
 		ctx context.Context,
 		tx *sql.Tx,
@@ -206,7 +223,7 @@ type IStore interface {
 		status resqualifications.RequestStatus,
 	) error
 	DeleteQualificationResult(ctx context.Context, tx qrm.DB, resultId int64) error
-	DeleteExamUser(ctx context.Context, tx qrm.DB, qualificationId int64, userId int32) error
+	DeleteExamUser(ctx context.Context, tx qrm.DB, attemptId string) error
 }
 
 type Store struct {

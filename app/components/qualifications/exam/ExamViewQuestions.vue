@@ -2,7 +2,15 @@
 import type { FormSubmitEvent } from '@nuxt/ui';
 import { differenceInMinutes, isPast } from 'date-fns';
 import { z } from 'zod';
+import {
+    areExamChoicesAllowed,
+    areExamChoicesUnique,
+    examTextLength,
+    isExamChoiceLimitExceeded,
+    isValidExamResponseKind,
+} from '~/utils/qualificationExam';
 import ScrollToTop from '~/components/partials/ScrollToTop.vue';
+import { authKeys } from '~/composables/useAuth';
 import { getQualificationsExamClient } from '~~/gen/ts/clients';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 import type { ExamQuestions, ExamResponse, ExamResponses, ExamUser } from '~~/gen/ts/resources/qualifications/exam/exam';
@@ -21,15 +29,89 @@ const props = defineProps<{
 
 const emits = defineEmits<{
     (e: 'submit', response: SubmitExamResponse): void;
+    (e: 'cancel'): void;
+    (e: 'expired'): void;
 }>();
 
 const notifications = useNotificationsStore();
+const { accountId, activeChar } = useAuth();
 
 const qualificationsExamClient = await getQualificationsExamClient();
 
-const schema = z.object({
-    responses: z.custom<ExamResponse>().array().max(100).default([]),
-});
+const schema = z
+    .object({
+        responses: z.custom<ExamResponse>().array().max(100).default([]),
+    })
+    .superRefine((values, ctx) => {
+        values.responses.forEach((examResponse, index) => {
+            const question = props.exam.questions.find((item) => item.id === examResponse.questionId);
+            const data = question?.data?.data;
+            const response = examResponse.response?.response;
+            if (!data || !response) {
+                ctx.addIssue({
+                    code: 'custom',
+                    path: ['responses', index],
+                    message: 'zod.custom.qualification_exam.invalid_response',
+                });
+                return;
+            }
+
+            if (!isValidExamResponseKind(data.oneofKind, response.oneofKind)) {
+                ctx.addIssue({
+                    code: 'custom',
+                    path: ['responses', index],
+                    message: 'zod.custom.qualification_exam.invalid_response',
+                });
+                return;
+            }
+
+            if (data.oneofKind === 'freeText' && response.oneofKind === 'freeText') {
+                const length = examTextLength(response.freeText.text);
+                if (data.freeText.minLength > 0 && length < data.freeText.minLength) {
+                    ctx.addIssue({
+                        code: 'custom',
+                        path: ['responses', index],
+                        message: 'zod.custom.qualification_exam.answer_too_short',
+                    });
+                }
+                if (data.freeText.maxLength > 0 && length > data.freeText.maxLength) {
+                    ctx.addIssue({
+                        code: 'custom',
+                        path: ['responses', index],
+                        message: 'zod.custom.qualification_exam.answer_too_long',
+                    });
+                }
+            }
+
+            if (data.oneofKind === 'singleChoice' && response.oneofKind === 'singleChoice') {
+                if (!areExamChoicesAllowed([response.singleChoice.choice], data.singleChoice.choices)) {
+                    ctx.addIssue({
+                        code: 'custom',
+                        path: ['responses', index],
+                        message: 'zod.custom.qualification_exam.select_answer',
+                    });
+                }
+            }
+
+            if (data.oneofKind === 'multipleChoice' && response.oneofKind === 'multipleChoice') {
+                const choices = response.multipleChoice.choices;
+                if (!areExamChoicesUnique(choices) || !areExamChoicesAllowed(choices, data.multipleChoice.choices)) {
+                    ctx.addIssue({
+                        code: 'custom',
+                        path: ['responses', index],
+                        message: 'zod.custom.qualification_exam.select_valid_answers',
+                    });
+                }
+                if (isExamChoiceLimitExceeded(choices, data.multipleChoice.limit)) {
+                    ctx.addIssue({
+                        code: 'custom',
+                        path: ['responses', index],
+                        message: 'zod.custom.qualification_exam.too_many_answers',
+                    });
+                }
+            }
+        });
+    });
 
 type Schema = z.output<typeof schema>;
 
@@ -37,33 +119,54 @@ const disabled = ref<boolean>(false);
 
 const endsAtTime = toDate(props.examUser.endsAt).getTime();
 
-const state = useState<Schema>('qualifications-exam-responses', () => ({
-    responses: props.examResponses?.responses ?? [],
-}));
+const state = useState<Schema>(
+    `qualifications-exam-responses-${authKeys.character(accountId.value, activeChar.value?.userId)}-${props.qualificationId}-${toDate(props.examUser.startedAt).getTime()}`,
+    () => ({
+        responses: props.examResponses?.responses ?? [],
+    }),
+);
+
+let partialSubmitInFlight: Promise<SubmitExamResponse> | undefined;
 
 async function submitExam(values: Schema, partial: boolean = false): Promise<SubmitExamResponse> {
-    try {
-        const call = qualificationsExamClient.submitExam({
-            qualificationId: props.qualificationId,
-            responses: {
+    if (partial && partialSubmitInFlight) {
+        await partialSubmitInFlight.catch(() => undefined);
+    }
+
+    const submit = (async () => {
+        try {
+            const call = qualificationsExamClient.submitExam({
                 qualificationId: props.qualificationId,
-                userId: 0,
-                responses: values.responses,
-            },
-            partial: partial,
-        });
-        const { response } = await call;
+                responses: {
+                    qualificationId: props.qualificationId,
+                    userId: 0,
+                    attemptId: '',
+                    responses: values.responses,
+                },
+                partial: partial,
+            });
+            const { response } = await call;
 
-        if (partial) return response;
+            if (partial) return response;
 
-        state.value.responses = [];
+            state.value.responses = [];
 
-        emits('submit', response);
+            emits('submit', response);
 
-        return response;
-    } catch (e) {
-        handleGRPCError(e as RpcError);
-        throw e;
+            return response;
+        } catch (e) {
+            handleGRPCError(e as RpcError);
+            throw e;
+        }
+    })();
+
+    if (!partial) return submit;
+
+    partialSubmitInFlight = submit;
+    try {
+        return await submit;
+    } finally {
+        if (partialSubmitInFlight === submit) partialSubmitInFlight = undefined;
     }
 }
 
@@ -74,6 +177,20 @@ onBeforeMount(() => {
 
         switch (q.data?.data.oneofKind ?? 'separator') {
             case 'separator':
+                state.value.responses.push({
+                    questionId: q.id,
+                    userId: 0,
+                    question: q,
+                    response: {
+                        response: {
+                            oneofKind: 'separator',
+                            separator: {},
+                        },
+                    },
+                });
+                break;
+
+            case 'image':
                 state.value.responses.push({
                     questionId: q.id,
                     userId: 0,
@@ -165,13 +282,25 @@ if (!props.responses) {
             pauseAutoSave();
             pause();
 
-            await submitExam(state.value, false);
+            let finalSaveSucceeded = false;
+            try {
+                // The server accepts partial submissions during the grace period.
+                await submitExam(state.value, true);
+                finalSaveSucceeded = true;
+            } catch {
+                // The RPC error has already been surfaced by submitExam.
+            }
 
-            notifications.add({
-                title: { key: 'notifications.qualifications.times_up.title', parameters: {} },
-                description: { key: 'notifications.qualifications.times_up.content', parameters: {} },
-                type: NotificationType.SUCCESS,
-            });
+            disabled.value = true;
+            emits('expired');
+
+            if (finalSaveSucceeded) {
+                notifications.add({
+                    title: { key: 'notifications.qualifications.times_up.title', parameters: {} },
+                    description: { key: 'notifications.qualifications.times_up.content', parameters: {} },
+                    type: NotificationType.INFO,
+                });
+            }
         } else if (!timeLowNotificationSent && minutesLeft <= 4) {
             notifications.add({
                 title: { key: 'notifications.qualifications.time_low.title', parameters: {} },
@@ -224,16 +353,23 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
         <template #header>
             <UDashboardNavbar :title="$t('pages.qualifications.id.exam.title')">
                 <template #right>
-                    <UButton
-                        class="w-full"
-                        type="submit"
-                        icon="i-mdi-content-save"
-                        block
-                        :disabled="!canSubmit"
-                        :loading="!canSubmit"
-                        :label="$t('common.submit')"
-                        @click="formRef?.submit()"
-                    />
+                    <UButtonGroup>
+                        <UButton
+                            color="error"
+                            variant="outline"
+                            :disabled="!canSubmit"
+                            :label="$t('common.cancel')"
+                            @click="$emit('cancel')"
+                        />
+                        <UButton
+                            type="submit"
+                            icon="i-mdi-content-save"
+                            :disabled="!canSubmit"
+                            :loading="!canSubmit"
+                            :label="$t('common.submit')"
+                            @click="formRef?.submit()"
+                        />
+                    </UButtonGroup>
                 </template>
             </UDashboardNavbar>
 

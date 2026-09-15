@@ -19,10 +19,12 @@ type fivenetQualificationsExamUsersTable struct {
 	// Columns
 	QualificationID mysql.ColumnInteger
 	UserID          mysql.ColumnInteger
+	AttemptID       mysql.ColumnString
 	CreatedAt       mysql.ColumnTimestamp
 	StartedAt       mysql.ColumnTimestamp
 	EndsAt          mysql.ColumnTimestamp
 	EndedAt         mysql.ColumnTimestamp
+	Snapshot        mysql.ColumnString
 
 	AllColumns     mysql.ColumnList
 	MutableColumns mysql.ColumnList
@@ -66,12 +68,14 @@ func newFivenetQualificationsExamUsersTableImpl(schemaName, tableName, alias str
 	var (
 		QualificationIDColumn = mysql.IntegerColumn("qualification_id")
 		UserIDColumn          = mysql.IntegerColumn("user_id")
+		AttemptIDColumn       = mysql.StringColumn("attempt_id")
 		CreatedAtColumn       = mysql.TimestampColumn("created_at")
 		StartedAtColumn       = mysql.TimestampColumn("started_at")
 		EndsAtColumn          = mysql.TimestampColumn("ends_at")
 		EndedAtColumn         = mysql.TimestampColumn("ended_at")
-		allColumns            = mysql.ColumnList{QualificationIDColumn, UserIDColumn, CreatedAtColumn, StartedAtColumn, EndsAtColumn, EndedAtColumn}
-		mutableColumns        = mysql.ColumnList{CreatedAtColumn, StartedAtColumn, EndsAtColumn, EndedAtColumn}
+		SnapshotColumn        = mysql.StringColumn("snapshot")
+		allColumns            = mysql.ColumnList{QualificationIDColumn, UserIDColumn, AttemptIDColumn, CreatedAtColumn, StartedAtColumn, EndsAtColumn, EndedAtColumn, SnapshotColumn}
+		mutableColumns        = mysql.ColumnList{AttemptIDColumn, CreatedAtColumn, StartedAtColumn, EndsAtColumn, EndedAtColumn, SnapshotColumn}
 		defaultColumns        = mysql.ColumnList{CreatedAtColumn}
 	)
 
@@ -81,10 +85,12 @@ func newFivenetQualificationsExamUsersTableImpl(schemaName, tableName, alias str
 		//Columns
 		QualificationID: QualificationIDColumn,
 		UserID:          UserIDColumn,
+		AttemptID:       AttemptIDColumn,
 		CreatedAt:       CreatedAtColumn,
 		StartedAt:       StartedAtColumn,
 		EndsAt:          EndsAtColumn,
 		EndedAt:         EndedAtColumn,
+		Snapshot:        SnapshotColumn,
 
 		AllColumns:     allColumns,
 		MutableColumns: mutableColumns,

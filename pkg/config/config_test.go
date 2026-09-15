@@ -126,6 +126,6 @@ func TestValidateConfigSecrets(t *testing.T) {
 	}
 
 	for _, cfg := range invalidConfigs {
-		assert.Error(t, validate.Struct(cfg))
+		require.Error(t, validate.Struct(cfg))
 	}
 }

@@ -1559,7 +1559,11 @@
                 "title": "Qualification Result"
             },
             "exam_view": {
-                "times_up": "Time's up! Your exam will be graded soon."
+                "times_up": "Time's up! Your exam will be graded soon.",
+                "cancel": {
+                    "title": "Cancel exam?",
+                    "description": "Your saved answers will be deleted and you will need to start the exam again."
+                }
             },
             "correct_question": "Correct",
             "qualification_editor": {
@@ -3080,6 +3084,18 @@
                 "ErrExamDisabled": {
                     "title": "Exam disabled",
                     "content": "The qualification's exam is disabled!"
+                },
+                "ErrExamAutoGradingFreeText": {
+                    "title": "Manual grading required",
+                    "content": "Automatic grading cannot be enabled for exams containing free-text questions."
+                },
+                "ErrExamAutoGradingInvalid": {
+                    "title": "Invalid automatic grading setup",
+                    "content": "Automatic grading requires a matching answer for every gradable question and a valid minimum point threshold."
+                },
+                "ErrExamAutoGradingAnswerLimit": {
+                    "title": "Invalid multiple-choice answer key",
+                    "content": "The number of correct choices cannot exceed the question's selection limit."
                 },
                 "ErrRequirementSelfRef": {
                     "title": "Self-reference not allowed",
@@ -5050,6 +5066,22 @@
                 "duplicate_job_grade": "A job and grade were selected multiple times. Please select each job and grade only once.",
                 "duplicate_user": "A citizen was selected multiple times. Please select each citizen only once.",
                 "duplicate_qualification": "A qualification was selected multiple times. Please select each qualification only once."
+            },
+            "qualification_editor": {
+                "maximum_length_order": "Maximum length must not be lower than minimum length.",
+                "choices_unique": "Choices must be unique.",
+                "selection_limit": "Selection limit cannot exceed the number of choices.",
+                "answer_limit": "The number of correct choices cannot exceed the selection limit.",
+                "manual_grading_required": "Disable automatic grading or remove free-text questions; free-text answers require manual grading.",
+                "minimum_points": "Minimum points cannot exceed the total automatically gradable points."
+            },
+            "qualification_exam": {
+                "invalid_response": "Invalid question response.",
+                "answer_too_short": "Answer is too short.",
+                "answer_too_long": "Answer is too long.",
+                "select_answer": "Select an answer.",
+                "select_valid_answers": "Select valid answers.",
+                "too_many_answers": "Too many answers selected."
             },
             "user": "An user must be selected."
         }

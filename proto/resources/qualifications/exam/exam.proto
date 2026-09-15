@@ -23,14 +23,17 @@ message QualificationExamSettings {
 
   google.protobuf.Duration time = 1 [
     (buf.validate.field).duration = {
-      lt: {seconds: 1036800} /* 24 hours */
       gte: {seconds: 300} /* 5 minutes */
+      lt: {seconds: 86401} /* 24 hours */
     },
     (buf.validate.field).required = true
   ];
   bool auto_grade = 2;
   AutoGradeMode auto_grade_mode = 3 [(buf.validate.field).enum.defined_only = true];
-  int32 minimum_points = 4;
+  int32 minimum_points = 4 [(buf.validate.field).int32 = {
+    gte: 0
+    lte: 10000
+  }];
 }
 
 enum AutoGradeMode {
@@ -148,6 +151,17 @@ message ExamUser {
   optional resources.timestamp.Timestamp started_at = 4;
   optional resources.timestamp.Timestamp ends_at = 5;
   optional resources.timestamp.Timestamp ended_at = 6;
+  optional ExamSnapshot snapshot = 7;
+  string attempt_id = 8;
+}
+
+// ExamSnapshot is immutable once an attempt has started. It ensures later
+// edits to an exam cannot change an in-progress or historical attempt.
+message ExamSnapshot {
+  option (codegen.dbscanner.dbscanner) = {enabled: true};
+
+  ExamQuestions exam = 1;
+  QualificationExamSettings settings = 2;
 }
 
 message ExamResponses {
@@ -156,6 +170,7 @@ message ExamResponses {
   int64 qualification_id = 1;
   int32 user_id = 2;
   repeated ExamResponse responses = 3 [(buf.validate.field).repeated.max_items = 100];
+  string attempt_id = 4;
 }
 
 message ExamResponse {

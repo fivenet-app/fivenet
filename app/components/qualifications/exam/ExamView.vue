@@ -3,6 +3,7 @@ import { isPast } from 'date-fns';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
+import ConfirmModal from '~/components/partials/ConfirmModal.vue';
 import { getQualificationsExamClient } from '~~/gen/ts/clients';
 import type { ExamQuestions, ExamResponses, ExamUser } from '~~/gen/ts/resources/qualifications/exam/exam';
 import type { GetExamInfoResponse, TakeExamResponse } from '~~/gen/ts/services/qualifications/exam';
@@ -13,6 +14,9 @@ const props = defineProps<{
 }>();
 
 const qualificationsExamClient = await getQualificationsExamClient();
+const overlay = useOverlay();
+const { t } = useI18n();
+const cancelExamModal = overlay.create(ConfirmModal);
 
 const { data, status, refresh, error } = useAuthedLazyAsyncData(
     'userState',
@@ -64,6 +68,22 @@ const exam = ref<ExamQuestions | undefined>();
 const examUser = ref<ExamUser | undefined>();
 const examResponses = ref<ExamResponses | undefined>();
 
+async function cancelExam(): Promise<void> {
+    await takeExam(true);
+    exam.value = undefined;
+    examResponses.value = undefined;
+    examUser.value = undefined;
+    await refresh();
+}
+
+function openCancelExamConfirmation(): void {
+    cancelExamModal.open({
+        title: t('components.qualifications.exam_view.cancel.title'),
+        description: t('components.qualifications.exam_view.cancel.description'),
+        confirm: cancelExam,
+    });
+}
+
 watch(data, async () => {
     if (data.value?.examUser?.endsAt !== undefined && data.value?.examUser?.endedAt === undefined) {
         await takeExam(false);
@@ -79,12 +99,14 @@ watch(data, async () => {
         :exam-user="examUser"
         :exam-responses="examResponses"
         :qualification="data.qualification"
+        @cancel="openCancelExamConfirmation"
         @submit="
             () => {
                 examUser = undefined;
                 refresh();
             }
         "
+        @expired="refresh"
     />
 
     <UDashboardPanel v-else :ui="{ root: 'pb-(--page-content-bottom-offset)' }">

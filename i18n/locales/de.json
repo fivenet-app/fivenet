@@ -1559,7 +1559,11 @@
                 "title": "Qualifizierungsergebnis"
             },
             "exam_view": {
-                "times_up": "Die Zeit ist um! Ihre Prüfung wird bald benotet werden."
+                "times_up": "Die Zeit ist um! Ihre Prüfung wird bald benotet werden.",
+                "cancel": {
+                    "title": "Prüfung abbrechen?",
+                    "description": "Ihre gespeicherten Antworten werden gelöscht und Sie müssen die Prüfung erneut beginnen."
+                }
             },
             "correct_question": "Richtig",
             "qualification_editor": {
@@ -3080,6 +3084,18 @@
                 "ErrExamDisabled": {
                     "title": "Prüfung deaktiviert",
                     "content": "Das Examen der Qualifizierung ist deaktiviert!"
+                },
+                "ErrExamAutoGradingFreeText": {
+                    "title": "Manuelle Bewertung erforderlich",
+                    "content": "Die automatische Bewertung kann für Prüfungen mit Freitextfragen nicht aktiviert werden."
+                },
+                "ErrExamAutoGradingInvalid": {
+                    "title": "Ungültige automatische Bewertung",
+                    "content": "Die automatische Bewertung erfordert eine passende Antwort für jede bewertbare Frage und eine gültige Mindestpunktzahl."
+                },
+                "ErrExamAutoGradingAnswerLimit": {
+                    "title": "Ungültiger Antwortschlüssel für Mehrfachauswahl",
+                    "content": "Die Anzahl der richtigen Auswahlmöglichkeiten darf das Auswahl-Limit der Frage nicht überschreiten."
                 },
                 "ErrRequirementSelfRef": {
                     "title": "Selbstreferenz nicht erlaubt",
@@ -5050,6 +5066,22 @@
                 "duplicate_job_grade": "Ein Beruf und Rang wurden mehrfach ausgewählt. Bitte wählen Sie jeden Beruf und Rang nur einmal aus.",
                 "duplicate_user": "Ein Bürger wurde mehrfach ausgewählt. Bitte wählen Sie jeden Bürger nur einmal aus.",
                 "duplicate_qualification": "Eine Qualifikation wurde mehrfach ausgewählt. Bitte wählen Sie jede Qualifikation nur einmal aus."
+            },
+            "qualification_editor": {
+                "maximum_length_order": "Die maximale Länge darf nicht kleiner als die minimale Länge sein.",
+                "choices_unique": "Die Auswahlmöglichkeiten müssen eindeutig sein.",
+                "selection_limit": "Das Auswahl-Limit darf die Anzahl der Auswahlmöglichkeiten nicht überschreiten.",
+                "answer_limit": "Die Anzahl der richtigen Auswahlmöglichkeiten darf das Auswahl-Limit nicht überschreiten.",
+                "manual_grading_required": "Deaktivieren Sie die automatische Bewertung oder entfernen Sie die Freitextfragen; Freitextantworten müssen manuell bewertet werden.",
+                "minimum_points": "Die Mindestpunktzahl darf die insgesamt automatisch bewertbaren Punkte nicht überschreiten."
+            },
+            "qualification_exam": {
+                "invalid_response": "Ungültige Antwort auf die Frage.",
+                "answer_too_short": "Die Antwort ist zu kurz.",
+                "answer_too_long": "Die Antwort ist zu lang.",
+                "select_answer": "Wählen Sie eine Antwort aus.",
+                "select_valid_answers": "Wählen Sie gültige Antworten aus.",
+                "too_many_answers": "Zu viele Antworten ausgewählt."
             },
             "user": "Ein Bürger muss ausgewählt werden."
         }
