@@ -8,18 +8,139 @@ import (
 	"strings"
 	"time"
 
+	centrumdispatchers "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/centrum/dispatchers"
 	centrumdispatches "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/centrum/dispatches"
+	centrumsettings "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/centrum/settings"
 	centrumunits "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/centrum/units"
+	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/common"
 	pbcentrum "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/centrum"
-	"github.com/fivenet-app/fivenet/v2026/pkg/utils/protoutils"
 	eventscentrum "github.com/fivenet-app/fivenet/v2026/services/centrum/events"
+	centrumutils "github.com/fivenet-app/fivenet/v2026/services/centrum/utils"
 	"github.com/nats-io/nats.go/jetstream"
 	"go.uber.org/zap"
 	"google.golang.org/protobuf/proto"
 )
 
+// feedCfg describes one source projection and its wire representation.
+type feedCfg struct {
+	StreamName string
+	Bucket     string
+	NoWildcard bool
+	Unmarshal  func(ctx context.Context, s *Server, b []byte) (proto.Message, error)
+	WrapPut    func(proto.Message) *pbcentrum.StreamResponse
+	WrapDelete func(key string) *pbcentrum.StreamResponse
+}
+
+var feeds = []feedCfg{
+	{
+		StreamName: "centrum_settings", Bucket: "centrum_settings", NoWildcard: true,
+		Unmarshal: func(ctx context.Context, _ *Server, b []byte) (proto.Message, error) {
+			var value centrumsettings.Settings
+			return &value, proto.Unmarshal(b, &value)
+		},
+		WrapPut: func(value proto.Message) *pbcentrum.StreamResponse {
+			return &pbcentrum.StreamResponse{
+				Change: &pbcentrum.StreamResponse_Settings{
+					Settings: value.(*centrumsettings.Settings),
+				},
+			}
+		},
+		WrapDelete: func(key string) *pbcentrum.StreamResponse {
+			return &pbcentrum.StreamResponse{
+				Change: &pbcentrum.StreamResponse_SettingsDeleted{SettingsDeleted: key},
+			}
+		},
+	},
+	{
+		StreamName: "centrum_dispatchers", Bucket: "centrum_dispatchers", NoWildcard: true,
+		Unmarshal: func(ctx context.Context, _ *Server, b []byte) (proto.Message, error) {
+			var value centrumdispatchers.Dispatchers
+			return &value, proto.Unmarshal(b, &value)
+		},
+		WrapPut: func(value proto.Message) *pbcentrum.StreamResponse {
+			return &pbcentrum.StreamResponse{
+				Change: &pbcentrum.StreamResponse_Dispatchers{
+					Dispatchers: value.(*centrumdispatchers.Dispatchers),
+				},
+			}
+		},
+		WrapDelete: func(key string) *pbcentrum.StreamResponse {
+			return &pbcentrum.StreamResponse{
+				Change: &pbcentrum.StreamResponse_Dispatchers{
+					Dispatchers: &centrumdispatchers.Dispatchers{Job: key},
+				},
+			}
+		},
+	},
+	{
+		StreamName: "centrum_units", Bucket: "centrum_units.job",
+		Unmarshal: func(ctx context.Context, s *Server, b []byte) (proto.Message, error) {
+			var mapping common.IDMapping
+			if err := proto.Unmarshal(b, &mapping); err != nil {
+				return nil, fmt.Errorf("failed to unmarshal unit id mapping. %w", err)
+			}
+			return s.units.Get(ctx, mapping.GetId())
+		},
+		WrapPut: func(value proto.Message) *pbcentrum.StreamResponse {
+			return &pbcentrum.StreamResponse{
+				Change: &pbcentrum.StreamResponse_UnitUpdated{
+					UnitUpdated: value.(*centrumunits.Unit),
+				},
+			}
+		},
+		WrapDelete: func(key string) *pbcentrum.StreamResponse {
+			id, err := centrumutils.ExtractID(key)
+			if err != nil {
+				return nil
+			}
+			return &pbcentrum.StreamResponse{
+				Change: &pbcentrum.StreamResponse_UnitDeleted{UnitDeleted: id},
+			}
+		},
+	},
+	{
+		StreamName: "centrum_dispatches", Bucket: "centrum_dispatches.job",
+		Unmarshal: func(ctx context.Context, s *Server, b []byte) (proto.Message, error) {
+			var mapping common.IDMapping
+			if err := proto.Unmarshal(b, &mapping); err != nil {
+				return nil, fmt.Errorf("failed to unmarshal dispatch id mapping. %w", err)
+			}
+			return s.dispatches.Get(ctx, mapping.GetId())
+		},
+		WrapPut: func(value proto.Message) *pbcentrum.StreamResponse {
+			return &pbcentrum.StreamResponse{
+				Change: &pbcentrum.StreamResponse_DispatchUpdated{
+					DispatchUpdated: value.(*centrumdispatches.Dispatch),
+				},
+			}
+		},
+		WrapDelete: func(key string) *pbcentrum.StreamResponse {
+			id, err := centrumutils.ExtractID(key)
+			if err != nil {
+				return nil
+			}
+			return &pbcentrum.StreamResponse{
+				Change: &pbcentrum.StreamResponse_DispatchDeleted{DispatchDeleted: id},
+			}
+		},
+	},
+}
+
+type projectionFeedEventKey struct {
+	feed    string
+	id      int64
+	deleted bool
+}
+
+type pendingProjectionFeedEvent struct {
+	jobs       map[string]struct{}
+	response   *pbcentrum.StreamResponse
+	kvRevision uint64
+}
+
 type feedEvent struct {
 	Sequence uint64
+	// Jobs is a de-duplicated list of jobs authorized to receive Response.
 	Jobs     []string
 	Response *pbcentrum.StreamResponse
 	// Resync tells connected clients that a source-feed interruption may have
@@ -28,40 +149,6 @@ type feedEvent struct {
 }
 
 const feedCoalesceWindow = 5 * time.Millisecond
-
-type dispatchFeedEventKey struct {
-	id      int64
-	deleted bool
-}
-
-type pendingDispatchFeedEvent struct {
-	jobs       map[string]struct{}
-	response   *pbcentrum.StreamResponse
-	kvRevision uint64
-}
-
-type unitFeedEventKey struct {
-	id      int64
-	deleted bool
-}
-
-type pendingUnitFeedEvent struct {
-	jobs       map[string]struct{}
-	response   *pbcentrum.StreamResponse
-	kvRevision uint64
-}
-
-func (s *Server) startFeedHub(ctx context.Context) {
-	s.wg.Go(func() {
-		s.runCentrumEventFeed(ctx)
-	})
-
-	for _, feed := range feeds {
-		s.wg.Go(func() {
-			s.runKVFeed(ctx, feed)
-		})
-	}
-}
 
 func (s *Server) publishFeedEvent(
 	feed string,
@@ -100,120 +187,85 @@ func (s *Server) publishFeedEventLocked(
 	s.metrics.IncFeedMessage(feed, "published")
 }
 
-func dispatchFeedKey(response *pbcentrum.StreamResponse) (dispatchFeedEventKey, bool) {
+func dispatchFeedKey(response *pbcentrum.StreamResponse) (projectionFeedEventKey, bool) {
 	if dispatch := response.GetDispatchUpdated(); dispatch != nil && dispatch.GetId() > 0 {
-		return dispatchFeedEventKey{id: dispatch.GetId()}, true
+		return projectionFeedEventKey{feed: "centrum_dispatches", id: dispatch.GetId()}, true
 	}
 	if id := response.GetDispatchDeleted(); id > 0 {
-		return dispatchFeedEventKey{id: id, deleted: true}, true
+		return projectionFeedEventKey{feed: "centrum_dispatches", id: id, deleted: true}, true
 	}
 
-	return dispatchFeedEventKey{}, false
+	return projectionFeedEventKey{}, false
 }
 
-func (s *Server) queueDispatchFeedEvent(job string, response *pbcentrum.StreamResponse, kvRevision uint64) {
-	if response == nil {
-		return
-	}
-
+func (s *Server) queueDispatchFeedEvent(
+	job string,
+	response *pbcentrum.StreamResponse,
+	kvRevision uint64,
+) {
 	key, ok := dispatchFeedKey(response)
 	if !ok {
 		s.publishFeedEvent("centrum_dispatches", []string{job}, response, kvRevision)
 		return
 	}
-
-	s.feedMu.Lock()
-	defer s.feedMu.Unlock()
-	if s.feedBroker.SubCount() == 0 {
-		s.metrics.IncFeedMessage("centrum_dispatches", "skipped_no_subscribers")
-		return
-	}
-
-	// Do not let an update and a deletion for the same dispatch overtake each other.
-	if key.deleted {
-		s.flushDispatchFeedEventLocked(dispatchFeedEventKey{id: key.id})
-	}
-
-	if s.pendingDispatchFeedEvents == nil {
-		s.pendingDispatchFeedEvents = make(map[dispatchFeedEventKey]*pendingDispatchFeedEvent)
-	}
-	pending := s.pendingDispatchFeedEvents[key]
-	if pending == nil {
-		pending = &pendingDispatchFeedEvent{jobs: make(map[string]struct{})}
-		s.pendingDispatchFeedEvents[key] = pending
-		time.AfterFunc(feedCoalesceWindow, func() {
-			s.flushDispatchFeedEvent(key)
-		})
-	}
-
-	pending.jobs[job] = struct{}{}
-	pending.response = response
-	pending.kvRevision = max(pending.kvRevision, kvRevision)
+	s.queueProjectionFeedEvent(job, response, kvRevision, key)
 }
 
-func (s *Server) flushDispatchFeedEvent(key dispatchFeedEventKey) {
-	s.feedMu.Lock()
-	defer s.feedMu.Unlock()
-	s.flushDispatchFeedEventLocked(key)
-}
-
-func (s *Server) flushDispatchFeedEventLocked(key dispatchFeedEventKey) {
-	pending := s.pendingDispatchFeedEvents[key]
-	if pending == nil {
-		return
-	}
-	delete(s.pendingDispatchFeedEvents, key)
-
-	jobs := make([]string, 0, len(pending.jobs))
-	for job := range pending.jobs {
-		jobs = append(jobs, job)
-	}
-	slices.Sort(jobs)
-	s.publishFeedEventLocked("centrum_dispatches", jobs, pending.response, pending.kvRevision)
-}
-
-func unitFeedKey(response *pbcentrum.StreamResponse) (unitFeedEventKey, bool) {
+func unitFeedKey(response *pbcentrum.StreamResponse) (projectionFeedEventKey, bool) {
 	if unit := response.GetUnitUpdated(); unit != nil && unit.GetId() > 0 {
-		return unitFeedEventKey{id: unit.GetId()}, true
+		return projectionFeedEventKey{feed: "centrum_units", id: unit.GetId()}, true
 	}
 	if id := response.GetUnitDeleted(); id > 0 {
-		return unitFeedEventKey{id: id, deleted: true}, true
+		return projectionFeedEventKey{feed: "centrum_units", id: id, deleted: true}, true
 	}
 
-	return unitFeedEventKey{}, false
+	return projectionFeedEventKey{}, false
 }
 
-func (s *Server) queueUnitFeedEvent(job string, response *pbcentrum.StreamResponse, kvRevision uint64) {
-	if response == nil {
-		return
-	}
-
+func (s *Server) queueUnitFeedEvent(
+	job string,
+	response *pbcentrum.StreamResponse,
+	kvRevision uint64,
+) {
 	key, ok := unitFeedKey(response)
 	if !ok {
 		s.publishFeedEvent("centrum_units", []string{job}, response, kvRevision)
 		return
 	}
+	s.queueProjectionFeedEvent(job, response, kvRevision, key)
+}
 
+// queueProjectionFeedEvent coalesces job-mapping updates while preserving an
+// update-before-delete order for the same live projection.
+func (s *Server) queueProjectionFeedEvent(
+	job string,
+	response *pbcentrum.StreamResponse,
+	kvRevision uint64,
+	key projectionFeedEventKey,
+) {
+	if response == nil {
+		return
+	}
 	s.feedMu.Lock()
 	defer s.feedMu.Unlock()
 	if s.feedBroker.SubCount() == 0 {
-		s.metrics.IncFeedMessage("centrum_units", "skipped_no_subscribers")
+		s.metrics.IncFeedMessage(key.feed, "skipped_no_subscribers")
 		return
 	}
 
 	if key.deleted {
-		s.flushUnitFeedEventLocked(unitFeedEventKey{id: key.id})
+		s.flushProjectionFeedEventLocked(projectionFeedEventKey{feed: key.feed, id: key.id})
 	}
 
-	if s.pendingUnitFeedEvents == nil {
-		s.pendingUnitFeedEvents = make(map[unitFeedEventKey]*pendingUnitFeedEvent)
+	if s.pendingProjectionFeedEvents == nil {
+		s.pendingProjectionFeedEvents = make(map[projectionFeedEventKey]*pendingProjectionFeedEvent)
 	}
-	pending := s.pendingUnitFeedEvents[key]
+	pending := s.pendingProjectionFeedEvents[key]
 	if pending == nil {
-		pending = &pendingUnitFeedEvent{jobs: make(map[string]struct{})}
-		s.pendingUnitFeedEvents[key] = pending
+		pending = &pendingProjectionFeedEvent{jobs: make(map[string]struct{})}
+		s.pendingProjectionFeedEvents[key] = pending
 		time.AfterFunc(feedCoalesceWindow, func() {
-			s.flushUnitFeedEvent(key)
+			s.flushProjectionFeedEvent(key)
 		})
 	}
 
@@ -222,25 +274,25 @@ func (s *Server) queueUnitFeedEvent(job string, response *pbcentrum.StreamRespon
 	pending.kvRevision = max(pending.kvRevision, kvRevision)
 }
 
-func (s *Server) flushUnitFeedEvent(key unitFeedEventKey) {
+func (s *Server) flushProjectionFeedEvent(key projectionFeedEventKey) {
 	s.feedMu.Lock()
 	defer s.feedMu.Unlock()
-	s.flushUnitFeedEventLocked(key)
+	s.flushProjectionFeedEventLocked(key)
 }
 
-func (s *Server) flushUnitFeedEventLocked(key unitFeedEventKey) {
-	pending := s.pendingUnitFeedEvents[key]
+func (s *Server) flushProjectionFeedEventLocked(key projectionFeedEventKey) {
+	pending := s.pendingProjectionFeedEvents[key]
 	if pending == nil {
 		return
 	}
-	delete(s.pendingUnitFeedEvents, key)
+	delete(s.pendingProjectionFeedEvents, key)
 
 	jobs := make([]string, 0, len(pending.jobs))
 	for job := range pending.jobs {
 		jobs = append(jobs, job)
 	}
 	slices.Sort(jobs)
-	s.publishFeedEventLocked("centrum_units", jobs, pending.response, pending.kvRevision)
+	s.publishFeedEventLocked(key.feed, jobs, pending.response, pending.kvRevision)
 }
 
 func (s *Server) publishFeedResync(feed string) {
@@ -255,24 +307,6 @@ func (s *Server) publishFeedResync(feed string) {
 		Resync:   true,
 	})
 	s.metrics.IncFeedResync(feed + "_worker_restart")
-}
-
-func (s *Server) runCentrumEventFeed(ctx context.Context) {
-	for {
-		err := s.consumeCentrumEvents(ctx)
-		if ctx.Err() == nil && !protoutils.IsContextCanceled(err) {
-			if err != nil {
-				s.logger.Error("centrum event feed stopped", zap.Error(err))
-			}
-			s.publishFeedResync("events")
-		}
-
-		select {
-		case <-ctx.Done():
-			return
-		case <-time.After(2 * time.Second):
-		}
-	}
 }
 
 func (s *Server) consumeCentrumEvents(ctx context.Context) error {
@@ -351,28 +385,6 @@ func (s *Server) consumeCentrumEvents(ctx context.Context) error {
 	}
 }
 
-func (s *Server) runKVFeed(ctx context.Context, feed feedCfg) {
-	for {
-		err := s.consumeKVFeed(ctx, feed)
-		if ctx.Err() == nil && !protoutils.IsContextCanceled(err) {
-			if err != nil {
-				s.logger.Error(
-					"centrum KV feed stopped",
-					zap.Error(err),
-					zap.String("bucket", feed.Bucket),
-				)
-			}
-			s.publishFeedResync(feed.StreamName)
-		}
-
-		select {
-		case <-ctx.Done():
-			return
-		case <-time.After(2 * time.Second):
-		}
-	}
-}
-
 func (s *Server) consumeKVFeed(ctx context.Context, feed feedCfg) error {
 	consumer, err := s.js.CreateConsumer(ctx, "KV_"+feed.StreamName, jetstream.ConsumerConfig{
 		FilterSubject: "$KV." + feed.Bucket + ".>",
@@ -415,11 +427,12 @@ func (s *Server) consumeKVFeed(ctx context.Context, feed feedCfg) error {
 
 		if op := msg.Headers().Get("KV-Operation"); op == "DEL" || op == "PURGE" {
 			response := feed.WrapDelete(key)
-			if feed.StreamName == "centrum_dispatches" {
+			switch feed.StreamName {
+			case "centrum_dispatches":
 				s.queueDispatchFeedEvent(job, response, kvRevision)
-			} else if feed.StreamName == "centrum_units" {
+			case "centrum_units":
 				s.queueUnitFeedEvent(job, response, kvRevision)
-			} else {
+			default:
 				s.publishFeedEvent(feed.StreamName, []string{job}, response, kvRevision)
 			}
 			continue
@@ -442,11 +455,12 @@ func (s *Server) consumeKVFeed(ctx context.Context, feed feedCfg) error {
 		}
 
 		response := feed.WrapPut(obj)
-		if feed.StreamName == "centrum_dispatches" {
+		switch feed.StreamName {
+		case "centrum_dispatches":
 			s.queueDispatchFeedEvent(job, response, kvRevision)
-		} else if feed.StreamName == "centrum_units" {
+		case "centrum_units":
 			s.queueUnitFeedEvent(job, response, kvRevision)
-		} else {
+		default:
 			s.publishFeedEvent(feed.StreamName, []string{job}, response, kvRevision)
 		}
 	}

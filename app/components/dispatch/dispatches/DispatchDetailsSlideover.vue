@@ -38,7 +38,7 @@ const centrumStore = useCentrumStore();
 const { dispatches, timeCorrection } = storeToRefs(centrumStore);
 const { canDo, selfAssign } = centrumStore;
 const notifications = useNotificationsStore();
-const now = useSecondClock();
+const now = useMinuteClock();
 const formatTimeAgo = useLocaleTimeAgoFormatter();
 
 const centrumDispatchesClient = await getCentrumDispatchesClient();

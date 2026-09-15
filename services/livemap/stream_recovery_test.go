@@ -48,6 +48,7 @@ func (p *streamRecoveryPerms) AttrJobGradeList(
 
 type streamRecoveryTracker struct {
 	*streamTestTracker
+
 	marker *livemapmarkers.UserMarker
 }
 
@@ -64,6 +65,7 @@ func (t *streamRecoveryTracker) ListTrackedJobs() []string {
 
 type streamRecoveryUserInfo struct {
 	pkguserinfo.UserInfoRetriever
+
 	userInfo *pbuserinfo.UserInfo
 }
 
@@ -83,6 +85,7 @@ func (*streamRecoveryChanges) UnsubscribeUserInfoChanges(chan *pbuserinfo.UserIn
 
 type streamRecoveryServer struct {
 	pblivemap.LivemapService_StreamServer
+
 	ctx context.Context
 	mu  sync.Mutex
 	ch  chan *pblivemap.StreamResponse
@@ -106,10 +109,14 @@ func (s *streamRecoveryServer) Send(resp *pblivemap.StreamResponse) error {
 	}
 }
 
-var _ pblivemap.LivemapService_StreamServer = (*streamRecoveryServer)(nil)
-var _ grpc.ServerStream = (*streamRecoveryServer)(nil)
+var (
+	_ pblivemap.LivemapService_StreamServer = (*streamRecoveryServer)(nil)
+	_ grpc.ServerStream                     = (*streamRecoveryServer)(nil)
+)
 
 func TestStreamRecoversAfterUserConsumerDeletion(t *testing.T) {
+	t.Parallel()
+
 	conn, js, shutdown, err := nats.NewInProcessNATSServer()
 	require.NoError(t, err)
 	defer func() { require.NoError(t, shutdown()) }()
@@ -159,7 +166,7 @@ func TestStreamRecoversAfterUserConsumerDeletion(t *testing.T) {
 	go func() { done <- server.Stream(&pblivemap.StreamRequest{}, streamSrv) }()
 
 	// The initial ACL, marker snapshot, and user snapshot establish the stream.
-	for i := 0; i < 3; i++ {
+	for range 3 {
 		select {
 		case <-responses:
 		case <-time.After(time.Second):
@@ -182,7 +189,7 @@ func TestStreamRecoversAfterUserConsumerDeletion(t *testing.T) {
 	}, time.Second, 10*time.Millisecond)
 
 	// Recreating the stream produces the same ACL and snapshots without ending the RPC.
-	for i := 0; i < 3; i++ {
+	for range 3 {
 		select {
 		case <-responses:
 		case <-time.After(time.Second):
@@ -198,7 +205,8 @@ func TestStreamRecoversAfterUserConsumerDeletion(t *testing.T) {
 
 	select {
 	case resp := <-responses:
-		require.Equal(t, float64(9), resp.GetUserUpdates().GetUpdates()[0].GetX())
+		require.InEpsilon(t, float64(9), resp.GetUserUpdates().GetUpdates()[0].GetX(), 0.0001)
+
 	case <-time.After(time.Second):
 		t.Fatal("timed out waiting for user marker update after consumer recovery")
 	}

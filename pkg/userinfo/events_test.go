@@ -183,6 +183,55 @@ func TestChangesPublishesAndConsumesUserInfoChangedEvent(t *testing.T) {
 	}
 }
 
+func TestChangesTerminatesInvalidConsumedEvent(t *testing.T) {
+	t.Parallel()
+
+	_, js, shutdown, err := nats.NewInProcessNATSServer()
+	require.NoError(t, err)
+	t.Cleanup(func() { require.NoError(t, shutdown()) })
+
+	changes := &Changes{
+		logger: zap.NewNop(),
+		broker: broker.NewWithResyncOnSlowSubscriber[*pbuserinfo.UserInfoChanged](10),
+	}
+	ctx, cancel := context.WithCancel(t.Context())
+	defer cancel()
+	go changes.broker.Start(ctx)
+
+	sub := changes.SubscribeUserInfoChanges()
+	consumer, err := CreateOrUpdateChangeConsumer(ctx, js, jetstream.ConsumerConfig{
+		Durable:       "invalid_changes_test_consumer",
+		AckPolicy:     jetstream.AckExplicitPolicy,
+		DeliverPolicy: jetstream.DeliverNewPolicy,
+		AckWait:       50 * time.Millisecond,
+	})
+	require.NoError(t, err)
+	consumeCtx, err := consumer.Consume(changes.handleMessage)
+	require.NoError(t, err)
+	defer consumeCtx.Stop()
+
+	_, err = js.Publish(
+		ctx,
+		fmt.Sprintf("%s.%d.changes", BaseSubject, 42),
+		[]byte(`{"accountId":"0","userId":7}`),
+	)
+	require.NoError(t, err)
+
+	assert.Never(t, func() bool {
+		select {
+		case <-sub:
+			return true
+		default:
+			return false
+		}
+	}, 200*time.Millisecond, 10*time.Millisecond)
+
+	require.Eventually(t, func() bool {
+		info, err := consumer.Info(ctx)
+		return err == nil && info.NumAckPending == 0
+	}, time.Second, 10*time.Millisecond)
+}
+
 func TestPublishUserInfoChangedRejectsInvalidEvents(t *testing.T) {
 	t.Parallel()
 

@@ -6,7 +6,9 @@ import (
 	"fmt"
 
 	centrumunits "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/centrum/units"
-	centrumutils "github.com/fivenet-app/fivenet/v2026/services/centrum/utils"
+	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
+	"github.com/go-jet/jet/v2/mysql"
+	"github.com/go-jet/jet/v2/qrm"
 	"github.com/nats-io/nats.go/jetstream"
 	"go.uber.org/zap"
 )
@@ -151,10 +153,6 @@ func (s *UnitDB) syncLoadedUnitMembership(ctx context.Context, unit *centrumunit
 	}
 
 	unitId := unit.GetId()
-	previous, err := s.store.Get(centrumutils.IdKey(unitId))
-	if err != nil && !errors.Is(err, jetstream.ErrKeyNotFound) {
-		return err
-	}
 	if err := s.updateInKV(ctx, unitId, unit); err != nil {
 		return err
 	}
@@ -191,7 +189,7 @@ func (s *UnitDB) syncLoadedUnitMembership(ctx context.Context, unit *centrumunit
 
 	return errors.Join(
 		errs,
-		s.clearRemovedTrackerMappingsForUnit(ctx, unitId, previous.GetUsers(), userIds),
+		s.clearStaleTrackerMappingsForUnit(ctx, unitId, userIds),
 	)
 }
 
@@ -208,11 +206,6 @@ func (s *UnitDB) isEligibleUnitMember(ctx context.Context, job string, userId in
 }
 
 func (s *UnitDB) syncMissingUnitMembership(ctx context.Context, unitId int64) error {
-	previous, err := s.store.Get(centrumutils.IdKey(unitId))
-	if err != nil && !errors.Is(err, jetstream.ErrKeyNotFound) {
-		return err
-	}
-
 	var errs error
 	if err := s.deleteInKV(ctx, unitId); err != nil && !errors.Is(err, jetstream.ErrKeyNotFound) {
 		errs = errors.Join(errs, err)
@@ -220,20 +213,23 @@ func (s *UnitDB) syncMissingUnitMembership(ctx context.Context, unitId int64) er
 
 	return errors.Join(
 		errs,
-		s.clearRemovedTrackerMappingsForUnit(ctx, unitId, previous.GetUsers(), nil),
+		s.clearStaleTrackerMappingsForUnit(ctx, unitId, nil),
 	)
 }
 
-func (s *UnitDB) clearRemovedTrackerMappingsForUnit(
+func (s *UnitDB) clearStaleTrackerMappingsForUnit(
 	ctx context.Context,
 	unitId int64,
-	previousUsers []*centrumunits.UnitAssignment,
 	validUserIds map[int32]struct{},
 ) error {
+	mappings, err := s.tracker.ListUserMappings(ctx)
+	if err != nil {
+		return err
+	}
+
 	var errs error
-	for _, user := range previousUsers {
-		userId := user.GetUserId()
-		if userId <= 0 {
+	for userId, mapping := range mappings {
+		if userId <= 0 || mapping == nil || mapping.UnitId == nil || mapping.GetUnitId() != unitId {
 			continue
 		}
 
@@ -241,7 +237,7 @@ func (s *UnitDB) clearRemovedTrackerMappingsForUnit(
 			continue
 		}
 
-		errs = errors.Join(errs, s.clearTrackerMappingForUnit(ctx, userId, unitId))
+		errs = errors.Join(errs, s.tracker.DeleteUserMapping(ctx, userId))
 	}
 
 	return errs
@@ -257,4 +253,44 @@ func (s *UnitDB) clearTrackerMappingForUnit(ctx context.Context, userId int32, u
 	}
 
 	return s.tracker.DeleteUserMapping(ctx, userId)
+}
+
+func (s *UnitDB) LoadUnitIDForUserID(ctx context.Context, userId int32) (int64, error) {
+	tUnitUser := table.FivenetCentrumUnitsUsers.AS("unit_assignment")
+
+	stmt := tUnitUser.
+		SELECT(
+			tUnitUser.UnitID.AS("unit_id"),
+		).
+		FROM(tUnitUser).
+		WHERE(
+			tUnitUser.UserID.EQ(mysql.Int32(userId)),
+		).
+		LIMIT(1)
+
+	var dest struct {
+		UnitID int64
+	}
+	if err := stmt.QueryContext(ctx, s.db, &dest); err != nil {
+		if !errors.Is(err, qrm.ErrNoRows) {
+			return 0, err
+		}
+
+		return 0, nil
+	}
+
+	return dest.UnitID, nil
+}
+
+func (s *UnitDB) UserInJob(
+	ctx context.Context,
+	db qrm.DB,
+	job string,
+	userID int32,
+) (bool, error) {
+	if s.jobs == nil {
+		return false, errors.New("jobs store unavailable")
+	}
+
+	return s.jobs.UserInJob(ctx, db, job, userID)
 }

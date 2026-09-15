@@ -8,14 +8,27 @@ import (
 	centrumsettings "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/centrum/settings"
 	pbuserinfo "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/userinfo"
 	pbcentrum "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/centrum"
+	pkguserinfo "github.com/fivenet-app/fivenet/v2026/pkg/userinfo"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"google.golang.org/grpc/metadata"
 )
 
 type testCentrumStreamServer struct {
-	//nolint:containedctx // Used in test env/setup only.
 	ctx context.Context
+}
+
+type authoritativeStreamUserInfo struct {
+	pkguserinfo.UserInfoRetriever
+
+	user *pbuserinfo.UserInfo
+}
+
+func (r *authoritativeStreamUserInfo) GetUserInfo(
+	context.Context,
+	int32,
+) (*pbuserinfo.UserInfo, error) {
+	return r.user, nil
 }
 
 func (s *testCentrumStreamServer) SetHeader(metadata.MD) error  { return nil }
@@ -52,6 +65,19 @@ func TestStreamRequestsSnapshotAfterPrimaryJobChange(t *testing.T) {
 	)
 
 	require.ErrorIs(t, err, errUserInfoChanged)
+	assert.Equal(t, "ambulance", user.GetJob())
+	assert.Equal(t, int32(1), user.GetJobGrade())
+}
+
+func TestRefreshStreamUserInfoUsesAuthoritativeState(t *testing.T) {
+	t.Parallel()
+
+	user := &pbuserinfo.UserInfo{UserId: 42, Job: "ambulance", JobGrade: 1}
+	server := &Server{userinfo: &authoritativeStreamUserInfo{
+		user: &pbuserinfo.UserInfo{UserId: 42, Job: "police", JobGrade: 3},
+	}}
+
+	require.NoError(t, server.refreshStreamUserInfo(t.Context(), user))
 	assert.Equal(t, "police", user.GetJob())
 	assert.Equal(t, int32(3), user.GetJobGrade())
 }

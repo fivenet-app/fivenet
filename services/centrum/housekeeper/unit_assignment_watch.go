@@ -103,15 +103,7 @@ func (s *Housekeeper) removeDispatchesFromEmptyUnit(
 		if row == nil || row.DispatchID <= 0 {
 			continue
 		}
-		if err := s.dispatches.UpdateAssignments(
-			ctx,
-			nil,
-			nil,
-			row.DispatchID,
-			nil,
-			[]int64{unit.GetId()},
-			time.Time{},
-		); err != nil {
+		if err := s.removeUnitFromDispatch(ctx, row.DispatchID, unit.GetId(), nil); err != nil {
 			errs = errors.Join(errs, fmt.Errorf(
 				"failed to remove unit %d from dispatch %d. %w",
 				unit.GetId(),
@@ -124,4 +116,22 @@ func (s *Housekeeper) removeDispatchesFromEmptyUnit(
 	}
 
 	return removed, errs
+}
+
+// removeUnitFromDispatch applies the common assignment transition used by the
+// immediate empty-unit watcher and the periodic reconciliation audit.
+func (s *Housekeeper) removeUnitFromDispatch(
+	ctx context.Context,
+	dispatchID, unitID int64,
+	creatorJob *string,
+) error {
+	return s.dispatches.UpdateAssignments(
+		ctx,
+		creatorJob,
+		nil,
+		dispatchID,
+		nil,
+		[]int64{unitID},
+		time.Time{},
+	)
 }

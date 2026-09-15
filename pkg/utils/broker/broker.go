@@ -116,7 +116,13 @@ func (b *Broker[T]) Subscribe() chan T {
 	}
 	select {
 	case <-b.done:
-		// The broker owns channel closure if it accepted the subscription.
+		select {
+		case <-ready:
+			// The broker registered the channel and owns its closure.
+		default:
+			// Start exited before it registered this buffered subscription.
+			close(msgCh)
+		}
 		return msgCh
 	case <-ready:
 	}

@@ -105,15 +105,14 @@ type Server struct {
 	wg     sync.WaitGroup
 	jsCons jetstream.ConsumeContext
 
-	feedBroker                *broker.Broker[*feedEvent]
-	feedMu                    sync.Mutex
-	feedSequence              atomic.Uint64
-	pendingDispatchFeedEvents map[dispatchFeedEventKey]*pendingDispatchFeedEvent
-	pendingUnitFeedEvents     map[unitFeedEventKey]*pendingUnitFeedEvent
-	ready                     chan struct{}
-	readyMu                   sync.RWMutex
-	readyErr                  error
-	metrics                   *centrummetrics.Metrics
+	feedBroker                  *broker.Broker[*feedEvent]
+	feedMu                      sync.Mutex
+	feedSequence                atomic.Uint64
+	pendingProjectionFeedEvents map[projectionFeedEventKey]*pendingProjectionFeedEvent
+	ready                       chan struct{}
+	readyMu                     sync.RWMutex
+	readyErr                    error
+	metrics                     *centrummetrics.Metrics
 
 	db                *sql.DB
 	perms             perms.Permissions
@@ -200,11 +199,10 @@ func NewServer(p Params) Result {
 
 		// Snapshot generation may take longer than the default broker queue.
 		// A sequence gap still forces a resync if this buffer is exceeded.
-		feedBroker:                broker.NewWithResyncOnSlowSubscriber[*feedEvent](512),
-		pendingDispatchFeedEvents: make(map[dispatchFeedEventKey]*pendingDispatchFeedEvent),
-		pendingUnitFeedEvents:     make(map[unitFeedEventKey]*pendingUnitFeedEvent),
-		ready:                     make(chan struct{}),
-		metrics:                   centrummetrics.Get(),
+		feedBroker:                  broker.NewWithResyncOnSlowSubscriber[*feedEvent](512),
+		pendingProjectionFeedEvents: make(map[projectionFeedEventKey]*pendingProjectionFeedEvent),
+		ready:                       make(chan struct{}),
+		metrics:                     centrummetrics.Get(),
 	}
 
 	p.LC.Append(fx.StartHook(func(ctxStartup context.Context) error {

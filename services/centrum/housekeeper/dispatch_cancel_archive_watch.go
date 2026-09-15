@@ -16,77 +16,6 @@ import (
 	"go.uber.org/zap"
 )
 
-func (s *Housekeeper) runIdleWatcher(ctx context.Context) {
-	for {
-		if err := s.idleWatcher(ctx); err != nil {
-			if !errors.Is(err, context.Canceled) {
-				s.recordWatcherRestart("idle", err)
-				s.logger.Error("idle watcher stopped", zap.Error(err))
-			}
-		}
-
-		select {
-		case <-ctx.Done():
-			return
-
-		case <-time.After(2 * time.Second):
-		}
-	}
-}
-
-func (s *Housekeeper) runDispatchCleanupWatcher(ctx context.Context) {
-	for {
-		if err := s.dispatchCleanupWatcher(ctx); err != nil {
-			if !errors.Is(err, context.Canceled) {
-				s.recordWatcherRestart("dispatch_cleanup", err)
-				s.logger.Error("dispatch cleanup watcher stopped", zap.Error(err))
-			}
-		}
-
-		select {
-		case <-ctx.Done():
-			return
-
-		case <-time.After(2 * time.Second):
-		}
-	}
-}
-
-func (s *Housekeeper) runProjectionCleanupWatcher(ctx context.Context) {
-	for {
-		if err := s.projectionCleanupWatcher(ctx); err != nil {
-			if !errors.Is(err, context.Canceled) {
-				s.recordWatcherRestart("projection_cleanup", err)
-				s.logger.Error("dispatch projection cleanup watcher stopped", zap.Error(err))
-			}
-		}
-
-		select {
-		case <-ctx.Done():
-			return
-
-		case <-time.After(2 * time.Second):
-		}
-	}
-}
-
-func (s *Housekeeper) runDispatchAssignmentExpirationWatcher(ctx context.Context) {
-	for {
-		if err := s.dispatchAssignmentExpirationWatcher(ctx); err != nil {
-			if !errors.Is(err, context.Canceled) {
-				s.recordWatcherRestart("dispatch_assignment_expiration", err)
-				s.logger.Error("dispatch assignment expiration watcher stopped", zap.Error(err))
-			}
-		}
-
-		select {
-		case <-ctx.Done():
-			return
-		case <-time.After(2 * time.Second):
-		}
-	}
-}
-
 // dispatchAssignmentExpirationWatcher reacts only to MaxAge purge markers.
 // Explicit Delete calls cancel a timer and must not be mistaken for expiry.
 func (s *Housekeeper) dispatchAssignmentExpirationWatcher(ctx context.Context) error {
@@ -110,7 +39,10 @@ func (s *Housekeeper) dispatchAssignmentExpirationWatcher(ctx context.Context) e
 
 			parts := strings.Split(event.Key(), ".")
 			if len(parts) != 3 {
-				s.logger.Warn("received invalid dispatch assignment timer key", zap.String("key", event.Key()))
+				s.logger.Warn(
+					"received invalid dispatch assignment timer key",
+					zap.String("key", event.Key()),
+				)
 				continue
 			}
 			dispatchID, dispatchErr := strconv.ParseInt(parts[1], 10, 64)
@@ -131,15 +63,28 @@ func (s *Housekeeper) dispatchAssignmentExpirationWatcher(ctx context.Context) e
 			if err != nil || dispatch == nil {
 				continue
 			}
-			assignment := slices.IndexFunc(dispatch.GetUnits(), func(assignment *centrumdispatches.DispatchAssignment) bool {
-				return assignment.GetUnitId() == unitID
-			})
+			assignment := slices.IndexFunc(
+				dispatch.GetUnits(),
+				func(assignment *centrumdispatches.DispatchAssignment) bool {
+					return assignment.GetUnitId() == unitID
+				},
+			)
 			if assignment < 0 || dispatch.GetUnits()[assignment].GetExpiresAt() == nil ||
-				dispatch.GetUnits()[assignment].GetExpiresAt().AsTime().After(time.Now()) {
+				dispatch.GetUnits()[assignment].GetExpiresAt().
+					AsTime().
+					After(time.Now().Add(-2*time.Second)) {
 				continue
 			}
 
-			if err := s.assignmentExpirationSource.UpdateAssignments(ctx, nil, nil, dispatchID, nil, []int64{unitID}, time.Time{}); err != nil {
+			if err := s.assignmentExpirationSource.UpdateAssignments(
+				ctx,
+				nil,
+				nil,
+				dispatchID,
+				nil,
+				[]int64{unitID},
+				time.Time{},
+			); err != nil {
 				s.logger.Error(
 					"failed to remove expired dispatch assignment",
 					zap.Int64("dispatch_id", dispatchID),
@@ -196,7 +141,11 @@ func (s *Housekeeper) idleWatcher(ctx context.Context) error {
 }
 
 func (s *Housekeeper) dispatchCleanupWatcher(ctx context.Context) error {
-	watch, err := s.dispatches.IdleStore().Watch(ctx, "cleanup.*")
+	return s.watchDispatchCleanup(ctx, s.dispatches.IdleStore())
+}
+
+func (s *Housekeeper) watchDispatchCleanup(ctx context.Context, idleStore jetstream.KeyValue) error {
+	watch, err := idleStore.Watch(ctx, "cleanup.*")
 	if err != nil {
 		return err
 	}
@@ -211,12 +160,14 @@ func (s *Housekeeper) dispatchCleanupWatcher(ctx context.Context) error {
 			if !ok {
 				return errWatcherUpdatesClosed
 			}
-			if e == nil ||
-				(e.Operation() != jetstream.KeyValueDelete && e.Operation() != jetstream.KeyValuePurge) {
+			// A regular Delete cancels the timer when a completed dispatch becomes
+			// active again. KeyTTL expiry emits a Purge marker, which is the only
+			// operation that must remove the completed projection.
+			if e == nil || e.Operation() != jetstream.KeyValuePurge {
 				continue
 			}
 
-			id, err := strconv.ParseInt(strings.TrimPrefix(e.Key(), "cleanup.id."), 10, 64)
+			id, err := strconv.ParseInt(strings.TrimPrefix(e.Key(), "cleanup."), 10, 64)
 			if err != nil || id <= 0 {
 				s.logger.Warn(
 					"received invalid dispatch cleanup timer key",
@@ -267,7 +218,7 @@ func (s *Housekeeper) projectionCleanupWatcher(ctx context.Context) error {
 				continue
 			}
 
-			id, err := strconv.ParseInt(strings.TrimPrefix(e.Key(), "projection.id."), 10, 64)
+			id, err := strconv.ParseInt(strings.TrimPrefix(e.Key(), "projection."), 10, 64)
 			if err != nil || id <= 0 {
 				s.logger.Warn(
 					"received invalid dispatch projection cleanup key",

@@ -264,7 +264,8 @@ func TestFeedHubForwardsJetStreamEventsAndKVUpdates(t *testing.T) {
 	require.NoError(t, err)
 
 	event := waitForFeedEvent(t, feed, func(event *feedEvent) bool {
-		return assert.Equal(t, []string{"ambulance"}, event.Jobs) && event.Response.GetUnitStatus().GetId() == status.GetId()
+		return assert.Equal(t, []string{"ambulance"}, event.Jobs) &&
+			event.Response.GetUnitStatus().GetId() == status.GetId()
 	})
 	assert.Equal(t, status.GetUnitId(), event.Response.GetUnitStatus().GetUnitId())
 	assert.Zero(t, event.Response.GetKvRevision())
@@ -277,7 +278,8 @@ func TestFeedHubForwardsJetStreamEventsAndKVUpdates(t *testing.T) {
 	require.NoError(t, err)
 
 	event = waitForFeedEvent(t, feed, func(event *feedEvent) bool {
-		return assert.Equal(t, []string{"police"}, event.Jobs) && event.Response.GetSettings().GetJob() == "police"
+		return assert.Equal(t, []string{"police"}, event.Jobs) &&
+			event.Response.GetSettings().GetJob() == "police"
 	})
 	assert.True(t, event.Response.GetSettings().GetEnabled())
 	assert.NotZero(t, event.Response.GetKvRevision())

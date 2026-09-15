@@ -18,7 +18,7 @@ const centrumDispatchesClient = await getCentrumDispatchesClient();
 
 const selectedDispatches = ref<number[]>([]);
 const queryDispatches = ref('');
-const now = useSecondClock();
+const now = useMinuteClock();
 
 async function takeDispatches(resp: TakeDispatchResp): Promise<void> {
     try {

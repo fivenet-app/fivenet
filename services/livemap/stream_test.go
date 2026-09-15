@@ -223,8 +223,8 @@ func TestProcessMessageForwardsSubsequentUserMarkerUpdates(t *testing.T) {
 	}
 
 	require.Len(t, sent, 2)
-	require.Equal(t, float64(1), sent[0].GetUserUpdates().GetUpdates()[0].GetX())
-	require.Equal(t, float64(3), sent[1].GetUserUpdates().GetUpdates()[0].GetX())
+	require.InEpsilon(t, float64(1), sent[0].GetUserUpdates().GetUpdates()[0].GetX(), 0.0001)
+	require.InEpsilon(t, float64(3), sent[1].GetUserUpdates().GetUpdates()[0].GetX(), 0.0001)
 }
 
 func TestProcessMessageForwardsDeleteAndRecreate(t *testing.T) {
@@ -281,5 +281,5 @@ func TestProcessMessageForwardsDeleteAndRecreate(t *testing.T) {
 	require.Len(t, sent[0].GetUserDeletes().GetDeletes(), 1)
 	require.Equal(t, int32(42), sent[0].GetUserDeletes().GetDeletes()[0].GetId())
 	require.Len(t, sent[1].GetUserUpdates().GetUpdates(), 1)
-	require.Equal(t, float64(3), sent[1].GetUserUpdates().GetUpdates()[0].GetX())
+	require.InEpsilon(t, float64(3), sent[1].GetUserUpdates().GetUpdates()[0].GetX(), 0.0001)
 }

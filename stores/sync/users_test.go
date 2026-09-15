@@ -48,6 +48,7 @@ type recordingNotifi struct {
 
 type recordingUserInfoChanges struct {
 	events []*pbuserinfo.UserInfoChanged
+	err    error
 }
 
 func (r *recordingUserInfoChanges) PublishUserInfoChanged(
@@ -55,7 +56,7 @@ func (r *recordingUserInfoChanges) PublishUserInfoChanged(
 	event *pbuserinfo.UserInfoChanged,
 ) error {
 	r.events = append(r.events, event)
-	return nil
+	return r.err
 }
 
 func (n *recordingNotifi) NotifyUser(context.Context, *notifications.Notification) error {
@@ -588,6 +589,25 @@ func TestPublishUserInfoChangedUsesCanonicalPublisher(t *testing.T) {
 	assert.Equal(t, int32(11), publisher.events[0].GetUserId())
 	assert.Equal(t, "sheriff", publisher.events[0].GetNewJob())
 	assert.Empty(t, store.notifi.(*recordingNotifi).events)
+}
+
+func TestPublishUserInfoChangedFallsBackWhenCanonicalPublishFails(t *testing.T) {
+	t.Parallel()
+
+	store, _ := newTestStore(t)
+	store.enricher = labelEnricher{}
+	notifi := &recordingNotifi{}
+	store.notifi = notifi
+	store.userInfoChanges = &recordingUserInfoChanges{err: assert.AnError}
+	accountID := int64(42)
+
+	store.publishUserInfoChanged(t.Context(), &accountID, 11, &userJobChange{
+		job: "sheriff", grade: 1,
+	})
+
+	require.Len(t, notifi.events, 1)
+	assert.Equal(t, int32(11), notifi.events[0].GetUserInfoChanged().GetUserId())
+	assert.Equal(t, "sheriff", notifi.events[0].GetUserInfoChanged().GetNewJob())
 }
 
 func TestHandleUserJobsPublishesPrimaryGradeChange(t *testing.T) {

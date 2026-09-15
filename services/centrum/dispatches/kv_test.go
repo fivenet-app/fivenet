@@ -17,10 +17,16 @@ import (
 
 type failingAssignmentTimerKV struct {
 	jetstream.KeyValue
+
 	err error
 }
 
-func (s failingAssignmentTimerKV) Create(context.Context, string, []byte, ...jetstream.KVCreateOpt) (uint64, error) {
+func (s failingAssignmentTimerKV) Create(
+	context.Context,
+	string,
+	[]byte,
+	...jetstream.KVCreateOpt,
+) (uint64, error) {
 	return 0, s.err
 }
 
@@ -101,7 +107,10 @@ func TestAssignmentExpirationTimerCanBeScheduledAndCancelled(t *testing.T) {
 	require.NoError(t, err)
 
 	dispatches := &DispatchDB{idleKV: idleKV}
-	require.NoError(t, dispatches.ScheduleAssignmentExpiration(t.Context(), 42, 7, time.Now().Add(time.Minute)))
+	require.NoError(
+		t,
+		dispatches.ScheduleAssignmentExpiration(t.Context(), 42, 7, time.Now().Add(time.Minute)),
+	)
 
 	_, err = idleKV.Get(t.Context(), assignmentExpirationKey(42, 7))
 	require.NoError(t, err)
@@ -111,7 +120,38 @@ func TestAssignmentExpirationTimerCanBeScheduledAndCancelled(t *testing.T) {
 	assert.ErrorIs(t, err, jetstream.ErrKeyNotFound)
 }
 
+func TestAssignmentExpirationTimerIsRescheduledWithNewTTL(t *testing.T) {
+	t.Parallel()
+
+	_, js, shutdown, err := nats.NewInProcessNATSServer()
+	require.NoError(t, err)
+	t.Cleanup(func() { require.NoError(t, shutdown()) })
+
+	idleKV, err := js.CreateOrUpdateKeyValue(t.Context(), jetstream.KeyValueConfig{
+		Bucket:         "test_dispatch_assignment_timer_reschedule",
+		Storage:        jetstream.MemoryStorage,
+		LimitMarkerTTL: InactiveLimitMarkerTTL,
+	})
+	require.NoError(t, err)
+
+	dispatches := &DispatchDB{idleKV: idleKV}
+	require.NoError(t, dispatches.ScheduleAssignmentExpiration(
+		t.Context(), 42, 7, time.Now().Add(2*time.Second),
+	))
+	require.NoError(t, dispatches.ScheduleAssignmentExpiration(
+		t.Context(), 42, 7, time.Now().Add(5*time.Second),
+	))
+
+	// The original timer would have expired by now. The recreated key must
+	// remain until the replacement deadline instead.
+	time.Sleep(2500 * time.Millisecond)
+	_, err = idleKV.Get(t.Context(), assignmentExpirationKey(42, 7))
+	require.NoError(t, err)
+}
+
 func TestAssignmentTimerFailureIsBestEffort(t *testing.T) {
+	t.Parallel()
+
 	timerErr := errors.New("KV unavailable")
 	dispatches := &DispatchDB{
 		idleKV: failingAssignmentTimerKV{err: timerErr},

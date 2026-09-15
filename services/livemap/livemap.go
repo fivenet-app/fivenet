@@ -168,7 +168,9 @@ func (s *Server) Stream(
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx).Clone()
 	userInfoChanges := s.userinfoChanges.SubscribeUserInfoChanges()
-	defer s.userinfoChanges.UnsubscribeUserInfoChanges(userInfoChanges)
+	defer func() {
+		s.userinfoChanges.UnsubscribeUserInfoChanges(userInfoChanges)
+	}()
 
 	s.logger.Debug("starting livemap stream", zap.Int32("user_id", userInfo.GetUserId()))
 	for {
@@ -213,8 +215,8 @@ func (s *Server) refreshStreamUserInfo(ctx context.Context, current *userinfo.Us
 	if err != nil {
 		return fmt.Errorf("failed to retrieve current user info: %w", err)
 	}
-	current.Job = updated.Job
-	current.JobGrade = updated.JobGrade
+	current.SetJob(updated.GetJob())
+	current.SetJobGrade(updated.GetJobGrade())
 	return nil
 }
 
@@ -406,8 +408,9 @@ func (s *Server) stream(
 				if change == nil || change.GetUserId() != userInfo.GetUserId() {
 					continue
 				}
-				userInfo.Job = change.GetNewJob()
-				userInfo.JobGrade = change.GetNewJobGrade()
+				// The outer Stream loop reloads authoritative user info before
+				// rebuilding the ACL and snapshots. Do not mutate userInfo here:
+				// marker goroutines concurrently use it for filtering.
 				return errLivemapUserInfoChanged
 			}
 		}
@@ -423,9 +426,10 @@ func (s *Server) stream(
 						return nil
 					}
 					if errors.Is(err, jetstream.ErrMsgIteratorClosed) && gctx.Err() != nil {
+						//nolint:nilerr // If the iterator is closed due to context cancellation, we can safely return nil here.
 						return nil
 					}
-					return fmt.Errorf("%w: %v", errLivemapUserFeedResync, err)
+					return fmt.Errorf("%w: %w", errLivemapUserFeedResync, err)
 				}
 
 				if err := s.processMessage(

@@ -149,6 +149,22 @@ func TestBrokerOperationsAfterShutdownReturn(t *testing.T) {
 	}
 }
 
+func TestBrokerClosesBufferedSubscriptionWhenStartExits(t *testing.T) {
+	t.Parallel()
+
+	// Simulate Start selecting cancellation after Subscribe has placed a
+	// subscription in subCh, but before Start has registered it.
+	b := New[int]()
+	result := make(chan chan int, 1)
+	go func() { result <- b.Subscribe() }()
+	require.Eventually(t, func() bool { return len(b.subCh) == 1 }, time.Second, time.Millisecond)
+	close(b.done)
+
+	ch := <-result
+	_, ok := <-ch
+	assert.False(t, ok, "unregistered subscriber must be closed by Subscribe")
+}
+
 func TestBrokerActiveSubscribersCloseOnShutdown(t *testing.T) {
 	t.Parallel()
 

@@ -210,27 +210,41 @@ func (d *DispatchDB) ScheduleAssignmentExpiration(
 		ttl = time.Second
 	}
 
-	_, err := d.idleKV.Create(
-		ctx,
-		assignmentExpirationKey(dispatchID, unitID),
-		nil,
-		jetstream.KeyTTL(ttl),
-	)
-	if errors.Is(err, jetstream.ErrKeyExists) {
-		entry, getErr := d.idleKV.Get(ctx, assignmentExpirationKey(dispatchID, unitID))
-		if getErr != nil {
-			return getErr
+	key := assignmentExpirationKey(dispatchID, unitID)
+	for {
+		_, err := d.idleKV.Create(ctx, key, nil, jetstream.KeyTTL(ttl))
+		if !errors.Is(err, jetstream.ErrKeyExists) {
+			return err
 		}
-		_, err = d.idleKV.Update(ctx, assignmentExpirationKey(dispatchID, unitID), nil, entry.Revision())
-	}
 
-	return err
+		// Updating a KV entry refreshes the current entry TTL; it cannot apply
+		// the new per-entry KeyTTL. Remove the old entry conditionally, then
+		// retry Create with the requested deadline.
+		entry, err := d.idleKV.Get(ctx, key)
+		if errors.Is(err, jetstream.ErrKeyNotFound) {
+			continue
+		}
+		if err != nil {
+			return err
+		}
+		if err := d.idleKV.Delete(ctx, key, jetstream.LastRevision(entry.Revision())); err != nil {
+			if errors.Is(err, jetstream.ErrKeyNotFound) || errors.Is(err, jetstream.ErrKeyExists) {
+				// A concurrent schedule or expiry changed the key. Start again from
+				// Create so the latest successful operation installs its TTL.
+				continue
+			}
+			return err
+		}
+	}
 }
 
 // CancelAssignmentExpiration cancels an outstanding assignment timer. A
 // regular delete is intentionally distinct from the TTL expiry marker watched
 // by the housekeeper.
-func (d *DispatchDB) CancelAssignmentExpiration(ctx context.Context, dispatchID, unitID int64) error {
+func (d *DispatchDB) CancelAssignmentExpiration(
+	ctx context.Context,
+	dispatchID, unitID int64,
+) error {
 	err := d.idleKV.Delete(ctx, assignmentExpirationKey(dispatchID, unitID))
 	if errors.Is(err, jetstream.ErrKeyNotFound) {
 		return nil

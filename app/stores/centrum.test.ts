@@ -1,5 +1,5 @@
 import { createPinia, setActivePinia } from 'pinia';
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { toTimestamp } from '~/utils/time';
 import type { Dispatchers } from '~~/gen/ts/resources/centrum/dispatchers/dispatchers';
 import {
@@ -75,6 +75,10 @@ describe('useCentrumStore', () => {
         vi.clearAllMocks();
     });
 
+    afterEach(() => {
+        vi.useRealTimers();
+    });
+
     it('keeps feed events with matching unit and dispatch status IDs', () => {
         const store = useCentrumStore();
 
@@ -103,12 +107,19 @@ describe('useCentrumStore', () => {
         expect(store.pendingDispatches).toEqual([]);
     });
 
-    it('clears dispatch revision state when its projection is removed', () => {
+    it('retains dispatch deletion revisions until tombstone cleanup', async () => {
+        vi.useFakeTimers();
+        vi.setSystemTime(new Date('2026-01-01T00:00:00Z'));
         const store = useCentrumStore();
         store.addOrUpdateDispatch(dispatch({ id: 11 }), 2);
         store.removeDispatch(11, 3);
 
-        // Removed projections do not retain a tombstone revision indefinitely.
+        store.addOrUpdateDispatch(dispatch({ id: 11 }), 2);
+
+        expect(store.dispatches.has(11)).toBe(false);
+
+        vi.advanceTimersByTime(5 * 60 * 1000);
+        await store.cleanup();
         store.addOrUpdateDispatch(dispatch({ id: 11 }), 2);
 
         expect(store.dispatches.has(11)).toBe(true);

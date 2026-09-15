@@ -8,6 +8,7 @@ import (
 
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/userinfo"
 	pbcentrum "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/centrum"
+	"github.com/fivenet-app/fivenet/v2026/pkg/utils"
 	"github.com/fivenet-app/fivenet/v2026/pkg/utils/protoutils"
 	"golang.org/x/sync/errgroup"
 )
@@ -29,7 +30,9 @@ func (s *Server) stream(
 	userInfoChanges <-chan *userinfo.UserInfoChanged,
 	snapshotSequence uint64,
 ) error {
-	jobs := append([]string{userInfo.GetJob()}, additionalJobs...)
+	// A job can be granted both as the primary job and as an additional job.
+	// De-duplicate once so every feed event performs a single membership check.
+	jobs := utils.SliceDedup(append([]string{userInfo.GetJob()}, additionalJobs...))
 	out := make(chan *pbcentrum.StreamResponse, 256)
 	g, gctx := errgroup.WithContext(ctx)
 
@@ -49,8 +52,9 @@ func (s *Server) stream(
 					continue
 				}
 
-				userInfo.Job = change.GetNewJob()
-				userInfo.JobGrade = change.GetNewJobGrade()
+				// The event is only a resync signal. It can have been buffered before
+				// the initial database refresh or durably replayed after a newer
+				// change, so its payload is not authoritative.
 				return errUserInfoChanged
 			case event, ok := <-feed:
 				if !ok {

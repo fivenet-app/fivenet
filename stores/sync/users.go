@@ -956,8 +956,9 @@ func (s *Store) publishUserInfoChanged(
 				zap.Int32("user_id", userID),
 				zap.Error(err),
 			)
+		} else {
+			return
 		}
-		return
 	}
 
 	// Keep direct notification delivery for tests and deployments that have not
