@@ -433,6 +433,9 @@ func (s *Server) deleteQualificationRequest(
 	if err != nil {
 		return err
 	}
+	if examUser == nil {
+		return nil
+	}
 	if err := s.store.DeleteExamResponses(ctx, tx, examUser.GetAttemptId()); err != nil {
 		return err
 	}

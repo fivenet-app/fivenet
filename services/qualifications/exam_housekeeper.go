@@ -22,6 +22,7 @@ const (
 	// examMaxRetentionDays bounds stored attempt snapshots, answers, and grading.
 	// Qualification results themselves are intentionally retained.
 	examMaxRetentionDays   = 60
+	examExpiryBatchSize    = 100
 	examRetentionBatchSize = 1000
 )
 
@@ -38,11 +39,11 @@ type ExamHousekeeperResult struct {
 	CronRegister croner.CronRegister `group:"cronjobregister"`
 }
 
-func NewExamHousekeeper(p Params) ExamHousekeeperResult {
+func NewExamHousekeeper(p Params, server *Server) ExamHousekeeperResult {
 	h := &ExamHousekeeper{
 		logger: p.Logger.Named("qualifications.exam_housekeeper"),
 		store:  p.Store,
-		server: NewServer(p),
+		server: server,
 	}
 	return ExamHousekeeperResult{Housekeeper: h, CronRegister: h}
 }
@@ -62,7 +63,7 @@ func (h *ExamHousekeeper) RegisterCronjobs(ctx context.Context, registry croner.
 
 func (h *ExamHousekeeper) RegisterCronjobHandlers(handlers *croner.Handlers) error {
 	handlers.Add(expireExamsCronjob, func(ctx context.Context, _ *cron.CronjobData) error {
-		attempts, err := h.store.ListExpiredExamUsers(ctx, 100)
+		attempts, err := h.store.ListExpiredExamUsers(ctx, examExpiryBatchSize)
 		if err != nil {
 			return fmt.Errorf("expire exam attempts: %w", err)
 		}
@@ -151,6 +152,7 @@ func (h *ExamHousekeeper) completeExpiredExam(
 		tx,
 		attempt.GetQualificationId(),
 		attempt.GetUserId(),
+		attempt.GetAttemptId(),
 	)
 	if err != nil || !expired {
 		return err
@@ -183,7 +185,7 @@ func (h *ExamHousekeeper) completeExpiredExam(
 	}
 	notifi.PublishAfterCommit(
 		ctx,
-		h.server.logger,
+		h.logger,
 		"qualification_result_updated",
 		publishNotifications...)
 	// A per-user "your exam has expired" notification can be prepared here.

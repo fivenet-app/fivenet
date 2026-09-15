@@ -2,6 +2,13 @@
 import type { FormSubmitEvent } from '@nuxt/ui';
 import { differenceInMinutes, isPast } from 'date-fns';
 import { z } from 'zod';
+import {
+    areExamChoicesAllowed,
+    areExamChoicesUnique,
+    examTextLength,
+    isExamChoiceLimitExceeded,
+    isValidExamResponseKind,
+} from '~/utils/qualificationExam';
 import ScrollToTop from '~/components/partials/ScrollToTop.vue';
 import { authKeys } from '~/composables/useAuth';
 import { getQualificationsExamClient } from '~~/gen/ts/clients';
@@ -49,8 +56,17 @@ const schema = z
                 return;
             }
 
+            if (!isValidExamResponseKind(data.oneofKind, response.oneofKind)) {
+                ctx.addIssue({
+                    code: 'custom',
+                    path: ['responses', index],
+                    message: 'zod.custom.qualification_exam.invalid_response',
+                });
+                return;
+            }
+
             if (data.oneofKind === 'freeText' && response.oneofKind === 'freeText') {
-                const length = [...response.freeText.text].length;
+                const length = examTextLength(response.freeText.text);
                 if (data.freeText.minLength > 0 && length < data.freeText.minLength) {
                     ctx.addIssue({
                         code: 'custom',
@@ -68,7 +84,7 @@ const schema = z
             }
 
             if (data.oneofKind === 'singleChoice' && response.oneofKind === 'singleChoice') {
-                if (!data.singleChoice.choices.includes(response.singleChoice.choice)) {
+                if (!areExamChoicesAllowed([response.singleChoice.choice], data.singleChoice.choices)) {
                     ctx.addIssue({
                         code: 'custom',
                         path: ['responses', index],
@@ -79,15 +95,14 @@ const schema = z
 
             if (data.oneofKind === 'multipleChoice' && response.oneofKind === 'multipleChoice') {
                 const choices = response.multipleChoice.choices;
-                const unique = new Set(choices);
-                if (unique.size !== choices.length || choices.some((choice) => !data.multipleChoice.choices.includes(choice))) {
+                if (!areExamChoicesUnique(choices) || !areExamChoicesAllowed(choices, data.multipleChoice.choices)) {
                     ctx.addIssue({
                         code: 'custom',
                         path: ['responses', index],
                         message: 'zod.custom.qualification_exam.select_valid_answers',
                     });
                 }
-                if (data.multipleChoice.limit && choices.length > data.multipleChoice.limit) {
+                if (isExamChoiceLimitExceeded(choices, data.multipleChoice.limit)) {
                     ctx.addIssue({
                         code: 'custom',
                         path: ['responses', index],
@@ -125,6 +140,7 @@ async function submitExam(values: Schema, partial: boolean = false): Promise<Sub
                 responses: {
                     qualificationId: props.qualificationId,
                     userId: 0,
+                    attemptId: '',
                     responses: values.responses,
                 },
                 partial: partial,

@@ -1,15 +1,68 @@
 package qualifications
 
 import (
+	"context"
 	"testing"
 
 	qualificationspb "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/qualifications"
 	qualificationsexam "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/qualifications/exam"
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/userinfo"
 	errorsqualifications "github.com/fivenet-app/fivenet/v2026/services/qualifications/errors"
+	qualificationsstore "github.com/fivenet-app/fivenet/v2026/stores/qualifications"
+	"github.com/go-jet/jet/v2/qrm"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
+
+type effectiveExamTestStore struct {
+	qualificationsstore.IStore
+
+	exam            *qualificationsexam.ExamQuestions
+	qualificationID int64
+	withAnswers     bool
+}
+
+func (s *effectiveExamTestStore) GetExamQuestions(
+	_ context.Context,
+	_ qrm.DB,
+	qualificationID int64,
+	withAnswers bool,
+) (*qualificationsexam.ExamQuestions, error) {
+	s.qualificationID = qualificationID
+	s.withAnswers = withAnswers
+	return s.exam, nil
+}
+
+func TestEffectiveExamForAutoGradingLoadsPersistedQuestionsWhenOmitted(t *testing.T) {
+	t.Parallel()
+
+	persistedExam := &qualificationsexam.ExamQuestions{
+		Questions: []*qualificationsexam.ExamQuestion{
+			{
+				Data: &qualificationsexam.ExamQuestionData{
+					Data: &qualificationsexam.ExamQuestionData_FreeText{
+						FreeText: &qualificationsexam.ExamQuestionText{},
+					},
+				},
+			},
+		},
+	}
+	store := &effectiveExamTestStore{exam: persistedExam}
+	server := &Server{store: store}
+
+	effectiveExam, err := server.effectiveExamForAutoGrading(t.Context(), 42, nil)
+	require.NoError(t, err)
+	assert.Same(t, persistedExam, effectiveExam)
+	assert.Equal(t, int64(42), store.qualificationID)
+	assert.True(t, store.withAnswers)
+	assert.ErrorIs(
+		t,
+		validateExamAutoGrading(effectiveExam, &qualificationsexam.QualificationExamSettings{
+			AutoGrade: true,
+		}),
+		errorsqualifications.ErrExamAutoGradingFreeText,
+	)
+}
 
 func TestCheckIfUserCanTakeExamRejectsUnavailableQualifications(t *testing.T) {
 	t.Parallel()
@@ -344,11 +397,21 @@ func TestMergeExamResponsesPreservesUnchangedResponses(t *testing.T) {
 
 func TestPublicExamResponsesRedactsLegacyAnswer(t *testing.T) {
 	t.Parallel()
-	exam := &qualificationsexam.ExamQuestions{Questions: []*qualificationsexam.ExamQuestion{{Id: 1}}}
-	responses := &qualificationsexam.ExamResponses{AttemptId: "attempt", Responses: []*qualificationsexam.ExamResponse{{
-		QuestionId: 1,
-		Question:   &qualificationsexam.ExamQuestion{Id: 1, Answer: &qualificationsexam.ExamQuestionAnswerData{AnswerKey: "secret"}},
-	}}}
+	exam := &qualificationsexam.ExamQuestions{
+		Questions: []*qualificationsexam.ExamQuestion{{Id: 1}},
+	}
+	responses := &qualificationsexam.ExamResponses{
+		AttemptId: "attempt",
+		Responses: []*qualificationsexam.ExamResponse{
+			{
+				QuestionId: 1,
+				Question: &qualificationsexam.ExamQuestion{
+					Id:     1,
+					Answer: &qualificationsexam.ExamQuestionAnswerData{AnswerKey: "secret"},
+				},
+			},
+		},
+	}
 
 	public := publicExamResponses(exam, responses)
 	require.Nil(t, public.GetResponses()[0].GetQuestion().GetAnswer())

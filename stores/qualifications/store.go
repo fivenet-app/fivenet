@@ -177,6 +177,7 @@ type IStore interface {
 		tx qrm.DB,
 		qualificationId int64,
 		userId int32,
+		attemptId string,
 		complete bool,
 		gracePeriod time.Duration,
 	) (bool, error)
@@ -187,13 +188,6 @@ type IStore interface {
 		userId int32,
 		attemptId string,
 		responses *qualificationsexam.ExamResponses,
-	) error
-	UpsertExamUserEndedAt(
-		ctx context.Context,
-		tx qrm.DB,
-		qualificationId int64,
-		userId int32,
-		endedAt time.Time,
 	) error
 	ListExpiredExamUsers(ctx context.Context, limit int64) ([]*qualificationsexam.ExamUser, error)
 	ListExamUsersPastRetention(
@@ -206,6 +200,7 @@ type IStore interface {
 		tx qrm.DB,
 		qualificationId int64,
 		userId int32,
+		attemptId string,
 	) (bool, error)
 	DeleteExamResponses(ctx context.Context, tx qrm.DB, attemptId string) error
 	HandleExamQuestionsChanges(

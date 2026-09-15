@@ -21,7 +21,6 @@ import (
 	logging "github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/logging"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
-	"google.golang.org/protobuf/proto"
 	"google.golang.org/protobuf/types/known/durationpb"
 )
 
@@ -171,6 +170,7 @@ func (s *Server) TakeExam(
 			tx,
 			req.GetQualificationId(),
 			userInfo.GetUserId(),
+			examUser.GetAttemptId(),
 			false,
 			0,
 		)
@@ -371,6 +371,7 @@ func (s *Server) SubmitExam(
 		tx,
 		req.GetQualificationId(),
 		userInfo.GetUserId(),
+		examUser.GetAttemptId(),
 		!req.GetPartial(),
 		examSubmissionGracePeriod,
 	)
@@ -548,6 +549,9 @@ func (s *Server) GetUserExam(
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 	}
+	if examUser == nil {
+		return &pbqualifications.GetUserExamResponse{}, nil
+	}
 
 	resp.Responses, resp.Grading, err = s.store.GetExamResponses(
 		ctx,
@@ -569,37 +573,4 @@ func (s *Server) GetUserExam(
 	resp.Responses = publicExamResponses(resp.Exam, resp.Responses)
 
 	return resp, nil
-}
-
-func examForCandidate(exam *qualificationsexam.ExamQuestions) *qualificationsexam.ExamQuestions {
-	if exam == nil {
-		return nil
-	}
-	examCopy := proto.Clone(exam).(*qualificationsexam.ExamQuestions)
-	for _, question := range examCopy.GetQuestions() {
-		question.ClearAnswer()
-	}
-	return examCopy
-}
-
-func publicExamUser(examUser *qualificationsexam.ExamUser) *qualificationsexam.ExamUser {
-	if examUser == nil {
-		return nil
-	}
-	examUserCopy := proto.Clone(examUser).(*qualificationsexam.ExamUser)
-	examUserCopy.ClearSnapshot()
-	examUserCopy.SetAttemptId("")
-	return examUserCopy
-}
-
-func publicExamResponses(
-	exam *qualificationsexam.ExamQuestions,
-	responses *qualificationsexam.ExamResponses,
-) *qualificationsexam.ExamResponses {
-	if responses == nil {
-		return nil
-	}
-	copy := sanitizeExamResponses(exam, responses)
-	copy.SetAttemptId("")
-	return copy
 }
