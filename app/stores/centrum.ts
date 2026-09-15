@@ -58,6 +58,7 @@ export const useCentrumStore = defineStore(
         const ownUnitId = ref<number | undefined>(undefined);
         const ownDispatches = ref<number[]>([]);
         const pendingDispatches = ref<number[]>([]);
+        const pendingDispatchExpiryTimers = new Map<number, ReturnType<typeof setTimeout>>();
 
         const dispatchSOS = useSounds('dispatch.dispatchSOS');
         const dispatchAssigned = useSounds('dispatch.dispatchAssigned');
@@ -75,15 +76,55 @@ export const useCentrumStore = defineStore(
             }
         };
 
+        const clearPendingDispatchExpiry = (id: number): void => {
+            const timer = pendingDispatchExpiryTimers.get(id);
+            if (timer) {
+                clearTimeout(timer);
+                pendingDispatchExpiryTimers.delete(id);
+            }
+        };
+
+        const clearPendingDispatchExpiries = (): void => {
+            pendingDispatchExpiryTimers.forEach((timer) => clearTimeout(timer));
+            pendingDispatchExpiryTimers.clear();
+        };
+
         /**
          * Removes a dispatch from the pending dispatches.
          * @param {number} id - The ID of the dispatch to remove.
          */
         const removePendingDispatch = (id: number): void => {
+            clearPendingDispatchExpiry(id);
             const idx = pendingDispatches.value.findIndex((d) => d === id);
             if (idx > -1) {
                 pendingDispatches.value.splice(idx, 1);
             }
+        };
+
+        const schedulePendingDispatchExpiry = (id: number, expiresAt: Timestamp): void => {
+            clearPendingDispatchExpiry(id);
+
+            const expire = (): void => {
+                pendingDispatchExpiryTimers.delete(id);
+                const assignment = dispatches.value.get(id)?.units.find((ua) => ua.unitId === ownUnitId.value);
+                if (!assignment?.expiresAt) return;
+
+                const remaining = toDate(assignment.expiresAt).getTime() - (Date.now() - timeCorrection.value);
+                if (remaining > 0) {
+                    schedulePendingDispatchExpiry(id, assignment.expiresAt);
+                    return;
+                }
+
+                removePendingDispatch(id);
+            };
+
+            const remaining = toDate(expiresAt).getTime() - (Date.now() - timeCorrection.value);
+            if (remaining <= 0) {
+                expire();
+                return;
+            }
+
+            pendingDispatchExpiryTimers.set(id, setTimeout(expire, remaining));
         };
 
         const isTransientDispatchUnitStatus = (status?: StatusDispatch): boolean => {
@@ -315,6 +356,7 @@ export const useCentrumStore = defineStore(
          * @param {number | undefined} id - The ID of the unit to set as the user's own, or undefined to unset.
          */
         const setOwnUnit = (id: number | undefined): void => {
+            if (ownUnitId.value !== id) clearPendingDispatchExpiries();
             ownUnitId.value = id;
         };
 
@@ -510,7 +552,12 @@ export const useCentrumStore = defineStore(
                     addOrUpdateOwnDispatch(dsp.id);
                 } else {
                     // else => it's pending
+                    if (toDate(assignment.expiresAt).getTime() <= Date.now() - timeCorrection.value) {
+                        removePendingDispatch(dsp.id);
+                        return;
+                    }
                     addOrUpdatePendingDispatch(dsp.id);
+                    schedulePendingDispatchExpiry(dsp.id, assignment.expiresAt);
                 }
             }
         };
@@ -534,6 +581,7 @@ export const useCentrumStore = defineStore(
         };
 
         const rebuildOwnDispatches = (): void => {
+            clearPendingDispatchExpiries();
             const own = [] as number[];
             const pending = [] as number[];
             if (ownUnitId.value !== undefined) {
@@ -547,10 +595,11 @@ export const useCentrumStore = defineStore(
                         return;
                     }
 
-                    if (assignment.expiresAt) {
+                    if (assignment.expiresAt && toDate(assignment.expiresAt).getTime() > Date.now() - timeCorrection.value) {
                         pending.push(dsp.id);
+                        schedulePendingDispatchExpiry(dsp.id, assignment.expiresAt);
                     } else {
-                        own.push(dsp.id);
+                        if (!assignment.expiresAt) own.push(dsp.id);
                     }
                 });
             }
@@ -897,7 +946,10 @@ export const useCentrumStore = defineStore(
          * @returns {Promise<void>} A promise that resolves when the stream stops.
          */
         const stopStream = async (end?: boolean): Promise<void> => {
-            if (end === true) stopping.value = true;
+            if (end === true) {
+                stopping.value = true;
+                clearPendingDispatchExpiries();
+            }
 
             if (abort.value) {
                 abort.value.abort();
@@ -958,6 +1010,7 @@ export const useCentrumStore = defineStore(
             ownUnitId.value = undefined;
             ownDispatches.value.length = 0;
             pendingDispatches.value.length = 0;
+            clearPendingDispatchExpiries();
 
             await restartAuthContextStream({ abort: abort.value, isStopping: () => stopping.value }, stopStream, startStream);
         };
@@ -1046,7 +1099,7 @@ export const useCentrumStore = defineStore(
                 } else {
                     const dsp = dispatches.value.get(pd);
                     const assignment = dsp?.units.find((ua) => ua.unitId === ownUnitId.value);
-                    if (assignment?.expiresAt && now - toDate(assignment.expiresAt).getTime() >= cleanupInterval) {
+                    if (assignment?.expiresAt && now >= toDate(assignment.expiresAt).getTime()) {
                         removePendingDispatch(pd);
                     }
                 }
@@ -1216,6 +1269,7 @@ export const useCentrumStore = defineStore(
             removeUnit,
             checkIfUnitAssignedToDispatch,
             addOrUpdateDispatch,
+            rebuildOwnDispatches,
             updateDispatchStatus,
             removeDispatch,
             addOrUpdateOwnDispatch,

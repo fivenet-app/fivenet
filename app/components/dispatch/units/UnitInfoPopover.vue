@@ -88,9 +88,7 @@ const unitStatusColor = computed(() => unitStatusToBGColor(props.unit?.status?.s
 
                 <p v-if="assignment?.expiresAt" class="inline-flex items-center gap-1 text-sm font-normal">
                     <UIcon class="size-4 text-amber-600" name="i-mdi-timer" />
-                    {{
-                        formatTimeAgo(toDate(assignment?.expiresAt, timeCorrection), { showSecond: true }, now)
-                    }}
+                    {{ formatTimeAgo(toDate(assignment?.expiresAt, timeCorrection), { showSecond: true }, now) }}
                 </p>
 
                 <div class="text-highlighted">

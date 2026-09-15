@@ -1,6 +1,8 @@
 <script lang="ts" setup>
 import DispatchFeedItem from '~/components/dispatch/dispatches/DispatchFeedItem.vue';
+import { dispatchStatuses, dispatchStatusToBGColor } from '~/components/dispatch/helpers';
 import { getCentrumDispatchesClient } from '~~/gen/ts/clients';
+import RefreshButton from '~/components/partials/RefreshButton.vue';
 import type { ListDispatchActivityResponse } from '~~/gen/ts/services/centrum/dispatches';
 
 const props = defineProps<{
@@ -13,12 +15,25 @@ const offset = ref(0);
 const dispatchId = computed(() => props.dispatchId ?? 0);
 const hasDispatchId = computed(() => dispatchId.value > 0);
 
+const timelineItems = computed(() =>
+    (data.value?.activity ?? []).map((item) => ({
+        ...item,
+        icon: dispatchStatuses.find((status) => status.status === item.status)?.icon ?? 'i-mdi-info-circle',
+        ui: { indicator: 'text-highlighted ' + dispatchStatusToBGColor(item.status) },
+    })),
+);
+
 const activityKey = computed(() => `centrum-dispatch-${dispatchId.value}-activity-${offset.value}`);
 
-const { data, refresh } = useAuthedLazyAsyncData('userState', activityKey, ({ signal }) => listDispatchActivity(signal), {
-    default: () => ({ activity: [] }),
-    immediate: false,
-});
+const { data, status, refresh } = useAuthedLazyAsyncData(
+    'userState',
+    activityKey,
+    ({ signal }) => listDispatchActivity(signal),
+    {
+        default: () => ({ activity: [] }),
+        immediate: false,
+    },
+);
 
 async function listDispatchActivity(signal: AbortSignal): Promise<ListDispatchActivityResponse> {
     if (!hasDispatchId.value) {
@@ -81,21 +96,19 @@ watch(
 </script>
 
 <template>
-    <div class="my-1 flex h-full flex-1 grow flex-col gap-2 px-1">
+    <div class="my-1 flex flex-col gap-2 px-1">
         <div class="flex justify-between">
             <h2 class="inline-flex flex-1 items-center text-base leading-6 font-semibold">{{ $t('common.feed') }}</h2>
+
+            <RefreshButton icon-only :disabled="!hasDispatchId" :loading="isRequestPending(status)" @click="() => refresh()" />
         </div>
 
-        <div class="flex flex-1 flex-col overflow-x-auto overflow-y-auto">
-            <ul class="space-y-2" role="list">
-                <DispatchFeedItem
-                    v-for="(activityItem, activityItemIdx) in data?.activity"
-                    :key="activityItem.id"
-                    :activity-length="data?.activity?.length ?? 0"
-                    :item="activityItem"
-                    :activity-item-idx="activityItemIdx"
-                />
-            </ul>
+        <div class="flex flex-col">
+            <UTimeline :items="timelineItems" size="xs" :ui="{ wrapper: '!mt-0 !pb-2' }">
+                <template #wrapper="{ item }">
+                    <DispatchFeedItem :item="item" />
+                </template>
+            </UTimeline>
         </div>
     </div>
 </template>

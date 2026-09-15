@@ -241,6 +241,54 @@ describe('useCentrumStore', () => {
         expect(mocks.notifications.add).toHaveBeenCalledTimes(1);
     });
 
+    it('removes a pending dispatch when its local expiration timer elapses', async () => {
+        vi.useFakeTimers();
+        try {
+            vi.setSystemTime(new Date('2026-01-01T00:00:00.000Z'));
+            const store = useCentrumStore();
+            store.ownUnitId = 7;
+
+            store.addOrUpdateDispatch(
+                dispatch({
+                    id: 21,
+                    units: [{ dispatchId: 21, unitId: 7, expiresAt: toTimestamp(new Date(Date.now() + 1_000)) }],
+                }),
+            );
+            expect(store.pendingDispatches).toEqual([21]);
+
+            await vi.advanceTimersByTimeAsync(1_000);
+
+            expect(store.pendingDispatches).toEqual([]);
+        } finally {
+            vi.useRealTimers();
+        }
+    });
+
+    it('does not resurrect an expired pending offer while rebuilding latest state', () => {
+        vi.useFakeTimers();
+        try {
+            vi.setSystemTime(new Date('2026-01-01T00:00:00.000Z'));
+            const store = useCentrumStore();
+            store.ownUnitId = 7;
+            store.dispatches = new Map([
+                [
+                    21,
+                    dispatch({
+                        id: 21,
+                        units: [{ dispatchId: 21, unitId: 7, expiresAt: toTimestamp(new Date(Date.now() - 1_000)) }],
+                    }),
+                ],
+            ]);
+
+            store.rebuildOwnDispatches();
+
+            expect(store.pendingDispatches).toEqual([]);
+            expect(store.ownDispatches).toEqual([]);
+        } finally {
+            vi.useRealTimers();
+        }
+    });
+
     it('does not replay an older dispatch status over a newer one', () => {
         const store = useCentrumStore();
         store.addOrUpdateDispatch(dispatch({ id: 21 }));
