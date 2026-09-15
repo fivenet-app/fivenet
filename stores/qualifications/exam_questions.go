@@ -10,6 +10,7 @@ import (
 	qualificationsexam "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/qualifications/exam"
 	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
 	"github.com/go-jet/jet/v2/mysql"
+	"google.golang.org/protobuf/proto"
 )
 
 func (s *Store) HandleExamQuestionsChanges(
@@ -37,6 +38,10 @@ func (s *Store) HandleExamQuestionsChanges(
 	current, err := s.GetExamQuestions(ctx, tx, qualificationId, false)
 	if err != nil {
 		return nil, err
+	}
+	currentByID := make(map[int64]*qualificationsexam.ExamQuestion, len(current.GetQuestions()))
+	for _, question := range current.GetQuestions() {
+		currentByID[question.GetId()] = question
 	}
 
 	toCreate, toUpdate, toDelete, err := compareExamQuestions(
@@ -90,9 +95,16 @@ func (s *Store) HandleExamQuestionsChanges(
 			switch data := question.GetData().GetData().(type) {
 			case *qualificationsexam.ExamQuestionData_Image:
 				if data.Image.GetImage() == nil {
-					return nil, errors.New("image question requires an image")
+					currentQuestion := currentByID[question.GetId()]
+					currentImage := currentQuestion.GetData().GetImage().GetImage()
+					if currentImage == nil {
+						return nil, errors.New("image question requires an image")
+					}
+					data.Image.SetImage(proto.Clone(currentImage).(*file.File))
 				}
-				files = append(files, data.Image.GetImage())
+				if data.Image.GetImage() != nil {
+					files = append(files, data.Image.GetImage())
+				}
 			}
 		}
 

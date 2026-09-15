@@ -1,5 +1,6 @@
 <script lang="ts" setup>
 import type { TabsItem } from '@nuxt/ui';
+import { isPast } from 'date-fns';
 import ConfirmModal from '~/components/partials/ConfirmModal.vue';
 import {
     checkQualificationAccess,
@@ -10,7 +11,7 @@ import {
     resultStatusToTextColor,
 } from '~/components/qualifications/helpers';
 import RequestUserModal from '~/components/qualifications/request/RequestUserModal.vue';
-import { getQualificationsQualificationsClient } from '~~/gen/ts/clients';
+import { getQualificationsExamClient, getQualificationsQualificationsClient } from '~~/gen/ts/clients';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 import { AccessLevel } from '~~/gen/ts/resources/qualifications/access/access';
 import { QualificationExamMode } from '~~/gen/ts/resources/qualifications/exam/exam';
@@ -44,6 +45,7 @@ const overlay = useOverlay();
 const notifications = useNotificationsStore();
 
 const qualificationsQualificationsClient = await getQualificationsQualificationsClient();
+const qualificationsExamClient = await getQualificationsExamClient();
 
 const { data, status, refresh, error } = useAuthedLazyAsyncData(
     'userState',
@@ -104,6 +106,7 @@ async function deleteQualification(qualificationId: number): Promise<DeleteQuali
 }
 
 const qualification = computed(() => data.value?.qualification);
+const examInfoError = shallowRef<RpcError>();
 
 const canDo = computed(() => ({
     request: checkQualificationAccess(
@@ -230,16 +233,30 @@ const actionItems = computed<ResponsiveActionEntry[]>(() => {
     return items;
 });
 
-watchOnce(data, async () => {
+async function redirectToActiveExam(): Promise<void> {
+    examInfoError.value = undefined;
+
     if (!data.value?.qualification?.request) return;
 
     if (data.value?.qualification?.request.status === RequestStatus.EXAM_STARTED) {
-        await navigateTo({
-            name: 'qualifications-id-exam',
-            params: { id: props.qualificationId },
-        });
+        try {
+            const { response } = await qualificationsExamClient.getExamInfo({
+                qualificationId: props.qualificationId,
+            });
+            const examUser = response.examUser;
+            if (!examUser?.endsAt || examUser.endedAt || isPast(toDate(examUser.endsAt))) return;
+
+            await navigateTo({
+                name: 'qualifications-id-exam',
+                params: { id: props.qualificationId },
+            });
+        } catch (e) {
+            examInfoError.value = e as RpcError;
+        }
     }
-});
+}
+
+watchOnce(data, redirectToActiveExam);
 
 const items = computed<TabsItem[]>(() =>
     [
@@ -444,10 +461,10 @@ const requestUserModal = overlay.create(RequestUserModal);
                 :message="$t('common.loading', [$t('common.qualifications', 1)])"
             />
             <DataErrorBlock
-                v-else-if="error"
+                v-else-if="error || examInfoError"
                 :title="$t('common.unable_to_load', [$t('common.qualifications', 1)])"
-                :error="error"
-                :retry="refresh"
+                :error="error ?? examInfoError"
+                :retry="examInfoError ? redirectToActiveExam : refresh"
             />
             <DataNoDataBlock
                 v-else-if="!qualification"

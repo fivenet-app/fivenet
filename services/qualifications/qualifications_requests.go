@@ -177,7 +177,7 @@ func (s *Server) CreateOrUpdateQualificationRequest(
 		}
 
 		// Only send notification when the status actually changed.
-		if request != nil && previousStatus != request.GetStatus() &&
+		if !req.GetSkipNotification() && request != nil && previousStatus != request.GetStatus() &&
 			request.GetUserId() != userInfo.GetUserId() {
 			requestID := request.GetQualificationId()
 			actorID := userInfo.GetUserId()
@@ -432,6 +432,9 @@ func (s *Server) deleteQualificationRequest(
 	examUser, err := s.store.GetExamUser(ctx, qualificationId, userId)
 	if err != nil {
 		return err
+	}
+	if examUser == nil {
+		return nil
 	}
 	if err := s.store.DeleteExamResponses(ctx, tx, examUser.GetAttemptId()); err != nil {
 		return err

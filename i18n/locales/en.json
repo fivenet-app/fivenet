@@ -1534,6 +1534,9 @@
             "request_modal": {
                 "title": "Request Qualification"
             },
+            "request_tutor_modal": {
+                "title": "Update Qualification Request"
+            },
             "content_unavailable": "Qualification content will be available once your request has been accepted.",
             "exam_editor": {
                 "question_types": {

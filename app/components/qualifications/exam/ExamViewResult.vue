@@ -11,15 +11,10 @@ defineProps<{
 </script>
 
 <template>
-    <UCard>
-        <UContainer>
-            <div class="flex flex-col gap-4">
-                <ExamViewQuestion
-                    v-for="(question, idx) in responses?.responses"
-                    :key="question.questionId"
-                    v-model="responses!.responses[idx]"
-                    disabled
-                >
+    <UContainer>
+        <div class="flex flex-col gap-4">
+            <UCard v-for="(question, idx) in responses?.responses" :key="question.questionId">
+                <ExamViewQuestion v-model="responses!.responses[idx]" disabled>
                     <template #question-after="{ disabled }">
                         <slot name="question-after" :question="{ question }" :disabled="disabled" />
                     </template>
@@ -28,7 +23,7 @@ defineProps<{
                         <slot name="question-below" :question="{ question }" :disabled="disabled" />
                     </template>
                 </ExamViewQuestion>
-            </div>
-        </UContainer>
-    </UCard>
+            </UCard>
+        </div>
+    </UContainer>
 </template>

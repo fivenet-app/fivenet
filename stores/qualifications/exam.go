@@ -6,6 +6,7 @@ import (
 	"time"
 
 	database "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/common/database"
+	resqualifications "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/qualifications"
 	qualificationsexam "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/qualifications/exam"
 	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
 	"github.com/go-jet/jet/v2/mysql"
@@ -143,7 +144,7 @@ func (s *Store) GetExamResponses(
 		}
 	}
 
-	dest.ExamResponses.AttemptId = attemptId
+	dest.ExamResponses.SetAttemptId(attemptId)
 
 	return dest.ExamResponses, dest.ExamGrading, nil
 }
@@ -239,6 +240,7 @@ func (s *Store) ClaimActiveExamUser(
 	tx qrm.DB,
 	qualificationId int64,
 	userId int32,
+	attemptId string,
 	complete bool,
 	gracePeriod time.Duration,
 ) (bool, error) {
@@ -246,6 +248,7 @@ func (s *Store) ClaimActiveExamUser(
 	conditions := mysql.AND(
 		tExamUser.QualificationID.EQ(mysql.Int64(qualificationId)),
 		tExamUser.UserID.EQ(mysql.Int32(userId)),
+		tExamUser.AttemptID.EQ(mysql.String(attemptId)),
 		tExamUser.EndedAt.IS_NULL(),
 		tExamUser.EndsAt.IS_NOT_NULL(),
 		tExamUser.EndsAt.GT(mysql.TimestampT(time.Now().Add(-gracePeriod))),
@@ -281,33 +284,6 @@ func (s *Store) ClaimActiveExamUser(
 	}
 	updated, err := result.RowsAffected()
 	return updated > 0, err
-}
-
-func (s *Store) UpsertExamUserEndedAt(
-	ctx context.Context,
-	tx qrm.DB,
-	qualificationId int64,
-	userId int32,
-	endedAt time.Time,
-) error {
-	tExamUser := table.FivenetQualificationsExamUsers
-	stmt := tExamUser.
-		INSERT(
-			tExamUser.QualificationID,
-			tExamUser.UserID,
-			tExamUser.EndedAt,
-		).
-		VALUES(
-			qualificationId,
-			userId,
-			mysql.DateTimeT(endedAt),
-		).
-		ON_DUPLICATE_KEY_UPDATE(
-			tExamUser.EndedAt.SET(mysql.TimestampT(endedAt)),
-		)
-
-	_, err := stmt.ExecContext(ctx, tx)
-	return err
 }
 
 func (s *Store) ListExpiredExamUsers(
@@ -347,8 +323,8 @@ func (s *Store) ListExpiredExamUsers(
 	return attempts, nil
 }
 
-// ListExamUsersPastRetention returns only completed attempts. Responses are
-// deleted with these attempts, while qualification results remain intact.
+// ListExamUsersPastRetention returns only attempts whose requests completed.
+// In particular, manually graded exams remain available while grading is pending.
 func (s *Store) ListExamUsersPastRetention(
 	ctx context.Context,
 	olderThan time.Time,
@@ -365,10 +341,16 @@ func (s *Store) ListExamUsersPastRetention(
 			tExamUser.EndsAt,
 			tExamUser.EndedAt,
 		).
-		FROM(tExamUser).
+		FROM(tExamUser.INNER_JOIN(tQualiReq,
+			tQualiReq.QualificationID.EQ(tExamUser.QualificationID).
+				AND(tQualiReq.UserID.EQ(tExamUser.UserID)),
+		)).
 		WHERE(mysql.AND(
 			tExamUser.EndedAt.IS_NOT_NULL(),
 			tExamUser.EndedAt.LT_EQ(mysql.TimestampT(olderThan)),
+			tQualiReq.Status.EQ(mysql.Int32(int32(
+				resqualifications.RequestStatus_REQUEST_STATUS_COMPLETED,
+			))),
 		)).
 		ORDER_BY(tExamUser.EndedAt.ASC()).
 		LIMIT(limit)
@@ -390,6 +372,7 @@ func (s *Store) ExpireExamUser(
 	tx qrm.DB,
 	qualificationId int64,
 	userId int32,
+	attemptId string,
 ) (bool, error) {
 	tExamUser := table.FivenetQualificationsExamUsers
 	stmt := tExamUser.
@@ -398,6 +381,7 @@ func (s *Store) ExpireExamUser(
 		WHERE(mysql.AND(
 			tExamUser.QualificationID.EQ(mysql.Int64(qualificationId)),
 			tExamUser.UserID.EQ(mysql.Int32(userId)),
+			tExamUser.AttemptID.EQ(mysql.String(attemptId)),
 			tExamUser.EndedAt.IS_NULL(),
 			tExamUser.EndsAt.IS_NOT_NULL(),
 			tExamUser.EndsAt.LT(mysql.TimestampT(time.Now().Add(-ExamSubmissionGracePeriod))),

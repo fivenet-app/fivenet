@@ -9,6 +9,7 @@ import (
 	pbqualifications "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/qualifications"
 	"github.com/fivenet-app/fivenet/v2026/pkg/access"
 	"github.com/fivenet-app/fivenet/v2026/pkg/filestore"
+	pkggrpc "github.com/fivenet-app/fivenet/v2026/pkg/grpc"
 	"github.com/fivenet-app/fivenet/v2026/pkg/housekeeper"
 	"github.com/fivenet-app/fivenet/v2026/pkg/mstlystcdata"
 	"github.com/fivenet-app/fivenet/v2026/pkg/notifi"
@@ -101,7 +102,14 @@ type Params struct {
 	Access            *access.QualificationsObjectAccess
 }
 
-func NewServer(p Params) *Server {
+type Result struct {
+	fx.Out
+
+	Server  *Server
+	Service pkggrpc.Service `group:"grpcservices"`
+}
+
+func NewServer(p Params) Result {
 	// 3 MiB limit
 	qualiFileHandler := filestore.NewHandler(
 		p.Storage,
@@ -134,7 +142,10 @@ func NewServer(p Params) *Server {
 		store:    p.Store,
 	}
 
-	return s
+	return Result{
+		Server:  s,
+		Service: s,
+	}
 }
 
 func (s *Server) RegisterServer(srv *grpc.Server) {

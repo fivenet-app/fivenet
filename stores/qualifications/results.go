@@ -71,6 +71,7 @@ func (s *Store) ListQualificationsResults(
 	columns := mysql.ProjectionList{
 		tQualiResult.ID,
 		tQualiResult.CreatedAt,
+		tQualiResult.DeletedAt,
 		tQualiResult.QualificationID,
 		tQualiResult.UserID,
 		tQualiResult.Status,
@@ -194,9 +195,10 @@ func (s *Store) GetQualificationResult(
 	status []resqualifications.ResultStatus,
 	userInfo *userinfo.UserInfo,
 	userId int32,
+	includeDeleted bool,
 ) (*resqualifications.QualificationResult, error) {
 	condition := mysql.Bool(true)
-	if userInfo == nil || !userInfo.GetJobAdmin() {
+	if !includeDeleted {
 		condition = condition.AND(tQualiResult.DeletedAt.IS_NULL())
 	}
 	if resultId > 0 {
@@ -273,6 +275,26 @@ func (s *Store) DeleteQualificationResult(ctx context.Context, tx qrm.DB, result
 	}
 
 	return s.deleteQualificationResultSuccessMapByResultID(ctx, tx, resultId)
+}
+
+func (s *Store) RestoreQualificationResult(
+	ctx context.Context,
+	tx qrm.DB,
+	resultId int64,
+	qualificationId int64,
+) error {
+	tQualiResult := table.FivenetQualificationsResults
+	stmt := tQualiResult.
+		UPDATE(tQualiResult.DeletedAt).
+		SET(mysql.NULL).
+		WHERE(tQualiResult.ID.EQ(mysql.Int64(resultId))).
+		LIMIT(1)
+
+	if _, err := stmt.ExecContext(ctx, tx); err != nil {
+		return err
+	}
+
+	return s.rebuildQualificationResultSuccessMapByQualificationID(ctx, tx, qualificationId)
 }
 
 func (s *Store) CreateQualificationResult(
@@ -381,7 +403,7 @@ func (s *Store) UpdateQualificationResult(
 		return err
 	}
 	if rowsAffected == 0 {
-		return nil
+		return qrm.ErrNoRows
 	}
 
 	return s.syncQualificationResultSuccessMap(

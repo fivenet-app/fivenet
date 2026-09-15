@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 import GenericImg from '~/components/partials/elements/GenericImg.vue';
 import type { ExamResponse } from '~~/gen/ts/resources/qualifications/exam/exam';
+import ExamViewQuestionHeader from './ExamViewQuestionHeader.vue';
 
 withDefaults(
     defineProps<{
@@ -12,19 +13,18 @@ withDefaults(
 );
 
 const modelValue = defineModel<ExamResponse | undefined>();
-const response = modelValue;
 
 function enforceMultipleChoiceLimit(choices: string[]): void {
     if (
         modelValue.value?.question?.data?.data.oneofKind !== 'multipleChoice' ||
-        response.value?.response?.response.oneofKind !== 'multipleChoice'
+        modelValue.value?.response?.response.oneofKind !== 'multipleChoice'
     ) {
         return;
     }
 
     const limit = modelValue.value.question.data.data.multipleChoice.limit ?? 0;
     if (limit > 0 && choices.length > limit) {
-        response.value.response.response.multipleChoice.choices = choices.slice(0, limit);
+        modelValue.value.response.response.multipleChoice.choices = choices.slice(0, limit);
     }
 }
 </script>
@@ -32,7 +32,7 @@ function enforceMultipleChoiceLimit(choices: string[]): void {
 <template>
     <div v-if="modelValue?.question" class="flex flex-1 flex-col justify-between gap-2 py-4">
         <div class="flex flex-1 flex-row gap-2">
-            <div v-if="modelValue?.question.data!.data.oneofKind === 'separator'">
+            <div v-if="modelValue?.question.data!.data.oneofKind === 'separator'" class="flex flex-col gap-2">
                 <USeparator class="mt-2 mb-2 text-xl">
                     <template v-if="modelValue?.question.title !== ''" #default>
                         <h4 class="text-xl" :title="`${$t('common.id')}: ${modelValue?.question.id}`">
@@ -41,18 +41,11 @@ function enforceMultipleChoiceLimit(choices: string[]): void {
                     </template>
                 </USeparator>
 
-                <p>{{ modelValue?.question.description }}</p>
+                <p class="text-muted">{{ modelValue?.question.description }}</p>
             </div>
 
-            <div v-else-if="modelValue?.question!.data?.data.oneofKind === 'image'">
-                <h4 class="text-xl" :title="`${$t('common.id')}: ${modelValue?.question.id}`">
-                    {{ modelValue?.question.title }}
-                </h4>
-
-                <div class="flex flex-1 justify-between gap-2">
-                    <p>{{ modelValue?.question.description }}</p>
-                    <p v-if="modelValue?.question.points">{{ $t('common.point', modelValue?.question.points) }}</p>
-                </div>
+            <div v-else-if="modelValue?.question!.data?.data.oneofKind === 'image'" class="flex flex-col gap-2">
+                <ExamViewQuestionHeader :question="modelValue.question" />
 
                 <GenericImg
                     class="min-h-12 min-w-12"
@@ -66,39 +59,31 @@ function enforceMultipleChoiceLimit(choices: string[]): void {
 
             <div
                 v-else-if="
-                    modelValue?.question.data!.data.oneofKind === 'yesno' && response?.response?.response.oneofKind === 'yesno'
+                    modelValue?.question.data!.data.oneofKind === 'yesno' &&
+                    modelValue?.response?.response.oneofKind === 'yesno'
                 "
                 class="flex flex-1 flex-col gap-2"
             >
-                <div class="flex flex-1 flex-row gap-2">
-                    <h4 class="text-xl" :title="`${$t('common.id')}: ${modelValue?.question.id}`">
-                        {{ modelValue?.question.title }}
-                    </h4>
-
-                    <div class="flex flex-1 justify-between gap-2">
-                        <p>{{ modelValue?.question.description }}</p>
-                        <p v-if="modelValue?.question.points">{{ $t('common.point', modelValue?.question.points) }}</p>
-                    </div>
-                </div>
+                <ExamViewQuestionHeader :question="modelValue.question" />
 
                 <UFieldGroup>
                     <UButton
                         class="w-20"
-                        :variant="response.response?.response.yesno.value ? 'solid' : 'outline'"
+                        :variant="modelValue.response?.response.yesno.value ? 'solid' : 'outline'"
                         color="success"
                         :label="$t('common.yes')"
                         block
                         :disabled="disabled"
-                        @click="response.response.response.yesno.value = true"
+                        @click="modelValue.response.response.yesno.value = true"
                     />
                     <UButton
                         class="w-20"
-                        :variant="!response.response?.response.yesno.value ? 'solid' : 'outline'"
+                        :variant="!modelValue.response?.response.yesno.value ? 'solid' : 'outline'"
                         color="error"
                         :label="$t('common.no')"
                         block
                         :disabled="disabled"
-                        @click="response.response.response.yesno.value = false"
+                        @click="modelValue.response.response.yesno.value = false"
                     />
                 </UFieldGroup>
             </div>
@@ -106,21 +91,12 @@ function enforceMultipleChoiceLimit(choices: string[]): void {
             <div
                 v-else-if="
                     modelValue?.question.data!.data.oneofKind === 'freeText' &&
-                    response?.response?.response.oneofKind === 'freeText'
+                    modelValue?.response?.response.oneofKind === 'freeText'
                 "
                 class="flex flex-1 flex-col gap-2"
             >
                 <div class="flex flex-1 flex-col gap-2">
-                    <div class="flex flex-1 flex-row gap-2">
-                        <h4 class="text-xl" :title="`${$t('common.id')}: ${modelValue?.question.id}`">
-                            {{ modelValue?.question.title }}
-                        </h4>
-
-                        <div class="flex flex-1 justify-between gap-2">
-                            <p>{{ modelValue?.question.description }}</p>
-                            <p v-if="modelValue?.question.points">{{ $t('common.point', modelValue?.question.points) }}</p>
-                        </div>
-                    </div>
+                    <ExamViewQuestionHeader :question="modelValue.question" />
 
                     <div>
                         <UBadge
@@ -135,7 +111,7 @@ function enforceMultipleChoiceLimit(choices: string[]): void {
                 </div>
 
                 <UTextarea
-                    v-model="response.response.response.freeText.text"
+                    v-model="modelValue.response.response.freeText.text"
                     :rows="5"
                     :maxlength="modelValue?.question.data!.data.freeText.maxLength || undefined"
                     :disabled="disabled"
@@ -145,24 +121,15 @@ function enforceMultipleChoiceLimit(choices: string[]): void {
             <div
                 v-else-if="
                     modelValue?.question.data!.data.oneofKind === 'singleChoice' &&
-                    response?.response?.response.oneofKind === 'singleChoice'
+                    modelValue?.response?.response.oneofKind === 'singleChoice'
                 "
                 class="flex flex-1 flex-col gap-2"
             >
-                <div class="flex flex-1 flex-row gap-2">
-                    <h4 class="text-xl" :title="`${$t('common.id')}: ${modelValue?.question.id}`">
-                        {{ modelValue?.question.title }}
-                    </h4>
-
-                    <div class="flex flex-1 justify-between gap-2">
-                        <p>{{ modelValue?.question.description }}</p>
-                        <p v-if="modelValue?.question.points">{{ $t('common.point', modelValue?.question.points) }}</p>
-                    </div>
-                </div>
+                <ExamViewQuestionHeader :question="modelValue.question" />
 
                 <UFormField class="flex-1" name="data.data.singleChoice.choices" :label="$t('common.option', 2)">
                     <URadioGroup
-                        v-model="response.response.response.singleChoice.choice"
+                        v-model="modelValue.response.response.singleChoice.choice"
                         :name="modelValue?.question.data!.data.singleChoice.choices.join(':')"
                         :items="modelValue?.question.data!.data.singleChoice?.choices"
                         :disabled="disabled"
@@ -173,20 +140,11 @@ function enforceMultipleChoiceLimit(choices: string[]): void {
             <div
                 v-else-if="
                     modelValue?.question.data?.data.oneofKind === 'multipleChoice' &&
-                    response?.response?.response.oneofKind === 'multipleChoice'
+                    modelValue?.response?.response.oneofKind === 'multipleChoice'
                 "
                 class="flex flex-1 flex-col gap-2"
             >
-                <div class="flex flex-1 flex-row gap-2">
-                    <h4 class="text-xl" :title="`${$t('common.id')}: ${modelValue?.question.id}`">
-                        {{ modelValue?.question.title }}
-                    </h4>
-
-                    <div class="flex flex-1 justify-between gap-2">
-                        <p>{{ modelValue?.question.description }}</p>
-                        <p v-if="modelValue?.question.points">{{ $t('common.point', modelValue?.question.points) }}</p>
-                    </div>
-                </div>
+                <ExamViewQuestionHeader :question="modelValue.question" />
 
                 <div>
                     <UBadge
@@ -201,7 +159,7 @@ function enforceMultipleChoiceLimit(choices: string[]): void {
                 <UFormField class="flex-1" :label="$t('common.option', 2)">
                     <div class="flex flex-1 flex-col gap-2">
                         <UCheckboxGroup
-                            v-model="response.response.response.multipleChoice.choices"
+                            v-model="modelValue.response.response.multipleChoice.choices"
                             name="data.data.multipleChoice.choices"
                             :disabled="disabled"
                             :items="modelValue.question.data.data.multipleChoice.choices"

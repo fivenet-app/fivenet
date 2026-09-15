@@ -13397,6 +13397,7 @@ Updates one preference scope. Fields omitted from preference inherit from a less
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | `request` | [resources.qualifications.QualificationRequest](#resourcesqualificationsQualificationRequest) |  |  |
+| `skip_notification` | [bool](#bool) |  | Suppresses the inbox notification normally sent when a tutor updates the request status. |
 
 
 

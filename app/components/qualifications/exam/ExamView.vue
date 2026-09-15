@@ -13,10 +13,13 @@ const props = defineProps<{
     qualificationId: number;
 }>();
 
-const qualificationsExamClient = await getQualificationsExamClient();
 const overlay = useOverlay();
+
 const { t } = useI18n();
-const cancelExamModal = overlay.create(ConfirmModal);
+
+const formatDuration = useDurationFormatter();
+
+const qualificationsExamClient = await getQualificationsExamClient();
 
 const { data, status, refresh, error } = useAuthedLazyAsyncData(
     'userState',
@@ -76,6 +79,8 @@ async function cancelExam(): Promise<void> {
     await refresh();
 }
 
+const cancelExamModal = overlay.create(ConfirmModal);
+
 function openCancelExamConfirmation(): void {
     cancelExamModal.open({
         title: t('components.qualifications.exam_view.cancel.title'),
@@ -128,8 +133,9 @@ watch(data, async () => {
                             v-if="data?.qualification?.examSettings?.time"
                             class="inline-flex gap-1"
                             icon="i-mdi-clock"
-                            :label="`${$t('common.duration')}: ${fromDuration(data.qualification.examSettings.time)}s`"
+                            :label="`${$t('common.duration')}: ${formatDuration(data.qualification.examSettings.time)}`"
                         />
+
                         <UBadge
                             class="inline-flex gap-1"
                             icon="i-mdi-question-mark"

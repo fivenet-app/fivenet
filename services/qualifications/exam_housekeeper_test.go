@@ -20,6 +20,7 @@ type examHousekeeperTestStore struct {
 
 	events    []string
 	responses *qualificationsexam.ExamResponses
+	attemptID string
 }
 
 func (s *examHousekeeperTestStore) GetQualification(
@@ -42,8 +43,10 @@ func (s *examHousekeeperTestStore) ExpireExamUser(
 	_ qrm.DB,
 	_ int64,
 	_ int32,
+	attemptID string,
 ) (bool, error) {
 	s.events = append(s.events, "expire")
+	s.attemptID = attemptID
 	return true, nil
 }
 
@@ -89,6 +92,7 @@ func TestExamHousekeeperGradesResponsesAfterExpiryClaim(t *testing.T) {
 	err = housekeeper.completeExpiredExam(t.Context(), &qualificationsexam.ExamUser{
 		QualificationId: 42,
 		UserId:          7,
+		AttemptId:       "expired-attempt",
 		Snapshot: &qualificationsexam.ExamSnapshot{
 			Exam: &qualificationsexam.ExamQuestions{},
 		},
@@ -101,4 +105,5 @@ func TestExamHousekeeperGradesResponsesAfterExpiryClaim(t *testing.T) {
 		"get-responses",
 		"grade:REQUEST_STATUS_EXAM_GRADING",
 	}, store.events)
+	assert.Equal(t, "expired-attempt", store.attemptID)
 }

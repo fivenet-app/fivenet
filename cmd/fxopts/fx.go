@@ -245,7 +245,7 @@ func GetFxBaseOpts(
 			grpc.AsService(pblivemap.NewServer),
 			grpc.AsService(pbmailer.NewServer),
 			grpc.AsService(pbnotifications.NewServer),
-			grpc.AsService(pbqualifications.NewServer),
+			pbqualifications.NewServer,
 			pbqualifications.NewExamHousekeeper,
 			grpc.AsService(pbsettings.NewServer),
 			grpc.AsService(pbstats.NewServer),

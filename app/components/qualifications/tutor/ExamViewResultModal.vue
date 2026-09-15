@@ -5,12 +5,14 @@ import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
 import ResultTutorForm from '~/components/qualifications/tutor/ResultTutorForm.vue';
 import { getQualificationsExamClient } from '~~/gen/ts/clients';
 import { QualificationExamMode } from '~~/gen/ts/resources/qualifications/exam/exam';
+import type { QualificationShort } from '~~/gen/ts/resources/qualifications/qualifications';
 import type { GetUserExamResponse } from '~~/gen/ts/services/qualifications/exam';
 import ExamViewResult from '../exam/ExamViewResult.vue';
 
 const props = withDefaults(
     defineProps<{
         qualificationId: number;
+        qualification?: QualificationShort;
         userId: number;
         resultId?: number;
         viewOnly?: boolean;
@@ -18,6 +20,7 @@ const props = withDefaults(
     }>(),
     {
         resultId: undefined,
+        qualification: undefined,
         viewOnly: false,
         examMode: QualificationExamMode.DISABLED,
     },
@@ -88,6 +91,7 @@ const correctCount = computed(() => data.value?.grading?.responses.filter((a) =>
 <template>
     <ResultTutorForm
         :qualification-id="qualificationId"
+        :qualification="qualification"
         :user-id="userId"
         :result-id="resultId"
         :score="pointCount"
@@ -105,6 +109,7 @@ const correctCount = computed(() => data.value?.grading?.responses.filter((a) =>
                 :retry="refresh"
             />
             <DataNoDataBlock v-else-if="!data" :type="$t('common.exam')" icon="i-mdi-sigma" />
+            <DataNoDataBlock v-else-if="!data.examUser" :type="$t('common.exam')" icon="i-mdi-sigma" />
 
             <template v-if="data?.responses">
                 <DataNoDataBlock

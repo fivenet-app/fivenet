@@ -3,6 +3,7 @@ import type { UForm } from '#components';
 import type { FormSubmitEvent } from '@nuxt/ui';
 import type { JSONContent } from '@tiptap/core';
 import { z } from 'zod';
+import { areExamChoicesUnique } from '~/utils/qualificationExam';
 import AccessManager from '~/components/partials/access/AccessManager.vue';
 import { enumToAccessLevelEnums, normalizeAccessEntryIds, type AccessType } from '~/components/partials/access/helpers';
 import TiptapEditor from '~/components/partials/editor/TiptapEditor.vue';
@@ -197,7 +198,7 @@ const schema = z
             }
             if (data.oneofKind === 'singleChoice' || data.oneofKind === 'multipleChoice') {
                 const choices = data.oneofKind === 'singleChoice' ? data.singleChoice.choices : data.multipleChoice.choices;
-                if (new Set(choices).size !== choices.length) {
+                if (!areExamChoicesUnique(choices)) {
                     ctx.addIssue({
                         code: 'custom',
                         path: ['exam', 'questions', index, 'data'],

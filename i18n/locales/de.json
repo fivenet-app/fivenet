@@ -1534,6 +1534,9 @@
             "request_modal": {
                 "title": "Qualifizierung anfragen"
             },
+            "request_tutor_modal": {
+                "title": "Qualifizierungsantrag bearbeiten"
+            },
             "content_unavailable": "Der Inhalt der Qualifizierung wird verfügbar sein, sobald Ihr Antrag angenommen wurde.",
             "exam_editor": {
                 "question_types": {
