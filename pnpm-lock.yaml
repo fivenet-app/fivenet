@@ -23,12 +23,12 @@ overrides:
   '@tiptap/pm': 3.31.3
   '@tiptap/vue-3': 3.31.3
   '@unhead/vue': 3.4.0
-  unhead: 3.4.0
-  vue: 3.5.42
+  fontless>esbuild: 0.28.2
   nuxt-typed-router>defu: 6.1.7
   nuxt-typed-router>lodash-es: 4.18.1
-  nuxt-typed-router>nanoid: 5.1.16
-  fontless>esbuild: 0.28.2
+  nuxt-typed-router>nanoid: 6.0.1
+  unhead: 3.4.0
+  vue: 3.5.42
 
 packageExtensionsChecksum: sha256-7+0BRckKAdS1Y1fGbYDn/DTQer+VqQHXj8450tVLHaY=
 
@@ -7304,9 +7304,9 @@ packages:
     engines: {node: ^10 || ^12 || ^13.7 || ^14 || >=15.0.1}
     hasBin: true
 
-  nanoid@5.1.16:
-    resolution: {integrity: sha512-kVrnsrJqMR8+oLJnGEmSWw9BivK5mt7H3FZatVRjrc5wGqFYuBxX1yG7+A7Gi5AefkX6t/oCkizcQgpu0cY1dQ==}
-    engines: {node: ^18 || >=20}
+  nanoid@6.0.1:
+    resolution: {integrity: sha512-3wVS3i51pE2pi1k5FFL/95BGfVS0kSsvDVuGXHOtxox/TywUmtgq+3qiTOTbs9J7KfHaXPiN171k/A6dBnaXFw==}
+    engines: {node: ^22 || ^24 || >=26}
     hasBin: true
 
   nanotar@0.3.0:
@@ -17709,7 +17709,7 @@ snapshots:
 
   nanoid@3.3.18: {}
 
-  nanoid@5.1.16: {}
+  nanoid@6.0.1: {}
 
   nanotar@0.3.0: {}
 
@@ -17980,7 +17980,7 @@ snapshots:
       lodash-es: 4.18.1
       log-symbols: 7.0.1
       mkdirp: 3.0.1
-      nanoid: 5.1.16
+      nanoid: 6.0.1
       pathe: 2.0.3
       prettier: 3.9.6
     transitivePeerDependencies:
