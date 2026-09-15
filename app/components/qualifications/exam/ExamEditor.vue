@@ -49,7 +49,7 @@ export const examSettingsSchema = z.object({
     }),
     autoGrade: z.coerce.boolean().default(false),
     autoGradeMode: z.enum(AutoGradeMode).default(AutoGradeMode.STRICT),
-    minimumPoints: z.coerce.number().min(0).default(0),
+    minimumPoints: z.coerce.number().min(0).max(10_000).default(0),
 });
 
 export type ExamSettingsSchema = z.output<typeof examSettingsSchema>;

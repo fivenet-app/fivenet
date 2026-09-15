@@ -106,8 +106,8 @@ type IStore interface {
 	CountExamQuestions(ctx context.Context, qualificationId int64) (int64, error)
 	GetExamResponses(
 		ctx context.Context,
-		qualificationId int64,
-		userId int32,
+		q qrm.DB,
+		attemptId string,
 	) (*qualificationsexam.ExamResponses, *qualificationsexam.ExamGrading, error)
 	CreateQualification(ctx context.Context, tx qrm.DB, userInfo *userinfo.UserInfo) (int64, error)
 	UpdateQualification(
@@ -150,8 +150,7 @@ type IStore interface {
 	UpdateExamResponseGrading(
 		ctx context.Context,
 		tx qrm.DB,
-		qualificationId int64,
-		userId int32,
+		attemptId string,
 		grading *qualificationsexam.ExamGrading,
 	) error
 	ApproveQualificationRequest(
@@ -172,7 +171,7 @@ type IStore interface {
 		userId int32,
 		endsAt time.Time,
 		snapshot *qualificationsexam.ExamSnapshot,
-	) error
+	) (string, error)
 	ClaimActiveExamUser(
 		ctx context.Context,
 		tx qrm.DB,
@@ -186,6 +185,7 @@ type IStore interface {
 		tx qrm.DB,
 		qualificationId int64,
 		userId int32,
+		attemptId string,
 		responses *qualificationsexam.ExamResponses,
 	) error
 	UpsertExamUserEndedAt(
@@ -207,7 +207,7 @@ type IStore interface {
 		qualificationId int64,
 		userId int32,
 	) (bool, error)
-	DeleteExamResponses(ctx context.Context, tx qrm.DB, qualificationId int64, userId int32) error
+	DeleteExamResponses(ctx context.Context, tx qrm.DB, attemptId string) error
 	HandleExamQuestionsChanges(
 		ctx context.Context,
 		tx *sql.Tx,
@@ -228,7 +228,7 @@ type IStore interface {
 		status resqualifications.RequestStatus,
 	) error
 	DeleteQualificationResult(ctx context.Context, tx qrm.DB, resultId int64) error
-	DeleteExamUser(ctx context.Context, tx qrm.DB, qualificationId int64, userId int32) error
+	DeleteExamUser(ctx context.Context, tx qrm.DB, attemptId string) error
 }
 
 type Store struct {

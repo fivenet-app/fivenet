@@ -429,8 +429,15 @@ func (s *Server) deleteQualificationRequest(
 	if err := s.store.DeleteQualificationRequest(ctx, tx, qualificationId, userId); err != nil {
 		return err
 	}
+	examUser, err := s.store.GetExamUser(ctx, qualificationId, userId)
+	if err != nil {
+		return err
+	}
+	if err := s.store.DeleteExamResponses(ctx, tx, examUser.GetAttemptId()); err != nil {
+		return err
+	}
 
-	if err := s.store.DeleteExamUser(ctx, tx, qualificationId, userId); err != nil {
+	if err := s.store.DeleteExamUser(ctx, tx, examUser.GetAttemptId()); err != nil {
 		return err
 	}
 

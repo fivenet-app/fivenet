@@ -1,9 +1,5 @@
 package qualificationsexam
 
-import (
-	"slices"
-)
-
 func (e *ExamQuestions) Grade(
 	mode AutoGradeMode,
 	questions *ExamResponses,
@@ -77,21 +73,37 @@ func (e *ExamQuestions) Grade(
 				})
 				break
 			}
+			uniqueAnswerChoices := make([]string, 0, len(answerChoices))
+			answerChoiceSet := make(map[string]struct{}, len(answerChoices))
+			for _, choice := range answerChoices {
+				if _, exists := answerChoiceSet[choice]; exists {
+					continue
+				}
+				answerChoiceSet[choice] = struct{}{}
+				uniqueAnswerChoices = append(uniqueAnswerChoices, choice)
+			}
 			correctChoices := 0
+			incorrectChoices := 0
+			selectedChoices := make(map[string]struct{})
 			for _, choice := range response.GetResponse().GetMultipleChoice().GetChoices() {
-				if slices.Contains(
-					answerChoices,
-					choice,
-				) {
+				if _, selected := selectedChoices[choice]; selected {
+					continue
+				}
+				selectedChoices[choice] = struct{}{}
+				if _, correct := answerChoiceSet[choice]; correct {
 					correctChoices++
+				} else {
+					incorrectChoices++
 				}
 			}
 
 			switch {
 			case mode == AutoGradeMode_AUTO_GRADE_MODE_PARTIAL_CREDIT:
-				points := float32(
-					question.GetPoints(),
-				) * (float32(correctChoices) / float32(len(answerChoices)))
+				points := float32(question.GetPoints()) *
+					float32(correctChoices-incorrectChoices) / float32(len(uniqueAnswerChoices))
+				if points < 0 {
+					points = 0
+				}
 				grading.Responses = append(grading.Responses, &ExamGradingResponse{
 					QuestionId: question.GetId(),
 					Points:     points,
@@ -99,7 +111,7 @@ func (e *ExamQuestions) Grade(
 				})
 				earnedPoints += points
 
-			case correctChoices == len(answerChoices) && len(response.GetResponse().GetMultipleChoice().GetChoices()) == len(answerChoices):
+			case correctChoices == len(uniqueAnswerChoices) && len(response.GetResponse().GetMultipleChoice().GetChoices()) == len(uniqueAnswerChoices):
 				grading.Responses = append(grading.Responses, &ExamGradingResponse{
 					QuestionId: question.GetId(),
 					Points:     float32(question.GetPoints()),
