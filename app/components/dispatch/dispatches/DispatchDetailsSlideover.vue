@@ -22,6 +22,8 @@ const props = defineProps<{
     dispatch?: Dispatch;
 }>();
 
+const open = defineModel<boolean>('open', { default: true });
+
 const emit = defineEmits<{
     (e: 'close', v: boolean): void;
 }>();
@@ -36,6 +38,8 @@ const centrumStore = useCentrumStore();
 const { dispatches, timeCorrection } = storeToRefs(centrumStore);
 const { canDo, selfAssign } = centrumStore;
 const notifications = useNotificationsStore();
+const now = useMinuteClock();
+const formatTimeAgo = useLocaleTimeAgoFormatter();
 
 const centrumDispatchesClient = await getCentrumDispatchesClient();
 
@@ -76,7 +80,7 @@ const dispatchStatusUpdateModal = overlay.create(DispatchStatusUpdateModal);
 </script>
 
 <template>
-    <USlideover :overlay="false">
+    <USlideover v-model:open="open" :overlay="false">
         <template #title>
             <div class="inline-flex items-center">
                 <IDCopyBadge :id="dispatch?.id ?? 0" class="mx-2" prefix="DSP" />
@@ -210,10 +214,11 @@ const dispatchStatusUpdateModal = overlay.create(DispatchStatusUpdateModal);
                                                 >
                                                     -
                                                     {{
-                                                        useLocaleTimeAgo(toDate(unit.expiresAt, timeCorrection), {
-                                                            showSecond: true,
-                                                            updateInterval: 1_000,
-                                                        }).value
+                                                        formatTimeAgo(
+                                                            toDate(unit.expiresAt, timeCorrection),
+                                                            { showSecond: true },
+                                                            now,
+                                                        )
                                                     }}
                                                 </span>
                                             </div>

@@ -7,6 +7,8 @@ import { defaultUnitIcon, unitStatusToBGColor, unitStatusToIcon } from '../helpe
 
 const centrumStore = useCentrumStore();
 const { timeCorrection } = storeToRefs(centrumStore);
+const now = useMinuteClock();
+const formatTimeAgo = useLocaleTimeAgoFormatter();
 
 const props = withDefaults(
     defineProps<{
@@ -86,12 +88,7 @@ const unitStatusColor = computed(() => unitStatusToBGColor(props.unit?.status?.s
 
                 <p v-if="assignment?.expiresAt" class="inline-flex items-center gap-1 text-sm font-normal">
                     <UIcon class="size-4 text-amber-600" name="i-mdi-timer" />
-                    {{
-                        useLocaleTimeAgo(toDate(assignment?.expiresAt, timeCorrection), {
-                            showSecond: true,
-                            updateInterval: 1_000,
-                        }).value
-                    }}
+                    {{ formatTimeAgo(toDate(assignment?.expiresAt, timeCorrection), { showSecond: true }, now) }}
                 </p>
 
                 <div class="text-highlighted">

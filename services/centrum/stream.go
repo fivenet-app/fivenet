@@ -5,28 +5,18 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"strings"
 	"time"
 
 	centrumdispatchers "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/centrum/dispatchers"
 	centrumdispatches "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/centrum/dispatches"
 	centrumsettings "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/centrum/settings"
-	centrumunits "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/centrum/units"
-	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/common"
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/timestamp"
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/userinfo"
 	pbcentrum "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/centrum"
 	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/auth"
 	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/errswrap"
-	"github.com/fivenet-app/fivenet/v2026/pkg/utils"
 	"github.com/fivenet-app/fivenet/v2026/pkg/utils/protoutils"
 	errorscentrum "github.com/fivenet-app/fivenet/v2026/services/centrum/errors"
-	eventscentrum "github.com/fivenet-app/fivenet/v2026/services/centrum/events"
-	centrumutils "github.com/fivenet-app/fivenet/v2026/services/centrum/utils"
-	"github.com/nats-io/nats.go/jetstream"
-	"go.uber.org/zap"
-	"golang.org/x/sync/errgroup"
-	"google.golang.org/protobuf/proto"
 )
 
 const feedFetch = 16
@@ -75,7 +65,10 @@ func (s *Server) sendLatestState(
 	}
 
 	// Own unit ID
-	ownUnitMapping, ok, _ := s.tracker.GetUserMapping(userInfo.GetUserId())
+	ownUnitMapping, ok, err := s.tracker.GetUserMapping(userInfo.GetUserId())
+	if err != nil {
+		return fmt.Errorf("failed to get own unit mapping: %w", err)
+	}
 	var pOwnUnitId *int64
 	if ok && ownUnitMapping != nil && ownUnitMapping.UnitId != nil &&
 		ownUnitMapping.GetUnitId() > 0 {
@@ -114,18 +107,45 @@ func (s *Server) Stream(
 	srv pbcentrum.CentrumService_StreamServer,
 ) error {
 	userInfo := auth.MustGetUserInfoFromContext(srv.Context()).Clone()
-
-	// Check if user has access to other job's centrum
-	jobList, acls, err := s.settings.GetAccessList(
-		srv.Context(),
-		userInfo.GetJob(),
-		userInfo.GetJobGrade(),
-	)
-	if err != nil {
+	// Subscribe before reading current state so a change committed during the
+	// database read is queued and forces a follow-up authorization snapshot.
+	userInfoChanges := s.userinfoChanges.SubscribeUserInfoChanges()
+	defer func() {
+		s.userinfoChanges.UnsubscribeUserInfoChanges(userInfoChanges)
+	}()
+	if err := s.refreshStreamUserInfo(srv.Context(), userInfo); err != nil {
+		return errswrap.NewError(err, errorscentrum.ErrFailedQuery)
+	}
+	if err := s.waitForReady(srv.Context()); err != nil {
+		if protoutils.IsContextCanceled(err) {
+			return nil
+		}
 		return errswrap.NewError(err, errorscentrum.ErrFailedQuery)
 	}
 
+	s.metrics.IncActiveStreams()
+	defer s.metrics.DecActiveStreams()
+
+	feed := s.feedBroker.Subscribe()
+	defer func() {
+		s.feedBroker.Unsubscribe(feed)
+	}()
+
 	for {
+		// Recalculate access after a user-info or own-settings change before
+		// sending another snapshot or forwarding any further feed event.
+		jobList, acls, err := s.settings.GetAccessList(
+			srv.Context(),
+			userInfo.GetJob(),
+			userInfo.GetJobGrade(),
+		)
+		if err != nil {
+			return errswrap.NewError(err, errorscentrum.ErrFailedQuery)
+		}
+
+		// Subscribe first, then capture the boundary. Events published while the
+		// snapshot is sent stay queued and are forwarded afterwards.
+		snapshotSequence := s.feedSequence.Load()
 		if err := s.sendHandshake(srv.Context(), srv, userInfo.GetJob(), acls); err != nil {
 			if protoutils.IsContextCanceled(err) {
 				return nil
@@ -140,7 +160,50 @@ func (s *Server) Stream(
 			return errswrap.NewError(err, errorscentrum.ErrFailedQuery)
 		}
 
-		if err := s.stream(srv.Context(), srv, userInfo, jobList); err != nil {
+		if err := s.stream(
+			srv.Context(),
+			srv,
+			userInfo,
+			jobList,
+			feed,
+			userInfoChanges,
+			snapshotSequence,
+		); err != nil {
+			if errors.Is(err, errFeedClosed) {
+				if srv.Context().Err() != nil {
+					return nil
+				}
+				s.metrics.IncFeedResync("slow_subscriber")
+				s.feedBroker.Unsubscribe(feed)
+				feed = s.feedBroker.Subscribe()
+				continue
+			}
+			if errors.Is(err, errFeedResync) {
+				s.metrics.IncFeedResync("sequence_gap")
+				continue
+			}
+			if errors.Is(err, errAccessChanged) || errors.Is(err, errUserInfoChanged) {
+				if errors.Is(err, errAccessChanged) {
+					s.metrics.IncFeedResync("access_change")
+				} else {
+					s.metrics.IncFeedResync("userinfo_change")
+				}
+				continue
+			}
+			if errors.Is(err, errUserInfoResync) {
+				if srv.Context().Err() != nil {
+					return nil
+				}
+				s.metrics.IncFeedResync("userinfo_subscriber_resync")
+				replacement := s.userinfoChanges.SubscribeUserInfoChanges()
+				if err := s.refreshStreamUserInfo(srv.Context(), userInfo); err != nil {
+					s.userinfoChanges.UnsubscribeUserInfoChanges(replacement)
+					return errswrap.NewError(err, errorscentrum.ErrFailedQuery)
+				}
+				s.userinfoChanges.UnsubscribeUserInfoChanges(userInfoChanges)
+				userInfoChanges = replacement
+				continue
+			}
 			return err
 		}
 
@@ -153,328 +216,13 @@ func (s *Server) Stream(
 	}
 }
 
-type feedCfg struct {
-	StreamName string
-	Bucket     string
-	NoWildcard bool                                                                  // if true, the subjects are not a wildcard bucket (e.g., centrum_dispatchers.JOB)
-	Unmarshal  func(ctx context.Context, s *Server, b []byte) (proto.Message, error) // bucket -> concrete proto
-	WrapPut    func(proto.Message) *pbcentrum.StreamResponse
-	WrapDelete func(key string) *pbcentrum.StreamResponse
-}
-
-var feeds = []feedCfg{
-	{
-		StreamName: "centrum_settings",
-		Bucket:     "centrum_settings",
-		NoWildcard: true,
-		Unmarshal: func(ctx context.Context, _ *Server, b []byte) (proto.Message, error) {
-			var u centrumsettings.Settings
-			return &u, proto.Unmarshal(b, &u)
-		},
-		WrapPut: func(m proto.Message) *pbcentrum.StreamResponse {
-			return &pbcentrum.StreamResponse{
-				Change: &pbcentrum.StreamResponse_Settings{Settings: m.(*centrumsettings.Settings)},
-			}
-		},
-		WrapDelete: func(key string) *pbcentrum.StreamResponse {
-			return &pbcentrum.StreamResponse{
-				Change: &pbcentrum.StreamResponse_SettingsDeleted{SettingsDeleted: key},
-			}
-		},
-	},
-	{
-		StreamName: "centrum_dispatchers",
-		Bucket:     "centrum_dispatchers",
-		NoWildcard: true,
-		Unmarshal: func(ctx context.Context, _ *Server, b []byte) (proto.Message, error) {
-			var u centrumdispatchers.Dispatchers
-			return &u, proto.Unmarshal(b, &u)
-		},
-		WrapPut: func(m proto.Message) *pbcentrum.StreamResponse {
-			return &pbcentrum.StreamResponse{
-				Change: &pbcentrum.StreamResponse_Dispatchers{
-					Dispatchers: m.(*centrumdispatchers.Dispatchers),
-				},
-			}
-		},
-		WrapDelete: func(key string) *pbcentrum.StreamResponse {
-			return &pbcentrum.StreamResponse{
-				Change: &pbcentrum.StreamResponse_Dispatchers{
-					Dispatchers: &centrumdispatchers.Dispatchers{Job: key},
-				},
-			}
-		},
-	},
-	{
-		StreamName: "centrum_units",
-		Bucket:     "centrum_units.job",
-		Unmarshal: func(ctx context.Context, s *Server, b []byte) (proto.Message, error) {
-			var d common.IDMapping
-			if err := proto.Unmarshal(b, &d); err != nil {
-				return nil, fmt.Errorf("failed to unmarshal unit id mapping. %w", err)
-			}
-			return s.units.Get(ctx, d.GetId())
-		},
-		WrapPut: func(m proto.Message) *pbcentrum.StreamResponse {
-			return &pbcentrum.StreamResponse{
-				Change: &pbcentrum.StreamResponse_UnitUpdated{UnitUpdated: m.(*centrumunits.Unit)},
-			}
-		},
-		WrapDelete: func(key string) *pbcentrum.StreamResponse {
-			id, err := centrumutils.ExtractID(key)
-			if err != nil {
-				return nil
-			}
-
-			return &pbcentrum.StreamResponse{
-				Change: &pbcentrum.StreamResponse_UnitDeleted{
-					UnitDeleted: id,
-				},
-			}
-		},
-	},
-	{
-		StreamName: "centrum_dispatches",
-		Bucket:     "centrum_dispatches.job",
-		Unmarshal: func(ctx context.Context, s *Server, b []byte) (proto.Message, error) {
-			var d common.IDMapping
-			if err := proto.Unmarshal(b, &d); err != nil {
-				return nil, fmt.Errorf("failed to unmarshal dispatch id mapping. %w", err)
-			}
-			return s.dispatches.Get(ctx, d.GetId())
-		},
-		WrapPut: func(m proto.Message) *pbcentrum.StreamResponse {
-			return &pbcentrum.StreamResponse{
-				Change: &pbcentrum.StreamResponse_DispatchUpdated{
-					DispatchUpdated: m.(*centrumdispatches.Dispatch),
-				},
-			}
-		},
-		WrapDelete: func(key string) *pbcentrum.StreamResponse {
-			id, err := centrumutils.ExtractID(key)
-			if err != nil {
-				return nil
-			}
-
-			return &pbcentrum.StreamResponse{
-				Change: &pbcentrum.StreamResponse_DispatchDeleted{
-					DispatchDeleted: id,
-				},
-			}
-		},
-	},
-}
-
-func (s *Server) stream(
-	ctx context.Context,
-	srv pbcentrum.CentrumService_StreamServer,
-	userInfo *userinfo.UserInfo,
-	additionalJobs []string,
-) error {
-	s.logger.Debug(
-		"starting centrum stream",
-		zap.String("job_main", userInfo.GetJob()),
-		zap.Int32("user_id", userInfo.GetUserId()),
-		zap.Strings("additional_jobs", additionalJobs),
-	)
-
-	jobs := []string{userInfo.GetJob()}
-	jobs = append(jobs, additionalJobs...)
-	jobs = utils.SliceDedup(jobs)
-
-	out := make(chan *pbcentrum.StreamResponse, 256)
-	g, gctx := errgroup.WithContext(ctx)
-
-	// Centrum Events (e.g., dispatch and unit status updates)
-	g.Go(func() error {
-		// Create ephemeral consumer with multi-filter
-		consCfg := jetstream.ConsumerConfig{
-			FilterSubjects: centrumSubjects(jobs),
-			DeliverPolicy:  jetstream.DeliverNewPolicy,
-			AckPolicy:      jetstream.AckNonePolicy,
-		}
-		consumer, err := s.js.CreateConsumer(gctx, "CENTRUM", consCfg)
-		if err != nil {
-			return fmt.Errorf("failed to create consumer. %w", err)
-		}
-
-		msgs, err := consumer.Messages(
-			jetstream.PullMaxMessages(feedFetch),
-			jetstream.WithMessagesErrOnMissingHeartbeat(false),
-		)
-		if err != nil {
-			return err
-		}
-		defer msgs.Stop()
-
-		for {
-			msg, err := msgs.Next(jetstream.NextContext(gctx))
-			if err != nil {
-				if protoutils.IsContextCanceled(err) ||
-					errors.Is(err, jetstream.ErrMsgIteratorClosed) {
-					return nil
-				}
-				return err
-			}
-
-			_, topic, tType := eventscentrum.SplitSubject(msg.Subject())
-
-			var r *pbcentrum.StreamResponse
-
-			switch topic {
-			case eventscentrum.TopicDispatch:
-				if tType != eventscentrum.TypeDispatchStatus {
-					continue
-				}
-
-				var d centrumdispatches.DispatchStatus
-				if err := proto.Unmarshal(msg.Data(), &d); err != nil {
-					s.logger.Error(
-						"failed to unmarshal dispatch status",
-						zap.Error(err),
-						zap.String("subject", msg.Subject()),
-					)
-				}
-
-				r = &pbcentrum.StreamResponse{
-					Change: &pbcentrum.StreamResponse_DispatchStatus{
-						DispatchStatus: &d,
-					},
-				}
-
-			case eventscentrum.TopicUnit:
-				if tType != eventscentrum.TypeUnitStatus {
-					continue
-				}
-				var u centrumunits.UnitStatus
-				if err := proto.Unmarshal(msg.Data(), &u); err != nil {
-					s.logger.Error(
-						"failed to unmarshal unit status",
-						zap.Error(err),
-						zap.String("subject", msg.Subject()),
-					)
-				}
-
-				r = &pbcentrum.StreamResponse{
-					Change: &pbcentrum.StreamResponse_UnitStatus{
-						UnitStatus: &u,
-					},
-				}
-			}
-
-			if r == nil {
-				s.logger.Warn(
-					"received unknown centrum event",
-					zap.String("subject", msg.Subject()),
-					zap.String("type", string(tType)),
-				)
-				continue
-			}
-
-			select {
-			case out <- r:
-
-			case <-gctx.Done():
-				return nil
-			}
-		}
-	})
-
-	// Setup feeds for each bucket
-	for _, f := range feeds {
-		g.Go(func() error {
-			// Create consumer with multi-filter
-			consCfg := jetstream.ConsumerConfig{
-				FilterSubjects: kvSubjects(f.Bucket, jobs, f.NoWildcard),
-				DeliverPolicy:  jetstream.DeliverNewPolicy,
-				AckPolicy:      jetstream.AckNonePolicy,
-				MaxWaiting:     8,
-			}
-			consumer, err := s.js.CreateConsumer(gctx, "KV_"+f.StreamName, consCfg)
-			if err != nil {
-				return fmt.Errorf("failed to create consumer. %w", err)
-			}
-
-			msgs, err := consumer.Messages(
-				jetstream.PullMaxMessages(feedFetch),
-				jetstream.WithMessagesErrOnMissingHeartbeat(false),
-			)
-			if err != nil {
-				return err
-			}
-			defer msgs.Stop()
-
-			for {
-				msg, err := msgs.Next(jetstream.NextContext(gctx))
-				if err != nil {
-					if protoutils.IsContextCanceled(err) ||
-						errors.Is(err, jetstream.ErrMsgIteratorClosed) {
-						return nil
-					}
-					return err
-				}
-
-				if op := msg.Headers().Get("KV-Operation"); op == "DEL" || op == "PURGE" {
-					key := strings.TrimPrefix(msg.Subject(), "$KV."+f.Bucket+".")
-
-					r := f.WrapDelete(key)
-					if r == nil {
-						continue
-					}
-					select {
-					case out <- r:
-
-					case <-gctx.Done():
-						return nil
-					}
-					continue
-				}
-
-				obj, err := f.Unmarshal(gctx, s, msg.Data())
-				if err != nil {
-					// Bad payload - skip
-					s.logger.Warn("failed to unmarshal feed message", zap.Error(err),
-						zap.String("bucket", f.Bucket), zap.String("subject", msg.Subject()))
-					continue
-				}
-
-				r := f.WrapPut(obj)
-				if r == nil {
-					continue
-				}
-				select {
-				case out <- r:
-
-				case <-gctx.Done():
-					return nil
-				}
-			}
-		})
+func (s *Server) refreshStreamUserInfo(ctx context.Context, current *userinfo.UserInfo) error {
+	updated, err := s.userinfo.GetUserInfo(ctx, current.GetUserId())
+	if err != nil {
+		return fmt.Errorf("failed to retrieve current user info. %w", err)
 	}
 
-	// Single writer
-	g.Go(func() error {
-		for {
-			select {
-			case <-gctx.Done():
-				return nil
-
-			case resp, ok := <-out:
-				if !ok {
-					return nil
-				}
-				if resp == nil {
-					continue
-				}
-				if err := srv.Send(resp); err != nil {
-					if protoutils.IsContextCanceled(err) {
-						return nil
-					}
-					return err
-				}
-			}
-		}
-	})
-
-	return g.Wait()
+	current.SetJob(updated.GetJob())
+	current.SetJobGrade(updated.GetJobGrade())
+	return nil
 }

@@ -165,7 +165,6 @@ func GetFxBaseOpts(
 		dbsynctablemanager.Module,
 		dbsyncconfig.StateModule,
 
-		userinfo.PollerModule,
 		userinfo.RetrieverModule,
 
 		pbcitizens.HousekeeperModule,

@@ -6,10 +6,15 @@ import (
 	"fmt"
 
 	centrumunits "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/centrum/units"
+	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
+	"github.com/go-jet/jet/v2/mysql"
+	"github.com/go-jet/jet/v2/qrm"
 	"github.com/nats-io/nats.go/jetstream"
 	"go.uber.org/zap"
 )
 
+// SyncUserUnitMapping reconciles membership and mappings from tracker duty
+// state. Unlike ReconcileUserJobChange, it may repair a matching assignment.
 func (s *UnitDB) SyncUserUnitMapping(ctx context.Context, userId int32) error {
 	if userId <= 0 {
 		return fmt.Errorf("invalid user ID: %d", userId)
@@ -29,9 +34,37 @@ func (s *UnitDB) SyncUserUnitMapping(ctx context.Context, userId int32) error {
 	if err != nil {
 		return err
 	}
+	if unitId > 0 {
+		unit, err := s.Get(ctx, unitId)
+		if err != nil {
+			return err
+		}
+
+		marker, markerFound := s.tracker.GetUserMarkerById(userId)
+		inJob, err := s.UserInJob(ctx, s.db, unit.GetJob(), userId)
+		if err != nil {
+			return err
+		}
+
+		// Unit membership is tied to the user's current duty context. Do not
+		// retain an old-job or off-duty assignment until the periodic audit runs.
+		if !markerFound || marker == nil || marker.GetHidden() ||
+			!s.tracker.IsUserOnDuty(userId) || marker.GetJob() != unit.GetJob() || !inJob {
+			if err := s.RemoveUnitAssignments(
+				ctx,
+				"",
+				&userId,
+				unitId,
+				[]int32{userId},
+			); err != nil {
+				return err
+			}
+			unitId = 0
+		}
+	}
 
 	var targetUnitId *int64
-	if unitId > 0 {
+	if unitId > 0 && s.tracker.IsUserOnDuty(userId) {
 		targetUnitId = &unitId
 	}
 
@@ -59,6 +92,42 @@ func (s *UnitDB) SyncUserUnitMapping(ctx context.Context, userId int32) error {
 	}
 
 	return errs
+}
+
+// ReconcileUserJobChange removes a durable unit assignment when its job no
+// longer matches the authoritative primary-job event. Unlike
+// SyncUserUnitMapping, it does not decide duty state or rebuild a matching
+// assignment from tracker state.
+func (s *UnitDB) ReconcileUserJobChange(
+	ctx context.Context,
+	userId int32,
+	job string,
+) (bool, error) {
+	if userId <= 0 {
+		return false, fmt.Errorf("invalid user ID: %d", userId)
+	}
+
+	unitId, err := s.LoadUnitIDForUserID(ctx, userId)
+	if err != nil {
+		return false, err
+	}
+	if unitId <= 0 {
+		return false, nil
+	}
+
+	unit, err := s.Get(ctx, unitId)
+	if err != nil {
+		return false, err
+	}
+	if unit == nil || unit.GetJob() == job {
+		return false, nil
+	}
+
+	if err := s.UpdateUnitAssignments(ctx, "", nil, unitId, nil, []int32{userId}); err != nil {
+		return false, err
+	}
+
+	return true, nil
 }
 
 func (s *UnitDB) SyncUnitMembership(ctx context.Context, unitId int64) error {
@@ -96,6 +165,16 @@ func (s *UnitDB) syncLoadedUnitMembership(ctx context.Context, unit *centrumunit
 			continue
 		}
 
+		eligible, err := s.isEligibleUnitMember(ctx, unit.GetJob(), userId)
+		if err != nil {
+			errs = errors.Join(errs, err)
+			continue
+		}
+		if !eligible {
+			errs = errors.Join(errs, s.clearTrackerMappingForUnit(ctx, userId, unitId))
+			continue
+		}
+
 		userIds[userId] = struct{}{}
 		if err := s.tracker.SetUserMappingForUser(ctx, userId, &unit.Id); err != nil {
 			s.logger.Error(
@@ -108,7 +187,22 @@ func (s *UnitDB) syncLoadedUnitMembership(ctx context.Context, unit *centrumunit
 		}
 	}
 
-	return errors.Join(errs, s.clearStaleTrackerMappingsForUnit(ctx, unitId, userIds))
+	return errors.Join(
+		errs,
+		s.clearStaleTrackerMappingsForUnit(ctx, unitId, userIds),
+	)
+}
+
+// isEligibleUnitMember keeps tracker mappings tied to the active duty
+// context. Durable membership is reconciled separately by user changes.
+func (s *UnitDB) isEligibleUnitMember(ctx context.Context, job string, userId int32) (bool, error) {
+	marker, found := s.tracker.GetUserMarkerById(userId)
+	if !found || marker == nil || marker.GetHidden() || !s.tracker.IsUserOnDuty(userId) ||
+		marker.GetJob() != job {
+		return false, nil
+	}
+
+	return s.UserInJob(ctx, s.db, job, userId)
 }
 
 func (s *UnitDB) syncMissingUnitMembership(ctx context.Context, unitId int64) error {
@@ -117,7 +211,10 @@ func (s *UnitDB) syncMissingUnitMembership(ctx context.Context, unitId int64) er
 		errs = errors.Join(errs, err)
 	}
 
-	return errors.Join(errs, s.clearStaleTrackerMappingsForUnit(ctx, unitId, nil))
+	return errors.Join(
+		errs,
+		s.clearStaleTrackerMappingsForUnit(ctx, unitId, nil),
+	)
 }
 
 func (s *UnitDB) clearStaleTrackerMappingsForUnit(
@@ -132,7 +229,7 @@ func (s *UnitDB) clearStaleTrackerMappingsForUnit(
 
 	var errs error
 	for userId, mapping := range mappings {
-		if mapping == nil || mapping.UnitId == nil || mapping.GetUnitId() != unitId {
+		if userId <= 0 || mapping == nil || mapping.UnitId == nil || mapping.GetUnitId() != unitId {
 			continue
 		}
 
@@ -140,10 +237,60 @@ func (s *UnitDB) clearStaleTrackerMappingsForUnit(
 			continue
 		}
 
-		if err := s.tracker.DeleteUserMapping(ctx, userId); err != nil {
-			errs = errors.Join(errs, err)
-		}
+		errs = errors.Join(errs, s.tracker.DeleteUserMapping(ctx, userId))
 	}
 
 	return errs
+}
+
+func (s *UnitDB) clearTrackerMappingForUnit(ctx context.Context, userId int32, unitId int64) error {
+	mapping, ok, err := s.tracker.GetUserMapping(userId)
+	if err != nil {
+		return err
+	}
+	if !ok || mapping == nil || mapping.UnitId == nil || mapping.GetUnitId() != unitId {
+		return nil
+	}
+
+	return s.tracker.DeleteUserMapping(ctx, userId)
+}
+
+func (s *UnitDB) LoadUnitIDForUserID(ctx context.Context, userId int32) (int64, error) {
+	tUnitUser := table.FivenetCentrumUnitsUsers.AS("unit_assignment")
+
+	stmt := tUnitUser.
+		SELECT(
+			tUnitUser.UnitID.AS("unit_id"),
+		).
+		FROM(tUnitUser).
+		WHERE(
+			tUnitUser.UserID.EQ(mysql.Int32(userId)),
+		).
+		LIMIT(1)
+
+	var dest struct {
+		UnitID int64
+	}
+	if err := stmt.QueryContext(ctx, s.db, &dest); err != nil {
+		if !errors.Is(err, qrm.ErrNoRows) {
+			return 0, err
+		}
+
+		return 0, nil
+	}
+
+	return dest.UnitID, nil
+}
+
+func (s *UnitDB) UserInJob(
+	ctx context.Context,
+	db qrm.DB,
+	job string,
+	userID int32,
+) (bool, error) {
+	if s.jobs == nil {
+		return false, errors.New("jobs store unavailable")
+	}
+
+	return s.jobs.UserInJob(ctx, db, job, userID)
 }

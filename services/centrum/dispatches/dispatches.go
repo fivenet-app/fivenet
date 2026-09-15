@@ -13,8 +13,6 @@ import (
 
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/centrum"
 	centrumdispatches "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/centrum/dispatches"
-	centrumsettings "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/centrum/settings"
-	centrumunits "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/centrum/units"
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/common"
 	jobscolleagues "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/jobs/colleagues"
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/timestamp"
@@ -22,16 +20,13 @@ import (
 	"github.com/fivenet-app/fivenet/v2026/pkg/config/appconfig"
 	"github.com/fivenet-app/fivenet/v2026/pkg/coords"
 	"github.com/fivenet-app/fivenet/v2026/pkg/coords/postals"
-	"github.com/fivenet-app/fivenet/v2026/pkg/dbutils"
 	"github.com/fivenet-app/fivenet/v2026/pkg/events"
-	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/errswrap"
 	"github.com/fivenet-app/fivenet/v2026/pkg/mstlystcdata"
 	"github.com/fivenet-app/fivenet/v2026/pkg/nats/store"
 	"github.com/fivenet-app/fivenet/v2026/pkg/server/admin"
 	"github.com/fivenet-app/fivenet/v2026/pkg/tracker"
 	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
 	errorscentrum "github.com/fivenet-app/fivenet/v2026/services/centrum/errors"
-	eventscentrum "github.com/fivenet-app/fivenet/v2026/services/centrum/events"
 	"github.com/fivenet-app/fivenet/v2026/services/centrum/settings"
 	"github.com/fivenet-app/fivenet/v2026/services/centrum/units"
 	centrumutils "github.com/fivenet-app/fivenet/v2026/services/centrum/utils"
@@ -45,7 +40,6 @@ import (
 	"go.uber.org/fx"
 	"go.uber.org/multierr"
 	"go.uber.org/zap"
-	"google.golang.org/protobuf/proto"
 )
 
 type dispatchMetrics struct {
@@ -147,7 +141,7 @@ func New(p Params) *DispatchDB {
 	p.LC.Append(fx.StartHook(func(ctxStartup context.Context) error {
 		idleKV, err := d.js.CreateOrUpdateKeyValue(ctxStartup, jetstream.KeyValueConfig{
 			Bucket:         "centrum_dispatches_idle",
-			Description:    "Timer keys that expire when a dispatch is inactive",
+			Description:    "Timer keys for dispatch inactivity, cleanup, projections, and assignments",
 			Storage:        jetstream.MemoryStorage,
 			History:        1,
 			MaxBytes:       0,
@@ -178,6 +172,31 @@ func New(p Params) *DispatchDB {
 			return err
 		}
 		d.jobMapping = jobSt
+		ensureJobMapping := func(ctx context.Context, job string, dispatchID int64, source string, refresh bool) error {
+			key := centrumutils.JobIdKey(job, dispatchID)
+			mapping := &common.IDMapping{Id: dispatchID}
+			var changed bool
+			var err error
+			if refresh {
+				// The job mapping is the job-scoped stream trigger. Rewrite it for
+				// every local dispatch projection update, even when its ID is unchanged.
+				err = jobSt.Put(ctx, key, mapping)
+				changed = err == nil
+			} else {
+				// Remote watchers only repair a missing mapping. Rewriting it from
+				// every server would duplicate the stream trigger.
+				changed, err = jobSt.PutIfChanged(ctx, key, mapping)
+			}
+			logger.Debug(
+				"ensured dispatch job mapping",
+				zap.String("source", source),
+				zap.String("key", key),
+				zap.Int64("dispatch_id", dispatchID),
+				zap.Bool("changed", changed),
+				zap.Error(err),
+			)
+			return err
+		}
 
 		st, err := store.New[centrumdispatches.Dispatch, *centrumdispatches.Dispatch](
 			ctxCancel,
@@ -210,12 +229,12 @@ func New(p Params) *DispatchDB {
 					newJobSet := make(map[string]struct{}, len(dispatch.GetJobs().GetJobStrings()))
 					for _, job := range dispatch.GetJobs().GetJobStrings() {
 						newJobSet[job] = struct{}{}
-						if err := jobSt.Put(
+						if err := ensureJobMapping(
 							ctx,
-							centrumutils.JobIdKey(job, dispatch.GetId()),
-							&common.IDMapping{
-								Id: dispatch.GetId(),
-							},
+							job,
+							dispatch.GetId(),
+							"local_update",
+							true,
 						); err != nil {
 							errs = multierr.Append(
 								errs,
@@ -315,12 +334,12 @@ func New(p Params) *DispatchDB {
 					newJobSet := make(map[string]struct{}, len(dispatch.GetJobs().GetJobStrings()))
 					for _, job := range dispatch.GetJobs().GetJobStrings() {
 						newJobSet[job] = struct{}{}
-						if err := jobSt.Put(
+						if err := ensureJobMapping(
 							ctx,
-							centrumutils.JobIdKey(job, dispatch.GetId()),
-							&common.IDMapping{
-								Id: dispatch.GetId(),
-							},
+							job,
+							dispatch.GetId(),
+							"remote_update",
+							false,
 						); err != nil {
 							return nil, fmt.Errorf(
 								"failed to update job %s mapping for dispatch %d. %w",
@@ -678,500 +697,6 @@ func (s *DispatchDB) LoadFromDB(ctx context.Context, cond mysql.BoolExpression) 
 	return len(dsps), nil
 }
 
-func (s *DispatchDB) LoadDispatchAssignments(
-	ctx context.Context,
-	dispatchId int64,
-) ([]*centrumdispatches.DispatchAssignment, error) {
-	tDispatchUnit := table.FivenetCentrumDispatchesAsgmts.AS("dispatch_assignment")
-
-	stmt := tDispatchUnit.
-		SELECT(
-			tDispatchUnit.DispatchID,
-			tDispatchUnit.UnitID,
-			tDispatchUnit.CreatedAt,
-			tDispatchUnit.ExpiresAt,
-		).
-		FROM(tDispatchUnit).
-		ORDER_BY(
-			tDispatchUnit.CreatedAt.ASC(),
-		).
-		WHERE(
-			tDispatchUnit.DispatchID.EQ(mysql.Int64(dispatchId)),
-		)
-
-	dest := []*centrumdispatches.DispatchAssignment{}
-	if err := stmt.QueryContext(ctx, s.db, &dest); err != nil {
-		if !errors.Is(err, qrm.ErrNoRows) {
-			return nil, err
-		}
-	}
-
-	// Retrieve units based on the dispatch unit assignments
-	for i := range dest {
-		unit, err := s.units.Get(ctx, dest[i].GetUnitId())
-		if unit == nil || err != nil {
-			return nil, fmt.Errorf(
-				"no unit found for dispatch id %d with id %d",
-				dispatchId,
-				dest[i].GetUnitId(),
-			)
-		}
-
-		dest[i].Unit = unit
-	}
-
-	return dest, nil
-}
-
-func (s *DispatchDB) GetLocations(job string) *coords.Coords[*centrumdispatches.Dispatch] {
-	s.dispatchLocationsMutex.Lock()
-	defer s.dispatchLocationsMutex.Unlock()
-
-	locations, ok := s.dispatchLocations[job]
-	if !ok {
-		locations = coords.New[*centrumdispatches.Dispatch]()
-		s.dispatchLocations[job] = locations
-	}
-	return locations
-}
-
-func (s *DispatchDB) GetLocationsJob() []string {
-	s.dispatchLocationsMutex.Lock()
-	defer s.dispatchLocationsMutex.Unlock()
-
-	jobs := make([]string, 0, len(s.dispatchLocations))
-	for job := range s.dispatchLocations {
-		jobs = append(jobs, job)
-	}
-
-	return jobs
-}
-
-func (s *DispatchDB) Delete(ctx context.Context, id int64, removeFromDB bool) error {
-	if err := s.deleteInKV(ctx, id); err != nil {
-		if !errors.Is(err, jetstream.ErrKeyNotFound) {
-			return err
-		}
-	}
-
-	if removeFromDB {
-		tDispatch := table.FivenetCentrumDispatches
-
-		stmt := tDispatch.
-			DELETE().
-			WHERE(mysql.AND(
-				tDispatch.ID.EQ(mysql.Int64(id)),
-			)).
-			LIMIT(1)
-
-		if _, err := stmt.ExecContext(ctx, s.db); err != nil {
-			return errorscentrum.ErrFailedQuery
-		}
-	}
-
-	return nil
-}
-
-func (s *DispatchDB) UpdateStatus(
-	ctx context.Context,
-	dspId int64,
-	in *centrumdispatches.DispatchStatus,
-) (*centrumdispatches.DispatchStatus, error) {
-	dsp, err := s.Get(ctx, dspId)
-	if err != nil {
-		if !errors.Is(err, jetstream.ErrKeyNotFound) {
-			return nil, err
-		}
-	}
-
-	if dsp != nil && dsp.GetStatus() != nil {
-		// If the dispatch status is the same and is a status that shouldn't be duplicated, don't update the status again
-		if dsp.GetStatus().GetStatus() == in.GetStatus() &&
-			(in.GetStatus() == centrumdispatches.StatusDispatch_STATUS_DISPATCH_NEW ||
-				in.GetStatus() == centrumdispatches.StatusDispatch_STATUS_DISPATCH_UNASSIGNED) {
-			s.logger.Debug(
-				"skipping dispatch status update due to being new or same status",
-				zap.Int64("dispatch_id", dsp.GetId()),
-				zap.String("status", in.GetStatus().String()),
-			)
-			return in, nil
-		}
-
-		// If the dispatch is complete, we ignore any unit unassignments/accepts/declines
-		if centrumutils.IsStatusDispatchComplete(dsp.GetStatus().GetStatus()) &&
-			(in.GetStatus() == centrumdispatches.StatusDispatch_STATUS_DISPATCH_UNASSIGNED ||
-				in.GetStatus() == centrumdispatches.StatusDispatch_STATUS_DISPATCH_UNIT_UNASSIGNED ||
-				in.GetStatus() == centrumdispatches.StatusDispatch_STATUS_DISPATCH_UNIT_ACCEPTED ||
-				in.GetStatus() == centrumdispatches.StatusDispatch_STATUS_DISPATCH_UNIT_DECLINED) {
-			return in, nil
-		}
-	}
-
-	s.logger.Debug(
-		"updating dispatch status",
-		zap.Int64("dispatch_id", dspId),
-		zap.String("status", in.GetStatus().String()),
-	)
-
-	if in.GetUserId() > 0 {
-		var err error
-		in.User, err = s.colleagueshydrator.GetBasicByUserID(
-			ctx,
-			s.db,
-			nil,
-			in.GetUserId(),
-			colleagueshydrator.ResolveOpts{
-				Scope: colleagueshydrator.JobScope{
-					Mode: colleagueshydrator.JobScopeExplicit,
-					Job:  dsp.GetFirstJob(),
-				},
-			},
-		)
-		if err != nil {
-			return nil, err
-		}
-
-		if um, ok := s.tracker.GetUserMarkerById(in.GetUserId()); ok {
-			in.X = &um.X
-			in.Y = &um.Y
-			in.Postal = um.Postal
-		}
-	}
-
-	// Set postal code using coordinates if empty
-	if !in.HasPostal() && in.HasX() && in.HasY() {
-		if postal, exists := s.postals.Closest(in.GetX(), in.GetY()); exists {
-			in.SetPostal(*postal.Code)
-		}
-	}
-
-	if in.GetCreatedAt() == nil {
-		in.CreatedAt = timestamp.Now()
-	}
-
-	in, err = s.AddDispatchStatus(ctx, s.db, in)
-	if err != nil {
-		return nil, err
-	}
-
-	if err := s.updateStatusInKV(ctx, in.GetDispatchId(), in); err != nil {
-		return nil, err
-	}
-
-	if err := s.publishDispatchStatus(ctx, in, dsp.GetJobs().GetJobStrings()); err != nil {
-		return nil, fmt.Errorf(
-			"failed to publish dispatch status event (message: '%+v'). %w",
-			in,
-			err,
-		)
-	}
-
-	return in, nil
-}
-
-func (s *DispatchDB) UpdateAssignments(
-	ctx context.Context,
-	creatorJob *string,
-	creatorId *int32,
-	dspId int64,
-	toAdd []int64,
-	toRemove []int64,
-	expiresAt time.Time,
-) error {
-	s.logger.Debug(
-		"updating dispatch assignments",
-		zap.Int32p("user_id", creatorId),
-		zap.Int64("dispatch_id", dspId),
-		zap.Int64s("toAdd", toAdd),
-		zap.Int64s("toRemove", toRemove),
-	)
-
-	if len(toAdd) == 0 && len(toRemove) == 0 {
-		return nil
-	}
-
-	var x, y *float64
-	var postal *string
-	if creatorId != nil {
-		if um, ok := s.tracker.GetUserMarkerById(*creatorId); ok {
-			x = &um.X
-			y = &um.Y
-			postal = um.Postal
-		}
-	}
-
-	tDispatchUnit := table.FivenetCentrumDispatchesAsgmts
-
-	// If expires at time is not zero
-	expiresAtVal := mysql.NULL
-	if !expiresAt.IsZero() {
-		expiresAtVal = mysql.TimeT(expiresAt)
-	}
-
-	resolvedUnits := map[int64]*centrumunits.Unit{}
-	if len(toAdd) > 0 {
-		for i := range toAdd {
-			unit, err := s.units.Get(ctx, toAdd[i])
-			if err != nil {
-				continue
-			}
-
-			// Skip empty units
-			if len(unit.GetUsers()) == 0 {
-				continue
-			}
-
-			// Only add unit to dispatch if not already assigned/in list
-			resolvedUnits[toAdd[i]] = unit
-		}
-	}
-
-	type pendingDispatchStatus struct {
-		status *centrumdispatches.DispatchStatus
-		jobs   []string
-	}
-	pendingStatuses := []pendingDispatchStatus{}
-	dsp, err := s.Get(ctx, dspId)
-	if err != nil {
-		return err
-	}
-	if dsp == nil {
-		return fmt.Errorf("dispatch %d not found", dspId)
-	}
-	jobs := slices.Clone(dsp.GetJobs().GetJobStrings())
-
-	// Begin transaction
-	tx, err := s.db.BeginTx(ctx, nil)
-	if err != nil {
-		return err
-	}
-	// Defer a rollback in case anything fails
-	defer tx.Rollback()
-
-	existingRows := []struct {
-		UnitID int64 `alias:"unit_id"`
-	}{}
-	stmt := tDispatchUnit.
-		SELECT(tDispatchUnit.UnitID).
-		FROM(tDispatchUnit).
-		WHERE(tDispatchUnit.DispatchID.EQ(mysql.Int64(dspId)))
-	if err := stmt.QueryContext(ctx, tx, &existingRows); err != nil {
-		if !errors.Is(err, qrm.ErrNoRows) {
-			return err
-		}
-	}
-
-	existingUnits := map[int64]struct{}{}
-	for _, row := range existingRows {
-		existingUnits[row.UnitID] = struct{}{}
-	}
-
-	actualRemove := make([]int64, 0, len(toRemove))
-	for _, unitId := range toRemove {
-		if _, ok := existingUnits[unitId]; ok {
-			actualRemove = append(actualRemove, unitId)
-			delete(existingUnits, unitId)
-		}
-	}
-	slices.Sort(actualRemove)
-	actualRemove = slices.Compact(actualRemove)
-
-	actualAdd := make([]int64, 0, len(resolvedUnits))
-	for unitId := range resolvedUnits {
-		if _, ok := existingUnits[unitId]; ok {
-			continue
-		}
-
-		actualAdd = append(actualAdd, unitId)
-		existingUnits[unitId] = struct{}{}
-	}
-	slices.Sort(actualAdd)
-	actualAdd = slices.Compact(actualAdd)
-
-	if len(toRemove) > 0 {
-		removeIds := make([]mysql.Expression, len(toRemove))
-		for i := range toRemove {
-			removeIds[i] = mysql.Int64(toRemove[i])
-		}
-
-		stmt := tDispatchUnit.
-			DELETE().
-			WHERE(mysql.AND(
-				tDispatchUnit.DispatchID.EQ(mysql.Int64(dspId)),
-				tDispatchUnit.UnitID.IN(removeIds...),
-			)).
-			LIMIT(int64(len(removeIds)))
-
-		if _, err := stmt.ExecContext(ctx, tx); err != nil {
-			return err
-		}
-	}
-
-	if len(resolvedUnits) > 0 {
-		stmt := tDispatchUnit.
-			INSERT(
-				tDispatchUnit.DispatchID,
-				tDispatchUnit.UnitID,
-				tDispatchUnit.ExpiresAt,
-			)
-
-		for unitId := range resolvedUnits {
-			stmt = stmt.
-				VALUES(
-					dspId,
-					unitId,
-					expiresAtVal,
-				)
-		}
-
-		stmt = stmt.
-			ON_DUPLICATE_KEY_UPDATE(
-				tDispatchUnit.ExpiresAt.SET(mysql.RawTimestamp("VALUES(`expires_at`)")),
-			)
-
-		if _, err := stmt.ExecContext(ctx, tx); err != nil {
-			if !dbutils.IsDuplicateError(err) {
-				return err
-			}
-		}
-	}
-
-	for _, unitId := range actualRemove {
-		pendingStatuses = append(pendingStatuses, pendingDispatchStatus{
-			status: &centrumdispatches.DispatchStatus{
-				CreatedAt:  timestamp.Now(),
-				DispatchId: dspId,
-				UnitId:     &unitId,
-				Status:     centrumdispatches.StatusDispatch_STATUS_DISPATCH_UNIT_UNASSIGNED,
-				UserId:     creatorId,
-				X:          x,
-				Y:          y,
-				Postal:     postal,
-				CreatorJob: creatorJob,
-			},
-			jobs: jobs,
-		})
-	}
-
-	for _, unitId := range actualAdd {
-		pendingStatuses = append(pendingStatuses, pendingDispatchStatus{
-			status: &centrumdispatches.DispatchStatus{
-				CreatedAt:  timestamp.Now(),
-				DispatchId: dspId,
-				UnitId:     &unitId,
-				UserId:     creatorId,
-				Status:     centrumdispatches.StatusDispatch_STATUS_DISPATCH_UNIT_ASSIGNED,
-				X:          x,
-				Y:          y,
-				Postal:     postal,
-				CreatorJob: creatorJob,
-			},
-			jobs: jobs,
-		})
-	}
-
-	var currentStatusID int64
-	if len(existingUnits) == 0 &&
-		(len(actualRemove) > 0 || len(actualAdd) > 0) &&
-		dsp.GetStatus() != nil &&
-		!centrumutils.IsStatusDispatchComplete(dsp.GetStatus().GetStatus()) {
-		pendingStatuses = append(pendingStatuses, pendingDispatchStatus{
-			status: &centrumdispatches.DispatchStatus{
-				CreatedAt:  timestamp.Now(),
-				DispatchId: dspId,
-				Status:     centrumdispatches.StatusDispatch_STATUS_DISPATCH_UNASSIGNED,
-				UserId:     creatorId,
-				X:          x,
-				Y:          y,
-				Postal:     postal,
-				CreatorJob: creatorJob,
-			},
-			jobs: jobs,
-		})
-	}
-
-	persistedStatuses := make([]pendingDispatchStatus, 0, len(pendingStatuses))
-	for i := range pendingStatuses {
-		status, err := s.AddDispatchStatus(ctx, tx, pendingStatuses[i].status)
-		if err != nil {
-			return err
-		}
-
-		if pendingStatuses[i].status.GetStatus() == centrumdispatches.StatusDispatch_STATUS_DISPATCH_UNASSIGNED {
-			currentStatusID = status.GetId()
-		}
-
-		persistedStatuses = append(persistedStatuses, pendingDispatchStatus{
-			status: status,
-			jobs:   pendingStatuses[i].jobs,
-		})
-	}
-
-	// Commit assignment and status rows before updating dispatch KV or publishing events.
-	if err := tx.Commit(); err != nil {
-		return err
-	}
-
-	finalAssignments, err := s.LoadDispatchAssignments(ctx, dspId)
-	if err != nil {
-		return err
-	}
-
-	key := centrumutils.IdKey(dspId)
-	if err := s.store.ComputeUpdate(
-		ctx,
-		key,
-		func(key string, dsp *centrumdispatches.Dispatch) (*centrumdispatches.Dispatch, bool, error) {
-			if dsp == nil {
-				s.logger.Error(
-					"nil dispatch in dispatch assignment update",
-					zap.String("key", key),
-					zap.Int64("dispatch_id", dspId),
-				)
-				return dsp, false, nil
-			}
-
-			changed := len(dsp.GetUnits()) != len(finalAssignments)
-			if !changed {
-				for i := range finalAssignments {
-					if proto.Equal(dsp.GetUnits()[i], finalAssignments[i]) {
-						continue
-					}
-					changed = true
-					break
-				}
-			}
-			dsp.Units = finalAssignments
-			if currentStatusID > 0 {
-				for _, pending := range persistedStatuses {
-					if pending.status.GetId() != currentStatusID {
-						continue
-					}
-					dsp.Status = pending.status
-					changed = true
-					break
-				}
-			}
-
-			return dsp, changed, nil
-		},
-	); err != nil {
-		return err
-	}
-
-	for i := range persistedStatuses {
-		if err := s.publishDispatchStatus(
-			ctx,
-			persistedStatuses[i].status,
-			persistedStatuses[i].jobs,
-		); err != nil {
-			return err
-		}
-	}
-
-	return nil
-}
-
 func (s *DispatchDB) Create(
 	ctx context.Context,
 	dsp *centrumdispatches.Dispatch,
@@ -1364,347 +889,6 @@ func (s *DispatchDB) Update(
 	return dsp, nil
 }
 
-func (s *DispatchDB) AddDispatchStatus(
-	ctx context.Context,
-	tx qrm.DB,
-	status *centrumdispatches.DispatchStatus,
-) (*centrumdispatches.DispatchStatus, error) {
-	// AddDispatchStatus only persists the status row. Callers that publish
-	// status events must do so after their surrounding DB/KV mutation succeeds.
-	tDispatchStatus := table.FivenetCentrumDispatchesStatus
-	stmt := tDispatchStatus.
-		INSERT(
-			tDispatchStatus.CreatedAt,
-			tDispatchStatus.DispatchID,
-			tDispatchStatus.Status,
-			tDispatchStatus.Reason,
-			tDispatchStatus.Code,
-			tDispatchStatus.UnitID,
-			tDispatchStatus.UserID,
-			tDispatchStatus.X,
-			tDispatchStatus.Y,
-			tDispatchStatus.Postal,
-			tDispatchStatus.CreatorJob,
-		).
-		VALUES(
-			status.GetCreatedAt(),
-			status.GetDispatchId(),
-			status.GetStatus(),
-			status.Reason,
-			status.Code,
-			status.UnitId,
-			status.UserId,
-			status.X,
-			status.Y,
-			status.Postal,
-			status.CreatorJob,
-		)
-
-	res, err := stmt.ExecContext(ctx, tx)
-	if err != nil {
-		return nil, err
-	}
-
-	lastId, err := res.LastInsertId()
-	if err != nil {
-		return nil, err
-	}
-
-	newStatus, err := s.GetStatusByID(ctx, tx, lastId)
-	if err != nil {
-		return nil, err
-	}
-
-	return newStatus, nil
-}
-
-func (s *DispatchDB) publishDispatchStatus(
-	ctx context.Context,
-	status *centrumdispatches.DispatchStatus,
-	jobs []string,
-) error {
-	data, err := proto.Marshal(status)
-	if err != nil {
-		return err
-	}
-
-	for _, job := range jobs {
-		if _, err := s.js.Publish(
-			ctx,
-			eventscentrum.BuildSubject(
-				eventscentrum.TopicDispatch,
-				eventscentrum.TypeDispatchStatus,
-				job,
-			),
-			data,
-		); err != nil {
-			return err
-		}
-	}
-
-	return nil
-}
-
-func (s *DispatchDB) GetStatusByID(
-	ctx context.Context,
-	tx qrm.DB,
-	id int64,
-) (*centrumdispatches.DispatchStatus, error) {
-	tDispatchStatus := table.FivenetCentrumDispatchesStatus.AS("dispatch_status")
-
-	stmt := tDispatchStatus.
-		SELECT(
-			tDispatchStatus.ID,
-			tDispatchStatus.CreatedAt,
-			tDispatchStatus.DispatchID,
-			tDispatchStatus.UnitID,
-			tDispatchStatus.Status,
-			tDispatchStatus.Reason,
-			tDispatchStatus.Code,
-			tDispatchStatus.UserID,
-			tDispatchStatus.X,
-			tDispatchStatus.Y,
-			tDispatchStatus.Postal,
-			tDispatchStatus.CreatorJob,
-		).
-		FROM(tDispatchStatus).
-		WHERE(
-			tDispatchStatus.ID.EQ(mysql.Int64(id)),
-		).
-		ORDER_BY(tDispatchStatus.ID.DESC()).
-		LIMIT(1)
-
-	var dest centrumdispatches.DispatchStatus
-	if err := stmt.QueryContext(ctx, tx, &dest); err != nil {
-		if !errors.Is(err, qrm.ErrNoRows) {
-			return nil, err
-		} else {
-			return nil, nil
-		}
-	}
-
-	if dest.GetUserId() > 0 {
-		colleague, err := s.colleagueshydrator.GetBasicByUserID(
-			ctx,
-			tx,
-			nil,
-			dest.GetUserId(),
-			colleagueshydrator.ResolveOpts{
-				Scope: colleagueshydrator.JobScope{Mode: colleagueshydrator.JobScopePrimary},
-			},
-		)
-		if err != nil {
-			return nil, err
-		}
-		dest.User = colleague
-	}
-
-	if dest.UnitId != nil && dest.GetUnitId() > 0 && dest.GetUser() != nil {
-		unit, err := s.units.Get(ctx, dest.GetUnitId())
-		if err != nil {
-			return nil, err
-		}
-
-		dest.Unit = unit
-	}
-
-	return &dest, nil
-}
-
-func (s *DispatchDB) TakeDispatch(
-	ctx context.Context,
-	userJob string,
-	userId int32,
-	unitId int64,
-	resp centrumdispatches.TakeDispatchResp,
-	dispatchIds []int64,
-) error {
-	settings, err := s.settings.Get(ctx, userJob)
-	if err != nil {
-		return errswrap.NewError(err, errorscentrum.ErrFailedQuery)
-	}
-
-	// If the dispatch center is in central command mode, units can't self assign dispatches
-	if settings.GetMode() == centrumsettings.CentrumMode_CENTRUM_MODE_CENTRAL_COMMAND {
-		return errorscentrum.ErrModeForbidsAction
-	}
-
-	unit, err := s.units.Get(ctx, unitId)
-	if err != nil {
-		return errswrap.NewError(err, errorscentrum.ErrFailedQuery)
-	}
-
-	var x, y *float64
-	var postal *string
-	if um, ok := s.tracker.GetUserMarkerById(userId); ok {
-		x = &um.X
-		y = &um.Y
-		postal = um.Postal
-	}
-
-	tDispatchUnit := table.FivenetCentrumDispatchesAsgmts
-
-	for _, dspId := range dispatchIds {
-		var statusToPublish *centrumdispatches.DispatchStatus
-		var publishJobs []string
-
-		if resp == centrumdispatches.TakeDispatchResp_TAKE_DISPATCH_RESP_ACCEPTED {
-			stmt := tDispatchUnit.
-				INSERT(
-					tDispatchUnit.DispatchID,
-					tDispatchUnit.UnitID,
-					tDispatchUnit.ExpiresAt,
-				).
-				VALUES(
-					dspId,
-					unit.GetId(),
-					mysql.NULL,
-				).
-				ON_DUPLICATE_KEY_UPDATE(
-					tDispatchUnit.ExpiresAt.SET(mysql.TimestampExp(mysql.NULL)),
-				)
-
-			if _, err := stmt.ExecContext(ctx, s.db); err != nil {
-				if !dbutils.IsDuplicateError(err) {
-					return errswrap.NewError(err, errorscentrum.ErrFailedQuery)
-				}
-			}
-		} else {
-			stmt := tDispatchUnit.
-				DELETE().
-				WHERE(mysql.AND(
-					tDispatchUnit.DispatchID.EQ(mysql.Int64(dspId)),
-					tDispatchUnit.UnitID.EQ(mysql.Int64(unit.GetId())),
-				)).
-				LIMIT(1)
-
-			if _, err := stmt.ExecContext(ctx, s.db); err != nil {
-				if !dbutils.IsDuplicateError(err) {
-					return errswrap.NewError(err, errorscentrum.ErrFailedQuery)
-				}
-			}
-		}
-
-		key := centrumutils.IdKey(dspId)
-		if err := s.store.ComputeUpdate(
-			ctx,
-			key,
-			func(key string, dsp *centrumdispatches.Dispatch) (*centrumdispatches.Dispatch, bool, error) {
-				// If dispatch is nil or completed, disallow to accept the dispatch
-				if dsp == nil ||
-					(dsp.GetStatus() != nil && centrumutils.IsStatusDispatchComplete(dsp.GetStatus().GetStatus())) {
-					return nil, false, errorscentrum.ErrDispatchAlreadyCompleted
-				}
-
-				var status centrumdispatches.StatusDispatch
-
-				// Dispatch accepted
-				if resp == centrumdispatches.TakeDispatchResp_TAKE_DISPATCH_RESP_ACCEPTED {
-					status = centrumdispatches.StatusDispatch_STATUS_DISPATCH_UNIT_ACCEPTED
-
-					found := false
-					accepted := true
-					// Set unit expires at to nil
-					for _, ua := range dsp.GetUnits() {
-						if ua.GetUnitId() == unit.GetId() {
-							found = true
-							// If there's no expiration time the unit has been directly assigned
-							if ua.GetExpiresAt() == nil {
-								accepted = false
-							}
-							ua.ExpiresAt = nil
-							break
-						}
-					}
-
-					if !found {
-						dsp.Units = append(dsp.Units, &centrumdispatches.DispatchAssignment{
-							DispatchId: dsp.GetId(),
-							UnitId:     unit.GetId(),
-							Unit:       unit,
-							CreatedAt:  timestamp.Now(),
-						})
-					}
-
-					if accepted {
-						// Set unit to busy when unit accepts a dispatch
-						if unit.GetStatus() == nil ||
-							unit.GetStatus().
-								GetStatus() !=
-								centrumunits.StatusUnit_STATUS_UNIT_BUSY {
-							if _, err := s.units.UpdateStatus(
-								ctx,
-								unit.GetId(),
-								&centrumunits.UnitStatus{
-									CreatedAt:  timestamp.Now(),
-									UnitId:     unit.GetId(),
-									Status:     centrumunits.StatusUnit_STATUS_UNIT_BUSY,
-									UserId:     &userId,
-									CreatorId:  &userId,
-									X:          x,
-									Y:          y,
-									Postal:     postal,
-									CreatorJob: &userJob,
-								},
-							); err != nil {
-								return nil, false, err
-							}
-						}
-					}
-				} else {
-					// Dispatch declined
-					status = centrumdispatches.StatusDispatch_STATUS_DISPATCH_UNIT_DECLINED
-
-					// Remove the unit's assignment
-					dsp.Units = slices.DeleteFunc(
-						dsp.GetUnits(),
-						func(in *centrumdispatches.DispatchAssignment) bool {
-							return in.GetUnitId() == unit.GetId()
-						},
-					)
-				}
-
-				persistedStatus, err := s.AddDispatchStatus(
-					ctx,
-					s.db,
-					&centrumdispatches.DispatchStatus{
-						CreatedAt:  timestamp.Now(),
-						DispatchId: dspId,
-						Status:     status,
-						UnitId:     &unitId,
-						UserId:     &userId,
-						X:          x,
-						Y:          y,
-						Postal:     postal,
-						CreatorJob: &userJob,
-					},
-				)
-				if err != nil {
-					return nil, false, err
-				}
-				dsp.SetStatus(persistedStatus)
-				statusToPublish = persistedStatus
-				publishJobs = slices.Clone(dsp.GetJobs().GetJobStrings())
-
-				return dsp, true, nil
-			},
-		); err != nil {
-			// Ignore errors that are "okay" to encounter
-			if !errors.Is(err, errorscentrum.ErrDispatchAlreadyCompleted) {
-				return errswrap.NewError(err, errorscentrum.ErrFailedQuery)
-			}
-		}
-
-		if statusToPublish != nil {
-			if err := s.publishDispatchStatus(ctx, statusToPublish, publishJobs); err != nil {
-				return errswrap.NewError(err, errorscentrum.ErrFailedQuery)
-			}
-		}
-	}
-
-	return nil
-}
-
 func (s *DispatchDB) AddAttributeToDispatch(
 	ctx context.Context,
 	dsp *centrumdispatches.Dispatch,
@@ -1757,5 +941,21 @@ func (s *DispatchDB) AddReferencesToDispatch(
 		}
 	}
 
+	return nil
+}
+
+func (s *DispatchDB) Delete(ctx context.Context, id int64, removeFromDB bool) error {
+	if err := s.deleteInKV(ctx, id); err != nil && !errors.Is(err, jetstream.ErrKeyNotFound) {
+		return err
+	}
+	if !removeFromDB {
+		return nil
+	}
+
+	dispatches := table.FivenetCentrumDispatches
+	stmt := dispatches.DELETE().WHERE(dispatches.ID.EQ(mysql.Int64(id))).LIMIT(1)
+	if _, err := stmt.ExecContext(ctx, s.db); err != nil {
+		return errorscentrum.ErrFailedQuery
+	}
 	return nil
 }

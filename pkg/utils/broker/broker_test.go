@@ -91,3 +91,89 @@ func TestBrokerStart(t *testing.T) {
 		// sub2 should be closed
 	}
 }
+
+func TestBrokerClosesSlowResyncSubscriber(t *testing.T) {
+	t.Parallel()
+
+	ctx, cancel := context.WithCancel(t.Context())
+	defer cancel()
+
+	broker := NewWithResyncOnSlowSubscriber[int](1)
+	go broker.Start(ctx)
+
+	sub := broker.Subscribe()
+	broker.Publish(1)
+	broker.Publish(2)
+	broker.Publish(3)
+
+	assert.Equal(t, 1, <-sub)
+	_, ok := <-sub
+	assert.False(t, ok)
+	assert.Eventually(
+		t,
+		func() bool { return broker.SubCount() == 0 },
+		time.Second,
+		10*time.Millisecond,
+	)
+}
+
+func TestBrokerOperationsAfterShutdownReturn(t *testing.T) {
+	t.Parallel()
+
+	b := New[int]()
+	ctx, cancel := context.WithCancel(t.Context())
+	done := make(chan struct{})
+	go func() {
+		b.Start(ctx)
+		close(done)
+	}()
+
+	cancel()
+	select {
+	case <-done:
+	case <-time.After(time.Second):
+		t.Fatal("broker did not stop")
+	}
+
+	finished := make(chan struct{})
+	go func() {
+		ch := b.Subscribe()
+		b.Publish(1)
+		b.Unsubscribe(ch)
+		close(finished)
+	}()
+	select {
+	case <-finished:
+	case <-time.After(time.Second):
+		t.Fatal("broker operation blocked after shutdown")
+	}
+}
+
+func TestBrokerActiveSubscribersCloseOnShutdown(t *testing.T) {
+	t.Parallel()
+
+	b := New[int]()
+	ctx, cancel := context.WithCancel(t.Context())
+	done := make(chan struct{})
+	go func() {
+		b.Start(ctx)
+		close(done)
+	}()
+
+	sub := b.Subscribe()
+	assert.Equal(t, int64(1), b.SubCount())
+	cancel()
+
+	select {
+	case <-done:
+	case <-time.After(time.Second):
+		t.Fatal("broker did not stop")
+	}
+	select {
+	case _, ok := <-sub:
+		assert.False(t, ok)
+	case <-time.After(time.Second):
+		t.Fatal("subscriber was not closed")
+	}
+	assert.Equal(t, int64(0), b.SubCount())
+}

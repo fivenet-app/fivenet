@@ -164,6 +164,13 @@ export interface StreamRequest {
  */
 export interface StreamResponse {
     /**
+     * Monotonic JetStream sequence of the source KV stream. It orders aggregate
+     * updates and delete tombstones for a single KV-backed resource.
+     *
+     * @generated from protobuf field: uint64 kv_revision = 13
+     */
+    kvRevision: number;
+    /**
      * @generated from protobuf oneof: change
      */
     change: {
@@ -875,6 +882,7 @@ export const StreamRequest = new StreamRequest$Type();
 class StreamResponse$Type extends MessageType<StreamResponse> {
     constructor() {
         super("services.centrum.StreamResponse", [
+            { no: 13, name: "kv_revision", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/ },
             { no: 1, name: "handshake", kind: "message", oneof: "change", T: () => StreamHandshake },
             { no: 2, name: "latest_state", kind: "message", oneof: "change", T: () => LatestState },
             { no: 3, name: "settings", kind: "message", oneof: "change", T: () => Settings },
@@ -891,6 +899,7 @@ class StreamResponse$Type extends MessageType<StreamResponse> {
     }
     create(value?: PartialMessage<StreamResponse>): StreamResponse {
         const message = globalThis.Object.create((this.messagePrototype!));
+        message.kvRevision = 0;
         message.change = { oneofKind: undefined };
         if (value !== undefined)
             reflectionMergePartial<StreamResponse>(this, message, value);
@@ -901,6 +910,9 @@ class StreamResponse$Type extends MessageType<StreamResponse> {
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
+                case /* uint64 kv_revision */ 13:
+                    message.kvRevision = reader.uint64().toNumber();
+                    break;
                 case /* services.centrum.StreamHandshake handshake */ 1:
                     message.change = {
                         oneofKind: "handshake",
@@ -1021,6 +1033,9 @@ class StreamResponse$Type extends MessageType<StreamResponse> {
         /* string settings_deleted = 12; */
         if (message.change.oneofKind === "settingsDeleted")
             writer.tag(12, WireType.LengthDelimited).string(message.change.settingsDeleted);
+        /* uint64 kv_revision = 13; */
+        if (message.kvRevision !== 0)
+            writer.tag(13, WireType.Varint).uint64(message.kvRevision);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);

@@ -20,12 +20,13 @@ func (s *Housekeeper) runTTLWatcher(ctx context.Context) error {
 	for {
 		if err := s.unitKVPing(ctx); err != nil {
 			if !errors.Is(err, context.Canceled) {
+				s.recordWatcherRestart("unit_ping", err)
 				s.logger.Error("unit ping watcher stopped", zap.Error(err))
 			}
 		}
 
 		select {
-		case <-s.ctx.Done():
+		case <-ctx.Done():
 			return nil
 
 		case <-time.After(2 * time.Second):
@@ -45,7 +46,10 @@ func (s *Housekeeper) unitKVPing(ctx context.Context) error {
 		case <-ctx.Done():
 			return nil
 
-		case e := <-watch.Updates():
+		case e, ok := <-watch.Updates():
+			if !ok {
+				return errWatcherUpdatesClosed
+			}
 			// Ignore nil event
 			if e == nil {
 				continue
@@ -127,7 +131,7 @@ func (s *Housekeeper) handleUnitKVPing(ctx context.Context, unitId int64) error 
 		zap.Int64("unit_id", unit.GetId()),
 		zap.Int32p("user_id", userId),
 	)
-	if _, err := s.units.UpdateStatus(ctx, unit.GetId(), &centrumunits.UnitStatus{
+	if _, _, err := s.units.UpdateStatus(ctx, unit.GetId(), &centrumunits.UnitStatus{
 		CreatedAt:  timestamp.Now(),
 		UnitId:     unit.GetId(),
 		Status:     centrumunits.StatusUnit_STATUS_UNIT_UNAVAILABLE,

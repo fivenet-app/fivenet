@@ -4,7 +4,6 @@ import DispatchStatusUpdateModal from '~/components/dispatch/dispatches/Dispatch
 import {
     dispatchStatusToBadgeColor,
     dispatchStatuses,
-    isStatusDispatchCompleted,
     unitStatusToBadgeColor,
     unitStatuses,
 } from '~/components/dispatch/helpers';
@@ -22,6 +21,7 @@ import { setWaypointPLZ } from '~/composables/nui';
 import { useCentrumStore } from '~/stores/centrum';
 import { useLivemapStore } from '~/stores/livemap';
 import { defaultCentrumSidebarPlacement, useSettingsStore, type CentrumSidebarPlacement } from '~/stores/settings';
+import { selectOwnDispatch } from '~/utils/centrum-dispatch-selection';
 import { getCentrumDispatchesClient, getCentrumUnitsClient } from '~~/gen/ts/clients';
 import { StatusDispatch } from '~~/gen/ts/resources/centrum/dispatches/dispatches';
 import { CentrumMode } from '~~/gen/ts/resources/centrum/settings/settings';
@@ -100,7 +100,13 @@ async function updateDispatchStatus(dispatchId: number, status: StatusDispatch):
             dispatchId: dispatchId,
             status: status,
         });
-        await call;
+        const { response } = await call;
+
+        if (response.status) {
+            centrumStore.updateDispatchStatus(response.status);
+        }
+
+        if (!response.updated) return;
 
         notifications.add({
             title: { key: 'notifications.centrum.sidebar.dispatch_status_updated.title', parameters: {} },
@@ -140,7 +146,13 @@ async function updateUnitStatus(id: number, status: StatusUnit): Promise<void> {
             unitId: id,
             status: status,
         });
-        await call;
+        const { response } = await call;
+
+        if (response.status) {
+            centrumStore.updateUnitStatus(response.status);
+        }
+
+        if (!response.updated) return;
 
         notifications.add({
             title: { key: 'notifications.centrum.sidebar.unit_status_updated.title', parameters: {} },
@@ -188,14 +200,18 @@ async function toggleSidebarBasedOnUnit(): Promise<void> {
     }
 }
 
-const requireUnitInterval = computed(() => settings.value?.timings?.requireUnitReminderSeconds ?? 900 * 1000);
+const requireUnitInterval = computed(() => (settings.value?.timings?.requireUnitReminderSeconds ?? 900) * 1000);
 const { pause, resume } = useIntervalFn(
     () => sendRequireUnitNotification(),
-    () => requireUnitInterval.value * 1000,
+    () => requireUnitInterval.value,
     {
         immediate: false,
     },
 );
+
+const { pause: pauseCheckup, resume: resumeCheckup } = useIntervalFn(() => checkup(), 1 * 60 * 1000, {
+    immediate: false,
+});
 
 function toggleRequireUnitNotification(): void {
     if (canStream.value && settings.value?.enabled) {
@@ -238,42 +254,15 @@ const onSubmitDispatchStatusThrottle = useThrottleFn(async (dispatchId?: number,
 }, 1000);
 
 const ownUnitStatus = computed(() => unitStatusToBadgeColor(getOwnUnit.value?.status?.status));
+const dispatchTimeNow = useMinuteClock();
 
 function ensureOwnDispatchSelected(): void {
-    if (getSortedOwnDispatches.value.length === 0) {
-        selectedDispatch.value = undefined;
-        return;
-    }
-
-    // If the selected dispatch is still our own dispatch, don't do anything
-    if (
-        selectedDispatch.value !== undefined &&
-        getSortedOwnDispatches.value.find((dispatchId) => dispatchId === selectedDispatch.value) !== undefined
-    ) {
-        const dispatch = dispatches.value.get(selectedDispatch.value);
-        if (!isStatusDispatchCompleted(dispatch?.status?.status ?? StatusDispatch.UNSPECIFIED)) return;
-    }
-
-    // otherwise select that current first one
-    if (getSortedOwnDispatches.value.length > 1) {
-        for (let index = 0; index < getSortedOwnDispatches.value.length; ++index) {
-            const ownedDsp = getSortedOwnDispatches.value[index];
-            if (!ownedDsp || ownedDsp === selectedDispatch.value) {
-                continue;
-            }
-
-            const dispatch = dispatches.value.get(ownedDsp);
-            if (isStatusDispatchCompleted(dispatch?.status?.status ?? StatusDispatch.UNSPECIFIED)) {
-                continue;
-            }
-
-            selectedDispatch.value = ownedDsp;
-            break;
-        }
-    } else {
-        selectedDispatch.value = getSortedOwnDispatches.value[0];
-    }
+    selectedDispatch.value = selectOwnDispatch(getSortedOwnDispatches.value, dispatches.value, selectedDispatch.value);
 }
+
+const ownDispatchSelectionState = computed(() =>
+    getSortedOwnDispatches.value.map((dispatchId) => [dispatchId, dispatches.value.get(dispatchId)?.status?.status]),
+);
 
 watchDebounced(
     selectedDispatch,
@@ -292,18 +281,27 @@ watchDebounced(
     },
 );
 
-watchDebounced(getSortedOwnDispatches.value, () => ensureOwnDispatchSelected(), {
+watchDebounced(ownDispatchSelectionState, () => ensureOwnDispatchSelected(), {
     debounce: 75,
     maxWait: 200,
+    immediate: true,
 });
 
-watch(settings, () => {
-    if (!settings.value?.enabled) return;
+watch(
+    settings,
+    () => {
+        if (!settings.value?.enabled) {
+            pauseCheckup();
+            pause();
+            return;
+        }
 
-    useIntervalFn(() => checkup(), 1 * 60 * 1000);
-    toggleSidebarBasedOnUnit();
-    toggleRequireUnitNotification();
-});
+        resumeCheckup();
+        toggleSidebarBasedOnUnit();
+        toggleRequireUnitNotification();
+    },
+    { immediate: true },
+);
 
 onBeforeMount(async () => {
     if (!canStream.value) return;
@@ -453,7 +451,10 @@ defineShortcuts({
 
                         <template v-if="canStream && settings?.enabled" #afterMap>
                             <!-- "Take Dispatches" Button -->
-                            <span v-if="getOwnUnit !== undefined" class="absolute right-1/2 bottom-2 z-30 inline-flex">
+                            <span
+                                v-if="getOwnUnit !== undefined"
+                                class="absolute right-1/2 bottom-2 z-30 inline-flex pb-(--page-content-bottom-offset)"
+                            >
                                 <UChip
                                     :ui="{
                                         base: 'absolute rounded-full ring-0 ring-white dark:ring-gray-900 flex items-center justify-center text-white dark:text-gray-900 font-medium whitespace-nowrap animate-ping duration-750',
@@ -699,6 +700,7 @@ defineShortcuts({
                                                         v-if="dispatches.get(dispatch) !== undefined"
                                                         v-model="selectedDispatch"
                                                         :dispatch="dispatches.get(dispatch)!"
+                                                        :now="dispatchTimeNow"
                                                     />
                                                 </template>
                                             </div>

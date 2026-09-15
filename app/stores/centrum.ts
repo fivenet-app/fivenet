@@ -21,12 +21,20 @@ const logger = useLogger('⛑️ Centrum');
 
 const cleanupInterval = 40 * 1000; // 40 seconds
 const dispatchEndOfLifeTime = 2 * 60 * 60 * 1000; // 2 hours
+const maxFeedItems = 100;
+const revisionTombstoneLifetime = 5 * 60 * 1000; // 5 minutes
+const maxRevisionTombstones = 1_000;
 
 // In seconds
 const maxBackOffTime = 7;
 const initialReconnectBackoffTime = 0.75;
 
 export type canDoAction = 'TakeControl' | 'TakeDispatch' | 'AssignDispatch' | 'UpdateDispatchStatus' | 'UpdateUnitStatus';
+
+type ProjectionRevision = {
+    revision: number;
+    deletedAt?: number;
+};
 
 export const useCentrumStore = defineStore(
     'centrum',
@@ -50,10 +58,14 @@ export const useCentrumStore = defineStore(
 
         const units = ref<Map<number, Unit>>(new Map());
         const dispatches = ref<Map<number, Dispatch>>(new Map());
+        // KV stream revisions order aggregate updates and bounded delete tombstones.
+        const unitRevisions = new Map<number, ProjectionRevision>();
+        const dispatchRevisions = new Map<number, ProjectionRevision>();
 
         const ownUnitId = ref<number | undefined>(undefined);
         const ownDispatches = ref<number[]>([]);
         const pendingDispatches = ref<number[]>([]);
+        const pendingDispatchExpiryTimers = new Map<number, ReturnType<typeof setTimeout>>();
 
         const dispatchSOS = useSounds('dispatch.dispatchSOS');
         const dispatchAssigned = useSounds('dispatch.dispatchAssigned');
@@ -71,19 +83,109 @@ export const useCentrumStore = defineStore(
             }
         };
 
+        const clearPendingDispatchExpiry = (id: number): void => {
+            const timer = pendingDispatchExpiryTimers.get(id);
+            if (timer) {
+                clearTimeout(timer);
+                pendingDispatchExpiryTimers.delete(id);
+            }
+        };
+
+        const clearPendingDispatchExpiries = (): void => {
+            pendingDispatchExpiryTimers.forEach((timer) => clearTimeout(timer));
+            pendingDispatchExpiryTimers.clear();
+        };
+
+        const pruneRevisionTombstones = (revisions: Map<number, ProjectionRevision>): void => {
+            const now = Date.now();
+            const tombstones: [number, ProjectionRevision][] = [];
+
+            for (const [id, revision] of revisions) {
+                if (revision.deletedAt === undefined) continue;
+                if (now - revision.deletedAt >= revisionTombstoneLifetime) {
+                    revisions.delete(id);
+                    continue;
+                }
+                tombstones.push([id, revision]);
+            }
+
+            tombstones.sort(([, a], [, b]) => a.deletedAt! - b.deletedAt!);
+            for (const [id] of tombstones.slice(0, Math.max(0, tombstones.length - maxRevisionTombstones))) {
+                revisions.delete(id);
+            }
+        };
+
         /**
          * Removes a dispatch from the pending dispatches.
          * @param {number} id - The ID of the dispatch to remove.
          */
         const removePendingDispatch = (id: number): void => {
+            clearPendingDispatchExpiry(id);
             const idx = pendingDispatches.value.findIndex((d) => d === id);
             if (idx > -1) {
                 pendingDispatches.value.splice(idx, 1);
             }
         };
 
+        const schedulePendingDispatchExpiry = (id: number, expiresAt: Timestamp): void => {
+            clearPendingDispatchExpiry(id);
+
+            const expire = (): void => {
+                pendingDispatchExpiryTimers.delete(id);
+                const assignment = dispatches.value.get(id)?.units.find((ua) => ua.unitId === ownUnitId.value);
+                if (!assignment?.expiresAt) return;
+
+                const remaining = toDate(assignment.expiresAt).getTime() - (Date.now() - timeCorrection.value);
+                if (remaining > 0) {
+                    schedulePendingDispatchExpiry(id, assignment.expiresAt);
+                    return;
+                }
+
+                removePendingDispatch(id);
+            };
+
+            const remaining = toDate(expiresAt).getTime() - (Date.now() - timeCorrection.value);
+            if (remaining <= 0) {
+                expire();
+                return;
+            }
+
+            pendingDispatchExpiryTimers.set(id, setTimeout(expire, remaining));
+        };
+
         const isTransientDispatchUnitStatus = (status?: StatusDispatch): boolean => {
             return status === StatusDispatch.UNIT_ASSIGNED || status === StatusDispatch.UNIT_UNASSIGNED;
+        };
+
+        const normalizeUnit = (unit: Unit): Unit => {
+            if (!unit.access) {
+                unit.access = {
+                    jobs: [],
+                    users: [],
+                    qualifications: [],
+                };
+            }
+            if (!unit.status) {
+                unit.status = {
+                    unitId: unit.id,
+                    id: 0,
+                    status: StatusUnit.UNKNOWN,
+                };
+            }
+
+            return unit;
+        };
+
+        const normalizeDispatch = (dispatchObj: Dispatch): Dispatch => {
+            if (!dispatchObj.status) {
+                dispatchObj.status = {
+                    dispatchId: dispatchObj.id,
+                    id: 0,
+                    status: StatusDispatch.NEW,
+                };
+            }
+
+            return dispatchObj;
         };
 
         /**
@@ -91,7 +193,7 @@ export const useCentrumStore = defineStore(
          * @returns {CentrumMode} The current mode of the centrum.
          */
         const getCurrentMode = computed<CentrumMode>(() => {
-            return dispatchers.value.length > 0
+            return dispatchers.value.some((dispatchers) => dispatchers.dispatchers.length > 0)
                 ? (settings.value?.mode ?? CentrumMode.UNSPECIFIED)
                 : (settings.value?.fallbackMode ?? CentrumMode.UNSPECIFIED);
         });
@@ -189,24 +291,20 @@ export const useCentrumStore = defineStore(
          * Adds or updates a unit in the store.
          * @param {Unit} unit - The unit to add or update.
          */
-        const addOrUpdateUnit = (unit: Unit): void => {
+        const addOrUpdateUnit = (unit: Unit, kvRevision?: number): boolean => {
+            const currentRevision = unitRevisions.get(unit.id)?.revision ?? 0;
+            if (kvRevision !== undefined && kvRevision > 0 && kvRevision <= currentRevision) {
+                logger.debug('Ignoring stale unit projection', {
+                    unitId: unit.id,
+                    kvRevision,
+                    currentRevision,
+                });
+                return false;
+            }
+
             const existing = units.value.get(unit.id);
             if (!existing) {
-                if (!unit.access) {
-                    unit.access = {
-                        jobs: [],
-                        users: [],
-                        qualifications: [],
-                    };
-                }
-                if (!unit.status) {
-                    unit.status = {
-                        unitId: unit.id,
-                        id: 0,
-                        status: StatusUnit.UNKNOWN,
-                    };
-                }
-                units.value.set(unit.id, unit);
+                units.value.set(unit.id, normalizeUnit(unit));
             } else {
                 existing.job = unit.job;
                 existing.createdAt = unit.createdAt;
@@ -229,6 +327,17 @@ export const useCentrumStore = defineStore(
 
                 updateUnitStatus(unit.status);
             }
+            if (kvRevision !== undefined && kvRevision > 0) {
+                unitRevisions.set(unit.id, { revision: kvRevision });
+            }
+
+            logger.debug('Applied unit projection', {
+                unitId: unit.id,
+                kvRevision,
+                users: unit.users.map((user) => user.userId),
+            });
+
+            return true;
         };
 
         /**
@@ -249,6 +358,8 @@ export const useCentrumStore = defineStore(
             } else {
                 // Don't set user added / removed for status
                 if (status.status === StatusUnit.USER_ADDED || status.status === StatusUnit.USER_REMOVED) return;
+
+                if (status.id > 0 && u.status.id >= status.id) return;
 
                 // Normal status update
                 u.status.id = status.id;
@@ -273,6 +384,7 @@ export const useCentrumStore = defineStore(
          * @param {number | undefined} id - The ID of the unit to set as the user's own, or undefined to unset.
          */
         const setOwnUnit = (id: number | undefined): void => {
+            if (ownUnitId.value !== id) clearPendingDispatchExpiries();
             ownUnitId.value = id;
         };
 
@@ -280,11 +392,19 @@ export const useCentrumStore = defineStore(
          * Removes a unit from the store.
          * @param {number} id - The ID of the unit to remove.
          */
-        const removeUnit = (id: number): void => {
+        const removeUnit = (id: number, kvRevision?: number): void => {
+            const currentRevision = unitRevisions.get(id)?.revision ?? 0;
+            if (kvRevision !== undefined && kvRevision > 0 && kvRevision <= currentRevision) return;
+
             if (ownUnitId.value === id) {
                 setOwnUnit(undefined);
             }
             units.value.delete(id);
+            if (kvRevision !== undefined && kvRevision > 0) {
+                unitRevisions.set(id, { revision: kvRevision, deletedAt: Date.now() });
+            } else if (currentRevision > 0) {
+                unitRevisions.set(id, { revision: currentRevision, deletedAt: Date.now() });
+            }
         };
 
         // Dispatches
@@ -303,18 +423,15 @@ export const useCentrumStore = defineStore(
          * Adds or updates a dispatch in the store.
          * @param {Dispatch} dispatchObj - The dispatch to add or update.
          */
-        const addOrUpdateDispatch = (dispatchObj: Dispatch): void => {
+        const addOrUpdateDispatch = (dispatchObj: Dispatch, kvRevision?: number): void => {
+            const currentRevision = dispatchRevisions.get(dispatchObj.id)?.revision ?? 0;
+            if (kvRevision !== undefined && kvRevision > 0 && kvRevision <= currentRevision) {
+                return;
+            }
+
             const existing = dispatches.value.get(dispatchObj.id);
             if (!existing) {
-                // Ensure the dispatch has a status
-                if (!dispatchObj.status) {
-                    dispatchObj.status = {
-                        dispatchId: dispatchObj.id,
-                        id: 0,
-                        status: StatusDispatch.NEW,
-                    };
-                }
-                dispatches.value.set(dispatchObj.id, dispatchObj);
+                dispatches.value.set(dispatchObj.id, normalizeDispatch(dispatchObj));
             } else {
                 existing.createdAt = dispatchObj.createdAt;
                 existing.updatedAt = dispatchObj.updatedAt;
@@ -337,6 +454,9 @@ export const useCentrumStore = defineStore(
 
                 updateDispatchStatus(dispatchObj.status);
             }
+            if (kvRevision !== undefined && kvRevision > 0) {
+                dispatchRevisions.set(dispatchObj.id, { revision: kvRevision });
+            }
             handleDispatchAssignment(dispatchObj);
         };
 
@@ -344,14 +464,23 @@ export const useCentrumStore = defineStore(
          * Updates the status of a dispatch.
          * @param {DispatchStatus | undefined} status - The new status of the dispatch.
          */
-        const updateDispatchStatus = (status: DispatchStatus | undefined): void => {
-            if (!status) return;
+        const updateDispatchStatus = (status: DispatchStatus | undefined): boolean => {
+            if (!status) return false;
             const disp = dispatches.value.get(status.dispatchId);
             if (!disp) {
                 logger.warn('Processed Dispatch Status for unknown dispatch:', status.dispatchId, status);
-                return;
+                return false;
             }
             status.unit = undefined;
+
+            logger.debug('Processing dispatch status', {
+                dispatchId: status.dispatchId,
+                statusId: status.id,
+                status: StatusDispatch[status.status],
+                unitId: status.unitId,
+                currentStatus: disp.status ? StatusDispatch[disp.status.status] : undefined,
+                assignedUnitIds: disp.units.map((assignment) => assignment.unitId),
+            });
 
             // Unit assignment events stay in feed, but do not become dispatch's current status.
             if (isTransientDispatchUnitStatus(status.status)) {
@@ -360,13 +489,30 @@ export const useCentrumStore = defineStore(
                     if (idx > -1) {
                         disp.units.splice(idx, 1);
                     }
+
+                    logger.debug('Applied dispatch unit unassignment', {
+                        dispatchId: status.dispatchId,
+                        unitId: status.unitId,
+                        assignmentFound: idx > -1,
+                        remainingUnitIds: disp.units.map((assignment) => assignment.unitId),
+                        currentStatus: disp.status ? StatusDispatch[disp.status.status] : undefined,
+                    });
                 }
-                return;
+                return true;
             }
 
             if (!disp.status) {
                 disp.status = status;
             } else {
+                if (status.id > 0 && disp.status.id >= status.id) {
+                    logger.debug('Ignoring stale dispatch status', {
+                        dispatchId: status.dispatchId,
+                        statusId: status.id,
+                        currentStatusId: disp.status.id,
+                    });
+                    return false;
+                }
+
                 disp.status.id = status.id;
                 disp.status.createdAt = status.createdAt;
                 disp.status.dispatchId = status.dispatchId;
@@ -381,16 +527,35 @@ export const useCentrumStore = defineStore(
                 disp.status.postal = status.postal;
                 disp.status.creatorJob = status.creatorJob;
             }
+
+            logger.debug('Applied dispatch status', {
+                dispatchId: status.dispatchId,
+                statusId: status.id,
+                status: StatusDispatch[status.status],
+                assignedUnitIds: disp.units.map((assignment) => assignment.unitId),
+            });
+
+            return true;
         };
 
         /**
          * Removes a dispatch from the store.
          * @param {number} id - The ID of the dispatch to remove.
          */
-        const removeDispatch = (id: number): void => {
+        const removeDispatch = (id: number, kvRevision?: number): void => {
+            const currentRevision = dispatchRevisions.get(id)?.revision ?? 0;
+            if (kvRevision !== undefined && kvRevision > 0 && kvRevision <= currentRevision) {
+                return;
+            }
+
             removePendingDispatch(id);
             removeOwnDispatch(id);
             dispatches.value.delete(id);
+            if (kvRevision !== undefined && kvRevision > 0) {
+                dispatchRevisions.set(id, { revision: kvRevision, deletedAt: Date.now() });
+            } else if (currentRevision > 0) {
+                dispatchRevisions.set(id, { revision: currentRevision, deletedAt: Date.now() });
+            }
         };
 
         /**
@@ -427,7 +592,12 @@ export const useCentrumStore = defineStore(
                     addOrUpdateOwnDispatch(dsp.id);
                 } else {
                     // else => it's pending
+                    if (toDate(assignment.expiresAt).getTime() <= Date.now() - timeCorrection.value) {
+                        removePendingDispatch(dsp.id);
+                        return;
+                    }
                     addOrUpdatePendingDispatch(dsp.id);
+                    schedulePendingDispatchExpiry(dsp.id, assignment.expiresAt);
                 }
             }
         };
@@ -448,6 +618,34 @@ export const useCentrumStore = defineStore(
 
                 dispatchAssigned.play();
             }
+        };
+
+        const rebuildOwnDispatches = (): void => {
+            clearPendingDispatchExpiries();
+            const own = [] as number[];
+            const pending = [] as number[];
+            if (ownUnitId.value !== undefined) {
+                dispatches.value.forEach((dsp) => {
+                    const assignment = dsp.units.find((ua) => ua.unitId === ownUnitId.value);
+                    if (
+                        !assignment ||
+                        dsp.status?.status === StatusDispatch.CANCELLED ||
+                        dsp.status?.status === StatusDispatch.COMPLETED
+                    ) {
+                        return;
+                    }
+
+                    if (assignment.expiresAt && toDate(assignment.expiresAt).getTime() > Date.now() - timeCorrection.value) {
+                        pending.push(dsp.id);
+                        schedulePendingDispatchExpiry(dsp.id, assignment.expiresAt);
+                    } else {
+                        if (!assignment.expiresAt) own.push(dsp.id);
+                    }
+                });
+            }
+
+            ownDispatches.value = own;
+            pendingDispatches.value = pending;
         };
 
         // Dispatchers
@@ -498,7 +696,7 @@ export const useCentrumStore = defineStore(
 
                     if (!resp || !resp.change) continue;
 
-                    logger.debug('Received change - oneofKind:', resp.change.oneofKind, resp.change);
+                    logger.debug('Received change - oneofKind:', resp.change.oneofKind);
 
                     if (resp.change.oneofKind === 'handshake') {
                         if (resp.change.handshake.serverTime) {
@@ -534,36 +732,19 @@ export const useCentrumStore = defineStore(
                         dispatchers.value.push(...(resp.change.latestState.dispatchers?.dispatchers ?? []));
                         isDispatcher.value = checkIfDispatcher(activeChar.value?.userId);
 
-                        const foundUnits: number[] = [];
-                        resp.change.latestState.units.forEach((u) => {
-                            foundUnits.push(u.id);
-                            addOrUpdateUnit(u);
-                        });
-                        // Remove missing units
-                        let removedUnits = 0;
-                        units.value.forEach((_, id) => {
-                            if (!foundUnits.includes(id)) {
-                                removeUnit(id);
-                                removedUnits++;
-                            }
-                        });
-                        logger.debug(`Removed ${removedUnits} old units`);
+                        unitRevisions.clear();
+                        units.value = new Map(resp.change.latestState.units.map((unit) => [unit.id, normalizeUnit(unit)]));
                         setOwnUnit(resp.change.latestState.ownUnitId);
 
-                        const foundDispatches: number[] = [];
-                        resp.change.latestState.dispatches.forEach((d) => {
-                            foundDispatches.push(d.id);
-                            addOrUpdateDispatch(d);
-                        });
-                        // Remove missing dispatches
-                        let removedDispatches = 0;
-                        dispatches.value.forEach((_, id) => {
-                            if (!foundDispatches.includes(id)) {
-                                removeDispatch(id);
-                                removedDispatches++;
-                            }
-                        });
-                        logger.debug(`Removed ${removedDispatches} old dispatches`);
+                        dispatchRevisions.clear();
+                        dispatches.value = new Map(
+                            resp.change.latestState.dispatches.map((dispatchObj) => [
+                                dispatchObj.id,
+                                normalizeDispatch(dispatchObj),
+                            ]),
+                        );
+                        rebuildOwnDispatches();
+                        reconnectBackoffTime.value = initialReconnectBackoffTime;
                     } else if (resp.change.oneofKind === 'settings') {
                         // Send notification when centrum got enabled while it was previously disabled
                         if (settings.value && !settings.value.enabled && resp.change.settings.enabled) {
@@ -594,9 +775,21 @@ export const useCentrumStore = defineStore(
 
                         isDispatcher.value = checkIfDispatcher(activeChar.value?.userId);
                     } else if (resp.change.oneofKind === 'unitDeleted') {
-                        removeUnit(resp.change.unitDeleted);
+                        removeUnit(resp.change.unitDeleted, resp.kvRevision);
                     } else if (resp.change.oneofKind === 'unitUpdated') {
-                        addOrUpdateUnit(resp.change.unitUpdated);
+                        logger.debug('Received unit projection', {
+                            unitId: resp.change.unitUpdated.id,
+                            kvRevision: resp.kvRevision,
+                            users: resp.change.unitUpdated.users.map((user) => user.userId),
+                            activeUserId: activeChar.value?.userId,
+                            ownUnitId: ownUnitId.value,
+                        });
+
+                        // Do not let an older membership snapshot for the prior
+                        // unit overwrite ownUnitId after a user switches units.
+                        if (!addOrUpdateUnit(resp.change.unitUpdated, resp.kvRevision)) {
+                            continue;
+                        }
 
                         // Check if user is in that unit
                         const idx = resp.change.unitUpdated.users.findIndex((u) => u.userId === activeChar.value?.userId);
@@ -631,11 +824,15 @@ export const useCentrumStore = defineStore(
                                 pendingDispatches.value.length = 0;
                             }
                         }
-
-                        if (isCenter.value && resp.change.unitUpdated.status) {
-                            addFeedItem(resp.change.unitUpdated.status);
-                        }
                     } else if (resp.change.oneofKind === 'unitStatus') {
+                        logger.debug('Received unit status', {
+                            unitId: resp.change.unitStatus.unitId,
+                            statusId: resp.change.unitStatus.id,
+                            status: StatusUnit[resp.change.unitStatus.status],
+                            userId: resp.change.unitStatus.userId,
+                            ownUnitId: ownUnitId.value,
+                        });
+
                         updateUnitStatus(resp.change.unitStatus);
 
                         if (isCenter.value) {
@@ -681,19 +878,24 @@ export const useCentrumStore = defineStore(
                             pendingDispatches.value.length = 0;
                         }
                     } else if (resp.change.oneofKind === 'dispatchDeleted') {
-                        removeDispatch(resp.change.dispatchDeleted);
+                        removeDispatch(resp.change.dispatchDeleted, resp.kvRevision);
                     } else if (resp.change.oneofKind === 'dispatchUpdated') {
-                        addOrUpdateDispatch(resp.change.dispatchUpdated);
-
-                        if (isCenter.value && resp.change.dispatchUpdated.status) {
-                            addFeedItem(resp.change.dispatchUpdated.status);
-                        }
+                        addOrUpdateDispatch(resp.change.dispatchUpdated, resp.kvRevision);
                     } else if (resp.change.oneofKind === 'dispatchStatus') {
                         const ds = resp.change.dispatchStatus;
 
+                        logger.debug('Received dispatch status', {
+                            dispatchId: ds.dispatchId,
+                            statusId: ds.id,
+                            status: StatusDispatch[ds.status],
+                            unitId: ds.unitId,
+                            currentStatus: dispatches.value.get(ds.dispatchId)?.status?.status,
+                            assignedUnitIds: dispatches.value.get(ds.dispatchId)?.units.map((assignment) => assignment.unitId),
+                        });
+
                         if (isCenter.value) addFeedItem(ds);
 
-                        updateDispatchStatus(ds);
+                        const statusApplied = updateDispatchStatus(ds);
 
                         if (ds.status === StatusDispatch.COMPLETED) {
                             // Play sound if one of the user's own dispatches got completed
@@ -701,7 +903,7 @@ export const useCentrumStore = defineStore(
                                 dispatchCompleted.play();
                             }
                         } else if (ds.status === StatusDispatch.ARCHIVED) {
-                            removeDispatch(ds.id);
+                            if (statusApplied) removeDispatch(ds.dispatchId);
                             continue;
                         } else if (ds.status === StatusDispatch.NEED_ASSISTANCE) {
                             dispatchSOS.play();
@@ -784,7 +986,10 @@ export const useCentrumStore = defineStore(
          * @returns {Promise<void>} A promise that resolves when the stream stops.
          */
         const stopStream = async (end?: boolean): Promise<void> => {
-            if (end === true) stopping.value = true;
+            if (end === true) {
+                stopping.value = true;
+                clearPendingDispatchExpiries();
+            }
 
             if (abort.value) {
                 abort.value.abort();
@@ -830,6 +1035,23 @@ export const useCentrumStore = defineStore(
          * Authorization changes should not use transport-reconnect backoff.
          */
         const restartForAuthContext = async (): Promise<void> => {
+            // Do not show the previous job's projection while the replacement
+            // stream is authorizing and loading its first snapshot.
+            error.value = undefined;
+            acls.value = undefined;
+            settings.value = undefined;
+            isDispatcher.value = false;
+            dispatchers.value.length = 0;
+            feed.value.length = 0;
+            units.value = new Map();
+            dispatches.value = new Map();
+            unitRevisions.clear();
+            dispatchRevisions.clear();
+            ownUnitId.value = undefined;
+            ownDispatches.value.length = 0;
+            pendingDispatches.value.length = 0;
+            clearPendingDispatchExpiries();
+
             await restartAuthContextStream({ abort: abort.value, isStopping: () => stopping.value }, stopStream, startStream);
         };
 
@@ -860,9 +1082,13 @@ export const useCentrumStore = defineStore(
          * @param {DispatchStatus | UnitStatus} item - The item to add to the feed.
          */
         const addFeedItem = (item: DispatchStatus | UnitStatus): void => {
-            const idx = feed.value.findIndex((fi) => fi.id === item.id);
+            const isDispatchStatus = 'dispatchId' in item;
+            const idx = feed.value.findIndex((fi) => fi.id === item.id && 'dispatchId' in fi === isDispatchStatus);
             if (idx === -1) {
                 feed.value.unshift(item);
+                if (feed.value.length > maxFeedItems) {
+                    feed.value.length = maxFeedItems;
+                }
             }
         };
 
@@ -906,19 +1132,21 @@ export const useCentrumStore = defineStore(
             logger.debug('Running cleanup tasks');
             const now = new Date().getTime() - timeCorrection.value;
 
+            pruneRevisionTombstones(unitRevisions);
+            pruneRevisionTombstones(dispatchRevisions);
+
             // Cleanup pending dispatches
-            pendingDispatches.value.forEach((pd) => {
+            for (const pd of [...pendingDispatches.value]) {
                 if (!dispatches.value.has(pd)) {
                     removePendingDispatch(pd);
                 } else {
                     const dsp = dispatches.value.get(pd);
-                    dsp?.units.forEach((ua) => {
-                        if (ua.expiresAt && now - toDate(ua.expiresAt).getTime() >= cleanupInterval) {
-                            removePendingDispatch(pd);
-                        }
-                    });
+                    const assignment = dsp?.units.find((ua) => ua.unitId === ownUnitId.value);
+                    if (assignment?.expiresAt && now >= toDate(assignment.expiresAt).getTime()) {
+                        removePendingDispatch(pd);
+                    }
                 }
-            });
+            }
 
             let count = 0;
             let skipped = 0;
@@ -949,11 +1177,13 @@ export const useCentrumStore = defineStore(
                 skipped++;
             });
 
-            if (feed.value.length > 100) {
-                feed.value.length = 100;
+            if (feed.value.length > maxFeedItems) {
+                feed.value.length = maxFeedItems;
             }
 
-            logger.info('Cleaned up dispatches, count:', count, 'skipped:', skipped);
+            if (count > 0) {
+                logger.debug('Cleaned up dispatches, count:', count, 'skipped:', skipped);
+            }
         };
 
         /**
@@ -1082,6 +1312,7 @@ export const useCentrumStore = defineStore(
             removeUnit,
             checkIfUnitAssignedToDispatch,
             addOrUpdateDispatch,
+            rebuildOwnDispatches,
             updateDispatchStatus,
             removeDispatch,
             addOrUpdateOwnDispatch,

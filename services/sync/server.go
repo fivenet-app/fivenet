@@ -20,6 +20,7 @@ import (
 	errorsgrpcauth "github.com/fivenet-app/fivenet/v2026/pkg/grpc/auth/errors"
 	"github.com/fivenet-app/fivenet/v2026/pkg/mstlystcdata"
 	"github.com/fivenet-app/fivenet/v2026/pkg/notifi"
+	pkguserinfo "github.com/fivenet-app/fivenet/v2026/pkg/userinfo"
 	"github.com/fivenet-app/fivenet/v2026/services/centrum/dispatches"
 	citizensstore "github.com/fivenet-app/fivenet/v2026/stores/citizens"
 	jobsstore "github.com/fivenet-app/fivenet/v2026/stores/jobs"
@@ -56,19 +57,20 @@ type Params struct {
 
 	LC fx.Lifecycle
 
-	Logger        *zap.Logger
-	DB            *sql.DB
-	JS            *events.JSWrapper
-	Auth          *auth.GRPCAuth
-	Config        *config.Config
-	AppConfig     appconfig.IConfig
-	DispatchDB    *dispatches.DispatchDB
-	CitizensStore citizensstore.IStore
-	JobsStore     jobsstore.IStore
-	LivemapStore  livemapstore.IStore
-	VehiclesStore vehiclesstore.IStore
-	Enricher      mstlystcdata.IEnricher
-	Notifi        notifi.INotifi
+	Logger          *zap.Logger
+	DB              *sql.DB
+	JS              *events.JSWrapper
+	Auth            *auth.GRPCAuth
+	Config          *config.Config
+	AppConfig       appconfig.IConfig
+	DispatchDB      *dispatches.DispatchDB
+	CitizensStore   citizensstore.IStore
+	JobsStore       jobsstore.IStore
+	LivemapStore    livemapstore.IStore
+	VehiclesStore   vehiclesstore.IStore
+	Enricher        mstlystcdata.IEnricher
+	Notifi          notifi.INotifi
+	UserInfoChanges pkguserinfo.ChangePublisher
 }
 
 type Result struct {
@@ -96,6 +98,7 @@ func NewServer(p Params) Result {
 			p.VehiclesStore,
 			p.Enricher,
 			p.Notifi,
+			p.UserInfoChanges,
 		),
 
 		tokens: p.Config.Sync.APITokens,

@@ -36,6 +36,7 @@ func TestBasicLivemapFlow(t *testing.T) {
 			dbServer.FxProvide(),
 			natsServer.FxProvide(),
 			fx.Provide(modules.TestUserInfoRetriever),
+			fx.Provide(modules.TestUserInfoChanges),
 			fx.Provide(tracker.NewForTests),
 			fx.Provide(grpcSrvModule),
 			fx.Provide(grpcserver.AsService(func(p Params) *Server {

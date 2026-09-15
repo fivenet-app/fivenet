@@ -24,238 +24,27 @@ const (
 	cleanupUnitsMappingsRepairedAttr     = "mappings_repaired"
 )
 
-func (s *Housekeeper) runCleanupUnits(ctx context.Context, data *cron.CronjobData) error {
-	ctx, span := s.tracer.Start(ctx, "centrum.units-cleanup")
-	defer span.End()
-
-	dest := &cron.GenericCronData{
-		Attributes: map[string]string{},
-	}
-	if err := data.Unmarshal(dest); err != nil {
-		s.logger.Warn("failed to unmarshal cleanup units cron data", zap.Error(err))
-	}
-
-	dispatchesUnassigned, emptyUnitsRemoved, err := s.removeDispatchesFromEmptyUnits(ctx)
-	if err != nil {
-		s.logger.Error("failed to clean empty units from dispatches", zap.Error(err))
-	}
-
-	unitStatusesUpdated, err := s.cleanupUnitStatus(ctx)
-	if err != nil {
-		s.logger.Error("failed to clean up unit status", zap.Error(err))
-	}
-
-	offDutyUsersRemoved, mappingsRepaired, err := s.checkUnitUsers(ctx)
-	if err != nil {
-		s.logger.Error("failed to check duty state of unit users", zap.Error(err))
-	}
-
-	dest.SetAttribute(cleanupUnitsDispatchesUnassignedAttr, strconv.Itoa(dispatchesUnassigned))
-	dest.SetAttribute(cleanupUnitsEmptyUnitsRemovedAttr, strconv.Itoa(emptyUnitsRemoved))
-	dest.SetAttribute(cleanupUnitsStatusesUpdatedAttr, strconv.Itoa(unitStatusesUpdated))
-	dest.SetAttribute(cleanupUnitsOffDutyRemovedAttr, strconv.Itoa(offDutyUsersRemoved))
-	dest.SetAttribute(cleanupUnitsMappingsRepairedAttr, strconv.Itoa(mappingsRepaired))
-
-	if err := data.MarshalFrom(dest); err != nil {
-		return fmt.Errorf("failed to marshal updated cleanup units cron data. %w", err)
-	}
-
-	return nil
-}
-
-// Remove empty units from dispatches (if no other unit is assigned to dispatch update status to UNASSIGNED) by
-// iterating over the dispatches and making sure the assigned units aren't empty.
-func (s *Housekeeper) removeDispatchesFromEmptyUnits(ctx context.Context) (int, int, error) {
-	dispatchesUnassigned := 0
-	emptyUnitsRemoved := 0
-	for _, settings := range s.settings.List(ctx) {
-		job := settings.GetJob()
-
-		dsps := s.dispatches.Filter(ctx, []string{job}, nil, []centrumdispatches.StatusDispatch{
-			centrumdispatches.StatusDispatch_STATUS_DISPATCH_ARCHIVED,
-			centrumdispatches.StatusDispatch_STATUS_DISPATCH_CANCELLED,
-			centrumdispatches.StatusDispatch_STATUS_DISPATCH_COMPLETED,
-			centrumdispatches.StatusDispatch_STATUS_DISPATCH_DELETED,
-		})
-
-		for _, dsp := range dsps {
-			// Make sure unassigned dispatch has the unassigned status
-			if len(dsp.GetUnits()) == 0 && dsp.GetStatus() != nil &&
-				!centrumutils.IsStatusDispatchUnassigned(dsp.GetStatus().GetStatus()) {
-				s.logger.Debug(
-					"updating dispatch status to unassigned because it has no assignments",
-					zap.String("job", job),
-					zap.Int64("dispatch_id", dsp.GetId()),
-				)
-				if _, err := s.dispatches.UpdateStatus(
-					ctx,
-					dsp.GetId(),
-					&centrumdispatches.DispatchStatus{
-						CreatedAt:  timestamp.Now(),
-						DispatchId: dsp.GetId(),
-						Status:     centrumdispatches.StatusDispatch_STATUS_DISPATCH_UNASSIGNED,
-						CreatorJob: &job,
-					},
-				); err != nil {
-					return dispatchesUnassigned, emptyUnitsRemoved, err
-				}
-				dispatchesUnassigned++
-
-				continue
-			}
-
-			for i := range slices.Backward(dsp.GetUnits()) {
-				if i > (len(dsp.GetUnits()) - 1) {
-					break
-				}
-
-				unitId := dsp.GetUnits()[i].GetUnitId()
-				// If unit isn't empty, continue with the loop
-				if unitId <= 0 {
-					continue
-				}
-
-				unit, err := s.units.Get(ctx, unitId)
-				if err != nil {
-					continue
-				}
-
-				if len(unit.GetUsers()) > 0 {
-					continue
-				}
-
-				s.logger.Debug(
-					"removing empty unit from dispatch",
-					zap.String(
-						"job",
-						job,
-					),
-					zap.Int64("unit_id", unitId),
-					zap.Int64("dispatch_id", dsp.GetId()),
-				)
-
-				if err := s.dispatches.UpdateAssignments(
-					ctx,
-					new(job),
-					nil,
-					dsp.GetId(),
-					nil,
-					[]int64{unitId},
-					time.Time{},
-				); err != nil {
-					s.logger.Error(
-						"failed to remove empty unit from dispatch",
-						zap.String(
-							"job",
-							job,
-						),
-						zap.Int64("unit_id", unitId),
-						zap.Int64("dispatch_id", dsp.GetId()),
-						zap.Error(err),
-					)
-					continue
-				}
-				emptyUnitsRemoved++
-			}
-		}
-	}
-
-	return dispatchesUnassigned, emptyUnitsRemoved, nil
-}
-
-// Iterate over units to ensure that, e.g., an empty unit status is set to `unavailable`.
-func (s *Housekeeper) cleanupUnitStatus(ctx context.Context) (int, error) {
-	updated := 0
-	for _, settings := range s.settings.List(ctx) {
-		job := settings.GetJob()
-
-		units := s.units.List(ctx, []string{job})
-		for _, unit := range units {
-			// Either unit has users but is static and in a wrong status
-			if len(unit.GetUsers()) > 0 {
-				if unit.GetAttributes() == nil ||
-					!unit.GetAttributes().Has(centrumunits.UnitAttribute_UNIT_ATTRIBUTE_STATIC) {
-					continue
-				}
-
-				if unit.GetStatus() != nil &&
-					(unit.GetStatus().GetStatus() == centrumunits.StatusUnit_STATUS_UNIT_BUSY ||
-						unit.GetStatus().GetStatus() == centrumunits.StatusUnit_STATUS_UNIT_ON_BREAK ||
-						unit.GetStatus().GetStatus() == centrumunits.StatusUnit_STATUS_UNIT_UNAVAILABLE) {
-					continue
-				}
-			} else if unit.GetStatus() != nil &&
-				// Or the unit is not already set to be unavailable (because it is empty)
-				unit.GetStatus().GetStatus() == centrumunits.StatusUnit_STATUS_UNIT_UNAVAILABLE {
-				continue
-			}
-
-			var userId *int32
-			if unit.GetStatus() != nil && unit.Status.UserId != nil {
-				userId = unit.GetStatus().UserId
-			}
-
-			s.logger.Debug(
-				"setting unit status to unavailable it is empty or static attribute (wrong status)",
-				zap.String(
-					"job",
-					job,
-				),
-				zap.Int64("unit_id", unit.GetId()),
-				zap.Int32p("user_id", userId),
-			)
-			if _, err := s.units.UpdateStatus(ctx, unit.GetId(), &centrumunits.UnitStatus{
-				CreatedAt:  timestamp.Now(),
-				UnitId:     unit.GetId(),
-				Status:     centrumunits.StatusUnit_STATUS_UNIT_UNAVAILABLE,
-				UserId:     userId,
-				CreatorJob: &job,
-			}); err != nil {
-				s.logger.Error(
-					"failed to update empty unit status to unavailable",
-					zap.String(
-						"job",
-						unit.GetJob(),
-					),
-					zap.Int64("unit_id", unit.GetId()),
-					zap.Error(err),
-				)
-				continue
-			}
-			updated++
-		}
-	}
-
-	return updated, nil
-}
-
 // Make sure that all users in units are still on duty.
 func (s *Housekeeper) checkUnitUsers(ctx context.Context) (int, int, error) {
-	foundUserIds := []int32{}
+	foundUserIds := map[int32]struct{}{}
 	offDutyRemoved := 0
 
-	for _, settings := range s.settings.List(ctx) {
-		job := settings.GetJob()
-
-		units := s.units.List(ctx, []string{job})
-		for _, u := range units {
-			unit, err := s.units.Get(ctx, u.GetId())
-			if err != nil {
-				continue
-			}
-
-			if len(unit.GetUsers()) == 0 {
-				continue
-			}
-
-			foundUids, removed, err := s.checkAndUpdateUnitUsers(ctx, unit)
-			if err != nil {
-				s.logger.Error("failed to check users in unit", zap.Error(err))
-			}
-			foundUserIds = append(foundUserIds, foundUids...)
-			offDutyRemoved += removed
+	s.units.Range(func(_ string, unit *centrumunits.Unit) bool {
+		if unit == nil || len(unit.GetUsers()) == 0 {
+			return true
 		}
-	}
+
+		foundUids, removed, err := s.checkAndUpdateUnitUsers(ctx, unit)
+		if err != nil {
+			s.logger.Error("failed to check users in unit", zap.Error(err))
+		}
+		for _, userId := range foundUids {
+			foundUserIds[userId] = struct{}{}
+		}
+		offDutyRemoved += removed
+
+		return true
+	})
 
 	userUnitIds, err := s.tracker.ListUserMappings(ctx)
 	if err != nil {
@@ -270,14 +59,14 @@ func (s *Housekeeper) checkUnitUsers(ctx context.Context) (int, int, error) {
 		}
 
 		// Check if user id is part of an unit
-		if slices.Contains(foundUserIds, userUnit.GetUserId()) {
+		if _, ok := foundUserIds[userUnit.GetUserId()]; ok {
 			continue
 		}
 
 		s.logger.Warn(
 			"found user with unit mapping that isn't in any unit anymore",
 			zap.Int32("user_id", userUnit.GetUserId()),
-			zap.Int32s("users_in_units", foundUserIds),
+			zap.Int("users_in_units", len(foundUserIds)),
 			zap.Any("mapping", userUnit),
 		)
 
@@ -320,12 +109,11 @@ func (s *Housekeeper) checkAndUpdateUnitUsers(
 			return foundUserIds, 0, fmt.Errorf("failed to check user job membership. %w", err)
 		}
 
-		unitMapping, ok, err := s.tracker.GetUserMapping(userId)
-		// If user is in that unit and still on duty, nothing to do, otherwise remove the user from the unit
-		if err == nil && ok && unitMapping.UnitId != nil &&
-			unit.GetId() == unitMapping.GetUnitId() &&
-			s.tracker.IsUserOnDuty(userId) &&
-			inJob {
+		marker, markerFound := s.tracker.GetUserMarkerById(userId)
+		// Tracker mappings are a projection and may be temporarily absent. Only
+		// duty/job facts may remove durable unit membership.
+		if markerFound && marker != nil && !marker.GetHidden() &&
+			s.tracker.IsUserOnDuty(userId) && marker.GetJob() == unit.GetJob() && inJob {
 			foundUserIds = append(foundUserIds, userId)
 			continue
 		}
@@ -369,4 +157,233 @@ func (s *Housekeeper) checkAndUpdateUnitUsers(
 	}
 
 	return foundUserIds, len(toRemove), nil
+}
+
+func (s *Housekeeper) runCleanupUnits(ctx context.Context, data *cron.CronjobData) error {
+	startedAt := time.Now()
+	defer func() { s.metrics.ObserveHousekeeperDuration("cleanup_units", time.Since(startedAt).Seconds()) }()
+
+	ctx, span := s.tracer.Start(ctx, "centrum.units-cleanup")
+	defer span.End()
+
+	dest := &cron.GenericCronData{Attributes: map[string]string{}}
+	if err := data.Unmarshal(dest); err != nil {
+		s.logger.Warn("failed to unmarshal cleanup units cron data", zap.Error(err))
+	}
+	unitStatusesUpdated, err := s.cleanupUnitStatus(ctx)
+	if err != nil {
+		return fmt.Errorf("failed to clean up unit status: %w", err)
+	}
+	s.metrics.SetHousekeeperWork("cleanup_units", "unit_statuses_updated", unitStatusesUpdated)
+	dest.SetAttribute(cleanupUnitsStatusesUpdatedAttr, strconv.Itoa(unitStatusesUpdated))
+	if err := data.MarshalFrom(dest); err != nil {
+		return fmt.Errorf("failed to marshal updated cleanup units cron data. %w", err)
+	}
+	return nil
+}
+
+func (s *Housekeeper) runAuditEmptyUnitDispatches(
+	ctx context.Context,
+	data *cron.CronjobData,
+) error {
+	startedAt := time.Now()
+	defer func() {
+		s.metrics.ObserveHousekeeperDuration(
+			"audit_empty_unit_dispatches",
+			time.Since(startedAt).Seconds(),
+		)
+	}()
+
+	dest := &cron.GenericCronData{Attributes: map[string]string{}}
+	if err := data.Unmarshal(dest); err != nil {
+		s.logger.Warn("failed to unmarshal empty unit dispatch audit cron data", zap.Error(err))
+	}
+	dispatchesUnassigned, emptyUnitsRemoved, err := s.removeDispatchesFromEmptyUnits(ctx)
+	if err != nil {
+		return fmt.Errorf("failed to audit empty units in dispatches. %w", err)
+	}
+	s.metrics.SetHousekeeperWork(
+		"audit_empty_unit_dispatches",
+		"dispatches_unassigned",
+		dispatchesUnassigned,
+	)
+	s.metrics.SetHousekeeperWork(
+		"audit_empty_unit_dispatches",
+		"empty_units_removed",
+		emptyUnitsRemoved,
+	)
+	dest.SetAttribute(cleanupUnitsDispatchesUnassignedAttr, strconv.Itoa(dispatchesUnassigned))
+	dest.SetAttribute(cleanupUnitsEmptyUnitsRemovedAttr, strconv.Itoa(emptyUnitsRemoved))
+	if err := data.MarshalFrom(dest); err != nil {
+		return fmt.Errorf("failed to marshal empty unit dispatch audit cron data. %w", err)
+	}
+	return nil
+}
+
+func (s *Housekeeper) runAuditUnitMembership(ctx context.Context, data *cron.CronjobData) error {
+	startedAt := time.Now()
+	defer func() {
+		s.metrics.ObserveHousekeeperDuration(
+			"audit_unit_membership",
+			time.Since(startedAt).Seconds(),
+		)
+	}()
+
+	ctx, span := s.tracer.Start(ctx, "centrum.unit-membership-audit")
+	defer span.End()
+
+	dest := &cron.GenericCronData{Attributes: map[string]string{}}
+	if err := data.Unmarshal(dest); err != nil {
+		s.logger.Warn("failed to unmarshal unit membership audit cron data", zap.Error(err))
+	}
+	offDutyUsersRemoved, mappingsRepaired, err := s.checkUnitUsers(ctx)
+	if err != nil {
+		return fmt.Errorf("failed to audit unit membership: %w", err)
+	}
+	s.metrics.SetHousekeeperWork(
+		"audit_unit_membership",
+		"off_duty_users_removed",
+		offDutyUsersRemoved,
+	)
+	s.metrics.SetHousekeeperWork("audit_unit_membership", "mappings_repaired", mappingsRepaired)
+	dest.SetAttribute(cleanupUnitsOffDutyRemovedAttr, strconv.Itoa(offDutyUsersRemoved))
+	dest.SetAttribute(cleanupUnitsMappingsRepairedAttr, strconv.Itoa(mappingsRepaired))
+	if err := data.MarshalFrom(dest); err != nil {
+		return fmt.Errorf("failed to marshal unit membership audit cron data. %w", err)
+	}
+	return nil
+}
+
+// cleanupUnitStatus ensures empty units and static units have a usable status.
+func (s *Housekeeper) cleanupUnitStatus(ctx context.Context) (int, error) {
+	updated := 0
+	for _, settings := range s.settings.List(ctx) {
+		job := settings.GetJob()
+		for _, unit := range s.units.List(ctx, []string{job}) {
+			if len(unit.GetUsers()) > 0 {
+				if unit.GetAttributes() == nil ||
+					!unit.GetAttributes().Has(centrumunits.UnitAttribute_UNIT_ATTRIBUTE_STATIC) {
+					continue
+				}
+				if unit.GetStatus() != nil &&
+					(unit.GetStatus().GetStatus() == centrumunits.StatusUnit_STATUS_UNIT_BUSY ||
+						unit.GetStatus().GetStatus() == centrumunits.StatusUnit_STATUS_UNIT_ON_BREAK ||
+						unit.GetStatus().GetStatus() == centrumunits.StatusUnit_STATUS_UNIT_UNAVAILABLE) {
+					continue
+				}
+			} else if unit.GetStatus() != nil && unit.GetStatus().GetStatus() == centrumunits.StatusUnit_STATUS_UNIT_UNAVAILABLE {
+				continue
+			}
+
+			var userID *int32
+			if unit.GetStatus() != nil && unit.Status.UserId != nil {
+				userID = unit.GetStatus().UserId
+			}
+			s.logger.Debug(
+				"setting unit status to unavailable because it is empty or static with a wrong status",
+				zap.String(
+					"job",
+					job,
+				),
+				zap.Int64("unit_id", unit.GetId()),
+				zap.Int32p("user_id", userID),
+			)
+			if _, _, err := s.units.UpdateStatus(ctx, unit.GetId(), &centrumunits.UnitStatus{
+				CreatedAt:  timestamp.Now(),
+				UnitId:     unit.GetId(),
+				Status:     centrumunits.StatusUnit_STATUS_UNIT_UNAVAILABLE,
+				UserId:     userID,
+				CreatorJob: &job,
+			}); err != nil {
+				s.logger.Error(
+					"failed to update empty unit status to unavailable",
+					zap.String("job", unit.GetJob()),
+					zap.Int64("unit_id", unit.GetId()),
+					zap.Error(err),
+				)
+				continue
+			}
+			updated++
+		}
+	}
+	return updated, nil
+}
+
+// removeDispatchesFromEmptyUnits removes empty units from active dispatches
+// and restores UNASSIGNED status when a dispatch has no assignments left.
+func (s *Housekeeper) removeDispatchesFromEmptyUnits(ctx context.Context) (int, int, error) {
+	dispatchesUnassigned, emptyUnitsRemoved := 0, 0
+	for _, settings := range s.settings.List(ctx) {
+		job := settings.GetJob()
+		dispatches := s.dispatches.Filter(
+			ctx,
+			[]string{job},
+			nil,
+			[]centrumdispatches.StatusDispatch{
+				centrumdispatches.StatusDispatch_STATUS_DISPATCH_ARCHIVED,
+				centrumdispatches.StatusDispatch_STATUS_DISPATCH_CANCELLED,
+				centrumdispatches.StatusDispatch_STATUS_DISPATCH_COMPLETED,
+				centrumdispatches.StatusDispatch_STATUS_DISPATCH_DELETED,
+			},
+		)
+
+		for _, dispatch := range dispatches {
+			if len(dispatch.GetUnits()) == 0 && dispatch.GetStatus() != nil &&
+				!centrumutils.IsStatusDispatchUnassigned(dispatch.GetStatus().GetStatus()) {
+				s.logger.Debug(
+					"updating dispatch status to unassigned because it has no assignments",
+					zap.String("job", job),
+					zap.Int64("dispatch_id", dispatch.GetId()),
+				)
+				if _, err := s.dispatches.UpdateStatus(
+					ctx,
+					dispatch.GetId(),
+					&centrumdispatches.DispatchStatus{
+						CreatedAt:  timestamp.Now(),
+						DispatchId: dispatch.GetId(),
+						Status:     centrumdispatches.StatusDispatch_STATUS_DISPATCH_UNASSIGNED,
+						CreatorJob: &job,
+					},
+				); err != nil {
+					return dispatchesUnassigned, emptyUnitsRemoved, err
+				}
+				dispatchesUnassigned++
+				continue
+			}
+
+			for i := range slices.Backward(dispatch.GetUnits()) {
+				if i > len(dispatch.GetUnits())-1 {
+					break
+				}
+				unitID := dispatch.GetUnits()[i].GetUnitId()
+				if unitID <= 0 {
+					continue
+				}
+				unit, err := s.units.Get(ctx, unitID)
+				if err != nil || len(unit.GetUsers()) > 0 {
+					continue
+				}
+				if err := s.removeUnitFromDispatch(
+					ctx,
+					dispatch.GetId(),
+					unitID,
+					new(job),
+				); err != nil {
+					s.logger.Error(
+						"failed to remove empty unit from dispatch",
+						zap.String("job", job),
+						zap.Int64(
+							"unit_id",
+							unitID,
+						),
+						zap.Int64("dispatch_id", dispatch.GetId()),
+						zap.Error(err),
+					)
+					continue
+				}
+				emptyUnitsRemoved++
+			}
+		}
+	}
+	return dispatchesUnassigned, emptyUnitsRemoved, nil
 }

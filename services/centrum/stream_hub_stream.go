@@ -1,0 +1,125 @@
+package centrum
+
+import (
+	"context"
+	"errors"
+	"fmt"
+	"slices"
+
+	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/userinfo"
+	pbcentrum "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/centrum"
+	"github.com/fivenet-app/fivenet/v2026/pkg/utils"
+	"github.com/fivenet-app/fivenet/v2026/pkg/utils/protoutils"
+	"golang.org/x/sync/errgroup"
+)
+
+var (
+	errFeedResync      = errors.New("centrum stream feed gap")
+	errFeedClosed      = errors.New("centrum stream feed closed")
+	errAccessChanged   = errors.New("centrum stream access changed")
+	errUserInfoChanged = errors.New("centrum stream user info changed")
+	errUserInfoResync  = errors.New("centrum stream user info resync")
+)
+
+func (s *Server) stream(
+	ctx context.Context,
+	srv pbcentrum.CentrumService_StreamServer,
+	userInfo *userinfo.UserInfo,
+	additionalJobs []string,
+	feed <-chan *feedEvent,
+	userInfoChanges <-chan *userinfo.UserInfoChanged,
+	snapshotSequence uint64,
+) error {
+	// A job can be granted both as the primary job and as an additional job.
+	// De-duplicate once so every feed event performs a single membership check.
+	jobs := utils.SliceDedup(append([]string{userInfo.GetJob()}, additionalJobs...))
+	out := make(chan *pbcentrum.StreamResponse, 256)
+	g, gctx := errgroup.WithContext(ctx)
+
+	g.Go(func() error {
+		lastSequence := snapshotSequence
+		for {
+			select {
+			case <-gctx.Done():
+				return nil
+
+			case change, ok := <-userInfoChanges:
+				if !ok {
+					return errUserInfoResync
+				}
+
+				if change == nil || change.GetUserId() != userInfo.GetUserId() {
+					continue
+				}
+
+				userInfo.SetJob(change.GetNewJob())
+				userInfo.SetJobGrade(change.GetNewJobGrade())
+				return errUserInfoChanged
+			case event, ok := <-feed:
+				if !ok {
+					return errFeedClosed
+				}
+
+				if event == nil || event.Sequence <= snapshotSequence {
+					continue
+				}
+
+				if event.Sequence != lastSequence+1 {
+					return fmt.Errorf(
+						"%w: expected %d, received %d",
+						errFeedResync,
+						lastSequence+1,
+						event.Sequence,
+					)
+				}
+				lastSequence = event.Sequence
+				if event.Resync {
+					return errFeedResync
+				}
+				if event.Response == nil {
+					continue
+				}
+				if settings := event.Response.GetSettings(); settings != nil &&
+					settings.GetJob() == userInfo.GetJob() {
+					return errAccessChanged
+				}
+				if event.Response.GetSettingsDeleted() == userInfo.GetJob() {
+					return errAccessChanged
+				}
+				if !slices.ContainsFunc(event.Jobs, func(job string) bool {
+					return slices.Contains(jobs, job)
+				}) {
+					continue
+				}
+				select {
+				case out <- event.Response:
+				case <-gctx.Done():
+					return nil
+				}
+			}
+		}
+	})
+
+	g.Go(func() error {
+		for {
+			select {
+			case <-gctx.Done():
+				return nil
+
+			case response := <-out:
+				if response == nil {
+					continue
+				}
+
+				if err := srv.Send(response); err != nil {
+					if protoutils.IsContextCanceled(err) {
+						return nil
+					}
+					return err
+				}
+			}
+		}
+	})
+
+	return g.Wait()
+}

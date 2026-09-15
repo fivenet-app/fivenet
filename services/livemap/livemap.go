@@ -1,6 +1,7 @@
 package livemap
 
 import (
+	"context"
 	"errors"
 	"fmt"
 	"strings"
@@ -27,6 +28,13 @@ const (
 	markerMarkerChunkSize = 75
 
 	feedFetch = 16
+)
+
+var (
+	errLivemapUserInfoChanged  = errors.New("livemap stream user info changed")
+	errLivemapUserInfoResync   = errors.New("livemap stream user info resync")
+	errLivemapMarkerFeedResync = errors.New("livemap marker feed resync")
+	errLivemapUserFeedResync   = errors.New("livemap user feed resync")
 )
 
 func (s *Server) getAndSendACL(
@@ -159,8 +167,65 @@ func (s *Server) Stream(
 	ctx := srv.Context()
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx).Clone()
+	userInfoChanges := s.userinfoChanges.SubscribeUserInfoChanges()
+	defer s.userinfoChanges.UnsubscribeUserInfoChanges(userInfoChanges)
 
 	s.logger.Debug("starting livemap stream", zap.Int32("user_id", userInfo.GetUserId()))
+	for {
+		if err := s.refreshStreamUserInfo(ctx, userInfo); err != nil {
+			return errswrap.NewError(err, errorslivemap.ErrStreamFailed)
+		}
+
+		err := s.stream(ctx, srv, userInfo, userInfoChanges)
+		if errors.Is(err, errLivemapUserInfoChanged) {
+			continue
+		}
+		if errors.Is(err, errLivemapUserInfoResync) {
+			if ctx.Err() != nil {
+				return nil
+			}
+			replacement := s.userinfoChanges.SubscribeUserInfoChanges()
+			s.userinfoChanges.UnsubscribeUserInfoChanges(userInfoChanges)
+			userInfoChanges = replacement
+			continue
+		}
+		if errors.Is(err, errLivemapMarkerFeedResync) {
+			if ctx.Err() != nil {
+				return nil
+			}
+			continue
+		}
+		if errors.Is(err, errLivemapUserFeedResync) {
+			if ctx.Err() != nil {
+				return nil
+			}
+			continue
+		}
+		if protoutils.IsContextCanceled(err) {
+			return nil
+		}
+		return err
+	}
+}
+
+func (s *Server) refreshStreamUserInfo(ctx context.Context, current *userinfo.UserInfo) error {
+	updated, err := s.userinfo.GetUserInfo(ctx, current.GetUserId())
+	if err != nil {
+		return fmt.Errorf("failed to retrieve current user info: %w", err)
+	}
+	current.SetJob(updated.GetJob())
+	current.SetJobGrade(updated.GetJobGrade())
+	return nil
+}
+
+func (s *Server) stream(
+	ctx context.Context,
+	srv pblivemap.LivemapService_StreamServer,
+	userInfo *userinfo.UserInfo,
+	userInfoChanges <-chan *userinfo.UserInfoChanged,
+) error {
+	markerUpdateCh := s.broker.Subscribe()
+	defer s.broker.Unsubscribe(markerUpdateCh)
 
 	markerJobs, usersJobs, userOnDuty, err := s.getAndSendACL(srv, userInfo)
 	if err != nil {
@@ -168,6 +233,33 @@ func (s *Server) Stream(
 			return nil
 		}
 		return err
+	}
+
+	// Subscribe before producing snapshots. The consumer buffers updates that
+	// arrive while the snapshots are written, avoiding a lost-update window.
+	var userMessages jetstream.MessagesContext
+	if usersJobs.Len() > 0 {
+		consumer, err := s.js.CreateConsumer(
+			ctx,
+			"KV_"+tracker.BucketUserLoc,
+			jetstream.ConsumerConfig{
+				FilterSubjects: buildFilters(usersJobs),
+				DeliverPolicy:  jetstream.DeliverNewPolicy,
+				AckPolicy:      jetstream.AckNonePolicy,
+				MaxWaiting:     16,
+			},
+		)
+		if err != nil {
+			return fmt.Errorf("failed to create consumer: %w", err)
+		}
+		userMessages, err = consumer.Messages(
+			jetstream.PullMaxMessages(feedFetch),
+			jetstream.WithMessagesErrOnMissingHeartbeat(false),
+		)
+		if err != nil {
+			return err
+		}
+		defer userMessages.Stop()
 	}
 
 	if end, err := s.sendMarkerMarkers(srv, markerJobs); end || err != nil {
@@ -239,9 +331,6 @@ func (s *Server) Stream(
 
 	// Marker updates goroutine - listens for marker updates and sends them to outCh
 	g.Go(func() error {
-		markerUpdateCh := s.broker.Subscribe()
-		defer s.broker.Unsubscribe(markerUpdateCh)
-
 		for {
 			select {
 			case <-gctx.Done():
@@ -249,7 +338,7 @@ func (s *Server) Stream(
 
 			case e, ok := <-markerUpdateCh:
 				if !ok {
-					return nil
+					return errLivemapMarkerFeedResync
 				}
 				if e == nil {
 					continue
@@ -305,38 +394,40 @@ func (s *Server) Stream(
 		}
 	})
 
-	if usersJobs.Len() > 0 {
+	g.Go(func() error {
+		for {
+			select {
+			case <-gctx.Done():
+				return nil
+			case change, ok := <-userInfoChanges:
+				if !ok {
+					return errLivemapUserInfoResync
+				}
+				if change == nil || change.GetUserId() != userInfo.GetUserId() {
+					continue
+				}
+				// The outer Stream loop reloads authoritative user info before
+				// rebuilding the ACL and snapshots. Do not mutate userInfo here:
+				// marker goroutines concurrently use it for filtering.
+				return errLivemapUserInfoChanged
+			}
+		}
+	})
+
+	if userMessages != nil {
 		// User markers goroutine - listens for user marker updates and sends them to outCh
 		g.Go(func() error {
-			// Upsert pull consumer with multi-filter
-			consCfg := jetstream.ConsumerConfig{
-				FilterSubjects: buildFilters(usersJobs),
-				DeliverPolicy:  jetstream.DeliverNewPolicy,
-				AckPolicy:      jetstream.AckNonePolicy,
-				MaxWaiting:     16,
-			}
-			consumer, err := s.js.CreateConsumer(gctx, "KV_"+tracker.BucketUserLoc, consCfg)
-			if err != nil {
-				return fmt.Errorf("failed to create consumer. %w", err)
-			}
-
-			msgs, err := consumer.Messages(
-				jetstream.PullMaxMessages(feedFetch),
-				jetstream.WithMessagesErrOnMissingHeartbeat(false),
-			)
-			if err != nil {
-				return err
-			}
-			defer msgs.Stop()
-
 			for {
-				msg, err := msgs.Next(jetstream.NextContext(gctx))
+				msg, err := userMessages.Next(jetstream.NextContext(gctx))
 				if err != nil {
-					if protoutils.IsContextCanceled(err) ||
-						errors.Is(err, jetstream.ErrMsgIteratorClosed) {
+					if protoutils.IsContextCanceled(err) {
 						return nil
 					}
-					return err
+					if errors.Is(err, jetstream.ErrMsgIteratorClosed) && gctx.Err() != nil {
+						//nolint:nilerr // If the iterator is closed due to context cancellation, we can safely return nil here.
+						return nil
+					}
+					return fmt.Errorf("%w: %w", errLivemapUserFeedResync, err)
 				}
 
 				if err := s.processMessage(

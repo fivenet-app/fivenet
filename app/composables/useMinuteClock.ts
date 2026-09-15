@@ -1,4 +1,7 @@
-import { createSharedComposable, useNow } from '@vueuse/core';
+import { createSharedComposable, useIntervalFn, useNow } from '@vueuse/core';
 
-// Shares one minute clock between active consumers and disposes it when none remain.
-export const useMinuteClock = createSharedComposable(() => useNow({ interval: 60_000 }));
+// Shares one minute-resolution clock between active consumers and disposes it
+// when no consumers remain.
+export const useMinuteClock = createSharedComposable(() =>
+    useNow({ scheduler: (callback) => useIntervalFn(callback, 60_000) }),
+);

@@ -6,25 +6,21 @@ import (
 	"errors"
 	"fmt"
 	"math"
-	"slices"
 	"time"
 
 	resourcesaccess "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/access"
 	centrumunits "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/centrum/units"
 	unitsaccess "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/centrum/units/access"
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/common"
-	jobscolleagues "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/jobs/colleagues"
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/timestamp"
 	"github.com/fivenet-app/fivenet/v2026/pkg/access"
 	"github.com/fivenet-app/fivenet/v2026/pkg/config"
 	"github.com/fivenet-app/fivenet/v2026/pkg/coords/postals"
-	"github.com/fivenet-app/fivenet/v2026/pkg/dbutils"
 	"github.com/fivenet-app/fivenet/v2026/pkg/events"
 	"github.com/fivenet-app/fivenet/v2026/pkg/mstlystcdata"
 	"github.com/fivenet-app/fivenet/v2026/pkg/nats/store"
 	"github.com/fivenet-app/fivenet/v2026/pkg/tracker"
 	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
-	eventscentrum "github.com/fivenet-app/fivenet/v2026/services/centrum/events"
 	centrumutils "github.com/fivenet-app/fivenet/v2026/services/centrum/utils"
 	jobsstore "github.com/fivenet-app/fivenet/v2026/stores/jobs"
 	colleagueshydrator "github.com/fivenet-app/fivenet/v2026/stores/jobs/colleagues/hydrator"
@@ -33,7 +29,6 @@ import (
 	"github.com/nats-io/nats.go/jetstream"
 	"go.uber.org/fx"
 	"go.uber.org/zap"
-	"google.golang.org/protobuf/proto"
 )
 
 const (
@@ -148,6 +143,31 @@ func New(p Params) *UnitDB {
 			return err
 		}
 		d.jobMapping = jobSt
+		ensureJobMapping := func(ctx context.Context, job string, unitID int64, source string, refresh bool) error {
+			key := centrumutils.JobIdKey(job, unitID)
+			mapping := &common.IDMapping{Id: unitID}
+			var changed bool
+			var err error
+			if refresh {
+				// The job mapping is the job-scoped stream trigger. Rewrite it for
+				// every local unit projection update, even when its ID is unchanged.
+				err = jobSt.Put(ctx, key, mapping)
+				changed = err == nil
+			} else {
+				// Remote watchers only repair a missing mapping. Rewriting it from
+				// every server would duplicate the stream trigger.
+				changed, err = jobSt.PutIfChanged(ctx, key, mapping)
+			}
+			logger.Debug(
+				"ensured unit job mapping",
+				zap.String("source", source),
+				zap.String("key", key),
+				zap.Int64("unit_id", unitID),
+				zap.Bool("changed", changed),
+				zap.Error(err),
+			)
+			return err
+		}
 
 		st, err := store.New[centrumunits.Unit, *centrumunits.Unit](
 			ctxCancel,
@@ -161,12 +181,12 @@ func New(p Params) *UnitDB {
 						return nil, nil
 					}
 
-					if err := jobSt.Put(
+					if err := ensureJobMapping(
 						ctx,
-						centrumutils.JobIdKey(unit.GetJob(), unit.GetId()),
-						&common.IDMapping{
-							Id: unit.GetId(),
-						},
+						unit.GetJob(),
+						unit.GetId(),
+						"local_update",
+						true,
 					); err != nil {
 						return nil, fmt.Errorf(
 							"failed to update job %s mapping for unit %d. %w",
@@ -209,12 +229,12 @@ func New(p Params) *UnitDB {
 						return nil, nil
 					}
 
-					if err := jobSt.Put(
+					if err := ensureJobMapping(
 						ctx,
-						centrumutils.JobIdKey(unit.GetJob(), unit.GetId()),
-						&common.IDMapping{
-							Id: unit.GetId(),
-						},
+						unit.GetJob(),
+						unit.GetId(),
+						"remote_update",
+						false,
 					); err != nil {
 						return nil, fmt.Errorf(
 							"failed to update job %s mapping for unit %d. %w",
@@ -483,541 +503,13 @@ func (s *UnitDB) nextSortOrder(ctx context.Context, q qrm.Queryable, job string)
 	return dest.SortOrder + 1, nil
 }
 
-func (s *UnitDB) LoadUnitIDForUserID(ctx context.Context, userId int32) (int64, error) {
-	tUnitUser := table.FivenetCentrumUnitsUsers.AS("unit_assignment")
-
-	stmt := tUnitUser.
-		SELECT(
-			tUnitUser.UnitID.AS("unit_id"),
-		).
-		FROM(tUnitUser).
-		WHERE(
-			tUnitUser.UserID.EQ(mysql.Int32(userId)),
-		).
-		LIMIT(1)
-
-	var dest struct {
-		UnitID int64
-	}
-	if err := stmt.QueryContext(ctx, s.db, &dest); err != nil {
-		if !errors.Is(err, qrm.ErrNoRows) {
-			return 0, err
-		}
-
-		return 0, nil
-	}
-
-	return dest.UnitID, nil
-}
-
-func (s *UnitDB) UserInJob(
-	ctx context.Context,
-	db qrm.DB,
-	job string,
-	userID int32,
-) (bool, error) {
-	if s.jobs == nil {
-		return false, errors.New("jobs store unavailable")
-	}
-
-	return s.jobs.UserInJob(ctx, db, job, userID)
-}
-
-func (s *UnitDB) UpdateStatus(
-	ctx context.Context,
-	unitId int64,
-	in *centrumunits.UnitStatus,
-) (*centrumunits.UnitStatus, error) {
-	unit, err := s.Get(ctx, unitId)
-	if err != nil {
-		return nil, err
-	}
-
-	// If the unit status is the same and is a status that shouldn't be duplicated, don't update the status again
-	if unit.GetStatus() != nil &&
-		unit.GetStatus().GetStatus() == in.GetStatus() &&
-		(in.GetStatus() == centrumunits.StatusUnit_STATUS_UNIT_ON_BREAK ||
-			in.GetStatus() == centrumunits.StatusUnit_STATUS_UNIT_BUSY ||
-			in.GetStatus() == centrumunits.StatusUnit_STATUS_UNIT_UNAVAILABLE ||
-			in.GetStatus() == centrumunits.StatusUnit_STATUS_UNIT_AVAILABLE) &&
-		// Additionally if the status is under 2 minutes disallow the same status update
-		(unit.GetStatus().GetCreatedAt() == nil || time.Since(unit.GetStatus().GetCreatedAt().AsTime()) < 2*time.Minute) {
-		s.logger.Debug(
-			"skipping unit status update due to same status or time",
-			zap.Int64("unit_id", unitId),
-			zap.String("status", in.GetStatus().String()),
-		)
-		return nil, nil
-	}
-
-	if unit.GetAttributes() != nil &&
-		unit.GetAttributes().Has(centrumunits.UnitAttribute_UNIT_ATTRIBUTE_STATIC) {
-		// Only allow a static unit to be set busy, on break or unavailable
-		if in.GetStatus() != centrumunits.StatusUnit_STATUS_UNIT_BUSY &&
-			in.GetStatus() != centrumunits.StatusUnit_STATUS_UNIT_ON_BREAK &&
-			in.GetStatus() != centrumunits.StatusUnit_STATUS_UNIT_UNAVAILABLE {
-			return nil, nil
-		}
-	}
-
-	s.logger.Debug(
-		"updating unit status",
-		zap.Int64("unit_id", unitId),
-		zap.String("status", in.GetStatus().String()),
-	)
-
-	if in.UserId != nil {
-		var err error
-		in.User, err = s.colleagueHydrator.GetBasicByUserID(
-			ctx,
-			s.db,
-			nil,
-			in.GetUserId(),
-			colleagueshydrator.ResolveOpts{
-				Scope: colleagueshydrator.JobScope{
-					Mode: colleagueshydrator.JobScopeExplicit,
-					Job:  unit.GetJob(),
-				},
-			},
-		)
-		if err != nil {
-			return nil, err
-		}
-
-		if um, ok := s.tracker.GetUserMarkerById(in.GetUserId()); ok {
-			in.X = &um.X
-			in.Y = &um.Y
-			in.Postal = um.Postal
-		}
-	}
-	if in.CreatorId != nil {
-		// If the creator of the status is the same as the user, no need to query the db
-		if in.UserId != nil && in.GetCreatorId() == in.GetUserId() {
-			in.SetCreator(in.GetUser())
-		} else {
-			var err error
-			in.Creator, err = s.colleagueHydrator.GetBasicByUserID(
-				ctx,
-				s.db,
-				nil,
-				in.GetCreatorId(),
-				colleagueshydrator.ResolveOpts{
-					Scope: colleagueshydrator.JobScope{
-						Mode: colleagueshydrator.JobScopeExplicit,
-						Job:  unit.GetJob(),
-					},
-				},
-			)
-			if err != nil {
-				return nil, err
-			}
-		}
-	}
-
-	if in.GetCreatedAt() == nil {
-		in.CreatedAt = timestamp.Now()
-	}
-
-	tUnitStatus := table.FivenetCentrumUnitsStatus
-	stmt := tUnitStatus.
-		INSERT(
-			tUnitStatus.CreatedAt,
-			tUnitStatus.UnitID,
-			tUnitStatus.Status,
-			tUnitStatus.Reason,
-			tUnitStatus.Code,
-			tUnitStatus.UserID,
-			tUnitStatus.X,
-			tUnitStatus.Y,
-			tUnitStatus.Postal,
-			tUnitStatus.CreatorID,
-			tUnitStatus.CreatorJob,
-		).
-		VALUES(
-			in.GetCreatedAt(),
-			in.GetUnitId(),
-			in.GetStatus(),
-			in.Reason,
-			in.Code,
-			in.UserId,
-			in.X,
-			in.Y,
-			in.Postal,
-			in.CreatorId,
-			in.CreatorJob,
-		)
-
-	res, err := stmt.ExecContext(ctx, s.db)
-	if err != nil {
-		return nil, err
-	}
-
-	lastId, err := res.LastInsertId()
-	if err != nil {
-		return nil, err
-	}
-	in.SetId(lastId)
-
-	if err := s.updateStatusInKV(ctx, in.GetUnitId(), in); err != nil {
-		return nil, err
-	}
-
-	if err := s.publishStatus(ctx, in, unit.GetJob()); err != nil {
-		return nil, err
-	}
-
-	return in, nil
-}
-
-func (s *UnitDB) UpdateUnitAssignments(
-	ctx context.Context,
-	creatorJob string,
-	creatorId *int32,
-	unitId int64,
-	toAdd []int32,
-	toRemove []int32,
-) error {
-	syncUserIds, err := s.applyUnitAssignmentChanges(
-		ctx,
-		creatorJob,
-		creatorId,
-		unitId,
-		toAdd,
-		toRemove,
-	)
-	if err != nil {
-		if len(syncUserIds) == 0 {
-			return err
-		}
-	}
-
-	var sideEffectErr error
-	if err != nil {
-		sideEffectErr = errors.Join(sideEffectErr, err)
-	}
-	for _, userId := range syncUserIds {
-		if err := s.SyncUserUnitMapping(ctx, userId); err != nil {
-			sideEffectErr = errors.Join(sideEffectErr, err)
-		}
-	}
-
-	if len(syncUserIds) == 0 {
-		if err := s.SyncUnitMembership(ctx, unitId); err != nil {
-			sideEffectErr = errors.Join(sideEffectErr, err)
-		}
-	}
-
-	return sideEffectErr
-}
-
-// RemoveUnitAssignments removes user membership rows and updates unit cache/status only.
-// It does not create, clear, or delete tracker mappings; callers must use tracker
-// UnsetUnitIDForUser or DeleteUserMapping explicitly for the intended tracker lifecycle.
-func (s *UnitDB) RemoveUnitAssignments(
-	ctx context.Context,
-	creatorJob string,
-	creatorId *int32,
-	unitId int64,
-	userIds []int32,
-) error {
-	_, err := s.applyUnitAssignmentChanges(ctx, creatorJob, creatorId, unitId, nil, userIds)
-	return err
-}
-
-func (s *UnitDB) applyUnitAssignmentChanges(
-	ctx context.Context,
-	_ string,
-	creatorId *int32,
-	unitId int64,
-	toAdd []int32,
-	toRemove []int32,
-) ([]int32, error) {
-	s.logger.Debug(
-		"updating unit assignments",
-		zap.Int64("unit_id", unitId),
-		zap.Int32s("toAdd", toAdd),
-		zap.Int32s("toRemove", toRemove),
-	)
-
-	if len(toAdd) == 0 && len(toRemove) == 0 {
-		return nil, nil
-	}
-
-	type pendingStatus struct {
-		status *centrumunits.UnitStatus
-		job    string
-	}
-
-	var x, y *float64
-	var postal *string
-	if creatorId != nil {
-		if um, ok := s.tracker.GetUserMarkerById(*creatorId); ok {
-			x = &um.X
-			y = &um.Y
-			postal = um.Postal
-		}
-	}
-
-	tUnitUser := table.FivenetCentrumUnitsUsers
-
-	addIds := []int32{}
-	pendingStatuses := []pendingStatus{}
-	unit, err := s.Get(ctx, unitId)
-	if err != nil {
-		return nil, err
-	}
-	if unit == nil {
-		return nil, fmt.Errorf("unit %d not found", unitId)
-	}
-
-	// Begin transaction
-	tx, err := s.db.BeginTx(ctx, nil)
-	if err != nil {
-		return nil, err
-	}
-	// Defer a rollback in case anything fails
-	defer tx.Rollback()
-
-	if len(toAdd) > 0 {
-		for i := range toAdd {
-			um, ok := s.tracker.GetUserMarkerById(toAdd[i])
-			if !ok || um.GetHidden() {
-				continue
-			}
-
-			addIds = append(addIds, toAdd[i])
-		}
-	}
-
-	existingRows := []struct {
-		UserID int32 `alias:"user_id"`
-	}{}
-	stmt := tUnitUser.
-		SELECT(tUnitUser.UserID).
-		FROM(tUnitUser).
-		WHERE(tUnitUser.UnitID.EQ(mysql.Int64(unitId)))
-	if err := stmt.QueryContext(ctx, tx, &existingRows); err != nil {
-		if !errors.Is(err, qrm.ErrNoRows) {
-			return nil, err
-		}
-	}
-
-	existingUsers := map[int32]struct{}{}
-	for _, row := range existingRows {
-		existingUsers[row.UserID] = struct{}{}
-	}
-
-	actualRemove := make([]int32, 0, len(toRemove))
-	for _, userId := range toRemove {
-		if _, ok := existingUsers[userId]; ok {
-			actualRemove = append(actualRemove, userId)
-			delete(existingUsers, userId)
-		}
-	}
-	slices.Sort(actualRemove)
-	actualRemove = slices.Compact(actualRemove)
-
-	actualAdd := make([]int32, 0, len(addIds))
-	for _, userId := range addIds {
-		if _, ok := existingUsers[userId]; ok {
-			continue
-		}
-
-		actualAdd = append(actualAdd, userId)
-	}
-	slices.Sort(actualAdd)
-	actualAdd = slices.Compact(actualAdd)
-
-	eligibleAdd := make([]int32, 0, len(actualAdd))
-	for _, userId := range actualAdd {
-		ok, err := s.UserInJob(ctx, tx, unit.GetJob(), userId)
-		if err != nil {
-			return nil, err
-		}
-		if !ok {
-			s.logger.Debug(
-				"dropping unit assignment for user not in job",
-				zap.Int64("unit_id", unitId),
-				zap.String("job", unit.GetJob()),
-				zap.Int32("user_id", userId),
-			)
-			continue
-		}
-
-		eligibleAdd = append(eligibleAdd, userId)
-	}
-
-	for _, userId := range eligibleAdd {
-		existingUsers[userId] = struct{}{}
-	}
-
-	toAddUsers := []*jobscolleagues.Colleague{}
-	if len(eligibleAdd) > 0 {
-		var err error
-		byUserID, err := s.colleagueHydrator.HydrateByUserID(
-			ctx,
-			s.db,
-			nil,
-			eligibleAdd,
-			colleagueshydrator.ResolveOpts{
-				Scope: colleagueshydrator.JobScope{
-					Mode: colleagueshydrator.JobScopeExplicit,
-					Job:  unit.GetJob(),
-				},
-			},
-		)
-		if err != nil {
-			return nil, err
-		}
-		for _, userId := range eligibleAdd {
-			if user, ok := byUserID[userId]; ok {
-				toAddUsers = append(toAddUsers, user)
-			}
-		}
-	}
-
-	if len(toRemove) > 0 {
-		removeIds := make([]mysql.Expression, len(toRemove))
-		for i := range toRemove {
-			removeIds[i] = mysql.Int32(toRemove[i])
-		}
-
-		stmt := tUnitUser.
-			DELETE().
-			WHERE(mysql.AND(
-				tUnitUser.UnitID.EQ(mysql.Int64(unitId)),
-				tUnitUser.UserID.IN(removeIds...),
-			)).
-			LIMIT(int64(len(removeIds)))
-
-		if _, err := stmt.ExecContext(ctx, tx); err != nil {
-			return nil, err
-		}
-	}
-
-	if len(eligibleAdd) > 0 {
-		stmt := tUnitUser.
-			INSERT(
-				tUnitUser.UnitID,
-				tUnitUser.UserID,
-			)
-
-		for _, id := range eligibleAdd {
-			stmt = stmt.
-				VALUES(
-					unitId,
-					id,
-				)
-		}
-
-		stmt = stmt.
-			ON_DUPLICATE_KEY_UPDATE(
-				tUnitUser.UnitID.SET(mysql.RawInt("VALUES(`unit_id`)")),
-			)
-
-		if _, err := stmt.ExecContext(ctx, tx); err != nil {
-			if !dbutils.IsDuplicateError(err) {
-				return nil, err
-			}
-		}
-	}
-
-	for _, userId := range actualRemove {
-		pendingStatuses = append(pendingStatuses, pendingStatus{
-			status: &centrumunits.UnitStatus{
-				CreatedAt:  timestamp.Now(),
-				UnitId:     unit.GetId(),
-				Status:     centrumunits.StatusUnit_STATUS_UNIT_USER_REMOVED,
-				UserId:     &userId,
-				CreatorId:  creatorId,
-				X:          x,
-				Y:          y,
-				Postal:     postal,
-				CreatorJob: new(unit.GetJob()),
-			},
-			job: unit.GetJob(),
-		})
-	}
-
-	for _, user := range toAddUsers {
-		pendingStatuses = append(pendingStatuses, pendingStatus{
-			status: &centrumunits.UnitStatus{
-				CreatedAt:  timestamp.Now(),
-				UnitId:     unit.GetId(),
-				Status:     centrumunits.StatusUnit_STATUS_UNIT_USER_ADDED,
-				UserId:     &user.UserId,
-				CreatorId:  creatorId,
-				X:          x,
-				Y:          y,
-				Postal:     postal,
-				CreatorJob: new(user.GetJob()),
-			},
-			job: unit.GetJob(),
-		})
-	}
-
-	if len(existingUsers) == 0 && (len(actualRemove) > 0 || len(eligibleAdd) > 0) {
-		pendingStatuses = append(pendingStatuses, pendingStatus{
-			status: &centrumunits.UnitStatus{
-				CreatedAt:  timestamp.Now(),
-				UnitId:     unit.GetId(),
-				Status:     centrumunits.StatusUnit_STATUS_UNIT_UNAVAILABLE,
-				UserId:     creatorId,
-				X:          x,
-				Y:          y,
-				Postal:     postal,
-				CreatorId:  creatorId,
-				CreatorJob: new(unit.GetJob()),
-			},
-			job: unit.GetJob(),
-		})
-	}
-
-	persistedStatuses := make([]pendingStatus, 0, len(pendingStatuses))
-	for i := range pendingStatuses {
-		status, err := s.AddStatus(ctx, tx, pendingStatuses[i].status)
-		if err != nil {
-			return nil, err
-		}
-
-		persistedStatuses = append(persistedStatuses, pendingStatus{
-			status: status,
-			job:    pendingStatuses[i].job,
-		})
-	}
-
-	// The DB commit is the source-of-truth boundary. Unit KV and tracker
-	// mappings are reconciled only after assignment and status rows are durable.
-	if err := tx.Commit(); err != nil {
-		return nil, err
-	}
-
-	var sideEffectErr error
-	if err := s.refreshUnitCacheFromDB(ctx, unitId); err != nil {
-		sideEffectErr = errors.Join(sideEffectErr, err)
-	}
-
-	for i := range persistedStatuses {
-		if err := s.publishStatus(
-			ctx,
-			persistedStatuses[i].status,
-			persistedStatuses[i].job,
-		); err != nil {
-			sideEffectErr = errors.Join(sideEffectErr, err)
-		}
-	}
-
-	syncUserIds := make([]int32, 0, len(eligibleAdd)+len(toRemove))
-	syncUserIds = append(syncUserIds, eligibleAdd...)
-	syncUserIds = append(syncUserIds, toRemove...)
-	slices.Sort(syncUserIds)
-	syncUserIds = slices.Compact(syncUserIds)
-
-	if sideEffectErr != nil {
-		return syncUserIds, sideEffectErr
-	}
-
-	return syncUserIds, nil
+func sameUnitStatusContent(current, next *centrumunits.UnitStatus) bool {
+	return current.GetStatus() == next.GetStatus() &&
+		current.GetReason() == next.GetReason() &&
+		current.GetCode() == next.GetCode() &&
+		current.GetUserId() == next.GetUserId() &&
+		current.GetCreatorId() == next.GetCreatorId() &&
+		current.GetCreatorJob() == next.GetCreatorJob()
 }
 
 func (s *UnitDB) CreateUnit(
@@ -1232,239 +724,6 @@ func (s *UnitDB) Update(
 	}
 
 	return unit, nil
-}
-
-func (s *UnitDB) AddStatus(
-	ctx context.Context,
-	tx qrm.DB,
-	status *centrumunits.UnitStatus,
-) (*centrumunits.UnitStatus, error) {
-	// AddStatus only persists the status row. Callers that publish status events
-	// must do so after their surrounding DB transaction has committed.
-	tUnitStatus := table.FivenetCentrumUnitsStatus
-	stmt := tUnitStatus.
-		INSERT(
-			tUnitStatus.CreatedAt,
-			tUnitStatus.UnitID,
-			tUnitStatus.Status,
-			tUnitStatus.Reason,
-			tUnitStatus.Code,
-			tUnitStatus.UserID,
-			tUnitStatus.X,
-			tUnitStatus.Y,
-			tUnitStatus.Postal,
-			tUnitStatus.CreatorID,
-			tUnitStatus.CreatorJob,
-		).
-		VALUES(
-			mysql.CURRENT_TIMESTAMP(),
-			status.GetUnitId(),
-			status.GetStatus(),
-			status.Reason,
-			status.Code,
-			status.UserId,
-			status.X,
-			status.Y,
-			status.Postal,
-			status.CreatorId,
-			status.CreatorJob,
-		)
-
-	res, err := stmt.ExecContext(ctx, tx)
-	if err != nil {
-		return nil, err
-	}
-
-	lastId, err := res.LastInsertId()
-	if err != nil {
-		return nil, err
-	}
-
-	newStatus, err := s.GetStatusByID(ctx, tx, lastId)
-	if err != nil {
-		return nil, err
-	}
-
-	return newStatus, nil
-}
-
-func (s *UnitDB) publishStatus(
-	ctx context.Context,
-	status *centrumunits.UnitStatus,
-	job string,
-) error {
-	data, err := proto.Marshal(status)
-	if err != nil {
-		return err
-	}
-
-	if _, err := s.js.Publish(
-		ctx,
-		eventscentrum.BuildSubject(eventscentrum.TopicUnit, eventscentrum.TypeUnitStatus, job),
-		data,
-	); err != nil {
-		return err
-	}
-
-	return nil
-}
-
-func (s *UnitDB) GetStatusByID(
-	ctx context.Context,
-	tx qrm.DB,
-	id int64,
-) (*centrumunits.UnitStatus, error) {
-	tUnitStatus := table.FivenetCentrumUnitsStatus.AS("unit_status")
-	tColleagueProps := table.FivenetJobColleagueProps.AS("colleague_props")
-	tColleague := table.FivenetUser.AS("colleague")
-	tUserProps := table.FivenetUserProps.AS("user_props")
-	tAvatar := table.FivenetFiles.AS("profile_picture")
-
-	stmt := tUnitStatus.
-		SELECT(
-			tUnitStatus.ID,
-			tUnitStatus.CreatedAt,
-			tUnitStatus.UnitID,
-			tUnitStatus.Status,
-			tUnitStatus.Reason,
-			tUnitStatus.Code,
-			tUnitStatus.UserID,
-			tUnitStatus.CreatorID,
-			tUnitStatus.X,
-			tUnitStatus.Y,
-			tUnitStatus.Postal,
-			tUnitStatus.CreatorJob,
-			tColleague.ID,
-			tColleague.Firstname,
-			tColleague.Lastname,
-			tColleague.Job,
-			tColleague.JobGrade,
-			tColleague.Sex,
-			tColleague.Dateofbirth,
-			tColleague.PhoneNumber,
-			tColleagueProps.UserID,
-			tColleagueProps.Job,
-			tColleagueProps.NamePrefix,
-			tColleagueProps.NameSuffix,
-			tUserProps.AvatarFileID.AS("colleague.profile_picture_file_id"),
-			tAvatar.FilePath.AS("colleague.profile_picture"),
-		).
-		FROM(
-			tUnitStatus.
-				LEFT_JOIN(tColleague,
-					tColleague.ID.EQ(tUnitStatus.UserID),
-				).
-				LEFT_JOIN(tUserProps,
-					tUserProps.UserID.EQ(tUnitStatus.UserID),
-				).
-				LEFT_JOIN(tColleagueProps,
-					mysql.AND(
-						tColleagueProps.UserID.EQ(tColleague.ID),
-						tColleagueProps.Job.EQ(tColleague.Job),
-					),
-				).
-				LEFT_JOIN(tAvatar,
-					tAvatar.ID.EQ(tUserProps.AvatarFileID),
-				),
-		).
-		WHERE(
-			tUnitStatus.ID.EQ(mysql.Int64(id)),
-		).
-		ORDER_BY(tUnitStatus.ID.DESC()).
-		LIMIT(1)
-
-	var dest centrumunits.UnitStatus
-	if err := stmt.QueryContext(ctx, tx, &dest); err != nil {
-		if !errors.Is(err, qrm.ErrNoRows) {
-			return nil, err
-		} else {
-			return nil, nil
-		}
-	}
-
-	// We can't use the units store to get the unit as we might be in a "locked" update unit call
-
-	return &dest, nil
-}
-
-func (s *UnitDB) GetLastStatus(
-	ctx context.Context,
-	tx qrm.DB,
-	unitId int64,
-) (*centrumunits.UnitStatus, error) {
-	tUnitStatus := table.FivenetCentrumUnitsStatus.AS("unit_status")
-	tColleagueProps := table.FivenetJobColleagueProps.AS("colleague_props")
-	tColleague := table.FivenetUser.AS("colleague")
-	tUserProps := table.FivenetUserProps.AS("user_props")
-	tAvatar := table.FivenetFiles.AS("profile_picture")
-
-	stmt := tUnitStatus.
-		SELECT(
-			tUnitStatus.ID,
-			tUnitStatus.CreatedAt,
-			tUnitStatus.UnitID,
-			tUnitStatus.Status,
-			tUnitStatus.Reason,
-			tUnitStatus.Code,
-			tUnitStatus.UserID,
-			tUnitStatus.CreatorID,
-			tUnitStatus.X,
-			tUnitStatus.Y,
-			tUnitStatus.Postal,
-			tUnitStatus.CreatorJob,
-			tColleague.ID,
-			tColleague.Firstname,
-			tColleague.Lastname,
-			tColleague.Job,
-			tColleague.JobGrade,
-			tColleague.Sex,
-			tColleague.Dateofbirth,
-			tColleague.PhoneNumber,
-			tColleagueProps.UserID,
-			tColleagueProps.Job,
-			tColleagueProps.NamePrefix,
-			tColleagueProps.NameSuffix,
-			tUserProps.AvatarFileID.AS("colleague.profile_picture_file_id"),
-			tAvatar.FilePath.AS("colleague.profile_picture"),
-		).
-		FROM(
-			tUnitStatus.
-				LEFT_JOIN(tColleague,
-					tColleague.ID.EQ(tUnitStatus.UserID),
-				).
-				LEFT_JOIN(tUserProps,
-					tUserProps.UserID.EQ(tUnitStatus.UserID),
-				).
-				LEFT_JOIN(tColleagueProps,
-					mysql.AND(
-						tColleagueProps.UserID.EQ(tColleague.ID),
-						tColleagueProps.Job.EQ(tColleague.Job),
-					),
-				).
-				LEFT_JOIN(tAvatar,
-					tAvatar.ID.EQ(tUserProps.AvatarFileID),
-				),
-		).
-		WHERE(mysql.AND(
-			tUnitStatus.UnitID.EQ(mysql.Int64(unitId)),
-			tUnitStatus.Status.NOT_IN(
-				mysql.Int32(int32(centrumunits.StatusUnit_STATUS_UNIT_USER_ADDED)),
-				mysql.Int32(int32(centrumunits.StatusUnit_STATUS_UNIT_USER_REMOVED)),
-			),
-		)).
-		ORDER_BY(tUnitStatus.ID.DESC()).
-		LIMIT(1)
-
-	var dest centrumunits.UnitStatus
-	if err := stmt.QueryContext(ctx, tx, &dest); err != nil {
-		if !errors.Is(err, qrm.ErrNoRows) {
-			return nil, err
-		} else {
-			return nil, nil
-		}
-	}
-
-	return &dest, nil
 }
 
 func (s *UnitDB) Delete(ctx context.Context, id int64) error {
