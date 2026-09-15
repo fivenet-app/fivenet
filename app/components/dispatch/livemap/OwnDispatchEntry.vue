@@ -1,10 +1,11 @@
 <script lang="ts" setup>
 import DispatchDetailsSlideover from '~/components/dispatch/dispatches/DispatchDetailsSlideover.vue';
-import { dispatchStatusToBadgeColor, dispatchTimeToTextColorSidebar } from '~/components/dispatch/helpers';
+import { dispatchTimeToTextColorSidebar } from '~/components/dispatch/helpers';
 import GenericTime from '~/components/partials/elements/GenericTime.vue';
 import { useCentrumStore } from '~/stores/centrum';
 import { useLivemapStore } from '~/stores/livemap';
-import { type Dispatch, StatusDispatch } from '~~/gen/ts/resources/centrum/dispatches/dispatches';
+import type { Dispatch } from '~~/gen/ts/resources/centrum/dispatches/dispatches';
+import DispatchStatusBadge from '~/components/dispatch/partials/DispatchStatusBadge.vue';
 
 const props = defineProps<{
     dispatch: Dispatch;
@@ -80,15 +81,11 @@ const dispatchTimeStyle = computed(() =>
                 </div>
 
                 <!-- Row 2: Grid of Status & Sent By, plus full-width Sent At -->
-                <div class="grid w-full grid-cols-2 gap-1 text-xs">
-                    <div class="inline-flex flex-col items-center">
+                <div class="grid w-full min-w-0 grid-cols-2 gap-1 text-xs">
+                    <div class="inline-flex w-full min-w-0 flex-col items-center">
                         <span class="font-medium">{{ $t('common.status') }}:</span>
-                        <UBadge
-                            class="line-clamp-2 px-px py-0.5 break-all"
-                            variant="solid"
-                            :color="dispatchStatusToBadgeColor(dispatch.status?.status)"
-                            :label="$t(`enums.centrum.StatusDispatch.${StatusDispatch[dispatch.status?.status ?? 0]}`)"
-                        />
+
+                        <DispatchStatusBadge :status="dispatch.status?.status" class="max-w-full min-w-0 justify-center" />
                     </div>
 
                     <div class="inline-flex flex-col items-center">

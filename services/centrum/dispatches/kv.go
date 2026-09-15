@@ -188,6 +188,57 @@ func projectionCleanupKey(id int64) string {
 	return "projection." + centrumutils.IdKey(id)
 }
 
+func assignmentExpirationKey(dispatchID, unitID int64) string {
+	return "assignment." + centrumutils.IdKey(dispatchID) + "." + centrumutils.IdKey(unitID)
+}
+
+// ScheduleAssignmentExpiration creates the short-lived timer which wakes the
+// elected housekeeper when a pending unit assignment reaches its deadline.
+// MySQL remains authoritative; the periodic expiration job recovers from a
+// timer that could not be created or observed.
+func (d *DispatchDB) ScheduleAssignmentExpiration(
+	ctx context.Context,
+	dispatchID, unitID int64,
+	expiresAt time.Time,
+) error {
+	if expiresAt.IsZero() {
+		return d.CancelAssignmentExpiration(ctx, dispatchID, unitID)
+	}
+
+	ttl := time.Until(expiresAt)
+	if ttl <= 0 {
+		ttl = time.Second
+	}
+
+	_, err := d.idleKV.Create(
+		ctx,
+		assignmentExpirationKey(dispatchID, unitID),
+		nil,
+		jetstream.KeyTTL(ttl),
+	)
+	if errors.Is(err, jetstream.ErrKeyExists) {
+		entry, getErr := d.idleKV.Get(ctx, assignmentExpirationKey(dispatchID, unitID))
+		if getErr != nil {
+			return getErr
+		}
+		_, err = d.idleKV.Update(ctx, assignmentExpirationKey(dispatchID, unitID), nil, entry.Revision())
+	}
+
+	return err
+}
+
+// CancelAssignmentExpiration cancels an outstanding assignment timer. A
+// regular delete is intentionally distinct from the TTL expiry marker watched
+// by the housekeeper.
+func (d *DispatchDB) CancelAssignmentExpiration(ctx context.Context, dispatchID, unitID int64) error {
+	err := d.idleKV.Delete(ctx, assignmentExpirationKey(dispatchID, unitID))
+	if errors.Is(err, jetstream.ErrKeyNotFound) {
+		return nil
+	}
+
+	return err
+}
+
 // TouchActivity updates the idle timer for a Dispatch.
 func (d *DispatchDB) TouchActivity(ctx context.Context, id int64) error {
 	key := "idle." + centrumutils.IdKey(id)

@@ -14,12 +14,12 @@ const emit = defineEmits<{
 const notificationStore = useNotificationsStore();
 const { dismissedBannerMessageID } = storeToRefs(notificationStore);
 
-const now = new Date();
+const now = useSecondClock();
 
 const hide = computed(
     () =>
         dismissedBannerMessageID.value === props.message.id ||
-        (props.message.expiresAt && toDate(props.message.expiresAt).getTime() - now.getTime() < 0),
+        (props.message.expiresAt && toDate(props.message.expiresAt).getTime() - now.value.getTime() < 0),
 );
 
 const bannerRef = useTemplateRef<{ $el: HTMLElement }>('bannerRef');

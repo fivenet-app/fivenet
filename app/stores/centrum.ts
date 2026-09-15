@@ -224,9 +224,16 @@ export const useCentrumStore = defineStore(
          * Adds or updates a unit in the store.
          * @param {Unit} unit - The unit to add or update.
          */
-        const addOrUpdateUnit = (unit: Unit, kvRevision?: number): void => {
+        const addOrUpdateUnit = (unit: Unit, kvRevision?: number): boolean => {
             const currentRevision = unitRevisions.get(unit.id) ?? 0;
-            if (kvRevision !== undefined && kvRevision <= currentRevision) return;
+            if (kvRevision !== undefined && kvRevision > 0 && kvRevision <= currentRevision) {
+                logger.debug('Ignoring stale unit projection', {
+                    unitId: unit.id,
+                    kvRevision,
+                    currentRevision,
+                });
+                return false;
+            }
 
             const existing = units.value.get(unit.id);
             if (!existing) {
@@ -253,7 +260,15 @@ export const useCentrumStore = defineStore(
 
                 updateUnitStatus(unit.status);
             }
-            if (kvRevision !== undefined) unitRevisions.set(unit.id, kvRevision);
+            if (kvRevision !== undefined && kvRevision > 0) unitRevisions.set(unit.id, kvRevision);
+
+            logger.debug('Applied unit projection', {
+                unitId: unit.id,
+                kvRevision,
+                users: unit.users.map((user) => user.userId),
+            });
+
+            return true;
         };
 
         /**
@@ -309,7 +324,7 @@ export const useCentrumStore = defineStore(
          */
         const removeUnit = (id: number, kvRevision?: number): void => {
             const currentRevision = unitRevisions.get(id) ?? 0;
-            if (kvRevision !== undefined && kvRevision <= currentRevision) return;
+            if (kvRevision !== undefined && kvRevision > 0 && kvRevision <= currentRevision) return;
 
             if (ownUnitId.value === id) {
                 setOwnUnit(undefined);
@@ -382,6 +397,15 @@ export const useCentrumStore = defineStore(
             }
             status.unit = undefined;
 
+            logger.debug('Processing dispatch status', {
+                dispatchId: status.dispatchId,
+                statusId: status.id,
+                status: StatusDispatch[status.status],
+                unitId: status.unitId,
+                currentStatus: disp.status ? StatusDispatch[disp.status.status] : undefined,
+                assignedUnitIds: disp.units.map((assignment) => assignment.unitId),
+            });
+
             // Unit assignment events stay in feed, but do not become dispatch's current status.
             if (isTransientDispatchUnitStatus(status.status)) {
                 if (status.status === StatusDispatch.UNIT_UNASSIGNED) {
@@ -389,6 +413,14 @@ export const useCentrumStore = defineStore(
                     if (idx > -1) {
                         disp.units.splice(idx, 1);
                     }
+
+                    logger.debug('Applied dispatch unit unassignment', {
+                        dispatchId: status.dispatchId,
+                        unitId: status.unitId,
+                        assignmentFound: idx > -1,
+                        remainingUnitIds: disp.units.map((assignment) => assignment.unitId),
+                        currentStatus: disp.status ? StatusDispatch[disp.status.status] : undefined,
+                    });
                 }
                 return;
             }
@@ -396,7 +428,14 @@ export const useCentrumStore = defineStore(
             if (!disp.status) {
                 disp.status = status;
             } else {
-                if (status.id > 0 && disp.status.id >= status.id) return;
+                if (status.id > 0 && disp.status.id >= status.id) {
+                    logger.debug('Ignoring stale dispatch status', {
+                        dispatchId: status.dispatchId,
+                        statusId: status.id,
+                        currentStatusId: disp.status.id,
+                    });
+                    return;
+                }
 
                 disp.status.id = status.id;
                 disp.status.createdAt = status.createdAt;
@@ -412,6 +451,13 @@ export const useCentrumStore = defineStore(
                 disp.status.postal = status.postal;
                 disp.status.creatorJob = status.creatorJob;
             }
+
+            logger.debug('Applied dispatch status', {
+                dispatchId: status.dispatchId,
+                statusId: status.id,
+                status: StatusDispatch[status.status],
+                assignedUnitIds: disp.units.map((assignment) => assignment.unitId),
+            });
         };
 
         /**
@@ -642,7 +688,19 @@ export const useCentrumStore = defineStore(
                     } else if (resp.change.oneofKind === 'unitDeleted') {
                         removeUnit(resp.change.unitDeleted, resp.kvRevision);
                     } else if (resp.change.oneofKind === 'unitUpdated') {
-                        addOrUpdateUnit(resp.change.unitUpdated, resp.kvRevision);
+                        logger.debug('Received unit projection', {
+                            unitId: resp.change.unitUpdated.id,
+                            kvRevision: resp.kvRevision,
+                            users: resp.change.unitUpdated.users.map((user) => user.userId),
+                            activeUserId: activeChar.value?.userId,
+                            ownUnitId: ownUnitId.value,
+                        });
+
+                        // Do not let an older membership snapshot for the prior
+                        // unit overwrite ownUnitId after a user switches units.
+                        if (!addOrUpdateUnit(resp.change.unitUpdated, resp.kvRevision)) {
+                            continue;
+                        }
 
                         // Check if user is in that unit
                         const idx = resp.change.unitUpdated.users.findIndex((u) => u.userId === activeChar.value?.userId);
@@ -678,6 +736,14 @@ export const useCentrumStore = defineStore(
                             }
                         }
                     } else if (resp.change.oneofKind === 'unitStatus') {
+                        logger.debug('Received unit status', {
+                            unitId: resp.change.unitStatus.unitId,
+                            statusId: resp.change.unitStatus.id,
+                            status: StatusUnit[resp.change.unitStatus.status],
+                            userId: resp.change.unitStatus.userId,
+                            ownUnitId: ownUnitId.value,
+                        });
+
                         updateUnitStatus(resp.change.unitStatus);
 
                         if (isCenter.value) {
@@ -728,6 +794,15 @@ export const useCentrumStore = defineStore(
                         addOrUpdateDispatch(resp.change.dispatchUpdated, resp.kvRevision);
                     } else if (resp.change.oneofKind === 'dispatchStatus') {
                         const ds = resp.change.dispatchStatus;
+
+                        logger.debug('Received dispatch status', {
+                            dispatchId: ds.dispatchId,
+                            statusId: ds.id,
+                            status: StatusDispatch[ds.status],
+                            unitId: ds.unitId,
+                            currentStatus: dispatches.value.get(ds.dispatchId)?.status?.status,
+                            assignedUnitIds: dispatches.value.get(ds.dispatchId)?.units.map((assignment) => assignment.unitId),
+                        });
 
                         if (isCenter.value) addFeedItem(ds);
 

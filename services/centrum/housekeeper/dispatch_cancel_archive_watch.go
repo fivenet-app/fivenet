@@ -3,6 +3,7 @@ package housekeeper
 import (
 	"context"
 	"errors"
+	"slices"
 	"strconv"
 	"strings"
 	"time"
@@ -65,6 +66,90 @@ func (s *Housekeeper) runProjectionCleanupWatcher(ctx context.Context) {
 			return
 
 		case <-time.After(2 * time.Second):
+		}
+	}
+}
+
+func (s *Housekeeper) runDispatchAssignmentExpirationWatcher(ctx context.Context) {
+	for {
+		if err := s.dispatchAssignmentExpirationWatcher(ctx); err != nil {
+			if !errors.Is(err, context.Canceled) {
+				s.recordWatcherRestart("dispatch_assignment_expiration", err)
+				s.logger.Error("dispatch assignment expiration watcher stopped", zap.Error(err))
+			}
+		}
+
+		select {
+		case <-ctx.Done():
+			return
+		case <-time.After(2 * time.Second):
+		}
+	}
+}
+
+// dispatchAssignmentExpirationWatcher reacts only to MaxAge purge markers.
+// Explicit Delete calls cancel a timer and must not be mistaken for expiry.
+func (s *Housekeeper) dispatchAssignmentExpirationWatcher(ctx context.Context) error {
+	watch, err := s.assignmentExpirationSource.IdleStore().Watch(ctx, "assignment.*.*")
+	if err != nil {
+		return err
+	}
+	defer watch.Stop()
+
+	for {
+		select {
+		case <-ctx.Done():
+			return ctx.Err()
+		case event, ok := <-watch.Updates():
+			if !ok {
+				return errWatcherUpdatesClosed
+			}
+			if event == nil || event.Operation() != jetstream.KeyValuePurge {
+				continue
+			}
+
+			parts := strings.Split(event.Key(), ".")
+			if len(parts) != 3 {
+				s.logger.Warn("received invalid dispatch assignment timer key", zap.String("key", event.Key()))
+				continue
+			}
+			dispatchID, dispatchErr := strconv.ParseInt(parts[1], 10, 64)
+			unitID, unitErr := strconv.ParseInt(parts[2], 10, 64)
+			if dispatchErr != nil || unitErr != nil || dispatchID <= 0 || unitID <= 0 {
+				s.logger.Warn(
+					"received invalid dispatch assignment timer key",
+					zap.String("key", event.Key()),
+					zap.Error(errors.Join(dispatchErr, unitErr)),
+				)
+				continue
+			}
+
+			// The timer is only a wake-up signal. Re-read the authoritative
+			// projection so an acceptance, reassignment, or cancellation that
+			// raced the expiry marker is never removed.
+			dispatch, err := s.assignmentExpirationSource.Get(ctx, dispatchID)
+			if err != nil || dispatch == nil {
+				continue
+			}
+			assignment := slices.IndexFunc(dispatch.GetUnits(), func(assignment *centrumdispatches.DispatchAssignment) bool {
+				return assignment.GetUnitId() == unitID
+			})
+			if assignment < 0 || dispatch.GetUnits()[assignment].GetExpiresAt() == nil ||
+				dispatch.GetUnits()[assignment].GetExpiresAt().AsTime().After(time.Now()) {
+				continue
+			}
+
+			if err := s.assignmentExpirationSource.UpdateAssignments(ctx, nil, nil, dispatchID, nil, []int64{unitID}, time.Time{}); err != nil {
+				s.logger.Error(
+					"failed to remove expired dispatch assignment",
+					zap.Int64("dispatch_id", dispatchID),
+					zap.Int64("unit_id", unitID),
+					zap.Error(err),
+				)
+				s.metrics.IncHousekeeperEvent("dispatch_assignment_expiration", "failed")
+				continue
+			}
+			s.metrics.IncHousekeeperEvent("dispatch_assignment_expiration", "expired")
 		}
 	}
 }

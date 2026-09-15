@@ -4,10 +4,12 @@ import (
 	"context"
 	"database/sql"
 	"errors"
+	"fmt"
 	"maps"
 	"os"
 	"slices"
 	"testing"
+	"time"
 
 	centrumres "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/centrum"
 	centrumaccess "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/centrum/access"
@@ -36,6 +38,7 @@ import (
 	"github.com/fivenet-app/fivenet/v2026/services/centrum/helpers"
 	"github.com/fivenet-app/fivenet/v2026/services/centrum/settings"
 	"github.com/fivenet-app/fivenet/v2026/services/centrum/units"
+	"github.com/nats-io/nats.go/jetstream"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"go.uber.org/fx"
@@ -1180,4 +1183,78 @@ func TestUpdateDispatchStatusAllowsMissingTrackerMapping(t *testing.T) {
 	require.True(t, resp.GetUpdated())
 	require.NotNil(t, resp.GetStatus())
 	assert.Positive(t, resp.GetStatus().GetId())
+}
+
+func TestDispatchAssignmentRemovalUpdatesDurableStateAndProjection(t *testing.T) {
+	t.Parallel()
+
+	srv, db, trackerStub := newCentrumJoinUnitTestServer(t)
+	ctx := auth.ContextWithUserInfo(t.Context(), &pbuserinfo.UserInfo{
+		UserId:   1,
+		Job:      "ambulance",
+		JobGrade: 17,
+	})
+	trackerStub.markers[2] = &livemapmarkers.UserMarker{UserId: 2, Job: "ambulance"}
+	upsertUserJobForTest(t, db, 1, "ambulance", 17)
+	upsertUserJobForTest(t, db, 2, "ambulance", 17)
+
+	firstUnit := createUnitForTest(t, srv, ctx, "Alpha-Dispatch-Expiry")
+	secondUnit := createUnitForTest(t, srv, ctx, "Bravo-Dispatch-Expiry")
+	require.NoError(t, srv.units.UpdateUnitAssignments(ctx, "ambulance", nil, firstUnit.GetId(), []int32{1}, nil))
+	require.NoError(t, srv.units.UpdateUnitAssignments(ctx, "ambulance", nil, secondUnit.GetId(), []int32{2}, nil))
+
+	dispatch := createDispatchForTest(t, srv, ctx)
+	job := "ambulance"
+	expiresAt := time.Now().Add(time.Minute)
+	require.NoError(t, srv.dispatches.UpdateAssignments(
+		ctx,
+		&job,
+		nil,
+		dispatch.GetId(),
+		[]int64{firstUnit.GetId(), secondUnit.GetId()},
+		nil,
+		expiresAt,
+	))
+
+	firstTimerKey := fmt.Sprintf("assignment.%d.%d", dispatch.GetId(), firstUnit.GetId())
+	secondTimerKey := fmt.Sprintf("assignment.%d.%d", dispatch.GetId(), secondUnit.GetId())
+	_, err := srv.dispatches.IdleStore().Get(ctx, firstTimerKey)
+	require.NoError(t, err)
+	_, err = srv.dispatches.IdleStore().Get(ctx, secondTimerKey)
+	require.NoError(t, err)
+
+	require.NoError(t, srv.dispatches.UpdateAssignments(
+		ctx,
+		&job,
+		nil,
+		dispatch.GetId(),
+		nil,
+		[]int64{firstUnit.GetId()},
+		time.Time{},
+	))
+
+	var assignmentCount int
+	require.NoError(t, db.QueryRow(
+		`SELECT COUNT(*) FROM fivenet_centrum_dispatches_asgmts WHERE dispatch_id = ? AND unit_id = ?`,
+		dispatch.GetId(),
+		firstUnit.GetId(),
+	).Scan(&assignmentCount))
+	assert.Zero(t, assignmentCount)
+
+	projected, err := srv.dispatches.Get(ctx, dispatch.GetId())
+	require.NoError(t, err)
+	require.Len(t, projected.GetUnits(), 1)
+	assert.Equal(t, secondUnit.GetId(), projected.GetUnits()[0].GetUnitId())
+
+	activity, err := srv.ListDispatchActivity(ctx, &pbcentrum.ListDispatchActivityRequest{Id: dispatch.GetId()})
+	require.NoError(t, err)
+	assert.True(t, slices.ContainsFunc(activity.GetActivity(), func(status *centrumdispatches.DispatchStatus) bool {
+		return status.GetUnitId() == firstUnit.GetId() &&
+			status.GetStatus() == centrumdispatches.StatusDispatch_STATUS_DISPATCH_UNIT_UNASSIGNED
+	}))
+
+	_, err = srv.dispatches.IdleStore().Get(ctx, firstTimerKey)
+	assert.ErrorIs(t, err, jetstream.ErrKeyNotFound)
+	_, err = srv.dispatches.IdleStore().Get(ctx, secondTimerKey)
+	assert.NoError(t, err)
 }

@@ -30,7 +30,8 @@ import (
 var ErrPrefixAmbiguous = errors.New("multiple keys found with given prefix")
 
 type storeMetrics struct {
-	dataMapCount *prometheus.GaugeVec
+	dataMapCount   *prometheus.GaugeVec
+	writeConflicts *prometheus.CounterVec
 }
 
 var (
@@ -47,9 +48,16 @@ func getStoreMetrics() *storeMetrics {
 				Name:      "datamap_count",
 				Help:      "Count of data map entries.",
 			}, []string{"bucket"}),
+			writeConflicts: prometheus.NewCounterVec(prometheus.CounterOpts{
+				Namespace: admin.MetricsNamespace,
+				Subsystem: "nats_store",
+				Name:      "write_conflicts_total",
+				Help:      "Count of optimistic KV write conflicts retried.",
+			}, []string{"bucket"}),
 		}
 
 		prometheus.MustRegister(storeMetricsInst.dataMapCount)
+		prometheus.MustRegister(storeMetricsInst.writeConflicts)
 	})
 
 	return storeMetricsInst
@@ -660,21 +668,31 @@ func (s *Store[T, U]) put(ctx context.Context, key string, msg U, oldItem U) err
 		return fmt.Errorf("failed to marshal proto msg for key %s put. %w", key, err)
 	}
 
-	// Attempt to create or update the key in the NATS KeyValue store.
+	// Concurrent workers may read the same revision before writing. Refresh and
+	// retry a bounded number of optimistic-CAS conflicts instead of dropping a
+	// logically idempotent projection update.
+	const maxWriteAttempts = 3
 	var rev uint64
-	entry, err := s.kv.Get(ctx, key)
-	if err == nil {
-		// Key exists -> optimistic CAS
-		rev, err = s.kv.Update(ctx, key, data, entry.Revision())
-		if err != nil {
-			return fmt.Errorf("failed to update value for key %s in put. %w", key, err)
+	for attempt := 1; attempt <= maxWriteAttempts; attempt++ {
+		entry, err := s.kv.Get(ctx, key)
+		if err == nil {
+			rev, err = s.kv.Update(ctx, key, data, entry.Revision())
+		} else if errors.Is(err, jetstream.ErrKeyNotFound) {
+			rev, err = s.kv.Create(ctx, key, data)
 		}
-	} else if errors.Is(err, jetstream.ErrKeyNotFound) {
-		// brand-new key
-		rev, err = s.kv.Create(ctx, key, data)
-		if err != nil {
-			return fmt.Errorf("failed to create value for key %s in put. %w", key, err)
+		if err == nil {
+			break
 		}
+		if !errors.Is(err, jetstream.ErrKeyExists) || attempt == maxWriteAttempts {
+			return fmt.Errorf("failed to write value for key %s in put. %w", key, err)
+		}
+
+		s.metrics.writeConflicts.WithLabelValues(s.bucket).Inc()
+		s.logger.Debug(
+			"retrying kv write after revision conflict",
+			zap.String("key", key),
+			zap.Int("attempt", attempt),
+		)
 	}
 
 	item := s.updateFromType(key, msg, true)
@@ -692,6 +710,21 @@ func (s *Store[T, U]) put(ctx context.Context, key string, msg U, oldItem U) err
 	}
 
 	return nil
+}
+
+// PutIfChanged writes msg only when its protobuf content differs from the
+// current value. It avoids redundant KV revisions from idempotent index hooks.
+func (s *Store[T, U]) PutIfChanged(ctx context.Context, key string, msg U) (bool, error) {
+	changed := false
+	err := s.ComputeUpdate(ctx, key, func(_ string, existing U) (U, bool, error) {
+		if existing != nil && proto.Equal(existing, msg) {
+			return existing, false, nil
+		}
+		changed = true
+		return msg, true, nil
+	})
+
+	return changed, err
 }
 
 func (s *Store[T, U]) ComputeUpdate(

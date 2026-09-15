@@ -198,7 +198,7 @@ func (s *Housekeeper) handleDispatchAssignmentExpiration(
 			zap.Int("expired_assignments", len(dsps)),
 		)
 		for dispatchId, units := range dsps {
-			if err := s.dispatches.UpdateAssignments(
+			if err := s.assignmentExpirationWriter.UpdateAssignments(
 				ctx,
 				new(job),
 				nil,
