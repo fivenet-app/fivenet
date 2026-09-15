@@ -217,7 +217,7 @@ func TestRefreshUserLocationsRemovesOldJobDispatcherOnJobChange(t *testing.T) {
 	trackerStub.SeedUserMarker(&livemapmarkers.UserMarker{
 		UserId:   1,
 		Job:      "ambulance",
-		JobGrade: proto.Int32(3),
+		JobGrade: new(int32(3)),
 		Hidden:   false,
 	})
 

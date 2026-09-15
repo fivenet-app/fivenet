@@ -202,6 +202,10 @@ func (s *Store[T, U]) Start(ctx context.Context, wait bool) error {
 	go func() {
 		for {
 			updateCh := watcher.Updates()
+			// Watch replays the current KV state before its nil sentinel. Track
+			// that snapshot so a restarted watcher can remove cached keys whose
+			// expiry or delete tombstone was pruned while it was unavailable.
+			seen := make(map[string]struct{})
 		watcherLoop:
 			for {
 				select {
@@ -228,6 +232,7 @@ func (s *Store[T, U]) Start(ctx context.Context, wait bool) error {
 					// After all initial keys have been received, a nil entry is returned
 					// by the JetStream KV watcher.
 					if entry == nil {
+						s.reconcileWatcherSnapshot(ctx, seen)
 						if !ready.Swap(true) {
 							wg.Done()
 						}
@@ -238,6 +243,7 @@ func (s *Store[T, U]) Start(ctx context.Context, wait bool) error {
 					if s.ignoredKeys != nil && slices.Contains(s.ignoredKeys, key) {
 						continue
 					}
+					seen[key] = struct{}{}
 
 					switch entry.Operation() {
 					case jetstream.KeyValueDelete, jetstream.KeyValuePurge:
@@ -306,6 +312,23 @@ func (s *Store[T, U]) Start(ctx context.Context, wait bool) error {
 	}
 
 	return nil
+}
+
+// reconcileWatcherSnapshot removes cached keys missing from a completed watcher
+// snapshot. A normal delete is replayed by Watch, but KV expiry and pruned delete
+// markers are absent from a later snapshot and would otherwise leave stale cache
+// entries after a watcher restart.
+func (s *Store[T, U]) reconcileWatcherSnapshot(ctx context.Context, seen map[string]struct{}) {
+	for key := range s.data.All() {
+		if s.ignoredKeys != nil && slices.Contains(s.ignoredKeys, key) {
+			continue
+		}
+		if _, ok := seen[key]; ok {
+			continue
+		}
+
+		s.handleWatcherDelete(ctx, key, nil)
+	}
 }
 
 func (s *Store[T, U]) handleWatcherDelete(
@@ -663,7 +686,9 @@ func (s *Store[T, U]) Range(fn func(key string, value U) bool) {
 		if _, ok := skip[userKey]; ok {
 			continue // Ignore
 		}
-		v, err := s.Get(internalKey)
+		// Get expects the caller-facing key and applies s.prefix itself.
+		// Passing internalKey here would prefix an already-prefixed key again.
+		v, err := s.Get(userKey)
 		if err != nil {
 			continue // Ignore errors, just skip this entry
 		}

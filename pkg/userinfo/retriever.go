@@ -162,16 +162,28 @@ func (r *Retriever) registerSubscriptions(
 }
 
 func (r *Retriever) handleMsg(m jetstream.Msg) {
-	if err := m.Ack(); err != nil {
-		r.logger.Error("failed to ack message", zap.Error(err), zap.String("subject", m.Subject()))
-	}
-
 	var evt pbuserinfo.UserInfoChanged
 	if err := protoutils.UnmarshalPartialJSON(m.Data(), &evt); err != nil {
 		r.logger.Error("failed to unmarshal user info changed event",
 			zap.Error(err),
 			zap.String("subject", m.Subject()),
 		)
+		// Malformed events cannot succeed on retry, so terminate them instead
+		// of allowing them to be redelivered indefinitely.
+		if err := m.Term(); err != nil {
+			r.logger.Error("failed to terminate malformed user info event", zap.Error(err))
+		}
+		return
+	}
+	if evt.GetUserId() <= 0 || evt.GetAccountId() <= 0 {
+		r.logger.Error("received invalid user info changed event",
+			zap.Int32("userId", evt.GetUserId()),
+			zap.Int64("accountId", evt.GetAccountId()),
+			zap.String("subject", m.Subject()),
+		)
+		if err := m.Term(); err != nil {
+			r.logger.Error("failed to terminate invalid user info event", zap.Error(err))
+		}
 		return
 	}
 
@@ -191,6 +203,11 @@ func (r *Retriever) handleMsg(m jetstream.Msg) {
 			zap.Int32("userId", evt.GetUserId()),
 			zap.Int64("accountId", evt.GetAccountId()),
 		)
+		return
+	}
+
+	if err := m.Ack(); err != nil {
+		r.logger.Error("failed to ack message", zap.Error(err), zap.String("subject", m.Subject()))
 	}
 }
 

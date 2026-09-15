@@ -4,7 +4,6 @@ import DispatchStatusUpdateModal from '~/components/dispatch/dispatches/Dispatch
 import {
     dispatchStatusToBadgeColor,
     dispatchStatuses,
-    isStatusDispatchCompleted,
     unitStatusToBadgeColor,
     unitStatuses,
 } from '~/components/dispatch/helpers';
@@ -22,6 +21,7 @@ import { setWaypointPLZ } from '~/composables/nui';
 import { useCentrumStore } from '~/stores/centrum';
 import { useLivemapStore } from '~/stores/livemap';
 import { defaultCentrumSidebarPlacement, useSettingsStore, type CentrumSidebarPlacement } from '~/stores/settings';
+import { selectOwnDispatch } from '~/utils/centrum-dispatch-selection';
 import { getCentrumDispatchesClient, getCentrumUnitsClient } from '~~/gen/ts/clients';
 import { StatusDispatch } from '~~/gen/ts/resources/centrum/dispatches/dispatches';
 import { CentrumMode } from '~~/gen/ts/resources/centrum/settings/settings';
@@ -200,10 +200,10 @@ async function toggleSidebarBasedOnUnit(): Promise<void> {
     }
 }
 
-const requireUnitInterval = computed(() => settings.value?.timings?.requireUnitReminderSeconds ?? 900 * 1000);
+const requireUnitInterval = computed(() => (settings.value?.timings?.requireUnitReminderSeconds ?? 900) * 1000);
 const { pause, resume } = useIntervalFn(
     () => sendRequireUnitNotification(),
-    () => requireUnitInterval.value * 1000,
+    () => requireUnitInterval.value,
     {
         immediate: false,
     },
@@ -254,43 +254,15 @@ const onSubmitDispatchStatusThrottle = useThrottleFn(async (dispatchId?: number,
 }, 1000);
 
 const ownUnitStatus = computed(() => unitStatusToBadgeColor(getOwnUnit.value?.status?.status));
-const dispatchTimeNow = useSecondClock();
+const dispatchTimeNow = useMinuteClock();
 
 function ensureOwnDispatchSelected(): void {
-    if (getSortedOwnDispatches.value.length === 0) {
-        selectedDispatch.value = undefined;
-        return;
-    }
-
-    // If the selected dispatch is still our own dispatch, don't do anything
-    if (
-        selectedDispatch.value !== undefined &&
-        getSortedOwnDispatches.value.find((dispatchId) => dispatchId === selectedDispatch.value) !== undefined
-    ) {
-        const dispatch = dispatches.value.get(selectedDispatch.value);
-        if (!isStatusDispatchCompleted(dispatch?.status?.status ?? StatusDispatch.UNSPECIFIED)) return;
-    }
-
-    // otherwise select that current first one
-    if (getSortedOwnDispatches.value.length > 1) {
-        for (let index = 0; index < getSortedOwnDispatches.value.length; ++index) {
-            const ownedDsp = getSortedOwnDispatches.value[index];
-            if (!ownedDsp || ownedDsp === selectedDispatch.value) {
-                continue;
-            }
-
-            const dispatch = dispatches.value.get(ownedDsp);
-            if (isStatusDispatchCompleted(dispatch?.status?.status ?? StatusDispatch.UNSPECIFIED)) {
-                continue;
-            }
-
-            selectedDispatch.value = ownedDsp;
-            break;
-        }
-    } else {
-        selectedDispatch.value = getSortedOwnDispatches.value[0];
-    }
+    selectedDispatch.value = selectOwnDispatch(getSortedOwnDispatches.value, dispatches.value, selectedDispatch.value);
 }
+
+const ownDispatchSelectionState = computed(() =>
+    getSortedOwnDispatches.value.map((dispatchId) => [dispatchId, dispatches.value.get(dispatchId)?.status?.status]),
+);
 
 watchDebounced(
     selectedDispatch,
@@ -309,9 +281,10 @@ watchDebounced(
     },
 );
 
-watchDebounced(getSortedOwnDispatches, () => ensureOwnDispatchSelected(), {
+watchDebounced(ownDispatchSelectionState, () => ensureOwnDispatchSelected(), {
     debounce: 75,
     maxWait: 200,
+    immediate: true,
 });
 
 watch(

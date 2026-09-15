@@ -144,16 +144,6 @@ func (c *Changes) registerSubscription(ctxStartup context.Context, ctx context.C
 }
 
 func (c *Changes) handleMessage(msg jetstream.Msg) {
-	defer func() {
-		if err := msg.Ack(); err != nil {
-			c.logger.Error(
-				"failed to ack user info change",
-				zap.Error(err),
-				zap.String("subject", msg.Subject()),
-			)
-		}
-	}()
-
 	event := &pbuserinfo.UserInfoChanged{}
 	if err := protoutils.UnmarshalPartialJSON(msg.Data(), event); err != nil {
 		c.logger.Error(
@@ -161,8 +151,33 @@ func (c *Changes) handleMessage(msg jetstream.Msg) {
 			zap.Error(err),
 			zap.String("subject", msg.Subject()),
 		)
+		// Malformed events cannot succeed on retry, so terminate them instead
+		// of acknowledging and silently losing them.
+		if err := msg.Term(); err != nil {
+			c.logger.Error("failed to terminate malformed user info change", zap.Error(err))
+		}
+		return
+	}
+	if event.GetUserId() <= 0 || event.GetAccountId() <= 0 {
+		c.logger.Error(
+			"received invalid user info change",
+			zap.Int32("userId", event.GetUserId()),
+			zap.Int64("accountId", event.GetAccountId()),
+			zap.String("subject", msg.Subject()),
+		)
+		if err := msg.Term(); err != nil {
+			c.logger.Error("failed to terminate invalid user info change", zap.Error(err))
+		}
 		return
 	}
 
 	c.broker.Publish(event)
+
+	if err := msg.Ack(); err != nil {
+		c.logger.Error(
+			"failed to ack user info change",
+			zap.Error(err),
+			zap.String("subject", msg.Subject()),
+		)
+	}
 }

@@ -8,8 +8,6 @@ import (
 	"testing"
 	"time"
 
-	"github.com/DATA-DOG/go-sqlmock"
-	"github.com/adhocore/gronx"
 	centrumdispatches "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/centrum/dispatches"
 	centrumunits "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/centrum/units"
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/cron"
@@ -39,67 +37,6 @@ func (s *unitAssignmentWatchSourceStub) WatchAll(
 ) (store.IKVWatcher[centrumunits.Unit, *centrumunits.Unit], error) {
 	close(s.ready)
 	return s.store.WatchAll(ctx)
-}
-
-func TestDispatchHousekeeperSchedules(t *testing.T) {
-	t.Parallel()
-
-	for _, test := range []struct {
-		name     string
-		schedule string
-		want     time.Time
-	}{
-		{
-			name:     "targeted cancellation recovery",
-			schedule: cancelOldDispatchesSchedule,
-			want:     time.Date(2026, time.January, 1, 0, 5, 0, 0, time.UTC),
-		},
-		{
-			name:     "empty unit dispatch recovery",
-			schedule: auditEmptyUnitDispatchesSchedule,
-			want:     time.Date(2026, time.January, 1, 0, 5, 0, 0, time.UTC),
-		},
-		{
-			name:     "kv recovery audit",
-			schedule: deleteOldDispatchesKVSchedule,
-			want:     time.Date(2026, time.January, 1, 2, 15, 0, 0, time.UTC),
-		},
-		{
-			name:     "authoritative user info recovery audit",
-			schedule: reconcileUserInfoStateSchedule,
-			want:     time.Date(2026, time.January, 1, 4, 0, 0, 0, time.UTC),
-		},
-	} {
-		t.Run(test.name, func(t *testing.T) {
-			t.Parallel()
-
-			next, err := gronx.NextTickAfter(
-				test.schedule,
-				time.Date(2026, time.January, 1, 0, 0, 1, 0, time.UTC),
-				false,
-			)
-			require.NoError(t, err)
-			assert.Equal(t, test.want, next)
-		})
-	}
-}
-
-func TestDeleteOldDispatchesSelectsOldestFirst(t *testing.T) {
-	t.Parallel()
-
-	db, mock, err := sqlmock.New()
-	require.NoError(t, err)
-	t.Cleanup(func() { _ = db.Close() })
-
-	mock.ExpectQuery("(?s)ORDER BY.*created_at.*ASC.*id.*ASC.*LIMIT \\\\?").
-		WithArgs(75).
-		WillReturnRows(sqlmock.NewRows([]string{"dispatch_id"}))
-
-	h := &Housekeeper{db: db}
-	deleted, err := h.deleteOldDispatches(t.Context())
-	require.NoError(t, err)
-	assert.Zero(t, deleted)
-	require.NoError(t, mock.ExpectationsWereMet())
 }
 
 type unitAssignmentsStub struct {

@@ -7,7 +7,7 @@ import { defaultUnitIcon, unitStatusToBGColor, unitStatusToIcon } from '../helpe
 
 const centrumStore = useCentrumStore();
 const { timeCorrection } = storeToRefs(centrumStore);
-const now = useSecondClock();
+const now = useMinuteClock();
 const formatTimeAgo = useLocaleTimeAgoFormatter();
 
 const props = withDefaults(

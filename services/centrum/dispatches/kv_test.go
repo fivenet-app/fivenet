@@ -17,10 +17,16 @@ import (
 
 type failingAssignmentTimerKV struct {
 	jetstream.KeyValue
+
 	err error
 }
 
-func (s failingAssignmentTimerKV) Create(context.Context, string, []byte, ...jetstream.KVCreateOpt) (uint64, error) {
+func (s failingAssignmentTimerKV) Create(
+	context.Context,
+	string,
+	[]byte,
+	...jetstream.KVCreateOpt,
+) (uint64, error) {
 	return 0, s.err
 }
 
@@ -101,7 +107,10 @@ func TestAssignmentExpirationTimerCanBeScheduledAndCancelled(t *testing.T) {
 	require.NoError(t, err)
 
 	dispatches := &DispatchDB{idleKV: idleKV}
-	require.NoError(t, dispatches.ScheduleAssignmentExpiration(t.Context(), 42, 7, time.Now().Add(time.Minute)))
+	require.NoError(
+		t,
+		dispatches.ScheduleAssignmentExpiration(t.Context(), 42, 7, time.Now().Add(time.Minute)),
+	)
 
 	_, err = idleKV.Get(t.Context(), assignmentExpirationKey(42, 7))
 	require.NoError(t, err)
@@ -112,6 +121,8 @@ func TestAssignmentExpirationTimerCanBeScheduledAndCancelled(t *testing.T) {
 }
 
 func TestAssignmentTimerFailureIsBestEffort(t *testing.T) {
+	t.Parallel()
+
 	timerErr := errors.New("KV unavailable")
 	dispatches := &DispatchDB{
 		idleKV: failingAssignmentTimerKV{err: timerErr},

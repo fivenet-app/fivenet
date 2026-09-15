@@ -10,8 +10,6 @@ import (
 	centrumdispatchers "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/centrum/dispatchers"
 	centrumdispatches "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/centrum/dispatches"
 	centrumsettings "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/centrum/settings"
-	centrumunits "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/centrum/units"
-	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/common"
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/timestamp"
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/userinfo"
 	pbcentrum "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/centrum"
@@ -19,8 +17,6 @@ import (
 	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/errswrap"
 	"github.com/fivenet-app/fivenet/v2026/pkg/utils/protoutils"
 	errorscentrum "github.com/fivenet-app/fivenet/v2026/services/centrum/errors"
-	centrumutils "github.com/fivenet-app/fivenet/v2026/services/centrum/utils"
-	"google.golang.org/protobuf/proto"
 )
 
 const feedFetch = 16
@@ -178,6 +174,7 @@ func (s *Server) Stream(
 					return nil
 				}
 				s.metrics.IncFeedResync("slow_subscriber")
+				s.feedBroker.Unsubscribe(feed)
 				feed = s.feedBroker.Subscribe()
 				continue
 			}
@@ -225,119 +222,7 @@ func (s *Server) refreshStreamUserInfo(ctx context.Context, current *userinfo.Us
 		return fmt.Errorf("failed to retrieve current user info. %w", err)
 	}
 
-	current.Job = updated.Job
-	current.JobGrade = updated.JobGrade
+	current.SetJob(updated.GetJob())
+	current.SetJobGrade(updated.GetJobGrade())
 	return nil
-}
-
-type feedCfg struct {
-	StreamName string
-	Bucket     string
-	NoWildcard bool                                                                  // if true, the subjects are not a wildcard bucket (e.g., centrum_dispatchers.JOB)
-	Unmarshal  func(ctx context.Context, s *Server, b []byte) (proto.Message, error) // bucket -> concrete proto
-	WrapPut    func(proto.Message) *pbcentrum.StreamResponse
-	WrapDelete func(key string) *pbcentrum.StreamResponse
-}
-
-var feeds = []feedCfg{
-	{
-		StreamName: "centrum_settings",
-		Bucket:     "centrum_settings",
-		NoWildcard: true,
-		Unmarshal: func(ctx context.Context, _ *Server, b []byte) (proto.Message, error) {
-			var u centrumsettings.Settings
-			return &u, proto.Unmarshal(b, &u)
-		},
-		WrapPut: func(m proto.Message) *pbcentrum.StreamResponse {
-			return &pbcentrum.StreamResponse{
-				Change: &pbcentrum.StreamResponse_Settings{Settings: m.(*centrumsettings.Settings)},
-			}
-		},
-		WrapDelete: func(key string) *pbcentrum.StreamResponse {
-			return &pbcentrum.StreamResponse{
-				Change: &pbcentrum.StreamResponse_SettingsDeleted{SettingsDeleted: key},
-			}
-		},
-	},
-	{
-		StreamName: "centrum_dispatchers",
-		Bucket:     "centrum_dispatchers",
-		NoWildcard: true,
-		Unmarshal: func(ctx context.Context, _ *Server, b []byte) (proto.Message, error) {
-			var u centrumdispatchers.Dispatchers
-			return &u, proto.Unmarshal(b, &u)
-		},
-		WrapPut: func(m proto.Message) *pbcentrum.StreamResponse {
-			return &pbcentrum.StreamResponse{
-				Change: &pbcentrum.StreamResponse_Dispatchers{
-					Dispatchers: m.(*centrumdispatchers.Dispatchers),
-				},
-			}
-		},
-		WrapDelete: func(key string) *pbcentrum.StreamResponse {
-			return &pbcentrum.StreamResponse{
-				Change: &pbcentrum.StreamResponse_Dispatchers{
-					Dispatchers: &centrumdispatchers.Dispatchers{Job: key},
-				},
-			}
-		},
-	},
-	{
-		StreamName: "centrum_units",
-		Bucket:     "centrum_units.job",
-		Unmarshal: func(ctx context.Context, s *Server, b []byte) (proto.Message, error) {
-			var d common.IDMapping
-			if err := proto.Unmarshal(b, &d); err != nil {
-				return nil, fmt.Errorf("failed to unmarshal unit id mapping. %w", err)
-			}
-			return s.units.Get(ctx, d.GetId())
-		},
-		WrapPut: func(m proto.Message) *pbcentrum.StreamResponse {
-			return &pbcentrum.StreamResponse{
-				Change: &pbcentrum.StreamResponse_UnitUpdated{UnitUpdated: m.(*centrumunits.Unit)},
-			}
-		},
-		WrapDelete: func(key string) *pbcentrum.StreamResponse {
-			id, err := centrumutils.ExtractID(key)
-			if err != nil {
-				return nil
-			}
-
-			return &pbcentrum.StreamResponse{
-				Change: &pbcentrum.StreamResponse_UnitDeleted{
-					UnitDeleted: id,
-				},
-			}
-		},
-	},
-	{
-		StreamName: "centrum_dispatches",
-		Bucket:     "centrum_dispatches.job",
-		Unmarshal: func(ctx context.Context, s *Server, b []byte) (proto.Message, error) {
-			var d common.IDMapping
-			if err := proto.Unmarshal(b, &d); err != nil {
-				return nil, fmt.Errorf("failed to unmarshal dispatch id mapping. %w", err)
-			}
-			return s.dispatches.Get(ctx, d.GetId())
-		},
-		WrapPut: func(m proto.Message) *pbcentrum.StreamResponse {
-			return &pbcentrum.StreamResponse{
-				Change: &pbcentrum.StreamResponse_DispatchUpdated{
-					DispatchUpdated: m.(*centrumdispatches.Dispatch),
-				},
-			}
-		},
-		WrapDelete: func(key string) *pbcentrum.StreamResponse {
-			id, err := centrumutils.ExtractID(key)
-			if err != nil {
-				return nil
-			}
-
-			return &pbcentrum.StreamResponse{
-				Change: &pbcentrum.StreamResponse_DispatchDeleted{
-					DispatchDeleted: id,
-				},
-			}
-		},
-	},
 }

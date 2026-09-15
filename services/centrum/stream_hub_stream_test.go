@@ -14,7 +14,6 @@ import (
 )
 
 type testCentrumStreamServer struct {
-	//nolint:containedctx // Used in test env/setup only.
 	ctx context.Context
 }
 

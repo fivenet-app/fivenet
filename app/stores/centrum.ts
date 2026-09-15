@@ -22,12 +22,19 @@ const logger = useLogger('⛑️ Centrum');
 const cleanupInterval = 40 * 1000; // 40 seconds
 const dispatchEndOfLifeTime = 2 * 60 * 60 * 1000; // 2 hours
 const maxFeedItems = 100;
+const revisionTombstoneLifetime = 5 * 60 * 1000; // 5 minutes
+const maxRevisionTombstones = 1_000;
 
 // In seconds
 const maxBackOffTime = 7;
 const initialReconnectBackoffTime = 0.75;
 
 export type canDoAction = 'TakeControl' | 'TakeDispatch' | 'AssignDispatch' | 'UpdateDispatchStatus' | 'UpdateUnitStatus';
+
+type ProjectionRevision = {
+    revision: number;
+    deletedAt?: number;
+};
 
 export const useCentrumStore = defineStore(
     'centrum',
@@ -51,9 +58,9 @@ export const useCentrumStore = defineStore(
 
         const units = ref<Map<number, Unit>>(new Map());
         const dispatches = ref<Map<number, Dispatch>>(new Map());
-        // KV stream revisions order aggregate updates and delete tombstones.
-        const unitRevisions = new Map<number, number>();
-        const dispatchRevisions = new Map<number, number>();
+        // KV stream revisions order aggregate updates and bounded delete tombstones.
+        const unitRevisions = new Map<number, ProjectionRevision>();
+        const dispatchRevisions = new Map<number, ProjectionRevision>();
 
         const ownUnitId = ref<number | undefined>(undefined);
         const ownDispatches = ref<number[]>([]);
@@ -87,6 +94,25 @@ export const useCentrumStore = defineStore(
         const clearPendingDispatchExpiries = (): void => {
             pendingDispatchExpiryTimers.forEach((timer) => clearTimeout(timer));
             pendingDispatchExpiryTimers.clear();
+        };
+
+        const pruneRevisionTombstones = (revisions: Map<number, ProjectionRevision>): void => {
+            const now = Date.now();
+            const tombstones: [number, ProjectionRevision][] = [];
+
+            for (const [id, revision] of revisions) {
+                if (revision.deletedAt === undefined) continue;
+                if (now - revision.deletedAt >= revisionTombstoneLifetime) {
+                    revisions.delete(id);
+                    continue;
+                }
+                tombstones.push([id, revision]);
+            }
+
+            tombstones.sort(([, a], [, b]) => a.deletedAt! - b.deletedAt!);
+            for (const [id] of tombstones.slice(0, Math.max(0, tombstones.length - maxRevisionTombstones))) {
+                revisions.delete(id);
+            }
         };
 
         /**
@@ -266,7 +292,7 @@ export const useCentrumStore = defineStore(
          * @param {Unit} unit - The unit to add or update.
          */
         const addOrUpdateUnit = (unit: Unit, kvRevision?: number): boolean => {
-            const currentRevision = unitRevisions.get(unit.id) ?? 0;
+            const currentRevision = unitRevisions.get(unit.id)?.revision ?? 0;
             if (kvRevision !== undefined && kvRevision > 0 && kvRevision <= currentRevision) {
                 logger.debug('Ignoring stale unit projection', {
                     unitId: unit.id,
@@ -301,7 +327,9 @@ export const useCentrumStore = defineStore(
 
                 updateUnitStatus(unit.status);
             }
-            if (kvRevision !== undefined && kvRevision > 0) unitRevisions.set(unit.id, kvRevision);
+            if (kvRevision !== undefined && kvRevision > 0) {
+                unitRevisions.set(unit.id, { revision: kvRevision });
+            }
 
             logger.debug('Applied unit projection', {
                 unitId: unit.id,
@@ -365,14 +393,18 @@ export const useCentrumStore = defineStore(
          * @param {number} id - The ID of the unit to remove.
          */
         const removeUnit = (id: number, kvRevision?: number): void => {
-            const currentRevision = unitRevisions.get(id) ?? 0;
+            const currentRevision = unitRevisions.get(id)?.revision ?? 0;
             if (kvRevision !== undefined && kvRevision > 0 && kvRevision <= currentRevision) return;
 
             if (ownUnitId.value === id) {
                 setOwnUnit(undefined);
             }
             units.value.delete(id);
-            unitRevisions.delete(id);
+            if (kvRevision !== undefined && kvRevision > 0) {
+                unitRevisions.set(id, { revision: kvRevision, deletedAt: Date.now() });
+            } else if (currentRevision > 0) {
+                unitRevisions.set(id, { revision: currentRevision, deletedAt: Date.now() });
+            }
         };
 
         // Dispatches
@@ -392,7 +424,7 @@ export const useCentrumStore = defineStore(
          * @param {Dispatch} dispatchObj - The dispatch to add or update.
          */
         const addOrUpdateDispatch = (dispatchObj: Dispatch, kvRevision?: number): void => {
-            const currentRevision = dispatchRevisions.get(dispatchObj.id) ?? 0;
+            const currentRevision = dispatchRevisions.get(dispatchObj.id)?.revision ?? 0;
             if (kvRevision !== undefined && kvRevision > 0 && kvRevision <= currentRevision) {
                 return;
             }
@@ -422,7 +454,9 @@ export const useCentrumStore = defineStore(
 
                 updateDispatchStatus(dispatchObj.status);
             }
-            if (kvRevision !== undefined && kvRevision > 0) dispatchRevisions.set(dispatchObj.id, kvRevision);
+            if (kvRevision !== undefined && kvRevision > 0) {
+                dispatchRevisions.set(dispatchObj.id, { revision: kvRevision });
+            }
             handleDispatchAssignment(dispatchObj);
         };
 
@@ -430,12 +464,12 @@ export const useCentrumStore = defineStore(
          * Updates the status of a dispatch.
          * @param {DispatchStatus | undefined} status - The new status of the dispatch.
          */
-        const updateDispatchStatus = (status: DispatchStatus | undefined): void => {
-            if (!status) return;
+        const updateDispatchStatus = (status: DispatchStatus | undefined): boolean => {
+            if (!status) return false;
             const disp = dispatches.value.get(status.dispatchId);
             if (!disp) {
                 logger.warn('Processed Dispatch Status for unknown dispatch:', status.dispatchId, status);
-                return;
+                return false;
             }
             status.unit = undefined;
 
@@ -464,7 +498,7 @@ export const useCentrumStore = defineStore(
                         currentStatus: disp.status ? StatusDispatch[disp.status.status] : undefined,
                     });
                 }
-                return;
+                return true;
             }
 
             if (!disp.status) {
@@ -476,7 +510,7 @@ export const useCentrumStore = defineStore(
                         statusId: status.id,
                         currentStatusId: disp.status.id,
                     });
-                    return;
+                    return false;
                 }
 
                 disp.status.id = status.id;
@@ -500,6 +534,8 @@ export const useCentrumStore = defineStore(
                 status: StatusDispatch[status.status],
                 assignedUnitIds: disp.units.map((assignment) => assignment.unitId),
             });
+
+            return true;
         };
 
         /**
@@ -507,7 +543,7 @@ export const useCentrumStore = defineStore(
          * @param {number} id - The ID of the dispatch to remove.
          */
         const removeDispatch = (id: number, kvRevision?: number): void => {
-            const currentRevision = dispatchRevisions.get(id) ?? 0;
+            const currentRevision = dispatchRevisions.get(id)?.revision ?? 0;
             if (kvRevision !== undefined && kvRevision > 0 && kvRevision <= currentRevision) {
                 return;
             }
@@ -515,7 +551,11 @@ export const useCentrumStore = defineStore(
             removePendingDispatch(id);
             removeOwnDispatch(id);
             dispatches.value.delete(id);
-            dispatchRevisions.delete(id);
+            if (kvRevision !== undefined && kvRevision > 0) {
+                dispatchRevisions.set(id, { revision: kvRevision, deletedAt: Date.now() });
+            } else if (currentRevision > 0) {
+                dispatchRevisions.set(id, { revision: currentRevision, deletedAt: Date.now() });
+            }
         };
 
         /**
@@ -855,7 +895,7 @@ export const useCentrumStore = defineStore(
 
                         if (isCenter.value) addFeedItem(ds);
 
-                        updateDispatchStatus(ds);
+                        const statusApplied = updateDispatchStatus(ds);
 
                         if (ds.status === StatusDispatch.COMPLETED) {
                             // Play sound if one of the user's own dispatches got completed
@@ -863,7 +903,7 @@ export const useCentrumStore = defineStore(
                                 dispatchCompleted.play();
                             }
                         } else if (ds.status === StatusDispatch.ARCHIVED) {
-                            removeDispatch(ds.dispatchId);
+                            if (statusApplied) removeDispatch(ds.dispatchId);
                             continue;
                         } else if (ds.status === StatusDispatch.NEED_ASSISTANCE) {
                             dispatchSOS.play();
@@ -1091,6 +1131,9 @@ export const useCentrumStore = defineStore(
         const cleanup = async (): Promise<void> => {
             logger.debug('Running cleanup tasks');
             const now = new Date().getTime() - timeCorrection.value;
+
+            pruneRevisionTombstones(unitRevisions);
+            pruneRevisionTombstones(dispatchRevisions);
 
             // Cleanup pending dispatches
             for (const pd of [...pendingDispatches.value]) {

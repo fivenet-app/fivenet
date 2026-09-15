@@ -29,7 +29,10 @@ func (s *assignmentExpirationSourceStub) IdleStore() jetstream.KeyValue {
 	return s.kv
 }
 
-func (s *assignmentExpirationSourceStub) Get(_ context.Context, _ int64) (*centrumdispatches.Dispatch, error) {
+func (s *assignmentExpirationSourceStub) Get(
+	_ context.Context,
+	_ int64,
+) (*centrumdispatches.Dispatch, error) {
 	select {
 	case s.getCalls <- struct{}{}:
 	default:
@@ -123,6 +126,8 @@ func newAssignmentExpirationWatcherTest(
 }
 
 func TestDispatchAssignmentExpirationWatcherRemovesOnlyExpiredAssignment(t *testing.T) {
+	t.Parallel()
+
 	expiredAt := timestamp.New(time.Now().Add(-time.Second))
 	futureAt := timestamp.New(time.Now().Add(time.Minute))
 	source, _, _ := newAssignmentExpirationWatcherTest(t, &centrumdispatches.Dispatch{
@@ -150,6 +155,8 @@ func TestDispatchAssignmentExpirationWatcherRemovesOnlyExpiredAssignment(t *test
 }
 
 func TestDispatchAssignmentExpirationWatcherIgnoresCancelledAndStaleTimers(t *testing.T) {
+	t.Parallel()
+
 	for _, test := range []struct {
 		name        string
 		expiresAt   *timestamp.Timestamp
@@ -170,12 +177,21 @@ func TestDispatchAssignmentExpirationWatcherIgnoresCancelledAndStaleTimers(t *te
 		},
 	} {
 		t.Run(test.name, func(t *testing.T) {
+			t.Parallel()
+
 			source, _, _ := newAssignmentExpirationWatcherTest(t, &centrumdispatches.Dispatch{
-				Id:    42,
-				Units: []*centrumdispatches.DispatchAssignment{{DispatchId: 42, UnitId: 7, ExpiresAt: test.expiresAt}},
+				Id: 42,
+				Units: []*centrumdispatches.DispatchAssignment{
+					{DispatchId: 42, UnitId: 7, ExpiresAt: test.expiresAt},
+				},
 			})
 
-			_, err := source.kv.Create(t.Context(), "assignment.42.7", nil, jetstream.KeyTTL(time.Second))
+			_, err := source.kv.Create(
+				t.Context(),
+				"assignment.42.7",
+				nil,
+				jetstream.KeyTTL(time.Second),
+			)
 			require.NoError(t, err)
 			if test.cancelTimer {
 				require.NoError(t, source.kv.Delete(t.Context(), "assignment.42.7"))

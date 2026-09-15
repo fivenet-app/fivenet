@@ -262,7 +262,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                 {{
                                     useLocaleTimeAgo(toDate(props.examUser.endsAt), {
                                         showSecond: true,
-                                        updateInterval: 1_000,
+                                        scheduler: (callback) => useIntervalFn(callback, 1_000),
                                     }).value
                                 }}
                             </div>

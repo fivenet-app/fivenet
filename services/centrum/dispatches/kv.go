@@ -221,7 +221,12 @@ func (d *DispatchDB) ScheduleAssignmentExpiration(
 		if getErr != nil {
 			return getErr
 		}
-		_, err = d.idleKV.Update(ctx, assignmentExpirationKey(dispatchID, unitID), nil, entry.Revision())
+		_, err = d.idleKV.Update(
+			ctx,
+			assignmentExpirationKey(dispatchID, unitID),
+			nil,
+			entry.Revision(),
+		)
 	}
 
 	return err
@@ -230,7 +235,10 @@ func (d *DispatchDB) ScheduleAssignmentExpiration(
 // CancelAssignmentExpiration cancels an outstanding assignment timer. A
 // regular delete is intentionally distinct from the TTL expiry marker watched
 // by the housekeeper.
-func (d *DispatchDB) CancelAssignmentExpiration(ctx context.Context, dispatchID, unitID int64) error {
+func (d *DispatchDB) CancelAssignmentExpiration(
+	ctx context.Context,
+	dispatchID, unitID int64,
+) error {
 	err := d.idleKV.Delete(ctx, assignmentExpirationKey(dispatchID, unitID))
 	if errors.Is(err, jetstream.ErrKeyNotFound) {
 		return nil

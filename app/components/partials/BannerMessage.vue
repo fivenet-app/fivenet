@@ -14,7 +14,7 @@ const emit = defineEmits<{
 const notificationStore = useNotificationsStore();
 const { dismissedBannerMessageID } = storeToRefs(notificationStore);
 
-const now = useSecondClock();
+const now = useMinuteClock();
 
 const hide = computed(
     () =>

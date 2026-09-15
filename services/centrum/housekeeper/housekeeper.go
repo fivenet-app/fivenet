@@ -11,7 +11,6 @@ import (
 	centrumdispatchers "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/centrum/dispatchers"
 	centrumdispatches "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/centrum/dispatches"
 	centrumunits "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/centrum/units"
-	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/cron"
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/timestamp"
 	"github.com/fivenet-app/fivenet/v2026/pkg/config"
 	"github.com/fivenet-app/fivenet/v2026/pkg/croner"
@@ -32,7 +31,6 @@ import (
 	"go.opentelemetry.io/otel/trace"
 	"go.uber.org/fx"
 	"go.uber.org/zap"
-	"google.golang.org/protobuf/types/known/durationpb"
 )
 
 const (
@@ -246,7 +244,9 @@ func New(p Params) Result {
 	}))
 
 	p.LC.Append(fx.StopHook(func(_ context.Context) error {
-		s.le.Stop()
+		if s.le != nil {
+			s.le.Stop()
+		}
 		cancel()
 
 		s.wg.Wait()
@@ -307,158 +307,10 @@ func (s *Housekeeper) start(ctx context.Context) {
 	})
 }
 
-// runLeadershipRecovery repairs projections that updates-only watchers could
-// miss during a leader handoff. It starts only after durable user-info delivery
-// is attached, so an overlapping event cannot be lost before the sweep.
-func (s *Housekeeper) runLeadershipRecovery(ctx context.Context) {
-	if _, _, _, _, err := s.cleanupDispatchers(ctx); err != nil {
-		s.logger.Error("failed to reconcile dispatchers on leadership start", zap.Error(err))
-	}
-	if _, _, err := s.checkUnitUsers(ctx); err != nil {
-		s.logger.Error(
-			"failed to reconcile unit membership on leadership start",
-			zap.Error(err),
-		)
-	}
-	if _, _, err := s.removeDispatchesFromEmptyUnits(ctx); err != nil {
-		s.logger.Error(
-			"failed to reconcile empty unit dispatch assignments on leadership start",
-			zap.Error(err),
-		)
-	}
-	if _, _, err := s.reconcileUserInfoState(ctx); err != nil {
-		s.logger.Error("failed to reconcile user info state on leadership start", zap.Error(err))
-	}
-}
-
 func (s *Housekeeper) recordWatcherRestart(watcher string, err error) {
 	outcome := "restart"
 	if errors.Is(err, errWatcherUpdatesClosed) {
 		outcome = "updates_closed"
 	}
 	s.metrics.IncHousekeeperEvent(watcher, outcome)
-}
-
-func (s *Housekeeper) RegisterCronjobs(ctx context.Context, registry croner.IRegistry) error {
-	for _, c := range []string{
-		"centrum.manager_housekeeper.dispatch_deduplication",
-		"centrum.manager_housekeeper.load_new_dispatches",
-		"centrum.manager_housekeeper.dispatch_assignment_expiration",
-		"centrum.manager_housekeeper.cleanup_units",
-		"centrum.manager_housekeeper.audit_unit_membership",
-		"centrum.manager_housekeeper.audit_empty_unit_dispatches",
-		"centrum.manager_housekeeper.cancel_old_dispatches",
-		"centrum.manager_housekeeper.delete_old_dispatches",
-		"centrum.manager_housekeeper.delete_old_dispatches_from_kv",
-		"centrum.manager_housekeeper.reconcile_userinfo_state",
-	} {
-		if err := registry.UnregisterCronjob(ctx, c); err != nil {
-			return err
-		}
-	}
-
-	// Once legacy FiveM plugins create dispatches through the Centrum API, remove
-	// the registration below and enable this replacement instead.
-	// if err := registry.UnregisterCronjob(ctx, "centrum.housekeeper.load_new_dispatches"); err != nil {
-	// 	return err
-	// }
-	if err := registry.RegisterCronjob(ctx, &cron.Cronjob{
-		Name:     "centrum.housekeeper.load_new_dispatches",
-		Schedule: "*/4 * * * * * *", // Every 4 seconds
-		Timeout:  durationpb.New(3 * time.Second),
-	}); err != nil {
-		return err
-	}
-
-	if err := registry.RegisterCronjob(ctx, &cron.Cronjob{
-		Name:     "centrum.housekeeper.dispatch_assignment_expiration",
-		Schedule: "*/2 * * * * * *", // Every 2 seconds
-		Timeout:  durationpb.New(3 * time.Second),
-	}); err != nil {
-		return err
-	}
-
-	if err := registry.RegisterCronjob(ctx, &cron.Cronjob{
-		Name:     "centrum.housekeeper.cleanup_units",
-		Schedule: "15 * * * *", // Every hour at 15 minutes past the hour
-		Timeout:  durationpb.New(6 * time.Second),
-	}); err != nil {
-		return err
-	}
-
-	if err := registry.RegisterCronjob(ctx, &cron.Cronjob{
-		Name:     "centrum.housekeeper.reconcile_userinfo_state",
-		Schedule: reconcileUserInfoStateSchedule, // Twelve-hour authoritative recovery audit; also manually runnable.
-		Timeout:  durationpb.New(2 * time.Minute),
-	}); err != nil {
-		return err
-	}
-
-	if err := registry.RegisterCronjob(ctx, &cron.Cronjob{
-		Name:     "centrum.housekeeper.audit_empty_unit_dispatches",
-		Schedule: auditEmptyUnitDispatchesSchedule, // Five-minute recovery audit for the targeted unit watcher.
-		Timeout:  durationpb.New(30 * time.Second),
-	}); err != nil {
-		return err
-	}
-
-	if err := registry.RegisterCronjob(ctx, &cron.Cronjob{
-		Name:     "centrum.housekeeper.audit_unit_membership",
-		Schedule: "30 3 * * *", // Daily at 03:30
-		Timeout:  durationpb.New(30 * time.Second),
-	}); err != nil {
-		return err
-	}
-
-	if err := registry.RegisterCronjob(ctx, &cron.Cronjob{
-		Name:     "centrum.housekeeper.cancel_old_dispatches",
-		Schedule: cancelOldDispatchesSchedule, // Every five minutes; targeted SQL recovery query.
-		Timeout:  durationpb.New(30 * time.Second),
-	}); err != nil {
-		return err
-	}
-
-	if err := registry.RegisterCronjob(ctx, &cron.Cronjob{
-		Name:     "centrum.housekeeper.delete_old_dispatches",
-		Schedule: "@hourly", // Hourly
-		Timeout:  durationpb.New(30 * time.Second),
-	}); err != nil {
-		return err
-	}
-
-	if err := registry.RegisterCronjob(ctx, &cron.Cronjob{
-		Name:     "centrum.housekeeper.delete_old_dispatches_from_kv",
-		Schedule: deleteOldDispatchesKVSchedule, // Twelve-hour recovery audit; targeted timers handle normal cleanup.
-		Timeout:  durationpb.New(30 * time.Second),
-	}); err != nil {
-		return err
-	}
-
-	if err := registry.RegisterCronjob(ctx, &cron.Cronjob{
-		Name:     "centrum.housekeeper.cleanup_dispatchers",
-		Schedule: "45 3 * * *", // Daily audit; tracker changes handle normal cleanup.
-		Timeout:  durationpb.New(30 * time.Second),
-	}); err != nil {
-		return err
-	}
-
-	return nil
-}
-
-func (s *Housekeeper) RegisterCronjobHandlers(h *croner.Handlers) error {
-	h.Add("centrum.housekeeper.load_new_dispatches", s.loadNewDispatches)
-	h.Add(
-		"centrum.housekeeper.dispatch_assignment_expiration",
-		s.runHandleDispatchAssignmentExpiration,
-	)
-	h.Add("centrum.housekeeper.cleanup_units", s.runCleanupUnits)
-	h.Add("centrum.housekeeper.audit_unit_membership", s.runAuditUnitMembership)
-	h.Add("centrum.housekeeper.audit_empty_unit_dispatches", s.runAuditEmptyUnitDispatches)
-	h.Add("centrum.housekeeper.cancel_old_dispatches", s.runCancelOldDispatches)
-	h.Add("centrum.housekeeper.delete_old_dispatches", s.runDeleteOldDispatches)
-	h.Add("centrum.housekeeper.delete_old_dispatches_from_kv", s.runDeleteOldDispatchesFromKV)
-	h.Add("centrum.housekeeper.reconcile_userinfo_state", s.runReconcileUserInfoState)
-	h.Add("centrum.housekeeper.cleanup_dispatchers", s.runCleanupDispatchers)
-
-	return nil
 }
