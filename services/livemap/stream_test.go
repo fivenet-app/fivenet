@@ -188,3 +188,98 @@ func TestProcessMessageOnDutyTransitionEnqueuesSnapshot(t *testing.T) {
 	require.Len(t, sent[0].GetSnapshot().GetMarkers(), 1)
 	require.Len(t, sent[1].GetUserUpdates().GetUpdates(), 1)
 }
+
+func TestProcessMessageForwardsSubsequentUserMarkerUpdates(t *testing.T) {
+	t.Parallel()
+
+	grade := int32(3)
+	userInfo := newUserInfo(10, "police", grade, false)
+	usersJobs := &permissionsattributes.JobGradeList{
+		Jobs: map[string]int32{"ambulance": 10},
+	}
+	userOnDuty := true
+
+	updates := []*livemapmarkers.UserMarker{
+		{UserId: 42, Job: "ambulance", JobGrade: &grade, X: 1, Y: 2},
+		{UserId: 42, Job: "ambulance", JobGrade: &grade, X: 3, Y: 4},
+	}
+
+	var sent []*pblivemap.StreamResponse
+	for _, marker := range updates {
+		data, err := proto.Marshal(marker)
+		require.NoError(t, err)
+
+		err = (&Server{}).processMessage(
+			&streamTestMsg{data: data},
+			userInfo,
+			&userOnDuty,
+			usersJobs,
+			func(resp *pblivemap.StreamResponse) error {
+				sent = append(sent, resp)
+				return nil
+			},
+		)
+		require.NoError(t, err)
+	}
+
+	require.Len(t, sent, 2)
+	require.Equal(t, float64(1), sent[0].GetUserUpdates().GetUpdates()[0].GetX())
+	require.Equal(t, float64(3), sent[1].GetUserUpdates().GetUpdates()[0].GetX())
+}
+
+func TestProcessMessageForwardsDeleteAndRecreate(t *testing.T) {
+	t.Parallel()
+
+	grade := int32(3)
+	userInfo := newUserInfo(10, "police", grade, false)
+	usersJobs := &permissionsattributes.JobGradeList{
+		Jobs: map[string]int32{"ambulance": 10},
+	}
+	userOnDuty := true
+
+	marker := &livemapmarkers.UserMarker{
+		UserId:   42,
+		Job:      "ambulance",
+		JobGrade: &grade,
+		X:        3,
+		Y:        4,
+	}
+	data, err := proto.Marshal(marker)
+	require.NoError(t, err)
+
+	var sent []*pblivemap.StreamResponse
+	send := func(resp *pblivemap.StreamResponse) error {
+		sent = append(sent, resp)
+		return nil
+	}
+
+	err = (&Server{}).processMessage(
+		&streamTestMsg{
+			subject: "$KV.userloc.ambulance.3.42",
+			headers: nats.Header{"KV-Operation": []string{"DEL"}},
+		},
+		userInfo,
+		&userOnDuty,
+		usersJobs,
+		send,
+	)
+	require.NoError(t, err)
+
+	err = (&Server{}).processMessage(
+		&streamTestMsg{
+			subject: "$KV.userloc.ambulance.3.42",
+			data:    data,
+		},
+		userInfo,
+		&userOnDuty,
+		usersJobs,
+		send,
+	)
+	require.NoError(t, err)
+
+	require.Len(t, sent, 2)
+	require.Len(t, sent[0].GetUserDeletes().GetDeletes(), 1)
+	require.Equal(t, int32(42), sent[0].GetUserDeletes().GetDeletes()[0].GetId())
+	require.Len(t, sent[1].GetUserUpdates().GetUpdates(), 1)
+	require.Equal(t, float64(3), sent[1].GetUserUpdates().GetUpdates()[0].GetX())
+}

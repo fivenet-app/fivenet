@@ -34,6 +34,7 @@ var (
 	errLivemapUserInfoChanged  = errors.New("livemap stream user info changed")
 	errLivemapUserInfoResync   = errors.New("livemap stream user info resync")
 	errLivemapMarkerFeedResync = errors.New("livemap marker feed resync")
+	errLivemapUserFeedResync   = errors.New("livemap user feed resync")
 )
 
 func (s *Server) getAndSendACL(
@@ -189,6 +190,12 @@ func (s *Server) Stream(
 			continue
 		}
 		if errors.Is(err, errLivemapMarkerFeedResync) {
+			if ctx.Err() != nil {
+				return nil
+			}
+			continue
+		}
+		if errors.Is(err, errLivemapUserFeedResync) {
 			if ctx.Err() != nil {
 				return nil
 			}
@@ -412,11 +419,13 @@ func (s *Server) stream(
 			for {
 				msg, err := userMessages.Next(jetstream.NextContext(gctx))
 				if err != nil {
-					if protoutils.IsContextCanceled(err) ||
-						errors.Is(err, jetstream.ErrMsgIteratorClosed) {
+					if protoutils.IsContextCanceled(err) {
 						return nil
 					}
-					return err
+					if errors.Is(err, jetstream.ErrMsgIteratorClosed) && gctx.Err() != nil {
+						return nil
+					}
+					return fmt.Errorf("%w: %v", errLivemapUserFeedResync, err)
 				}
 
 				if err := s.processMessage(

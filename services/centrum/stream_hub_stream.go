@@ -83,7 +83,9 @@ func (s *Server) stream(
 				if event.Response.GetSettingsDeleted() == userInfo.GetJob() {
 					return errAccessChanged
 				}
-				if !slices.Contains(jobs, event.Job) {
+				if !slices.ContainsFunc(event.Jobs, func(job string) bool {
+					return slices.Contains(jobs, job)
+				}) {
 					continue
 				}
 				select {

@@ -6,6 +6,7 @@ import (
 	"testing"
 	"time"
 
+	centrumdispatches "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/centrum/dispatches"
 	centrumsettings "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/centrum/settings"
 	centrumunits "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/centrum/units"
 	pbcentrum "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/centrum"
@@ -87,14 +88,116 @@ func TestFeedHubDoesNotAdvanceSequenceWithoutSubscribers(t *testing.T) {
 		feedBroker: broker.NewWithResyncOnSlowSubscriber[*feedEvent](10),
 		metrics:    centrummetrics.Get(),
 	}
-	srv.publishFeedEvent("events", "", &pbcentrum.StreamResponse{}, 0)
+	srv.publishFeedEvent("events", nil, &pbcentrum.StreamResponse{}, 0)
 	assert.Equal(t, uint64(0), srv.feedSequence.Load())
 
 	go srv.feedBroker.Start(ctx)
 	feed := srv.feedBroker.Subscribe()
-	srv.publishFeedEvent("events", "", &pbcentrum.StreamResponse{}, 0)
+	srv.publishFeedEvent("events", nil, &pbcentrum.StreamResponse{}, 0)
 	event := waitForFeedEvent(t, feed, func(event *feedEvent) bool { return !event.Resync })
 	assert.Equal(t, uint64(1), event.Sequence)
+}
+
+func TestFeedHubCoalescesDispatchMappingEvents(t *testing.T) {
+	t.Parallel()
+
+	ctx, cancel := context.WithCancel(t.Context())
+	defer cancel()
+	srv := &Server{
+		feedBroker: broker.NewWithResyncOnSlowSubscriber[*feedEvent](10),
+		metrics:    centrummetrics.Get(),
+	}
+	go srv.feedBroker.Start(ctx)
+
+	feed := srv.feedBroker.Subscribe()
+	defer srv.feedBroker.Unsubscribe(feed)
+
+	for _, job := range []string{"ambulance", "fire", "police"} {
+		srv.queueDispatchFeedEvent(job, &pbcentrum.StreamResponse{
+			Change: &pbcentrum.StreamResponse_DispatchUpdated{
+				DispatchUpdated: &centrumdispatches.Dispatch{Id: 42},
+			},
+		}, 7)
+	}
+
+	event := waitForFeedEvent(t, feed, func(event *feedEvent) bool {
+		return event.Response.GetDispatchUpdated().GetId() == 42
+	})
+	assert.Equal(t, []string{"ambulance", "fire", "police"}, event.Jobs)
+	assert.Equal(t, uint64(7), event.Response.GetKvRevision())
+
+	select {
+	case duplicate := <-feed:
+		assert.Failf(t, "received duplicate dispatch event", "%+v", duplicate)
+	case <-time.After(feedCoalesceWindow * 2):
+	}
+}
+
+func TestFeedHubCoalescesUnitMappingEvents(t *testing.T) {
+	t.Parallel()
+
+	ctx, cancel := context.WithCancel(t.Context())
+	defer cancel()
+	srv := &Server{
+		feedBroker: broker.NewWithResyncOnSlowSubscriber[*feedEvent](10),
+		metrics:    centrummetrics.Get(),
+	}
+	go srv.feedBroker.Start(ctx)
+
+	feed := srv.feedBroker.Subscribe()
+	defer srv.feedBroker.Unsubscribe(feed)
+
+	for _, job := range []string{"ambulance", "fire", "police"} {
+		srv.queueUnitFeedEvent(job, &pbcentrum.StreamResponse{
+			Change: &pbcentrum.StreamResponse_UnitUpdated{
+				UnitUpdated: &centrumunits.Unit{Id: 42},
+			},
+		}, 7)
+	}
+
+	event := waitForFeedEvent(t, feed, func(event *feedEvent) bool {
+		return event.Response.GetUnitUpdated().GetId() == 42
+	})
+	assert.Equal(t, []string{"ambulance", "fire", "police"}, event.Jobs)
+	assert.Equal(t, uint64(7), event.Response.GetKvRevision())
+
+	select {
+	case duplicate := <-feed:
+		assert.Failf(t, "received duplicate unit event", "%+v", duplicate)
+	case <-time.After(feedCoalesceWindow * 2):
+	}
+}
+
+func TestFeedHubPreservesDispatchUpdateBeforeDeletion(t *testing.T) {
+	t.Parallel()
+
+	ctx, cancel := context.WithCancel(t.Context())
+	defer cancel()
+	srv := &Server{
+		feedBroker: broker.NewWithResyncOnSlowSubscriber[*feedEvent](10),
+		metrics:    centrummetrics.Get(),
+	}
+	go srv.feedBroker.Start(ctx)
+
+	feed := srv.feedBroker.Subscribe()
+	defer srv.feedBroker.Unsubscribe(feed)
+
+	srv.queueDispatchFeedEvent("ambulance", &pbcentrum.StreamResponse{
+		Change: &pbcentrum.StreamResponse_DispatchUpdated{
+			DispatchUpdated: &centrumdispatches.Dispatch{Id: 42},
+		},
+	}, 7)
+	srv.queueDispatchFeedEvent("ambulance", &pbcentrum.StreamResponse{
+		Change: &pbcentrum.StreamResponse_DispatchDeleted{DispatchDeleted: 42},
+	}, 8)
+
+	updated := waitForFeedEvent(t, feed, func(event *feedEvent) bool {
+		return event.Response.GetDispatchUpdated().GetId() == 42
+	})
+	deleted := waitForFeedEvent(t, feed, func(event *feedEvent) bool {
+		return event.Response.GetDispatchDeleted() == 42
+	})
+	assert.Less(t, updated.Sequence, deleted.Sequence)
 }
 
 func waitForFeedHubConsumer(t *testing.T, srv *Server, streamName string) {
@@ -161,7 +264,7 @@ func TestFeedHubForwardsJetStreamEventsAndKVUpdates(t *testing.T) {
 	require.NoError(t, err)
 
 	event := waitForFeedEvent(t, feed, func(event *feedEvent) bool {
-		return event.Job == "ambulance" && event.Response.GetUnitStatus().GetId() == status.GetId()
+		return assert.Equal(t, []string{"ambulance"}, event.Jobs) && event.Response.GetUnitStatus().GetId() == status.GetId()
 	})
 	assert.Equal(t, status.GetUnitId(), event.Response.GetUnitStatus().GetUnitId())
 	assert.Zero(t, event.Response.GetKvRevision())
@@ -174,7 +277,7 @@ func TestFeedHubForwardsJetStreamEventsAndKVUpdates(t *testing.T) {
 	require.NoError(t, err)
 
 	event = waitForFeedEvent(t, feed, func(event *feedEvent) bool {
-		return event.Job == "police" && event.Response.GetSettings().GetJob() == "police"
+		return assert.Equal(t, []string{"police"}, event.Jobs) && event.Response.GetSettings().GetJob() == "police"
 	})
 	assert.True(t, event.Response.GetSettings().GetEnabled())
 	assert.NotZero(t, event.Response.GetKvRevision())

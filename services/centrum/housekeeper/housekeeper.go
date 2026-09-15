@@ -68,16 +68,28 @@ type Housekeeper struct {
 	userInfoReconcileConsumer jetstream.Consumer
 	le                        *leaderelection.LeaderElector
 
-	settings                  *settings.SettingsDB
-	dispatchers               *dispatchers.DispatchersDB
-	units                     *units.UnitDB
-	unitAssignments           unitAssignments
-	unitAssignmentWatchSource unitAssignmentWatchSource
-	dispatches                *dispatches.DispatchDB
-	unitUserState             unitUserState
-	dispatcherUserState       dispatcherUserState
-	dispatchLifecycle         dispatchLifecycle
-	emptyUnitCleaner          emptyUnitCleaner
+	settings                   *settings.SettingsDB
+	dispatchers                *dispatchers.DispatchersDB
+	units                      *units.UnitDB
+	unitAssignments            unitAssignments
+	unitAssignmentWatchSource  unitAssignmentWatchSource
+	dispatches                 *dispatches.DispatchDB
+	assignmentExpirationSource dispatchAssignmentExpirationSource
+	assignmentExpirationWriter dispatchAssignmentExpirationWriter
+	unitUserState              unitUserState
+	dispatcherUserState        dispatcherUserState
+	dispatchLifecycle          dispatchLifecycle
+	emptyUnitCleaner           emptyUnitCleaner
+}
+
+type dispatchAssignmentExpirationSource interface {
+	IdleStore() jetstream.KeyValue
+	Get(context.Context, int64) (*centrumdispatches.Dispatch, error)
+	UpdateAssignments(context.Context, *string, *int32, int64, []int64, []int64, time.Time) error
+}
+
+type dispatchAssignmentExpirationWriter interface {
+	UpdateAssignments(context.Context, *string, *int32, int64, []int64, []int64, time.Time) error
 }
 
 type unitAssignments interface {
@@ -181,20 +193,29 @@ func New(p Params) Result {
 		userinfo: p.UserInfo,
 		js:       p.JS,
 
-		settings:        p.Settings,
-		dispatchers:     p.Dispatchers,
-		units:           p.Units,
-		unitAssignments: p.Units,
-		dispatches:      p.Dispatches,
+		settings:                   p.Settings,
+		dispatchers:                p.Dispatchers,
+		units:                      p.Units,
+		unitAssignments:            p.Units,
+		dispatches:                 p.Dispatches,
+		assignmentExpirationSource: p.Dispatches,
+		assignmentExpirationWriter: p.Dispatches,
 	}
 	// For testing, we can override these functions to use mocks or fakes.
-	s.unitAssignmentWatchSource = p.Units.Store()
 	s.unitUserState = p.Units
 	s.dispatcherUserState = p.Dispatchers
 	s.dispatchLifecycle = p.Dispatches
 	s.emptyUnitCleaner = dispatchAssignmentCleaner{housekeeper: s}
 
 	p.LC.Append(fx.StartHook(func(ctxStartup context.Context) error {
+		// UnitDB creates its KV-backed store in its own start hook. Capture it
+		// only after that hook has run; doing so in New stores a typed nil pointer
+		// in the interface and panics when the elected housekeeper starts watching.
+		s.unitAssignmentWatchSource = p.Units.Store()
+		if s.unitAssignmentWatchSource == nil {
+			return errors.New("unit assignment watch source is not initialized")
+		}
+
 		if err := s.ensureUserInfoReconcileConsumer(ctxStartup); err != nil {
 			return fmt.Errorf("failed to register user info reconciliation consumer: %w", err)
 		}
@@ -275,6 +296,10 @@ func (s *Housekeeper) start(ctx context.Context) {
 
 	s.wg.Go(func() {
 		s.runProjectionCleanupWatcher(ctx)
+	})
+
+	s.wg.Go(func() {
+		s.runDispatchAssignmentExpirationWatcher(ctx)
 	})
 
 	s.wg.Go(func() {

@@ -148,6 +148,31 @@ func New(p Params) *UnitDB {
 			return err
 		}
 		d.jobMapping = jobSt
+		ensureJobMapping := func(ctx context.Context, job string, unitID int64, source string, refresh bool) error {
+			key := centrumutils.JobIdKey(job, unitID)
+			mapping := &common.IDMapping{Id: unitID}
+			changed := false
+			var err error
+			if refresh {
+				// The job mapping is the job-scoped stream trigger. Rewrite it for
+				// every local unit projection update, even when its ID is unchanged.
+				err = jobSt.Put(ctx, key, mapping)
+				changed = err == nil
+			} else {
+				// Remote watchers only repair a missing mapping. Rewriting it from
+				// every server would duplicate the stream trigger.
+				changed, err = jobSt.PutIfChanged(ctx, key, mapping)
+			}
+			logger.Debug(
+				"ensured unit job mapping",
+				zap.String("source", source),
+				zap.String("key", key),
+				zap.Int64("unit_id", unitID),
+				zap.Bool("changed", changed),
+				zap.Error(err),
+			)
+			return err
+		}
 
 		st, err := store.New[centrumunits.Unit, *centrumunits.Unit](
 			ctxCancel,
@@ -161,13 +186,7 @@ func New(p Params) *UnitDB {
 						return nil, nil
 					}
 
-					if err := jobSt.Put(
-						ctx,
-						centrumutils.JobIdKey(unit.GetJob(), unit.GetId()),
-						&common.IDMapping{
-							Id: unit.GetId(),
-						},
-					); err != nil {
+					if err := ensureJobMapping(ctx, unit.GetJob(), unit.GetId(), "local_update", true); err != nil {
 						return nil, fmt.Errorf(
 							"failed to update job %s mapping for unit %d. %w",
 							unit.GetJob(),
@@ -209,13 +228,7 @@ func New(p Params) *UnitDB {
 						return nil, nil
 					}
 
-					if err := jobSt.Put(
-						ctx,
-						centrumutils.JobIdKey(unit.GetJob(), unit.GetId()),
-						&common.IDMapping{
-							Id: unit.GetId(),
-						},
-					); err != nil {
+					if err := ensureJobMapping(ctx, unit.GetJob(), unit.GetId(), "remote_update", false); err != nil {
 						return nil, fmt.Errorf(
 							"failed to update job %s mapping for unit %d. %w",
 							unit.GetJob(),

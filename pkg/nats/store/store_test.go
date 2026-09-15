@@ -59,6 +59,14 @@ func TestBasicStoreCreateAndUse(t *testing.T) {
 	err = store.Put(ctx, "second", second)
 	require.NoError(t, err)
 
+	changed, err := store.PutIfChanged(ctx, "first", first)
+	require.NoError(t, err)
+	assert.False(t, changed)
+
+	changed, err = store.PutIfChanged(ctx, "first", &tests.SimpleObject{Field1: "Updated"})
+	require.NoError(t, err)
+	assert.True(t, changed)
+
 	keys := store.Keys("")
 	assert.Len(t, keys, 2)
 

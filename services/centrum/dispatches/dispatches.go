@@ -147,7 +147,7 @@ func New(p Params) *DispatchDB {
 	p.LC.Append(fx.StartHook(func(ctxStartup context.Context) error {
 		idleKV, err := d.js.CreateOrUpdateKeyValue(ctxStartup, jetstream.KeyValueConfig{
 			Bucket:         "centrum_dispatches_idle",
-			Description:    "Timer keys for inactive and completed dispatches",
+			Description:    "Timer keys for dispatch inactivity, cleanup, projections, and assignments",
 			Storage:        jetstream.MemoryStorage,
 			History:        1,
 			MaxBytes:       0,
@@ -178,6 +178,31 @@ func New(p Params) *DispatchDB {
 			return err
 		}
 		d.jobMapping = jobSt
+		ensureJobMapping := func(ctx context.Context, job string, dispatchID int64, source string, refresh bool) error {
+			key := centrumutils.JobIdKey(job, dispatchID)
+			mapping := &common.IDMapping{Id: dispatchID}
+			changed := false
+			var err error
+			if refresh {
+				// The job mapping is the job-scoped stream trigger. Rewrite it for
+				// every local dispatch projection update, even when its ID is unchanged.
+				err = jobSt.Put(ctx, key, mapping)
+				changed = err == nil
+			} else {
+				// Remote watchers only repair a missing mapping. Rewriting it from
+				// every server would duplicate the stream trigger.
+				changed, err = jobSt.PutIfChanged(ctx, key, mapping)
+			}
+			logger.Debug(
+				"ensured dispatch job mapping",
+				zap.String("source", source),
+				zap.String("key", key),
+				zap.Int64("dispatch_id", dispatchID),
+				zap.Bool("changed", changed),
+				zap.Error(err),
+			)
+			return err
+		}
 
 		st, err := store.New[centrumdispatches.Dispatch, *centrumdispatches.Dispatch](
 			ctxCancel,
@@ -210,12 +235,12 @@ func New(p Params) *DispatchDB {
 					newJobSet := make(map[string]struct{}, len(dispatch.GetJobs().GetJobStrings()))
 					for _, job := range dispatch.GetJobs().GetJobStrings() {
 						newJobSet[job] = struct{}{}
-						if err := jobSt.Put(
+						if err := ensureJobMapping(
 							ctx,
-							centrumutils.JobIdKey(job, dispatch.GetId()),
-							&common.IDMapping{
-								Id: dispatch.GetId(),
-							},
+							job,
+							dispatch.GetId(),
+							"local_update",
+							true,
 						); err != nil {
 							errs = multierr.Append(
 								errs,
@@ -315,12 +340,12 @@ func New(p Params) *DispatchDB {
 					newJobSet := make(map[string]struct{}, len(dispatch.GetJobs().GetJobStrings()))
 					for _, job := range dispatch.GetJobs().GetJobStrings() {
 						newJobSet[job] = struct{}{}
-						if err := jobSt.Put(
+						if err := ensureJobMapping(
 							ctx,
-							centrumutils.JobIdKey(job, dispatch.GetId()),
-							&common.IDMapping{
-								Id: dispatch.GetId(),
-							},
+							job,
+							dispatch.GetId(),
+							"remote_update",
+							false,
 						); err != nil {
 							return nil, fmt.Errorf(
 								"failed to update job %s mapping for dispatch %d. %w",
@@ -968,7 +993,7 @@ func (s *DispatchDB) UpdateAssignments(
 		UnitID int64 `alias:"unit_id"`
 	}{}
 	stmt := tDispatchUnit.
-		SELECT(tDispatchUnit.UnitID).
+		SELECT(tDispatchUnit.UnitID.AS("unit_id")).
 		FROM(tDispatchUnit).
 		WHERE(tDispatchUnit.DispatchID.EQ(mysql.Int64(dspId)))
 	if err := stmt.QueryContext(ctx, tx, &existingRows); err != nil {
@@ -978,9 +1003,17 @@ func (s *DispatchDB) UpdateAssignments(
 	}
 
 	existingUnits := map[int64]struct{}{}
+	existingAssignmentIDs := make([]int64, 0, len(existingRows))
 	for _, row := range existingRows {
 		existingUnits[row.UnitID] = struct{}{}
+		existingAssignmentIDs = append(existingAssignmentIDs, row.UnitID)
 	}
+	slices.Sort(existingAssignmentIDs)
+	s.logger.Debug(
+		"loaded persisted dispatch assignments before assignment update",
+		zap.Int64("dispatch_id", dspId),
+		zap.Int64s("persisted_assignment_unit_ids", existingAssignmentIDs),
+	)
 
 	actualRemove := make([]int64, 0, len(toRemove))
 	for _, unitId := range toRemove {
@@ -991,6 +1024,22 @@ func (s *DispatchDB) UpdateAssignments(
 	}
 	slices.Sort(actualRemove)
 	actualRemove = slices.Compact(actualRemove)
+
+	// A requested removal must reconcile an assignment that remains only in the
+	// KV projection and emit the corresponding status transition.
+	effectiveRemove := slices.Clone(actualRemove)
+	for _, unitId := range toRemove {
+		if slices.ContainsFunc(
+			dsp.GetUnits(),
+			func(assignment *centrumdispatches.DispatchAssignment) bool {
+				return assignment.GetUnitId() == unitId
+			},
+		) {
+			effectiveRemove = append(effectiveRemove, unitId)
+		}
+	}
+	slices.Sort(effectiveRemove)
+	effectiveRemove = slices.Compact(effectiveRemove)
 
 	actualAdd := make([]int64, 0, len(resolvedUnits))
 	for unitId := range resolvedUnits {
@@ -1003,6 +1052,18 @@ func (s *DispatchDB) UpdateAssignments(
 	}
 	slices.Sort(actualAdd)
 	actualAdd = slices.Compact(actualAdd)
+
+	s.logger.Debug(
+		"resolved dispatch assignment changes",
+		zap.Int64("dispatch_id", dspId),
+		zap.Int64s("requested_add", toAdd),
+		zap.Int64s("requested_remove", toRemove),
+		zap.Int64s("actual_add", actualAdd),
+		zap.Int64s("actual_remove", actualRemove),
+		zap.Int64s("effective_remove", effectiveRemove),
+		zap.Int("remaining_assignments", len(existingUnits)),
+		zap.String("current_status", dsp.GetStatus().GetStatus().String()),
+	)
 
 	if len(toRemove) > 0 {
 		removeIds := make([]mysql.Expression, len(toRemove))
@@ -1052,7 +1113,7 @@ func (s *DispatchDB) UpdateAssignments(
 		}
 	}
 
-	for _, unitId := range actualRemove {
+	for _, unitId := range effectiveRemove {
 		pendingStatuses = append(pendingStatuses, pendingDispatchStatus{
 			status: &centrumdispatches.DispatchStatus{
 				CreatedAt:  timestamp.Now(),
@@ -1088,7 +1149,7 @@ func (s *DispatchDB) UpdateAssignments(
 
 	var currentStatusID int64
 	if len(existingUnits) == 0 &&
-		(len(actualRemove) > 0 || len(actualAdd) > 0) &&
+		(len(effectiveRemove) > 0 || len(actualAdd) > 0) &&
 		dsp.GetStatus() != nil &&
 		!centrumutils.IsStatusDispatchComplete(dsp.GetStatus().GetStatus()) {
 		pendingStatuses = append(pendingStatuses, pendingDispatchStatus{
@@ -1105,6 +1166,12 @@ func (s *DispatchDB) UpdateAssignments(
 			jobs: jobs,
 		})
 	}
+
+	s.logger.Debug(
+		"prepared dispatch assignment statuses",
+		zap.Int64("dispatch_id", dspId),
+		zap.Int("status_count", len(pendingStatuses)),
+	)
 
 	persistedStatuses := make([]pendingDispatchStatus, 0, len(pendingStatuses))
 	for i := range pendingStatuses {
@@ -1132,6 +1199,15 @@ func (s *DispatchDB) UpdateAssignments(
 	if err != nil {
 		return err
 	}
+	finalAssignmentIDs := make([]int64, 0, len(finalAssignments))
+	for _, assignment := range finalAssignments {
+		finalAssignmentIDs = append(finalAssignmentIDs, assignment.GetUnitId())
+	}
+	s.logger.Debug(
+		"loaded assignments after assignment update",
+		zap.Int64("dispatch_id", dspId),
+		zap.Int64s("persisted_assignment_unit_ids", finalAssignmentIDs),
+	)
 
 	key := centrumutils.IdKey(dspId)
 	if err := s.store.ComputeUpdate(
@@ -1175,7 +1251,19 @@ func (s *DispatchDB) UpdateAssignments(
 		return err
 	}
 
+	// Timers are an optimization for prompt expiry notification. The committed
+	// assignment rows remain authoritative and the housekeeper cron recovers if
+	// a timer operation fails.
+	s.updateAssignmentExpirationTimers(ctx, dspId, actualRemove, resolvedUnits, expiresAt)
+
 	for i := range persistedStatuses {
+		s.logger.Debug(
+			"publishing dispatch assignment status",
+			zap.Int64("dispatch_id", dspId),
+			zap.Int64("status_id", persistedStatuses[i].status.GetId()),
+			zap.String("status", persistedStatuses[i].status.GetStatus().String()),
+			zap.Int64p("unit_id", persistedStatuses[i].status.UnitId),
+		)
 		if err := s.publishDispatchStatus(
 			ctx,
 			persistedStatuses[i].status,
@@ -1186,6 +1274,46 @@ func (s *DispatchDB) UpdateAssignments(
 	}
 
 	return nil
+}
+
+func (s *DispatchDB) updateAssignmentExpirationTimers(
+	ctx context.Context,
+	dspID int64,
+	actualRemove []int64,
+	resolvedUnits map[int64]*centrumunits.Unit,
+	expiresAt time.Time,
+) {
+	for _, unitID := range actualRemove {
+		if err := s.CancelAssignmentExpiration(ctx, dspID, unitID); err != nil {
+			s.logger.Warn(
+				"failed to cancel dispatch assignment expiration timer",
+				zap.Int64("dispatch_id", dspID),
+				zap.Int64("unit_id", unitID),
+				zap.Error(err),
+			)
+		}
+	}
+	for unitID := range resolvedUnits {
+		if expiresAt.IsZero() {
+			if err := s.CancelAssignmentExpiration(ctx, dspID, unitID); err != nil {
+				s.logger.Warn(
+					"failed to cancel forced dispatch assignment expiration timer",
+					zap.Int64("dispatch_id", dspID),
+					zap.Int64("unit_id", unitID),
+					zap.Error(err),
+				)
+			}
+		} else {
+			if err := s.ScheduleAssignmentExpiration(ctx, dspID, unitID, expiresAt); err != nil {
+				s.logger.Warn(
+					"failed to schedule dispatch assignment expiration timer",
+					zap.Int64("dispatch_id", dspID),
+					zap.Int64("unit_id", unitID),
+					zap.Error(err),
+				)
+			}
+		}
+	}
 }
 
 func (s *DispatchDB) Create(
@@ -1563,8 +1691,11 @@ func (s *DispatchDB) TakeDispatch(
 	for _, dspId := range dispatchIds {
 		var statusToPublish *centrumdispatches.DispatchStatus
 		var publishJobs []string
+		action := "declined"
+		var result sql.Result
 
 		if resp == centrumdispatches.TakeDispatchResp_TAKE_DISPATCH_RESP_ACCEPTED {
+			action = "accepted"
 			stmt := tDispatchUnit.
 				INSERT(
 					tDispatchUnit.DispatchID,
@@ -1577,10 +1708,15 @@ func (s *DispatchDB) TakeDispatch(
 					mysql.NULL,
 				).
 				ON_DUPLICATE_KEY_UPDATE(
-					tDispatchUnit.ExpiresAt.SET(mysql.TimestampExp(mysql.NULL)),
+					// Keep the former polling-based grace period: an offer may be
+					// accepted for two seconds after its deadline, but never later.
+					tDispatchUnit.ExpiresAt.SET(mysql.RawTimestamp(
+						"IF(`expires_at` IS NULL OR `expires_at` >= DATE_SUB(CURRENT_TIMESTAMP(), INTERVAL 2 SECOND), NULL, `expires_at`)",
+					)),
 				)
 
-			if _, err := stmt.ExecContext(ctx, s.db); err != nil {
+			result, err = stmt.ExecContext(ctx, s.db)
+			if err != nil {
 				if !dbutils.IsDuplicateError(err) {
 					return errswrap.NewError(err, errorscentrum.ErrFailedQuery)
 				}
@@ -1594,10 +1730,45 @@ func (s *DispatchDB) TakeDispatch(
 				)).
 				LIMIT(1)
 
-			if _, err := stmt.ExecContext(ctx, s.db); err != nil {
+			result, err = stmt.ExecContext(ctx, s.db)
+			if err != nil {
 				if !dbutils.IsDuplicateError(err) {
 					return errswrap.NewError(err, errorscentrum.ErrFailedQuery)
 				}
+			}
+		}
+
+		rowsAffected := int64(-1)
+		if result != nil {
+			if rows, err := result.RowsAffected(); err == nil {
+				rowsAffected = rows
+			}
+		}
+		assignments, assignmentErr := s.LoadDispatchAssignments(ctx, dspId)
+		if assignmentErr != nil {
+			return errswrap.NewError(assignmentErr, errorscentrum.ErrFailedQuery)
+		} else {
+			assignmentIDs := make([]int64, 0, len(assignments))
+			assignmentExpired := false
+			for _, assignment := range assignments {
+				assignmentIDs = append(assignmentIDs, assignment.GetUnitId())
+				if resp == centrumdispatches.TakeDispatchResp_TAKE_DISPATCH_RESP_ACCEPTED &&
+					assignment.GetUnitId() == unit.GetId() &&
+					assignment.GetExpiresAt() != nil &&
+					assignment.GetExpiresAt().AsTime().Before(time.Now().Add(-2*time.Second)) {
+					assignmentExpired = true
+				}
+			}
+			s.logger.Debug(
+				"persisted take dispatch assignment mutation",
+				zap.Int64("dispatch_id", dspId),
+				zap.Int64("unit_id", unit.GetId()),
+				zap.String("action", action),
+				zap.Int64("rows_affected", rowsAffected),
+				zap.Int64s("persisted_assignment_unit_ids", assignmentIDs),
+			)
+			if assignmentExpired {
+				return errorscentrum.ErrNotPartOfDispatch
 			}
 		}
 
@@ -1619,14 +1790,14 @@ func (s *DispatchDB) TakeDispatch(
 					status = centrumdispatches.StatusDispatch_STATUS_DISPATCH_UNIT_ACCEPTED
 
 					found := false
-					accepted := true
 					// Set unit expires at to nil
 					for _, ua := range dsp.GetUnits() {
 						if ua.GetUnitId() == unit.GetId() {
 							found = true
-							// If there's no expiration time the unit has been directly assigned
+							// A direct assignment has already been accepted. Do not emit
+							// another acceptance status or rewrite the projection.
 							if ua.GetExpiresAt() == nil {
-								accepted = false
+								return dsp, false, nil
 							}
 							ua.ExpiresAt = nil
 							break
@@ -1642,29 +1813,25 @@ func (s *DispatchDB) TakeDispatch(
 						})
 					}
 
-					if accepted {
-						// Set unit to busy when unit accepts a dispatch
-						if unit.GetStatus() == nil ||
-							unit.GetStatus().
-								GetStatus() !=
-								centrumunits.StatusUnit_STATUS_UNIT_BUSY {
-							if _, _, err := s.units.UpdateStatus(
-								ctx,
-								unit.GetId(),
-								&centrumunits.UnitStatus{
-									CreatedAt:  timestamp.Now(),
-									UnitId:     unit.GetId(),
-									Status:     centrumunits.StatusUnit_STATUS_UNIT_BUSY,
-									UserId:     &userId,
-									CreatorId:  &userId,
-									X:          x,
-									Y:          y,
-									Postal:     postal,
-									CreatorJob: &userJob,
-								},
-							); err != nil {
-								return nil, false, err
-							}
+					// Set unit to busy when unit accepts a dispatch.
+					if unit.GetStatus() == nil ||
+						unit.GetStatus().GetStatus() != centrumunits.StatusUnit_STATUS_UNIT_BUSY {
+						if _, _, err := s.units.UpdateStatus(
+							ctx,
+							unit.GetId(),
+							&centrumunits.UnitStatus{
+								CreatedAt:  timestamp.Now(),
+								UnitId:     unit.GetId(),
+								Status:     centrumunits.StatusUnit_STATUS_UNIT_BUSY,
+								UserId:     &userId,
+								CreatorId:  &userId,
+								X:          x,
+								Y:          y,
+								Postal:     postal,
+								CreatorJob: &userJob,
+							},
+						); err != nil {
+							return nil, false, err
 						}
 					}
 				} else {
@@ -1715,6 +1882,16 @@ func (s *DispatchDB) TakeDispatch(
 			if err := s.publishDispatchStatus(ctx, statusToPublish, publishJobs); err != nil {
 				return errswrap.NewError(err, errorscentrum.ErrFailedQuery)
 			}
+		}
+
+		if err := s.CancelAssignmentExpiration(ctx, dspId, unit.GetId()); err != nil {
+			s.logger.Warn(
+				"failed to cancel dispatch assignment expiration timer after response",
+				zap.Int64("dispatch_id", dspId),
+				zap.Int64("unit_id", unit.GetId()),
+				zap.String("action", action),
+				zap.Error(err),
+			)
 		}
 	}
 

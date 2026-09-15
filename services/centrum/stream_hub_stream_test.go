@@ -62,7 +62,7 @@ func TestStreamRequestsSnapshotAfterOwnSettingsChange(t *testing.T) {
 	feed := make(chan *feedEvent, 1)
 	feed <- &feedEvent{
 		Sequence: 1,
-		Job:      "ambulance",
+		Jobs:     []string{"ambulance"},
 		Response: &pbcentrum.StreamResponse{
 			Change: &pbcentrum.StreamResponse_Settings{
 				Settings: &centrumsettings.Settings{Job: "ambulance"},
@@ -151,7 +151,7 @@ func TestStreamIgnoresEventsOutsideAuthorizedJobs(t *testing.T) {
 	feed := make(chan *feedEvent, 1)
 	feed <- &feedEvent{
 		Sequence: 1,
-		Job:      "police",
+		Jobs:     []string{"police"},
 		Response: &pbcentrum.StreamResponse{
 			Change: &pbcentrum.StreamResponse_Settings{
 				Settings: &centrumsettings.Settings{Job: "police"},
