@@ -3,6 +3,7 @@ package store
 import (
 	"context"
 	"testing"
+	"time"
 
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/common/tests"
 	"github.com/fivenet-app/fivenet/v2026/internal/tests/nats"
@@ -129,4 +130,27 @@ func TestBasicStoreCreateAndUse(t *testing.T) {
 
 	list = store.List()
 	assert.Empty(t, list)
+}
+
+func TestWatchAllClosesUpdatesWhenCanceled(t *testing.T) {
+	t.Parallel()
+
+	_, js, shutdown, err := nats.NewInProcessNATSServer()
+	require.NoError(t, err)
+	defer func() { require.NoError(t, shutdown()) }()
+
+	ctx, cancel := context.WithCancel(t.Context())
+	store, err := New[tests.SimpleObject](ctx, zaptest.NewLogger(t), js, "watch_close")
+	require.NoError(t, err)
+
+	watcher, err := store.WatchAll(ctx)
+	require.NoError(t, err)
+	cancel()
+
+	select {
+	case _, ok := <-watcher.Updates():
+		require.False(t, ok)
+	case <-time.After(time.Second):
+		t.Fatal("watcher updates channel did not close after cancellation")
+	}
 }

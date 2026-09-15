@@ -546,7 +546,7 @@ func (m *Manager) refreshUserLocations(ctx context.Context, initial bool) error 
 		zap.Int("removed", removed),
 	)
 
-	return nil
+	return errs
 }
 
 func (m *Manager) cleanupUserIDs(ctx context.Context, foundUserIds map[int32]any) (int, error) {

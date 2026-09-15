@@ -170,6 +170,7 @@ async function closeModal(): Promise<void> {
                         >
                             <ClientOnly>
                                 <USelectMenu
+                                    class="w-full"
                                     name="unitStatus"
                                     :items="['&nbsp;', ...settings?.predefinedStatus.unitStatus]"
                                     :search-input="{ placeholder: $t('common.search_field') }"

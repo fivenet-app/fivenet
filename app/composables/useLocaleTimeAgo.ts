@@ -62,11 +62,7 @@ export function useLocaleTimeAgo(date: Date, options?: UseTimeAgoOptions<false>)
     });
 }
 
-export function useLocaleTimeAgoFormatter(): (
-    date: Date,
-    options?: FormatTimeAgoOptions,
-    now?: Date | number,
-) => string {
+export function useLocaleTimeAgoFormatter(): (date: Date, options?: FormatTimeAgoOptions, now?: Date | number) => string {
     const { t } = useI18n();
 
     const i18nMessages: UseTimeAgoMessages<UseTimeAgoUnitNamesDefault> = {
@@ -104,9 +100,13 @@ export function useLocaleTimeAgoFormatter(): (
     };
 
     return (date, options, now) =>
-        formatTimeAgo(date, {
-            ...options,
-            messages: i18nMessages,
-            fullDateFormatter: (value: Date) => value.toLocaleDateString(),
-        }, now);
+        formatTimeAgo(
+            date,
+            {
+                ...options,
+                messages: i18nMessages,
+                fullDateFormatter: (value: Date) => value.toLocaleDateString(),
+            },
+            now,
+        );
 }

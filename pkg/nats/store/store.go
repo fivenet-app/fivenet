@@ -200,41 +200,89 @@ func (s *Store[T, U]) Start(ctx context.Context, wait bool) error {
 
 	wg.Add(1)
 	go func() {
-		updateCh := watcher.Updates()
-
 		for {
-			select {
-			case <-ctx.Done():
-				if err := watcher.Stop(); err != nil {
-					if !errors.Is(err, nats.ErrConsumerNotFound) &&
-						!errors.Is(err, nats.ErrBadSubscription) {
-						s.logger.Error("error while stopping watcher", zap.Error(err))
+			updateCh := watcher.Updates()
+		watcherLoop:
+			for {
+				select {
+				case <-ctx.Done():
+					if err := watcher.Stop(); err != nil {
+						if !errors.Is(err, nats.ErrConsumerNotFound) &&
+							!errors.Is(err, nats.ErrBadSubscription) {
+							s.logger.Error("error while stopping watcher", zap.Error(err))
+						}
 					}
-				} else {
-					s.logger.Debug("store watcher done")
-				}
-				return
-
-			case entry := <-updateCh:
-				// After all initial keys have been received, a nil entry is returned
-				if entry == nil {
 					if !ready.Swap(true) {
 						wg.Done()
 					}
-					continue
+					return
+
+				case entry, ok := <-updateCh:
+					if !ok {
+						s.logger.Warn("store watcher channel closed; restarting watcher")
+						// A closed channel before the initial nil sentinel means the
+						// cache has not finished loading; retry the watcher.
+						break watcherLoop
+					}
+
+					// After all initial keys have been received, a nil entry is returned
+					// by the JetStream KV watcher.
+					if entry == nil {
+						if !ready.Swap(true) {
+							wg.Done()
+						}
+						continue
+					}
+
+					key := entry.Key()
+					if s.ignoredKeys != nil && slices.Contains(s.ignoredKeys, key) {
+						continue
+					}
+
+					switch entry.Operation() {
+					case jetstream.KeyValueDelete, jetstream.KeyValuePurge:
+						s.handleWatcherDelete(ctx, key, entry)
+
+					case jetstream.KeyValuePut:
+						s.handleWatcherPut(ctx, key, entry)
+					}
 				}
+			}
 
-				key := entry.Key()
-				if s.ignoredKeys != nil && slices.Contains(s.ignoredKeys, key) {
-					continue
+			if err := watcher.Stop(); err != nil &&
+				!errors.Is(err, nats.ErrConsumerNotFound) &&
+				!errors.Is(err, nats.ErrBadSubscription) {
+				s.logger.Error("error while stopping closed store watcher", zap.Error(err))
+			}
+			select {
+			case <-ctx.Done():
+				if !ready.Swap(true) {
+					wg.Done()
 				}
+				return
+			case <-time.After(time.Second):
+			}
 
-				switch entry.Operation() {
-				case jetstream.KeyValueDelete, jetstream.KeyValuePurge:
-					s.handleWatcherDelete(ctx, key, entry)
-
-				case jetstream.KeyValuePut:
-					s.handleWatcherPut(ctx, key, entry)
+			for {
+				nextWatcher, err := s.kv.Watch(ctx, s.prefix+">")
+				if err == nil {
+					watcher = nextWatcher
+					break
+				}
+				if ctx.Err() != nil {
+					if !ready.Swap(true) {
+						wg.Done()
+					}
+					return
+				}
+				s.logger.Error("failed to restart store watcher", zap.Error(err))
+				select {
+				case <-ctx.Done():
+					if !ready.Swap(true) {
+						wg.Done()
+					}
+					return
+				case <-time.After(time.Second):
 				}
 			}
 		}
@@ -863,9 +911,15 @@ func (s *Store[T, U]) WatchAll(ctx context.Context) (IKVWatcher[T, U], error) {
 				} else {
 					s.logger.Debug("store watcher done")
 				}
+				close(w.ch)
 				return
 
-			case entry := <-updateCh:
+			case entry, ok := <-updateCh:
+				if !ok {
+					s.logger.Warn("store update watcher closed")
+					close(w.ch)
+					return
+				}
 				if entry == nil {
 					continue
 				}
@@ -875,11 +929,16 @@ func (s *Store[T, U]) WatchAll(ctx context.Context) (IKVWatcher[T, U], error) {
 					continue
 				}
 
-				w.ch <- &KeyValueEntry[T, U]{
+				select {
+				case w.ch <- &KeyValueEntry[T, U]{
 					key:       key,
 					operation: entry.Operation(),
 					value:     entry.Value(),
 					revision:  entry.Revision(),
+				}:
+				case <-ctx.Done():
+					close(w.ch)
+					return
 				}
 			}
 		}

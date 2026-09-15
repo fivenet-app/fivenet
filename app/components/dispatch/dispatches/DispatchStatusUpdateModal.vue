@@ -198,18 +198,21 @@ async function closeModal(): Promise<void> {
                             </label>
                         </dt>
                         <dd class="mt-1 text-sm leading-6 sm:col-span-2 sm:mt-0">
-                            <ClientOnly>
-                                <USelectMenu
-                                    name="dispatchStatus"
-                                    :items="['&nbsp;', ...settings?.predefinedStatus.dispatchStatus]"
-                                    :search-input="{ placeholder: $t('common.search_field') }"
-                                    @update:model-value="($event) => updateReasonField($event)"
-                                >
-                                    <template #item-label="{ item }">
-                                        {{ item !== '' ? item : '&nbsp;' }}
-                                    </template>
-                                </USelectMenu>
-                            </ClientOnly>
+                            <UFormField class="flex-1">
+                                <ClientOnly>
+                                    <USelectMenu
+                                        class="w-full"
+                                        name="dispatchStatus"
+                                        :items="['&nbsp;', ...settings?.predefinedStatus.dispatchStatus]"
+                                        :search-input="{ placeholder: $t('common.search_field') }"
+                                        @update:model-value="($event) => updateReasonField($event)"
+                                    >
+                                        <template #item-label="{ item }">
+                                            {{ item !== '' ? item : '&nbsp;' }}
+                                        </template>
+                                    </USelectMenu>
+                                </ClientOnly>
+                            </UFormField>
                         </dd>
                     </div>
                 </dl>
