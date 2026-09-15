@@ -109,3 +109,28 @@ func TestGrade(t *testing.T) {
 		"Expected grading responses to be equal to the number of questions",
 	)
 }
+
+func TestGradeDoesNotAwardDuplicateOrExtraChoices(t *testing.T) {
+	t.Parallel()
+	question := &ExamQuestion{
+		Id:     1,
+		Points: proto.Int32(10),
+		Data: &ExamQuestionData{Data: &ExamQuestionData_MultipleChoice{
+			MultipleChoice: &ExamQuestionMultipleChoice{Choices: []string{"A", "B", "C"}},
+		}},
+		Answer: &ExamQuestionAnswerData{Answer: &ExamQuestionAnswerData_MultipleChoice{
+			MultipleChoice: &ExamResponseMultipleChoice{Choices: []string{"A", "B"}},
+		}},
+	}
+
+	score, _ := (&ExamQuestions{Questions: []*ExamQuestion{question}}).Grade(
+		AutoGradeMode_AUTO_GRADE_MODE_STRICT,
+		&ExamResponses{Responses: []*ExamResponse{{
+			QuestionId: 1,
+			Response: &ExamResponseData{Response: &ExamResponseData_MultipleChoice{
+				MultipleChoice: &ExamResponseMultipleChoice{Choices: []string{"A", "B", "C"}},
+			}},
+		}}},
+	)
+	assert.Zero(t, score)
+}

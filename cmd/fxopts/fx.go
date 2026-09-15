@@ -230,7 +230,7 @@ func GetFxBaseOpts(
 			wikistore.New,
 		),
 
-		// GRPC Services
+		// GRPC Services and friends
 		fx.Provide(
 			grpc.AsService(pbauth.NewServer),
 			pbcalendar.NewServer,
@@ -246,6 +246,7 @@ func GetFxBaseOpts(
 			grpc.AsService(pbmailer.NewServer),
 			grpc.AsService(pbnotifications.NewServer),
 			grpc.AsService(pbqualifications.NewServer),
+			pbqualifications.NewExamHousekeeper,
 			grpc.AsService(pbsettings.NewServer),
 			grpc.AsService(pbstats.NewServer),
 			pbsync.NewServer,

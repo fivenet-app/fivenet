@@ -471,6 +471,34 @@ func (m *ExamResponses) Sanitize() error {
 
 // Sanitize sanitizes the message's fields, in case of complex types it calls
 // their Sanitize() method recursively.
+func (m *ExamSnapshot) Sanitize() error {
+	if m == nil {
+		return nil
+	}
+
+	// Field: Exam
+	if m.Exam != nil {
+		if v, ok := any(m.GetExam()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+	}
+
+	// Field: Settings
+	if m.Settings != nil {
+		if v, ok := any(m.GetSettings()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+	}
+
+	return nil
+}
+
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *ExamUser) Sanitize() error {
 	if m == nil {
 		return nil
@@ -497,6 +525,15 @@ func (m *ExamUser) Sanitize() error {
 	// Field: EndsAt
 	if m.EndsAt != nil {
 		if v, ok := any(m.GetEndsAt()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+	}
+
+	// Field: Snapshot
+	if m.Snapshot != nil {
+		if v, ok := any(m.GetSnapshot()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}

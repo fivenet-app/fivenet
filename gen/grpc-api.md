@@ -4804,6 +4804,20 @@ Policy snapshot applied to a specific version
 
 
 
+### resources.qualifications.exam.ExamSnapshot
+ExamSnapshot is immutable once an attempt has started. It ensures later edits to an exam cannot change an in-progress or historical attempt.
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `exam` | [ExamQuestions](#resourcesqualificationsexamExamQuestions) |  |  |
+| `settings` | [QualificationExamSettings](#resourcesqualificationsexamQualificationExamSettings) |  |  |
+
+
+
+
+
 ### resources.qualifications.exam.ExamUser
 
 
@@ -4815,6 +4829,7 @@ Policy snapshot applied to a specific version
 | `started_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
 | `ends_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
 | `ended_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
+| `snapshot` | [ExamSnapshot](#resourcesqualificationsexamExamSnapshot) | optional |  |
 
 
 
