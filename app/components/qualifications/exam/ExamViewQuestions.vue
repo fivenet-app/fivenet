@@ -3,6 +3,7 @@ import type { FormSubmitEvent } from '@nuxt/ui';
 import { differenceInMinutes, isPast } from 'date-fns';
 import { z } from 'zod';
 import ScrollToTop from '~/components/partials/ScrollToTop.vue';
+import { authKeys } from '~/composables/useAuth';
 import { getQualificationsExamClient } from '~~/gen/ts/clients';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 import type { ExamQuestions, ExamResponse, ExamResponses, ExamUser } from '~~/gen/ts/resources/qualifications/exam/exam';
@@ -21,15 +22,81 @@ const props = defineProps<{
 
 const emits = defineEmits<{
     (e: 'submit', response: SubmitExamResponse): void;
+    (e: 'cancel'): void;
+    (e: 'expired'): void;
 }>();
 
 const notifications = useNotificationsStore();
+const { accountId, activeChar } = useAuth();
 
 const qualificationsExamClient = await getQualificationsExamClient();
 
-const schema = z.object({
-    responses: z.custom<ExamResponse>().array().max(100).default([]),
-});
+const schema = z
+    .object({
+        responses: z.custom<ExamResponse>().array().max(100).default([]),
+    })
+    .superRefine((values, ctx) => {
+        values.responses.forEach((examResponse, index) => {
+            const question = props.exam.questions.find((item) => item.id === examResponse.questionId);
+            const data = question?.data?.data;
+            const response = examResponse.response?.response;
+            if (!data || !response) {
+                ctx.addIssue({
+                    code: 'custom',
+                    path: ['responses', index],
+                    message: 'zod.custom.qualification_exam.invalid_response',
+                });
+                return;
+            }
+
+            if (data.oneofKind === 'freeText' && response.oneofKind === 'freeText') {
+                const length = [...response.freeText.text].length;
+                if (data.freeText.minLength > 0 && length < data.freeText.minLength) {
+                    ctx.addIssue({
+                        code: 'custom',
+                        path: ['responses', index],
+                        message: 'zod.custom.qualification_exam.answer_too_short',
+                    });
+                }
+                if (data.freeText.maxLength > 0 && length > data.freeText.maxLength) {
+                    ctx.addIssue({
+                        code: 'custom',
+                        path: ['responses', index],
+                        message: 'zod.custom.qualification_exam.answer_too_long',
+                    });
+                }
+            }
+
+            if (data.oneofKind === 'singleChoice' && response.oneofKind === 'singleChoice') {
+                if (!data.singleChoice.choices.includes(response.singleChoice.choice)) {
+                    ctx.addIssue({
+                        code: 'custom',
+                        path: ['responses', index],
+                        message: 'zod.custom.qualification_exam.select_answer',
+                    });
+                }
+            }
+
+            if (data.oneofKind === 'multipleChoice' && response.oneofKind === 'multipleChoice') {
+                const choices = response.multipleChoice.choices;
+                const unique = new Set(choices);
+                if (unique.size !== choices.length || choices.some((choice) => !data.multipleChoice.choices.includes(choice))) {
+                    ctx.addIssue({
+                        code: 'custom',
+                        path: ['responses', index],
+                        message: 'zod.custom.qualification_exam.select_valid_answers',
+                    });
+                }
+                if (data.multipleChoice.limit && choices.length > data.multipleChoice.limit) {
+                    ctx.addIssue({
+                        code: 'custom',
+                        path: ['responses', index],
+                        message: 'zod.custom.qualification_exam.too_many_answers',
+                    });
+                }
+            }
+        });
+    });
 
 type Schema = z.output<typeof schema>;
 
@@ -37,9 +104,12 @@ const disabled = ref<boolean>(false);
 
 const endsAtTime = toDate(props.examUser.endsAt).getTime();
 
-const state = useState<Schema>('qualifications-exam-responses', () => ({
-    responses: props.examResponses?.responses ?? [],
-}));
+const state = useState<Schema>(
+    `qualifications-exam-responses-${authKeys.character(accountId.value, activeChar.value?.userId)}-${props.qualificationId}-${toDate(props.examUser.startedAt).getTime()}`,
+    () => ({
+        responses: props.examResponses?.responses ?? [],
+    }),
+);
 
 async function submitExam(values: Schema, partial: boolean = false): Promise<SubmitExamResponse> {
     try {
@@ -74,6 +144,20 @@ onBeforeMount(() => {
 
         switch (q.data?.data.oneofKind ?? 'separator') {
             case 'separator':
+                state.value.responses.push({
+                    questionId: q.id,
+                    userId: 0,
+                    question: q,
+                    response: {
+                        response: {
+                            oneofKind: 'separator',
+                            separator: {},
+                        },
+                    },
+                });
+                break;
+
+            case 'image':
                 state.value.responses.push({
                     questionId: q.id,
                     userId: 0,
@@ -165,12 +249,13 @@ if (!props.responses) {
             pauseAutoSave();
             pause();
 
-            await submitExam(state.value, false);
+            disabled.value = true;
+            emits('expired');
 
             notifications.add({
                 title: { key: 'notifications.qualifications.times_up.title', parameters: {} },
                 description: { key: 'notifications.qualifications.times_up.content', parameters: {} },
-                type: NotificationType.SUCCESS,
+                type: NotificationType.INFO,
             });
         } else if (!timeLowNotificationSent && minutesLeft <= 4) {
             notifications.add({
@@ -224,16 +309,23 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
         <template #header>
             <UDashboardNavbar :title="$t('pages.qualifications.id.exam.title')">
                 <template #right>
-                    <UButton
-                        class="w-full"
-                        type="submit"
-                        icon="i-mdi-content-save"
-                        block
-                        :disabled="!canSubmit"
-                        :loading="!canSubmit"
-                        :label="$t('common.submit')"
-                        @click="formRef?.submit()"
-                    />
+                    <UButtonGroup>
+                        <UButton
+                            color="error"
+                            variant="outline"
+                            :disabled="!canSubmit"
+                            :label="$t('common.cancel')"
+                            @click="$emit('cancel')"
+                        />
+                        <UButton
+                            type="submit"
+                            icon="i-mdi-content-save"
+                            :disabled="!canSubmit"
+                            :loading="!canSubmit"
+                            :label="$t('common.submit')"
+                            @click="formRef?.submit()"
+                        />
+                    </UButtonGroup>
                 </template>
             </UDashboardNavbar>
 

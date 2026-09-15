@@ -137,6 +137,38 @@ func (x *ExamResponses) Value() (driver.Value, error) {
 	return string(out), err
 }
 
+// Scan implements driver.Valuer for protobuf ExamSnapshot.
+func (x *ExamSnapshot) Scan(value any) error {
+	switch t := value.(type) {
+	case string:
+		if t == "" {
+			return nil
+		}
+		return protoutils.UnmarshalPartialJSON([]byte(t), x)
+	case *string:
+		if t == nil {
+			return nil
+		}
+		return protoutils.UnmarshalPartialJSON([]byte(*t), x)
+	case []byte:
+		if len(t) == 0 {
+			return nil
+		}
+		return protoutils.UnmarshalPartialJSON(t, x)
+	}
+	return nil
+}
+
+// Value marshals the ExamSnapshot value into driver.Valuer.
+func (x *ExamSnapshot) Value() (driver.Value, error) {
+	if x == nil {
+		return nil, nil
+	}
+
+	out, err := protoutils.MarshalToJSON(x)
+	return string(out), err
+}
+
 // Scan implements driver.Valuer for protobuf QualificationExamSettings.
 func (x *QualificationExamSettings) Scan(value any) error {
 	switch t := value.(type) {

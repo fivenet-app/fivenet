@@ -503,7 +503,7 @@ watch(
                                     v-model="question.data!.data.freeText.minLength"
                                     :step="10"
                                     :min="0"
-                                    :max="Number.MAX_SAFE_INTEGER"
+                                    :max="500000"
                                     :disabled="disabled"
                                 />
                             </UFormField>
@@ -517,7 +517,7 @@ watch(
                                     v-model="question.data!.data.freeText.maxLength"
                                     :step="10"
                                     :min="0"
-                                    :max="Number.MAX_SAFE_INTEGER"
+                                    :max="500000"
                                     :disabled="disabled"
                                 />
                             </UFormField>

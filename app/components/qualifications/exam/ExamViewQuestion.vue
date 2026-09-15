@@ -13,6 +13,20 @@ withDefaults(
 
 const modelValue = defineModel<ExamResponse | undefined>();
 const response = modelValue;
+
+function enforceMultipleChoiceLimit(choices: string[]): void {
+    if (
+        modelValue.value?.question?.data?.data.oneofKind !== 'multipleChoice' ||
+        response.value?.response?.response.oneofKind !== 'multipleChoice'
+    ) {
+        return;
+    }
+
+    const limit = modelValue.value.question.data.data.multipleChoice.limit ?? 0;
+    if (limit > 0 && choices.length > limit) {
+        response.value.response.response.multipleChoice.choices = choices.slice(0, limit);
+    }
+}
 </script>
 
 <template>
@@ -186,6 +200,7 @@ const response = modelValue;
                             name="data.data.multipleChoice.choices"
                             :disabled="disabled"
                             :items="modelValue.question.data.data.multipleChoice.choices"
+                            @update:model-value="enforceMultipleChoiceLimit"
                         />
                     </div>
                 </UFormField>

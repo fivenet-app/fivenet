@@ -31,6 +31,7 @@ func (s *Store) GetExamUser(
 			tExamUser.StartedAt,
 			tExamUser.EndsAt,
 			tExamUser.EndedAt,
+			tExamUser.Snapshot,
 		).
 		FROM(tExamUser).
 		WHERE(mysql.AND(
@@ -198,6 +199,7 @@ func (s *Store) CreateExamUser(
 	qualificationId int64,
 	userId int32,
 	endsAt time.Time,
+	snapshot *qualificationsexam.ExamSnapshot,
 ) error {
 	tExamUser := table.FivenetQualificationsExamUsers
 	stmt := tExamUser.
@@ -207,6 +209,8 @@ func (s *Store) CreateExamUser(
 			tExamUser.StartedAt,
 			tExamUser.EndsAt,
 			tExamUser.EndedAt,
+			tExamUser.Snapshot,
+			tExamUser.Snapshot,
 		).
 		VALUES(
 			qualificationId,
@@ -214,10 +218,42 @@ func (s *Store) CreateExamUser(
 			mysql.CURRENT_TIMESTAMP(),
 			mysql.TimestampT(endsAt),
 			mysql.NULL,
+			snapshot,
 		)
 
 	_, err := stmt.ExecContext(ctx, tx)
 	return err
+}
+
+// ClaimActiveExamUser serializes a response write with expiry. When complete
+// is true it also marks the attempt ended, but only while it is still active.
+func (s *Store) ClaimActiveExamUser(
+	ctx context.Context,
+	tx qrm.DB,
+	qualificationId int64,
+	userId int32,
+	complete bool,
+) (bool, error) {
+	tExamUser := table.FivenetQualificationsExamUsers
+	var stmt mysql.Statement
+	conditions := mysql.AND(
+		tExamUser.QualificationID.EQ(mysql.Int64(qualificationId)),
+		tExamUser.UserID.EQ(mysql.Int32(userId)),
+		tExamUser.EndedAt.IS_NULL(),
+		tExamUser.EndsAt.IS_NOT_NULL(),
+		tExamUser.EndsAt.GT(mysql.CURRENT_TIMESTAMP()),
+	)
+	if complete {
+		stmt = tExamUser.UPDATE(tExamUser.EndedAt).SET(mysql.CURRENT_TIMESTAMP()).WHERE(conditions).LIMIT(1)
+	} else {
+		stmt = tExamUser.UPDATE(tExamUser.EndsAt).SET(tExamUser.EndsAt).WHERE(conditions).LIMIT(1)
+	}
+	result, err := stmt.ExecContext(ctx, tx)
+	if err != nil {
+		return false, err
+	}
+	updated, err := result.RowsAffected()
+	return updated > 0, err
 }
 
 func (s *Store) UpsertExamUserEndedAt(
@@ -242,6 +278,110 @@ func (s *Store) UpsertExamUserEndedAt(
 		ON_DUPLICATE_KEY_UPDATE(
 			tExamUser.EndedAt.SET(mysql.TimestampT(endedAt)),
 		)
+
+	_, err := stmt.ExecContext(ctx, tx)
+	return err
+}
+
+func (s *Store) ListExpiredExamUsers(ctx context.Context, limit int64) ([]*qualificationsexam.ExamUser, error) {
+	tExamUser := table.FivenetQualificationsExamUsers
+	stmt := tExamUser.
+		SELECT(
+			tExamUser.QualificationID,
+			tExamUser.UserID,
+			tExamUser.CreatedAt,
+			tExamUser.StartedAt,
+			tExamUser.EndsAt,
+			tExamUser.EndedAt,
+		).
+		FROM(tExamUser).
+		WHERE(mysql.AND(
+			tExamUser.EndedAt.IS_NULL(),
+			tExamUser.EndsAt.IS_NOT_NULL(),
+			tExamUser.EndsAt.LT(mysql.CURRENT_TIMESTAMP()),
+		)).
+		ORDER_BY(tExamUser.EndsAt.ASC()).
+		LIMIT(limit)
+
+	var attempts []*qualificationsexam.ExamUser
+	if err := stmt.QueryContext(ctx, s.db, &attempts); err != nil && !errors.Is(err, qrm.ErrNoRows) {
+		return nil, err
+	}
+	return attempts, nil
+}
+
+// ListExamUsersPastRetention returns only completed attempts. Responses are
+// deleted with these attempts, while qualification results remain intact.
+func (s *Store) ListExamUsersPastRetention(
+	ctx context.Context,
+	olderThan time.Time,
+	limit int64,
+) ([]*qualificationsexam.ExamUser, error) {
+	tExamUser := table.FivenetQualificationsExamUsers
+	stmt := tExamUser.
+		SELECT(
+			tExamUser.QualificationID,
+			tExamUser.UserID,
+			tExamUser.CreatedAt,
+			tExamUser.StartedAt,
+			tExamUser.EndsAt,
+			tExamUser.EndedAt,
+		).
+		FROM(tExamUser).
+		WHERE(mysql.AND(
+			tExamUser.EndedAt.IS_NOT_NULL(),
+			tExamUser.EndedAt.LT_EQ(mysql.TimestampT(olderThan)),
+		)).
+		ORDER_BY(tExamUser.EndedAt.ASC()).
+		LIMIT(limit)
+
+	var attempts []*qualificationsexam.ExamUser
+	if err := stmt.QueryContext(ctx, s.db, &attempts); err != nil && !errors.Is(err, qrm.ErrNoRows) {
+		return nil, err
+	}
+	return attempts, nil
+}
+
+func (s *Store) ExpireExamUser(
+	ctx context.Context,
+	tx qrm.DB,
+	qualificationId int64,
+	userId int32,
+) (bool, error) {
+	tExamUser := table.FivenetQualificationsExamUsers
+	stmt := tExamUser.
+		UPDATE(tExamUser.EndedAt).
+		SET(tExamUser.EndsAt).
+		WHERE(mysql.AND(
+			tExamUser.QualificationID.EQ(mysql.Int64(qualificationId)),
+			tExamUser.UserID.EQ(mysql.Int32(userId)),
+			tExamUser.EndedAt.IS_NULL(),
+			tExamUser.EndsAt.IS_NOT_NULL(),
+			tExamUser.EndsAt.LT(mysql.CURRENT_TIMESTAMP()),
+		)).
+		LIMIT(1)
+	result, err := stmt.ExecContext(ctx, tx)
+	if err != nil {
+		return false, err
+	}
+	updated, err := result.RowsAffected()
+	return updated > 0, err
+}
+
+func (s *Store) DeleteExamResponses(
+	ctx context.Context,
+	tx qrm.DB,
+	qualificationId int64,
+	userId int32,
+) error {
+	tExamResponses := table.FivenetQualificationsExamResponses
+	stmt := tExamResponses.
+		DELETE().
+		WHERE(mysql.AND(
+			tExamResponses.QualificationID.EQ(mysql.Int64(qualificationId)),
+			tExamResponses.UserID.EQ(mysql.Int32(userId)),
+		)).
+		LIMIT(1)
 
 	_, err := stmt.ExecContext(ctx, tx)
 	return err
