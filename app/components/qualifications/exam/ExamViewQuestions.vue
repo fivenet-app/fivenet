@@ -111,29 +111,46 @@ const state = useState<Schema>(
     }),
 );
 
+let partialSubmitInFlight: Promise<SubmitExamResponse> | undefined;
+
 async function submitExam(values: Schema, partial: boolean = false): Promise<SubmitExamResponse> {
-    try {
-        const call = qualificationsExamClient.submitExam({
-            qualificationId: props.qualificationId,
-            responses: {
+    if (partial && partialSubmitInFlight) {
+        await partialSubmitInFlight.catch(() => undefined);
+    }
+
+    const submit = (async () => {
+        try {
+            const call = qualificationsExamClient.submitExam({
                 qualificationId: props.qualificationId,
-                userId: 0,
-                responses: values.responses,
-            },
-            partial: partial,
-        });
-        const { response } = await call;
+                responses: {
+                    qualificationId: props.qualificationId,
+                    userId: 0,
+                    responses: values.responses,
+                },
+                partial: partial,
+            });
+            const { response } = await call;
 
-        if (partial) return response;
+            if (partial) return response;
 
-        state.value.responses = [];
+            state.value.responses = [];
 
-        emits('submit', response);
+            emits('submit', response);
 
-        return response;
-    } catch (e) {
-        handleGRPCError(e as RpcError);
-        throw e;
+            return response;
+        } catch (e) {
+            handleGRPCError(e as RpcError);
+            throw e;
+        }
+    })();
+
+    if (!partial) return submit;
+
+    partialSubmitInFlight = submit;
+    try {
+        return await submit;
+    } finally {
+        if (partialSubmitInFlight === submit) partialSubmitInFlight = undefined;
     }
 }
 
@@ -249,14 +266,25 @@ if (!props.responses) {
             pauseAutoSave();
             pause();
 
+            let finalSaveSucceeded = false;
+            try {
+                // The server accepts partial submissions during the grace period.
+                await submitExam(state.value, true);
+                finalSaveSucceeded = true;
+            } catch {
+                // The RPC error has already been surfaced by submitExam.
+            }
+
             disabled.value = true;
             emits('expired');
 
-            notifications.add({
-                title: { key: 'notifications.qualifications.times_up.title', parameters: {} },
-                description: { key: 'notifications.qualifications.times_up.content', parameters: {} },
-                type: NotificationType.INFO,
-            });
+            if (finalSaveSucceeded) {
+                notifications.add({
+                    title: { key: 'notifications.qualifications.times_up.title', parameters: {} },
+                    description: { key: 'notifications.qualifications.times_up.content', parameters: {} },
+                    type: NotificationType.INFO,
+                });
+            }
         } else if (!timeLowNotificationSent && minutesLeft <= 4) {
             notifications.add({
                 title: { key: 'notifications.qualifications.time_low.title', parameters: {} },

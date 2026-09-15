@@ -173,7 +173,14 @@ type IStore interface {
 		endsAt time.Time,
 		snapshot *qualificationsexam.ExamSnapshot,
 	) error
-	ClaimActiveExamUser(ctx context.Context, tx qrm.DB, qualificationId int64, userId int32, complete bool) (bool, error)
+	ClaimActiveExamUser(
+		ctx context.Context,
+		tx qrm.DB,
+		qualificationId int64,
+		userId int32,
+		complete bool,
+		gracePeriod time.Duration,
+	) (bool, error)
 	UpsertExamResponses(
 		ctx context.Context,
 		tx qrm.DB,
@@ -189,8 +196,17 @@ type IStore interface {
 		endedAt time.Time,
 	) error
 	ListExpiredExamUsers(ctx context.Context, limit int64) ([]*qualificationsexam.ExamUser, error)
-	ListExamUsersPastRetention(ctx context.Context, olderThan time.Time, limit int64) ([]*qualificationsexam.ExamUser, error)
-	ExpireExamUser(ctx context.Context, tx qrm.DB, qualificationId int64, userId int32) (bool, error)
+	ListExamUsersPastRetention(
+		ctx context.Context,
+		olderThan time.Time,
+		limit int64,
+	) ([]*qualificationsexam.ExamUser, error)
+	ExpireExamUser(
+		ctx context.Context,
+		tx qrm.DB,
+		qualificationId int64,
+		userId int32,
+	) (bool, error)
 	DeleteExamResponses(ctx context.Context, tx qrm.DB, qualificationId int64, userId int32) error
 	HandleExamQuestionsChanges(
 		ctx context.Context,

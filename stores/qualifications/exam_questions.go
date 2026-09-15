@@ -3,6 +3,7 @@ package qualificationsstore
 import (
 	"context"
 	"database/sql"
+	"errors"
 	"fmt"
 
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/file"
@@ -54,7 +55,7 @@ func (s *Store) HandleExamQuestionsChanges(
 		switch data := question.GetData().GetData().(type) {
 		case *qualificationsexam.ExamQuestionData_Image:
 			if data.Image.GetImage() == nil {
-				return nil, fmt.Errorf("image question requires an image")
+				return nil, errors.New("image question requires an image")
 			}
 			files = append(files, data.Image.GetImage())
 		}
@@ -89,7 +90,7 @@ func (s *Store) HandleExamQuestionsChanges(
 			switch data := question.GetData().GetData().(type) {
 			case *qualificationsexam.ExamQuestionData_Image:
 				if data.Image.GetImage() == nil {
-					return nil, fmt.Errorf("image question requires an image")
+					return nil, errors.New("image question requires an image")
 				}
 				files = append(files, data.Image.GetImage())
 			}
@@ -154,7 +155,7 @@ func compareExamQuestions(
 	persisted := make(map[int64]*qualificationsexam.ExamQuestion, len(current))
 	for _, question := range current {
 		if question == nil || question.GetId() <= 0 {
-			return nil, nil, nil, fmt.Errorf("invalid persisted exam question")
+			return nil, nil, nil, errors.New("invalid persisted exam question")
 		}
 		persisted[question.GetId()] = question
 	}
@@ -162,7 +163,7 @@ func compareExamQuestions(
 	incoming := make(map[int64]*qualificationsexam.ExamQuestion, len(in))
 	for _, question := range in {
 		if question == nil {
-			return nil, nil, nil, fmt.Errorf("invalid exam question")
+			return nil, nil, nil, errors.New("invalid exam question")
 		}
 		if question.GetId() <= 0 {
 			toCreate = append(toCreate, question)
