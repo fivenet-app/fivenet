@@ -114,16 +114,14 @@ func (h *ExamHousekeeper) deleteRetainedExamData(
 	if err := h.store.DeleteExamResponses(
 		ctx,
 		tx,
-		attempt.GetQualificationId(),
-		attempt.GetUserId(),
+		attempt.GetAttemptId(),
 	); err != nil {
 		return err
 	}
 	if err := h.store.DeleteExamUser(
 		ctx,
 		tx,
-		attempt.GetQualificationId(),
-		attempt.GetUserId(),
+		attempt.GetAttemptId(),
 	); err != nil {
 		return err
 	}
@@ -161,8 +159,8 @@ func (h *ExamHousekeeper) completeExpiredExam(
 	// responses between this read and the grading transaction.
 	responses, _, err := h.store.GetExamResponses(
 		ctx,
-		attempt.GetQualificationId(),
-		attempt.GetUserId(),
+		tx,
+		attempt.GetAttemptId(),
 	)
 	if err != nil {
 		return err

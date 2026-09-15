@@ -397,8 +397,7 @@ func (s *Store) UpdateQualificationResult(
 func (s *Store) UpdateExamResponseGrading(
 	ctx context.Context,
 	tx qrm.DB,
-	qualificationId int64,
-	userId int32,
+	attemptId string,
 	grading *qualificationsexam.ExamGrading,
 ) error {
 	tExamResponse := table.FivenetQualificationsExamResponses
@@ -406,8 +405,7 @@ func (s *Store) UpdateExamResponseGrading(
 		UPDATE(tExamResponse.Grading).
 		SET(grading).
 		WHERE(mysql.AND(
-			tExamResponse.QualificationID.EQ(mysql.Int64(qualificationId)),
-			tExamResponse.UserID.EQ(mysql.Int32(userId)),
+			tExamResponse.AttemptID.EQ(mysql.String(attemptId)),
 		)).
 		LIMIT(1)
 

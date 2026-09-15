@@ -339,6 +339,13 @@ func (s *Server) UpdateQualification(
 		}
 	}
 
+	if err := validateExamAutoGrading(
+		req.GetQualification().GetExam(),
+		req.GetQualification().GetExamSettings(),
+	); err != nil {
+		return nil, err
+	}
+
 	// A qualification can only be switched to published once
 	if !oldQuali.GetDraft() && oldQuali.GetDraft() != req.GetQualification().GetDraft() {
 		// Allow a super user to change the draft state

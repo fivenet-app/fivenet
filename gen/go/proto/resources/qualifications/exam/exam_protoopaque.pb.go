@@ -1586,6 +1586,7 @@ type ExamUser struct {
 	xxx_hidden_EndsAt          *timestamp.Timestamp   `protobuf:"bytes,5,opt,name=ends_at,json=endsAt,proto3,oneof"`
 	xxx_hidden_EndedAt         *timestamp.Timestamp   `protobuf:"bytes,6,opt,name=ended_at,json=endedAt,proto3,oneof"`
 	xxx_hidden_Snapshot        *ExamSnapshot          `protobuf:"bytes,7,opt,name=snapshot,proto3,oneof"`
+	xxx_hidden_AttemptId       string                 `protobuf:"bytes,8,opt,name=attempt_id,json=attemptId,proto3"`
 	unknownFields              protoimpl.UnknownFields
 	sizeCache                  protoimpl.SizeCache
 }
@@ -1664,6 +1665,13 @@ func (x *ExamUser) GetSnapshot() *ExamSnapshot {
 	return nil
 }
 
+func (x *ExamUser) GetAttemptId() string {
+	if x != nil {
+		return x.xxx_hidden_AttemptId
+	}
+	return ""
+}
+
 func (x *ExamUser) SetQualificationId(v int64) {
 	x.xxx_hidden_QualificationId = v
 }
@@ -1690,6 +1698,10 @@ func (x *ExamUser) SetEndedAt(v *timestamp.Timestamp) {
 
 func (x *ExamUser) SetSnapshot(v *ExamSnapshot) {
 	x.xxx_hidden_Snapshot = v
+}
+
+func (x *ExamUser) SetAttemptId(v string) {
+	x.xxx_hidden_AttemptId = v
 }
 
 func (x *ExamUser) HasCreatedAt() bool {
@@ -1757,6 +1769,7 @@ type ExamUser_builder struct {
 	EndsAt          *timestamp.Timestamp
 	EndedAt         *timestamp.Timestamp
 	Snapshot        *ExamSnapshot
+	AttemptId       string
 }
 
 func (b0 ExamUser_builder) Build() *ExamUser {
@@ -1770,6 +1783,7 @@ func (b0 ExamUser_builder) Build() *ExamUser {
 	x.xxx_hidden_EndsAt = b.EndsAt
 	x.xxx_hidden_EndedAt = b.EndedAt
 	x.xxx_hidden_Snapshot = b.Snapshot
+	x.xxx_hidden_AttemptId = b.AttemptId
 	return m0
 }
 
@@ -1873,6 +1887,7 @@ type ExamResponses struct {
 	xxx_hidden_QualificationId int64                  `protobuf:"varint,1,opt,name=qualification_id,json=qualificationId,proto3"`
 	xxx_hidden_UserId          int32                  `protobuf:"varint,2,opt,name=user_id,json=userId,proto3"`
 	xxx_hidden_Responses       *[]*ExamResponse       `protobuf:"bytes,3,rep,name=responses,proto3"`
+	xxx_hidden_AttemptId       string                 `protobuf:"bytes,4,opt,name=attempt_id,json=attemptId,proto3"`
 	unknownFields              protoimpl.UnknownFields
 	sizeCache                  protoimpl.SizeCache
 }
@@ -1925,6 +1940,13 @@ func (x *ExamResponses) GetResponses() []*ExamResponse {
 	return nil
 }
 
+func (x *ExamResponses) GetAttemptId() string {
+	if x != nil {
+		return x.xxx_hidden_AttemptId
+	}
+	return ""
+}
+
 func (x *ExamResponses) SetQualificationId(v int64) {
 	x.xxx_hidden_QualificationId = v
 }
@@ -1937,12 +1959,17 @@ func (x *ExamResponses) SetResponses(v []*ExamResponse) {
 	x.xxx_hidden_Responses = &v
 }
 
+func (x *ExamResponses) SetAttemptId(v string) {
+	x.xxx_hidden_AttemptId = v
+}
+
 type ExamResponses_builder struct {
 	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
 
 	QualificationId int64
 	UserId          int32
 	Responses       []*ExamResponse
+	AttemptId       string
 }
 
 func (b0 ExamResponses_builder) Build() *ExamResponses {
@@ -1952,6 +1979,7 @@ func (b0 ExamResponses_builder) Build() *ExamResponses {
 	x.xxx_hidden_QualificationId = b.QualificationId
 	x.xxx_hidden_UserId = b.UserId
 	x.xxx_hidden_Responses = &b.Responses
+	x.xxx_hidden_AttemptId = b.AttemptId
 	return m0
 }
 
@@ -2876,7 +2904,7 @@ const file_resources_qualifications_exam_exam_proto_rawDesc = "" +
 	"\tfree_text\x18\x05 \x01(\v2/.resources.qualifications.exam.ExamResponseTextH\x00R\bfreeText\x12^\n" +
 	"\rsingle_choice\x18\x06 \x01(\v27.resources.qualifications.exam.ExamResponseSingleChoiceH\x00R\fsingleChoice\x12d\n" +
 	"\x0fmultiple_choice\x18\a \x01(\v29.resources.qualifications.exam.ExamResponseMultipleChoiceH\x00R\x0emultipleChoice:\x06\xe2\xf3\x18\x02\b\x01B\b\n" +
-	"\x06answer\"\xe6\x03\n" +
+	"\x06answer\"\x85\x04\n" +
 	"\bExamUser\x12)\n" +
 	"\x10qualification_id\x18\x01 \x01(\x03R\x0fqualificationId\x12\x17\n" +
 	"\auser_id\x18\x02 \x01(\x05R\x06userId\x12B\n" +
@@ -2886,7 +2914,9 @@ const file_resources_qualifications_exam_exam_proto_rawDesc = "" +
 	"started_at\x18\x04 \x01(\v2\x1e.resources.timestamp.TimestampH\x01R\tstartedAt\x88\x01\x01\x12<\n" +
 	"\aends_at\x18\x05 \x01(\v2\x1e.resources.timestamp.TimestampH\x02R\x06endsAt\x88\x01\x01\x12>\n" +
 	"\bended_at\x18\x06 \x01(\v2\x1e.resources.timestamp.TimestampH\x03R\aendedAt\x88\x01\x01\x12L\n" +
-	"\bsnapshot\x18\a \x01(\v2+.resources.qualifications.exam.ExamSnapshotH\x04R\bsnapshot\x88\x01\x01B\r\n" +
+	"\bsnapshot\x18\a \x01(\v2+.resources.qualifications.exam.ExamSnapshotH\x04R\bsnapshot\x88\x01\x01\x12\x1d\n" +
+	"\n" +
+	"attempt_id\x18\b \x01(\tR\tattemptIdB\r\n" +
 	"\v_created_atB\r\n" +
 	"\v_started_atB\n" +
 	"\n" +
@@ -2895,11 +2925,13 @@ const file_resources_qualifications_exam_exam_proto_rawDesc = "" +
 	"\t_snapshot\"\xae\x01\n" +
 	"\fExamSnapshot\x12@\n" +
 	"\x04exam\x18\x01 \x01(\v2,.resources.qualifications.exam.ExamQuestionsR\x04exam\x12T\n" +
-	"\bsettings\x18\x02 \x01(\v28.resources.qualifications.exam.QualificationExamSettingsR\bsettings:\x06\xe2\xf3\x18\x02\b\x01\"\xa6\x01\n" +
+	"\bsettings\x18\x02 \x01(\v28.resources.qualifications.exam.QualificationExamSettingsR\bsettings:\x06\xe2\xf3\x18\x02\b\x01\"\xc5\x01\n" +
 	"\rExamResponses\x12)\n" +
 	"\x10qualification_id\x18\x01 \x01(\x03R\x0fqualificationId\x12\x17\n" +
 	"\auser_id\x18\x02 \x01(\x05R\x06userId\x12I\n" +
-	"\tresponses\x18\x03 \x03(\v2+.resources.qualifications.exam.ExamResponseR\tresponses:\x06\xe2\xf3\x18\x02\b\x01\"\xde\x01\n" +
+	"\tresponses\x18\x03 \x03(\v2+.resources.qualifications.exam.ExamResponseR\tresponses\x12\x1d\n" +
+	"\n" +
+	"attempt_id\x18\x04 \x01(\tR\tattemptId:\x06\xe2\xf3\x18\x02\b\x01\"\xde\x01\n" +
 	"\fExamResponse\x12\x1f\n" +
 	"\vquestion_id\x18\x01 \x01(\x03R\n" +
 	"questionId\x12\x17\n" +

@@ -10,6 +10,62 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
+func TestStoreClaimActiveExamUserAllowsPartialSaveDuringGracePeriod(t *testing.T) {
+	t.Parallel()
+
+	db, mock, err := sqlmock.New()
+	require.NoError(t, err)
+	t.Cleanup(func() { _ = db.Close() })
+
+	store := New(testParams(db))
+	mock.ExpectBegin()
+	tx, err := db.BeginTx(t.Context(), nil)
+	require.NoError(t, err)
+
+	expectedQuery := regexp.QuoteMeta(`SELECT`) +
+		`(?s).*` + regexp.QuoteMeta(`FROM fivenet_qualifications_exam_users`) +
+		`(?s).*` + regexp.QuoteMeta(`qualification_id = ?`) +
+		`(?s).*` + regexp.QuoteMeta(`user_id = ?`) +
+		`(?s).*` + regexp.QuoteMeta(`FOR UPDATE`)
+	mock.ExpectQuery(expectedQuery).
+		WithArgs(int64(42), int32(7), sqlmock.AnyArg(), int64(1)).
+		WillReturnRows(sqlmock.NewRows([]string{"ended_at", "ends_at"}).AddRow(nil, time.Now().Add(-time.Second)))
+
+	active, err := store.ClaimActiveExamUser(t.Context(), tx, 42, 7, false, 30*time.Second)
+	require.NoError(t, err)
+	assert.True(t, active)
+	mock.ExpectCommit()
+	require.NoError(t, tx.Commit())
+	require.NoError(t, mock.ExpectationsWereMet())
+}
+
+func TestStoreClaimActiveExamUserRejectsExpiredCancellation(t *testing.T) {
+	t.Parallel()
+
+	db, mock, err := sqlmock.New()
+	require.NoError(t, err)
+	t.Cleanup(func() { _ = db.Close() })
+
+	store := New(testParams(db))
+	mock.ExpectBegin()
+	tx, err := db.BeginTx(t.Context(), nil)
+	require.NoError(t, err)
+
+	expectedQuery := regexp.QuoteMeta(`SELECT`) +
+		`(?s).*` + regexp.QuoteMeta(`FROM fivenet_qualifications_exam_users`) +
+		`(?s).*` + regexp.QuoteMeta(`FOR UPDATE`)
+	mock.ExpectQuery(expectedQuery).
+		WithArgs(int64(42), int32(7), sqlmock.AnyArg(), int64(1)).
+		WillReturnRows(sqlmock.NewRows([]string{"ended_at", "ends_at"}))
+
+	active, err := store.ClaimActiveExamUser(t.Context(), tx, 42, 7, false, 0)
+	require.NoError(t, err)
+	assert.False(t, active)
+	mock.ExpectCommit()
+	require.NoError(t, tx.Commit())
+	require.NoError(t, mock.ExpectationsWereMet())
+}
+
 func TestStoreGetExamUser(t *testing.T) {
 	t.Parallel()
 
@@ -87,10 +143,10 @@ func TestStoreExpireExamUserClaimsOnlyActiveExpiredAttempt(t *testing.T) {
 		`(?s).*` + regexp.QuoteMeta(`fivenet_qualifications_exam_users.qualification_id = ?`) +
 		`(?s).*` + regexp.QuoteMeta(`fivenet_qualifications_exam_users.user_id = ?`) +
 		`(?s).*` + regexp.QuoteMeta(`fivenet_qualifications_exam_users.ended_at IS NULL`) +
-		`(?s).*` + regexp.QuoteMeta(`fivenet_qualifications_exam_users.ends_at < CURRENT_TIMESTAMP`) +
+		`(?s).*` + regexp.QuoteMeta(`fivenet_qualifications_exam_users.ends_at < TIMESTAMP(?)`) +
 		`(?s).*` + regexp.QuoteMeta(`LIMIT ?;`)
 	mock.ExpectExec(expectedQuery).
-		WithArgs(int64(42), int32(7), int64(1)).
+		WithArgs(int64(42), int32(7), sqlmock.AnyArg(), int64(1)).
 		WillReturnResult(sqlmock.NewResult(0, 1))
 
 	expired, err := store.ExpireExamUser(t.Context(), tx, 42, 7)

@@ -4,7 +4,6 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
-	"google.golang.org/protobuf/proto"
 )
 
 func TestGrade(t *testing.T) {
@@ -23,7 +22,7 @@ func TestGrade(t *testing.T) {
 						Yesno: &ExamResponseYesNo{Value: true},
 					},
 				},
-				Points: proto.Int32(10),
+				Points: new(int32(10)),
 			},
 			{
 				Id: 2,
@@ -39,7 +38,7 @@ func TestGrade(t *testing.T) {
 						SingleChoice: &ExamResponseSingleChoice{Choice: "A"},
 					},
 				},
-				Points: proto.Int32(20),
+				Points: new(int32(20)),
 			},
 			{
 				Id: 3,
@@ -55,7 +54,7 @@ func TestGrade(t *testing.T) {
 						MultipleChoice: &ExamResponseMultipleChoice{Choices: []string{"A", "B"}},
 					},
 				},
-				Points: proto.Int32(30),
+				Points: new(int32(30)),
 			},
 		},
 	}
@@ -114,7 +113,7 @@ func TestGradeDoesNotAwardDuplicateOrExtraChoices(t *testing.T) {
 	t.Parallel()
 	question := &ExamQuestion{
 		Id:     1,
-		Points: proto.Int32(10),
+		Points: new(int32(10)),
 		Data: &ExamQuestionData{Data: &ExamQuestionData_MultipleChoice{
 			MultipleChoice: &ExamQuestionMultipleChoice{Choices: []string{"A", "B", "C"}},
 		}},
@@ -123,14 +122,55 @@ func TestGradeDoesNotAwardDuplicateOrExtraChoices(t *testing.T) {
 		}},
 	}
 
-	score, _ := (&ExamQuestions{Questions: []*ExamQuestion{question}}).Grade(
+	exam := &ExamQuestions{Questions: []*ExamQuestion{question}}
+	responses := &ExamResponses{Responses: []*ExamResponse{{
+		QuestionId: 1,
+		Response: &ExamResponseData{Response: &ExamResponseData_MultipleChoice{
+			MultipleChoice: &ExamResponseMultipleChoice{Choices: []string{"A", "B", "C"}},
+		}},
+	}}}
+
+	score, _ := exam.Grade(
 		AutoGradeMode_AUTO_GRADE_MODE_STRICT,
+		responses,
+	)
+	assert.Zero(t, score)
+
+	score, grading := exam.Grade(
+		AutoGradeMode_AUTO_GRADE_MODE_PARTIAL_CREDIT,
 		&ExamResponses{Responses: []*ExamResponse{{
 			QuestionId: 1,
 			Response: &ExamResponseData{Response: &ExamResponseData_MultipleChoice{
-				MultipleChoice: &ExamResponseMultipleChoice{Choices: []string{"A", "B", "C"}},
+				MultipleChoice: &ExamResponseMultipleChoice{Choices: []string{"A", "B", "C", "A"}},
 			}},
 		}}},
 	)
-	assert.Zero(t, score)
+	assert.InEpsilon(t, float32(5), score, 0.0001)
+	assert.InEpsilon(t, float32(5), grading.GetResponses()[0].GetPoints(), 0.0001)
+}
+
+func TestGradeDeduplicatesAnswerChoicesForPartialCredit(t *testing.T) {
+	t.Parallel()
+	question := &ExamQuestion{
+		Id:     1,
+		Points: new(int32(10)),
+		Data: &ExamQuestionData{Data: &ExamQuestionData_MultipleChoice{
+			MultipleChoice: &ExamQuestionMultipleChoice{Choices: []string{"A", "B"}},
+		}},
+		Answer: &ExamQuestionAnswerData{Answer: &ExamQuestionAnswerData_MultipleChoice{
+			MultipleChoice: &ExamResponseMultipleChoice{Choices: []string{"A", "A"}},
+		}},
+	}
+
+	score, grading := (&ExamQuestions{Questions: []*ExamQuestion{question}}).Grade(
+		AutoGradeMode_AUTO_GRADE_MODE_PARTIAL_CREDIT,
+		&ExamResponses{Responses: []*ExamResponse{{
+			QuestionId: 1,
+			Response: &ExamResponseData{Response: &ExamResponseData_MultipleChoice{
+				MultipleChoice: &ExamResponseMultipleChoice{Choices: []string{"A"}},
+			}},
+		}}},
+	)
+	assert.InEpsilon(t, float32(10), score, 0.0001)
+	assert.InEpsilon(t, float32(10), grading.GetResponses()[0].GetPoints(), 0.0001)
 }

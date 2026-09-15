@@ -96,5 +96,5 @@ func TestParseUserTokenReturnsWrappedExpiryError(t *testing.T) {
 	parsed, err := tm.ParseUserToken(token)
 	require.Error(t, err)
 	assert.Nil(t, parsed)
-	assert.ErrorIs(t, err, jwt.ErrTokenExpired)
+	require.ErrorIs(t, err, jwt.ErrTokenExpired)
 }

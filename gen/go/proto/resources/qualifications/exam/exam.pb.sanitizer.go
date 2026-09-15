@@ -454,6 +454,9 @@ func (m *ExamResponses) Sanitize() error {
 		return nil
 	}
 
+	// Field: AttemptId
+	m.AttemptId = htmlsanitizer.SanitizeAndUnescape(m.AttemptId)
+
 	// Field: Responses
 	for idx, item := range m.Responses {
 		_, _ = idx, item
@@ -503,6 +506,9 @@ func (m *ExamUser) Sanitize() error {
 	if m == nil {
 		return nil
 	}
+
+	// Field: AttemptId
+	m.AttemptId = htmlsanitizer.SanitizeAndUnescape(m.AttemptId)
 
 	// Field: CreatedAt
 	if m.CreatedAt != nil {

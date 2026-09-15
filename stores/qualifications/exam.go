@@ -10,7 +10,10 @@ import (
 	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
 	"github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
+	"github.com/google/uuid"
 )
+
+const ExamSubmissionGracePeriod = 30 * time.Second
 
 type examResponses struct {
 	ExamResponses *qualificationsexam.ExamResponses `alias:"responses"`
@@ -27,6 +30,7 @@ func (s *Store) GetExamUser(
 		SELECT(
 			tExamUser.QualificationID,
 			tExamUser.UserID,
+			tExamUser.AttemptID,
 			tExamUser.CreatedAt,
 			tExamUser.StartedAt,
 			tExamUser.EndsAt,
@@ -111,21 +115,21 @@ func (s *Store) CountExamQuestions(ctx context.Context, qualificationId int64) (
 
 func (s *Store) GetExamResponses(
 	ctx context.Context,
-	qualificationId int64,
-	userId int32,
+	q qrm.DB,
+	attemptId string,
 ) (*qualificationsexam.ExamResponses, *qualificationsexam.ExamGrading, error) {
 	tExamResponses := tExamResponses.AS("examresponses")
 	stmt := tExamResponses.
 		SELECT(
 			tExamResponses.QualificationID,
 			tExamResponses.UserID,
+			tExamResponses.AttemptID,
 			tExamResponses.Responses,
 			tExamResponses.Grading,
 		).
 		FROM(tExamResponses).
 		WHERE(mysql.AND(
-			tExamResponses.QualificationID.EQ(mysql.Int64(qualificationId)),
-			tExamResponses.UserID.EQ(mysql.Int32(userId)),
+			tExamResponses.AttemptID.EQ(mysql.String(attemptId)),
 		)).
 		LIMIT(1)
 
@@ -133,14 +137,13 @@ func (s *Store) GetExamResponses(
 		ExamResponses: &qualificationsexam.ExamResponses{},
 		ExamGrading:   &qualificationsexam.ExamGrading{},
 	}
-	if err := stmt.QueryContext(ctx, s.db, dest); err != nil {
+	if err := stmt.QueryContext(ctx, q, dest); err != nil {
 		if !errors.Is(err, qrm.ErrNoRows) {
 			return nil, nil, err
 		}
 	}
 
-	dest.ExamResponses.QualificationId = qualificationId
-	dest.ExamResponses.UserId = userId
+	dest.ExamResponses.AttemptId = attemptId
 
 	return dest.ExamResponses, dest.ExamGrading, nil
 }
@@ -150,6 +153,7 @@ func (s *Store) UpsertExamResponses(
 	tx qrm.DB,
 	qualificationId int64,
 	userId int32,
+	attemptId string,
 	responses *qualificationsexam.ExamResponses,
 ) error {
 	tExamResponses := table.FivenetQualificationsExamResponses
@@ -157,17 +161,20 @@ func (s *Store) UpsertExamResponses(
 		INSERT(
 			tExamResponses.QualificationID,
 			tExamResponses.UserID,
+			tExamResponses.AttemptID,
 			tExamResponses.Responses,
 			tExamResponses.Grading,
 		).
 		VALUES(
 			qualificationId,
 			userId,
+			attemptId,
 			responses,
 			mysql.NULL,
 		).
 		ON_DUPLICATE_KEY_UPDATE(
 			tExamResponses.Responses.SET(mysql.RawString("VALUES(`responses`)")),
+			tExamResponses.AttemptID.SET(mysql.RawString("VALUES(`attempt_id`)")),
 		)
 
 	_, err := stmt.ExecContext(ctx, tx)
@@ -177,15 +184,13 @@ func (s *Store) UpsertExamResponses(
 func (s *Store) DeleteExamUser(
 	ctx context.Context,
 	tx qrm.DB,
-	qualificationId int64,
-	userId int32,
+	attemptId string,
 ) error {
 	tExamUser := table.FivenetQualificationsExamUsers
 	stmt := tExamUser.
 		DELETE().
 		WHERE(mysql.AND(
-			tExamUser.QualificationID.EQ(mysql.Int64(qualificationId)),
-			tExamUser.UserID.EQ(mysql.Int32(userId)),
+			tExamUser.AttemptID.EQ(mysql.String(attemptId)),
 		)).
 		LIMIT(1)
 
@@ -200,12 +205,14 @@ func (s *Store) CreateExamUser(
 	userId int32,
 	endsAt time.Time,
 	snapshot *qualificationsexam.ExamSnapshot,
-) error {
+) (string, error) {
 	tExamUser := table.FivenetQualificationsExamUsers
+	attemptId := uuid.NewString()
 	stmt := tExamUser.
 		INSERT(
 			tExamUser.QualificationID,
 			tExamUser.UserID,
+			tExamUser.AttemptID,
 			tExamUser.StartedAt,
 			tExamUser.EndsAt,
 			tExamUser.EndedAt,
@@ -214,6 +221,7 @@ func (s *Store) CreateExamUser(
 		VALUES(
 			qualificationId,
 			userId,
+			attemptId,
 			mysql.CURRENT_TIMESTAMP(),
 			mysql.TimestampT(endsAt),
 			mysql.NULL,
@@ -221,7 +229,7 @@ func (s *Store) CreateExamUser(
 		)
 
 	_, err := stmt.ExecContext(ctx, tx)
-	return err
+	return attemptId, err
 }
 
 // ClaimActiveExamUser serializes a response write with expiry. When complete
@@ -311,6 +319,7 @@ func (s *Store) ListExpiredExamUsers(
 		SELECT(
 			tExamUser.QualificationID,
 			tExamUser.UserID,
+			tExamUser.AttemptID,
 			tExamUser.CreatedAt,
 			tExamUser.StartedAt,
 			tExamUser.EndsAt,
@@ -321,7 +330,7 @@ func (s *Store) ListExpiredExamUsers(
 		WHERE(mysql.AND(
 			tExamUser.EndedAt.IS_NULL(),
 			tExamUser.EndsAt.IS_NOT_NULL(),
-			tExamUser.EndsAt.LT(mysql.CURRENT_TIMESTAMP()),
+			tExamUser.EndsAt.LT(mysql.TimestampT(time.Now().Add(-ExamSubmissionGracePeriod))),
 		)).
 		ORDER_BY(tExamUser.EndsAt.ASC()).
 		LIMIT(limit)
@@ -350,6 +359,7 @@ func (s *Store) ListExamUsersPastRetention(
 		SELECT(
 			tExamUser.QualificationID,
 			tExamUser.UserID,
+			tExamUser.AttemptID,
 			tExamUser.CreatedAt,
 			tExamUser.StartedAt,
 			tExamUser.EndsAt,
@@ -390,7 +400,7 @@ func (s *Store) ExpireExamUser(
 			tExamUser.UserID.EQ(mysql.Int32(userId)),
 			tExamUser.EndedAt.IS_NULL(),
 			tExamUser.EndsAt.IS_NOT_NULL(),
-			tExamUser.EndsAt.LT(mysql.CURRENT_TIMESTAMP()),
+			tExamUser.EndsAt.LT(mysql.TimestampT(time.Now().Add(-ExamSubmissionGracePeriod))),
 		)).
 		LIMIT(1)
 	result, err := stmt.ExecContext(ctx, tx)
@@ -404,15 +414,13 @@ func (s *Store) ExpireExamUser(
 func (s *Store) DeleteExamResponses(
 	ctx context.Context,
 	tx qrm.DB,
-	qualificationId int64,
-	userId int32,
+	attemptId string,
 ) error {
 	tExamResponses := table.FivenetQualificationsExamResponses
 	stmt := tExamResponses.
 		DELETE().
 		WHERE(mysql.AND(
-			tExamResponses.QualificationID.EQ(mysql.Int64(qualificationId)),
-			tExamResponses.UserID.EQ(mysql.Int32(userId)),
+			tExamResponses.AttemptID.EQ(mysql.String(attemptId)),
 		)).
 		LIMIT(1)
 

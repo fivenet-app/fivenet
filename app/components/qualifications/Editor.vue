@@ -215,6 +215,21 @@ const schema = z
                         message: 'zod.custom.qualification_editor.selection_limit',
                     });
                 }
+                if (
+                    value.examSettings.autoGrade &&
+                    data.oneofKind === 'multipleChoice' &&
+                    (data.multipleChoice.limit ?? 0) > 0 &&
+                    (question.answer?.answer.oneofKind === 'multipleChoice'
+                        ? question.answer.answer.multipleChoice.choices.length
+                        : 0) > data.multipleChoice.limit!
+                ) {
+                    // The candidate limit must be at least the number of configured correct choices.
+                    ctx.addIssue({
+                        code: 'custom',
+                        path: ['exam', 'questions', index, 'answer'],
+                        message: 'zod.custom.qualification_editor.answer_limit',
+                    });
+                }
             }
             if (data.oneofKind === 'yesno' || data.oneofKind === 'singleChoice' || data.oneofKind === 'multipleChoice') {
                 autoGradePoints += question.points ?? 0;

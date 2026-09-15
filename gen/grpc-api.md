@@ -4799,6 +4799,7 @@ Policy snapshot applied to a specific version
 | `qualification_id` | [int64](#int64) |  |  |
 | `user_id` | [int32](#int32) |  |  |
 | `responses` | [ExamResponse](#resourcesqualificationsexamExamResponse) | repeated |  |
+| `attempt_id` | [string](#string) |  |  |
 
 
 
@@ -4830,6 +4831,7 @@ ExamSnapshot is immutable once an attempt has started. It ensures later edits to
 | `ends_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
 | `ended_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
 | `snapshot` | [ExamSnapshot](#resourcesqualificationsexamExamSnapshot) | optional |  |
+| `attempt_id` | [string](#string) |  |  |
 
 
 

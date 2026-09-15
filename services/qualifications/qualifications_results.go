@@ -266,11 +266,14 @@ func (s *Server) createOrUpdateQualificationResult(
 
 	if quali.GetExamMode() > qualificationsexam.QualificationExamMode_QUALIFICATION_EXAM_MODE_DISABLED &&
 		grading != nil {
+		examUser, err := s.store.GetExamUser(ctx, quali.GetId(), userId)
+		if err != nil {
+			return 0, err
+		}
 		if err := s.store.UpdateExamResponseGrading(
 			ctx,
 			tx,
-			quali.GetId(),
-			userId,
+			examUser.GetAttemptId(),
 			grading,
 		); err != nil {
 			return 0, err
@@ -453,16 +456,22 @@ func (s *Server) DeleteQualificationResult(
 	}
 	// Defer a rollback in case anything fails
 	defer tx.Rollback()
+	examUser, err := s.store.GetExamUser(ctx, result.GetQualificationId(), result.GetUserId())
+	if err != nil {
+		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
+	}
 
 	if err := s.store.DeleteQualificationResult(ctx, tx, result.GetId()); err != nil {
+		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
+	}
+	if err := s.store.DeleteExamResponses(ctx, tx, examUser.GetAttemptId()); err != nil {
 		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 	}
 
 	if err := s.store.DeleteExamUser(
 		ctx,
 		tx,
-		result.GetQualificationId(),
-		result.GetUserId(),
+		examUser.GetAttemptId(),
 	); err != nil {
 		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 	}

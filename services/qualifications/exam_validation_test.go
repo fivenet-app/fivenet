@@ -6,6 +6,7 @@ import (
 	qualificationspb "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/qualifications"
 	qualificationsexam "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/qualifications/exam"
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/userinfo"
+	errorsqualifications "github.com/fivenet-app/fivenet/v2026/services/qualifications/errors"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
@@ -175,4 +176,182 @@ func TestNormalizeExamResponsesRejectsOverlongFreeText(t *testing.T) {
 	require.Error(t, err)
 	assert.Contains(t, err.Error(), "too long")
 	assert.Equal(t, "longer", response.GetFreeText().GetText())
+}
+
+func TestValidateExamAutoGradingRejectsInvalidConfigurations(t *testing.T) {
+	t.Parallel()
+	settings := &qualificationsexam.QualificationExamSettings{AutoGrade: true}
+
+	err := validateExamAutoGrading(
+		&qualificationsexam.ExamQuestions{Questions: []*qualificationsexam.ExamQuestion{
+			{
+				Data: &qualificationsexam.ExamQuestionData{
+					Data: &qualificationsexam.ExamQuestionData_FreeText{
+						FreeText: &qualificationsexam.ExamQuestionText{},
+					},
+				},
+			},
+		}},
+		settings,
+	)
+	require.ErrorIs(t, err, errorsqualifications.ErrExamAutoGradingFreeText)
+
+	err = validateExamAutoGrading(
+		&qualificationsexam.ExamQuestions{Questions: []*qualificationsexam.ExamQuestion{
+			{
+				Data: &qualificationsexam.ExamQuestionData{
+					Data: &qualificationsexam.ExamQuestionData_Yesno{
+						Yesno: &qualificationsexam.ExamQuestionYesNo{},
+					},
+				},
+			},
+		}},
+		settings,
+	)
+	require.ErrorIs(t, err, errorsqualifications.ErrExamAutoGradingInvalid)
+
+	settings.MinimumPoints = 11
+	err = validateExamAutoGrading(
+		&qualificationsexam.ExamQuestions{Questions: []*qualificationsexam.ExamQuestion{
+			{
+				Points: new(int32(10)),
+				Data: &qualificationsexam.ExamQuestionData{
+					Data: &qualificationsexam.ExamQuestionData_Yesno{
+						Yesno: &qualificationsexam.ExamQuestionYesNo{},
+					},
+				},
+				Answer: &qualificationsexam.ExamQuestionAnswerData{
+					Answer: &qualificationsexam.ExamQuestionAnswerData_Yesno{
+						Yesno: &qualificationsexam.ExamResponseYesNo{},
+					},
+				},
+			},
+		}},
+		settings,
+	)
+	require.ErrorIs(t, err, errorsqualifications.ErrExamAutoGradingInvalid)
+}
+
+func TestValidateExamAutoGradingRejectsMismatchedAnswers(t *testing.T) {
+	t.Parallel()
+	settings := &qualificationsexam.QualificationExamSettings{AutoGrade: true}
+
+	for _, question := range []*qualificationsexam.ExamQuestion{
+		{
+			Data: &qualificationsexam.ExamQuestionData{Data: &qualificationsexam.ExamQuestionData_SingleChoice{
+				SingleChoice: &qualificationsexam.ExamQuestionSingleChoice{Choices: []string{"A", "B"}},
+			}},
+			Answer: &qualificationsexam.ExamQuestionAnswerData{Answer: &qualificationsexam.ExamQuestionAnswerData_SingleChoice{
+				SingleChoice: &qualificationsexam.ExamResponseSingleChoice{Choice: "C"},
+			}},
+		},
+		{
+			Data: &qualificationsexam.ExamQuestionData{Data: &qualificationsexam.ExamQuestionData_MultipleChoice{
+				MultipleChoice: &qualificationsexam.ExamQuestionMultipleChoice{Choices: []string{"A", "B"}},
+			}},
+			Answer: &qualificationsexam.ExamQuestionAnswerData{Answer: &qualificationsexam.ExamQuestionAnswerData_MultipleChoice{
+				MultipleChoice: &qualificationsexam.ExamResponseMultipleChoice{Choices: []string{"A", "C"}},
+			}},
+		},
+	} {
+		err := validateExamAutoGrading(
+			&qualificationsexam.ExamQuestions{
+				Questions: []*qualificationsexam.ExamQuestion{question},
+			},
+			settings,
+		)
+		require.ErrorIs(t, err, errorsqualifications.ErrExamAutoGradingInvalid)
+	}
+}
+
+func TestValidateExamAutoGradingRejectsAnswerKeyExceedingLimit(t *testing.T) {
+	t.Parallel()
+
+	err := validateExamAutoGrading(
+		&qualificationsexam.ExamQuestions{Questions: []*qualificationsexam.ExamQuestion{
+			{
+				Data: &qualificationsexam.ExamQuestionData{
+					Data: &qualificationsexam.ExamQuestionData_MultipleChoice{
+						MultipleChoice: &qualificationsexam.ExamQuestionMultipleChoice{
+							Choices: []string{"A", "B"},
+							Limit:   new(int32(1)),
+						},
+					},
+				},
+				Answer: &qualificationsexam.ExamQuestionAnswerData{
+					Answer: &qualificationsexam.ExamQuestionAnswerData_MultipleChoice{
+						MultipleChoice: &qualificationsexam.ExamResponseMultipleChoice{
+							Choices: []string{"A", "B"},
+						},
+					},
+				},
+			},
+		}},
+		&qualificationsexam.QualificationExamSettings{AutoGrade: true},
+	)
+	require.ErrorIs(t, err, errorsqualifications.ErrExamAutoGradingAnswerLimit)
+}
+
+func TestExamForCandidateRedactsAnswer(t *testing.T) {
+	t.Parallel()
+	exam := &qualificationsexam.ExamQuestions{Questions: []*qualificationsexam.ExamQuestion{{
+		Id: 1,
+		Answer: &qualificationsexam.ExamQuestionAnswerData{
+			AnswerKey: "yes",
+			Answer: &qualificationsexam.ExamQuestionAnswerData_Yesno{
+				Yesno: &qualificationsexam.ExamResponseYesNo{Value: true},
+			},
+		},
+	}}}
+
+	candidateExam := examForCandidate(exam)
+	require.Nil(t, candidateExam.GetQuestions()[0].GetAnswer())
+	require.NotNil(t, exam.GetQuestions()[0].GetAnswer())
+}
+
+func TestMergeExamResponsesPreservesUnchangedResponses(t *testing.T) {
+	t.Parallel()
+	existingResponse := &qualificationsexam.ExamResponse{
+		QuestionId: 1,
+		Question: &qualificationsexam.ExamQuestion{
+			Id: 999,
+			Answer: &qualificationsexam.ExamQuestionAnswerData{
+				AnswerKey: "legacy-answer",
+			},
+		},
+	}
+	updatedResponse := &qualificationsexam.ExamResponse{QuestionId: 2}
+	existing := &qualificationsexam.ExamResponses{
+		QualificationId: 42,
+		UserId:          7,
+		Responses:       []*qualificationsexam.ExamResponse{existingResponse, {QuestionId: 2}},
+	}
+	incoming := &qualificationsexam.ExamResponses{
+		Responses: []*qualificationsexam.ExamResponse{updatedResponse},
+	}
+
+	merged := mergeExamResponses(&qualificationsexam.ExamQuestions{
+		Questions: []*qualificationsexam.ExamQuestion{{Id: 1}, {Id: 2}},
+	}, existing, incoming)
+	require.Len(t, merged.GetResponses(), 2)
+	assert.NotSame(t, existingResponse, merged.GetResponses()[0])
+	assert.Equal(t, int64(1), merged.GetResponses()[0].GetQuestion().GetId())
+	assert.Nil(t, merged.GetResponses()[0].GetQuestion().GetAnswer())
+	assert.Same(t, updatedResponse, merged.GetResponses()[1])
+	assert.Equal(t, int64(42), merged.GetQualificationId())
+	assert.Equal(t, int32(7), merged.GetUserId())
+}
+
+func TestPublicExamResponsesRedactsLegacyAnswer(t *testing.T) {
+	t.Parallel()
+	exam := &qualificationsexam.ExamQuestions{Questions: []*qualificationsexam.ExamQuestion{{Id: 1}}}
+	responses := &qualificationsexam.ExamResponses{AttemptId: "attempt", Responses: []*qualificationsexam.ExamResponse{{
+		QuestionId: 1,
+		Question:   &qualificationsexam.ExamQuestion{Id: 1, Answer: &qualificationsexam.ExamQuestionAnswerData{AnswerKey: "secret"}},
+	}}}
+
+	public := publicExamResponses(exam, responses)
+	require.Nil(t, public.GetResponses()[0].GetQuestion().GetAnswer())
+	assert.Empty(t, public.GetAttemptId())
+	assert.NotNil(t, responses.GetResponses()[0].GetQuestion().GetAnswer())
 }
