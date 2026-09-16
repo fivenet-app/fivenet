@@ -199,11 +199,11 @@ export const useAuthStore = defineStore(
          */
         const commitQueryContext = (): void => {
             queryContextRevision.value += 1;
-            // Publish the complete new key while requests are still disabled.
-            // Enabling first would start a request with the old key, which is
-            // immediately cancelled when queryContext updates below.
-            queryContext.value = buildQueryContext();
+            // Enable requests before publishing the new key. Nuxt's key watcher
+            // executes synchronously and skips the fetch while `enabled` is
+            // false; changing `enabled` alone does not trigger a fetch later.
             isQueryTransitioning.value = false;
+            queryContext.value = buildQueryContext();
         };
 
         let chooseCharacterPromise: Promise<void> | undefined;
