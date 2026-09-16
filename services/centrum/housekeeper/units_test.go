@@ -35,8 +35,9 @@ type unitAssignmentWatchSourceStub struct {
 func (s *unitAssignmentWatchSourceStub) WatchAll(
 	ctx context.Context,
 ) (store.IKVWatcher[centrumunits.Unit, *centrumunits.Unit], error) {
+	watcher, err := s.store.WatchAll(ctx)
 	close(s.ready)
-	return s.store.WatchAll(ctx)
+	return watcher, err
 }
 
 type unitAssignmentsStub struct {
@@ -239,11 +240,20 @@ func TestWatchUnitAssignmentsRecoversAfterCleanupFailure(t *testing.T) {
 	go func() {
 		done <- h.watchUnitAssignments(ctx)
 	}()
-	<-source.ready
+	select {
+	case <-source.ready:
+	case <-time.After(5 * time.Second):
+		t.Fatal("unit assignment watcher did not become ready")
+	}
 
 	emptyUnit := &centrumunits.Unit{Id: 42}
 	require.NoError(t, unitStore.Put(ctx, "unit.42", emptyUnit))
-	require.Equal(t, 1, <-attempts)
+	select {
+	case call := <-attempts:
+		require.Equal(t, 1, call)
+	case <-time.After(5 * time.Second):
+		t.Fatal("initial empty-unit cleanup was not attempted")
+	}
 
 	// Deletion events must not invoke assignment cleanup.
 	require.NoError(t, unitStore.Delete(ctx, "unit.42"))
@@ -255,7 +265,12 @@ func TestWatchUnitAssignmentsRecoversAfterCleanupFailure(t *testing.T) {
 
 	// A later PUT must still be handled after the prior cleanup failure.
 	require.NoError(t, unitStore.Put(ctx, "unit.42", emptyUnit))
-	require.Equal(t, 2, <-attempts)
+	select {
+	case call := <-attempts:
+		require.Equal(t, 2, call)
+	case <-time.After(5 * time.Second):
+		t.Fatal("empty-unit cleanup was not retried after the failure")
+	}
 
 	cancel()
 	require.NoError(t, <-done)
