@@ -32,7 +32,7 @@ type userInfoReconcileConsume struct {
 // ensureUserInfoReconcileConsumer keeps user-info changes retained while no
 // housekeeper leader is active. It intentionally has no inactivity timeout.
 func (s *Housekeeper) ensureUserInfoReconcileConsumer(ctx context.Context) error {
-	consumer, err := pkguserinfo.CreateOrUpdateChangeConsumer(
+	consumer, err := pkguserinfo.CreateOrUpdateUserInfoChangeConsumer(
 		ctx,
 		s.js,
 		jetstream.ConsumerConfig{

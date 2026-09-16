@@ -83,6 +83,13 @@ func (c *streamRecoveryChanges) SubscribeUserInfoChanges() chan *pbuserinfo.User
 
 func (*streamRecoveryChanges) UnsubscribeUserInfoChanges(chan *pbuserinfo.UserInfoChanged) {}
 
+func (*streamRecoveryChanges) SubscribeAccountGroupsChanges() chan *pbuserinfo.AccountGroupsChanged {
+	return make(chan *pbuserinfo.AccountGroupsChanged)
+}
+
+func (*streamRecoveryChanges) UnsubscribeAccountGroupsChanges(chan *pbuserinfo.AccountGroupsChanged) {
+}
+
 type streamRecoveryServer struct {
 	pblivemap.LivemapService_StreamServer
 

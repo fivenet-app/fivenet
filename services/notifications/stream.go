@@ -33,12 +33,13 @@ import (
 
 const feedFetch = 8
 
+var errAccountGroupsChangesResync = errors.New("account group changes subscriber requires resync")
+
 func (s *Server) buildSubjects(
 	ctx context.Context,
 	userInfo *pbuserinfo.UserInfo,
 ) ([]string, []string, error) {
 	baseSubjects := []string{
-		fmt.Sprintf("%s.%s.%d", notifi.BaseSubject, notifi.AccountTopic, userInfo.GetAccountId()),
 		fmt.Sprintf("%s.%s", notifi.BaseSubject, notifi.SystemTopic),
 	}
 
@@ -200,8 +201,11 @@ func (s *Server) Stream(srv pbnotifications.NotificationsService_StreamServer) e
 	// Track changes to user info, so we can send an updated user info to the user
 	currentUserInfo := userInfo.Clone()
 	accountOnly := currentUserInfo.GetUserId() == 0
+	accountGroupsChanges := s.userinfoChanges.SubscribeAccountGroupsChanges()
+	defer s.userinfoChanges.UnsubscribeAccountGroupsChanges(accountGroupsChanges)
 
 	subjectsMu := &sync.Mutex{}
+	stateMu := &sync.RWMutex{}
 	baseSubjects, additionalSubjects, err := s.buildSubjects(ctx, currentUserInfo)
 	if err != nil {
 		return errswrap.NewError(err, ErrFailedStream)
@@ -233,11 +237,36 @@ func (s *Server) Stream(srv pbnotifications.NotificationsService_StreamServer) e
 	// Count only after the consumer boundary exists. Durable notification events
 	// carry an updated unread count, so this is the stream's only count lookup.
 	var notificationCount int64
+	var notificationCountMu sync.RWMutex
 	if !accountOnly {
 		notificationCount, err = s.store.CountUnread(ctx, userInfo.GetUserId())
 		if err != nil {
 			return errswrap.NewError(err, ErrFailedStream)
 		}
+	}
+	notificationCountSnapshot := func() int64 {
+		notificationCountMu.RLock()
+		defer notificationCountMu.RUnlock()
+		return notificationCount
+	}
+	setNotificationCount := func(count int64) {
+		notificationCountMu.Lock()
+		defer notificationCountMu.Unlock()
+		notificationCount = count
+	}
+	decrementNotificationCount := func(count int64) {
+		notificationCountMu.Lock()
+		defer notificationCountMu.Unlock()
+		if notificationCount-count <= 0 {
+			notificationCount = 0
+			return
+		}
+		notificationCount -= count
+	}
+	currentUserInfoSnapshot := func() *pbuserinfo.UserInfo {
+		stateMu.RLock()
+		defer stateMu.RUnlock()
+		return currentUserInfo.Clone()
 	}
 	// Keep the durable consumer alive across websocket stream restarts on the
 	// same connection. The consumer will expire via InactiveThreshold once the
@@ -252,7 +281,7 @@ func (s *Server) Stream(srv pbnotifications.NotificationsService_StreamServer) e
 	// A consumer uses DeliverNew, so no notification event is guaranteed to be
 	// delivered on connection. Send the snapshot explicitly before live events.
 	outCh <- &pbnotifications.StreamResponse{
-		NotificationCount: notificationCount,
+		NotificationCount: notificationCountSnapshot(),
 		Data: &pbnotifications.StreamResponse_NotificationState{
 			NotificationState: true,
 		},
@@ -317,6 +346,22 @@ func (s *Server) Stream(srv pbnotifications.NotificationsService_StreamServer) e
 		return refreshConsumerSubjects()
 	}
 
+	applyAndRefreshAccountGroups := func(change *pbuserinfo.AccountGroupsChanged) error {
+		stateMu.Lock()
+		defer stateMu.Unlock()
+
+		applyAccountGroupsChanged(currentUserInfo, change)
+		return rebuildAndRefreshSubjects()
+	}
+
+	applyAndRefreshUserInfo := func(change *pbuserinfo.UserInfoChanged) error {
+		stateMu.Lock()
+		defer stateMu.Unlock()
+
+		applyUserInfoChanged(currentUserInfo, change)
+		return rebuildAndRefreshSubjects()
+	}
+
 	g.Go(func() error {
 		// Update metrics for active user sessions in first goroutine
 		s.metrics.lastSession.SetToCurrentTime()
@@ -346,12 +391,14 @@ func (s *Server) Stream(srv pbnotifications.NotificationsService_StreamServer) e
 					continue // Skip nil client view
 				}
 
+				stateMu.Lock()
 				newClientViewSubjects, err := s.buildClientViewSubjects(
 					gctx,
 					currentUserInfo,
 					clientView,
 				)
 				if err != nil {
+					stateMu.Unlock()
 					return err
 				}
 
@@ -361,8 +408,10 @@ func (s *Server) Stream(srv pbnotifications.NotificationsService_StreamServer) e
 				subjectsMu.Unlock()
 
 				if err := refreshConsumerSubjects(); err != nil {
+					stateMu.Unlock()
 					return err
 				}
+				stateMu.Unlock()
 			}
 		}
 	})
@@ -392,6 +441,45 @@ func (s *Server) Stream(srv pbnotifications.NotificationsService_StreamServer) e
 		}
 	})
 
+	// Canonical account changes are delivered through pkg/userinfo and adapted
+	// to the existing browser UserEvent contract here.
+	g.Go(func() error {
+		for {
+			select {
+			case <-gctx.Done():
+				return nil
+
+			case change, ok := <-accountGroupsChanges:
+				if !ok {
+					return errAccountGroupsChangesResync
+				}
+				if change == nil || change.GetAccountId() != userInfo.GetAccountId() {
+					continue
+				}
+
+				if err := applyAndRefreshAccountGroups(change); err != nil {
+					return err
+				}
+
+				dest := &notificationsevents.UserEvent{
+					Data: &notificationsevents.UserEvent_AccountGroupsChanged{
+						AccountGroupsChanged: change,
+					},
+				}
+				select {
+				case <-gctx.Done():
+					return nil
+				case outCh <- &pbnotifications.StreamResponse{
+					NotificationCount: notificationCountSnapshot(),
+					Data: &pbnotifications.StreamResponse_UserEvent{
+						UserEvent: dest,
+					},
+				}:
+				}
+			}
+		}
+	})
+
 	g.Go(func() error {
 		msgs, err := consumer.Messages(
 			jetstream.PullMaxMessages(feedFetch),
@@ -416,15 +504,15 @@ func (s *Server) Stream(srv pbnotifications.NotificationsService_StreamServer) e
 			if msg == nil {
 				s.logger.Warn(
 					"nil notification message received via message queue",
-					zap.Int32("user_id", currentUserInfo.GetUserId()),
+					zap.Int32("user_id", userInfo.GetUserId()),
 				)
 				continue
 			}
 
 			topic, parts := notifi.SplitSubject(msg.Subject())
 			switch topic {
-			case notifi.UserTopic, notifi.AccountTopic:
-				if accountOnly && topic == notifi.UserTopic {
+			case notifi.UserTopic:
+				if accountOnly {
 					continue
 				}
 
@@ -433,12 +521,11 @@ func (s *Server) Stream(srv pbnotifications.NotificationsService_StreamServer) e
 					return errswrap.NewError(err, ErrFailedStream)
 				}
 
-				needsSubjectRefresh := false
 				switch d := dest.GetData().(type) {
 				case *notificationsevents.UserEvent_Notification:
 					if err := s.hydrateNotifications(
 						gctx,
-						currentUserInfo,
+						currentUserInfoSnapshot(),
 						[]*resourcesnotifications.Notification{d.Notification},
 					); err != nil {
 						return errswrap.NewError(err, ErrFailedStream)
@@ -447,36 +534,21 @@ func (s *Server) Stream(srv pbnotifications.NotificationsService_StreamServer) e
 						dest.UnreadCount != nil {
 						// This is intentionally eventually consistent: concurrent
 						// publishers can observe and deliver counts out of order.
-						notificationCount = *dest.UnreadCount
+						setNotificationCount(*dest.UnreadCount)
 					}
 
 				case *notificationsevents.UserEvent_NotificationsReadCount:
 					if topic == notifi.UserTopic {
-						if notificationCount-d.NotificationsReadCount <= 0 {
-							notificationCount = 0
-						} else {
-							notificationCount -= d.NotificationsReadCount
-						}
+						decrementNotificationCount(d.NotificationsReadCount)
 					}
 
 				case *notificationsevents.UserEvent_NotificationsUnreadCount:
 					if topic == notifi.UserTopic {
-						notificationCount = d.NotificationsUnreadCount
+						setNotificationCount(d.NotificationsUnreadCount)
 					}
 
 				case *notificationsevents.UserEvent_UserInfoChanged:
-					if topic == notifi.UserTopic {
-						applyUserInfoChanged(currentUserInfo, d.UserInfoChanged)
-						needsSubjectRefresh = true
-					}
-
-				case *notificationsevents.UserEvent_AccountGroupsChanged:
-					applyAccountGroupsChanged(currentUserInfo, d.AccountGroupsChanged)
-					needsSubjectRefresh = true
-				}
-
-				if needsSubjectRefresh {
-					if err := rebuildAndRefreshSubjects(); err != nil {
+					if err := applyAndRefreshUserInfo(d.UserInfoChanged); err != nil {
 						return err
 					}
 				}
@@ -486,7 +558,7 @@ func (s *Server) Stream(srv pbnotifications.NotificationsService_StreamServer) e
 					return nil
 
 				case outCh <- &pbnotifications.StreamResponse{
-					NotificationCount: notificationCount,
+					NotificationCount: notificationCountSnapshot(),
 					Data: &pbnotifications.StreamResponse_UserEvent{
 						UserEvent: &dest,
 					},
@@ -508,7 +580,7 @@ func (s *Server) Stream(srv pbnotifications.NotificationsService_StreamServer) e
 					return nil
 
 				case outCh <- &pbnotifications.StreamResponse{
-					NotificationCount: notificationCount,
+					NotificationCount: notificationCountSnapshot(),
 					Data: &pbnotifications.StreamResponse_JobEvent{
 						JobEvent: &dest,
 					},
@@ -528,7 +600,7 @@ func (s *Server) Stream(srv pbnotifications.NotificationsService_StreamServer) e
 				if err != nil {
 					continue
 				}
-				if currentUserInfo.GetJobGrade() < int32(grade) {
+				if currentUserInfoSnapshot().GetJobGrade() < int32(grade) {
 					continue
 				}
 				var dest notificationsevents.JobGradeEvent
@@ -540,7 +612,7 @@ func (s *Server) Stream(srv pbnotifications.NotificationsService_StreamServer) e
 				case <-gctx.Done():
 					return nil
 				case outCh <- &pbnotifications.StreamResponse{
-					NotificationCount: notificationCount,
+					NotificationCount: notificationCountSnapshot(),
 					Data: &pbnotifications.StreamResponse_JobGradeEvent{
 						JobGradeEvent: &dest,
 					},
@@ -558,7 +630,7 @@ func (s *Server) Stream(srv pbnotifications.NotificationsService_StreamServer) e
 					return nil
 
 				case outCh <- &pbnotifications.StreamResponse{
-					NotificationCount: notificationCount,
+					NotificationCount: notificationCountSnapshot(),
 					Data: &pbnotifications.StreamResponse_SystemEvent{
 						SystemEvent: &dest,
 					},
@@ -575,7 +647,7 @@ func (s *Server) Stream(srv pbnotifications.NotificationsService_StreamServer) e
 					return errswrap.NewError(err, ErrFailedStream)
 				}
 
-				if !s.shouldDeliverObjectEvent(&dest, currentUserInfo) {
+				if !s.shouldDeliverObjectEvent(&dest, currentUserInfoSnapshot()) {
 					continue
 				}
 
@@ -584,7 +656,7 @@ func (s *Server) Stream(srv pbnotifications.NotificationsService_StreamServer) e
 					return nil
 
 				case outCh <- &pbnotifications.StreamResponse{
-					NotificationCount: notificationCount,
+					NotificationCount: notificationCountSnapshot(),
 					Data: &pbnotifications.StreamResponse_ObjectEvent{
 						ObjectEvent: &dest,
 					},
@@ -606,7 +678,7 @@ func (s *Server) Stream(srv pbnotifications.NotificationsService_StreamServer) e
 					return nil
 
 				case outCh <- &pbnotifications.StreamResponse{
-					NotificationCount: notificationCount,
+					NotificationCount: notificationCountSnapshot(),
 					Data: &pbnotifications.StreamResponse_MailerEvent{
 						MailerEvent: &dest,
 					},
