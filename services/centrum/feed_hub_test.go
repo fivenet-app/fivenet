@@ -206,7 +206,7 @@ func waitForFeedHubConsumer(t *testing.T, srv *Server, streamName string) {
 		}
 		_, ok := <-stream.ConsumerNames(t.Context()).Name()
 		return ok
-	}, 2*time.Second, 10*time.Millisecond)
+	}, 4*time.Second, 10*time.Millisecond)
 }
 
 func waitForFeedEvent(
@@ -279,4 +279,47 @@ func TestFeedHubForwardsJetStreamEventsAndKVUpdates(t *testing.T) {
 	})
 	assert.True(t, event.Response.GetSettings().GetEnabled())
 	assert.NotZero(t, event.Response.GetKvRevision())
+}
+
+func TestFeedHubResyncsAndRecoversAfterKVConsumerDeletion(t *testing.T) {
+	t.Parallel()
+
+	srv, _ := newFeedHubTestServer(t)
+	waitForFeedHubConsumer(t, srv, "KV_centrum_settings")
+
+	feed := srv.feedBroker.Subscribe()
+	defer srv.feedBroker.Unsubscribe(feed)
+
+	stream, err := srv.js.Stream(t.Context(), "KV_centrum_settings")
+	require.NoError(t, err)
+	deleted := false
+	for name := range stream.ConsumerNames(t.Context()).Name() {
+		require.NoError(t, stream.DeleteConsumer(t.Context(), name))
+		deleted = true
+		break
+	}
+	require.True(t, deleted, "expected the settings feed consumer to exist")
+
+	settingsKV, err := srv.js.KeyValue(t.Context(), "centrum_settings")
+	require.NoError(t, err)
+	data, err := proto.Marshal(&centrumsettings.Settings{Job: "fire", Enabled: true})
+	require.NoError(t, err)
+	_, err = settingsKV.Put(t.Context(), "fire", data)
+	require.NoError(t, err)
+
+	// A client receiving this event rebuilds its handshake/latest-state snapshot
+	// before accepting events from the replacement worker.
+	resync := waitForFeedEvent(t, feed, func(event *feedEvent) bool { return event.Resync })
+	require.NotZero(t, resync.Sequence)
+	waitForFeedHubConsumer(t, srv, "KV_centrum_settings")
+
+	data, err = proto.Marshal(&centrumsettings.Settings{Job: "ambulance", Enabled: true})
+	require.NoError(t, err)
+	_, err = settingsKV.Put(t.Context(), "ambulance", data)
+	require.NoError(t, err)
+
+	event := waitForFeedEvent(t, feed, func(event *feedEvent) bool {
+		return event.Response.GetSettings().GetJob() == "ambulance"
+	})
+	assert.True(t, event.Response.GetSettings().GetEnabled())
 }

@@ -3,6 +3,7 @@ package housekeeper
 import (
 	"context"
 	"errors"
+	"sync/atomic"
 	"testing"
 	"time"
 
@@ -10,6 +11,7 @@ import (
 	centrumunits "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/centrum/units"
 	jobscolleagues "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/jobs/colleagues"
 	pbuserinfo "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/userinfo"
+	testnats "github.com/fivenet-app/fivenet/v2026/internal/tests/nats"
 	pkguserinfo "github.com/fivenet-app/fivenet/v2026/pkg/userinfo"
 	centrummetrics "github.com/fivenet-app/fivenet/v2026/services/centrum/metrics"
 	"github.com/nats-io/nats.go"
@@ -134,6 +136,62 @@ func TestHandleUserInfoReconcileMessageAcknowledgesOnlyAfterSuccess(t *testing.T
 	assert.True(t, msg.acked)
 	assert.Zero(t, msg.nakDelay)
 	assert.False(t, msg.terminated)
+}
+
+func TestUserInfoReconcileConsumerRetainsEventAcrossLeadershipHandoff(t *testing.T) {
+	t.Parallel()
+
+	ctx := t.Context()
+	js := testnats.NewServer(t, testnats.ServerOptions{InProcess: true}).GetJS()
+
+	var reconciled atomic.Int32
+	newHousekeeper := func() *Housekeeper {
+		return &Housekeeper{
+			logger:   zap.NewNop(),
+			metrics:  centrummetrics.Get(),
+			js:       js,
+			userinfo: userInfoRetrieverForTest(42, "police"),
+			unitUserState: fakeUnitUserState{
+				reconcile: func(_ context.Context, userID int32, job string) (bool, error) {
+					if userID == 42 && job == "police" {
+						reconciled.Add(1)
+					}
+					return false, nil
+				},
+			},
+			dispatcherUserState: fakeDispatcherUserState{},
+		}
+	}
+
+	first := newHousekeeper()
+	require.NoError(t, first.ensureUserInfoReconcileConsumer(ctx))
+	firstLeaderCtx, stopFirstLeader := context.WithCancel(ctx)
+	firstConsume, err := first.startUserInfoReconcileConsumer(firstLeaderCtx)
+	require.NoError(t, err)
+
+	// Simulate the elected leader stepping down before a canonical event is
+	// published. The durable consumer must retain that event for its successor.
+	stopFirstLeader()
+	firstConsume.ctx.Stop()
+
+	event := &pbuserinfo.UserInfoChanged{AccountId: 1, UserId: 42}
+	event.SetJob("ambulance") // Deliberately stale: the handler reloads "police".
+	data, err := protojson.Marshal(event)
+	require.NoError(t, err)
+	_, err = js.Publish(ctx, "userinfo.1.changes", data)
+	require.NoError(t, err)
+
+	second := newHousekeeper()
+	require.NoError(t, second.ensureUserInfoReconcileConsumer(ctx))
+	secondLeaderCtx, stopSecondLeader := context.WithCancel(ctx)
+	t.Cleanup(stopSecondLeader)
+	secondConsume, err := second.startUserInfoReconcileConsumer(secondLeaderCtx)
+	require.NoError(t, err)
+	t.Cleanup(secondConsume.ctx.Stop)
+
+	require.Eventually(t, func() bool { return reconciled.Load() == 1 }, time.Second, 10*time.Millisecond)
+	time.Sleep(100 * time.Millisecond)
+	require.Equal(t, int32(1), reconciled.Load(), "the durable event must be reconciled exactly once")
 }
 
 func TestHandleUserInfoReconcileMessageRetriesFailure(t *testing.T) {

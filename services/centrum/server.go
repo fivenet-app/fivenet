@@ -216,6 +216,13 @@ func NewServer(p Params) Result {
 
 		s.wg.Go(func() {
 			err := s.loadData(ctxCancel)
+			if err == nil {
+				// Feed projections resolve their values through the local stores.
+				// Start them only after the initial store refresh has completed, so
+				// an early KV event cannot be dropped because its projection is not
+				// available locally yet.
+				s.startFeedHub(ctxCancel)
+			}
 			s.readyMu.Lock()
 			s.readyErr = err
 			close(s.ready)
@@ -224,8 +231,6 @@ func NewServer(p Params) Result {
 				s.logger.Error("failed to load initial centrum data", zap.Error(err))
 			}
 		})
-
-		s.startFeedHub(ctxCancel)
 
 		return nil
 	}))
