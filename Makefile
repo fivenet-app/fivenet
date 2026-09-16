@@ -38,7 +38,7 @@ clean:
 
 .PHONY: watch
 watch:
-	pnpm dev
+	pnpm run dev
 
 .PHONY: build-container
 build-container:
@@ -72,7 +72,7 @@ build-go:
 .PHONY: build-js
 build-js:
 	rm -rf ./.nuxt/dist/
-	NODE_OPTIONS="--max-old-space-size=8192" pnpm build
+	NODE_OPTIONS="--max-old-space-size=8192" pnpm run build
 
 .PHONY: run-server
 run-server:
@@ -107,7 +107,7 @@ fmt-proto: buf
 
 .PHONY: fmt-js
 fmt-js:
-	pnpm prettier --write ./app
+	pnpm run prettier --write ./app
 
 .PHONY: gen-licenses
 gen-licenses: go-licenses

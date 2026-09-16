@@ -5,7 +5,7 @@
 To contribute to Fivenet, please follow these steps:
 
 1. Fork the repository on GitHub.
-2. Clone the forked repository to your local machine using `git clone https://github.com/fivenet-app/fivenet-app.github.io.git`.
+2. Clone the forked repository to your local machine using `git clone https://github.com/fivenet-app/fivenet.git`.
 3. Create a new branch for your feature or bug fix using `git checkout -b <branch_name>`.
 4. Make your changes to the codebase, be sure to check the [code style section](#code-style) and adhere to our coding standards.
 5. Test your changes thoroughly to ensure they work as expected.
@@ -46,3 +46,67 @@ When writing code, please follow the following guidelines:
     - Make sure to use the project's linter and formatter to check your code (e.g., `eslint` + `prettier` for frontend code, gofmt for backend code).
 - Use consistent indentation and spacing.
 - Avoid using magic numbers or hard-coded values; use constants or configuration files instead.
+
+## Common Development Commands
+
+Install frontend dependencies:
+
+```sh
+pnpm install --frozen-lockfile
+```
+
+Run the development server:
+
+```sh
+make watch
+```
+
+Run the backend server (Golang required):
+
+```sh
+make run-server
+```
+
+Run tests:
+
+```sh
+make tests       # Go and frontend tests
+make tests-go    # Go tests only
+make tests-js    # Frontend tests only
+```
+
+Lint and format frontend code:
+
+```sh
+pnpm run lint
+pnpm run format
+```
+
+Format protobuf sources and regenerate protobuf APIs:
+
+```sh
+make fmt-proto
+make gen-proto
+```
+
+Regenerate SQL and protobuf output (requires test database):
+
+```sh
+make gen
+```
+
+Build the frontend and backend:
+
+```sh
+make build-js
+make build-go
+```
+
+### Local Privileges and Tooling
+
+Some commands may need additional local setup:
+
+- `make gen-proto` installs missing Go-based tools such as `buf` and `protoc-gen-doc`. The Go bin directory must be writable and available on `PATH`.
+- Docker-related commands require access to a running Docker daemon. Some Golang tests require access to Docker.
+- Dependency installation and tool installation require network access.
+- Do not use `sudo` for repository commands; configure the local Go, Node.js/pnpm, and Docker environments instead.
