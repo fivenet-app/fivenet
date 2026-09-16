@@ -3737,6 +3737,25 @@
                 "MANAGE": "Verwalten",
                 "EDIT": "Editieren"
             },
+            "QualificationActivityType": {
+                "UNSPECIFIED": "Unbestimmt",
+                "CREATED": "Qualifikation erstellt",
+                "UPDATED": "Qualifikation aktualisiert",
+                "DELETED": "Qualifikation gelöscht",
+                "RESTORED": "Qualifikation wiederhergestellt",
+                "ACCESS_UPDATED": "Zugriff aktualisiert",
+                "REQUEST_CREATED": "Anfrage erstellt",
+                "REQUEST_UPDATED": "Anfrage aktualisiert",
+                "REQUEST_DELETED": "Anfrage gelöscht",
+                "EXAM_STARTED": "Prüfung gestartet",
+                "EXAM_CANCELLED": "Prüfung abgebrochen",
+                "EXAM_SUBMITTED": "Prüfung abgegeben",
+                "EXAM_EXPIRED": "Prüfung abgelaufen",
+                "RESULT_CREATED": "Ergebnis erstellt",
+                "RESULT_UPDATED": "Ergebnis aktualisiert",
+                "RESULT_DELETED": "Ergebnis gelöscht",
+                "RESULT_RESTORED": "Ergebnis wiederhergestellt"
+            },
             "ResultStatus": {
                 "UNSPECIFIED": "Unbestimmt",
                 "PENDING": "Ausstehend",

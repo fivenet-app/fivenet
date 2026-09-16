@@ -17,6 +17,7 @@ import (
 	pbjobs "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/jobs"
 	permsjobs "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/jobs/perms"
 	"github.com/fivenet-app/fivenet/v2026/pkg/access"
+	"github.com/fivenet-app/fivenet/v2026/pkg/dbutils"
 	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/auth"
 	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/errswrap"
 	grpc_audit "github.com/fivenet-app/fivenet/v2026/pkg/grpc/interceptors/audit"
@@ -584,10 +585,6 @@ func (s *Server) ListColleagueActivity(
 		},
 	}
 
-	if len(req.GetActivityTypes()) == 0 {
-		return resp, nil
-	}
-
 	// If no user IDs given or more than 2, show all the user has access to
 	if len(resolvedUserIDs) == 0 || len(resolvedUserIDs) >= 2 {
 		condition = condition.AND(
@@ -660,7 +657,8 @@ func (s *Server) ListColleagueActivity(
 		}
 	}
 
-	if len(req.GetActivityTypes()) > 0 {
+	hasActivityTypeFilter := len(req.GetActivityTypes()) > 0
+	if hasActivityTypeFilter {
 		req.ActivityTypes = slices.DeleteFunc(
 			req.GetActivityTypes(),
 			func(t colleaguesactivity.ColleagueActivityType) bool {
@@ -674,8 +672,32 @@ func (s *Server) ListColleagueActivity(
 		)
 	}
 
+	activityTypes := req.GetActivityTypes()
+	if hasActivityTypeFilter && len(activityTypes) == 0 {
+		return resp, nil
+	}
+	if !hasActivityTypeFilter {
+		activityTypes = []colleaguesactivity.ColleagueActivityType{
+			colleaguesactivity.ColleagueActivityType_COLLEAGUE_ACTIVITY_TYPE_HIRED,
+			colleaguesactivity.ColleagueActivityType_COLLEAGUE_ACTIVITY_TYPE_FIRED,
+			colleaguesactivity.ColleagueActivityType_COLLEAGUE_ACTIVITY_TYPE_PROMOTED,
+			colleaguesactivity.ColleagueActivityType_COLLEAGUE_ACTIVITY_TYPE_DEMOTED,
+			colleaguesactivity.ColleagueActivityType_COLLEAGUE_ACTIVITY_TYPE_ABSENCE_DATE,
+			colleaguesactivity.ColleagueActivityType_COLLEAGUE_ACTIVITY_TYPE_NOTE,
+			colleaguesactivity.ColleagueActivityType_COLLEAGUE_ACTIVITY_TYPE_LABELS,
+			colleaguesactivity.ColleagueActivityType_COLLEAGUE_ACTIVITY_TYPE_NAME,
+		}
+	}
 	condTypes := []mysql.Expression{}
-	for _, aType := range req.GetActivityTypes() {
+	for _, aType := range activityTypes {
+		if !slices.ContainsFunc(
+			types.Values(),
+			func(s permsjobs.ColleaguesServiceListColleagueActivityTypesPermValue) bool {
+				return strings.Contains(aType.String(), "COLLEAGUE_ACTIVITY_TYPE_"+string(s))
+			},
+		) {
+			continue
+		}
 		condTypes = append(condTypes, mysql.Int32(int32(aType)))
 	}
 
@@ -684,6 +706,16 @@ func (s *Server) ListColleagueActivity(
 	}
 
 	condition = condition.AND(tColleagueActivity.ActivityType.IN(condTypes...))
+	if req.HasFrom() {
+		condition = condition.AND(
+			tColleagueActivity.CreatedAt.GT_EQ(dbutils.TimestampToMySQL(req.GetFrom())),
+		)
+	}
+	if req.HasTo() {
+		condition = condition.AND(
+			tColleagueActivity.CreatedAt.LT_EQ(dbutils.TimestampToMySQL(req.GetTo())),
+		)
+	}
 
 	query := jobsstore.ListQuery{
 		Job:   userInfo.GetJob(),

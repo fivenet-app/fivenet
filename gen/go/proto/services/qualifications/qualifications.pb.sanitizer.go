@@ -132,6 +132,89 @@ func (m *GetQualificationResponse) Sanitize() error {
 
 // Sanitize sanitizes the message's fields, in case of complex types it calls
 // their Sanitize() method recursively.
+func (m *ListQualificationActivityRequest) Sanitize() error {
+	if m == nil {
+		return nil
+	}
+
+	// Field: From
+	if m.From != nil {
+		if v, ok := any(m.GetFrom()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+	}
+
+	// Field: Pagination
+	if m.Pagination != nil {
+		if v, ok := any(m.GetPagination()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+	}
+
+	// Field: Sort
+	if m.Sort != nil {
+		if v, ok := any(m.GetSort()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+	}
+
+	// Field: To
+	if m.To != nil {
+		if v, ok := any(m.GetTo()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+	}
+
+	// Field: Types
+	for idx, item := range m.Types {
+		_, _ = idx, item
+
+	}
+
+	return nil
+}
+
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
+func (m *ListQualificationActivityResponse) Sanitize() error {
+	if m == nil {
+		return nil
+	}
+
+	// Field: Activity
+	for idx, item := range m.Activity {
+		_, _ = idx, item
+
+		if v, ok := any(item).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+
+	}
+
+	// Field: Pagination
+	if m.Pagination != nil {
+		if v, ok := any(m.GetPagination()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+	}
+
+	return nil
+}
+
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *ListQualificationRequestsRequest) Sanitize() error {
 	if m == nil {
 		return nil

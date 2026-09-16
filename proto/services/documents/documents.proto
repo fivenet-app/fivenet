@@ -179,6 +179,7 @@ message ListDocumentActivityRequest {
   resources.common.database.PaginationRequest pagination = 1 [(buf.validate.field).required = true];
   int64 document_id = 2;
   // Search params
+  // Activity types to filter by. If empty, all activity types will be returned.
   repeated resources.documents.activity.DocActivityType activity_types = 3 [(buf.validate.field).repeated = {
     max_items: 10
     items: {

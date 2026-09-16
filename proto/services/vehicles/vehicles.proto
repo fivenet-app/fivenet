@@ -7,6 +7,7 @@ import "codegen/itemslen/itemslen.proto";
 import "codegen/perms/perms.proto";
 import "codegen/sanitizer/sanitizer.proto";
 import "resources/common/database/database.proto";
+import "resources/timestamp/timestamp.proto";
 import "resources/vehicles/activity/activity.proto";
 import "resources/vehicles/props/props.proto";
 import "resources/vehicles/vehicles.proto";
@@ -53,16 +54,20 @@ message SetVehiclePropsResponse {
 message ListVehicleActivityRequest {
   resources.common.database.PaginationRequest pagination = 1 [(buf.validate.field).required = true];
   optional resources.common.database.Sort sort = 2;
+  // Search params
   string plate = 3 [(buf.validate.field).string = {
     min_len: 1
     max_len: 32
   }];
+  // Activity types to filter by. If empty, all activity types will be returned.
   repeated resources.vehicles.activity.VehicleActivityType types = 4 [(buf.validate.field).repeated = {
     max_items: 10
     items: {
       enum: {defined_only: true}
     }
   }];
+  optional resources.timestamp.Timestamp from = 5;
+  optional resources.timestamp.Timestamp to = 6;
 }
 
 message ListVehicleActivityResponse {

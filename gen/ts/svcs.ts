@@ -456,6 +456,7 @@ export const grpcMethods = [
 	'qualifications.QualificationsService/CreateQualification',
 	'qualifications.QualificationsService/UpdateQualification',
 	'qualifications.QualificationsService/DeleteQualification',
+	'qualifications.QualificationsService/ListQualificationActivity',
 	'qualifications.QualificationsService/ListQualificationRequests',
 	'qualifications.QualificationsService/CreateOrUpdateQualificationRequest',
 	'qualifications.QualificationsService/DeleteQualificationReq',

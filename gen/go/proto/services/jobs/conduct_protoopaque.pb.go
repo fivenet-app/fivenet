@@ -235,6 +235,7 @@ type ListConductEntriesRequest_builder struct {
 	Pagination *database.PaginationRequest
 	Sort       *database.Sort
 	// Search params
+	// Conduct types to filter by. If empty, all conduct types will be returned.
 	Types       []conduct.ConductType
 	ShowExpired *bool
 	ShowDrafts  *bool

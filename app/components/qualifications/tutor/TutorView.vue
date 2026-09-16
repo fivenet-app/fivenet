@@ -65,7 +65,7 @@ const results = ref<InstanceType<typeof ResultList> | null>(null);
                             </template>
 
                             <template #item-label="{ item: user }">
-                                {{ `${user?.firstname} ${user?.lastname} (${user?.dateofbirth})` }}
+                                {{ userToLabel(user) }}
                             </template>
 
                             <template #empty> {{ $t('common.not_found', [$t('common.user', 2)]) }} </template>

@@ -103,7 +103,7 @@ func TestStoreGetExamUser(t *testing.T) {
 			"exam_user.ended_at",
 		}).AddRow(int64(42), int32(7), now, now, now, nil))
 
-	examUser, err := store.GetExamUser(t.Context(), 42, 7)
+	examUser, err := store.GetExamUser(t.Context(), db, 42, 7)
 	require.NoError(t, err)
 	require.NotNil(t, examUser)
 	assert.Equal(t, int64(42), examUser.GetQualificationId())

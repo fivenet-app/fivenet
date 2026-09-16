@@ -8,6 +8,7 @@ import "codegen/perms/perms.proto";
 import "codegen/sanitizer/sanitizer.proto";
 import "resources/common/database/database.proto";
 import "resources/file/filestore.proto";
+import "resources/timestamp/timestamp.proto";
 import "resources/users/activity/activity.proto";
 import "resources/users/props/props.proto";
 import "resources/users/user.proto";
@@ -49,12 +50,15 @@ message ListUserActivityRequest {
   optional resources.common.database.Sort sort = 2;
   // Search params
   int32 user_id = 3 [(buf.validate.field).int32.gt = 0];
+  // Activity types to filter by. If empty, all activity types will be returned.
   repeated resources.users.activity.UserActivityType types = 4 [(buf.validate.field).repeated = {
     max_items: 20
     items: {
       enum: {defined_only: true}
     }
   }];
+  optional resources.timestamp.Timestamp from = 5;
+  optional resources.timestamp.Timestamp to = 6;
 }
 
 message ListUserActivityResponse {

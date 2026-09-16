@@ -11,6 +11,7 @@ import "resources/jobs/colleagues/activity/activity.proto";
 import "resources/jobs/colleagues/colleagues.proto";
 import "resources/jobs/labels/labels.proto";
 import "resources/jobs/user_selector.proto";
+import "resources/timestamp/timestamp.proto";
 
 option go_package = "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/jobs;jobs";
 
@@ -54,12 +55,15 @@ message ListColleagueActivityRequest {
   optional resources.common.database.Sort sort = 2;
   // Search params
   optional resources.jobs.UserSelector users = 3;
+  // Activity types to filter by. If empty, all user-permitted activity types will be returned.
   repeated resources.jobs.colleagues.activity.ColleagueActivityType activity_types = 4 [(buf.validate.field).repeated = {
     max_items: 10
     items: {
       enum: {defined_only: true}
     }
   }];
+  optional resources.timestamp.Timestamp from = 5;
+  optional resources.timestamp.Timestamp to = 6;
 }
 
 message ListColleagueActivityResponse {

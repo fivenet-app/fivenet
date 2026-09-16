@@ -30,6 +30,7 @@ import type { ResponsiveActionEntry } from '../partials/ResponsiveActions.types'
 import OpenClosedBadge from '../partials/OpenClosedBadge.vue';
 import RefreshButton from '../partials/RefreshButton.vue';
 import TutorView from './tutor/TutorView.vue';
+import ActivityPanel from './ActivityPanel.vue';
 import ResponsiveActions from '~/components/partials/ResponsiveActions.vue';
 
 const props = defineProps<{
@@ -263,6 +264,9 @@ const items = computed<TabsItem[]>(() =>
         { slot: 'info' as const, label: t('common.content'), icon: 'i-mdi-info', value: 'info' },
         canDo.value.grade
             ? { slot: 'tutor' as const, label: t('common.tutor'), icon: 'i-mdi-sigma', value: 'tutor' }
+            : undefined,
+        canDo.value.grade
+            ? { slot: 'activity' as const, label: t('common.activity'), icon: 'i-mdi-pulse', value: 'activity' }
             : undefined,
     ].flatMap((item) => (item !== undefined ? [item] : [])),
 );
@@ -631,6 +635,10 @@ const requestUserModal = overlay.create(RequestUserModal);
                                 <TutorView :qualification="qualification" />
                             </div>
                         </div>
+                    </template>
+
+                    <template v-if="canDo.grade" #activity>
+                        <ActivityPanel :qualification-id="qualification.id" />
                     </template>
                 </UTabs>
             </div>

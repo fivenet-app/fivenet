@@ -155,6 +155,15 @@ func (m *ListColleagueActivityRequest) Sanitize() error {
 
 	}
 
+	// Field: From
+	if m.From != nil {
+		if v, ok := any(m.GetFrom()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+	}
+
 	// Field: Pagination
 	if m.Pagination != nil {
 		if v, ok := any(m.GetPagination()).(interface{ Sanitize() error }); ok {
@@ -167,6 +176,15 @@ func (m *ListColleagueActivityRequest) Sanitize() error {
 	// Field: Sort
 	if m.Sort != nil {
 		if v, ok := any(m.GetSort()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+	}
+
+	// Field: To
+	if m.To != nil {
+		if v, ok := any(m.GetTo()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}

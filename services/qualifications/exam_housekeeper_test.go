@@ -6,6 +6,7 @@ import (
 
 	"github.com/DATA-DOG/go-sqlmock"
 	resqualifications "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/qualifications"
+	qualificationsactivity "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/qualifications/activity"
 	qualificationsexam "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/qualifications/exam"
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/userinfo"
 	qualificationsstore "github.com/fivenet-app/fivenet/v2026/stores/qualifications"
@@ -48,6 +49,15 @@ func (s *examHousekeeperTestStore) ExpireExamUser(
 	s.events = append(s.events, "expire")
 	s.attemptID = attemptID
 	return true, nil
+}
+
+func (s *examHousekeeperTestStore) CreateQualificationActivity(
+	_ context.Context,
+	_ qrm.DB,
+	activity *qualificationsactivity.QualificationActivity,
+) error {
+	s.events = append(s.events, "activity:"+activity.GetType().String())
+	return nil
 }
 
 func (s *examHousekeeperTestStore) GetExamResponses(
@@ -102,6 +112,7 @@ func TestExamHousekeeperGradesResponsesAfterExpiryClaim(t *testing.T) {
 	assert.Equal(t, []string{
 		"get-qualification",
 		"expire",
+		"activity:QUALIFICATION_ACTIVITY_TYPE_EXAM_EXPIRED",
 		"get-responses",
 		"grade:REQUEST_STATUS_EXAM_GRADING",
 	}, store.events)

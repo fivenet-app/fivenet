@@ -98,7 +98,7 @@ func newFivenetCalendarEntriesTableImpl(schemaName, tableName, alias string) fiv
 		RecurrenceVersionColumn = mysql.IntegerColumn("recurrence_version")
 		allColumns              = mysql.ColumnList{IDColumn, CreatedAtColumn, UpdatedAtColumn, DeletedAtColumn, CalendarIDColumn, JobColumn, StartTimeColumn, EndTimeColumn, AllDayColumn, TitleColumn, ContentColumn, ClosedColumn, RsvpOpenColumn, IconColumn, CreatorIDColumn, CreatorJobColumn, RecurringColumn, RecurringUntilColumn, RecurrenceVersionColumn}
 		mutableColumns          = mysql.ColumnList{CreatedAtColumn, UpdatedAtColumn, DeletedAtColumn, CalendarIDColumn, JobColumn, StartTimeColumn, EndTimeColumn, AllDayColumn, TitleColumn, ContentColumn, ClosedColumn, RsvpOpenColumn, IconColumn, CreatorIDColumn, CreatorJobColumn, RecurringColumn, RecurringUntilColumn, RecurrenceVersionColumn}
-		defaultColumns          = mysql.ColumnList{CreatedAtColumn, ClosedColumn, RsvpOpenColumn, RecurrenceVersionColumn}
+		defaultColumns          = mysql.ColumnList{CreatedAtColumn, AllDayColumn, ClosedColumn, RsvpOpenColumn, RecurrenceVersionColumn}
 	)
 
 	return fivenetCalendarEntriesTable{

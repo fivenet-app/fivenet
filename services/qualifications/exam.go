@@ -7,6 +7,7 @@ import (
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/audit"
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/qualifications"
 	qualificationsaccess "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/qualifications/access"
+	qualificationsactivity "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/qualifications/activity"
 	qualificationsexam "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/qualifications/exam"
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/userinfo"
 	pbqualifications "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/qualifications"
@@ -56,7 +57,7 @@ func (s *Server) GetExamInfo(
 		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 	}
 
-	examUser, err := s.store.GetExamUser(ctx, req.GetQualificationId(), userInfo.GetUserId())
+	examUser, err := s.store.GetExamUser(ctx, s.db, req.GetQualificationId(), userInfo.GetUserId())
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 	}
@@ -155,20 +156,23 @@ func (s *Server) TakeExam(
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 	}
-	examUser, err := s.store.GetExamUser(ctx, req.GetQualificationId(), userInfo.GetUserId())
+	examUser, err := s.store.GetExamUser(ctx, s.db, req.GetQualificationId(), userInfo.GetUserId())
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 	}
+
 	if req.GetCancel() {
 		if examUser == nil || examUser.GetEndedAt() != nil ||
 			examUser.GetEndsAt() == nil || !time.Now().Before(examUser.GetEndsAt().AsTime()) {
 			return nil, errorsqualifications.ErrExamDisabled
 		}
+
 		tx, err := s.db.BeginTx(ctx, nil)
 		if err != nil {
 			return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 		}
 		defer tx.Rollback()
+
 		active, err := s.store.ClaimActiveExamUser(
 			ctx,
 			tx,
@@ -207,9 +211,23 @@ func (s *Server) TakeExam(
 		); err != nil {
 			return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 		}
+		if err := s.addQualificationActivityForAttempt(
+			ctx,
+			tx,
+			req.GetQualificationId(),
+			qualificationsactivity.QualificationActivityType_QUALIFICATION_ACTIVITY_TYPE_EXAM_CANCELLED,
+			userInfo.GetUserId(),
+			userInfo.GetUserId(),
+			examUser.GetAttemptId(),
+			nil,
+		); err != nil {
+			return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
+		}
+
 		if err := tx.Commit(); err != nil {
 			return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 		}
+
 		return &pbqualifications.TakeExamResponse{}, nil
 	}
 
@@ -219,6 +237,19 @@ func (s *Server) TakeExam(
 	}
 	if !check {
 		return nil, errorsqualifications.ErrExamDisabled
+	}
+
+	// Read the attempt and its related data in the same transaction as the
+	// start writes so the response reflects the state being committed.
+	tx, err := s.db.BeginTx(ctx, nil)
+	if err != nil {
+		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
+	}
+	defer tx.Rollback()
+
+	examUser, err = s.store.GetExamUser(ctx, tx, req.GetQualificationId(), userInfo.GetUserId())
+	if err != nil {
+		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 	}
 
 	timesUp := examUser != nil && examUser.GetEndsAt() != nil &&
@@ -234,7 +265,7 @@ func (s *Server) TakeExam(
 	if examUser != nil && examUser.GetSnapshot() != nil {
 		exam = examForCandidate(examUser.GetSnapshot().GetExam())
 	} else if examUser == nil || !timesUp {
-		exam, err = s.store.GetExamQuestions(ctx, s.db, req.GetQualificationId(), false)
+		exam, err = s.store.GetExamQuestions(ctx, tx, req.GetQualificationId(), false)
 		if err != nil {
 			return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 		}
@@ -244,7 +275,7 @@ func (s *Server) TakeExam(
 	if examUser != nil && !timesUp {
 		responses, _, err = s.store.GetExamResponses(
 			ctx,
-			s.db,
+			tx,
 			examUser.GetAttemptId(),
 		)
 		if err != nil {
@@ -254,7 +285,7 @@ func (s *Server) TakeExam(
 
 	if err := s.store.UpdateRequestStatus(
 		ctx,
-		s.db,
+		tx,
 		req.GetQualificationId(),
 		userInfo.GetUserId(),
 		qualifications.RequestStatus_REQUEST_STATUS_EXAM_STARTED,
@@ -265,13 +296,13 @@ func (s *Server) TakeExam(
 	// No end time for the exam? Need to create an entry
 	if examUser == nil || examUser.GetEndsAt() == nil {
 		examTime := quali.GetExamSettings().GetTime().AsDuration()
-		examWithAnswers, err := s.store.GetExamQuestions(ctx, s.db, req.GetQualificationId(), true)
+		examWithAnswers, err := s.store.GetExamQuestions(ctx, tx, req.GetQualificationId(), true)
 		if err != nil {
 			return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 		}
 		if _, err := s.store.CreateExamUser(
 			ctx,
-			s.db,
+			tx,
 			req.GetQualificationId(),
 			userInfo.GetUserId(),
 			time.Now().Add(examTime),
@@ -286,8 +317,24 @@ func (s *Server) TakeExam(
 		}
 	}
 
-	examUser, err = s.store.GetExamUser(ctx, req.GetQualificationId(), userInfo.GetUserId())
+	examUser, err = s.store.GetExamUser(ctx, tx, req.GetQualificationId(), userInfo.GetUserId())
 	if err != nil {
+		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
+	}
+	if err := s.addQualificationActivityForAttempt(
+		ctx,
+		tx,
+		req.GetQualificationId(),
+		qualificationsactivity.QualificationActivityType_QUALIFICATION_ACTIVITY_TYPE_EXAM_STARTED,
+		userInfo.GetUserId(),
+		userInfo.GetUserId(),
+		examUser.GetAttemptId(),
+		nil,
+	); err != nil {
+		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
+	}
+
+	if err := tx.Commit(); err != nil {
 		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 	}
 
@@ -337,7 +384,7 @@ func (s *Server) SubmitExam(
 
 	var duration time.Duration
 	endedAt := time.Now()
-	examUser, err := s.store.GetExamUser(ctx, req.GetQualificationId(), userInfo.GetUserId())
+	examUser, err := s.store.GetExamUser(ctx, s.db, req.GetQualificationId(), userInfo.GetUserId())
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 	}
@@ -362,13 +409,14 @@ func (s *Server) SubmitExam(
 		return nil, status.Errorf(codes.InvalidArgument, "invalid exam submission: %v", err)
 	}
 
-	// Begin transaction
+	// Lock and persist the submission atomically. The preflight reads above are
+	// revalidated by ClaimActiveExamUser inside this transaction.
 	tx, err := s.db.BeginTx(ctx, nil)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 	}
-	// Defer a rollback in case anything fails
 	defer tx.Rollback()
+
 	publishNotifications := make([]func(context.Context) error, 0, 1)
 	active, err := s.store.ClaimActiveExamUser(
 		ctx,
@@ -419,6 +467,18 @@ func (s *Server) SubmitExam(
 			examUser.GetSnapshot(),
 			responses,
 			&publishNotifications,
+		); err != nil {
+			return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
+		}
+		if err := s.addQualificationActivityForAttempt(
+			ctx,
+			tx,
+			req.GetQualificationId(),
+			qualificationsactivity.QualificationActivityType_QUALIFICATION_ACTIVITY_TYPE_EXAM_SUBMITTED,
+			userInfo.GetUserId(),
+			userInfo.GetUserId(),
+			examUser.GetAttemptId(),
+			nil,
 		); err != nil {
 			return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 		}
@@ -549,7 +609,7 @@ func (s *Server) GetUserExam(
 	}
 
 	resp := &pbqualifications.GetUserExamResponse{}
-	examUser, err := s.store.GetExamUser(ctx, req.GetQualificationId(), req.GetUserId())
+	examUser, err := s.store.GetExamUser(ctx, s.db, req.GetQualificationId(), req.GetUserId())
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 	}

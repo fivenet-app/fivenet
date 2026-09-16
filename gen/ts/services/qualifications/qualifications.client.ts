@@ -20,6 +20,8 @@ import type { CreateOrUpdateQualificationRequestResponse } from "./qualification
 import type { CreateOrUpdateQualificationRequestRequest } from "./qualifications";
 import type { ListQualificationRequestsResponse } from "./qualifications";
 import type { ListQualificationRequestsRequest } from "./qualifications";
+import type { ListQualificationActivityResponse } from "./qualifications";
+import type { ListQualificationActivityRequest } from "./qualifications";
 import type { DeleteQualificationResponse } from "./qualifications";
 import type { DeleteQualificationRequest } from "./qualifications";
 import type { UpdateQualificationResponse } from "./qualifications";
@@ -57,6 +59,10 @@ export interface IQualificationsServiceClient {
      * @generated from protobuf rpc: DeleteQualification
      */
     deleteQualification(input: DeleteQualificationRequest, options?: RpcOptions): UnaryCall<DeleteQualificationRequest, DeleteQualificationResponse>;
+    /**
+     * @generated from protobuf rpc: ListQualificationActivity
+     */
+    listQualificationActivity(input: ListQualificationActivityRequest, options?: RpcOptions): UnaryCall<ListQualificationActivityRequest, ListQualificationActivityResponse>;
     /**
      * @generated from protobuf rpc: ListQualificationRequests
      */
@@ -131,52 +137,59 @@ export class QualificationsServiceClient implements IQualificationsServiceClient
         return stackIntercept<DeleteQualificationRequest, DeleteQualificationResponse>("unary", this._transport, method, opt, input);
     }
     /**
+     * @generated from protobuf rpc: ListQualificationActivity
+     */
+    listQualificationActivity(input: ListQualificationActivityRequest, options?: RpcOptions): UnaryCall<ListQualificationActivityRequest, ListQualificationActivityResponse> {
+        const method = this.methods[5], opt = this._transport.mergeOptions(options);
+        return stackIntercept<ListQualificationActivityRequest, ListQualificationActivityResponse>("unary", this._transport, method, opt, input);
+    }
+    /**
      * @generated from protobuf rpc: ListQualificationRequests
      */
     listQualificationRequests(input: ListQualificationRequestsRequest, options?: RpcOptions): UnaryCall<ListQualificationRequestsRequest, ListQualificationRequestsResponse> {
-        const method = this.methods[5], opt = this._transport.mergeOptions(options);
+        const method = this.methods[6], opt = this._transport.mergeOptions(options);
         return stackIntercept<ListQualificationRequestsRequest, ListQualificationRequestsResponse>("unary", this._transport, method, opt, input);
     }
     /**
      * @generated from protobuf rpc: CreateOrUpdateQualificationRequest
      */
     createOrUpdateQualificationRequest(input: CreateOrUpdateQualificationRequestRequest, options?: RpcOptions): UnaryCall<CreateOrUpdateQualificationRequestRequest, CreateOrUpdateQualificationRequestResponse> {
-        const method = this.methods[6], opt = this._transport.mergeOptions(options);
+        const method = this.methods[7], opt = this._transport.mergeOptions(options);
         return stackIntercept<CreateOrUpdateQualificationRequestRequest, CreateOrUpdateQualificationRequestResponse>("unary", this._transport, method, opt, input);
     }
     /**
      * @generated from protobuf rpc: DeleteQualificationReq
      */
     deleteQualificationReq(input: DeleteQualificationReqRequest, options?: RpcOptions): UnaryCall<DeleteQualificationReqRequest, DeleteQualificationReqResponse> {
-        const method = this.methods[7], opt = this._transport.mergeOptions(options);
+        const method = this.methods[8], opt = this._transport.mergeOptions(options);
         return stackIntercept<DeleteQualificationReqRequest, DeleteQualificationReqResponse>("unary", this._transport, method, opt, input);
     }
     /**
      * @generated from protobuf rpc: ListQualificationsResults
      */
     listQualificationsResults(input: ListQualificationsResultsRequest, options?: RpcOptions): UnaryCall<ListQualificationsResultsRequest, ListQualificationsResultsResponse> {
-        const method = this.methods[8], opt = this._transport.mergeOptions(options);
+        const method = this.methods[9], opt = this._transport.mergeOptions(options);
         return stackIntercept<ListQualificationsResultsRequest, ListQualificationsResultsResponse>("unary", this._transport, method, opt, input);
     }
     /**
      * @generated from protobuf rpc: CreateOrUpdateQualificationResult
      */
     createOrUpdateQualificationResult(input: CreateOrUpdateQualificationResultRequest, options?: RpcOptions): UnaryCall<CreateOrUpdateQualificationResultRequest, CreateOrUpdateQualificationResultResponse> {
-        const method = this.methods[9], opt = this._transport.mergeOptions(options);
+        const method = this.methods[10], opt = this._transport.mergeOptions(options);
         return stackIntercept<CreateOrUpdateQualificationResultRequest, CreateOrUpdateQualificationResultResponse>("unary", this._transport, method, opt, input);
     }
     /**
      * @generated from protobuf rpc: DeleteQualificationResult
      */
     deleteQualificationResult(input: DeleteQualificationResultRequest, options?: RpcOptions): UnaryCall<DeleteQualificationResultRequest, DeleteQualificationResultResponse> {
-        const method = this.methods[10], opt = this._transport.mergeOptions(options);
+        const method = this.methods[11], opt = this._transport.mergeOptions(options);
         return stackIntercept<DeleteQualificationResultRequest, DeleteQualificationResultResponse>("unary", this._transport, method, opt, input);
     }
     /**
      * @generated from protobuf rpc: UploadFile
      */
     uploadFile(options?: RpcOptions): ClientStreamingCall<UploadFileRequest, UploadFileResponse> {
-        const method = this.methods[11], opt = this._transport.mergeOptions(options);
+        const method = this.methods[12], opt = this._transport.mergeOptions(options);
         return stackIntercept<UploadFileRequest, UploadFileResponse>("clientStreaming", this._transport, method, opt);
     }
 }

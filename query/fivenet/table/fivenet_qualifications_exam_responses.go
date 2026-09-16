@@ -69,7 +69,7 @@ func newFivenetQualificationsExamResponsesTableImpl(schemaName, tableName, alias
 		ResponsesColumn       = mysql.StringColumn("responses")
 		GradingColumn         = mysql.StringColumn("grading")
 		allColumns            = mysql.ColumnList{QualificationIDColumn, UserIDColumn, AttemptIDColumn, ResponsesColumn, GradingColumn}
-		mutableColumns        = mysql.ColumnList{AttemptIDColumn, ResponsesColumn, GradingColumn}
+		mutableColumns        = mysql.ColumnList{ResponsesColumn, GradingColumn}
 		defaultColumns        = mysql.ColumnList{}
 	)
 

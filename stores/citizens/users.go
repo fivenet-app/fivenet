@@ -6,6 +6,7 @@ import (
 
 	citizenslicenses "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/citizens/licenses"
 	database "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/common/database"
+	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/timestamp"
 	users "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/users"
 	usersactivity "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/users/activity"
 	usersprops "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/users/props"
@@ -44,6 +45,8 @@ type GetUserOptions struct {
 type UserActivityOptions struct {
 	UserID int32
 	Types  []usersactivity.UserActivityType
+	From   *timestamp.Timestamp
+	To     *timestamp.Timestamp
 }
 
 type ListUserActivityOptions struct {

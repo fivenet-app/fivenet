@@ -7,6 +7,7 @@ import (
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/audit"
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/jobs"
 	qualificationsaccess "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/qualifications/access"
+	qualificationsactivity "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/qualifications/activity"
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/userinfo"
 	pbqualifications "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/qualifications"
 	"github.com/fivenet-app/fivenet/v2026/pkg/access"
@@ -190,6 +191,17 @@ func (s *Server) SetQualificationAccess(
 		); err != nil {
 			return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 		}
+	}
+	if err := s.addQualificationActivity(
+		ctx,
+		tx,
+		req.GetQualificationId(),
+		qualificationsactivity.QualificationActivityType_QUALIFICATION_ACTIVITY_TYPE_ACCESS_UPDATED,
+		userInfo.GetUserId(),
+		0,
+		nil,
+	); err != nil {
+		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 	}
 
 	// Commit the transaction

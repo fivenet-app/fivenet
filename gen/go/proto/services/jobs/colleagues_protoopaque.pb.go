@@ -17,6 +17,7 @@ import (
 	colleagues "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/jobs/colleagues"
 	activity "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/jobs/colleagues/activity"
 	labels "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/jobs/labels"
+	timestamp "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/timestamp"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	reflect "reflect"
@@ -663,6 +664,8 @@ type ListColleagueActivityRequest struct {
 	xxx_hidden_Sort          *database.Sort                   `protobuf:"bytes,2,opt,name=sort,proto3,oneof"`
 	xxx_hidden_Users         *jobs.UserSelector               `protobuf:"bytes,3,opt,name=users,proto3,oneof"`
 	xxx_hidden_ActivityTypes []activity.ColleagueActivityType `protobuf:"varint,4,rep,packed,name=activity_types,json=activityTypes,proto3,enum=resources.jobs.colleagues.activity.ColleagueActivityType"`
+	xxx_hidden_From          *timestamp.Timestamp             `protobuf:"bytes,5,opt,name=from,proto3,oneof"`
+	xxx_hidden_To            *timestamp.Timestamp             `protobuf:"bytes,6,opt,name=to,proto3,oneof"`
 	unknownFields            protoimpl.UnknownFields
 	sizeCache                protoimpl.SizeCache
 }
@@ -720,6 +723,20 @@ func (x *ListColleagueActivityRequest) GetActivityTypes() []activity.ColleagueAc
 	return nil
 }
 
+func (x *ListColleagueActivityRequest) GetFrom() *timestamp.Timestamp {
+	if x != nil {
+		return x.xxx_hidden_From
+	}
+	return nil
+}
+
+func (x *ListColleagueActivityRequest) GetTo() *timestamp.Timestamp {
+	if x != nil {
+		return x.xxx_hidden_To
+	}
+	return nil
+}
+
 func (x *ListColleagueActivityRequest) SetPagination(v *database.PaginationRequest) {
 	x.xxx_hidden_Pagination = v
 }
@@ -734,6 +751,14 @@ func (x *ListColleagueActivityRequest) SetUsers(v *jobs.UserSelector) {
 
 func (x *ListColleagueActivityRequest) SetActivityTypes(v []activity.ColleagueActivityType) {
 	x.xxx_hidden_ActivityTypes = v
+}
+
+func (x *ListColleagueActivityRequest) SetFrom(v *timestamp.Timestamp) {
+	x.xxx_hidden_From = v
+}
+
+func (x *ListColleagueActivityRequest) SetTo(v *timestamp.Timestamp) {
+	x.xxx_hidden_To = v
 }
 
 func (x *ListColleagueActivityRequest) HasPagination() bool {
@@ -757,6 +782,20 @@ func (x *ListColleagueActivityRequest) HasUsers() bool {
 	return x.xxx_hidden_Users != nil
 }
 
+func (x *ListColleagueActivityRequest) HasFrom() bool {
+	if x == nil {
+		return false
+	}
+	return x.xxx_hidden_From != nil
+}
+
+func (x *ListColleagueActivityRequest) HasTo() bool {
+	if x == nil {
+		return false
+	}
+	return x.xxx_hidden_To != nil
+}
+
 func (x *ListColleagueActivityRequest) ClearPagination() {
 	x.xxx_hidden_Pagination = nil
 }
@@ -769,14 +808,25 @@ func (x *ListColleagueActivityRequest) ClearUsers() {
 	x.xxx_hidden_Users = nil
 }
 
+func (x *ListColleagueActivityRequest) ClearFrom() {
+	x.xxx_hidden_From = nil
+}
+
+func (x *ListColleagueActivityRequest) ClearTo() {
+	x.xxx_hidden_To = nil
+}
+
 type ListColleagueActivityRequest_builder struct {
 	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
 
 	Pagination *database.PaginationRequest
 	Sort       *database.Sort
 	// Search params
-	Users         *jobs.UserSelector
+	Users *jobs.UserSelector
+	// Activity types to filter by. If empty, all user-permitted activity types will be returned.
 	ActivityTypes []activity.ColleagueActivityType
+	From          *timestamp.Timestamp
+	To            *timestamp.Timestamp
 }
 
 func (b0 ListColleagueActivityRequest_builder) Build() *ListColleagueActivityRequest {
@@ -787,6 +837,8 @@ func (b0 ListColleagueActivityRequest_builder) Build() *ListColleagueActivityReq
 	x.xxx_hidden_Sort = b.Sort
 	x.xxx_hidden_Users = b.Users
 	x.xxx_hidden_ActivityTypes = b.ActivityTypes
+	x.xxx_hidden_From = b.From
+	x.xxx_hidden_To = b.To
 	return m0
 }
 
@@ -1617,7 +1669,7 @@ var File_services_jobs_colleagues_proto protoreflect.FileDescriptor
 
 const file_services_jobs_colleagues_proto_rawDesc = "" +
 	"\n" +
-	"\x1eservices/jobs/colleagues.proto\x12\rservices.jobs\x1a\x1fcodegen/itemslen/itemslen.proto\x1a\x19codegen/perms/perms.proto\x1a!codegen/sanitizer/sanitizer.proto\x1a(resources/common/database/database.proto\x1a1resources/jobs/colleagues/activity/activity.proto\x1a*resources/jobs/colleagues/colleagues.proto\x1a\"resources/jobs/labels/labels.proto\x1a\"resources/jobs/user_selector.proto\"\xe4\x03\n" +
+	"\x1eservices/jobs/colleagues.proto\x12\rservices.jobs\x1a\x1fcodegen/itemslen/itemslen.proto\x1a\x19codegen/perms/perms.proto\x1a!codegen/sanitizer/sanitizer.proto\x1a(resources/common/database/database.proto\x1a1resources/jobs/colleagues/activity/activity.proto\x1a*resources/jobs/colleagues/colleagues.proto\x1a\"resources/jobs/labels/labels.proto\x1a\"resources/jobs/user_selector.proto\x1a#resources/timestamp/timestamp.proto\"\xe4\x03\n" +
 	"\x15ListColleaguesRequest\x12L\n" +
 	"\n" +
 	"pagination\x18\x01 \x01(\v2,.resources.common.database.PaginationRequestR\n" +
@@ -1655,16 +1707,20 @@ const file_services_jobs_colleagues_proto_rawDesc = "" +
 	"\n" +
 	"_info_only\"Z\n" +
 	"\x14GetColleagueResponse\x12B\n" +
-	"\tcolleague\x18\x01 \x01(\v2$.resources.jobs.colleagues.ColleagueR\tcolleague\"\xd4\x02\n" +
+	"\tcolleague\x18\x01 \x01(\v2$.resources.jobs.colleagues.ColleagueR\tcolleague\"\xd2\x03\n" +
 	"\x1cListColleagueActivityRequest\x12L\n" +
 	"\n" +
 	"pagination\x18\x01 \x01(\v2,.resources.common.database.PaginationRequestR\n" +
 	"pagination\x128\n" +
 	"\x04sort\x18\x02 \x01(\v2\x1f.resources.common.database.SortH\x00R\x04sort\x88\x01\x01\x127\n" +
 	"\x05users\x18\x03 \x01(\v2\x1c.resources.jobs.UserSelectorH\x01R\x05users\x88\x01\x01\x12`\n" +
-	"\x0eactivity_types\x18\x04 \x03(\x0e29.resources.jobs.colleagues.activity.ColleagueActivityTypeR\ractivityTypesB\a\n" +
+	"\x0eactivity_types\x18\x04 \x03(\x0e29.resources.jobs.colleagues.activity.ColleagueActivityTypeR\ractivityTypes\x127\n" +
+	"\x04from\x18\x05 \x01(\v2\x1e.resources.timestamp.TimestampH\x02R\x04from\x88\x01\x01\x123\n" +
+	"\x02to\x18\x06 \x01(\v2\x1e.resources.timestamp.TimestampH\x03R\x02to\x88\x01\x01B\a\n" +
 	"\x05_sortB\b\n" +
-	"\x06_users\"\xc7\x01\n" +
+	"\x06_usersB\a\n" +
+	"\x05_fromB\x05\n" +
+	"\x03_to\"\xc7\x01\n" +
 	"\x1dListColleagueActivityResponse\x12M\n" +
 	"\n" +
 	"pagination\x18\x01 \x01(\v2-.resources.common.database.PaginationResponseR\n" +
@@ -1741,10 +1797,11 @@ var file_services_jobs_colleagues_proto_goTypes = []any{
 	(*database.PaginationResponse)(nil),     // 23: resources.common.database.PaginationResponse
 	(*colleagues.Colleague)(nil),            // 24: resources.jobs.colleagues.Colleague
 	(activity.ColleagueActivityType)(0),     // 25: resources.jobs.colleagues.activity.ColleagueActivityType
-	(*activity.ColleagueActivity)(nil),      // 26: resources.jobs.colleagues.activity.ColleagueActivity
-	(*colleagues.ColleagueProps)(nil),       // 27: resources.jobs.colleagues.ColleagueProps
-	(*labels.Label)(nil),                    // 28: resources.jobs.labels.Label
-	(*labels.LabelCount)(nil),               // 29: resources.jobs.labels.LabelCount
+	(*timestamp.Timestamp)(nil),             // 26: resources.timestamp.Timestamp
+	(*activity.ColleagueActivity)(nil),      // 27: resources.jobs.colleagues.activity.ColleagueActivity
+	(*colleagues.ColleagueProps)(nil),       // 28: resources.jobs.colleagues.ColleagueProps
+	(*labels.Label)(nil),                    // 29: resources.jobs.labels.Label
+	(*labels.LabelCount)(nil),               // 30: resources.jobs.labels.LabelCount
 }
 var file_services_jobs_colleagues_proto_depIdxs = []int32{
 	20, // 0: services.jobs.ListColleaguesRequest.pagination:type_name -> resources.common.database.PaginationRequest
@@ -1758,39 +1815,41 @@ var file_services_jobs_colleagues_proto_depIdxs = []int32{
 	21, // 8: services.jobs.ListColleagueActivityRequest.sort:type_name -> resources.common.database.Sort
 	22, // 9: services.jobs.ListColleagueActivityRequest.users:type_name -> resources.jobs.UserSelector
 	25, // 10: services.jobs.ListColleagueActivityRequest.activity_types:type_name -> resources.jobs.colleagues.activity.ColleagueActivityType
-	23, // 11: services.jobs.ListColleagueActivityResponse.pagination:type_name -> resources.common.database.PaginationResponse
-	26, // 12: services.jobs.ListColleagueActivityResponse.activity:type_name -> resources.jobs.colleagues.activity.ColleagueActivity
-	27, // 13: services.jobs.SetColleaguePropsRequest.props:type_name -> resources.jobs.colleagues.ColleagueProps
-	27, // 14: services.jobs.SetColleaguePropsResponse.props:type_name -> resources.jobs.colleagues.ColleagueProps
-	28, // 15: services.jobs.GetColleagueLabelsResponse.labels:type_name -> resources.jobs.labels.Label
-	28, // 16: services.jobs.CreateOrUpdateLabelRequest.label:type_name -> resources.jobs.labels.Label
-	28, // 17: services.jobs.CreateOrUpdateLabelResponse.label:type_name -> resources.jobs.labels.Label
-	29, // 18: services.jobs.GetColleagueLabelsStatsResponse.count:type_name -> resources.jobs.labels.LabelCount
-	0,  // 19: services.jobs.ColleaguesService.ListColleagues:input_type -> services.jobs.ListColleaguesRequest
-	2,  // 20: services.jobs.ColleaguesService.GetSelf:input_type -> services.jobs.GetSelfRequest
-	4,  // 21: services.jobs.ColleaguesService.GetColleague:input_type -> services.jobs.GetColleagueRequest
-	6,  // 22: services.jobs.ColleaguesService.ListColleagueActivity:input_type -> services.jobs.ListColleagueActivityRequest
-	8,  // 23: services.jobs.ColleaguesService.SetColleagueProps:input_type -> services.jobs.SetColleaguePropsRequest
-	10, // 24: services.jobs.ColleaguesService.GetColleagueLabels:input_type -> services.jobs.GetColleagueLabelsRequest
-	12, // 25: services.jobs.ColleaguesService.CreateOrUpdateLabel:input_type -> services.jobs.CreateOrUpdateLabelRequest
-	14, // 26: services.jobs.ColleaguesService.DeleteLabel:input_type -> services.jobs.DeleteLabelRequest
-	16, // 27: services.jobs.ColleaguesService.ReorderLabels:input_type -> services.jobs.ReorderLabelsRequest
-	18, // 28: services.jobs.ColleaguesService.GetColleagueLabelsStats:input_type -> services.jobs.GetColleagueLabelsStatsRequest
-	1,  // 29: services.jobs.ColleaguesService.ListColleagues:output_type -> services.jobs.ListColleaguesResponse
-	3,  // 30: services.jobs.ColleaguesService.GetSelf:output_type -> services.jobs.GetSelfResponse
-	5,  // 31: services.jobs.ColleaguesService.GetColleague:output_type -> services.jobs.GetColleagueResponse
-	7,  // 32: services.jobs.ColleaguesService.ListColleagueActivity:output_type -> services.jobs.ListColleagueActivityResponse
-	9,  // 33: services.jobs.ColleaguesService.SetColleagueProps:output_type -> services.jobs.SetColleaguePropsResponse
-	11, // 34: services.jobs.ColleaguesService.GetColleagueLabels:output_type -> services.jobs.GetColleagueLabelsResponse
-	13, // 35: services.jobs.ColleaguesService.CreateOrUpdateLabel:output_type -> services.jobs.CreateOrUpdateLabelResponse
-	15, // 36: services.jobs.ColleaguesService.DeleteLabel:output_type -> services.jobs.DeleteLabelResponse
-	17, // 37: services.jobs.ColleaguesService.ReorderLabels:output_type -> services.jobs.ReorderLabelsResponse
-	19, // 38: services.jobs.ColleaguesService.GetColleagueLabelsStats:output_type -> services.jobs.GetColleagueLabelsStatsResponse
-	29, // [29:39] is the sub-list for method output_type
-	19, // [19:29] is the sub-list for method input_type
-	19, // [19:19] is the sub-list for extension type_name
-	19, // [19:19] is the sub-list for extension extendee
-	0,  // [0:19] is the sub-list for field type_name
+	26, // 11: services.jobs.ListColleagueActivityRequest.from:type_name -> resources.timestamp.Timestamp
+	26, // 12: services.jobs.ListColleagueActivityRequest.to:type_name -> resources.timestamp.Timestamp
+	23, // 13: services.jobs.ListColleagueActivityResponse.pagination:type_name -> resources.common.database.PaginationResponse
+	27, // 14: services.jobs.ListColleagueActivityResponse.activity:type_name -> resources.jobs.colleagues.activity.ColleagueActivity
+	28, // 15: services.jobs.SetColleaguePropsRequest.props:type_name -> resources.jobs.colleagues.ColleagueProps
+	28, // 16: services.jobs.SetColleaguePropsResponse.props:type_name -> resources.jobs.colleagues.ColleagueProps
+	29, // 17: services.jobs.GetColleagueLabelsResponse.labels:type_name -> resources.jobs.labels.Label
+	29, // 18: services.jobs.CreateOrUpdateLabelRequest.label:type_name -> resources.jobs.labels.Label
+	29, // 19: services.jobs.CreateOrUpdateLabelResponse.label:type_name -> resources.jobs.labels.Label
+	30, // 20: services.jobs.GetColleagueLabelsStatsResponse.count:type_name -> resources.jobs.labels.LabelCount
+	0,  // 21: services.jobs.ColleaguesService.ListColleagues:input_type -> services.jobs.ListColleaguesRequest
+	2,  // 22: services.jobs.ColleaguesService.GetSelf:input_type -> services.jobs.GetSelfRequest
+	4,  // 23: services.jobs.ColleaguesService.GetColleague:input_type -> services.jobs.GetColleagueRequest
+	6,  // 24: services.jobs.ColleaguesService.ListColleagueActivity:input_type -> services.jobs.ListColleagueActivityRequest
+	8,  // 25: services.jobs.ColleaguesService.SetColleagueProps:input_type -> services.jobs.SetColleaguePropsRequest
+	10, // 26: services.jobs.ColleaguesService.GetColleagueLabels:input_type -> services.jobs.GetColleagueLabelsRequest
+	12, // 27: services.jobs.ColleaguesService.CreateOrUpdateLabel:input_type -> services.jobs.CreateOrUpdateLabelRequest
+	14, // 28: services.jobs.ColleaguesService.DeleteLabel:input_type -> services.jobs.DeleteLabelRequest
+	16, // 29: services.jobs.ColleaguesService.ReorderLabels:input_type -> services.jobs.ReorderLabelsRequest
+	18, // 30: services.jobs.ColleaguesService.GetColleagueLabelsStats:input_type -> services.jobs.GetColleagueLabelsStatsRequest
+	1,  // 31: services.jobs.ColleaguesService.ListColleagues:output_type -> services.jobs.ListColleaguesResponse
+	3,  // 32: services.jobs.ColleaguesService.GetSelf:output_type -> services.jobs.GetSelfResponse
+	5,  // 33: services.jobs.ColleaguesService.GetColleague:output_type -> services.jobs.GetColleagueResponse
+	7,  // 34: services.jobs.ColleaguesService.ListColleagueActivity:output_type -> services.jobs.ListColleagueActivityResponse
+	9,  // 35: services.jobs.ColleaguesService.SetColleagueProps:output_type -> services.jobs.SetColleaguePropsResponse
+	11, // 36: services.jobs.ColleaguesService.GetColleagueLabels:output_type -> services.jobs.GetColleagueLabelsResponse
+	13, // 37: services.jobs.ColleaguesService.CreateOrUpdateLabel:output_type -> services.jobs.CreateOrUpdateLabelResponse
+	15, // 38: services.jobs.ColleaguesService.DeleteLabel:output_type -> services.jobs.DeleteLabelResponse
+	17, // 39: services.jobs.ColleaguesService.ReorderLabels:output_type -> services.jobs.ReorderLabelsResponse
+	19, // 40: services.jobs.ColleaguesService.GetColleagueLabelsStats:output_type -> services.jobs.GetColleagueLabelsStatsResponse
+	31, // [31:41] is the sub-list for method output_type
+	21, // [21:31] is the sub-list for method input_type
+	21, // [21:21] is the sub-list for extension type_name
+	21, // [21:21] is the sub-list for extension extendee
+	0,  // [0:21] is the sub-list for field type_name
 }
 
 func init() { file_services_jobs_colleagues_proto_init() }

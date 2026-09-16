@@ -98,66 +98,15 @@ func newFivenetJobGroupsTableImpl(schemaName, tableName, alias string) fivenetJo
 		CreatedAtColumn       = mysql.TimestampColumn("created_at")
 		UpdatedAtColumn       = mysql.TimestampColumn("updated_at")
 		DeletedAtColumn       = mysql.TimestampColumn("deleted_at")
-		allColumns            = mysql.ColumnList{
-			IDColumn,
-			JobColumn,
-			NameColumn,
-			DescriptionColumn,
-			ShortNameColumn,
-			LogoFileIDColumn,
-			ColorColumn,
-			TypeColumn,
-			StateColumn,
-			MembershipModeColumn,
-			SortRankColumn,
-			MembersCountColumn,
-			LeadersCountColumn,
-			RulesCountColumn,
-			ExclusionsCountColumn,
-			CreatedByUserIDColumn,
-			UpdatedByUserIDColumn,
-			CreatedAtColumn,
-			UpdatedAtColumn,
-			DeletedAtColumn,
-		}
-		mutableColumns = mysql.ColumnList{
-			JobColumn,
-			NameColumn,
-			DescriptionColumn,
-			ShortNameColumn,
-			LogoFileIDColumn,
-			ColorColumn,
-			TypeColumn,
-			StateColumn,
-			MembershipModeColumn,
-			SortRankColumn,
-			MembersCountColumn,
-			LeadersCountColumn,
-			RulesCountColumn,
-			ExclusionsCountColumn,
-			CreatedByUserIDColumn,
-			UpdatedByUserIDColumn,
-			CreatedAtColumn,
-			UpdatedAtColumn,
-			DeletedAtColumn,
-		}
-		defaultColumns = mysql.ColumnList{
-			TypeColumn,
-			StateColumn,
-			MembershipModeColumn,
-			SortRankColumn,
-			MembersCountColumn,
-			LeadersCountColumn,
-			RulesCountColumn,
-			ExclusionsCountColumn,
-			CreatedAtColumn,
-		}
+		allColumns            = mysql.ColumnList{IDColumn, JobColumn, NameColumn, DescriptionColumn, ShortNameColumn, LogoFileIDColumn, ColorColumn, TypeColumn, StateColumn, MembershipModeColumn, SortRankColumn, MembersCountColumn, LeadersCountColumn, RulesCountColumn, ExclusionsCountColumn, CreatedByUserIDColumn, UpdatedByUserIDColumn, CreatedAtColumn, UpdatedAtColumn, DeletedAtColumn}
+		mutableColumns        = mysql.ColumnList{JobColumn, NameColumn, DescriptionColumn, ShortNameColumn, LogoFileIDColumn, ColorColumn, TypeColumn, StateColumn, MembershipModeColumn, SortRankColumn, MembersCountColumn, LeadersCountColumn, RulesCountColumn, ExclusionsCountColumn, CreatedByUserIDColumn, UpdatedByUserIDColumn, CreatedAtColumn, UpdatedAtColumn, DeletedAtColumn}
+		defaultColumns        = mysql.ColumnList{TypeColumn, StateColumn, MembershipModeColumn, SortRankColumn, MembersCountColumn, LeadersCountColumn, RulesCountColumn, ExclusionsCountColumn, CreatedAtColumn}
 	)
 
 	return fivenetJobGroupsTable{
 		Table: mysql.NewTable(schemaName, tableName, alias, allColumns...),
 
-		// Columns
+		//Columns
 		ID:              IDColumn,
 		Job:             JobColumn,
 		Name:            NameColumn,

@@ -311,6 +311,7 @@ message ListGroupActivityRequest {
 
   int64 group_id = 3;
 
+  // Activity types to filter by. If empty, all activity types will be returned.
   repeated resources.jobs.groups.GroupActivityType types = 4 [(buf.validate.field).repeated = {
     max_items: 14
     items: {

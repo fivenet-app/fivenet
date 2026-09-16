@@ -5,6 +5,7 @@ import (
 	"errors"
 
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/common/database"
+	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/timestamp"
 	vehiclesactivity "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/vehicles/activity"
 	"github.com/fivenet-app/fivenet/v2026/pkg/dbutils"
 	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
@@ -15,6 +16,8 @@ import (
 type VehicleActivityOptions struct {
 	Plate string
 	Types []vehiclesactivity.VehicleActivityType
+	From  *timestamp.Timestamp
+	To    *timestamp.Timestamp
 }
 
 type CountVehicleActivityOptions struct {
@@ -40,6 +43,16 @@ func buildVehicleActivityCondition(
 			types = append(types, mysql.Int32(int32(*t.Enum())))
 		}
 		condition = condition.AND(tVehicleActivity.Type.IN(types...))
+	}
+	if opts.From != nil {
+		condition = condition.AND(
+			tVehicleActivity.CreatedAt.GT_EQ(dbutils.TimestampToMySQL(opts.From)),
+		)
+	}
+	if opts.To != nil {
+		condition = condition.AND(
+			tVehicleActivity.CreatedAt.LT_EQ(dbutils.TimestampToMySQL(opts.To)),
+		)
 	}
 
 	return condition

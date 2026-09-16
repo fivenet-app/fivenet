@@ -76,7 +76,7 @@ async function getColleague(userId: number, signal: AbortSignal): Promise<GetCol
 useHead({
     title: () =>
         colleague.value?.colleague
-            ? `${colleague.value.colleague.firstname} ${colleague.value.colleague.lastname} (${colleague.value.colleague.dateofbirth} - ${t('pages.jobs.colleagues.id.title')}`
+            ? `${userToLabel(colleague.value.colleague)} - ${t('pages.jobs.colleagues.id.title')}`
             : t('pages.jobs.colleagues.id.title'),
 });
 

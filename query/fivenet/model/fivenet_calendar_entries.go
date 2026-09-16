@@ -20,6 +20,7 @@ type FivenetCalendarEntries struct {
 	Job               *string    `json:"job"`
 	StartTime         time.Time  `json:"start_time"`
 	EndTime           *time.Time `json:"end_time"`
+	AllDay            bool       `json:"all_day"`
 	Title             string     `json:"title"`
 	Content           *string    `json:"content"`
 	Closed            *bool      `json:"closed"`

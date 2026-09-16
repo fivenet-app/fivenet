@@ -17,7 +17,7 @@ type FivenetVehiclesActivity struct {
 	CreatorID  *int32     `json:"creator_id"`
 	Plate      string     `json:"plate"`
 	Type       int16      `json:"type"`
-	CreatorJob *string    `json:"creator_job"`
+	CreatorJob string     `json:"creator_job"`
 	Reason     *string    `json:"reason"`
 	Data       *string    `json:"data"`
 }

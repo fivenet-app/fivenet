@@ -9,8 +9,10 @@ import "resources/access/access.proto";
 import "resources/common/content/content.proto";
 import "resources/common/database/database.proto";
 import "resources/file/filestore.proto";
+import "resources/qualifications/activity/activity.proto";
 import "resources/qualifications/exam/exam.proto";
 import "resources/qualifications/qualifications.proto";
+import "resources/timestamp/timestamp.proto";
 
 option go_package = "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/qualifications;qualifications";
 
@@ -57,6 +59,28 @@ message DeleteQualificationRequest {
 }
 
 message DeleteQualificationResponse {}
+
+message ListQualificationActivityRequest {
+  resources.common.database.PaginationRequest pagination = 1 [(buf.validate.field).required = true];
+  optional resources.common.database.Sort sort = 2;
+  int64 qualification_id = 3;
+  // Search params
+  // Activity types to filter by. If empty, all activity types will be returned.
+  repeated resources.qualifications.activity.QualificationActivityType types = 4 [(buf.validate.field).repeated = {
+    max_items: 18
+    items: {
+      enum: {defined_only: true}
+    }
+  }];
+  optional int32 user_id = 5 [(buf.validate.field).int32.gt = 0];
+  optional resources.timestamp.Timestamp from = 6;
+  optional resources.timestamp.Timestamp to = 7;
+}
+
+message ListQualificationActivityResponse {
+  resources.common.database.PaginationResponse pagination = 1 [(buf.validate.field).required = true];
+  repeated resources.qualifications.activity.QualificationActivity activity = 2 [(codegen.itemslen.enabled) = true];
+}
 
 // Access
 
@@ -221,6 +245,12 @@ service QualificationsService {
           ]
         }
       ]
+    };
+  }
+  rpc ListQualificationActivity(ListQualificationActivityRequest) returns (ListQualificationActivityResponse) {
+    option (codegen.perms.perms) = {
+      enabled: true
+      name: "ListQualifications"
     };
   }
 

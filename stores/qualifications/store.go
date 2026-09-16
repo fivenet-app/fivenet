@@ -8,6 +8,7 @@ import (
 	database "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/common/database"
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/file"
 	resqualifications "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/qualifications"
+	qualificationsactivity "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/qualifications/activity"
 	qualificationsexam "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/qualifications/exam"
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/timestamp"
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/userinfo"
@@ -42,7 +43,31 @@ type ListQualificationsResultsOptions struct {
 	Search          string
 }
 
+type ListQualificationActivityOptions struct {
+	QualificationID int64
+	Types           []qualificationsactivity.QualificationActivityType
+	UserID          int32
+	From            *timestamp.Timestamp
+	To              *timestamp.Timestamp
+	Sort            *database.Sort
+	Offset          int64
+	Limit           int64
+}
+
 type IStore interface {
+	CreateQualificationActivity(
+		ctx context.Context,
+		tx qrm.DB,
+		activity *qualificationsactivity.QualificationActivity,
+	) error
+	CountQualificationActivity(
+		ctx context.Context,
+		opts ListQualificationActivityOptions,
+	) (int64, error)
+	ListQualificationActivity(
+		ctx context.Context,
+		opts ListQualificationActivityOptions,
+	) ([]*qualificationsactivity.QualificationActivity, error)
 	ListQualifications(
 		ctx context.Context,
 		opts ListQualificationsOptions,
@@ -95,6 +120,7 @@ type IStore interface {
 	) (*resqualifications.QualificationResult, error)
 	GetExamUser(
 		ctx context.Context,
+		q qrm.DB,
 		qualificationId int64,
 		userId int32,
 	) (*qualificationsexam.ExamUser, error)
@@ -224,7 +250,12 @@ type IStore interface {
 		status resqualifications.RequestStatus,
 	) error
 	DeleteQualificationResult(ctx context.Context, tx qrm.DB, resultId int64) error
-	RestoreQualificationResult(ctx context.Context, tx qrm.DB, resultId int64, qualificationId int64) error
+	RestoreQualificationResult(
+		ctx context.Context,
+		tx qrm.DB,
+		resultId int64,
+		qualificationId int64,
+	) error
 	DeleteExamUser(ctx context.Context, tx qrm.DB, attemptId string) error
 }
 

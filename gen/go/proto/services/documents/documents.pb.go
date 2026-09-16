@@ -2069,6 +2069,7 @@ type ListDocumentActivityRequest struct {
 	Pagination *database.PaginationRequest `protobuf:"bytes,1,opt,name=pagination,proto3" json:"pagination,omitempty"`
 	DocumentId int64                       `protobuf:"varint,2,opt,name=document_id,json=documentId,proto3" json:"document_id,omitempty"`
 	// Search params
+	// Activity types to filter by. If empty, all activity types will be returned.
 	ActivityTypes []activity.DocActivityType `protobuf:"varint,3,rep,packed,name=activity_types,json=activityTypes,proto3,enum=resources.documents.activity.DocActivityType" json:"activity_types,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -2149,6 +2150,7 @@ type ListDocumentActivityRequest_builder struct {
 	Pagination *database.PaginationRequest
 	DocumentId int64
 	// Search params
+	// Activity types to filter by. If empty, all activity types will be returned.
 	ActivityTypes []activity.DocActivityType
 }
 

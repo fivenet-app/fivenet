@@ -79,10 +79,7 @@ async function getUser(userId: number, signal: AbortSignal): Promise<User> {
 }
 
 useHead({
-    title: () =>
-        user.value
-            ? `${user.value.firstname} ${user.value.lastname} (${user.value.dateofbirth}) - ${t('pages.citizens.id.title')}`
-            : t('pages.citizens.id.title'),
+    title: () => (user.value ? `${userToLabel(user.value)} - ${t('pages.citizens.id.title')}` : t('pages.citizens.id.title')),
 });
 
 function addToClipboard(): void {

@@ -2209,6 +2209,7 @@ type ListDocumentActivityRequest_builder struct {
 	Pagination *database.PaginationRequest
 	DocumentId int64
 	// Search params
+	// Activity types to filter by. If empty, all activity types will be returned.
 	ActivityTypes []activity.DocActivityType
 }
 

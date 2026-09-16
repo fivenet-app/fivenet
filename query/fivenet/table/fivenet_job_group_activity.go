@@ -7,13 +7,16 @@
 
 package table
 
-import "github.com/go-jet/jet/v2/mysql"
+import (
+	"github.com/go-jet/jet/v2/mysql"
+)
 
 var FivenetJobGroupActivity = newFivenetJobGroupActivityTable("", "fivenet_job_group_activity", "")
 
-type FivenetJobGroupActivityTable struct {
+type fivenetJobGroupActivityTable struct {
 	mysql.Table
 
+	// Columns
 	ID           mysql.ColumnInteger
 	Job          mysql.ColumnString
 	GroupID      mysql.ColumnInteger
@@ -30,41 +33,73 @@ type FivenetJobGroupActivityTable struct {
 	DefaultColumns mysql.ColumnList
 }
 
+type FivenetJobGroupActivityTable struct {
+	fivenetJobGroupActivityTable
+
+	NEW fivenetJobGroupActivityTable
+}
+
+// AS creates new FivenetJobGroupActivityTable with assigned alias
 func (a FivenetJobGroupActivityTable) AS(alias string) *FivenetJobGroupActivityTable {
 	return newFivenetJobGroupActivityTable(a.SchemaName(), a.TableName(), alias)
 }
 
+// Schema creates new FivenetJobGroupActivityTable with assigned schema name
 func (a FivenetJobGroupActivityTable) FromSchema(schemaName string) *FivenetJobGroupActivityTable {
 	return newFivenetJobGroupActivityTable(schemaName, a.TableName(), a.Alias())
 }
 
-func newFivenetJobGroupActivityTable(schemaName, tableName, alias string) *FivenetJobGroupActivityTable {
-	id := mysql.IntegerColumn("id")
-	job := mysql.StringColumn("job")
-	groupID := mysql.IntegerColumn("group_id")
-	activityType := mysql.IntegerColumn("activity_type")
-	actorUserID := mysql.IntegerColumn("actor_user_id")
-	targetUserID := mysql.IntegerColumn("target_user_id")
-	ruleID := mysql.IntegerColumn("rule_id")
-	reason := mysql.StringColumn("reason")
-	data := mysql.StringColumn("data")
-	createdAt := mysql.TimestampColumn("created_at")
-	allColumns := mysql.ColumnList{id, job, groupID, activityType, actorUserID, targetUserID, ruleID, reason, data, createdAt}
+// WithPrefix creates new FivenetJobGroupActivityTable with assigned table prefix
+func (a FivenetJobGroupActivityTable) WithPrefix(prefix string) *FivenetJobGroupActivityTable {
+	return newFivenetJobGroupActivityTable(a.SchemaName(), prefix+a.TableName(), a.TableName())
+}
 
+// WithSuffix creates new FivenetJobGroupActivityTable with assigned table suffix
+func (a FivenetJobGroupActivityTable) WithSuffix(suffix string) *FivenetJobGroupActivityTable {
+	return newFivenetJobGroupActivityTable(a.SchemaName(), a.TableName()+suffix, a.TableName())
+}
+
+func newFivenetJobGroupActivityTable(schemaName, tableName, alias string) *FivenetJobGroupActivityTable {
 	return &FivenetJobGroupActivityTable{
-		Table:          mysql.NewTable(schemaName, tableName, alias, allColumns...),
-		ID:             id,
-		Job:            job,
-		GroupID:        groupID,
-		ActivityType:   activityType,
-		ActorUserID:    actorUserID,
-		TargetUserID:   targetUserID,
-		RuleID:         ruleID,
-		Reason:         reason,
-		Data:           data,
-		CreatedAt:      createdAt,
+		fivenetJobGroupActivityTable: newFivenetJobGroupActivityTableImpl(schemaName, tableName, alias),
+		NEW:                          newFivenetJobGroupActivityTableImpl("", "new", ""),
+	}
+}
+
+func newFivenetJobGroupActivityTableImpl(schemaName, tableName, alias string) fivenetJobGroupActivityTable {
+	var (
+		IDColumn           = mysql.IntegerColumn("id")
+		JobColumn          = mysql.StringColumn("job")
+		GroupIDColumn      = mysql.IntegerColumn("group_id")
+		ActivityTypeColumn = mysql.IntegerColumn("activity_type")
+		ActorUserIDColumn  = mysql.IntegerColumn("actor_user_id")
+		TargetUserIDColumn = mysql.IntegerColumn("target_user_id")
+		RuleIDColumn       = mysql.IntegerColumn("rule_id")
+		ReasonColumn       = mysql.StringColumn("reason")
+		DataColumn         = mysql.StringColumn("data")
+		CreatedAtColumn    = mysql.TimestampColumn("created_at")
+		allColumns         = mysql.ColumnList{IDColumn, JobColumn, GroupIDColumn, ActivityTypeColumn, ActorUserIDColumn, TargetUserIDColumn, RuleIDColumn, ReasonColumn, DataColumn, CreatedAtColumn}
+		mutableColumns     = mysql.ColumnList{JobColumn, GroupIDColumn, ActivityTypeColumn, ActorUserIDColumn, TargetUserIDColumn, RuleIDColumn, ReasonColumn, DataColumn, CreatedAtColumn}
+		defaultColumns     = mysql.ColumnList{CreatedAtColumn}
+	)
+
+	return fivenetJobGroupActivityTable{
+		Table: mysql.NewTable(schemaName, tableName, alias, allColumns...),
+
+		//Columns
+		ID:           IDColumn,
+		Job:          JobColumn,
+		GroupID:      GroupIDColumn,
+		ActivityType: ActivityTypeColumn,
+		ActorUserID:  ActorUserIDColumn,
+		TargetUserID: TargetUserIDColumn,
+		RuleID:       RuleIDColumn,
+		Reason:       ReasonColumn,
+		Data:         DataColumn,
+		CreatedAt:    CreatedAtColumn,
+
 		AllColumns:     allColumns,
-		MutableColumns: mysql.ColumnList{job, groupID, activityType, actorUserID, targetUserID, ruleID, reason, data, createdAt},
-		DefaultColumns: mysql.ColumnList{id, createdAt},
+		MutableColumns: mutableColumns,
+		DefaultColumns: defaultColumns,
 	}
 }
