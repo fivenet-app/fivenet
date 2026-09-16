@@ -128,7 +128,7 @@ func (r *Retriever) registerSubscriptions(
 	ctxCancel context.Context,
 ) error {
 	// Subscribe to the userinfo diffs stream
-	consumer, err := CreateOrUpdateChangeConsumer(
+	consumer, err := CreateOrUpdateUserInfoChangeConsumer(
 		ctxStartup,
 		r.js,
 		jetstream.ConsumerConfig{

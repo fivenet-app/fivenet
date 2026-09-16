@@ -8,7 +8,6 @@ import (
 	"slices"
 
 	accounts "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/accounts"
-	notificationsevents "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/notifications/events"
 	activity "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/sync/activity"
 	pkguserinfo "github.com/fivenet-app/fivenet/v2026/pkg/userinfo"
 	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
@@ -108,7 +107,7 @@ func (s *Store) publishAccountGroupsChanged(
 	license string,
 	groups *accounts.AccountGroups,
 ) {
-	if s.notifi == nil {
+	if s.userInfoChanges == nil {
 		return
 	}
 
@@ -134,19 +133,10 @@ func (s *Store) publishAccountGroupsChanged(
 		pkguserinfo.CanBeSuperuser(groups, license, jobAdminGroups, jobAdminUsers),
 		pkguserinfo.CanBeConfigAdmin(groups, license, configAdminGroups, configAdminUsers),
 	)
-	if err := s.notifi.SendAccountEvent(ctx, accountID, &notificationsevents.UserEvent{
-		Data: &notificationsevents.UserEvent_AccountGroupsChanged{
-			AccountGroupsChanged: event,
-		},
-	}); err != nil {
-		groupNames := []string(nil)
-		if groups != nil {
-			groupNames = groups.GetGroups()
-		}
+	if err := s.userInfoChanges.PublishAccountGroupsChanged(ctx, event); err != nil {
 		s.logger.Warn(
-			"failed to publish account group change event",
+			"failed to publish canonical account group change",
 			zap.Int64("account_id", accountID),
-			zap.Strings("groups", groupNames),
 			zap.Error(err),
 		)
 	}

@@ -26,7 +26,7 @@ func TestCreateOrUpdateChangeConsumerUsesCanonicalStreamAndSubject(t *testing.T)
 
 	js := nats.NewServer(t, nats.ServerOptions{InProcess: true}).GetJS()
 
-	consumer, err := CreateOrUpdateChangeConsumer(
+	consumer, err := CreateOrUpdateUserInfoChangeConsumer(
 		t.Context(),
 		js,
 		jetstream.ConsumerConfig{
@@ -47,6 +47,27 @@ func TestCreateOrUpdateChangeConsumerUsesCanonicalStreamAndSubject(t *testing.T)
 	streamInfo, err := stream.Info(t.Context())
 	require.NoError(t, err)
 	assert.Equal(t, jetstream.InterestPolicy, streamInfo.Config.Retention)
+}
+
+func TestCreateOrUpdateAccountGroupsChangeConsumerUsesCanonicalStreamAndSubject(t *testing.T) {
+	t.Parallel()
+
+	js := nats.NewServer(t, nats.ServerOptions{InProcess: true}).GetJS()
+
+	consumer, err := CreateOrUpdateAccountGroupsChangeConsumer(
+		t.Context(),
+		js,
+		jetstream.ConsumerConfig{
+			Durable:       "test_account_groups_change_consumer",
+			DeliverPolicy: jetstream.DeliverNewPolicy,
+			AckPolicy:     jetstream.AckExplicitPolicy,
+		},
+	)
+	require.NoError(t, err)
+
+	info, err := consumer.Info(t.Context())
+	require.NoError(t, err)
+	assert.Equal(t, AccountGroupsSubject, info.Config.FilterSubject)
 }
 
 func (labelEnricher) EnrichJobInfo(user common.IJobInfo) {
@@ -123,15 +144,15 @@ func TestChangesSubscriberClosesWhenItFallsBehind(t *testing.T) {
 	t.Parallel()
 
 	changes := &Changes{
-		broker: broker.NewWithResyncOnSlowSubscriber[*pbuserinfo.UserInfoChanged](32),
+		userInfoBroker: broker.NewWithResyncOnSlowSubscriber[*pbuserinfo.UserInfoChanged](32),
 	}
 	ctx, cancel := context.WithCancel(t.Context())
 	defer cancel()
-	go changes.broker.Start(ctx)
+	go changes.userInfoBroker.Start(ctx)
 
 	sub := changes.SubscribeUserInfoChanges()
 	for i := range int32(34) {
-		changes.broker.Publish(&pbuserinfo.UserInfoChanged{UserId: i + 1})
+		changes.userInfoBroker.Publish(&pbuserinfo.UserInfoChanged{UserId: i + 1})
 	}
 
 	for range 32 {
@@ -147,22 +168,22 @@ func TestChangesPublishesAndConsumesUserInfoChangedEvent(t *testing.T) {
 	js := nats.NewServer(t, nats.ServerOptions{InProcess: true}).GetJS()
 
 	changes := &Changes{
-		logger: zap.NewNop(),
-		js:     js,
-		broker: broker.NewWithResyncOnSlowSubscriber[*pbuserinfo.UserInfoChanged](10),
+		logger:         zap.NewNop(),
+		js:             js,
+		userInfoBroker: broker.NewWithResyncOnSlowSubscriber[*pbuserinfo.UserInfoChanged](10),
 	}
 	ctx, cancel := context.WithCancel(t.Context())
 	defer cancel()
-	go changes.broker.Start(ctx)
+	go changes.userInfoBroker.Start(ctx)
 
 	sub := changes.SubscribeUserInfoChanges()
-	consumer, err := CreateOrUpdateChangeConsumer(ctx, js, jetstream.ConsumerConfig{
+	consumer, err := CreateOrUpdateUserInfoChangeConsumer(ctx, js, jetstream.ConsumerConfig{
 		Durable:       "changes_test_consumer",
 		AckPolicy:     jetstream.AckExplicitPolicy,
 		DeliverPolicy: jetstream.DeliverNewPolicy,
 	})
 	require.NoError(t, err)
-	consumeCtx, err := consumer.Consume(changes.handleMessage)
+	consumeCtx, err := consumer.Consume(changes.handleUserInfoMessage)
 	require.NoError(t, err)
 	defer consumeCtx.Stop()
 
@@ -179,28 +200,65 @@ func TestChangesPublishesAndConsumesUserInfoChangedEvent(t *testing.T) {
 	}
 }
 
+func TestChangesPublishesAndConsumesAccountGroupsChangedEvent(t *testing.T) {
+	t.Parallel()
+
+	js := nats.NewServer(t, nats.ServerOptions{InProcess: true}).GetJS()
+	changes := &Changes{
+		logger:              zap.NewNop(),
+		js:                  js,
+		accountGroupsBroker: broker.NewWithResyncOnSlowSubscriber[*pbuserinfo.AccountGroupsChanged](10),
+	}
+	ctx, cancel := context.WithCancel(t.Context())
+	defer cancel()
+	go changes.accountGroupsBroker.Start(ctx)
+
+	sub := changes.SubscribeAccountGroupsChanges()
+	consumer, err := CreateOrUpdateAccountGroupsChangeConsumer(ctx, js, jetstream.ConsumerConfig{
+		Durable:       "account_groups_changes_test_consumer",
+		AckPolicy:     jetstream.AckExplicitPolicy,
+		DeliverPolicy: jetstream.DeliverNewPolicy,
+	})
+	require.NoError(t, err)
+	consumeCtx, err := consumer.Consume(changes.handleAccountGroupsMessage)
+	require.NoError(t, err)
+	defer consumeCtx.Stop()
+
+	want := &pbuserinfo.AccountGroupsChanged{AccountId: 42, CanBeSuperuser: true}
+	require.NoError(t, changes.PublishAccountGroupsChanged(ctx, want))
+
+	select {
+	case got := <-sub:
+		require.NotNil(t, got)
+		assert.Equal(t, want.GetAccountId(), got.GetAccountId())
+		assert.True(t, got.GetCanBeSuperuser())
+	case <-time.After(2 * time.Second):
+		t.Fatal("timed out waiting for consumed account group event")
+	}
+}
+
 func TestChangesTerminatesInvalidConsumedEvent(t *testing.T) {
 	t.Parallel()
 
 	js := nats.NewServer(t, nats.ServerOptions{InProcess: true}).GetJS()
 
 	changes := &Changes{
-		logger: zap.NewNop(),
-		broker: broker.NewWithResyncOnSlowSubscriber[*pbuserinfo.UserInfoChanged](10),
+		logger:         zap.NewNop(),
+		userInfoBroker: broker.NewWithResyncOnSlowSubscriber[*pbuserinfo.UserInfoChanged](10),
 	}
 	ctx, cancel := context.WithCancel(t.Context())
 	defer cancel()
-	go changes.broker.Start(ctx)
+	go changes.userInfoBroker.Start(ctx)
 
 	sub := changes.SubscribeUserInfoChanges()
-	consumer, err := CreateOrUpdateChangeConsumer(ctx, js, jetstream.ConsumerConfig{
+	consumer, err := CreateOrUpdateUserInfoChangeConsumer(ctx, js, jetstream.ConsumerConfig{
 		Durable:       "invalid_changes_test_consumer",
 		AckPolicy:     jetstream.AckExplicitPolicy,
 		DeliverPolicy: jetstream.DeliverNewPolicy,
 		AckWait:       50 * time.Millisecond,
 	})
 	require.NoError(t, err)
-	consumeCtx, err := consumer.Consume(changes.handleMessage)
+	consumeCtx, err := consumer.Consume(changes.handleUserInfoMessage)
 	require.NoError(t, err)
 	defer consumeCtx.Stop()
 
@@ -254,7 +312,7 @@ func TestChangeConsumerRedeliversUnacknowledgedEventAfterRestart(t *testing.T) {
 
 	ctx, cancel := context.WithCancel(t.Context())
 	defer cancel()
-	consumer, err := CreateOrUpdateChangeConsumer(ctx, js, jetstream.ConsumerConfig{
+	consumer, err := CreateOrUpdateUserInfoChangeConsumer(ctx, js, jetstream.ConsumerConfig{
 		Durable:       "handoff_test_consumer",
 		AckPolicy:     jetstream.AckExplicitPolicy,
 		DeliverPolicy: jetstream.DeliverNewPolicy,
@@ -281,7 +339,7 @@ func TestChangeConsumerRedeliversUnacknowledgedEventAfterRestart(t *testing.T) {
 	}
 	consumeCtx.Stop()
 
-	consumer, err = CreateOrUpdateChangeConsumer(ctx, js, jetstream.ConsumerConfig{
+	consumer, err = CreateOrUpdateUserInfoChangeConsumer(ctx, js, jetstream.ConsumerConfig{
 		Durable:       "handoff_test_consumer",
 		AckPolicy:     jetstream.AckExplicitPolicy,
 		DeliverPolicy: jetstream.DeliverNewPolicy,

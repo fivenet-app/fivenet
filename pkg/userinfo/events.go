@@ -17,15 +17,16 @@ const (
 	// BaseSubject is the base subject for user, job, object and system notification events.
 	BaseSubject = "userinfo"
 
-	UserInfoStreamName = "USERINFO"
-	UserInfoSubject    = "userinfo.*.changes"
+	UserInfoStreamName   = "USERINFO"
+	UserInfoSubject      = "userinfo.*.changes"
+	AccountGroupsSubject = "userinfo.*.account_groups"
 )
 
 func registerUserInfoStream(ctx context.Context, js *events.JSWrapper) error {
 	userinfoStreamCfg := jetstream.StreamConfig{
 		Name:        UserInfoStreamName,
 		Description: "Stream for userinfo changes",
-		Subjects:    []string{UserInfoSubject},
+		Subjects:    []string{UserInfoSubject, AccountGroupsSubject},
 		Retention:   jetstream.InterestPolicy,
 	}
 	if _, err := js.CreateOrUpdateStream(ctx, userinfoStreamCfg); err != nil {
@@ -35,10 +36,30 @@ func registerUserInfoStream(ctx context.Context, js *events.JSWrapper) error {
 	return nil
 }
 
-// CreateOrUpdateChangeConsumer creates a durable consumer for canonical user
+// CreateOrUpdateAccountGroupsChangeConsumer creates a durable consumer for
+// canonical account-group changes.
+func CreateOrUpdateAccountGroupsChangeConsumer(
+	ctx context.Context,
+	js *events.JSWrapper,
+	cfg jetstream.ConsumerConfig,
+) (jetstream.Consumer, error) {
+	if err := registerUserInfoStream(ctx, js); err != nil {
+		return nil, err
+	}
+
+	cfg.FilterSubject = AccountGroupsSubject
+	consumer, err := js.CreateOrUpdateConsumer(ctx, UserInfoStreamName, cfg)
+	if err != nil {
+		return nil, fmt.Errorf("failed to create/update account group change consumer: %w", err)
+	}
+
+	return consumer, nil
+}
+
+// CreateOrUpdateUserInfoChangeConsumer creates a durable consumer for canonical user
 // info changes. The stream and subject remain owned by this package; callers
 // own delivery, acknowledgement, and lifecycle policy.
-func CreateOrUpdateChangeConsumer(
+func CreateOrUpdateUserInfoChangeConsumer(
 	ctx context.Context,
 	js *events.JSWrapper,
 	cfg jetstream.ConsumerConfig,

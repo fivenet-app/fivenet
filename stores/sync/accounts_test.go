@@ -15,8 +15,8 @@ func TestHandleAccountUpdatePublishesGroupChange(t *testing.T) {
 	t.Parallel()
 
 	store, mock := newTestStore(t)
-	rec := &recordingNotifi{}
-	store.notifi = rec
+	publisher := &recordingUserInfoChanges{}
+	store.userInfoChanges = publisher
 
 	mock.ExpectBegin()
 	mock.ExpectQuery(
@@ -38,8 +38,8 @@ func TestHandleAccountUpdatePublishesGroupChange(t *testing.T) {
 	})
 	require.NoError(t, err)
 
-	require.Len(t, rec.events, 1)
-	evt := rec.events[0].GetAccountGroupsChanged()
+	require.Len(t, publisher.accountEvents, 1)
+	evt := publisher.accountEvents[0]
 	require.NotNil(t, evt)
 	assert.Equal(t, int64(42), evt.GetAccountId())
 	require.NotNil(t, evt.GetNewGroups())

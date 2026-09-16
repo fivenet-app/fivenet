@@ -25,6 +25,7 @@ var ChangesModule = fx.Module(
 // ChangePublisher publishes canonical user-info changes for all processes.
 type ChangePublisher interface {
 	PublishUserInfoChanged(ctx context.Context, event *pbuserinfo.UserInfoChanged) error
+	PublishAccountGroupsChanged(ctx context.Context, event *pbuserinfo.AccountGroupsChanged) error
 }
 
 // ChangeSubscriber provides process-local fanout of canonical user-info changes.
@@ -32,14 +33,18 @@ type ChangePublisher interface {
 type ChangeSubscriber interface {
 	SubscribeUserInfoChanges() chan *pbuserinfo.UserInfoChanged
 	UnsubscribeUserInfoChanges(chan *pbuserinfo.UserInfoChanged)
+	SubscribeAccountGroupsChanges() chan *pbuserinfo.AccountGroupsChanged
+	UnsubscribeAccountGroupsChanges(chan *pbuserinfo.AccountGroupsChanged)
 }
 
 type Changes struct {
-	logger *zap.Logger
-	js     *events.JSWrapper
-	broker *broker.Broker[*pbuserinfo.UserInfoChanged]
-	wg     sync.WaitGroup
-	jsCons jetstream.ConsumeContext
+	logger              *zap.Logger
+	js                  *events.JSWrapper
+	userInfoBroker      *broker.Broker[*pbuserinfo.UserInfoChanged]
+	accountGroupsBroker *broker.Broker[*pbuserinfo.AccountGroupsChanged]
+	wg                  sync.WaitGroup
+	userInfoJSCons      jetstream.ConsumeContext
+	accountGroupsJSCons jetstream.ConsumeContext
 }
 
 type ChangesParams struct {
@@ -61,17 +66,26 @@ type ChangesResult struct {
 func NewChanges(p ChangesParams) ChangesResult {
 	ctx, cancel := context.WithCancel(context.Background())
 	c := &Changes{
-		logger: p.Logger.Named("userinfo.changes"),
-		js:     p.JS,
-		broker: broker.NewWithResyncOnSlowSubscriber[*pbuserinfo.UserInfoChanged](32),
+		logger:              p.Logger.Named("userinfo.changes"),
+		js:                  p.JS,
+		userInfoBroker:      broker.NewWithResyncOnSlowSubscriber[*pbuserinfo.UserInfoChanged](32),
+		accountGroupsBroker: broker.NewWithResyncOnSlowSubscriber[*pbuserinfo.AccountGroupsChanged](32),
 	}
 
 	p.LC.Append(fx.StartHook(func(ctxStartup context.Context) error {
 		c.wg.Go(func() {
-			c.broker.Start(ctx)
+			c.userInfoBroker.Start(ctx)
+		})
+		c.wg.Go(func() {
+			c.accountGroupsBroker.Start(ctx)
 		})
 
-		if err := c.registerSubscription(ctxStartup, ctx); err != nil {
+		if err := c.registerUserInfoSubscription(ctxStartup, ctx); err != nil {
+			cancel()
+			c.wg.Wait()
+			return err
+		}
+		if err := c.registerAccountGroupsSubscription(ctxStartup, ctx); err != nil {
 			cancel()
 			c.wg.Wait()
 			return err
@@ -82,14 +96,37 @@ func NewChanges(p ChangesParams) ChangesResult {
 
 	p.LC.Append(fx.StopHook(func(context.Context) error {
 		cancel()
-		if c.jsCons != nil {
-			c.jsCons.Stop()
+		if c.userInfoJSCons != nil {
+			c.userInfoJSCons.Stop()
+		}
+		if c.accountGroupsJSCons != nil {
+			c.accountGroupsJSCons.Stop()
 		}
 		c.wg.Wait()
 		return nil
 	}))
 
 	return ChangesResult{Changes: c, Publisher: c, Subscriber: c}
+}
+
+func (c *Changes) PublishAccountGroupsChanged(
+	ctx context.Context,
+	event *pbuserinfo.AccountGroupsChanged,
+) error {
+	if event == nil || event.GetAccountId() <= 0 {
+		return errors.New("account group change requires an account ID")
+	}
+
+	if _, err := c.js.PublishProto(
+		ctx,
+		fmt.Sprintf("%s.%d.account_groups", BaseSubject, event.GetAccountId()),
+		event,
+	); err != nil {
+		getChangesMetrics().publishFailures.Inc()
+		return fmt.Errorf("failed to publish account group change: %w", err)
+	}
+
+	return nil
 }
 
 func (c *Changes) PublishUserInfoChanged(
@@ -113,15 +150,23 @@ func (c *Changes) PublishUserInfoChanged(
 }
 
 func (c *Changes) SubscribeUserInfoChanges() chan *pbuserinfo.UserInfoChanged {
-	return c.broker.Subscribe()
+	return c.userInfoBroker.Subscribe()
 }
 
 func (c *Changes) UnsubscribeUserInfoChanges(ch chan *pbuserinfo.UserInfoChanged) {
-	c.broker.Unsubscribe(ch)
+	c.userInfoBroker.Unsubscribe(ch)
 }
 
-func (c *Changes) registerSubscription(ctxStartup context.Context, ctx context.Context) error {
-	consumer, err := CreateOrUpdateChangeConsumer(
+func (c *Changes) SubscribeAccountGroupsChanges() chan *pbuserinfo.AccountGroupsChanged {
+	return c.accountGroupsBroker.Subscribe()
+}
+
+func (c *Changes) UnsubscribeAccountGroupsChanges(ch chan *pbuserinfo.AccountGroupsChanged) {
+	c.accountGroupsBroker.Unsubscribe(ch)
+}
+
+func (c *Changes) registerUserInfoSubscription(ctxStartup context.Context, ctx context.Context) error {
+	consumer, err := CreateOrUpdateUserInfoChangeConsumer(
 		ctxStartup,
 		c.js,
 		jetstream.ConsumerConfig{
@@ -134,8 +179,8 @@ func (c *Changes) registerSubscription(ctxStartup context.Context, ctx context.C
 		return fmt.Errorf("failed to create user info changes consumer. %w", err)
 	}
 
-	c.jsCons, err = consumer.Consume(c.handleMessage,
-		c.js.ConsumeErrHandlerWithRestart(ctx, c.logger, c.registerSubscription))
+	c.userInfoJSCons, err = consumer.Consume(c.handleUserInfoMessage,
+		c.js.ConsumeErrHandlerWithRestart(ctx, c.logger, c.registerUserInfoSubscription))
 	if err != nil {
 		return fmt.Errorf("failed to start user info changes consumer. %w", err)
 	}
@@ -143,7 +188,30 @@ func (c *Changes) registerSubscription(ctxStartup context.Context, ctx context.C
 	return nil
 }
 
-func (c *Changes) handleMessage(msg jetstream.Msg) {
+func (c *Changes) registerAccountGroupsSubscription(ctxStartup context.Context, ctx context.Context) error {
+	consumer, err := CreateOrUpdateAccountGroupsChangeConsumer(
+		ctxStartup,
+		c.js,
+		jetstream.ConsumerConfig{
+			Durable:           instance.ID() + "_account_groups_changes",
+			AckPolicy:         jetstream.AckExplicitPolicy,
+			InactiveThreshold: time.Minute,
+		},
+	)
+	if err != nil {
+		return fmt.Errorf("failed to create account group changes consumer. %w", err)
+	}
+
+	c.accountGroupsJSCons, err = consumer.Consume(c.handleAccountGroupsMessage,
+		c.js.ConsumeErrHandlerWithRestart(ctx, c.logger, c.registerAccountGroupsSubscription))
+	if err != nil {
+		return fmt.Errorf("failed to start account group changes consumer. %w", err)
+	}
+
+	return nil
+}
+
+func (c *Changes) handleUserInfoMessage(msg jetstream.Msg) {
 	event := &pbuserinfo.UserInfoChanged{}
 	if err := protoutils.UnmarshalPartialJSON(msg.Data(), event); err != nil {
 		c.logger.Error(
@@ -171,7 +239,7 @@ func (c *Changes) handleMessage(msg jetstream.Msg) {
 		return
 	}
 
-	c.broker.Publish(event)
+	c.userInfoBroker.Publish(event)
 
 	if err := msg.Ack(); err != nil {
 		c.logger.Error(
@@ -179,5 +247,28 @@ func (c *Changes) handleMessage(msg jetstream.Msg) {
 			zap.Error(err),
 			zap.String("subject", msg.Subject()),
 		)
+	}
+}
+
+func (c *Changes) handleAccountGroupsMessage(msg jetstream.Msg) {
+	event := &pbuserinfo.AccountGroupsChanged{}
+	if err := protoutils.UnmarshalPartialJSON(msg.Data(), event); err != nil {
+		c.logger.Error("failed to unmarshal account group change", zap.Error(err), zap.String("subject", msg.Subject()))
+		if err := msg.Term(); err != nil {
+			c.logger.Error("failed to terminate malformed account group change", zap.Error(err))
+		}
+		return
+	}
+	if event.GetAccountId() <= 0 {
+		c.logger.Error("received invalid account group change", zap.Int64("account_id", event.GetAccountId()), zap.String("subject", msg.Subject()))
+		if err := msg.Term(); err != nil {
+			c.logger.Error("failed to terminate invalid account group change", zap.Error(err))
+		}
+		return
+	}
+
+	c.accountGroupsBroker.Publish(event)
+	if err := msg.Ack(); err != nil {
+		c.logger.Error("failed to ack account group change", zap.Error(err), zap.String("subject", msg.Subject()))
 	}
 }

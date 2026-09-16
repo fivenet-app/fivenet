@@ -103,6 +103,12 @@ func (testUserInfoChanges) SubscribeUserInfoChanges() chan *pbuserinfo.UserInfoC
 
 func (testUserInfoChanges) UnsubscribeUserInfoChanges(chan *pbuserinfo.UserInfoChanged) {}
 
+func (testUserInfoChanges) SubscribeAccountGroupsChanges() chan *pbuserinfo.AccountGroupsChanged {
+	return make(chan *pbuserinfo.AccountGroupsChanged)
+}
+
+func (testUserInfoChanges) UnsubscribeAccountGroupsChanges(chan *pbuserinfo.AccountGroupsChanged) {}
+
 func TestUserInfoChanges() userinfo.ChangeSubscriber { return testUserInfoChanges{} }
 
 func TestTokenMgr() *auth.TokenMgr {

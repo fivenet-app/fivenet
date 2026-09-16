@@ -47,8 +47,17 @@ type recordingNotifi struct {
 }
 
 type recordingUserInfoChanges struct {
-	events []*pbuserinfo.UserInfoChanged
-	err    error
+	events        []*pbuserinfo.UserInfoChanged
+	accountEvents []*pbuserinfo.AccountGroupsChanged
+	err           error
+}
+
+func (r *recordingUserInfoChanges) PublishAccountGroupsChanged(
+	_ context.Context,
+	event *pbuserinfo.AccountGroupsChanged,
+) error {
+	r.accountEvents = append(r.accountEvents, event)
+	return r.err
 }
 
 func (r *recordingUserInfoChanges) PublishUserInfoChanged(
@@ -75,15 +84,6 @@ func (n *recordingNotifi) SendObjectEvent(
 	context.Context,
 	*notificationsclientview.ObjectEvent,
 ) error {
-	return nil
-}
-
-func (n *recordingNotifi) SendAccountEvent(
-	_ context.Context,
-	_ int64,
-	event *notificationsevents.UserEvent,
-) error {
-	n.events = append(n.events, event)
 	return nil
 }
 
