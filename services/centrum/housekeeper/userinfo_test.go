@@ -189,9 +189,19 @@ func TestUserInfoReconcileConsumerRetainsEventAcrossLeadershipHandoff(t *testing
 	require.NoError(t, err)
 	t.Cleanup(secondConsume.ctx.Stop)
 
-	require.Eventually(t, func() bool { return reconciled.Load() == 1 }, time.Second, 10*time.Millisecond)
+	require.Eventually(
+		t,
+		func() bool { return reconciled.Load() == 1 },
+		time.Second,
+		10*time.Millisecond,
+	)
 	time.Sleep(100 * time.Millisecond)
-	require.Equal(t, int32(1), reconciled.Load(), "the durable event must be reconciled exactly once")
+	require.Equal(
+		t,
+		int32(1),
+		reconciled.Load(),
+		"the durable event must be reconciled exactly once",
+	)
 }
 
 func TestHandleUserInfoReconcileMessageRetriesFailure(t *testing.T) {

@@ -25,16 +25,18 @@ import (
 )
 
 const (
-	mysqlRootPassword        = "secret"
-	mysqlUserPassword        = "changeme"
-	mysqlSeedDBName          = "fivenet"
-	mysqlControlDBName       = "fivenet_test_control"
-	mysqlControlTableName    = "mysql_container_state"
-	sharedMySQLContainerName = "fivenet-mysql-test"
-	sharedMySQLBootstrapLock = "fivenet-mysql-bootstrap"
-	mysqlCharset             = "utf8mb4"
-	mysqlCollation           = "utf8mb4_unicode_ci"
-	mysqlTimezone            = "Europe/Berlin"
+	mysqlRootPassword         = "secret"
+	mysqlUserPassword         = "changeme"
+	mysqlSeedDBName           = "fivenet"
+	mysqlControlDBName        = "fivenet_test_control"
+	mysqlControlTableName     = "mysql_container_state"
+	sharedMySQLContainerName  = "fivenet-mysql-test"
+	sharedMySQLBootstrapLock  = "fivenet-mysql-bootstrap"
+	mysqlCharset              = "utf8mb4"
+	mysqlCollation            = "utf8mb4_unicode_ci"
+	mysqlTimezone             = "Europe/Berlin"
+	sharedMySQLLookupAttempts = 40
+	sharedMySQLLookupDelay    = 250 * time.Millisecond
 
 	cleanupTimeout = 45 * time.Second
 )
@@ -252,6 +254,14 @@ func (m *mysqlTestDBManager) ensureSharedContainerLocked(ctx context.Context, t 
 		return nil
 	}
 
+	// The dockertest reuse registry is process-local. Look up the named
+	// container in Docker first so that separate `go test` processes can share
+	// the same container without deliberately provoking a name conflict.
+	if existing, ok := m.findSharedContainerLocked(ctx); ok {
+		m.sharedPort = existing.GetPort("3306/tcp")
+		return m.waitForMySQLReadyLocked(ctx)
+	}
+
 	image, tag := loadDockerComposeServiceImage(t, "mysql")
 
 	resource, runErr := m.pool.Run(
@@ -275,18 +285,12 @@ func (m *mysqlTestDBManager) ensureSharedContainerLocked(ctx context.Context, t 
 		}),
 	)
 	if runErr != nil {
-		// A container created by an earlier test process is not in
-		// dockertest's in-memory reuse registry. In that case Run returns a
-		// name-conflict error even though the container is perfectly usable.
-		// Docker can also take a moment to make the conflicting container
-		// visible through ContainerList, so retry the lookup after a short
-		// delay. If it cannot be reused, return the creation error so the
-		// test fails instead of being reported as skipped.
+		// Another test process may have created the container after the lookup
+		// above. Its in-memory reuse registry is not shared with this process, so
+		// Run reports a Docker name conflict; recover by adopting that container.
 		if existing, ok := m.findSharedContainerWithRetryLocked(ctx); ok {
 			m.sharedPort = existing.GetPort("3306/tcp")
-			if m.sharedPort != "" {
-				return m.waitForMySQLReadyLocked(ctx)
-			}
+			return m.waitForMySQLReadyLocked(ctx)
 		}
 		return fmt.Errorf("failed to create shared mysql container. %w", runErr)
 	}
@@ -333,69 +337,57 @@ func (m *mysqlTestDBManager) waitForMySQLReadyLocked(ctx context.Context) error 
 func (m *mysqlTestDBManager) findSharedContainerLocked(
 	ctx context.Context,
 ) (dockertest.ClosableResource, bool) {
-	containers, err := m.pool.Client().ContainerList(
+	// Inspect by the complete name instead of using ContainerList's substring
+	// name filter. Inspect is also the authoritative operation when another
+	// process has just created the container but it has not appeared in a list
+	// response yet.
+	inspect, err := m.pool.Client().ContainerInspect(
 		ctx,
-		mobyclient.ContainerListOptions{
-			All:     true,
-			Filters: mobyclient.Filters{}.Add("name", sharedMySQLContainerName),
-		},
+		sharedMySQLContainerName,
+		mobyclient.ContainerInspectOptions{},
 	)
-	if err != nil || len(containers.Items) == 0 {
+	if err != nil || inspect.Container.State == nil {
 		return nil, false
 	}
 
-	for _, container := range containers.Items {
-		// The name filter is a substring match. Only reuse the container
-		// whose name exactly matches the name requested by Run.
-		if !slices.Contains(container.Names, "/"+sharedMySQLContainerName) {
-			continue
-		}
-
-		inspect, err := m.pool.Client().ContainerInspect(
+	if !inspect.Container.State.Running {
+		if _, err := m.pool.Client().ContainerStart(
 			ctx,
-			container.ID,
+			inspect.Container.ID,
+			mobyclient.ContainerStartOptions{},
+		); err != nil {
+			return nil, false
+		}
+		inspect, err = m.pool.Client().ContainerInspect(
+			ctx,
+			sharedMySQLContainerName,
 			mobyclient.ContainerInspectOptions{},
 		)
-		if err != nil {
-			continue
+		if err != nil || inspect.Container.State == nil || !inspect.Container.State.Running {
+			return nil, false
 		}
-
-		if inspect.Container.State != nil && !inspect.Container.State.Running {
-			if _, err := m.pool.Client().ContainerStart(
-				ctx,
-				container.ID,
-				mobyclient.ContainerStartOptions{},
-			); err != nil {
-				return nil, false
-			}
-			inspect, err = m.pool.Client().ContainerInspect(
-				ctx,
-				container.ID,
-				mobyclient.ContainerInspectOptions{},
-			)
-			if err != nil {
-				return nil, false
-			}
-		}
-
-		return dockertest.NewResource(inspect.Container), true
 	}
 
-	return nil, false
+	// Port bindings can be empty briefly after ContainerStart. Returning false
+	// makes the caller retry instead of permanently caching an unusable port.
+	resource := dockertest.NewResource(inspect.Container)
+	if resource.GetPort("3306/tcp") == "" {
+		return nil, false
+	}
+
+	return resource, true
 }
 
 func (m *mysqlTestDBManager) findSharedContainerWithRetryLocked(
 	ctx context.Context,
 ) (dockertest.ClosableResource, bool) {
-	const attempts = 5
-
-	for attempt := range attempts {
+	for attempt := range sharedMySQLLookupAttempts {
 		if existing, ok := m.findSharedContainerLocked(ctx); ok {
 			return existing, true
 		}
 
-		if attempt+1 < attempts {
-			timer := time.NewTimer(100 * time.Millisecond)
+		if attempt+1 < sharedMySQLLookupAttempts {
+			timer := time.NewTimer(sharedMySQLLookupDelay)
 			select {
 			case <-ctx.Done():
 				timer.Stop()
