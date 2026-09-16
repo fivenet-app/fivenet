@@ -3,6 +3,7 @@ package centrumconverter
 import (
 	"context"
 	"database/sql"
+	"regexp"
 	"strconv"
 	"strings"
 	"sync"
@@ -20,6 +21,8 @@ import (
 	"go.uber.org/fx"
 	"go.uber.org/zap"
 )
+
+const maxDispatchConvertCount = 15
 
 type Converter struct {
 	logger *zap.Logger
@@ -52,6 +55,13 @@ func New(p Params) *Converter {
 
 	ctxCancel, cancel := context.WithCancel(context.Background())
 
+	convertJobs := make([]string, 0, len(p.Config.DispatchCenter.ConvertJobs))
+	for _, job := range p.Config.DispatchCenter.ConvertJobs {
+		if job != "" {
+			convertJobs = append(convertJobs, regexp.QuoteMeta(job))
+		}
+	}
+
 	c := &Converter{
 		logger: p.Logger.Named("centrum.converter"),
 		db:     p.DB,
@@ -82,6 +92,9 @@ func New(p Params) *Converter {
 
 func (s *Converter) convertPhoneJobMsgToDispatch(ctx context.Context) {
 	if len(s.convertJobs) == 0 {
+		s.logger.Warn(
+			"dispatch center phone converter is enabled, but no jobs configured to convert",
+		)
 		return
 	}
 
@@ -148,7 +161,7 @@ func (s *Converter) convertGKSPhoneJobMsgToDispatch(ctx context.Context) error {
 			),
 			tGksPhoneJMsg.Owner.EQ(mysql.Int32(0)),
 		)).
-		LIMIT(15)
+		LIMIT(maxDispatchConvertCount)
 
 	var dest []struct {
 		*model.GksphoneJobMessage
@@ -273,10 +286,12 @@ func (s *Converter) convertLBPhoneJobMsgToDispatch(ctx context.Context) error {
 		).
 		WHERE(mysql.AND(
 			tPhoneServicesChannels.Company.REGEXP_LIKE(
-				mysql.String("\\[\"(" + strings.Join(s.convertJobs, "|") + ")\"\\]"),
+				mysql.String(
+					"\\[\"(" + strings.Join(s.convertJobs, "|") + ")\"\\]",
+				),
 			),
 		)).
-		LIMIT(15)
+		LIMIT(maxDispatchConvertCount)
 
 	var dest []struct {
 		ID          int32
