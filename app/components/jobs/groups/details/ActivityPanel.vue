@@ -55,11 +55,15 @@ const {
 
 const activityItems = computed<GroupActivity[]>(() => activity.value?.activity ?? []);
 
+function activityTypeLabel(activityType: GroupActivityType): string {
+    return t(`enums.jobs.groups.GroupActivityType.${GroupActivityType[activityType] ?? 'UNSPECIFIED'}`);
+}
+
 const activityTypeItems = computed(() =>
     Object.values(GroupActivityType)
         .filter((value): value is GroupActivityType => typeof value === 'number' && value !== GroupActivityType.UNSPECIFIED)
         .map((value) => ({
-            label: t(`enums.jobs.groups.GroupActivityType.${GroupActivityType[value] ?? 'UNSPECIFIED'}`),
+            label: activityTypeLabel(value),
             value,
             icon: groupActivityTypeIcon(value),
             ui: {
@@ -106,10 +110,6 @@ async function clearFilters(): Promise<void> {
     }
 
     page.value = 1;
-}
-
-function activityLabel(activity: GroupActivity): string {
-    return t(`enums.jobs.groups.GroupActivityType.${GroupActivityType[activity.type] ?? 'UNSPECIFIED'}`);
 }
 
 function activityRuleLabel(activity: GroupActivity): string | undefined {
@@ -261,7 +261,7 @@ watch(
                             <div class="flex-1 space-y-1">
                                 <div class="flex items-center justify-between gap-3">
                                     <h3 class="text-sm font-medium">
-                                        {{ activityLabel(entry) }}
+                                        {{ activityTypeLabel(entry.type) }}
                                     </h3>
 
                                     <p v-if="entry.createdAt" class="text-sm text-muted">

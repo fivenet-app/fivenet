@@ -5,6 +5,7 @@ import ActivityFeedEntry from '~/components/jobs/colleagues/info/ActivityFeedEnt
 import UserGroupSelector from '~/components/jobs/UserGroupSelector.vue';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
+import InputDateRangePopover, { type DateRange } from '~/components/partials/InputDateRangePopover.vue';
 import Pagination from '~/components/partials/Pagination.vue';
 import SortButton from '~/components/partials/SortButton.vue';
 import type { Form } from '@nuxt/ui';
@@ -46,7 +47,8 @@ const activityTypes = computed(() =>
 
 const schema = z.object({
     users: userSelectorSchema,
-    types: z.enum(ColleagueActivityType).array().max(typesAttrs.value.length).default(activityTypes.value),
+    types: z.enum(ColleagueActivityType).array().max(typesAttrs.value.length).default([]),
+    dateRange: z.custom<DateRange>().optional(),
     sorting: z
         .object({
             columns: z
@@ -94,6 +96,8 @@ async function listColleagueActivity(values: Schema, signal: AbortSignal): Promi
                 sort: values.sorting,
                 users: values.users,
                 activityTypes: values.types,
+                from: toTimestamp(values.dateRange?.start),
+                to: toTimestamp(values.dateRange?.end),
             },
             { abort: signal },
         );
@@ -159,10 +163,6 @@ watch(
                                 value-key="aType"
                                 :search-input="{ placeholder: $t('common.type', 2) }"
                             >
-                                <template #default>
-                                    {{ $t('common.selected', query.types.length) }}
-                                </template>
-
                                 <template #item-label="{ item }">
                                     {{ $t(`enums.jobs.ColleagueActivityType.${ColleagueActivityType[item.aType]}`) }}
                                 </template>
@@ -170,6 +170,10 @@ watch(
                                 <template #empty> {{ $t('common.not_found', [$t('common.type', 2)]) }} </template>
                             </USelectMenu>
                         </ClientOnly>
+                    </UFormField>
+
+                    <UFormField class="flex-1" name="dateRange" :label="$t('common.date')">
+                        <InputDateRangePopover v-model="query.dateRange" class="w-full" clearable time />
                     </UFormField>
 
                     <UFormField label="&nbsp;">

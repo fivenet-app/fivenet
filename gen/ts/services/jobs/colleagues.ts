@@ -16,6 +16,7 @@ import { LabelCount } from "../../resources/jobs/labels/labels";
 import { Label } from "../../resources/jobs/labels/labels";
 import { ColleagueProps } from "../../resources/jobs/colleagues/colleagues";
 import { ColleagueActivity } from "../../resources/jobs/colleagues/activity/activity";
+import { Timestamp } from "../../resources/timestamp/timestamp";
 import { ColleagueActivityType } from "../../resources/jobs/colleagues/activity/activity";
 import { Colleague } from "../../resources/jobs/colleagues/colleagues";
 import { PaginationResponse } from "../../resources/common/database/database";
@@ -138,6 +139,14 @@ export interface ListColleagueActivityRequest {
      * @generated from protobuf field: repeated resources.jobs.colleagues.activity.ColleagueActivityType activity_types = 4
      */
     activityTypes: ColleagueActivityType[];
+    /**
+     * @generated from protobuf field: optional resources.timestamp.Timestamp from = 5
+     */
+    from?: Timestamp;
+    /**
+     * @generated from protobuf field: optional resources.timestamp.Timestamp to = 6
+     */
+    to?: Timestamp;
 }
 /**
  * @generated from protobuf message services.jobs.ListColleagueActivityResponse
@@ -613,7 +622,9 @@ class ListColleagueActivityRequest$Type extends MessageType<ListColleagueActivit
             { no: 1, name: "pagination", kind: "message", T: () => PaginationRequest, options: { "buf.validate.field": { required: true } } },
             { no: 2, name: "sort", kind: "message", T: () => Sort },
             { no: 3, name: "users", kind: "message", T: () => UserSelector },
-            { no: 4, name: "activity_types", kind: "enum", repeat: 1 /*RepeatType.PACKED*/, T: () => ["resources.jobs.colleagues.activity.ColleagueActivityType", ColleagueActivityType, "COLLEAGUE_ACTIVITY_TYPE_"], options: { "buf.validate.field": { repeated: { maxItems: "10", items: { enum: { definedOnly: true } } } } } }
+            { no: 4, name: "activity_types", kind: "enum", repeat: 1 /*RepeatType.PACKED*/, T: () => ["resources.jobs.colleagues.activity.ColleagueActivityType", ColleagueActivityType, "COLLEAGUE_ACTIVITY_TYPE_"], options: { "buf.validate.field": { repeated: { maxItems: "10", items: { enum: { definedOnly: true } } } } } },
+            { no: 5, name: "from", kind: "message", T: () => Timestamp },
+            { no: 6, name: "to", kind: "message", T: () => Timestamp }
         ]);
     }
     create(value?: PartialMessage<ListColleagueActivityRequest>): ListColleagueActivityRequest {
@@ -644,6 +655,12 @@ class ListColleagueActivityRequest$Type extends MessageType<ListColleagueActivit
                     else
                         message.activityTypes.push(reader.int32());
                     break;
+                case /* optional resources.timestamp.Timestamp from */ 5:
+                    message.from = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.from);
+                    break;
+                case /* optional resources.timestamp.Timestamp to */ 6:
+                    message.to = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.to);
+                    break;
                 default:
                     let u = options.readUnknownField;
                     if (u === "throw")
@@ -672,6 +689,12 @@ class ListColleagueActivityRequest$Type extends MessageType<ListColleagueActivit
                 writer.int32(message.activityTypes[i]);
             writer.join();
         }
+        /* optional resources.timestamp.Timestamp from = 5; */
+        if (message.from)
+            Timestamp.internalBinaryWrite(message.from, writer.tag(5, WireType.LengthDelimited).fork(), options).join();
+        /* optional resources.timestamp.Timestamp to = 6; */
+        if (message.to)
+            Timestamp.internalBinaryWrite(message.to, writer.tag(6, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
