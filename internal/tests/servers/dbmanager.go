@@ -279,16 +279,16 @@ func (m *mysqlTestDBManager) ensureSharedContainerLocked(ctx context.Context, t 
 		// dockertest's in-memory reuse registry. In that case Run returns a
 		// name-conflict error even though the container is perfectly usable.
 		// Docker can also take a moment to make the conflicting container
-		// visible through ContainerList, so retry the lookup briefly.
+		// visible through ContainerList, so retry the lookup after a short
+		// delay. If it cannot be reused, return the creation error so the
+		// test fails instead of being reported as skipped.
 		if existing, ok := m.findSharedContainerWithRetryLocked(ctx); ok {
 			m.sharedPort = existing.GetPort("3306/tcp")
 			if m.sharedPort != "" {
 				return m.waitForMySQLReadyLocked(ctx)
 			}
 		}
-		return &setupUnavailableError{
-			err: runErr,
-		}
+		return fmt.Errorf("failed to create shared mysql container. %w", runErr)
 	}
 
 	m.sharedPort = resource.GetPort("3306/tcp")
