@@ -452,10 +452,7 @@ defineShortcuts({
 
                         <template v-if="canStream && settings?.enabled" #afterMap>
                             <!-- "Take Dispatches" Button -->
-                            <span
-                                v-if="getOwnUnit !== undefined"
-                                class="absolute right-1/2 bottom-2 z-30 inline-flex pb-(--page-content-bottom-offset)"
-                            >
+                            <span v-if="getOwnUnit !== undefined" class="absolute right-1/2 bottom-2 z-30 inline-flex">
                                 <UChip
                                     :ui="{
                                         base: 'absolute rounded-full ring-0 ring-white dark:ring-gray-900 flex items-center justify-center text-white dark:text-gray-900 font-medium whitespace-nowrap animate-ping duration-750',
