@@ -136,6 +136,10 @@ func (c *Cache[T, U]) Start(ctx context.Context, wait bool) error {
 	go func() {
 		for {
 			updateCh := watcher.Updates()
+			// Watch replays the current KV state before its nil sentinel. Track
+			// that snapshot so a restarted watcher can remove cached keys whose
+			// expiry or delete tombstone was pruned while it was unavailable.
+			seen := make(map[string]struct{})
 			watchClosed := false
 			for !watchClosed {
 				select {
@@ -150,6 +154,7 @@ func (c *Cache[T, U]) Start(ctx context.Context, wait bool) error {
 						continue
 					}
 					if entry == nil {
+						c.reconcileWatcherSnapshot(seen)
 						markReady()
 						continue
 					}
@@ -158,6 +163,7 @@ func (c *Cache[T, U]) Start(ctx context.Context, wait bool) error {
 					if c.ignoredKeys != nil && slices.Contains(c.ignoredKeys, key) {
 						continue
 					}
+					seen[key] = struct{}{}
 
 					switch entry.Operation() {
 					case jetstream.KeyValuePut:
@@ -226,6 +232,23 @@ func (c *Cache[T, U]) Start(ctx context.Context, wait bool) error {
 	}
 
 	return nil
+}
+
+// reconcileWatcherSnapshot removes cached keys missing from a completed watcher
+// snapshot. A normal delete is replayed by Watch, but KV expiry and pruned delete
+// markers are absent from a later snapshot and would otherwise leave stale cache
+// entries after a watcher restart.
+func (c *Cache[T, U]) reconcileWatcherSnapshot(seen map[string]struct{}) {
+	for key := range c.data.All() {
+		if c.ignoredKeys != nil && slices.Contains(c.ignoredKeys, key) {
+			continue
+		}
+		if _, ok := seen[key]; ok {
+			continue
+		}
+
+		c.handleWatcherDelete(key)
+	}
 }
 
 // handleWatcherPut handles a put/update event from the NATS KeyValue watcher.

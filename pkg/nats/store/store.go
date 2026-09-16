@@ -735,6 +735,8 @@ func (s *Store[T, U]) Put(ctx context.Context, key string, msg U) error {
 	return nil
 }
 
+const maxPutWriteAttempts = 3
+
 func (s *Store[T, U]) put(ctx context.Context, key string, msg U, oldItem U) error {
 	data, err := proto.Marshal(msg)
 	if err != nil {
@@ -744,9 +746,9 @@ func (s *Store[T, U]) put(ctx context.Context, key string, msg U, oldItem U) err
 	// Concurrent workers may read the same revision before writing. Refresh and
 	// retry a bounded number of optimistic-CAS conflicts instead of dropping a
 	// logically idempotent projection update.
-	const maxWriteAttempts = 3
+
 	var rev uint64
-	for attempt := 1; attempt <= maxWriteAttempts; attempt++ {
+	for attempt := 1; attempt <= maxPutWriteAttempts; attempt++ {
 		entry, err := s.kv.Get(ctx, key)
 		if err == nil {
 			rev, err = s.kv.Update(ctx, key, data, entry.Revision())
@@ -756,7 +758,7 @@ func (s *Store[T, U]) put(ctx context.Context, key string, msg U, oldItem U) err
 		if err == nil {
 			break
 		}
-		if !errors.Is(err, jetstream.ErrKeyExists) || attempt == maxWriteAttempts {
+		if !errors.Is(err, jetstream.ErrKeyExists) || attempt == maxPutWriteAttempts {
 			return fmt.Errorf("failed to write value for key %s in put. %w", key, err)
 		}
 

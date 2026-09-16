@@ -52,13 +52,17 @@ func New(p Params) *Converter {
 		p.Logger.Debug("dispatch center converter is disabled")
 		return nil
 	}
+	if len(p.Config.DispatchCenter.ConvertJobs) == 0 {
+		p.Logger.Warn("dispatch center converter is enabled but no convert jobs are configured")
+		return nil
+	}
 
 	ctxCancel, cancel := context.WithCancel(context.Background())
 
 	convertJobs := make([]string, 0, len(p.Config.DispatchCenter.ConvertJobs))
 	for _, job := range p.Config.DispatchCenter.ConvertJobs {
 		if job != "" {
-			convertJobs = append(convertJobs, regexp.QuoteMeta(job))
+			convertJobs = append(convertJobs, job)
 		}
 	}
 
@@ -91,13 +95,6 @@ func New(p Params) *Converter {
 }
 
 func (s *Converter) convertPhoneJobMsgToDispatch(ctx context.Context) {
-	if len(s.convertJobs) == 0 {
-		s.logger.Warn(
-			"dispatch center phone converter is enabled, but no jobs configured to convert",
-		)
-		return
-	}
-
 	for {
 		select {
 		case <-ctx.Done():
@@ -137,6 +134,11 @@ func (s *Converter) convertGKSPhoneJobMsgToDispatch(ctx context.Context) error {
 	tGksPhoneSettings := table.GksphoneSettings
 	tUsers := table.FivenetUser
 
+	jobs := make([]string, 0, len(s.convertJobs))
+	for _, job := range s.convertJobs {
+		jobs = append(jobs, regexp.QuoteMeta(job))
+	}
+
 	stmt := tGksPhoneJMsg.
 		SELECT(
 			tGksPhoneJMsg.ID,
@@ -158,7 +160,7 @@ func (s *Converter) convertGKSPhoneJobMsgToDispatch(ctx context.Context) error {
 		WHERE(mysql.AND(
 			// Target job(s) are stored as JSON array like this: `["ambulance"]`
 			tGksPhoneJMsg.Jobm.REGEXP_LIKE(
-				mysql.String("\\[\"("+strings.Join(s.convertJobs, "|")+")\"\\]"),
+				mysql.String("\\[\"("+strings.Join(jobs, "|")+")\"\\]"),
 			),
 			tGksPhoneJMsg.Owner.EQ(mysql.Int32(0)),
 		)).
@@ -321,8 +323,7 @@ func (s *Converter) convertLBPhoneJobMsgToDispatch(ctx context.Context) error {
 		}
 
 		dsp := &centrumdispatches.Dispatch{
-			CreatedAt:  timestamp.Now(),
-			Attributes: &centrumdispatches.DispatchAttributes{},
+			CreatedAt: timestamp.Now(),
 			Jobs: &centrum.JobList{
 				Jobs: []*centrum.JobListEntry{
 					{
@@ -330,11 +331,12 @@ func (s *Converter) convertLBPhoneJobMsgToDispatch(ctx context.Context) error {
 					},
 				},
 			},
-			Message:   message,
-			X:         float64(msg.XPos),
-			Y:         float64(msg.YPos),
-			Anon:      false,
-			CreatorId: &msg.UserId,
+			Message:    message,
+			X:          float64(msg.XPos),
+			Y:          float64(msg.YPos),
+			Anon:       false,
+			Attributes: &centrumdispatches.DispatchAttributes{},
+			CreatorId:  &msg.UserId,
 		}
 
 		s.logger.Debug(

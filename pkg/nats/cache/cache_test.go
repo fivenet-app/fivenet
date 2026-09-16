@@ -12,6 +12,7 @@ import (
 	testnats "github.com/fivenet-app/fivenet/v2026/internal/tests/nats"
 	"github.com/fivenet-app/fivenet/v2026/pkg/utils/protoutils"
 	"github.com/nats-io/nats.go/jetstream"
+	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"go.uber.org/zap"
 	"google.golang.org/protobuf/proto"
@@ -93,6 +94,38 @@ func TestCacheRestartsWatcherAfterClosure(t *testing.T) {
 		item, err := c.Get("restarted")
 		return err == nil && item.GetValue() == "after restart"
 	}, 3*time.Second, 10*time.Millisecond)
+}
+
+func TestCacheReconcilesWatcherSnapshot(t *testing.T) {
+	t.Parallel()
+
+	ctx := t.Context()
+	kv := newFakeKV("cache_snapshot_reconcile")
+	c, err := New[wrapperspb.StringValue, *wrapperspb.StringValue](
+		ctx,
+		zap.NewNop(),
+		nil,
+		kv.Bucket(),
+		withKeyValue[wrapperspb.StringValue, *wrapperspb.StringValue](kv),
+		withIgnoredKeys[wrapperspb.StringValue, *wrapperspb.StringValue]("ignored"),
+	)
+	require.NoError(t, err)
+
+	c.data.Store("retained", &EntryWrapper[wrapperspb.StringValue, *wrapperspb.StringValue]{
+		Data: &wrapperspb.StringValue{Value: "retained"},
+	})
+	c.data.Store("stale", &EntryWrapper[wrapperspb.StringValue, *wrapperspb.StringValue]{
+		Data: &wrapperspb.StringValue{Value: "stale"},
+	})
+	c.data.Store("ignored", &EntryWrapper[wrapperspb.StringValue, *wrapperspb.StringValue]{
+		Data: &wrapperspb.StringValue{Value: "ignored"},
+	})
+
+	c.reconcileWatcherSnapshot(map[string]struct{}{"retained": {}})
+
+	assert.True(t, c.Has("retained"))
+	assert.False(t, c.Has("stale"))
+	assert.True(t, c.Has("ignored"))
 }
 
 func TestCacheMirrorsExternalNATSChanges(t *testing.T) {

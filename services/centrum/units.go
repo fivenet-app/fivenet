@@ -347,7 +347,8 @@ func (s *Server) JoinUnit(
 	// context remains an administrative context and must not create a second,
 	// durable unit identity for the character.
 	marker, onDuty := s.tracker.GetUserMarkerById(userInfo.GetUserId())
-	if !onDuty || marker == nil || marker.GetHidden() || !s.tracker.IsUserOnDuty(userInfo.GetUserId()) {
+	if !onDuty || marker == nil || marker.GetHidden() ||
+		!s.tracker.IsUserOnDuty(userInfo.GetUserId()) {
 		if err := s.units.SyncUserUnitMapping(ctx, userInfo.GetUserId()); err != nil {
 			return nil, errswrap.NewError(err, errorscentrum.ErrFailedQuery)
 		}
@@ -413,7 +414,11 @@ func (s *Server) JoinUnit(
 		// Only check unit access when not empty
 		if newUnit.GetAccess() != nil && !newUnit.GetAccess().IsEmpty() {
 			// Make sure requestor is not a dispatcher
-			if !s.helpers.CheckIfUserIsDispatcher(ctx, effectiveUserInfo.GetJob(), userInfo.GetUserId()) {
+			if !s.helpers.CheckIfUserIsDispatcher(
+				ctx,
+				effectiveUserInfo.GetJob(),
+				userInfo.GetUserId(),
+			) {
 				check, err := s.units.GetAccess().
 					CanUserAccessTarget(ctx, newUnit.GetId(), effectiveUserInfo, int32(unitsaccess.UnitAccessLevel_UNIT_ACCESS_LEVEL_JOIN))
 				if err != nil {

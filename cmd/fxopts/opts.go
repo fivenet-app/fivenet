@@ -2,6 +2,7 @@ package fxopts
 
 import (
 	"context"
+	"time"
 
 	"github.com/fivenet-app/fivenet/v2026/pkg/croner"
 	"github.com/fivenet-app/fivenet/v2026/pkg/demo"
@@ -35,7 +36,12 @@ func FxServerOpts() []fx.Option {
 func FxReadinessOpts() []fx.Option {
 	return []fx.Option{
 		fx.Invoke(func(lc fx.Lifecycle, readiness *admin.Readiness) {
-			lc.Append(fx.StartHook(func(context.Context) error {
+			lc.Append(fx.StartHook(func(ctx context.Context) error {
+				select {
+				case <-time.After(3 * time.Second):
+				case <-ctx.Done():
+					return ctx.Err()
+				}
 				readiness.SetReady(true)
 				return nil
 			}))

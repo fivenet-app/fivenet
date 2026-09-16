@@ -8,63 +8,48 @@ import (
 	"go.uber.org/zap"
 )
 
-// These functions own watcher lifecycle and restart behavior. The underlying
-// watcher implementations remain with their domain-specific handlers.
-func (s *Housekeeper) runIdleWatcher(ctx context.Context) {
+// watcherFunc is a long-running watcher which returns when it needs to be
+// restarted or when its context is cancelled.
+type watcherFunc func(context.Context) error
+
+// runWatcher owns the common watcher lifecycle and restart behavior. The
+// underlying watcher implementations remain with their domain-specific
+// handlers.
+func (s *Housekeeper) runWatcher(ctx context.Context, name string, watch watcherFunc) {
 	for {
-		if err := s.idleWatcher(ctx); err != nil && !errors.Is(err, context.Canceled) {
-			s.recordWatcherRestart("idle", err)
-			s.logger.Error("idle watcher stopped", zap.Error(err))
+		if err := watch(ctx); err != nil && !errors.Is(err, context.Canceled) {
+			s.recordWatcherRestart(name, err)
+			s.logger.Error(
+				"housekeeper watcher stopped",
+				zap.String("watcher", name),
+				zap.Error(err),
+			)
 		}
 		select {
 		case <-ctx.Done():
 			return
+
 		case <-time.After(2 * time.Second):
 		}
 	}
+}
+
+func (s *Housekeeper) runIdleWatcher(ctx context.Context) {
+	s.runWatcher(ctx, "idle", s.idleWatcher)
 }
 
 func (s *Housekeeper) runDispatchCleanupWatcher(ctx context.Context) {
-	for {
-		if err := s.dispatchCleanupWatcher(ctx); err != nil && !errors.Is(err, context.Canceled) {
-			s.recordWatcherRestart("dispatch_cleanup", err)
-			s.logger.Error("dispatch cleanup watcher stopped", zap.Error(err))
-		}
-		select {
-		case <-ctx.Done():
-			return
-		case <-time.After(2 * time.Second):
-		}
-	}
+	s.runWatcher(ctx, "dispatch_cleanup", s.dispatchCleanupWatcher)
 }
 
 func (s *Housekeeper) runProjectionCleanupWatcher(ctx context.Context) {
-	for {
-		if err := s.projectionCleanupWatcher(ctx); err != nil && !errors.Is(err, context.Canceled) {
-			s.recordWatcherRestart("projection_cleanup", err)
-			s.logger.Error("dispatch projection cleanup watcher stopped", zap.Error(err))
-		}
-		select {
-		case <-ctx.Done():
-			return
-		case <-time.After(2 * time.Second):
-		}
-	}
+	s.runWatcher(ctx, "projection_cleanup", s.projectionCleanupWatcher)
 }
 
 func (s *Housekeeper) runDispatchAssignmentExpirationWatcher(ctx context.Context) {
-	for {
-		if err := s.dispatchAssignmentExpirationWatcher(
-			ctx,
-		); err != nil &&
-			!errors.Is(err, context.Canceled) {
-			s.recordWatcherRestart("dispatch_assignment_expiration", err)
-			s.logger.Error("dispatch assignment expiration watcher stopped", zap.Error(err))
-		}
-		select {
-		case <-ctx.Done():
-			return
-		case <-time.After(2 * time.Second):
-		}
-	}
+	s.runWatcher(
+		ctx,
+		"dispatch_assignment_expiration",
+		s.dispatchAssignmentExpirationWatcher,
+	)
 }

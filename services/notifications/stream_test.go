@@ -32,7 +32,9 @@ func (s *accountGroupsChangeSubscriberStub) SubscribeUserInfoChanges() chan *pbu
 	return make(chan *pbuserinfo.UserInfoChanged)
 }
 
-func (s *accountGroupsChangeSubscriberStub) UnsubscribeUserInfoChanges(chan *pbuserinfo.UserInfoChanged) {
+func (s *accountGroupsChangeSubscriberStub) UnsubscribeUserInfoChanges(
+	chan *pbuserinfo.UserInfoChanged,
+) {
 }
 
 func (s *accountGroupsChangeSubscriberStub) SubscribeAccountGroupsChanges() chan *pbuserinfo.AccountGroupsChanged {
@@ -93,7 +95,10 @@ func (s *notificationsStreamServerStub) Send(response *pbnotifications.StreamRes
 	}
 }
 
-func receiveStreamResponse(t *testing.T, sent <-chan *pbnotifications.StreamResponse) *pbnotifications.StreamResponse {
+func receiveStreamResponse(
+	t *testing.T,
+	sent <-chan *pbnotifications.StreamResponse,
+) *pbnotifications.StreamResponse {
 	t.Helper()
 	select {
 	case response := <-sent:

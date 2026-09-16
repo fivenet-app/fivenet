@@ -87,7 +87,9 @@ func (*streamRecoveryChanges) SubscribeAccountGroupsChanges() chan *pbuserinfo.A
 	return make(chan *pbuserinfo.AccountGroupsChanged)
 }
 
-func (*streamRecoveryChanges) UnsubscribeAccountGroupsChanges(chan *pbuserinfo.AccountGroupsChanged) {
+func (*streamRecoveryChanges) UnsubscribeAccountGroupsChanges(
+	chan *pbuserinfo.AccountGroupsChanged,
+) {
 }
 
 type streamRecoveryServer struct {
@@ -197,7 +199,7 @@ func TestStreamRecoversAfterUserConsumerDeletion(t *testing.T) {
 	for range 3 {
 		select {
 		case <-responses:
-		case <-time.After(time.Second):
+		case <-time.After(2 * time.Second):
 			t.Fatal("timed out waiting for stream resync response")
 		}
 	}

@@ -205,9 +205,11 @@ func TestChangesPublishesAndConsumesAccountGroupsChangedEvent(t *testing.T) {
 
 	js := nats.NewServer(t, nats.ServerOptions{InProcess: true}).GetJS()
 	changes := &Changes{
-		logger:              zap.NewNop(),
-		js:                  js,
-		accountGroupsBroker: broker.NewWithResyncOnSlowSubscriber[*pbuserinfo.AccountGroupsChanged](10),
+		logger: zap.NewNop(),
+		js:     js,
+		accountGroupsBroker: broker.NewWithResyncOnSlowSubscriber[*pbuserinfo.AccountGroupsChanged](
+			10,
+		),
 	}
 	ctx, cancel := context.WithCancel(t.Context())
 	defer cancel()

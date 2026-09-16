@@ -204,9 +204,15 @@ func (s *UnitDB) IsEligibleUnitMember(ctx context.Context, job string, userId in
 	return s.isEligibleJobMember(ctx, s.db, job, userId)
 }
 
-func (s *UnitDB) isEligibleJobMember(ctx context.Context, db qrm.DB, job string, userID int32) (bool, error) {
+func (s *UnitDB) isEligibleJobMember(
+	ctx context.Context,
+	db qrm.DB,
+	job string,
+	userID int32,
+) (bool, error) {
 	marker, found := s.tracker.GetUserMarkerById(userID)
-	if !found || marker == nil || marker.GetHidden() || !s.tracker.IsUserOnDuty(userID) || marker.GetJob() != job {
+	if !found || marker == nil || marker.GetHidden() || !s.tracker.IsUserOnDuty(userID) ||
+		marker.GetJob() != job {
 		return false, nil
 	}
 
