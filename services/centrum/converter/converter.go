@@ -69,7 +69,7 @@ func New(p Params) *Converter {
 		dispatches: p.Dispatches,
 
 		converterType: p.Config.DispatchCenter.Type,
-		convertJobs:   p.Config.DispatchCenter.ConvertJobs,
+		convertJobs:   convertJobs,
 	}
 
 	p.LC.Append(fx.StartHook(func(ctxStartup context.Context) error {
@@ -156,6 +156,7 @@ func (s *Converter) convertGKSPhoneJobMsgToDispatch(ctx context.Context) error {
 				),
 		).
 		WHERE(mysql.AND(
+			// Target job(s) are stored as JSON array like this: `["ambulance"]`
 			tGksPhoneJMsg.Jobm.REGEXP_LIKE(
 				mysql.String("\\[\"("+strings.Join(s.convertJobs, "|")+")\"\\]"),
 			),
@@ -262,6 +263,11 @@ func (s *Converter) convertLBPhoneJobMsgToDispatch(ctx context.Context) error {
 	tPhonePhones := table.PhonePhones
 	tUsers := table.FivenetUser
 
+	targetJobsExp := make([]mysql.Expression, 0, len(s.convertJobs))
+	for _, job := range s.convertJobs {
+		targetJobsExp = append(targetJobsExp, mysql.String(job))
+	}
+
 	stmt := tPhoneServicesChannels.
 		SELECT(
 			tPhoneServicesChannels.ID,
@@ -285,11 +291,8 @@ func (s *Converter) convertLBPhoneJobMsgToDispatch(ctx context.Context) error {
 				),
 		).
 		WHERE(mysql.AND(
-			tPhoneServicesChannels.Company.REGEXP_LIKE(
-				mysql.String(
-					"\\[\"(" + strings.Join(s.convertJobs, "|") + ")\"\\]",
-				),
-			),
+			// The target job is stored in the `company` field directly.
+			tPhoneServicesChannels.Company.IN(targetJobsExp...),
 		)).
 		LIMIT(maxDispatchConvertCount)
 

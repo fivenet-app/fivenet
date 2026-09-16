@@ -20,7 +20,6 @@ import (
 	"github.com/fivenet-app/fivenet/v2026/pkg/nats/store"
 	"github.com/fivenet-app/fivenet/v2026/services/centrum/dispatches"
 	centrummetrics "github.com/fivenet-app/fivenet/v2026/services/centrum/metrics"
-	"github.com/go-jet/jet/v2/qrm"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"go.opentelemetry.io/otel/trace/noop"
@@ -45,9 +44,8 @@ type unitAssignmentsStub struct {
 	removed   []int32
 }
 
-func (s *unitAssignmentsStub) UserInJob(
+func (s *unitAssignmentsStub) IsEligibleUnitMember(
 	_ context.Context,
-	_ qrm.DB,
 	_ string,
 	userID int32,
 ) (bool, error) {

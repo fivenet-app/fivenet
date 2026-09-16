@@ -104,16 +104,12 @@ func (s *Housekeeper) checkAndUpdateUnitUsers(
 			continue
 		}
 
-		inJob, err := s.unitAssignments.UserInJob(ctx, s.db, unit.GetJob(), userId)
+		eligible, err := s.unitAssignments.IsEligibleUnitMember(ctx, unit.GetJob(), userId)
 		if err != nil {
-			return foundUserIds, 0, fmt.Errorf("failed to check user job membership. %w", err)
+			return foundUserIds, 0, fmt.Errorf("failed to check eligible unit membership. %w", err)
 		}
 
-		marker, markerFound := s.tracker.GetUserMarkerById(userId)
-		// Tracker mappings are a projection and may be temporarily absent. Only
-		// duty/job facts may remove durable unit membership.
-		if markerFound && marker != nil && !marker.GetHidden() &&
-			s.tracker.IsUserOnDuty(userId) && marker.GetJob() == unit.GetJob() && inJob {
+		if eligible {
 			foundUserIds = append(foundUserIds, userId)
 			continue
 		}

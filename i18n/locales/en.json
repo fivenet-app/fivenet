@@ -2602,6 +2602,10 @@
                     "content": "Please join an unit!"
                 }
             },
+            "unit_join_restricted": {
+                "title": "Unit joining is unavailable for superuser mode in a different job",
+                "content": "Your character can only join units for their active on-duty job. The selected superuser job is for administration and does not change your unit membership job."
+            },
             "disabled": {
                 "title": "Dispatch center is disabled!",
                 "content": "You job's dispatch center is disabled, please contact your job leader."

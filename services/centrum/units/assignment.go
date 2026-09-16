@@ -68,7 +68,14 @@ func (s *UnitDB) RemoveUnitAssignments(
 	unitId int64,
 	userIds []int32,
 ) error {
-	_, err := s.applyUnitAssignmentChanges(ctx, creatorJob, creatorId, unitId, nil, userIds)
+	_, err := s.applyUnitAssignmentChanges(
+		ctx,
+		creatorJob,
+		creatorId,
+		unitId,
+		nil,
+		userIds,
+	)
 	return err
 }
 
@@ -178,7 +185,7 @@ func (s *UnitDB) applyUnitAssignmentChanges(
 
 	eligibleAdd := make([]int32, 0, len(actualAdd))
 	for _, userId := range actualAdd {
-		ok, err := s.UserInJob(ctx, tx, unit.GetJob(), userId)
+		ok, err := s.isEligibleJobMember(ctx, tx, unit.GetJob(), userId)
 		if err != nil {
 			return nil, err
 		}

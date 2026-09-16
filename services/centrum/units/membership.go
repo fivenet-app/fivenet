@@ -40,16 +40,14 @@ func (s *UnitDB) SyncUserUnitMapping(ctx context.Context, userId int32) error {
 			return err
 		}
 
-		marker, markerFound := s.tracker.GetUserMarkerById(userId)
-		inJob, err := s.UserInJob(ctx, s.db, unit.GetJob(), userId)
+		eligible, err := s.IsEligibleUnitMember(ctx, unit.GetJob(), userId)
 		if err != nil {
 			return err
 		}
 
 		// Unit membership is tied to the user's current duty context. Do not
 		// retain an old-job or off-duty assignment until the periodic audit runs.
-		if !markerFound || marker == nil || marker.GetHidden() ||
-			!s.tracker.IsUserOnDuty(userId) || marker.GetJob() != unit.GetJob() || !inJob {
+		if !eligible {
 			if err := s.RemoveUnitAssignments(
 				ctx,
 				"",
@@ -94,14 +92,14 @@ func (s *UnitDB) SyncUserUnitMapping(ctx context.Context, userId int32) error {
 	return errs
 }
 
-// ReconcileUserJobChange removes a durable unit assignment when its job no
-// longer matches the authoritative primary-job event. Unlike
-// SyncUserUnitMapping, it does not decide duty state or rebuild a matching
-// assignment from tracker state.
+// ReconcileUserJobChange removes a durable unit assignment when it no longer
+// matches the active marker's effective duty job. The user-info event is a
+// trigger only: a location job override remains authoritative while it is
+// active.
 func (s *UnitDB) ReconcileUserJobChange(
 	ctx context.Context,
 	userId int32,
-	job string,
+	_ string,
 ) (bool, error) {
 	if userId <= 0 {
 		return false, fmt.Errorf("invalid user ID: %d", userId)
@@ -119,7 +117,14 @@ func (s *UnitDB) ReconcileUserJobChange(
 	if err != nil {
 		return false, err
 	}
-	if unit == nil || unit.GetJob() == job {
+	if unit == nil {
+		return false, nil
+	}
+	eligible, err := s.IsEligibleUnitMember(ctx, unit.GetJob(), userId)
+	if err != nil {
+		return false, err
+	}
+	if eligible {
 		return false, nil
 	}
 
@@ -165,7 +170,7 @@ func (s *UnitDB) syncLoadedUnitMembership(ctx context.Context, unit *centrumunit
 			continue
 		}
 
-		eligible, err := s.isEligibleUnitMember(ctx, unit.GetJob(), userId)
+		eligible, err := s.IsEligibleUnitMember(ctx, unit.GetJob(), userId)
 		if err != nil {
 			errs = errors.Join(errs, err)
 			continue
@@ -193,16 +198,26 @@ func (s *UnitDB) syncLoadedUnitMembership(ctx context.Context, unit *centrumunit
 	)
 }
 
-// isEligibleUnitMember keeps tracker mappings tied to the active duty
-// context. Durable membership is reconciled separately by user changes.
-func (s *UnitDB) isEligibleUnitMember(ctx context.Context, job string, userId int32) (bool, error) {
-	marker, found := s.tracker.GetUserMarkerById(userId)
-	if !found || marker == nil || marker.GetHidden() || !s.tracker.IsUserOnDuty(userId) ||
-		marker.GetJob() != job {
+// IsEligibleUnitMember keeps tracker mappings tied to the active marker job.
+// A matching marker may contain a location job/grade override.
+func (s *UnitDB) IsEligibleUnitMember(ctx context.Context, job string, userId int32) (bool, error) {
+	return s.isEligibleJobMember(ctx, s.db, job, userId)
+}
+
+func (s *UnitDB) isEligibleJobMember(ctx context.Context, db qrm.DB, job string, userID int32) (bool, error) {
+	marker, found := s.tracker.GetUserMarkerById(userID)
+	if !found || marker == nil || marker.GetHidden() || !s.tracker.IsUserOnDuty(userID) || marker.GetJob() != job {
 		return false, nil
 	}
 
-	return s.UserInJob(ctx, s.db, job, userId)
+	inJob, err := s.UserInJob(ctx, db, job, userID)
+	if err != nil || inJob {
+		return inJob, err
+	}
+
+	// A matching active marker is the character's trusted effective duty job,
+	// including an override from fivenet_centrum_user_locations.
+	return true, nil
 }
 
 func (s *UnitDB) syncMissingUnitMembership(ctx context.Context, unitId int64) error {

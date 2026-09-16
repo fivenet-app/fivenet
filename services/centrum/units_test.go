@@ -240,7 +240,10 @@ func TestReconcileUserJobChangeRemovesOnlyCrossJobAssignment(t *testing.T) {
 	assert.False(t, removed)
 	assert.Equal(t, 1, unitAssignmentCountForTest(t, db, unit.GetId(), 1))
 
-	removed, err = srv.units.ReconcileUserJobChange(ctx, 1, "police")
+	// A user-info job event alone does not invalidate a marker job override.
+	// The assignment changes only once the active marker switches jobs.
+	trackerStub.markers[1].Job = "police"
+	removed, err = srv.units.ReconcileUserJobChange(ctx, 1, "ambulance")
 	require.NoError(t, err)
 	assert.True(t, removed)
 	assert.Zero(t, unitAssignmentCountForTest(t, db, unit.GetId(), 1))
@@ -427,6 +430,39 @@ func TestUpdateUnitAssignmentsDropsUsersOutsideUnitJob(t *testing.T) {
 	assert.False(t, ok)
 }
 
+func TestJoinUnitUsesActiveMarkerJobOverride(t *testing.T) {
+	t.Parallel()
+
+	srv, db, trackerStub := newCentrumJoinUnitTestServer(t)
+	ctx := auth.ContextWithUserInfo(t.Context(), &pbuserinfo.UserInfo{
+		UserId:    1,
+		Job:       "police",
+		JobGrade:  17,
+		Superuser: true,
+	})
+	trackerStub.markers[1].Job = "police"
+
+	policeCtx := auth.ContextWithUserInfo(t.Context(), &pbuserinfo.UserInfo{
+		UserId:   2,
+		Job:      "police",
+		JobGrade: 17,
+	})
+	unit := createUnitForTest(t, srv, policeCtx, "Alpha-Marker-Override")
+
+	resp, err := srv.JoinUnit(ctx, &pbcentrum.JoinUnitRequest{UnitId: &unit.Id})
+	require.NoError(t, err)
+	require.NotNil(t, resp.GetUnit())
+	assert.Equal(t, unit.GetId(), resp.GetUnit().GetId())
+
+	// The user has no persisted police membership. The active marker override,
+	// rather than the selected superuser context, is the effective duty job.
+	inJob, err := srv.units.UserInJob(ctx, db, "police", 1)
+	require.NoError(t, err)
+	assert.False(t, inJob)
+	assert.Equal(t, 1, unitAssignmentCountForTest(t, db, unit.GetId(), 1))
+	assertUnitCacheHasUser(t, srv, ctx, unit.GetId(), 1, true)
+}
+
 func TestRemoveUnitAssignmentsDoesNotWriteTrackerMapping(t *testing.T) {
 	t.Parallel()
 
@@ -463,13 +499,19 @@ func TestJoinUnitKeepsCurrentUnitWhenTargetValidationFails(t *testing.T) {
 	t.Parallel()
 
 	srv, db, trackerStub := newCentrumJoinUnitTestServer(t)
-	ctx := auth.ContextWithUserInfo(t.Context(), &pbuserinfo.UserInfo{
+	ambulanceCtx := auth.ContextWithUserInfo(t.Context(), &pbuserinfo.UserInfo{
 		UserId:   1,
 		Job:      "ambulance",
 		JobGrade: 17,
 	})
+	ctx := auth.ContextWithUserInfo(t.Context(), &pbuserinfo.UserInfo{
+		UserId:    1,
+		Job:       "police",
+		JobGrade:  17,
+		Superuser: true,
+	})
 
-	currentUnit := createUnitForTest(t, srv, ctx, "Alpha-Current")
+	currentUnit := createUnitForTest(t, srv, ambulanceCtx, "Alpha-Current")
 	seedAssignmentForTest(t, db, trackerStub, currentUnit.GetId(), 1)
 
 	policeCtx := auth.ContextWithUserInfo(t.Context(), &pbuserinfo.UserInfo{

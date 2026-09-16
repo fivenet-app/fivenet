@@ -25,7 +25,6 @@ import (
 	centrummetrics "github.com/fivenet-app/fivenet/v2026/services/centrum/metrics"
 	"github.com/fivenet-app/fivenet/v2026/services/centrum/settings"
 	"github.com/fivenet-app/fivenet/v2026/services/centrum/units"
-	"github.com/go-jet/jet/v2/qrm"
 	"github.com/nats-io/nats.go/jetstream"
 	tracesdk "go.opentelemetry.io/otel/sdk/trace"
 	"go.opentelemetry.io/otel/trace"
@@ -91,7 +90,7 @@ type dispatchAssignmentExpirationWriter interface {
 }
 
 type unitAssignments interface {
-	UserInJob(ctx context.Context, db qrm.DB, job string, userID int32) (bool, error)
+	IsEligibleUnitMember(ctx context.Context, job string, userID int32) (bool, error)
 	UpdateUnitAssignments(
 		ctx context.Context,
 		creatorJob string,
@@ -209,10 +208,11 @@ func New(p Params) Result {
 		// UnitDB creates its KV-backed store in its own start hook. Capture it
 		// only after that hook has run; doing so in New stores a typed nil pointer
 		// in the interface and panics when the elected housekeeper starts watching.
-		s.unitAssignmentWatchSource = p.Units.Store()
-		if s.unitAssignmentWatchSource == nil {
+		unitStore := p.Units.Store()
+		if unitStore == nil {
 			return errors.New("unit assignment watch source is not initialized")
 		}
+		s.unitAssignmentWatchSource = unitStore
 
 		if err := s.ensureUserInfoReconcileConsumer(ctxStartup); err != nil {
 			return fmt.Errorf("failed to register user info reconciliation consumer: %w", err)
