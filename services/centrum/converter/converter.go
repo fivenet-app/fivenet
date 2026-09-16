@@ -5,6 +5,7 @@ import (
 	"database/sql"
 	"strconv"
 	"strings"
+	"sync"
 	"time"
 
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/centrum"
@@ -28,6 +29,7 @@ type Converter struct {
 
 	converterType string
 	convertJobs   []string
+	wg            sync.WaitGroup
 }
 
 type Params struct {
@@ -61,13 +63,16 @@ func New(p Params) *Converter {
 	}
 
 	p.LC.Append(fx.StartHook(func(ctxStartup context.Context) error {
-		c.convertPhoneJobMsgToDispatch(ctxCancel)
+		c.wg.Go(func() {
+			c.convertPhoneJobMsgToDispatch(ctxCancel)
+		})
 
 		return nil
 	}))
 
 	p.LC.Append(fx.StopHook(func(_ context.Context) error {
 		cancel()
+		c.wg.Wait()
 
 		return nil
 	}))
