@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/cron"
+	qualificationsactivity "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/qualifications/activity"
 	qualificationsexam "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/qualifications/exam"
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/userinfo"
 	"github.com/fivenet-app/fivenet/v2026/pkg/croner"
@@ -163,6 +164,17 @@ func (h *ExamHousekeeper) completeExpiredExam(
 		attempt.GetAttemptId(),
 	)
 	if err != nil || !expired {
+		return err
+	}
+	if err := h.server.addQualificationActivity(
+		ctx,
+		tx,
+		attempt.GetQualificationId(),
+		qualificationsactivity.QualificationActivityType_QUALIFICATION_ACTIVITY_TYPE_EXAM_EXPIRED,
+		0,
+		attempt.GetUserId(),
+		nil,
+	); err != nil {
 		return err
 	}
 	// Expiry holds the attempt row lock, so no partial submission can update the

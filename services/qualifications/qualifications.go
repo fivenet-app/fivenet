@@ -8,6 +8,7 @@ import (
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/file"
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/qualifications"
 	qualificationsaccess "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/qualifications/access"
+	qualificationsactivity "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/qualifications/activity"
 	qualificationsexam "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/qualifications/exam"
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/timestamp"
 	usershort "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/users/short"
@@ -257,6 +258,17 @@ func (s *Server) CreateQualification(
 	); err != nil {
 		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 	}
+	if err := s.addQualificationActivity(
+		ctx,
+		tx,
+		lastId,
+		qualificationsactivity.QualificationActivityType_QUALIFICATION_ACTIVITY_TYPE_CREATED,
+		userInfo.GetUserId(),
+		0,
+		nil,
+	); err != nil {
+		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
+	}
 
 	// Commit the transaction
 	if err := tx.Commit(); err != nil {
@@ -436,6 +448,17 @@ func (s *Server) UpdateQualification(
 	); err != nil {
 		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 	}
+	if err := s.addQualificationActivity(
+		ctx,
+		tx,
+		req.GetQualification().GetId(),
+		qualificationsactivity.QualificationActivityType_QUALIFICATION_ACTIVITY_TYPE_UPDATED,
+		userInfo.GetUserId(),
+		0,
+		nil,
+	); err != nil {
+		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
+	}
 
 	// Commit the transaction
 	if err := tx.Commit(); err != nil {
@@ -526,6 +549,21 @@ func (s *Server) DeleteQualification(
 		tx,
 		req.GetQualificationId(),
 		deletedAtTime,
+	); err != nil {
+		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
+	}
+	activityType := qualificationsactivity.QualificationActivityType_QUALIFICATION_ACTIVITY_TYPE_DELETED
+	if deletedAtTime == nil {
+		activityType = qualificationsactivity.QualificationActivityType_QUALIFICATION_ACTIVITY_TYPE_RESTORED
+	}
+	if err := s.addQualificationActivity(
+		ctx,
+		tx,
+		req.GetQualificationId(),
+		activityType,
+		userInfo.GetUserId(),
+		0,
+		nil,
 	); err != nil {
 		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 	}

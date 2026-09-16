@@ -8,6 +8,7 @@ import (
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/notifications"
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/qualifications"
 	qualificationsaccess "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/qualifications/access"
+	qualificationsactivity "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/qualifications/activity"
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/userinfo"
 	usershort "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/users/short"
 	pbqualifications "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/qualifications"
@@ -175,6 +176,19 @@ func (s *Server) CreateOrUpdateQualificationRequest(
 		if err != nil {
 			return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 		}
+		if request != nil {
+			if err := s.addQualificationActivity(
+				ctx,
+				tx,
+				request.GetQualificationId(),
+				qualificationsactivity.QualificationActivityType_QUALIFICATION_ACTIVITY_TYPE_REQUEST_UPDATED,
+				userInfo.GetUserId(),
+				request.GetUserId(),
+				&qualificationsactivity.QualificationActivityData{RequestStatus: request.Status},
+			); err != nil {
+				return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
+			}
+		}
 
 		// Only send notification when the status actually changed.
 		if !req.GetSkipNotification() && request != nil && previousStatus != request.GetStatus() &&
@@ -263,6 +277,22 @@ func (s *Server) CreateOrUpdateQualificationRequest(
 		}
 		req.Request.UserId = userInfo.GetUserId()
 		if err := s.store.UpsertQualificationRequest(ctx, tx, req.GetRequest()); err != nil {
+			return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
+		}
+		requestStatus := req.GetRequest().Status
+		if requestStatus == nil {
+			defaultStatus := qualifications.RequestStatus_REQUEST_STATUS_PENDING
+			requestStatus = &defaultStatus
+		}
+		if err := s.addQualificationActivity(
+			ctx,
+			tx,
+			req.GetRequest().GetQualificationId(),
+			qualificationsactivity.QualificationActivityType_QUALIFICATION_ACTIVITY_TYPE_REQUEST_CREATED,
+			userInfo.GetUserId(),
+			userInfo.GetUserId(),
+			&qualificationsactivity.QualificationActivityData{RequestStatus: requestStatus},
+		); err != nil {
 			return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 		}
 		grpc_audit.SetAction(ctx, audit.EventAction_EVENT_ACTION_CREATED)
@@ -369,6 +399,17 @@ func (s *Server) DeleteQualificationReq(
 		tx,
 		re.GetQualificationId(),
 		re.GetUserId(),
+	); err != nil {
+		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
+	}
+	if err := s.addQualificationActivity(
+		ctx,
+		tx,
+		re.GetQualificationId(),
+		qualificationsactivity.QualificationActivityType_QUALIFICATION_ACTIVITY_TYPE_REQUEST_DELETED,
+		userInfo.GetUserId(),
+		re.GetUserId(),
+		nil,
 	); err != nil {
 		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 	}

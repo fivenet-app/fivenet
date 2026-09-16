@@ -519,6 +519,9 @@ var PermsRemap = map[string][]perms.PermissionRef{
 	"qualifications.QualificationsService/GetQualification": {
 		permsqualifications.QualificationsService.ListQualifications.Perm,
 	},
+	"qualifications.QualificationsService/ListQualificationActivity": {
+		permsqualifications.QualificationsService.ListQualifications.Perm,
+	},
 	"qualifications.QualificationsService/ListQualificationRequests": {
 		permsqualifications.QualificationsService.ListQualifications.Perm,
 	},

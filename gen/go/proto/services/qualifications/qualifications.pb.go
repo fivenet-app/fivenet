@@ -16,7 +16,9 @@ import (
 	database "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/common/database"
 	file "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/file"
 	qualifications "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/qualifications"
+	activity "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/qualifications/activity"
 	exam "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/qualifications/exam"
+	timestamp "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/timestamp"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	reflect "reflect"
@@ -746,6 +748,284 @@ func (b0 DeleteQualificationResponse_builder) Build() *DeleteQualificationRespon
 	return m0
 }
 
+type ListQualificationActivityRequest struct {
+	state           protoimpl.MessageState               `protogen:"hybrid.v1"`
+	Pagination      *database.PaginationRequest          `protobuf:"bytes,1,opt,name=pagination,proto3" json:"pagination,omitempty"`
+	Sort            *database.Sort                       `protobuf:"bytes,2,opt,name=sort,proto3,oneof" json:"sort,omitempty"`
+	QualificationId int64                                `protobuf:"varint,3,opt,name=qualification_id,json=qualificationId,proto3" json:"qualification_id,omitempty"`
+	Types           []activity.QualificationActivityType `protobuf:"varint,4,rep,packed,name=types,proto3,enum=resources.qualifications.activity.QualificationActivityType" json:"types,omitempty"`
+	UserId          *int32                               `protobuf:"varint,5,opt,name=user_id,json=userId,proto3,oneof" json:"user_id,omitempty"`
+	From            *timestamp.Timestamp                 `protobuf:"bytes,6,opt,name=from,proto3,oneof" json:"from,omitempty"`
+	To              *timestamp.Timestamp                 `protobuf:"bytes,7,opt,name=to,proto3,oneof" json:"to,omitempty"`
+	unknownFields   protoimpl.UnknownFields
+	sizeCache       protoimpl.SizeCache
+}
+
+func (x *ListQualificationActivityRequest) Reset() {
+	*x = ListQualificationActivityRequest{}
+	mi := &file_services_qualifications_qualifications_proto_msgTypes[10]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ListQualificationActivityRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ListQualificationActivityRequest) ProtoMessage() {}
+
+func (x *ListQualificationActivityRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_services_qualifications_qualifications_proto_msgTypes[10]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+func (x *ListQualificationActivityRequest) GetPagination() *database.PaginationRequest {
+	if x != nil {
+		return x.Pagination
+	}
+	return nil
+}
+
+func (x *ListQualificationActivityRequest) GetSort() *database.Sort {
+	if x != nil {
+		return x.Sort
+	}
+	return nil
+}
+
+func (x *ListQualificationActivityRequest) GetQualificationId() int64 {
+	if x != nil {
+		return x.QualificationId
+	}
+	return 0
+}
+
+func (x *ListQualificationActivityRequest) GetTypes() []activity.QualificationActivityType {
+	if x != nil {
+		return x.Types
+	}
+	return nil
+}
+
+func (x *ListQualificationActivityRequest) GetUserId() int32 {
+	if x != nil && x.UserId != nil {
+		return *x.UserId
+	}
+	return 0
+}
+
+func (x *ListQualificationActivityRequest) GetFrom() *timestamp.Timestamp {
+	if x != nil {
+		return x.From
+	}
+	return nil
+}
+
+func (x *ListQualificationActivityRequest) GetTo() *timestamp.Timestamp {
+	if x != nil {
+		return x.To
+	}
+	return nil
+}
+
+func (x *ListQualificationActivityRequest) SetPagination(v *database.PaginationRequest) {
+	x.Pagination = v
+}
+
+func (x *ListQualificationActivityRequest) SetSort(v *database.Sort) {
+	x.Sort = v
+}
+
+func (x *ListQualificationActivityRequest) SetQualificationId(v int64) {
+	x.QualificationId = v
+}
+
+func (x *ListQualificationActivityRequest) SetTypes(v []activity.QualificationActivityType) {
+	x.Types = v
+}
+
+func (x *ListQualificationActivityRequest) SetUserId(v int32) {
+	x.UserId = &v
+}
+
+func (x *ListQualificationActivityRequest) SetFrom(v *timestamp.Timestamp) {
+	x.From = v
+}
+
+func (x *ListQualificationActivityRequest) SetTo(v *timestamp.Timestamp) {
+	x.To = v
+}
+
+func (x *ListQualificationActivityRequest) HasPagination() bool {
+	if x == nil {
+		return false
+	}
+	return x.Pagination != nil
+}
+
+func (x *ListQualificationActivityRequest) HasSort() bool {
+	if x == nil {
+		return false
+	}
+	return x.Sort != nil
+}
+
+func (x *ListQualificationActivityRequest) HasUserId() bool {
+	if x == nil {
+		return false
+	}
+	return x.UserId != nil
+}
+
+func (x *ListQualificationActivityRequest) HasFrom() bool {
+	if x == nil {
+		return false
+	}
+	return x.From != nil
+}
+
+func (x *ListQualificationActivityRequest) HasTo() bool {
+	if x == nil {
+		return false
+	}
+	return x.To != nil
+}
+
+func (x *ListQualificationActivityRequest) ClearPagination() {
+	x.Pagination = nil
+}
+
+func (x *ListQualificationActivityRequest) ClearSort() {
+	x.Sort = nil
+}
+
+func (x *ListQualificationActivityRequest) ClearUserId() {
+	x.UserId = nil
+}
+
+func (x *ListQualificationActivityRequest) ClearFrom() {
+	x.From = nil
+}
+
+func (x *ListQualificationActivityRequest) ClearTo() {
+	x.To = nil
+}
+
+type ListQualificationActivityRequest_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Pagination      *database.PaginationRequest
+	Sort            *database.Sort
+	QualificationId int64
+	Types           []activity.QualificationActivityType
+	UserId          *int32
+	From            *timestamp.Timestamp
+	To              *timestamp.Timestamp
+}
+
+func (b0 ListQualificationActivityRequest_builder) Build() *ListQualificationActivityRequest {
+	m0 := &ListQualificationActivityRequest{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Pagination = b.Pagination
+	x.Sort = b.Sort
+	x.QualificationId = b.QualificationId
+	x.Types = b.Types
+	x.UserId = b.UserId
+	x.From = b.From
+	x.To = b.To
+	return m0
+}
+
+type ListQualificationActivityResponse struct {
+	state         protoimpl.MessageState            `protogen:"hybrid.v1"`
+	Pagination    *database.PaginationResponse      `protobuf:"bytes,1,opt,name=pagination,proto3" json:"pagination,omitempty"`
+	Activity      []*activity.QualificationActivity `protobuf:"bytes,2,rep,name=activity,proto3" json:"activity,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ListQualificationActivityResponse) Reset() {
+	*x = ListQualificationActivityResponse{}
+	mi := &file_services_qualifications_qualifications_proto_msgTypes[11]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ListQualificationActivityResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ListQualificationActivityResponse) ProtoMessage() {}
+
+func (x *ListQualificationActivityResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_services_qualifications_qualifications_proto_msgTypes[11]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+func (x *ListQualificationActivityResponse) GetPagination() *database.PaginationResponse {
+	if x != nil {
+		return x.Pagination
+	}
+	return nil
+}
+
+func (x *ListQualificationActivityResponse) GetActivity() []*activity.QualificationActivity {
+	if x != nil {
+		return x.Activity
+	}
+	return nil
+}
+
+func (x *ListQualificationActivityResponse) SetPagination(v *database.PaginationResponse) {
+	x.Pagination = v
+}
+
+func (x *ListQualificationActivityResponse) SetActivity(v []*activity.QualificationActivity) {
+	x.Activity = v
+}
+
+func (x *ListQualificationActivityResponse) HasPagination() bool {
+	if x == nil {
+		return false
+	}
+	return x.Pagination != nil
+}
+
+func (x *ListQualificationActivityResponse) ClearPagination() {
+	x.Pagination = nil
+}
+
+type ListQualificationActivityResponse_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Pagination *database.PaginationResponse
+	Activity   []*activity.QualificationActivity
+}
+
+func (b0 ListQualificationActivityResponse_builder) Build() *ListQualificationActivityResponse {
+	m0 := &ListQualificationActivityResponse{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Pagination = b.Pagination
+	x.Activity = b.Activity
+	return m0
+}
+
 type GetQualificationAccessRequest struct {
 	state           protoimpl.MessageState `protogen:"hybrid.v1"`
 	QualificationId int64                  `protobuf:"varint,1,opt,name=qualification_id,json=qualificationId,proto3" json:"qualification_id,omitempty"`
@@ -755,7 +1035,7 @@ type GetQualificationAccessRequest struct {
 
 func (x *GetQualificationAccessRequest) Reset() {
 	*x = GetQualificationAccessRequest{}
-	mi := &file_services_qualifications_qualifications_proto_msgTypes[10]
+	mi := &file_services_qualifications_qualifications_proto_msgTypes[12]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -767,7 +1047,7 @@ func (x *GetQualificationAccessRequest) String() string {
 func (*GetQualificationAccessRequest) ProtoMessage() {}
 
 func (x *GetQualificationAccessRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_services_qualifications_qualifications_proto_msgTypes[10]
+	mi := &file_services_qualifications_qualifications_proto_msgTypes[12]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -812,7 +1092,7 @@ type GetQualificationAccessResponse struct {
 
 func (x *GetQualificationAccessResponse) Reset() {
 	*x = GetQualificationAccessResponse{}
-	mi := &file_services_qualifications_qualifications_proto_msgTypes[11]
+	mi := &file_services_qualifications_qualifications_proto_msgTypes[13]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -824,7 +1104,7 @@ func (x *GetQualificationAccessResponse) String() string {
 func (*GetQualificationAccessResponse) ProtoMessage() {}
 
 func (x *GetQualificationAccessResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_services_qualifications_qualifications_proto_msgTypes[11]
+	mi := &file_services_qualifications_qualifications_proto_msgTypes[13]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -881,7 +1161,7 @@ type SetQualificationAccessRequest struct {
 
 func (x *SetQualificationAccessRequest) Reset() {
 	*x = SetQualificationAccessRequest{}
-	mi := &file_services_qualifications_qualifications_proto_msgTypes[12]
+	mi := &file_services_qualifications_qualifications_proto_msgTypes[14]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -893,7 +1173,7 @@ func (x *SetQualificationAccessRequest) String() string {
 func (*SetQualificationAccessRequest) ProtoMessage() {}
 
 func (x *SetQualificationAccessRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_services_qualifications_qualifications_proto_msgTypes[12]
+	mi := &file_services_qualifications_qualifications_proto_msgTypes[14]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -961,7 +1241,7 @@ type SetQualificationAccessResponse struct {
 
 func (x *SetQualificationAccessResponse) Reset() {
 	*x = SetQualificationAccessResponse{}
-	mi := &file_services_qualifications_qualifications_proto_msgTypes[13]
+	mi := &file_services_qualifications_qualifications_proto_msgTypes[15]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -973,7 +1253,7 @@ func (x *SetQualificationAccessResponse) String() string {
 func (*SetQualificationAccessResponse) ProtoMessage() {}
 
 func (x *SetQualificationAccessResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_services_qualifications_qualifications_proto_msgTypes[13]
+	mi := &file_services_qualifications_qualifications_proto_msgTypes[15]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1011,7 +1291,7 @@ type ListQualificationRequestsRequest struct {
 
 func (x *ListQualificationRequestsRequest) Reset() {
 	*x = ListQualificationRequestsRequest{}
-	mi := &file_services_qualifications_qualifications_proto_msgTypes[14]
+	mi := &file_services_qualifications_qualifications_proto_msgTypes[16]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1023,7 +1303,7 @@ func (x *ListQualificationRequestsRequest) String() string {
 func (*ListQualificationRequestsRequest) ProtoMessage() {}
 
 func (x *ListQualificationRequestsRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_services_qualifications_qualifications_proto_msgTypes[14]
+	mi := &file_services_qualifications_qualifications_proto_msgTypes[16]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1179,7 +1459,7 @@ type ListQualificationRequestsResponse struct {
 
 func (x *ListQualificationRequestsResponse) Reset() {
 	*x = ListQualificationRequestsResponse{}
-	mi := &file_services_qualifications_qualifications_proto_msgTypes[15]
+	mi := &file_services_qualifications_qualifications_proto_msgTypes[17]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1191,7 +1471,7 @@ func (x *ListQualificationRequestsResponse) String() string {
 func (*ListQualificationRequestsResponse) ProtoMessage() {}
 
 func (x *ListQualificationRequestsResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_services_qualifications_qualifications_proto_msgTypes[15]
+	mi := &file_services_qualifications_qualifications_proto_msgTypes[17]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1262,7 +1542,7 @@ type CreateOrUpdateQualificationRequestRequest struct {
 
 func (x *CreateOrUpdateQualificationRequestRequest) Reset() {
 	*x = CreateOrUpdateQualificationRequestRequest{}
-	mi := &file_services_qualifications_qualifications_proto_msgTypes[16]
+	mi := &file_services_qualifications_qualifications_proto_msgTypes[18]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1274,7 +1554,7 @@ func (x *CreateOrUpdateQualificationRequestRequest) String() string {
 func (*CreateOrUpdateQualificationRequestRequest) ProtoMessage() {}
 
 func (x *CreateOrUpdateQualificationRequestRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_services_qualifications_qualifications_proto_msgTypes[16]
+	mi := &file_services_qualifications_qualifications_proto_msgTypes[18]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1344,7 +1624,7 @@ type CreateOrUpdateQualificationRequestResponse struct {
 
 func (x *CreateOrUpdateQualificationRequestResponse) Reset() {
 	*x = CreateOrUpdateQualificationRequestResponse{}
-	mi := &file_services_qualifications_qualifications_proto_msgTypes[17]
+	mi := &file_services_qualifications_qualifications_proto_msgTypes[19]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1356,7 +1636,7 @@ func (x *CreateOrUpdateQualificationRequestResponse) String() string {
 func (*CreateOrUpdateQualificationRequestResponse) ProtoMessage() {}
 
 func (x *CreateOrUpdateQualificationRequestResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_services_qualifications_qualifications_proto_msgTypes[17]
+	mi := &file_services_qualifications_qualifications_proto_msgTypes[19]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1415,7 +1695,7 @@ type DeleteQualificationReqRequest struct {
 
 func (x *DeleteQualificationReqRequest) Reset() {
 	*x = DeleteQualificationReqRequest{}
-	mi := &file_services_qualifications_qualifications_proto_msgTypes[18]
+	mi := &file_services_qualifications_qualifications_proto_msgTypes[20]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1427,7 +1707,7 @@ func (x *DeleteQualificationReqRequest) String() string {
 func (*DeleteQualificationReqRequest) ProtoMessage() {}
 
 func (x *DeleteQualificationReqRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_services_qualifications_qualifications_proto_msgTypes[18]
+	mi := &file_services_qualifications_qualifications_proto_msgTypes[20]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1498,7 +1778,7 @@ type DeleteQualificationReqResponse struct {
 
 func (x *DeleteQualificationReqResponse) Reset() {
 	*x = DeleteQualificationReqResponse{}
-	mi := &file_services_qualifications_qualifications_proto_msgTypes[19]
+	mi := &file_services_qualifications_qualifications_proto_msgTypes[21]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1510,7 +1790,7 @@ func (x *DeleteQualificationReqResponse) String() string {
 func (*DeleteQualificationReqResponse) ProtoMessage() {}
 
 func (x *DeleteQualificationReqResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_services_qualifications_qualifications_proto_msgTypes[19]
+	mi := &file_services_qualifications_qualifications_proto_msgTypes[21]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1548,7 +1828,7 @@ type ListQualificationsResultsRequest struct {
 
 func (x *ListQualificationsResultsRequest) Reset() {
 	*x = ListQualificationsResultsRequest{}
-	mi := &file_services_qualifications_qualifications_proto_msgTypes[20]
+	mi := &file_services_qualifications_qualifications_proto_msgTypes[22]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1560,7 +1840,7 @@ func (x *ListQualificationsResultsRequest) String() string {
 func (*ListQualificationsResultsRequest) ProtoMessage() {}
 
 func (x *ListQualificationsResultsRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_services_qualifications_qualifications_proto_msgTypes[20]
+	mi := &file_services_qualifications_qualifications_proto_msgTypes[22]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1716,7 +1996,7 @@ type ListQualificationsResultsResponse struct {
 
 func (x *ListQualificationsResultsResponse) Reset() {
 	*x = ListQualificationsResultsResponse{}
-	mi := &file_services_qualifications_qualifications_proto_msgTypes[21]
+	mi := &file_services_qualifications_qualifications_proto_msgTypes[23]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1728,7 +2008,7 @@ func (x *ListQualificationsResultsResponse) String() string {
 func (*ListQualificationsResultsResponse) ProtoMessage() {}
 
 func (x *ListQualificationsResultsResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_services_qualifications_qualifications_proto_msgTypes[21]
+	mi := &file_services_qualifications_qualifications_proto_msgTypes[23]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1800,7 +2080,7 @@ type CreateOrUpdateQualificationResultRequest struct {
 
 func (x *CreateOrUpdateQualificationResultRequest) Reset() {
 	*x = CreateOrUpdateQualificationResultRequest{}
-	mi := &file_services_qualifications_qualifications_proto_msgTypes[22]
+	mi := &file_services_qualifications_qualifications_proto_msgTypes[24]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1812,7 +2092,7 @@ func (x *CreateOrUpdateQualificationResultRequest) String() string {
 func (*CreateOrUpdateQualificationResultRequest) ProtoMessage() {}
 
 func (x *CreateOrUpdateQualificationResultRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_services_qualifications_qualifications_proto_msgTypes[22]
+	mi := &file_services_qualifications_qualifications_proto_msgTypes[24]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1906,7 +2186,7 @@ type CreateOrUpdateQualificationResultResponse struct {
 
 func (x *CreateOrUpdateQualificationResultResponse) Reset() {
 	*x = CreateOrUpdateQualificationResultResponse{}
-	mi := &file_services_qualifications_qualifications_proto_msgTypes[23]
+	mi := &file_services_qualifications_qualifications_proto_msgTypes[25]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1918,7 +2198,7 @@ func (x *CreateOrUpdateQualificationResultResponse) String() string {
 func (*CreateOrUpdateQualificationResultResponse) ProtoMessage() {}
 
 func (x *CreateOrUpdateQualificationResultResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_services_qualifications_qualifications_proto_msgTypes[23]
+	mi := &file_services_qualifications_qualifications_proto_msgTypes[25]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1976,7 +2256,7 @@ type DeleteQualificationResultRequest struct {
 
 func (x *DeleteQualificationResultRequest) Reset() {
 	*x = DeleteQualificationResultRequest{}
-	mi := &file_services_qualifications_qualifications_proto_msgTypes[24]
+	mi := &file_services_qualifications_qualifications_proto_msgTypes[26]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1988,7 +2268,7 @@ func (x *DeleteQualificationResultRequest) String() string {
 func (*DeleteQualificationResultRequest) ProtoMessage() {}
 
 func (x *DeleteQualificationResultRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_services_qualifications_qualifications_proto_msgTypes[24]
+	mi := &file_services_qualifications_qualifications_proto_msgTypes[26]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2046,7 +2326,7 @@ type DeleteQualificationResultResponse struct {
 
 func (x *DeleteQualificationResultResponse) Reset() {
 	*x = DeleteQualificationResultResponse{}
-	mi := &file_services_qualifications_qualifications_proto_msgTypes[25]
+	mi := &file_services_qualifications_qualifications_proto_msgTypes[27]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2058,7 +2338,7 @@ func (x *DeleteQualificationResultResponse) String() string {
 func (*DeleteQualificationResultResponse) ProtoMessage() {}
 
 func (x *DeleteQualificationResultResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_services_qualifications_qualifications_proto_msgTypes[25]
+	mi := &file_services_qualifications_qualifications_proto_msgTypes[27]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2085,7 +2365,7 @@ var File_services_qualifications_qualifications_proto protoreflect.FileDescripto
 
 const file_services_qualifications_qualifications_proto_rawDesc = "" +
 	"\n" +
-	",services/qualifications/qualifications.proto\x12\x17services.qualifications\x1a\x1fcodegen/itemslen/itemslen.proto\x1a\x19codegen/perms/perms.proto\x1a\x1dresources/access/access.proto\x1a&resources/common/content/content.proto\x1a(resources/common/database/database.proto\x1a\x1eresources/file/filestore.proto\x1a(resources/qualifications/exam/exam.proto\x1a-resources/qualifications/qualifications.proto\"\xf3\x01\n" +
+	",services/qualifications/qualifications.proto\x12\x17services.qualifications\x1a\x1fcodegen/itemslen/itemslen.proto\x1a\x19codegen/perms/perms.proto\x1a\x1dresources/access/access.proto\x1a&resources/common/content/content.proto\x1a(resources/common/database/database.proto\x1a\x1eresources/file/filestore.proto\x1a0resources/qualifications/activity/activity.proto\x1a(resources/qualifications/exam/exam.proto\x1a-resources/qualifications/qualifications.proto\x1a#resources/timestamp/timestamp.proto\"\xf3\x01\n" +
 	"\x19ListQualificationsRequest\x12L\n" +
 	"\n" +
 	"pagination\x18\x01 \x01(\v2,.resources.common.database.PaginationRequestR\n" +
@@ -2118,7 +2398,27 @@ const file_services_qualifications_qualifications_proto_rawDesc = "" +
 	"\x10qualification_id\x18\x01 \x01(\x03R\x0fqualificationId\"G\n" +
 	"\x1aDeleteQualificationRequest\x12)\n" +
 	"\x10qualification_id\x18\x01 \x01(\x03R\x0fqualificationId\"\x1d\n" +
-	"\x1bDeleteQualificationResponse\"J\n" +
+	"\x1bDeleteQualificationResponse\"\xda\x03\n" +
+	" ListQualificationActivityRequest\x12L\n" +
+	"\n" +
+	"pagination\x18\x01 \x01(\v2,.resources.common.database.PaginationRequestR\n" +
+	"pagination\x128\n" +
+	"\x04sort\x18\x02 \x01(\v2\x1f.resources.common.database.SortH\x00R\x04sort\x88\x01\x01\x12)\n" +
+	"\x10qualification_id\x18\x03 \x01(\x03R\x0fqualificationId\x12R\n" +
+	"\x05types\x18\x04 \x03(\x0e2<.resources.qualifications.activity.QualificationActivityTypeR\x05types\x12\x1c\n" +
+	"\auser_id\x18\x05 \x01(\x05H\x01R\x06userId\x88\x01\x01\x127\n" +
+	"\x04from\x18\x06 \x01(\v2\x1e.resources.timestamp.TimestampH\x02R\x04from\x88\x01\x01\x123\n" +
+	"\x02to\x18\a \x01(\v2\x1e.resources.timestamp.TimestampH\x03R\x02to\x88\x01\x01B\a\n" +
+	"\x05_sortB\n" +
+	"\n" +
+	"\b_user_idB\a\n" +
+	"\x05_fromB\x05\n" +
+	"\x03_to\"\xce\x01\n" +
+	"!ListQualificationActivityResponse\x12M\n" +
+	"\n" +
+	"pagination\x18\x01 \x01(\v2-.resources.common.database.PaginationResponseR\n" +
+	"pagination\x12Z\n" +
+	"\bactivity\x18\x02 \x03(\v28.resources.qualifications.activity.QualificationActivityB\x04\xc8\xf3\x18\x01R\bactivity\"J\n" +
 	"\x1dGetQualificationAccessRequest\x12)\n" +
 	"\x10qualification_id\x18\x01 \x01(\x03R\x0fqualificationId\"R\n" +
 	"\x1eGetQualificationAccessResponse\x120\n" +
@@ -2182,7 +2482,7 @@ const file_services_qualifications_qualifications_proto_rawDesc = "" +
 	" DeleteQualificationResultRequest\x12\x1b\n" +
 	"\tresult_id\x18\x01 \x01(\x03R\bresultId\x12+\n" +
 	"\x11skip_notification\x18\x02 \x01(\bR\x10skipNotification\"#\n" +
-	"!DeleteQualificationResultResponse2\xbb\x10\n" +
+	"!DeleteQualificationResultResponse2\xec\x11\n" +
 	"\x15QualificationsService\x12\x85\x01\n" +
 	"\x12ListQualifications\x122.services.qualifications.ListQualificationsRequest\x1a3.services.qualifications.ListQualificationsResponse\"\x06\xd2\xf3\x18\x02\b\x01\x12\x93\x01\n" +
 	"\x10GetQualification\x120.services.qualifications.GetQualificationRequest\x1a1.services.qualifications.GetQualificationResponse\"\x1a\xd2\xf3\x18\x16\b\x01\"\x12ListQualifications\x12\x9d\x01\n" +
@@ -2194,6 +2494,7 @@ const file_services_qualifications_qualifications_proto_rawDesc = "" +
 	"\x13DeleteQualification\x123.services.qualifications.DeleteQualificationRequest\x1a4.services.qualifications.DeleteQualificationResponse\"3\xd2\xf3\x18/\b\x01:+\n" +
 	"\x06Access\x18\x01\"\x03Own\"\n" +
 	"Lower_Rank\"\tSame_Rank\"\x03Any\x12\xae\x01\n" +
+	"\x19ListQualificationActivity\x129.services.qualifications.ListQualificationActivityRequest\x1a:.services.qualifications.ListQualificationActivityResponse\"\x1a\xd2\xf3\x18\x16\b\x01\"\x12ListQualifications\x12\xae\x01\n" +
 	"\x19ListQualificationRequests\x129.services.qualifications.ListQualificationRequestsRequest\x1a:.services.qualifications.ListQualificationRequestsResponse\"\x1a\xd2\xf3\x18\x16\b\x01\"\x12ListQualifications\x12\xc9\x01\n" +
 	"\"CreateOrUpdateQualificationRequest\x12B.services.qualifications.CreateOrUpdateQualificationRequestRequest\x1aC.services.qualifications.CreateOrUpdateQualificationRequestResponse\"\x1a\xd2\xf3\x18\x16\b\x01\"\x12ListQualifications\x12\xa5\x01\n" +
 	"\x16DeleteQualificationReq\x126.services.qualifications.DeleteQualificationReqRequest\x1a7.services.qualifications.DeleteQualificationReqResponse\"\x1a\xd2\xf3\x18\x16\b\x01\"\x12ListQualifications\x12\xae\x01\n" +
@@ -2203,7 +2504,7 @@ const file_services_qualifications_qualifications_proto_rawDesc = "" +
 	"\n" +
 	"UploadFile\x12!.resources.file.UploadFileRequest\x1a\".resources.file.UploadFileResponse\"\x1b\xd2\xf3\x18\x17\b\x01\"\x13UpdateQualification(\x01\x1a\x1c\xea\xf3\x18\x18\bP\x12\x14i-mdi-school-outlineBZZXgithub.com/fivenet-app/fivenet/v2026/gen/go/proto/services/qualifications;qualificationsb\x06proto3"
 
-var file_services_qualifications_qualifications_proto_msgTypes = make([]protoimpl.MessageInfo, 26)
+var file_services_qualifications_qualifications_proto_msgTypes = make([]protoimpl.MessageInfo, 28)
 var file_services_qualifications_qualifications_proto_goTypes = []any{
 	(*ListQualificationsRequest)(nil),                  // 0: services.qualifications.ListQualificationsRequest
 	(*ListQualificationsResponse)(nil),                 // 1: services.qualifications.ListQualificationsResponse
@@ -2215,90 +2516,104 @@ var file_services_qualifications_qualifications_proto_goTypes = []any{
 	(*UpdateQualificationResponse)(nil),                // 7: services.qualifications.UpdateQualificationResponse
 	(*DeleteQualificationRequest)(nil),                 // 8: services.qualifications.DeleteQualificationRequest
 	(*DeleteQualificationResponse)(nil),                // 9: services.qualifications.DeleteQualificationResponse
-	(*GetQualificationAccessRequest)(nil),              // 10: services.qualifications.GetQualificationAccessRequest
-	(*GetQualificationAccessResponse)(nil),             // 11: services.qualifications.GetQualificationAccessResponse
-	(*SetQualificationAccessRequest)(nil),              // 12: services.qualifications.SetQualificationAccessRequest
-	(*SetQualificationAccessResponse)(nil),             // 13: services.qualifications.SetQualificationAccessResponse
-	(*ListQualificationRequestsRequest)(nil),           // 14: services.qualifications.ListQualificationRequestsRequest
-	(*ListQualificationRequestsResponse)(nil),          // 15: services.qualifications.ListQualificationRequestsResponse
-	(*CreateOrUpdateQualificationRequestRequest)(nil),  // 16: services.qualifications.CreateOrUpdateQualificationRequestRequest
-	(*CreateOrUpdateQualificationRequestResponse)(nil), // 17: services.qualifications.CreateOrUpdateQualificationRequestResponse
-	(*DeleteQualificationReqRequest)(nil),              // 18: services.qualifications.DeleteQualificationReqRequest
-	(*DeleteQualificationReqResponse)(nil),             // 19: services.qualifications.DeleteQualificationReqResponse
-	(*ListQualificationsResultsRequest)(nil),           // 20: services.qualifications.ListQualificationsResultsRequest
-	(*ListQualificationsResultsResponse)(nil),          // 21: services.qualifications.ListQualificationsResultsResponse
-	(*CreateOrUpdateQualificationResultRequest)(nil),   // 22: services.qualifications.CreateOrUpdateQualificationResultRequest
-	(*CreateOrUpdateQualificationResultResponse)(nil),  // 23: services.qualifications.CreateOrUpdateQualificationResultResponse
-	(*DeleteQualificationResultRequest)(nil),           // 24: services.qualifications.DeleteQualificationResultRequest
-	(*DeleteQualificationResultResponse)(nil),          // 25: services.qualifications.DeleteQualificationResultResponse
-	(*database.PaginationRequest)(nil),                 // 26: resources.common.database.PaginationRequest
-	(*database.Sort)(nil),                              // 27: resources.common.database.Sort
-	(*database.PaginationResponse)(nil),                // 28: resources.common.database.PaginationResponse
-	(*qualifications.Qualification)(nil),               // 29: resources.qualifications.Qualification
-	(content.ContentType)(0),                           // 30: resources.common.content.ContentType
-	(*access.Access)(nil),                              // 31: resources.access.Access
-	(qualifications.RequestStatus)(0),                  // 32: resources.qualifications.RequestStatus
-	(*qualifications.QualificationRequest)(nil),        // 33: resources.qualifications.QualificationRequest
-	(qualifications.ResultStatus)(0),                   // 34: resources.qualifications.ResultStatus
-	(*qualifications.QualificationResult)(nil),         // 35: resources.qualifications.QualificationResult
-	(*exam.ExamGrading)(nil),                           // 36: resources.qualifications.exam.ExamGrading
-	(*file.UploadFileRequest)(nil),                     // 37: resources.file.UploadFileRequest
-	(*file.UploadFileResponse)(nil),                    // 38: resources.file.UploadFileResponse
+	(*ListQualificationActivityRequest)(nil),           // 10: services.qualifications.ListQualificationActivityRequest
+	(*ListQualificationActivityResponse)(nil),          // 11: services.qualifications.ListQualificationActivityResponse
+	(*GetQualificationAccessRequest)(nil),              // 12: services.qualifications.GetQualificationAccessRequest
+	(*GetQualificationAccessResponse)(nil),             // 13: services.qualifications.GetQualificationAccessResponse
+	(*SetQualificationAccessRequest)(nil),              // 14: services.qualifications.SetQualificationAccessRequest
+	(*SetQualificationAccessResponse)(nil),             // 15: services.qualifications.SetQualificationAccessResponse
+	(*ListQualificationRequestsRequest)(nil),           // 16: services.qualifications.ListQualificationRequestsRequest
+	(*ListQualificationRequestsResponse)(nil),          // 17: services.qualifications.ListQualificationRequestsResponse
+	(*CreateOrUpdateQualificationRequestRequest)(nil),  // 18: services.qualifications.CreateOrUpdateQualificationRequestRequest
+	(*CreateOrUpdateQualificationRequestResponse)(nil), // 19: services.qualifications.CreateOrUpdateQualificationRequestResponse
+	(*DeleteQualificationReqRequest)(nil),              // 20: services.qualifications.DeleteQualificationReqRequest
+	(*DeleteQualificationReqResponse)(nil),             // 21: services.qualifications.DeleteQualificationReqResponse
+	(*ListQualificationsResultsRequest)(nil),           // 22: services.qualifications.ListQualificationsResultsRequest
+	(*ListQualificationsResultsResponse)(nil),          // 23: services.qualifications.ListQualificationsResultsResponse
+	(*CreateOrUpdateQualificationResultRequest)(nil),   // 24: services.qualifications.CreateOrUpdateQualificationResultRequest
+	(*CreateOrUpdateQualificationResultResponse)(nil),  // 25: services.qualifications.CreateOrUpdateQualificationResultResponse
+	(*DeleteQualificationResultRequest)(nil),           // 26: services.qualifications.DeleteQualificationResultRequest
+	(*DeleteQualificationResultResponse)(nil),          // 27: services.qualifications.DeleteQualificationResultResponse
+	(*database.PaginationRequest)(nil),                 // 28: resources.common.database.PaginationRequest
+	(*database.Sort)(nil),                              // 29: resources.common.database.Sort
+	(*database.PaginationResponse)(nil),                // 30: resources.common.database.PaginationResponse
+	(*qualifications.Qualification)(nil),               // 31: resources.qualifications.Qualification
+	(content.ContentType)(0),                           // 32: resources.common.content.ContentType
+	(activity.QualificationActivityType)(0),            // 33: resources.qualifications.activity.QualificationActivityType
+	(*timestamp.Timestamp)(nil),                        // 34: resources.timestamp.Timestamp
+	(*activity.QualificationActivity)(nil),             // 35: resources.qualifications.activity.QualificationActivity
+	(*access.Access)(nil),                              // 36: resources.access.Access
+	(qualifications.RequestStatus)(0),                  // 37: resources.qualifications.RequestStatus
+	(*qualifications.QualificationRequest)(nil),        // 38: resources.qualifications.QualificationRequest
+	(qualifications.ResultStatus)(0),                   // 39: resources.qualifications.ResultStatus
+	(*qualifications.QualificationResult)(nil),         // 40: resources.qualifications.QualificationResult
+	(*exam.ExamGrading)(nil),                           // 41: resources.qualifications.exam.ExamGrading
+	(*file.UploadFileRequest)(nil),                     // 42: resources.file.UploadFileRequest
+	(*file.UploadFileResponse)(nil),                    // 43: resources.file.UploadFileResponse
 }
 var file_services_qualifications_qualifications_proto_depIdxs = []int32{
-	26, // 0: services.qualifications.ListQualificationsRequest.pagination:type_name -> resources.common.database.PaginationRequest
-	27, // 1: services.qualifications.ListQualificationsRequest.sort:type_name -> resources.common.database.Sort
-	28, // 2: services.qualifications.ListQualificationsResponse.pagination:type_name -> resources.common.database.PaginationResponse
-	29, // 3: services.qualifications.ListQualificationsResponse.qualifications:type_name -> resources.qualifications.Qualification
-	29, // 4: services.qualifications.GetQualificationResponse.qualification:type_name -> resources.qualifications.Qualification
-	30, // 5: services.qualifications.CreateQualificationRequest.content_type:type_name -> resources.common.content.ContentType
-	29, // 6: services.qualifications.UpdateQualificationRequest.qualification:type_name -> resources.qualifications.Qualification
-	31, // 7: services.qualifications.GetQualificationAccessResponse.access:type_name -> resources.access.Access
-	31, // 8: services.qualifications.SetQualificationAccessRequest.access:type_name -> resources.access.Access
-	26, // 9: services.qualifications.ListQualificationRequestsRequest.pagination:type_name -> resources.common.database.PaginationRequest
-	27, // 10: services.qualifications.ListQualificationRequestsRequest.sort:type_name -> resources.common.database.Sort
-	32, // 11: services.qualifications.ListQualificationRequestsRequest.status:type_name -> resources.qualifications.RequestStatus
-	28, // 12: services.qualifications.ListQualificationRequestsResponse.pagination:type_name -> resources.common.database.PaginationResponse
-	33, // 13: services.qualifications.ListQualificationRequestsResponse.requests:type_name -> resources.qualifications.QualificationRequest
-	33, // 14: services.qualifications.CreateOrUpdateQualificationRequestRequest.request:type_name -> resources.qualifications.QualificationRequest
-	33, // 15: services.qualifications.CreateOrUpdateQualificationRequestResponse.request:type_name -> resources.qualifications.QualificationRequest
-	26, // 16: services.qualifications.ListQualificationsResultsRequest.pagination:type_name -> resources.common.database.PaginationRequest
-	27, // 17: services.qualifications.ListQualificationsResultsRequest.sort:type_name -> resources.common.database.Sort
-	34, // 18: services.qualifications.ListQualificationsResultsRequest.status:type_name -> resources.qualifications.ResultStatus
-	28, // 19: services.qualifications.ListQualificationsResultsResponse.pagination:type_name -> resources.common.database.PaginationResponse
-	35, // 20: services.qualifications.ListQualificationsResultsResponse.results:type_name -> resources.qualifications.QualificationResult
-	35, // 21: services.qualifications.CreateOrUpdateQualificationResultRequest.result:type_name -> resources.qualifications.QualificationResult
-	36, // 22: services.qualifications.CreateOrUpdateQualificationResultRequest.grading:type_name -> resources.qualifications.exam.ExamGrading
-	35, // 23: services.qualifications.CreateOrUpdateQualificationResultResponse.result:type_name -> resources.qualifications.QualificationResult
-	0,  // 24: services.qualifications.QualificationsService.ListQualifications:input_type -> services.qualifications.ListQualificationsRequest
-	2,  // 25: services.qualifications.QualificationsService.GetQualification:input_type -> services.qualifications.GetQualificationRequest
-	4,  // 26: services.qualifications.QualificationsService.CreateQualification:input_type -> services.qualifications.CreateQualificationRequest
-	6,  // 27: services.qualifications.QualificationsService.UpdateQualification:input_type -> services.qualifications.UpdateQualificationRequest
-	8,  // 28: services.qualifications.QualificationsService.DeleteQualification:input_type -> services.qualifications.DeleteQualificationRequest
-	14, // 29: services.qualifications.QualificationsService.ListQualificationRequests:input_type -> services.qualifications.ListQualificationRequestsRequest
-	16, // 30: services.qualifications.QualificationsService.CreateOrUpdateQualificationRequest:input_type -> services.qualifications.CreateOrUpdateQualificationRequestRequest
-	18, // 31: services.qualifications.QualificationsService.DeleteQualificationReq:input_type -> services.qualifications.DeleteQualificationReqRequest
-	20, // 32: services.qualifications.QualificationsService.ListQualificationsResults:input_type -> services.qualifications.ListQualificationsResultsRequest
-	22, // 33: services.qualifications.QualificationsService.CreateOrUpdateQualificationResult:input_type -> services.qualifications.CreateOrUpdateQualificationResultRequest
-	24, // 34: services.qualifications.QualificationsService.DeleteQualificationResult:input_type -> services.qualifications.DeleteQualificationResultRequest
-	37, // 35: services.qualifications.QualificationsService.UploadFile:input_type -> resources.file.UploadFileRequest
-	1,  // 36: services.qualifications.QualificationsService.ListQualifications:output_type -> services.qualifications.ListQualificationsResponse
-	3,  // 37: services.qualifications.QualificationsService.GetQualification:output_type -> services.qualifications.GetQualificationResponse
-	5,  // 38: services.qualifications.QualificationsService.CreateQualification:output_type -> services.qualifications.CreateQualificationResponse
-	7,  // 39: services.qualifications.QualificationsService.UpdateQualification:output_type -> services.qualifications.UpdateQualificationResponse
-	9,  // 40: services.qualifications.QualificationsService.DeleteQualification:output_type -> services.qualifications.DeleteQualificationResponse
-	15, // 41: services.qualifications.QualificationsService.ListQualificationRequests:output_type -> services.qualifications.ListQualificationRequestsResponse
-	17, // 42: services.qualifications.QualificationsService.CreateOrUpdateQualificationRequest:output_type -> services.qualifications.CreateOrUpdateQualificationRequestResponse
-	19, // 43: services.qualifications.QualificationsService.DeleteQualificationReq:output_type -> services.qualifications.DeleteQualificationReqResponse
-	21, // 44: services.qualifications.QualificationsService.ListQualificationsResults:output_type -> services.qualifications.ListQualificationsResultsResponse
-	23, // 45: services.qualifications.QualificationsService.CreateOrUpdateQualificationResult:output_type -> services.qualifications.CreateOrUpdateQualificationResultResponse
-	25, // 46: services.qualifications.QualificationsService.DeleteQualificationResult:output_type -> services.qualifications.DeleteQualificationResultResponse
-	38, // 47: services.qualifications.QualificationsService.UploadFile:output_type -> resources.file.UploadFileResponse
-	36, // [36:48] is the sub-list for method output_type
-	24, // [24:36] is the sub-list for method input_type
-	24, // [24:24] is the sub-list for extension type_name
-	24, // [24:24] is the sub-list for extension extendee
-	0,  // [0:24] is the sub-list for field type_name
+	28, // 0: services.qualifications.ListQualificationsRequest.pagination:type_name -> resources.common.database.PaginationRequest
+	29, // 1: services.qualifications.ListQualificationsRequest.sort:type_name -> resources.common.database.Sort
+	30, // 2: services.qualifications.ListQualificationsResponse.pagination:type_name -> resources.common.database.PaginationResponse
+	31, // 3: services.qualifications.ListQualificationsResponse.qualifications:type_name -> resources.qualifications.Qualification
+	31, // 4: services.qualifications.GetQualificationResponse.qualification:type_name -> resources.qualifications.Qualification
+	32, // 5: services.qualifications.CreateQualificationRequest.content_type:type_name -> resources.common.content.ContentType
+	31, // 6: services.qualifications.UpdateQualificationRequest.qualification:type_name -> resources.qualifications.Qualification
+	28, // 7: services.qualifications.ListQualificationActivityRequest.pagination:type_name -> resources.common.database.PaginationRequest
+	29, // 8: services.qualifications.ListQualificationActivityRequest.sort:type_name -> resources.common.database.Sort
+	33, // 9: services.qualifications.ListQualificationActivityRequest.types:type_name -> resources.qualifications.activity.QualificationActivityType
+	34, // 10: services.qualifications.ListQualificationActivityRequest.from:type_name -> resources.timestamp.Timestamp
+	34, // 11: services.qualifications.ListQualificationActivityRequest.to:type_name -> resources.timestamp.Timestamp
+	30, // 12: services.qualifications.ListQualificationActivityResponse.pagination:type_name -> resources.common.database.PaginationResponse
+	35, // 13: services.qualifications.ListQualificationActivityResponse.activity:type_name -> resources.qualifications.activity.QualificationActivity
+	36, // 14: services.qualifications.GetQualificationAccessResponse.access:type_name -> resources.access.Access
+	36, // 15: services.qualifications.SetQualificationAccessRequest.access:type_name -> resources.access.Access
+	28, // 16: services.qualifications.ListQualificationRequestsRequest.pagination:type_name -> resources.common.database.PaginationRequest
+	29, // 17: services.qualifications.ListQualificationRequestsRequest.sort:type_name -> resources.common.database.Sort
+	37, // 18: services.qualifications.ListQualificationRequestsRequest.status:type_name -> resources.qualifications.RequestStatus
+	30, // 19: services.qualifications.ListQualificationRequestsResponse.pagination:type_name -> resources.common.database.PaginationResponse
+	38, // 20: services.qualifications.ListQualificationRequestsResponse.requests:type_name -> resources.qualifications.QualificationRequest
+	38, // 21: services.qualifications.CreateOrUpdateQualificationRequestRequest.request:type_name -> resources.qualifications.QualificationRequest
+	38, // 22: services.qualifications.CreateOrUpdateQualificationRequestResponse.request:type_name -> resources.qualifications.QualificationRequest
+	28, // 23: services.qualifications.ListQualificationsResultsRequest.pagination:type_name -> resources.common.database.PaginationRequest
+	29, // 24: services.qualifications.ListQualificationsResultsRequest.sort:type_name -> resources.common.database.Sort
+	39, // 25: services.qualifications.ListQualificationsResultsRequest.status:type_name -> resources.qualifications.ResultStatus
+	30, // 26: services.qualifications.ListQualificationsResultsResponse.pagination:type_name -> resources.common.database.PaginationResponse
+	40, // 27: services.qualifications.ListQualificationsResultsResponse.results:type_name -> resources.qualifications.QualificationResult
+	40, // 28: services.qualifications.CreateOrUpdateQualificationResultRequest.result:type_name -> resources.qualifications.QualificationResult
+	41, // 29: services.qualifications.CreateOrUpdateQualificationResultRequest.grading:type_name -> resources.qualifications.exam.ExamGrading
+	40, // 30: services.qualifications.CreateOrUpdateQualificationResultResponse.result:type_name -> resources.qualifications.QualificationResult
+	0,  // 31: services.qualifications.QualificationsService.ListQualifications:input_type -> services.qualifications.ListQualificationsRequest
+	2,  // 32: services.qualifications.QualificationsService.GetQualification:input_type -> services.qualifications.GetQualificationRequest
+	4,  // 33: services.qualifications.QualificationsService.CreateQualification:input_type -> services.qualifications.CreateQualificationRequest
+	6,  // 34: services.qualifications.QualificationsService.UpdateQualification:input_type -> services.qualifications.UpdateQualificationRequest
+	8,  // 35: services.qualifications.QualificationsService.DeleteQualification:input_type -> services.qualifications.DeleteQualificationRequest
+	10, // 36: services.qualifications.QualificationsService.ListQualificationActivity:input_type -> services.qualifications.ListQualificationActivityRequest
+	16, // 37: services.qualifications.QualificationsService.ListQualificationRequests:input_type -> services.qualifications.ListQualificationRequestsRequest
+	18, // 38: services.qualifications.QualificationsService.CreateOrUpdateQualificationRequest:input_type -> services.qualifications.CreateOrUpdateQualificationRequestRequest
+	20, // 39: services.qualifications.QualificationsService.DeleteQualificationReq:input_type -> services.qualifications.DeleteQualificationReqRequest
+	22, // 40: services.qualifications.QualificationsService.ListQualificationsResults:input_type -> services.qualifications.ListQualificationsResultsRequest
+	24, // 41: services.qualifications.QualificationsService.CreateOrUpdateQualificationResult:input_type -> services.qualifications.CreateOrUpdateQualificationResultRequest
+	26, // 42: services.qualifications.QualificationsService.DeleteQualificationResult:input_type -> services.qualifications.DeleteQualificationResultRequest
+	42, // 43: services.qualifications.QualificationsService.UploadFile:input_type -> resources.file.UploadFileRequest
+	1,  // 44: services.qualifications.QualificationsService.ListQualifications:output_type -> services.qualifications.ListQualificationsResponse
+	3,  // 45: services.qualifications.QualificationsService.GetQualification:output_type -> services.qualifications.GetQualificationResponse
+	5,  // 46: services.qualifications.QualificationsService.CreateQualification:output_type -> services.qualifications.CreateQualificationResponse
+	7,  // 47: services.qualifications.QualificationsService.UpdateQualification:output_type -> services.qualifications.UpdateQualificationResponse
+	9,  // 48: services.qualifications.QualificationsService.DeleteQualification:output_type -> services.qualifications.DeleteQualificationResponse
+	11, // 49: services.qualifications.QualificationsService.ListQualificationActivity:output_type -> services.qualifications.ListQualificationActivityResponse
+	17, // 50: services.qualifications.QualificationsService.ListQualificationRequests:output_type -> services.qualifications.ListQualificationRequestsResponse
+	19, // 51: services.qualifications.QualificationsService.CreateOrUpdateQualificationRequest:output_type -> services.qualifications.CreateOrUpdateQualificationRequestResponse
+	21, // 52: services.qualifications.QualificationsService.DeleteQualificationReq:output_type -> services.qualifications.DeleteQualificationReqResponse
+	23, // 53: services.qualifications.QualificationsService.ListQualificationsResults:output_type -> services.qualifications.ListQualificationsResultsResponse
+	25, // 54: services.qualifications.QualificationsService.CreateOrUpdateQualificationResult:output_type -> services.qualifications.CreateOrUpdateQualificationResultResponse
+	27, // 55: services.qualifications.QualificationsService.DeleteQualificationResult:output_type -> services.qualifications.DeleteQualificationResultResponse
+	43, // 56: services.qualifications.QualificationsService.UploadFile:output_type -> resources.file.UploadFileResponse
+	44, // [44:57] is the sub-list for method output_type
+	31, // [31:44] is the sub-list for method input_type
+	31, // [31:31] is the sub-list for extension type_name
+	31, // [31:31] is the sub-list for extension extendee
+	0,  // [0:31] is the sub-list for field type_name
 }
 
 func init() { file_services_qualifications_qualifications_proto_init() }
@@ -2308,16 +2623,17 @@ func file_services_qualifications_qualifications_proto_init() {
 	}
 	file_services_qualifications_qualifications_proto_msgTypes[0].OneofWrappers = []any{}
 	file_services_qualifications_qualifications_proto_msgTypes[2].OneofWrappers = []any{}
-	file_services_qualifications_qualifications_proto_msgTypes[14].OneofWrappers = []any{}
-	file_services_qualifications_qualifications_proto_msgTypes[20].OneofWrappers = []any{}
+	file_services_qualifications_qualifications_proto_msgTypes[10].OneofWrappers = []any{}
+	file_services_qualifications_qualifications_proto_msgTypes[16].OneofWrappers = []any{}
 	file_services_qualifications_qualifications_proto_msgTypes[22].OneofWrappers = []any{}
+	file_services_qualifications_qualifications_proto_msgTypes[24].OneofWrappers = []any{}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_services_qualifications_qualifications_proto_rawDesc), len(file_services_qualifications_qualifications_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   26,
+			NumMessages:   28,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

@@ -10,6 +10,7 @@ import (
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/notifications"
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/qualifications"
 	qualificationsaccess "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/qualifications/access"
+	qualificationsactivity "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/qualifications/activity"
 	qualificationsexam "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/qualifications/exam"
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/userinfo"
 	usershort "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/users/short"
@@ -247,7 +248,15 @@ func (s *Server) createOrUpdateQualificationResult(
 		}
 		resultId = lastId
 	} else {
-		result, err := s.getQualificationResult(ctx, quali.GetId(), resultId, nil, userInfo, userId, false)
+		result, err := s.getQualificationResult(
+			ctx,
+			quali.GetId(),
+			resultId,
+			nil,
+			userInfo,
+			userId,
+			false,
+		)
 		if err != nil {
 			return 0, err
 		}
@@ -313,6 +322,21 @@ func (s *Server) createOrUpdateQualificationResult(
 		if err := s.deleteQualificationRequest(ctx, tx, qualificationId, userId); err != nil {
 			return 0, err
 		}
+	}
+	activityType := qualificationsactivity.QualificationActivityType_QUALIFICATION_ACTIVITY_TYPE_RESULT_UPDATED
+	if previousResult == nil {
+		activityType = qualificationsactivity.QualificationActivityType_QUALIFICATION_ACTIVITY_TYPE_RESULT_CREATED
+	}
+	if err := s.addQualificationActivity(
+		ctx,
+		tx,
+		qualificationId,
+		activityType,
+		userInfo.GetUserId(),
+		userId,
+		&qualificationsactivity.QualificationActivityData{ResultStatus: &status, Score: score},
+	); err != nil {
+		return 0, err
 	}
 
 	// Only send notification when the original result had no score and wasn't in pending status
@@ -423,7 +447,15 @@ func (s *Server) DeleteQualificationResult(
 ) (*pbqualifications.DeleteQualificationResultResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
-	result, err := s.getQualificationResult(ctx, 0, req.GetResultId(), nil, userInfo, 0, userInfo.GetJobAdmin())
+	result, err := s.getQualificationResult(
+		ctx,
+		0,
+		req.GetResultId(),
+		nil,
+		userInfo,
+		0,
+		userInfo.GetJobAdmin(),
+	)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 	}
@@ -470,8 +502,26 @@ func (s *Server) DeleteQualificationResult(
 		); err != nil {
 			return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 		}
+		if err := s.addQualificationActivity(
+			ctx,
+			tx,
+			result.GetQualificationId(),
+			qualificationsactivity.QualificationActivityType_QUALIFICATION_ACTIVITY_TYPE_RESULT_RESTORED,
+			userInfo.GetUserId(),
+			result.GetUserId(),
+			nil,
+		); err != nil {
+			return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
+		}
 		if result.GetStatus() == qualifications.ResultStatus_RESULT_STATUS_SUCCESSFUL {
-			if err := s.syncQualificationResultLabel(ctx, tx, userInfo, quali, result.GetUserId(), true); err != nil {
+			if err := s.syncQualificationResultLabel(
+				ctx,
+				tx,
+				userInfo,
+				quali,
+				result.GetUserId(),
+				true,
+			); err != nil {
 				return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 			}
 		}
@@ -485,11 +535,29 @@ func (s *Server) DeleteQualificationResult(
 	if err := s.store.DeleteQualificationResult(ctx, tx, result.GetId()); err != nil {
 		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 	}
+	if err := s.addQualificationActivity(
+		ctx,
+		tx,
+		result.GetQualificationId(),
+		qualificationsactivity.QualificationActivityType_QUALIFICATION_ACTIVITY_TYPE_RESULT_DELETED,
+		userInfo.GetUserId(),
+		result.GetUserId(),
+		nil,
+	); err != nil {
+		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
+	}
 	// Keep the exam attempt and its responses until their regular housekeeper cleanup.
 	// This lets a soft-deleted result be restored with its original exam data intact.
 
 	if result.GetStatus() == qualifications.ResultStatus_RESULT_STATUS_SUCCESSFUL {
-		if err := s.syncQualificationResultLabel(ctx, tx, userInfo, quali, result.GetUserId(), false); err != nil {
+		if err := s.syncQualificationResultLabel(
+			ctx,
+			tx,
+			userInfo,
+			quali,
+			result.GetUserId(),
+			false,
+		); err != nil {
 			return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 		}
 	}

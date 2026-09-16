@@ -3,6 +3,14 @@
 
 package qualifications
 
+// ItemsLen returns the length of Activity.
+func (m *ListQualificationActivityResponse) ItemsLen() int {
+	if m == nil {
+		return 0
+	}
+	return len(m.GetActivity())
+}
+
 // ItemsLen returns the length of Requests.
 func (m *ListQualificationRequestsResponse) ItemsLen() int {
 	if m == nil {

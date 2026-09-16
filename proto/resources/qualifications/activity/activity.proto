@@ -1,0 +1,51 @@
+syntax = "proto3";
+
+package resources.qualifications.activity;
+
+import "buf/validate/validate.proto";
+import "codegen/dbscanner/dbscanner.proto";
+import "resources/qualifications/qualifications.proto";
+import "resources/timestamp/timestamp.proto";
+import "resources/users/short/user.proto";
+
+option go_package = "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/qualifications/activity;qualificationsactivity";
+
+enum QualificationActivityType {
+  QUALIFICATION_ACTIVITY_TYPE_UNSPECIFIED = 0;
+  QUALIFICATION_ACTIVITY_TYPE_CREATED = 1;
+  QUALIFICATION_ACTIVITY_TYPE_UPDATED = 2;
+  QUALIFICATION_ACTIVITY_TYPE_DELETED = 3;
+  QUALIFICATION_ACTIVITY_TYPE_RESTORED = 4;
+  QUALIFICATION_ACTIVITY_TYPE_ACCESS_UPDATED = 5;
+  QUALIFICATION_ACTIVITY_TYPE_REQUEST_CREATED = 10;
+  QUALIFICATION_ACTIVITY_TYPE_REQUEST_UPDATED = 11;
+  QUALIFICATION_ACTIVITY_TYPE_REQUEST_DELETED = 12;
+  QUALIFICATION_ACTIVITY_TYPE_EXAM_STARTED = 20;
+  QUALIFICATION_ACTIVITY_TYPE_EXAM_CANCELLED = 21;
+  QUALIFICATION_ACTIVITY_TYPE_EXAM_SUBMITTED = 22;
+  QUALIFICATION_ACTIVITY_TYPE_EXAM_EXPIRED = 23;
+  QUALIFICATION_ACTIVITY_TYPE_RESULT_CREATED = 30;
+  QUALIFICATION_ACTIVITY_TYPE_RESULT_UPDATED = 31;
+  QUALIFICATION_ACTIVITY_TYPE_RESULT_DELETED = 32;
+  QUALIFICATION_ACTIVITY_TYPE_RESULT_RESTORED = 33;
+}
+
+message QualificationActivity {
+  int64 id = 1;
+  int64 qualification_id = 2;
+  QualificationActivityType type = 3 [(buf.validate.field).enum.defined_only = true];
+  optional int32 actor_user_id = 4;
+  optional resources.users.short.UserShort actor_user = 5;
+  optional int32 target_user_id = 6;
+  optional resources.users.short.UserShort target_user = 7;
+  resources.timestamp.Timestamp created_at = 8;
+  optional QualificationActivityData data = 9;
+}
+
+message QualificationActivityData {
+  option (codegen.dbscanner.dbscanner) = {enabled: true};
+
+  optional resources.qualifications.RequestStatus request_status = 1 [(buf.validate.field).enum.defined_only = true];
+  optional resources.qualifications.ResultStatus result_status = 2 [(buf.validate.field).enum.defined_only = true];
+  optional float score = 3;
+}

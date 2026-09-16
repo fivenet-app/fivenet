@@ -20,6 +20,9 @@ import { ResultStatus } from "../../resources/qualifications/qualifications";
 import { QualificationRequest } from "../../resources/qualifications/qualifications";
 import { RequestStatus } from "../../resources/qualifications/qualifications";
 import { Access } from "../../resources/access/access";
+import { QualificationActivity } from "../../resources/qualifications/activity/activity";
+import { Timestamp } from "../../resources/timestamp/timestamp";
+import { QualificationActivityType } from "../../resources/qualifications/activity/activity";
 import { ContentType } from "../../resources/common/content/content";
 import { Qualification } from "../../resources/qualifications/qualifications";
 import { PaginationResponse } from "../../resources/common/database/database";
@@ -132,6 +135,52 @@ export interface DeleteQualificationRequest {
  * @generated from protobuf message services.qualifications.DeleteQualificationResponse
  */
 export interface DeleteQualificationResponse {
+}
+/**
+ * @generated from protobuf message services.qualifications.ListQualificationActivityRequest
+ */
+export interface ListQualificationActivityRequest {
+    /**
+     * @generated from protobuf field: resources.common.database.PaginationRequest pagination = 1
+     */
+    pagination?: PaginationRequest;
+    /**
+     * @generated from protobuf field: optional resources.common.database.Sort sort = 2
+     */
+    sort?: Sort;
+    /**
+     * @generated from protobuf field: int64 qualification_id = 3
+     */
+    qualificationId: number;
+    /**
+     * @generated from protobuf field: repeated resources.qualifications.activity.QualificationActivityType types = 4
+     */
+    types: QualificationActivityType[];
+    /**
+     * @generated from protobuf field: optional int32 user_id = 5
+     */
+    userId?: number;
+    /**
+     * @generated from protobuf field: optional resources.timestamp.Timestamp from = 6
+     */
+    from?: Timestamp;
+    /**
+     * @generated from protobuf field: optional resources.timestamp.Timestamp to = 7
+     */
+    to?: Timestamp;
+}
+/**
+ * @generated from protobuf message services.qualifications.ListQualificationActivityResponse
+ */
+export interface ListQualificationActivityResponse {
+    /**
+     * @generated from protobuf field: resources.common.database.PaginationResponse pagination = 1
+     */
+    pagination?: PaginationResponse;
+    /**
+     * @generated from protobuf field: repeated resources.qualifications.activity.QualificationActivity activity = 2
+     */
+    activity: QualificationActivity[];
 }
 // Access
 
@@ -852,6 +901,158 @@ class DeleteQualificationResponse$Type extends MessageType<DeleteQualificationRe
  * @generated MessageType for protobuf message services.qualifications.DeleteQualificationResponse
  */
 export const DeleteQualificationResponse = new DeleteQualificationResponse$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class ListQualificationActivityRequest$Type extends MessageType<ListQualificationActivityRequest> {
+    constructor() {
+        super("services.qualifications.ListQualificationActivityRequest", [
+            { no: 1, name: "pagination", kind: "message", T: () => PaginationRequest, options: { "buf.validate.field": { required: true } } },
+            { no: 2, name: "sort", kind: "message", T: () => Sort },
+            { no: 3, name: "qualification_id", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ },
+            { no: 4, name: "types", kind: "enum", repeat: 1 /*RepeatType.PACKED*/, T: () => ["resources.qualifications.activity.QualificationActivityType", QualificationActivityType, "QUALIFICATION_ACTIVITY_TYPE_"], options: { "buf.validate.field": { repeated: { maxItems: "18", items: { enum: { definedOnly: true } } } } } },
+            { no: 5, name: "user_id", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/, options: { "buf.validate.field": { int32: { gt: 0 } } } },
+            { no: 6, name: "from", kind: "message", T: () => Timestamp },
+            { no: 7, name: "to", kind: "message", T: () => Timestamp }
+        ]);
+    }
+    create(value?: PartialMessage<ListQualificationActivityRequest>): ListQualificationActivityRequest {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        message.qualificationId = 0;
+        message.types = [];
+        if (value !== undefined)
+            reflectionMergePartial<ListQualificationActivityRequest>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: ListQualificationActivityRequest): ListQualificationActivityRequest {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* resources.common.database.PaginationRequest pagination */ 1:
+                    message.pagination = PaginationRequest.internalBinaryRead(reader, reader.uint32(), options, message.pagination);
+                    break;
+                case /* optional resources.common.database.Sort sort */ 2:
+                    message.sort = Sort.internalBinaryRead(reader, reader.uint32(), options, message.sort);
+                    break;
+                case /* int64 qualification_id */ 3:
+                    message.qualificationId = reader.int64().toNumber();
+                    break;
+                case /* repeated resources.qualifications.activity.QualificationActivityType types */ 4:
+                    if (wireType === WireType.LengthDelimited)
+                        for (let e = reader.int32() + reader.pos; reader.pos < e;)
+                            message.types.push(reader.int32());
+                    else
+                        message.types.push(reader.int32());
+                    break;
+                case /* optional int32 user_id */ 5:
+                    message.userId = reader.int32();
+                    break;
+                case /* optional resources.timestamp.Timestamp from */ 6:
+                    message.from = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.from);
+                    break;
+                case /* optional resources.timestamp.Timestamp to */ 7:
+                    message.to = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.to);
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: ListQualificationActivityRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* resources.common.database.PaginationRequest pagination = 1; */
+        if (message.pagination)
+            PaginationRequest.internalBinaryWrite(message.pagination, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
+        /* optional resources.common.database.Sort sort = 2; */
+        if (message.sort)
+            Sort.internalBinaryWrite(message.sort, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
+        /* int64 qualification_id = 3; */
+        if (message.qualificationId !== 0)
+            writer.tag(3, WireType.Varint).int64(message.qualificationId);
+        /* repeated resources.qualifications.activity.QualificationActivityType types = 4; */
+        if (message.types.length) {
+            writer.tag(4, WireType.LengthDelimited).fork();
+            for (let i = 0; i < message.types.length; i++)
+                writer.int32(message.types[i]);
+            writer.join();
+        }
+        /* optional int32 user_id = 5; */
+        if (message.userId !== undefined)
+            writer.tag(5, WireType.Varint).int32(message.userId);
+        /* optional resources.timestamp.Timestamp from = 6; */
+        if (message.from)
+            Timestamp.internalBinaryWrite(message.from, writer.tag(6, WireType.LengthDelimited).fork(), options).join();
+        /* optional resources.timestamp.Timestamp to = 7; */
+        if (message.to)
+            Timestamp.internalBinaryWrite(message.to, writer.tag(7, WireType.LengthDelimited).fork(), options).join();
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message services.qualifications.ListQualificationActivityRequest
+ */
+export const ListQualificationActivityRequest = new ListQualificationActivityRequest$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class ListQualificationActivityResponse$Type extends MessageType<ListQualificationActivityResponse> {
+    constructor() {
+        super("services.qualifications.ListQualificationActivityResponse", [
+            { no: 1, name: "pagination", kind: "message", T: () => PaginationResponse, options: { "buf.validate.field": { required: true } } },
+            { no: 2, name: "activity", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => QualificationActivity, options: { "codegen.itemslen.enabled": true } }
+        ]);
+    }
+    create(value?: PartialMessage<ListQualificationActivityResponse>): ListQualificationActivityResponse {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        message.activity = [];
+        if (value !== undefined)
+            reflectionMergePartial<ListQualificationActivityResponse>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: ListQualificationActivityResponse): ListQualificationActivityResponse {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* resources.common.database.PaginationResponse pagination */ 1:
+                    message.pagination = PaginationResponse.internalBinaryRead(reader, reader.uint32(), options, message.pagination);
+                    break;
+                case /* repeated resources.qualifications.activity.QualificationActivity activity */ 2:
+                    message.activity.push(QualificationActivity.internalBinaryRead(reader, reader.uint32(), options));
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: ListQualificationActivityResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* resources.common.database.PaginationResponse pagination = 1; */
+        if (message.pagination)
+            PaginationResponse.internalBinaryWrite(message.pagination, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
+        /* repeated resources.qualifications.activity.QualificationActivity activity = 2; */
+        for (let i = 0; i < message.activity.length; i++)
+            QualificationActivity.internalBinaryWrite(message.activity[i], writer.tag(2, WireType.LengthDelimited).fork(), options).join();
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message services.qualifications.ListQualificationActivityResponse
+ */
+export const ListQualificationActivityResponse = new ListQualificationActivityResponse$Type();
 // @generated message type with reflection information, may provide speed optimized methods
 class GetQualificationAccessRequest$Type extends MessageType<GetQualificationAccessRequest> {
     constructor() {
@@ -1753,6 +1954,7 @@ export const QualificationsService = new ServiceType("services.qualifications.Qu
     { name: "CreateQualification", options: { "codegen.perms.perms": { enabled: true, name: "UpdateQualification" } }, I: CreateQualificationRequest, O: CreateQualificationResponse },
     { name: "UpdateQualification", options: { "codegen.perms.perms": { enabled: true, attrs: [{ key: "Access", type: "ATTRIBUTE_TYPE_STRING_LIST", validStringList: ["Own", "Lower_Rank", "Same_Rank", "Any"] }, { key: "Fields", type: "ATTRIBUTE_TYPE_STRING_LIST", validStringList: ["Public"] }] } }, I: UpdateQualificationRequest, O: UpdateQualificationResponse },
     { name: "DeleteQualification", options: { "codegen.perms.perms": { enabled: true, attrs: [{ key: "Access", type: "ATTRIBUTE_TYPE_STRING_LIST", validStringList: ["Own", "Lower_Rank", "Same_Rank", "Any"] }] } }, I: DeleteQualificationRequest, O: DeleteQualificationResponse },
+    { name: "ListQualificationActivity", options: { "codegen.perms.perms": { enabled: true, name: "ListQualifications" } }, I: ListQualificationActivityRequest, O: ListQualificationActivityResponse },
     { name: "ListQualificationRequests", options: { "codegen.perms.perms": { enabled: true, name: "ListQualifications" } }, I: ListQualificationRequestsRequest, O: ListQualificationRequestsResponse },
     { name: "CreateOrUpdateQualificationRequest", options: { "codegen.perms.perms": { enabled: true, name: "ListQualifications" } }, I: CreateOrUpdateQualificationRequestRequest, O: CreateOrUpdateQualificationRequestResponse },
     { name: "DeleteQualificationReq", options: { "codegen.perms.perms": { enabled: true, name: "ListQualifications" } }, I: DeleteQualificationReqRequest, O: DeleteQualificationReqResponse },

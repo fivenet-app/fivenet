@@ -25,6 +25,7 @@ const (
 	QualificationsService_CreateQualification_FullMethodName                = "/services.qualifications.QualificationsService/CreateQualification"
 	QualificationsService_UpdateQualification_FullMethodName                = "/services.qualifications.QualificationsService/UpdateQualification"
 	QualificationsService_DeleteQualification_FullMethodName                = "/services.qualifications.QualificationsService/DeleteQualification"
+	QualificationsService_ListQualificationActivity_FullMethodName          = "/services.qualifications.QualificationsService/ListQualificationActivity"
 	QualificationsService_ListQualificationRequests_FullMethodName          = "/services.qualifications.QualificationsService/ListQualificationRequests"
 	QualificationsService_CreateOrUpdateQualificationRequest_FullMethodName = "/services.qualifications.QualificationsService/CreateOrUpdateQualificationRequest"
 	QualificationsService_DeleteQualificationReq_FullMethodName             = "/services.qualifications.QualificationsService/DeleteQualificationReq"
@@ -43,6 +44,7 @@ type QualificationsServiceClient interface {
 	CreateQualification(ctx context.Context, in *CreateQualificationRequest, opts ...grpc.CallOption) (*CreateQualificationResponse, error)
 	UpdateQualification(ctx context.Context, in *UpdateQualificationRequest, opts ...grpc.CallOption) (*UpdateQualificationResponse, error)
 	DeleteQualification(ctx context.Context, in *DeleteQualificationRequest, opts ...grpc.CallOption) (*DeleteQualificationResponse, error)
+	ListQualificationActivity(ctx context.Context, in *ListQualificationActivityRequest, opts ...grpc.CallOption) (*ListQualificationActivityResponse, error)
 	ListQualificationRequests(ctx context.Context, in *ListQualificationRequestsRequest, opts ...grpc.CallOption) (*ListQualificationRequestsResponse, error)
 	CreateOrUpdateQualificationRequest(ctx context.Context, in *CreateOrUpdateQualificationRequestRequest, opts ...grpc.CallOption) (*CreateOrUpdateQualificationRequestResponse, error)
 	DeleteQualificationReq(ctx context.Context, in *DeleteQualificationReqRequest, opts ...grpc.CallOption) (*DeleteQualificationReqResponse, error)
@@ -104,6 +106,16 @@ func (c *qualificationsServiceClient) DeleteQualification(ctx context.Context, i
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(DeleteQualificationResponse)
 	err := c.cc.Invoke(ctx, QualificationsService_DeleteQualification_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *qualificationsServiceClient) ListQualificationActivity(ctx context.Context, in *ListQualificationActivityRequest, opts ...grpc.CallOption) (*ListQualificationActivityResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ListQualificationActivityResponse)
+	err := c.cc.Invoke(ctx, QualificationsService_ListQualificationActivity_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -192,6 +204,7 @@ type QualificationsServiceServer interface {
 	CreateQualification(context.Context, *CreateQualificationRequest) (*CreateQualificationResponse, error)
 	UpdateQualification(context.Context, *UpdateQualificationRequest) (*UpdateQualificationResponse, error)
 	DeleteQualification(context.Context, *DeleteQualificationRequest) (*DeleteQualificationResponse, error)
+	ListQualificationActivity(context.Context, *ListQualificationActivityRequest) (*ListQualificationActivityResponse, error)
 	ListQualificationRequests(context.Context, *ListQualificationRequestsRequest) (*ListQualificationRequestsResponse, error)
 	CreateOrUpdateQualificationRequest(context.Context, *CreateOrUpdateQualificationRequestRequest) (*CreateOrUpdateQualificationRequestResponse, error)
 	DeleteQualificationReq(context.Context, *DeleteQualificationReqRequest) (*DeleteQualificationReqResponse, error)
@@ -223,6 +236,9 @@ func (UnimplementedQualificationsServiceServer) UpdateQualification(context.Cont
 }
 func (UnimplementedQualificationsServiceServer) DeleteQualification(context.Context, *DeleteQualificationRequest) (*DeleteQualificationResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DeleteQualification not implemented")
+}
+func (UnimplementedQualificationsServiceServer) ListQualificationActivity(context.Context, *ListQualificationActivityRequest) (*ListQualificationActivityResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ListQualificationActivity not implemented")
 }
 func (UnimplementedQualificationsServiceServer) ListQualificationRequests(context.Context, *ListQualificationRequestsRequest) (*ListQualificationRequestsResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ListQualificationRequests not implemented")
@@ -352,6 +368,24 @@ func _QualificationsService_DeleteQualification_Handler(srv interface{}, ctx con
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(QualificationsServiceServer).DeleteQualification(ctx, req.(*DeleteQualificationRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _QualificationsService_ListQualificationActivity_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ListQualificationActivityRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(QualificationsServiceServer).ListQualificationActivity(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: QualificationsService_ListQualificationActivity_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(QualificationsServiceServer).ListQualificationActivity(ctx, req.(*ListQualificationActivityRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -497,6 +531,10 @@ var QualificationsService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "DeleteQualification",
 			Handler:    _QualificationsService_DeleteQualification_Handler,
+		},
+		{
+			MethodName: "ListQualificationActivity",
+			Handler:    _QualificationsService_ListQualificationActivity_Handler,
 		},
 		{
 			MethodName: "ListQualificationRequests",

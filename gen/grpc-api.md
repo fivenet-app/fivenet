@@ -6785,6 +6785,74 @@ User related events
 
 
 
+## resources/qualifications/activity/activity.proto
+
+
+### resources.qualifications.activity.QualificationActivity
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `id` | [int64](#int64) |  |  |
+| `qualification_id` | [int64](#int64) |  |  |
+| `type` | [QualificationActivityType](#resourcesqualificationsactivityQualificationActivityType) |  |  |
+| `actor_user_id` | [int32](#int32) | optional |  |
+| `actor_user` | [resources.users.short.UserShort](#resourcesusersshortUserShort) | optional |  |
+| `target_user_id` | [int32](#int32) | optional |  |
+| `target_user` | [resources.users.short.UserShort](#resourcesusersshortUserShort) | optional |  |
+| `created_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) |  |  |
+| `data` | [QualificationActivityData](#resourcesqualificationsactivityQualificationActivityData) | optional |  |
+
+
+
+
+
+### resources.qualifications.activity.QualificationActivityData
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `request_status` | [resources.qualifications.RequestStatus](#resourcesqualificationsRequestStatus) | optional |  |
+| `result_status` | [resources.qualifications.ResultStatus](#resourcesqualificationsResultStatus) | optional |  |
+| `score` | [float](#float) | optional |  |
+
+
+
+
+ <!-- end messages -->
+
+
+### resources.qualifications.activity.QualificationActivityType
+
+| Name | Number | Description |
+| ---- | ------ | ----------- |
+| `QUALIFICATION_ACTIVITY_TYPE_UNSPECIFIED` | 0 |  |
+| `QUALIFICATION_ACTIVITY_TYPE_CREATED` | 1 |  |
+| `QUALIFICATION_ACTIVITY_TYPE_UPDATED` | 2 |  |
+| `QUALIFICATION_ACTIVITY_TYPE_DELETED` | 3 |  |
+| `QUALIFICATION_ACTIVITY_TYPE_RESTORED` | 4 |  |
+| `QUALIFICATION_ACTIVITY_TYPE_ACCESS_UPDATED` | 5 |  |
+| `QUALIFICATION_ACTIVITY_TYPE_REQUEST_CREATED` | 10 |  |
+| `QUALIFICATION_ACTIVITY_TYPE_REQUEST_UPDATED` | 11 |  |
+| `QUALIFICATION_ACTIVITY_TYPE_REQUEST_DELETED` | 12 |  |
+| `QUALIFICATION_ACTIVITY_TYPE_EXAM_STARTED` | 20 |  |
+| `QUALIFICATION_ACTIVITY_TYPE_EXAM_CANCELLED` | 21 |  |
+| `QUALIFICATION_ACTIVITY_TYPE_EXAM_SUBMITTED` | 22 |  |
+| `QUALIFICATION_ACTIVITY_TYPE_EXAM_EXPIRED` | 23 |  |
+| `QUALIFICATION_ACTIVITY_TYPE_RESULT_CREATED` | 30 |  |
+| `QUALIFICATION_ACTIVITY_TYPE_RESULT_UPDATED` | 31 |  |
+| `QUALIFICATION_ACTIVITY_TYPE_RESULT_DELETED` | 32 |  |
+| `QUALIFICATION_ACTIVITY_TYPE_RESULT_RESTORED` | 33 |  |
+
+
+ <!-- end enums -->
+
+ <!-- end HasExtensions -->
+
+ <!-- end services -->
+
+
+
 ## resources/settings/perms.proto
 
 
@@ -9302,6 +9370,8 @@ Auth Service handles user authentication, character selection and oauth2 connect
 | `sort` | [resources.common.database.Sort](#resourcescommondatabaseSort) | optional |  |
 | `user_id` | [int32](#int32) |  | Search params |
 | `types` | [resources.users.activity.UserActivityType](#resourcesusersactivityUserActivityType) | repeated |  |
+| `from` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
+| `to` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
 
 
 
@@ -11269,6 +11339,8 @@ Upsert = insert missing PENDING tasks/slots; will NOT delete existing tasks. Ide
 | `sort` | [resources.common.database.Sort](#resourcescommondatabaseSort) | optional |  |
 | `users` | [resources.jobs.UserSelector](#resourcesjobsUserSelector) | optional | Search params |
 | `activity_types` | [resources.jobs.colleagues.activity.ColleagueActivityType](#resourcesjobscolleaguesactivityColleagueActivityType) | repeated |  |
+| `from` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
+| `to` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
 
 
 
@@ -13559,6 +13631,35 @@ Updates one preference scope. Fields omitted from preference inherit from a less
 
 
 
+### services.qualifications.ListQualificationActivityRequest
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `pagination` | [resources.common.database.PaginationRequest](#resourcescommondatabasePaginationRequest) |  |  |
+| `sort` | [resources.common.database.Sort](#resourcescommondatabaseSort) | optional |  |
+| `qualification_id` | [int64](#int64) |  |  |
+| `types` | [resources.qualifications.activity.QualificationActivityType](#resourcesqualificationsactivityQualificationActivityType) | repeated |  |
+| `user_id` | [int32](#int32) | optional |  |
+| `from` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
+| `to` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
+
+
+
+
+
+### services.qualifications.ListQualificationActivityResponse
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `pagination` | [resources.common.database.PaginationResponse](#resourcescommondatabasePaginationResponse) |  |  |
+| `activity` | [resources.qualifications.activity.QualificationActivity](#resourcesqualificationsactivityQualificationActivity) | repeated |  |
+
+
+
+
+
 ### services.qualifications.ListQualificationRequestsRequest
 
 
@@ -13696,6 +13797,7 @@ Updates one preference scope. Fields omitted from preference inherit from a less
 | `CreateQualification` | [CreateQualificationRequest](#servicesqualificationsCreateQualificationRequest) | [CreateQualificationResponse](#servicesqualificationsCreateQualificationResponse) | |
 | `UpdateQualification` | [UpdateQualificationRequest](#servicesqualificationsUpdateQualificationRequest) | [UpdateQualificationResponse](#servicesqualificationsUpdateQualificationResponse) | |
 | `DeleteQualification` | [DeleteQualificationRequest](#servicesqualificationsDeleteQualificationRequest) | [DeleteQualificationResponse](#servicesqualificationsDeleteQualificationResponse) | |
+| `ListQualificationActivity` | [ListQualificationActivityRequest](#servicesqualificationsListQualificationActivityRequest) | [ListQualificationActivityResponse](#servicesqualificationsListQualificationActivityResponse) | |
 | `ListQualificationRequests` | [ListQualificationRequestsRequest](#servicesqualificationsListQualificationRequestsRequest) | [ListQualificationRequestsResponse](#servicesqualificationsListQualificationRequestsResponse) | |
 | `CreateOrUpdateQualificationRequest` | [CreateOrUpdateQualificationRequestRequest](#servicesqualificationsCreateOrUpdateQualificationRequestRequest) | [CreateOrUpdateQualificationRequestResponse](#servicesqualificationsCreateOrUpdateQualificationRequestResponse) | |
 | `DeleteQualificationReq` | [DeleteQualificationReqRequest](#servicesqualificationsDeleteQualificationReqRequest) | [DeleteQualificationReqResponse](#servicesqualificationsDeleteQualificationReqResponse) | |
@@ -15234,6 +15336,8 @@ Sync Service handles the sync of data (e.g., users, jobs) to this FiveNet instan
 | `sort` | [resources.common.database.Sort](#resourcescommondatabaseSort) | optional |  |
 | `plate` | [string](#string) |  |  |
 | `types` | [resources.vehicles.activity.VehicleActivityType](#resourcesvehiclesactivityVehicleActivityType) | repeated |  |
+| `from` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
+| `to` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
 
 
 

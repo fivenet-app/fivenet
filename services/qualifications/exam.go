@@ -7,6 +7,7 @@ import (
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/audit"
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/qualifications"
 	qualificationsaccess "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/qualifications/access"
+	qualificationsactivity "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/qualifications/activity"
 	qualificationsexam "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/qualifications/exam"
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/userinfo"
 	pbqualifications "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/qualifications"
@@ -207,6 +208,17 @@ func (s *Server) TakeExam(
 		); err != nil {
 			return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 		}
+		if err := s.addQualificationActivity(
+			ctx,
+			tx,
+			req.GetQualificationId(),
+			qualificationsactivity.QualificationActivityType_QUALIFICATION_ACTIVITY_TYPE_EXAM_CANCELLED,
+			userInfo.GetUserId(),
+			userInfo.GetUserId(),
+			nil,
+		); err != nil {
+			return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
+		}
 		if err := tx.Commit(); err != nil {
 			return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 		}
@@ -263,7 +275,8 @@ func (s *Server) TakeExam(
 	}
 
 	// No end time for the exam? Need to create an entry
-	if examUser == nil || examUser.GetEndsAt() == nil {
+	startedNewAttempt := examUser == nil || examUser.GetEndsAt() == nil
+	if startedNewAttempt {
 		examTime := quali.GetExamSettings().GetTime().AsDuration()
 		examWithAnswers, err := s.store.GetExamQuestions(ctx, s.db, req.GetQualificationId(), true)
 		if err != nil {
@@ -289,6 +302,19 @@ func (s *Server) TakeExam(
 	examUser, err = s.store.GetExamUser(ctx, req.GetQualificationId(), userInfo.GetUserId())
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
+	}
+	if startedNewAttempt {
+		if err := s.addQualificationActivity(
+			ctx,
+			s.db,
+			req.GetQualificationId(),
+			qualificationsactivity.QualificationActivityType_QUALIFICATION_ACTIVITY_TYPE_EXAM_STARTED,
+			userInfo.GetUserId(),
+			userInfo.GetUserId(),
+			nil,
+		); err != nil {
+			return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
+		}
 	}
 
 	grpc_audit.SetAction(ctx, audit.EventAction_EVENT_ACTION_UPDATED)
@@ -419,6 +445,17 @@ func (s *Server) SubmitExam(
 			examUser.GetSnapshot(),
 			responses,
 			&publishNotifications,
+		); err != nil {
+			return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
+		}
+		if err := s.addQualificationActivity(
+			ctx,
+			tx,
+			req.GetQualificationId(),
+			qualificationsactivity.QualificationActivityType_QUALIFICATION_ACTIVITY_TYPE_EXAM_SUBMITTED,
+			userInfo.GetUserId(),
+			userInfo.GetUserId(),
+			nil,
 		); err != nil {
 			return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 		}
