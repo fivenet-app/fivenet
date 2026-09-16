@@ -68,11 +68,13 @@ onBeforeMount(() => {
                     "
                 />
             </div>
+
             <div v-if="expiresAt" class="flex flex-col text-sm">
                 <span class="font-semibold">{{ $t('common.expires_in') }}:</span>
                 <span>{{ formatTimeAgo(toDate(expiresAt, timeCorrection), { showSecond: true }, now) }}</span>
             </div>
-            <div v-if="expiresAt" class="flex flex-col text-sm">
+
+            <div v-if="dispatch.createdAt" class="flex flex-col text-sm">
                 <span class="font-semibold">{{ $t('common.created') }}:</span>
                 <span>{{ formatTimeAgo(toDate(dispatch.createdAt, timeCorrection), { showSecond: true }, now) }}</span>
             </div>

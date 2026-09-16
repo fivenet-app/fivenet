@@ -38,28 +38,52 @@ const dispatchTimeStyle = computed(() =>
 </script>
 
 <template>
-    <li class="my-1 flex flex-row items-center gap-0.5">
-        <div class="flex flex-col items-center gap-2">
-            <URadioGroup
-                v-model="modelValue"
-                name="active"
-                :items="[{ value: dispatch.id }]"
-                value-key="value"
-                :ui="{ label: 'hidden', item: 'items-end', wrapper: 'ms-0' }"
-            />
+    <li class="my-1 flex items-stretch -space-x-px">
+        <div class="grid grid-rows-[minmax(0,1fr)_minmax(0,1fr)] -space-y-px self-stretch">
+            <UTooltip class="h-full min-h-0" :text="$t('common.select')">
+                <URadioGroup
+                    v-model="modelValue"
+                    name="active"
+                    variant="card"
+                    size="sm"
+                    color="primary"
+                    :items="[
+                        {
+                            value: dispatch.id,
+                        },
+                    ]"
+                    value-key="value"
+                    :ui="{
+                        root: 'h-full',
+                        fieldset: 'h-full',
+                        item: 'h-full w-7 cursor-pointer items-center justify-center rounded-tl-md rounded-bl-none rounded-r-none border-r-0 p-0',
+                        container: 'h-full',
+                        wrapper: 'm-0 flex h-full items-center justify-center',
+                    }"
+                />
+            </UTooltip>
 
-            <UButton variant="link" icon="i-mdi-map-marker" @click="gotoCoords({ x: dispatch.x, y: dispatch.y })" />
+            <UTooltip class="h-full min-h-0" :text="$t('common.goto')">
+                <UButton
+                    block
+                    class="h-full rounded-t-none rounded-r-none border-t-0 border-r-0 p-0"
+                    color="neutral"
+                    icon="i-mdi-map-marker"
+                    variant="subtle"
+                    @click="gotoCoords({ x: dispatch.x, y: dispatch.y })"
+                />
+            </UTooltip>
         </div>
 
         <UChip
-            class="flex w-full max-w-full shrink flex-col items-center"
+            class="min-w-0 flex-1 self-stretch"
             :show="dispatchTimeStyle.ping"
             position="top-left"
             size="md"
             :ui="{ base: dispatchTimeStyle.class + ' ' + (dispatchTimeStyle.ping ? 'animate-pulse' : '') }"
         >
             <UButton
-                class="my-0.5 inline-flex w-full max-w-full shrink flex-col items-center p-2 text-xs"
+                class="h-full w-full flex-col items-center rounded-l-none p-2 text-xs"
                 block
                 color="error"
                 @click="

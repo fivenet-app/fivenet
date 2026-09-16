@@ -79,12 +79,14 @@ const sidebarContentSplitClass = computed(() =>
 
 const overlay = useOverlay();
 
-const centrumDispatchesClient = await getCentrumDispatchesClient();
-const centrumUnitsClient = await getCentrumUnitsClient();
-
 const logger = useLogger('⛑️ Centrum');
 
 const canStream = can('centrum.CentrumService/Stream');
+
+const now = useSecondClock();
+
+const centrumDispatchesClient = await getCentrumDispatchesClient();
+const centrumUnitsClient = await getCentrumUnitsClient();
 
 const selectedDispatch = ref<number | undefined>();
 
@@ -254,7 +256,6 @@ const onSubmitDispatchStatusThrottle = useThrottleFn(async (dispatchId?: number,
 }, 1000);
 
 const ownUnitStatus = computed(() => unitStatusToBadgeColor(getOwnUnit.value?.status?.status));
-const dispatchTimeNow = useMinuteClock();
 
 function ensureOwnDispatchSelected(): void {
     selectedDispatch.value = selectOwnDispatch(getSortedOwnDispatches.value, dispatches.value, selectedDispatch.value);
@@ -700,7 +701,7 @@ defineShortcuts({
                                                         v-if="dispatches.get(dispatch) !== undefined"
                                                         v-model="selectedDispatch"
                                                         :dispatch="dispatches.get(dispatch)!"
-                                                        :now="dispatchTimeNow"
+                                                        :now="now"
                                                     />
                                                 </template>
                                             </div>

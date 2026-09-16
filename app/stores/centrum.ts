@@ -331,12 +331,6 @@ export const useCentrumStore = defineStore(
                 unitRevisions.set(unit.id, { revision: kvRevision });
             }
 
-            logger.debug('Applied unit projection', {
-                unitId: unit.id,
-                kvRevision,
-                users: unit.users.map((user) => user.userId),
-            });
-
             return true;
         };
 
@@ -473,15 +467,6 @@ export const useCentrumStore = defineStore(
             }
             status.unit = undefined;
 
-            logger.debug('Processing dispatch status', {
-                dispatchId: status.dispatchId,
-                statusId: status.id,
-                status: StatusDispatch[status.status],
-                unitId: status.unitId,
-                currentStatus: disp.status ? StatusDispatch[disp.status.status] : undefined,
-                assignedUnitIds: disp.units.map((assignment) => assignment.unitId),
-            });
-
             // Unit assignment events stay in feed, but do not become dispatch's current status.
             if (isTransientDispatchUnitStatus(status.status)) {
                 if (status.status === StatusDispatch.UNIT_UNASSIGNED) {
@@ -489,14 +474,6 @@ export const useCentrumStore = defineStore(
                     if (idx > -1) {
                         disp.units.splice(idx, 1);
                     }
-
-                    logger.debug('Applied dispatch unit unassignment', {
-                        dispatchId: status.dispatchId,
-                        unitId: status.unitId,
-                        assignmentFound: idx > -1,
-                        remainingUnitIds: disp.units.map((assignment) => assignment.unitId),
-                        currentStatus: disp.status ? StatusDispatch[disp.status.status] : undefined,
-                    });
                 }
                 return true;
             }
@@ -527,13 +504,6 @@ export const useCentrumStore = defineStore(
                 disp.status.postal = status.postal;
                 disp.status.creatorJob = status.creatorJob;
             }
-
-            logger.debug('Applied dispatch status', {
-                dispatchId: status.dispatchId,
-                statusId: status.id,
-                status: StatusDispatch[status.status],
-                assignedUnitIds: disp.units.map((assignment) => assignment.unitId),
-            });
 
             return true;
         };
@@ -777,14 +747,6 @@ export const useCentrumStore = defineStore(
                     } else if (resp.change.oneofKind === 'unitDeleted') {
                         removeUnit(resp.change.unitDeleted, resp.kvRevision);
                     } else if (resp.change.oneofKind === 'unitUpdated') {
-                        logger.debug('Received unit projection', {
-                            unitId: resp.change.unitUpdated.id,
-                            kvRevision: resp.kvRevision,
-                            users: resp.change.unitUpdated.users.map((user) => user.userId),
-                            activeUserId: activeChar.value?.userId,
-                            ownUnitId: ownUnitId.value,
-                        });
-
                         // Do not let an older membership snapshot for the prior
                         // unit overwrite ownUnitId after a user switches units.
                         if (!addOrUpdateUnit(resp.change.unitUpdated, resp.kvRevision)) {
@@ -825,14 +787,6 @@ export const useCentrumStore = defineStore(
                             }
                         }
                     } else if (resp.change.oneofKind === 'unitStatus') {
-                        logger.debug('Received unit status', {
-                            unitId: resp.change.unitStatus.unitId,
-                            statusId: resp.change.unitStatus.id,
-                            status: StatusUnit[resp.change.unitStatus.status],
-                            userId: resp.change.unitStatus.userId,
-                            ownUnitId: ownUnitId.value,
-                        });
-
                         updateUnitStatus(resp.change.unitStatus);
 
                         if (isCenter.value) {
@@ -883,15 +837,6 @@ export const useCentrumStore = defineStore(
                         addOrUpdateDispatch(resp.change.dispatchUpdated, resp.kvRevision);
                     } else if (resp.change.oneofKind === 'dispatchStatus') {
                         const ds = resp.change.dispatchStatus;
-
-                        logger.debug('Received dispatch status', {
-                            dispatchId: ds.dispatchId,
-                            statusId: ds.id,
-                            status: StatusDispatch[ds.status],
-                            unitId: ds.unitId,
-                            currentStatus: dispatches.value.get(ds.dispatchId)?.status?.status,
-                            assignedUnitIds: dispatches.value.get(ds.dispatchId)?.units.map((assignment) => assignment.unitId),
-                        });
 
                         if (isCenter.value) addFeedItem(ds);
 
