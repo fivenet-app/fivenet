@@ -7,6 +7,7 @@ import "codegen/itemslen/itemslen.proto";
 import "codegen/perms/perms.proto";
 import "codegen/sanitizer/sanitizer.proto";
 import "resources/common/database/database.proto";
+import "resources/timestamp/timestamp.proto";
 import "resources/vehicles/activity/activity.proto";
 import "resources/vehicles/props/props.proto";
 import "resources/vehicles/vehicles.proto";
@@ -63,6 +64,8 @@ message ListVehicleActivityRequest {
       enum: {defined_only: true}
     }
   }];
+  optional resources.timestamp.Timestamp from = 5;
+  optional resources.timestamp.Timestamp to = 6;
 }
 
 message ListVehicleActivityResponse {

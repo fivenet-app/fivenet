@@ -13,6 +13,7 @@ import (
 	_ "github.com/fivenet-app/fivenet/v2026/gen/go/proto/codegen/perms"
 	_ "github.com/fivenet-app/fivenet/v2026/gen/go/proto/codegen/sanitizer"
 	database "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/common/database"
+	timestamp "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/timestamp"
 	vehicles "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/vehicles"
 	activity "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/vehicles/activity"
 	props "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/vehicles/props"
@@ -508,6 +509,8 @@ type ListVehicleActivityRequest struct {
 	xxx_hidden_Sort       *database.Sort                 `protobuf:"bytes,2,opt,name=sort,proto3,oneof"`
 	xxx_hidden_Plate      string                         `protobuf:"bytes,3,opt,name=plate,proto3"`
 	xxx_hidden_Types      []activity.VehicleActivityType `protobuf:"varint,4,rep,packed,name=types,proto3,enum=resources.vehicles.activity.VehicleActivityType"`
+	xxx_hidden_From       *timestamp.Timestamp           `protobuf:"bytes,5,opt,name=from,proto3,oneof"`
+	xxx_hidden_To         *timestamp.Timestamp           `protobuf:"bytes,6,opt,name=to,proto3,oneof"`
 	unknownFields         protoimpl.UnknownFields
 	sizeCache             protoimpl.SizeCache
 }
@@ -565,6 +568,20 @@ func (x *ListVehicleActivityRequest) GetTypes() []activity.VehicleActivityType {
 	return nil
 }
 
+func (x *ListVehicleActivityRequest) GetFrom() *timestamp.Timestamp {
+	if x != nil {
+		return x.xxx_hidden_From
+	}
+	return nil
+}
+
+func (x *ListVehicleActivityRequest) GetTo() *timestamp.Timestamp {
+	if x != nil {
+		return x.xxx_hidden_To
+	}
+	return nil
+}
+
 func (x *ListVehicleActivityRequest) SetPagination(v *database.PaginationRequest) {
 	x.xxx_hidden_Pagination = v
 }
@@ -581,6 +598,14 @@ func (x *ListVehicleActivityRequest) SetTypes(v []activity.VehicleActivityType) 
 	x.xxx_hidden_Types = v
 }
 
+func (x *ListVehicleActivityRequest) SetFrom(v *timestamp.Timestamp) {
+	x.xxx_hidden_From = v
+}
+
+func (x *ListVehicleActivityRequest) SetTo(v *timestamp.Timestamp) {
+	x.xxx_hidden_To = v
+}
+
 func (x *ListVehicleActivityRequest) HasPagination() bool {
 	if x == nil {
 		return false
@@ -595,12 +620,34 @@ func (x *ListVehicleActivityRequest) HasSort() bool {
 	return x.xxx_hidden_Sort != nil
 }
 
+func (x *ListVehicleActivityRequest) HasFrom() bool {
+	if x == nil {
+		return false
+	}
+	return x.xxx_hidden_From != nil
+}
+
+func (x *ListVehicleActivityRequest) HasTo() bool {
+	if x == nil {
+		return false
+	}
+	return x.xxx_hidden_To != nil
+}
+
 func (x *ListVehicleActivityRequest) ClearPagination() {
 	x.xxx_hidden_Pagination = nil
 }
 
 func (x *ListVehicleActivityRequest) ClearSort() {
 	x.xxx_hidden_Sort = nil
+}
+
+func (x *ListVehicleActivityRequest) ClearFrom() {
+	x.xxx_hidden_From = nil
+}
+
+func (x *ListVehicleActivityRequest) ClearTo() {
+	x.xxx_hidden_To = nil
 }
 
 type ListVehicleActivityRequest_builder struct {
@@ -610,6 +657,8 @@ type ListVehicleActivityRequest_builder struct {
 	Sort       *database.Sort
 	Plate      string
 	Types      []activity.VehicleActivityType
+	From       *timestamp.Timestamp
+	To         *timestamp.Timestamp
 }
 
 func (b0 ListVehicleActivityRequest_builder) Build() *ListVehicleActivityRequest {
@@ -620,6 +669,8 @@ func (b0 ListVehicleActivityRequest_builder) Build() *ListVehicleActivityRequest
 	x.xxx_hidden_Sort = b.Sort
 	x.xxx_hidden_Plate = b.Plate
 	x.xxx_hidden_Types = b.Types
+	x.xxx_hidden_From = b.From
+	x.xxx_hidden_To = b.To
 	return m0
 }
 
@@ -711,7 +762,7 @@ var File_services_vehicles_vehicles_proto protoreflect.FileDescriptor
 
 const file_services_vehicles_vehicles_proto_rawDesc = "" +
 	"\n" +
-	" services/vehicles/vehicles.proto\x12\x11services.vehicles\x1a\x1fcodegen/itemslen/itemslen.proto\x1a\x19codegen/perms/perms.proto\x1a!codegen/sanitizer/sanitizer.proto\x1a(resources/common/database/database.proto\x1a*resources/vehicles/activity/activity.proto\x1a$resources/vehicles/props/props.proto\x1a!resources/vehicles/vehicles.proto\"\xe9\x02\n" +
+	" services/vehicles/vehicles.proto\x12\x11services.vehicles\x1a\x1fcodegen/itemslen/itemslen.proto\x1a\x19codegen/perms/perms.proto\x1a!codegen/sanitizer/sanitizer.proto\x1a(resources/common/database/database.proto\x1a#resources/timestamp/timestamp.proto\x1a*resources/vehicles/activity/activity.proto\x1a$resources/vehicles/props/props.proto\x1a!resources/vehicles/vehicles.proto\"\xe9\x02\n" +
 	"\x13ListVehiclesRequest\x12L\n" +
 	"\n" +
 	"pagination\x18\x01 \x01(\v2,.resources.common.database.PaginationRequestR\n" +
@@ -736,15 +787,19 @@ const file_services_vehicles_vehicles_proto_rawDesc = "" +
 	"\x05props\x18\x01 \x01(\v2&.resources.vehicles.props.VehiclePropsR\x05props\x12\x1e\n" +
 	"\x06reason\x18\x02 \x01(\tB\x06\xda\xf3\x18\x02\b\x01R\x06reason\"W\n" +
 	"\x17SetVehiclePropsResponse\x12<\n" +
-	"\x05props\x18\x01 \x01(\v2&.resources.vehicles.props.VehiclePropsR\x05props\"\x8b\x02\n" +
+	"\x05props\x18\x01 \x01(\v2&.resources.vehicles.props.VehiclePropsR\x05props\"\x89\x03\n" +
 	"\x1aListVehicleActivityRequest\x12L\n" +
 	"\n" +
 	"pagination\x18\x01 \x01(\v2,.resources.common.database.PaginationRequestR\n" +
 	"pagination\x128\n" +
 	"\x04sort\x18\x02 \x01(\v2\x1f.resources.common.database.SortH\x00R\x04sort\x88\x01\x01\x12\x14\n" +
 	"\x05plate\x18\x03 \x01(\tR\x05plate\x12F\n" +
-	"\x05types\x18\x04 \x03(\x0e20.resources.vehicles.activity.VehicleActivityTypeR\x05typesB\a\n" +
-	"\x05_sort\"\xbc\x01\n" +
+	"\x05types\x18\x04 \x03(\x0e20.resources.vehicles.activity.VehicleActivityTypeR\x05types\x127\n" +
+	"\x04from\x18\x05 \x01(\v2\x1e.resources.timestamp.TimestampH\x01R\x04from\x88\x01\x01\x123\n" +
+	"\x02to\x18\x06 \x01(\v2\x1e.resources.timestamp.TimestampH\x02R\x02to\x88\x01\x01B\a\n" +
+	"\x05_sortB\a\n" +
+	"\x05_fromB\x05\n" +
+	"\x03_to\"\xbc\x01\n" +
 	"\x1bListVehicleActivityResponse\x12M\n" +
 	"\n" +
 	"pagination\x18\x01 \x01(\v2-.resources.common.database.PaginationResponseR\n" +
@@ -772,7 +827,8 @@ var file_services_vehicles_vehicles_proto_goTypes = []any{
 	(*vehicles.Vehicle)(nil),            // 9: resources.vehicles.Vehicle
 	(*props.VehicleProps)(nil),          // 10: resources.vehicles.props.VehicleProps
 	(activity.VehicleActivityType)(0),   // 11: resources.vehicles.activity.VehicleActivityType
-	(*activity.VehicleActivity)(nil),    // 12: resources.vehicles.activity.VehicleActivity
+	(*timestamp.Timestamp)(nil),         // 12: resources.timestamp.Timestamp
+	(*activity.VehicleActivity)(nil),    // 13: resources.vehicles.activity.VehicleActivity
 }
 var file_services_vehicles_vehicles_proto_depIdxs = []int32{
 	6,  // 0: services.vehicles.ListVehiclesRequest.pagination:type_name -> resources.common.database.PaginationRequest
@@ -784,19 +840,21 @@ var file_services_vehicles_vehicles_proto_depIdxs = []int32{
 	6,  // 6: services.vehicles.ListVehicleActivityRequest.pagination:type_name -> resources.common.database.PaginationRequest
 	7,  // 7: services.vehicles.ListVehicleActivityRequest.sort:type_name -> resources.common.database.Sort
 	11, // 8: services.vehicles.ListVehicleActivityRequest.types:type_name -> resources.vehicles.activity.VehicleActivityType
-	8,  // 9: services.vehicles.ListVehicleActivityResponse.pagination:type_name -> resources.common.database.PaginationResponse
-	12, // 10: services.vehicles.ListVehicleActivityResponse.activity:type_name -> resources.vehicles.activity.VehicleActivity
-	0,  // 11: services.vehicles.VehiclesService.ListVehicles:input_type -> services.vehicles.ListVehiclesRequest
-	2,  // 12: services.vehicles.VehiclesService.SetVehicleProps:input_type -> services.vehicles.SetVehiclePropsRequest
-	4,  // 13: services.vehicles.VehiclesService.ListVehicleActivity:input_type -> services.vehicles.ListVehicleActivityRequest
-	1,  // 14: services.vehicles.VehiclesService.ListVehicles:output_type -> services.vehicles.ListVehiclesResponse
-	3,  // 15: services.vehicles.VehiclesService.SetVehicleProps:output_type -> services.vehicles.SetVehiclePropsResponse
-	5,  // 16: services.vehicles.VehiclesService.ListVehicleActivity:output_type -> services.vehicles.ListVehicleActivityResponse
-	14, // [14:17] is the sub-list for method output_type
-	11, // [11:14] is the sub-list for method input_type
-	11, // [11:11] is the sub-list for extension type_name
-	11, // [11:11] is the sub-list for extension extendee
-	0,  // [0:11] is the sub-list for field type_name
+	12, // 9: services.vehicles.ListVehicleActivityRequest.from:type_name -> resources.timestamp.Timestamp
+	12, // 10: services.vehicles.ListVehicleActivityRequest.to:type_name -> resources.timestamp.Timestamp
+	8,  // 11: services.vehicles.ListVehicleActivityResponse.pagination:type_name -> resources.common.database.PaginationResponse
+	13, // 12: services.vehicles.ListVehicleActivityResponse.activity:type_name -> resources.vehicles.activity.VehicleActivity
+	0,  // 13: services.vehicles.VehiclesService.ListVehicles:input_type -> services.vehicles.ListVehiclesRequest
+	2,  // 14: services.vehicles.VehiclesService.SetVehicleProps:input_type -> services.vehicles.SetVehiclePropsRequest
+	4,  // 15: services.vehicles.VehiclesService.ListVehicleActivity:input_type -> services.vehicles.ListVehicleActivityRequest
+	1,  // 16: services.vehicles.VehiclesService.ListVehicles:output_type -> services.vehicles.ListVehiclesResponse
+	3,  // 17: services.vehicles.VehiclesService.SetVehicleProps:output_type -> services.vehicles.SetVehiclePropsResponse
+	5,  // 18: services.vehicles.VehiclesService.ListVehicleActivity:output_type -> services.vehicles.ListVehicleActivityResponse
+	16, // [16:19] is the sub-list for method output_type
+	13, // [13:16] is the sub-list for method input_type
+	13, // [13:13] is the sub-list for extension type_name
+	13, // [13:13] is the sub-list for extension extendee
+	0,  // [0:13] is the sub-list for field type_name
 }
 
 func init() { file_services_vehicles_vehicles_proto_init() }

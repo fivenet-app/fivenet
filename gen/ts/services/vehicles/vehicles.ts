@@ -13,6 +13,7 @@ import type { PartialMessage } from "@protobuf-ts/runtime";
 import { reflectionMergePartial } from "@protobuf-ts/runtime";
 import { MessageType } from "@protobuf-ts/runtime";
 import { VehicleActivity } from "../../resources/vehicles/activity/activity";
+import { Timestamp } from "../../resources/timestamp/timestamp";
 import { VehicleActivityType } from "../../resources/vehicles/activity/activity";
 import { VehicleProps } from "../../resources/vehicles/props/props";
 import { Vehicle } from "../../resources/vehicles/vehicles";
@@ -109,6 +110,14 @@ export interface ListVehicleActivityRequest {
      * @generated from protobuf field: repeated resources.vehicles.activity.VehicleActivityType types = 4
      */
     types: VehicleActivityType[];
+    /**
+     * @generated from protobuf field: optional resources.timestamp.Timestamp from = 5
+     */
+    from?: Timestamp;
+    /**
+     * @generated from protobuf field: optional resources.timestamp.Timestamp to = 6
+     */
+    to?: Timestamp;
 }
 /**
  * @generated from protobuf message services.vehicles.ListVehicleActivityResponse
@@ -381,7 +390,9 @@ class ListVehicleActivityRequest$Type extends MessageType<ListVehicleActivityReq
             { no: 1, name: "pagination", kind: "message", T: () => PaginationRequest, options: { "buf.validate.field": { required: true } } },
             { no: 2, name: "sort", kind: "message", T: () => Sort },
             { no: 3, name: "plate", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { minLen: "1", maxLen: "32" } } } },
-            { no: 4, name: "types", kind: "enum", repeat: 1 /*RepeatType.PACKED*/, T: () => ["resources.vehicles.activity.VehicleActivityType", VehicleActivityType, "VEHICLE_ACTIVITY_TYPE_"], options: { "buf.validate.field": { repeated: { maxItems: "10", items: { enum: { definedOnly: true } } } } } }
+            { no: 4, name: "types", kind: "enum", repeat: 1 /*RepeatType.PACKED*/, T: () => ["resources.vehicles.activity.VehicleActivityType", VehicleActivityType, "VEHICLE_ACTIVITY_TYPE_"], options: { "buf.validate.field": { repeated: { maxItems: "10", items: { enum: { definedOnly: true } } } } } },
+            { no: 5, name: "from", kind: "message", T: () => Timestamp },
+            { no: 6, name: "to", kind: "message", T: () => Timestamp }
         ]);
     }
     create(value?: PartialMessage<ListVehicleActivityRequest>): ListVehicleActivityRequest {
@@ -413,6 +424,12 @@ class ListVehicleActivityRequest$Type extends MessageType<ListVehicleActivityReq
                     else
                         message.types.push(reader.int32());
                     break;
+                case /* optional resources.timestamp.Timestamp from */ 5:
+                    message.from = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.from);
+                    break;
+                case /* optional resources.timestamp.Timestamp to */ 6:
+                    message.to = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.to);
+                    break;
                 default:
                     let u = options.readUnknownField;
                     if (u === "throw")
@@ -441,6 +458,12 @@ class ListVehicleActivityRequest$Type extends MessageType<ListVehicleActivityReq
                 writer.int32(message.types[i]);
             writer.join();
         }
+        /* optional resources.timestamp.Timestamp from = 5; */
+        if (message.from)
+            Timestamp.internalBinaryWrite(message.from, writer.tag(5, WireType.LengthDelimited).fork(), options).join();
+        /* optional resources.timestamp.Timestamp to = 6; */
+        if (message.to)
+            Timestamp.internalBinaryWrite(message.to, writer.tag(6, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
