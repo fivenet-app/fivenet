@@ -1,6 +1,7 @@
 import type { RpcError, RpcOptions } from '@protobuf-ts/runtime-rpc';
 import { defineStore } from 'pinia';
 import { parseQuery } from 'vue-router';
+import { revalidateCurrentRoutePermission } from '~/composables/auth/routePermission';
 import { useGRPCWebsocketTransport } from '~/composables/grpcws';
 import { webSocket } from '~/composables/grpcws/bridge';
 import { isSetupBypassRoute } from '~/composables/setup';
@@ -657,8 +658,12 @@ export const useAuthStore = defineStore(
                       }
                     : null;
                 writeSuperuserRestoreHint(superuserRestoreHint.value);
-                commitQueryContext();
-                await navigateTo('/overview');
+                try {
+                    // Revalidate after applying the new permissions so restricted routes can redirect.
+                    await revalidateCurrentRoutePermission(notifications.add);
+                } finally {
+                    commitQueryContext();
+                }
 
                 // Notify user about the change
                 if (superuser) {
