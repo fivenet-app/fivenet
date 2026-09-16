@@ -4799,6 +4799,21 @@ Policy snapshot applied to a specific version
 | `qualification_id` | [int64](#int64) |  |  |
 | `user_id` | [int32](#int32) |  |  |
 | `responses` | [ExamResponse](#resourcesqualificationsexamExamResponse) | repeated |  |
+| `attempt_id` | [string](#string) |  |  |
+
+
+
+
+
+### resources.qualifications.exam.ExamSnapshot
+ExamSnapshot is immutable once an attempt has started. It ensures later edits to an exam cannot change an in-progress or historical attempt.
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `exam` | [ExamQuestions](#resourcesqualificationsexamExamQuestions) |  |  |
+| `settings` | [QualificationExamSettings](#resourcesqualificationsexamQualificationExamSettings) |  |  |
 
 
 
@@ -4815,6 +4830,8 @@ Policy snapshot applied to a specific version
 | `started_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
 | `ends_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
 | `ended_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
+| `snapshot` | [ExamSnapshot](#resourcesqualificationsexamExamSnapshot) | optional |  |
+| `attempt_id` | [string](#string) |  |  |
 
 
 
@@ -13380,6 +13397,7 @@ Updates one preference scope. Fields omitted from preference inherit from a less
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | `request` | [resources.qualifications.QualificationRequest](#resourcesqualificationsQualificationRequest) |  |  |
+| `skip_notification` | [bool](#bool) |  | Suppresses the inbox notification normally sent when a tutor updates the request status. |
 
 
 

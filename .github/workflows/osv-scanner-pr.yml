@@ -16,6 +16,6 @@ permissions:
   security-events: write
 
 jobs:
-  scan:
+  osv-scan:
     name: Scan dependencies
     uses: google/osv-scanner-action/.github/workflows/osv-scanner-reusable-pr.yml@a345acffa64b0eaede81a3d9aae6141214d9c8fc # v2.6.0

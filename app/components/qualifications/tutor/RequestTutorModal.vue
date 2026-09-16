@@ -35,6 +35,7 @@ const availableStatus = [
 const schema = z.object({
     status: z.enum(RequestStatus),
     approverComment: z.coerce.string().max(255),
+    notifyUser: z.coerce.boolean().default(true),
 });
 
 type Schema = z.output<typeof schema>;
@@ -42,6 +43,7 @@ type Schema = z.output<typeof schema>;
 const state = reactive<Schema>({
     status: props.status ?? RequestStatus.PENDING,
     approverComment: '',
+    notifyUser: true,
 });
 
 const { hasUnsavedChanges, confirmLeave, syncSnapshot } = useSnapshotChanges(state);
@@ -59,6 +61,7 @@ async function createOrUpdateQualificationRequest(
                 status: values.status,
                 approverComment: values.approverComment,
             },
+            skipNotification: !values.notifyUser,
         });
         const { response } = await call;
 
@@ -104,14 +107,14 @@ async function closeModal(): Promise<void> {
 
 <template>
     <UModal
-        :title="$t('components.qualifications.request_modal.title')"
+        :title="$t('components.qualifications.request_tutor_modal.title')"
         :close="false"
         :dismissible="!hasUnsavedChanges && canSubmit"
     >
         <template #header>
             <div class="flex w-full items-center justify-between gap-2">
                 <h3 class="font-semibold text-highlighted">
-                    {{ $t('components.qualifications.request_modal.title') }}
+                    {{ $t('components.qualifications.request_tutor_modal.title') }}
                 </h3>
 
                 <UButton
@@ -126,7 +129,7 @@ async function closeModal(): Promise<void> {
         </template>
 
         <template #body>
-            <UForm ref="formRef" :schema="schema" :state="state" @submit="onSubmitThrottle">
+            <UForm ref="formRef" :schema="schema" :state="state" class="space-y-2" @submit="onSubmitThrottle">
                 <UFormField class="flex-1" name="status" :label="$t('common.status')">
                     <ClientOnly>
                         <USelectMenu
@@ -169,6 +172,8 @@ async function closeModal(): Promise<void> {
                         :placeholder="$t('common.message')"
                     />
                 </UFormField>
+
+                <USwitch v-model="state.notifyUser" :label="$t('components.jobs.groups.details.notify_user')" />
             </UForm>
         </template>
 

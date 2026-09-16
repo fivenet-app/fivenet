@@ -7,6 +7,8 @@ const props = withDefaults(
         description?: string;
         cancel?: () => Promise<unknown> | unknown;
         confirm: () => Promise<unknown> | unknown;
+        notifyUser?: boolean;
+        onNotifyUserUpdate?: (value: boolean) => void;
         icon?: string;
         color?: ButtonProps['color'];
         iconClass?: string;
@@ -15,6 +17,8 @@ const props = withDefaults(
         title: undefined,
         description: undefined,
         cancel: undefined,
+        notifyUser: undefined,
+        onNotifyUserUpdate: undefined,
         icon: 'i-mdi-warning-circle',
         color: 'error',
         iconClass: 'text-red-500 dark:text-red-400',
@@ -24,6 +28,17 @@ const props = withDefaults(
 const emit = defineEmits<{
     (e: 'close', v: boolean): void;
 }>();
+
+const notifyUser = ref(props.notifyUser);
+
+watch(
+    () => props.notifyUser,
+    (value) => (notifyUser.value = value),
+);
+
+watch(notifyUser, (value) => {
+    if (value !== undefined) props.onNotifyUserUpdate?.(value);
+});
 
 async function handleConfirm(): Promise<void> {
     await props.confirm();
@@ -42,6 +57,10 @@ async function handleCancel(): Promise<void> {
         :description="props.description ?? $t('components.partials.confirm_dialog.description')"
         @update:model-value="props.cancel && props.cancel()"
     >
+        <template v-if="notifyUser !== undefined" #body>
+            <USwitch v-model="notifyUser" :label="$t('components.jobs.groups.details.notify_user')" />
+        </template>
+
         <template #footer>
             <UButton :color="props.color" :label="$t('common.confirm')" @click="handleConfirm" />
             <UButton color="neutral" :label="$t('common.cancel')" @click="handleCancel" />

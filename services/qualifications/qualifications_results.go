@@ -169,6 +169,7 @@ func (s *Server) CreateOrUpdateQualificationResult(
 		nil,
 		userInfo,
 		req.GetResult().GetUserId(),
+		false,
 	)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
@@ -200,6 +201,7 @@ func (s *Server) createOrUpdateQualificationResult(
 		nil,
 		userInfo,
 		userId,
+		false,
 	)
 	if err != nil {
 		return 0, err
@@ -211,6 +213,7 @@ func (s *Server) createOrUpdateQualificationResult(
 		[]qualifications.ResultStatus{qualifications.ResultStatus_RESULT_STATUS_SUCCESSFUL},
 		userInfo,
 		userId,
+		false,
 	)
 	if err != nil {
 		return 0, err
@@ -244,9 +247,12 @@ func (s *Server) createOrUpdateQualificationResult(
 		}
 		resultId = lastId
 	} else {
-		result, err := s.getQualificationResult(ctx, quali.GetId(), resultId, nil, userInfo, userId)
+		result, err := s.getQualificationResult(ctx, quali.GetId(), resultId, nil, userInfo, userId, false)
 		if err != nil {
 			return 0, err
+		}
+		if result == nil {
+			return 0, qrm.ErrNoRows
 		}
 
 		userId = result.GetUserId()
@@ -266,29 +272,29 @@ func (s *Server) createOrUpdateQualificationResult(
 
 	if quali.GetExamMode() > qualificationsexam.QualificationExamMode_QUALIFICATION_EXAM_MODE_DISABLED &&
 		grading != nil {
+		examUser, err := s.store.GetExamUser(ctx, quali.GetId(), userId)
+		if err != nil {
+			return 0, err
+		}
 		if err := s.store.UpdateExamResponseGrading(
 			ctx,
 			tx,
-			quali.GetId(),
-			userId,
+			examUser.GetAttemptId(),
 			grading,
 		); err != nil {
 			return 0, err
 		}
 	}
 
-	if quali.GetLabelSyncEnabled() {
-		// Add/Remove label based on result status
-		if err := s.handleColleagueLabelSync(
-			ctx,
-			tx,
-			userInfo,
-			quali,
-			userId,
-			status == qualifications.ResultStatus_RESULT_STATUS_SUCCESSFUL,
-		); err != nil {
-			return 0, err
-		}
+	if err := s.syncQualificationResultLabel(
+		ctx,
+		tx,
+		userInfo,
+		quali,
+		userId,
+		status == qualifications.ResultStatus_RESULT_STATUS_SUCCESSFUL,
+	); err != nil {
+		return 0, err
 	}
 
 	// If the result is successful, complete the request status
@@ -362,6 +368,7 @@ func (s *Server) getQualificationResult(
 	status []qualifications.ResultStatus,
 	userInfo *userinfo.UserInfo,
 	userId int32,
+	includeDeleted bool,
 ) (*qualifications.QualificationResult, error) {
 	result, err := s.store.GetQualificationResult(
 		ctx,
@@ -370,6 +377,7 @@ func (s *Server) getQualificationResult(
 		status,
 		userInfo,
 		userId,
+		includeDeleted,
 	)
 	if err != nil {
 		return nil, err
@@ -415,7 +423,7 @@ func (s *Server) DeleteQualificationResult(
 ) (*pbqualifications.DeleteQualificationResultResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
-	result, err := s.getQualificationResult(ctx, 0, req.GetResultId(), nil, userInfo, 0)
+	result, err := s.getQualificationResult(ctx, 0, req.GetResultId(), nil, userInfo, 0, userInfo.GetJobAdmin())
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 	}
@@ -453,30 +461,35 @@ func (s *Server) DeleteQualificationResult(
 	}
 	// Defer a rollback in case anything fails
 	defer tx.Rollback()
+	if result.GetDeletedAt() != nil && userInfo.GetJobAdmin() {
+		if err := s.store.RestoreQualificationResult(
+			ctx,
+			tx,
+			result.GetId(),
+			result.GetQualificationId(),
+		); err != nil {
+			return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
+		}
+		if result.GetStatus() == qualifications.ResultStatus_RESULT_STATUS_SUCCESSFUL {
+			if err := s.syncQualificationResultLabel(ctx, tx, userInfo, quali, result.GetUserId(), true); err != nil {
+				return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
+			}
+		}
+		if err := tx.Commit(); err != nil {
+			return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
+		}
 
+		grpc_audit.SetAction(ctx, audit.EventAction_EVENT_ACTION_RESTORED)
+		return &pbqualifications.DeleteQualificationResultResponse{}, nil
+	}
 	if err := s.store.DeleteQualificationResult(ctx, tx, result.GetId()); err != nil {
 		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 	}
+	// Keep the exam attempt and its responses until their regular housekeeper cleanup.
+	// This lets a soft-deleted result be restored with its original exam data intact.
 
-	if err := s.store.DeleteExamUser(
-		ctx,
-		tx,
-		result.GetQualificationId(),
-		result.GetUserId(),
-	); err != nil {
-		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
-	}
-
-	if quali.GetLabelSyncEnabled() {
-		// Remove label as we are deleting the result
-		if err := s.handleColleagueLabelSync(
-			ctx,
-			tx,
-			userInfo,
-			quali,
-			result.GetUserId(),
-			false,
-		); err != nil {
+	if result.GetStatus() == qualifications.ResultStatus_RESULT_STATUS_SUCCESSFUL {
+		if err := s.syncQualificationResultLabel(ctx, tx, userInfo, quali, result.GetUserId(), false); err != nil {
 			return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 		}
 	}
@@ -526,6 +539,23 @@ func (s *Server) DeleteQualificationResult(
 	grpc_audit.SetAction(ctx, audit.EventAction_EVENT_ACTION_DELETED)
 
 	return &pbqualifications.DeleteQualificationResultResponse{}, nil
+}
+
+// syncQualificationResultLabel keeps the externally visible label in step with
+// the result success map, which store mutations maintain atomically.
+func (s *Server) syncQualificationResultLabel(
+	ctx context.Context,
+	tx qrm.DB,
+	userInfo *userinfo.UserInfo,
+	quali *qualifications.Qualification,
+	userId int32,
+	hasSuccessfulResult bool,
+) error {
+	if !quali.GetLabelSyncEnabled() {
+		return nil
+	}
+
+	return s.handleColleagueLabelSync(ctx, tx, userInfo, quali, userId, hasSuccessfulResult)
 }
 
 func (s *Server) handleColleagueLabelSync(

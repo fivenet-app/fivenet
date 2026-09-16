@@ -77,7 +77,6 @@ const query = reactive<Schema>({
     page: 1,
 });
 const notifyUser = ref(true);
-
 const { data, status, refresh, error } = useAuthedLazyAsyncData(
     'userState',
     () =>
@@ -120,11 +119,14 @@ async function listQualificationResults(
     }
 }
 
-async function deleteQualificationResult(resultId: number): Promise<DeleteQualificationResultResponse> {
+async function deleteQualificationResult(
+    resultId: number,
+    skipNotification: boolean,
+): Promise<DeleteQualificationResultResponse> {
     try {
         const call = qualificationsQualificationsClient.deleteQualificationResult({
             resultId,
-            skipNotification: !notifyUser.value,
+            skipNotification,
         });
         const { response } = await call;
 
@@ -145,6 +147,7 @@ const columns = computed(
                 cell: ({ row }) =>
                     h('div', [
                         row.original.status === ResultStatus.PENDING &&
+                            !row.original.deletedAt &&
                             h(UTooltip, { text: t('common.grade') }, () =>
                                 h(UButton, {
                                     variant: 'link',
@@ -153,6 +156,7 @@ const columns = computed(
                                     onClick: () => {
                                         examViewResultModal.open({
                                             qualificationId: row.original.qualificationId,
+                                            qualification: props.qualification,
                                             userId: row.original.userId,
                                             resultId: row.original.id,
                                             examMode: props.examMode,
@@ -170,6 +174,7 @@ const columns = computed(
                                     onClick: () => {
                                         examViewResultModal.open({
                                             qualificationId: row.original.qualificationId,
+                                            qualification: props.qualification,
                                             userId: row.original.userId,
                                             resultId: row.original.id,
                                             examMode: props.examMode,
@@ -186,15 +191,25 @@ const columns = computed(
                             undefined,
                             props.qualification?.creatorJob,
                         ) &&
-                            h(UTooltip, { text: t('common.delete') }, () =>
+                            h(UTooltip, { text: t(row.original.deletedAt ? 'common.restore' : 'common.delete') }, () =>
                                 h(UButton, {
                                     class: 'flex-initial',
                                     variant: 'link',
-                                    icon: 'i-mdi-delete',
-                                    color: 'error',
+                                    icon: row.original.deletedAt ? 'i-mdi-restore' : 'i-mdi-delete',
+                                    color: row.original.deletedAt ? 'success' : 'error',
                                     onClick: () => {
                                         confirmModal.open({
-                                            confirm: async () => deleteQualificationResult(row.original.id),
+                                            color: row.original.deletedAt ? 'success' : 'error',
+                                            icon: row.original.deletedAt ? 'i-mdi-restore' : 'i-mdi-warning-circle',
+                                            notifyUser: row.original.deletedAt ? undefined : notifyUser.value,
+                                            onNotifyUserUpdate: row.original.deletedAt
+                                                ? undefined
+                                                : (value) => (notifyUser.value = value),
+                                            confirm: async () =>
+                                                deleteQualificationResult(
+                                                    row.original.id,
+                                                    row.original.deletedAt !== undefined || !notifyUser.value,
+                                                ),
                                         });
                                     },
                                 }),
@@ -282,9 +297,6 @@ const confirmModal = overlay.create(ConfirmModal);
         />
 
         <template v-else>
-            <div class="mb-3 flex justify-end">
-                <USwitch v-model="notifyUser" :label="$t('components.jobs.groups.details.notify_user')" />
-            </div>
             <UTable
                 v-model:sorting="query.sorting.columns"
                 :columns="columns"

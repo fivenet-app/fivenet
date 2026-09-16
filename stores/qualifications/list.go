@@ -176,6 +176,7 @@ func (s *Store) GetQualification(
 		nil,
 		userInfo,
 		userInfo.GetUserId(),
+		false,
 	)
 	if err != nil {
 		return nil, err

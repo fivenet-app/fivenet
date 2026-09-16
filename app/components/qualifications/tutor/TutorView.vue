@@ -19,6 +19,7 @@ const overlay = useOverlay();
 const resultTutorModal = overlay.create(ResultTutorModal, {
     props: {
         qualificationId: props.qualification.id,
+        qualification: props.qualification,
         onRefresh: undefined,
     },
 });
@@ -101,6 +102,7 @@ const results = ref<InstanceType<typeof ResultList> | null>(null);
                             @click="
                                 resultTutorModal.open({
                                     qualificationId: qualification.id,
+                                    qualification,
                                     onRefresh: () => results?.refresh(),
                                 })
                             "

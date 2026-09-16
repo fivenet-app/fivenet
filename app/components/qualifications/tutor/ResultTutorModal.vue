@@ -1,8 +1,10 @@
 <script lang="ts" setup>
 import ResultTutorForm from './ResultTutorForm.vue';
+import type { QualificationShort } from '~~/gen/ts/resources/qualifications/qualifications';
 
 defineProps<{
     qualificationId: number;
+    qualification?: QualificationShort;
     userId?: number;
     resultId?: number;
 }>();
@@ -16,6 +18,7 @@ defineEmits<{
 <template>
     <ResultTutorForm
         :qualification-id="qualificationId"
+        :qualification="qualification"
         :user-id="userId"
         :result-id="resultId"
         @refresh="$emit('refresh')"

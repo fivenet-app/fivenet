@@ -1252,10 +1252,12 @@ func (b0 ListQualificationRequestsResponse_builder) Build() *ListQualificationRe
 }
 
 type CreateOrUpdateQualificationRequestRequest struct {
-	state         protoimpl.MessageState               `protogen:"hybrid.v1"`
-	Request       *qualifications.QualificationRequest `protobuf:"bytes,1,opt,name=request,proto3" json:"request,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
+	state   protoimpl.MessageState               `protogen:"hybrid.v1"`
+	Request *qualifications.QualificationRequest `protobuf:"bytes,1,opt,name=request,proto3" json:"request,omitempty"`
+	// Suppresses the inbox notification normally sent when a tutor updates the request status.
+	SkipNotification bool `protobuf:"varint,2,opt,name=skip_notification,json=skipNotification,proto3" json:"skip_notification,omitempty"`
+	unknownFields    protoimpl.UnknownFields
+	sizeCache        protoimpl.SizeCache
 }
 
 func (x *CreateOrUpdateQualificationRequestRequest) Reset() {
@@ -1290,8 +1292,19 @@ func (x *CreateOrUpdateQualificationRequestRequest) GetRequest() *qualifications
 	return nil
 }
 
+func (x *CreateOrUpdateQualificationRequestRequest) GetSkipNotification() bool {
+	if x != nil {
+		return x.SkipNotification
+	}
+	return false
+}
+
 func (x *CreateOrUpdateQualificationRequestRequest) SetRequest(v *qualifications.QualificationRequest) {
 	x.Request = v
+}
+
+func (x *CreateOrUpdateQualificationRequestRequest) SetSkipNotification(v bool) {
+	x.SkipNotification = v
 }
 
 func (x *CreateOrUpdateQualificationRequestRequest) HasRequest() bool {
@@ -1309,6 +1322,8 @@ type CreateOrUpdateQualificationRequestRequest_builder struct {
 	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
 
 	Request *qualifications.QualificationRequest
+	// Suppresses the inbox notification normally sent when a tutor updates the request status.
+	SkipNotification bool
 }
 
 func (b0 CreateOrUpdateQualificationRequestRequest_builder) Build() *CreateOrUpdateQualificationRequestRequest {
@@ -1316,6 +1331,7 @@ func (b0 CreateOrUpdateQualificationRequestRequest_builder) Build() *CreateOrUpd
 	b, x := &b0, m0
 	_, _ = b, x
 	x.Request = b.Request
+	x.SkipNotification = b.SkipNotification
 	return m0
 }
 
@@ -2127,9 +2143,10 @@ const file_services_qualifications_qualifications_proto_rawDesc = "" +
 	"\n" +
 	"pagination\x18\x01 \x01(\v2-.resources.common.database.PaginationResponseR\n" +
 	"pagination\x12P\n" +
-	"\brequests\x18\x02 \x03(\v2..resources.qualifications.QualificationRequestB\x04\xc8\xf3\x18\x01R\brequests\"u\n" +
+	"\brequests\x18\x02 \x03(\v2..resources.qualifications.QualificationRequestB\x04\xc8\xf3\x18\x01R\brequests\"\xa2\x01\n" +
 	")CreateOrUpdateQualificationRequestRequest\x12H\n" +
-	"\arequest\x18\x01 \x01(\v2..resources.qualifications.QualificationRequestR\arequest\"v\n" +
+	"\arequest\x18\x01 \x01(\v2..resources.qualifications.QualificationRequestR\arequest\x12+\n" +
+	"\x11skip_notification\x18\x02 \x01(\bR\x10skipNotification\"v\n" +
 	"*CreateOrUpdateQualificationRequestResponse\x12H\n" +
 	"\arequest\x18\x01 \x01(\v2..resources.qualifications.QualificationRequestR\arequest\"\x90\x01\n" +
 	"\x1dDeleteQualificationReqRequest\x12)\n" +

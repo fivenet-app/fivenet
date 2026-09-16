@@ -1,8 +1,17 @@
 <script lang="ts" setup>
 import type { FormSubmitEvent } from '@nuxt/ui';
-import { differenceInMinutes, isPast } from 'date-fns';
+import { isPast } from 'date-fns';
 import { z } from 'zod';
+import {
+    areExamChoicesAllowed,
+    areExamChoicesUnique,
+    examTextLength,
+    isAnsweredExamSingleChoice,
+    isExamChoiceLimitExceeded,
+    isValidExamResponseKind,
+} from '~/utils/qualificationExam';
 import ScrollToTop from '~/components/partials/ScrollToTop.vue';
+import { authKeys } from '~/composables/useAuth';
 import { getQualificationsExamClient } from '~~/gen/ts/clients';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 import type { ExamQuestions, ExamResponse, ExamResponses, ExamUser } from '~~/gen/ts/resources/qualifications/exam/exam';
@@ -21,49 +30,167 @@ const props = defineProps<{
 
 const emits = defineEmits<{
     (e: 'submit', response: SubmitExamResponse): void;
+    (e: 'cancel'): void;
+    (e: 'expired'): void;
 }>();
 
 const notifications = useNotificationsStore();
 
+const { accountId, activeChar } = useAuth();
+
+const formatDuration = useDurationFormatter();
+
 const qualificationsExamClient = await getQualificationsExamClient();
 
-const schema = z.object({
-    responses: z.custom<ExamResponse>().array().max(100).default([]),
-});
+const schema = z
+    .object({
+        responses: z.custom<ExamResponse>().array().max(100).default([]),
+    })
+    .superRefine((values, ctx) => {
+        values.responses.forEach((examResponse, index) => {
+            const question = props.exam.questions.find((item) => item.id === examResponse.questionId);
+            const data = question?.data?.data;
+            const response = examResponse.response?.response;
+            if (!data || !response) {
+                ctx.addIssue({
+                    code: 'custom',
+                    path: ['responses', index],
+                    message: 'zod.custom.qualification_exam.invalid_response',
+                });
+                return;
+            }
+
+            if (!isValidExamResponseKind(data.oneofKind, response.oneofKind)) {
+                ctx.addIssue({
+                    code: 'custom',
+                    path: ['responses', index],
+                    message: 'zod.custom.qualification_exam.invalid_response',
+                });
+                return;
+            }
+
+            if (data.oneofKind === 'freeText' && response.oneofKind === 'freeText') {
+                const length = examTextLength(response.freeText.text);
+                if (data.freeText.minLength > 0 && length < data.freeText.minLength) {
+                    ctx.addIssue({
+                        code: 'custom',
+                        path: ['responses', index],
+                        message: 'zod.custom.qualification_exam.answer_too_short',
+                    });
+                }
+                if (data.freeText.maxLength > 0 && length > data.freeText.maxLength) {
+                    ctx.addIssue({
+                        code: 'custom',
+                        path: ['responses', index],
+                        message: 'zod.custom.qualification_exam.answer_too_long',
+                    });
+                }
+            }
+
+            if (data.oneofKind === 'singleChoice' && response.oneofKind === 'singleChoice') {
+                if (!areExamChoicesAllowed([response.singleChoice.choice], data.singleChoice.choices)) {
+                    ctx.addIssue({
+                        code: 'custom',
+                        path: ['responses', index],
+                        message: 'zod.custom.qualification_exam.select_answer',
+                    });
+                }
+            }
+
+            if (data.oneofKind === 'multipleChoice' && response.oneofKind === 'multipleChoice') {
+                const choices = response.multipleChoice.choices;
+                if (!areExamChoicesUnique(choices) || !areExamChoicesAllowed(choices, data.multipleChoice.choices)) {
+                    ctx.addIssue({
+                        code: 'custom',
+                        path: ['responses', index],
+                        message: 'zod.custom.qualification_exam.select_valid_answers',
+                    });
+                }
+                if (isExamChoiceLimitExceeded(choices, data.multipleChoice.limit)) {
+                    ctx.addIssue({
+                        code: 'custom',
+                        path: ['responses', index],
+                        message: 'zod.custom.qualification_exam.too_many_answers',
+                    });
+                }
+            }
+        });
+    });
 
 type Schema = z.output<typeof schema>;
 
 const disabled = ref<boolean>(false);
 
 const endsAtTime = toDate(props.examUser.endsAt).getTime();
+const startsAtTime = toDate(props.examUser.startedAt).getTime();
+const timeLowAtTime = endsAtTime - (endsAtTime - startsAtTime) * 0.15;
 
-const state = useState<Schema>('qualifications-exam-responses', () => ({
-    responses: props.examResponses?.responses ?? [],
-}));
+const state = useState<Schema>(
+    `qualifications-exam-responses-${authKeys.character(accountId.value, activeChar.value?.userId)}-${props.qualificationId}-${toDate(props.examUser.startedAt).getTime()}`,
+    () => ({
+        responses: props.examResponses?.responses ?? [],
+    }),
+);
+
+let partialSubmitInFlight: Promise<SubmitExamResponse> | undefined;
+
+function partialResponses(responses: ExamResponse[]): ExamResponse[] {
+    return responses.filter((examResponse) => {
+        const question = props.exam.questions.find((item) => item.id === examResponse.questionId);
+        const data = question?.data?.data;
+        const response = examResponse.response?.response;
+
+        // State is deliberately initialized for every question so controls can
+        // bind with v-model. Do not serialize an untouched single-choice
+        // placeholder as an exam answer, though: it is neither a response nor
+        // valid input for the server to persist.
+        if (data?.oneofKind === 'singleChoice' && response?.oneofKind === 'singleChoice') {
+            return isAnsweredExamSingleChoice(response.singleChoice.choice, data.singleChoice.choices);
+        }
+
+        return true;
+    });
+}
 
 async function submitExam(values: Schema, partial: boolean = false): Promise<SubmitExamResponse> {
-    try {
-        const call = qualificationsExamClient.submitExam({
-            qualificationId: props.qualificationId,
-            responses: {
+    if (partial && partialSubmitInFlight) {
+        await partialSubmitInFlight.catch(() => undefined);
+    }
+
+    const submit = (async () => {
+        try {
+            const call = qualificationsExamClient.submitExam({
                 qualificationId: props.qualificationId,
-                userId: 0,
-                responses: values.responses,
-            },
-            partial: partial,
-        });
-        const { response } = await call;
+                responses: {
+                    qualificationId: props.qualificationId,
+                    userId: 0,
+                    attemptId: '',
+                    responses: partial ? partialResponses(values.responses) : values.responses,
+                },
+                partial: partial,
+            });
+            const { response } = await call;
 
-        if (partial) return response;
+            if (partial) return response;
 
-        state.value.responses = [];
+            state.value.responses = [];
 
-        emits('submit', response);
+            emits('submit', response);
 
-        return response;
-    } catch (e) {
-        handleGRPCError(e as RpcError);
-        throw e;
+            return response;
+        } catch (e) {
+            handleGRPCError(e as RpcError);
+            throw e;
+        }
+    })();
+
+    if (!partial) return submit;
+
+    partialSubmitInFlight = submit;
+    try {
+        return await submit;
+    } finally {
+        if (partialSubmitInFlight === submit) partialSubmitInFlight = undefined;
     }
 }
 
@@ -74,6 +201,20 @@ onBeforeMount(() => {
 
         switch (q.data?.data.oneofKind ?? 'separator') {
             case 'separator':
+                state.value.responses.push({
+                    questionId: q.id,
+                    userId: 0,
+                    question: q,
+                    response: {
+                        response: {
+                            oneofKind: 'separator',
+                            separator: {},
+                        },
+                    },
+                });
+                break;
+
+            case 'image':
                 state.value.responses.push({
                     questionId: q.id,
                     userId: 0,
@@ -160,19 +301,30 @@ const { pause: pauseAutoSave } = useIntervalFn(() => submitExam(state.value, tru
 if (!props.responses) {
     let timeLowNotificationSent = false;
     const { pause } = useIntervalFn(async () => {
-        const minutesLeft = differenceInMinutes(endsAtTime, new Date());
         if (isPast(endsAtTime)) {
             pauseAutoSave();
             pause();
 
-            await submitExam(state.value, false);
+            let finalSaveSucceeded = false;
+            try {
+                // The server accepts partial submissions during the grace period.
+                await submitExam(state.value, true);
+                finalSaveSucceeded = true;
+            } catch {
+                // The RPC error has already been surfaced by submitExam.
+            }
 
-            notifications.add({
-                title: { key: 'notifications.qualifications.times_up.title', parameters: {} },
-                description: { key: 'notifications.qualifications.times_up.content', parameters: {} },
-                type: NotificationType.SUCCESS,
-            });
-        } else if (!timeLowNotificationSent && minutesLeft <= 4) {
+            disabled.value = true;
+            emits('expired');
+
+            if (finalSaveSucceeded) {
+                notifications.add({
+                    title: { key: 'notifications.qualifications.times_up.title', parameters: {} },
+                    description: { key: 'notifications.qualifications.times_up.content', parameters: {} },
+                    type: NotificationType.INFO,
+                });
+            }
+        } else if (!timeLowNotificationSent && Date.now() >= timeLowAtTime) {
             notifications.add({
                 title: { key: 'notifications.qualifications.time_low.title', parameters: {} },
                 description: { key: 'notifications.qualifications.time_low.content', parameters: {} },
@@ -224,16 +376,24 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
         <template #header>
             <UDashboardNavbar :title="$t('pages.qualifications.id.exam.title')">
                 <template #right>
-                    <UButton
-                        class="w-full"
-                        type="submit"
-                        icon="i-mdi-content-save"
-                        block
-                        :disabled="!canSubmit"
-                        :loading="!canSubmit"
-                        :label="$t('common.submit')"
-                        @click="formRef?.submit()"
-                    />
+                    <UFieldGroup>
+                        <UButton
+                            color="error"
+                            variant="outline"
+                            :disabled="!canSubmit"
+                            :label="$t('common.cancel')"
+                            @click="$emit('cancel')"
+                        />
+
+                        <UButton
+                            type="submit"
+                            icon="i-mdi-content-save"
+                            :disabled="!canSubmit"
+                            :loading="!canSubmit"
+                            :label="$t('common.submit')"
+                            @click="formRef?.submit()"
+                        />
+                    </UFieldGroup>
                 </template>
             </UDashboardNavbar>
 
@@ -293,7 +453,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                 v-if="qualification?.examSettings?.time"
                                 class="inline-flex gap-1"
                                 icon="i-mdi-clock"
-                                :label="`${$t('common.duration')}: ${fromDuration(qualification.examSettings.time)}s`"
+                                :label="`${$t('common.duration')}: ${formatDuration(qualification.examSettings.time)}`"
                             />
                             <UBadge
                                 class="inline-flex gap-1"

@@ -64,6 +64,7 @@ func TestStoreGetQualificationResult(t *testing.T) {
 		nil,
 		&userinfo.UserInfo{UserId: 7, Job: "police"},
 		7,
+		false,
 	)
 	require.NoError(t, err)
 	require.NotNil(t, result)

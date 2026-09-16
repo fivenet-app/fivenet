@@ -19,6 +19,7 @@ type fivenetQualificationsExamResponsesTable struct {
 	// Columns
 	QualificationID mysql.ColumnInteger
 	UserID          mysql.ColumnInteger
+	AttemptID       mysql.ColumnString
 	Responses       mysql.ColumnString
 	Grading         mysql.ColumnString
 
@@ -64,10 +65,11 @@ func newFivenetQualificationsExamResponsesTableImpl(schemaName, tableName, alias
 	var (
 		QualificationIDColumn = mysql.IntegerColumn("qualification_id")
 		UserIDColumn          = mysql.IntegerColumn("user_id")
+		AttemptIDColumn       = mysql.StringColumn("attempt_id")
 		ResponsesColumn       = mysql.StringColumn("responses")
 		GradingColumn         = mysql.StringColumn("grading")
-		allColumns            = mysql.ColumnList{QualificationIDColumn, UserIDColumn, ResponsesColumn, GradingColumn}
-		mutableColumns        = mysql.ColumnList{ResponsesColumn, GradingColumn}
+		allColumns            = mysql.ColumnList{QualificationIDColumn, UserIDColumn, AttemptIDColumn, ResponsesColumn, GradingColumn}
+		mutableColumns        = mysql.ColumnList{AttemptIDColumn, ResponsesColumn, GradingColumn}
 		defaultColumns        = mysql.ColumnList{}
 	)
 
@@ -77,6 +79,7 @@ func newFivenetQualificationsExamResponsesTableImpl(schemaName, tableName, alias
 		//Columns
 		QualificationID: QualificationIDColumn,
 		UserID:          UserIDColumn,
+		AttemptID:       AttemptIDColumn,
 		Responses:       ResponsesColumn,
 		Grading:         GradingColumn,
 

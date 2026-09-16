@@ -83,7 +83,6 @@ const query = reactive<Schema>({
     page: 1,
 });
 const notifyUser = ref(true);
-
 const { data, status, refresh, error } = useAuthedLazyAsyncData(
     'userState',
     `qualifications-requests:${query.page}-${JSON.stringify(query)}-${props.qualification.id}-${JSON.stringify(props.searchQuery)}`,
@@ -195,6 +194,7 @@ const columns = computed(
                                             : resultTutorModal
                                         ).open({
                                             qualificationId: row.original.qualificationId,
+                                            qualification: props.qualification,
                                             examMode: props.examMode,
                                             userId: row.original.userId,
                                             onRefresh: onRefresh,
@@ -216,6 +216,8 @@ const columns = computed(
                                     color: 'error',
                                     onClick: () => {
                                         confirmModal.open({
+                                            notifyUser: notifyUser.value,
+                                            onNotifyUserUpdate: (value) => (notifyUser.value = value),
                                             confirm: async () =>
                                                 deleteQualificationRequest(row.original.qualificationId, row.original.userId),
                                         });
@@ -308,9 +310,6 @@ const examViewResultModal = overlay.create(ExamViewResultModal);
         />
 
         <template v-else>
-            <div class="mb-3 flex justify-end">
-                <USwitch v-model="notifyUser" :label="$t('components.jobs.groups.details.notify_user')" />
-            </div>
             <UTable
                 v-model:sorting="query.sorting.columns"
                 :columns="columns"

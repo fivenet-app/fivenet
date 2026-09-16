@@ -339,6 +339,21 @@ func (s *Server) UpdateQualification(
 		}
 	}
 
+	effectiveExam, err := s.effectiveExamForAutoGrading(
+		ctx,
+		req.GetQualification().GetId(),
+		req.GetQualification().GetExam(),
+	)
+	if err != nil {
+		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
+	}
+	if err := validateExamAutoGrading(
+		effectiveExam,
+		req.GetQualification().GetExamSettings(),
+	); err != nil {
+		return nil, err
+	}
+
 	// A qualification can only be switched to published once
 	if !oldQuali.GetDraft() && oldQuali.GetDraft() != req.GetQualification().GetDraft() {
 		// Allow a super user to change the draft state
@@ -432,6 +447,18 @@ func (s *Server) UpdateQualification(
 	return &pbqualifications.UpdateQualificationResponse{
 		QualificationId: req.GetQualification().GetId(),
 	}, nil
+}
+
+func (s *Server) effectiveExamForAutoGrading(
+	ctx context.Context,
+	qualificationId int64,
+	requestExam *qualificationsexam.ExamQuestions,
+) (*qualificationsexam.ExamQuestions, error) {
+	if requestExam != nil {
+		return requestExam, nil
+	}
+
+	return s.store.GetExamQuestions(ctx, s.db, qualificationId, true)
 }
 
 func (s *Server) DeleteQualification(

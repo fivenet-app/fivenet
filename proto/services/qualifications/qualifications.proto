@@ -102,6 +102,8 @@ message ListQualificationRequestsResponse {
 
 message CreateOrUpdateQualificationRequestRequest {
   resources.qualifications.QualificationRequest request = 1 [(buf.validate.field).required = true];
+  // Suppresses the inbox notification normally sent when a tutor updates the request status.
+  bool skip_notification = 2;
 }
 
 message CreateOrUpdateQualificationRequestResponse {

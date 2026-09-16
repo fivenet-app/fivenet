@@ -36,6 +36,33 @@ var (
 		},
 		&common.I18NItem{Key: "errors.qualifications.QualificationsService.ErrExamDisabled.title"},
 	)
+	ErrExamAutoGradingFreeText = common.NewI18nErr(
+		codes.InvalidArgument,
+		&common.I18NItem{
+			Key: "errors.qualifications.QualificationsService.ErrExamAutoGradingFreeText.content",
+		},
+		&common.I18NItem{
+			Key: "errors.qualifications.QualificationsService.ErrExamAutoGradingFreeText.title",
+		},
+	)
+	ErrExamAutoGradingInvalid = common.NewI18nErr(
+		codes.InvalidArgument,
+		&common.I18NItem{
+			Key: "errors.qualifications.QualificationsService.ErrExamAutoGradingInvalid.content",
+		},
+		&common.I18NItem{
+			Key: "errors.qualifications.QualificationsService.ErrExamAutoGradingInvalid.title",
+		},
+	)
+	ErrExamAutoGradingAnswerLimit = common.NewI18nErr(
+		codes.InvalidArgument,
+		&common.I18NItem{
+			Key: "errors.qualifications.QualificationsService.ErrExamAutoGradingAnswerLimit.content",
+		},
+		&common.I18NItem{
+			Key: "errors.qualifications.QualificationsService.ErrExamAutoGradingAnswerLimit.title",
+		},
+	)
 	ErrRequirementSelfRef = common.NewI18nErr(
 		codes.InvalidArgument,
 		&common.I18NItem{

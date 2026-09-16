@@ -225,6 +225,12 @@ export interface CreateOrUpdateQualificationRequestRequest {
      * @generated from protobuf field: resources.qualifications.QualificationRequest request = 1
      */
     request?: QualificationRequest;
+    /**
+     * Suppresses the inbox notification normally sent when a tutor updates the request status.
+     *
+     * @generated from protobuf field: bool skip_notification = 2
+     */
+    skipNotification: boolean;
 }
 /**
  * @generated from protobuf message services.qualifications.CreateOrUpdateQualificationRequestResponse
@@ -1188,11 +1194,13 @@ export const ListQualificationRequestsResponse = new ListQualificationRequestsRe
 class CreateOrUpdateQualificationRequestRequest$Type extends MessageType<CreateOrUpdateQualificationRequestRequest> {
     constructor() {
         super("services.qualifications.CreateOrUpdateQualificationRequestRequest", [
-            { no: 1, name: "request", kind: "message", T: () => QualificationRequest, options: { "buf.validate.field": { required: true } } }
+            { no: 1, name: "request", kind: "message", T: () => QualificationRequest, options: { "buf.validate.field": { required: true } } },
+            { no: 2, name: "skip_notification", kind: "scalar", T: 8 /*ScalarType.BOOL*/ }
         ]);
     }
     create(value?: PartialMessage<CreateOrUpdateQualificationRequestRequest>): CreateOrUpdateQualificationRequestRequest {
         const message = globalThis.Object.create((this.messagePrototype!));
+        message.skipNotification = false;
         if (value !== undefined)
             reflectionMergePartial<CreateOrUpdateQualificationRequestRequest>(this, message, value);
         return message;
@@ -1204,6 +1212,9 @@ class CreateOrUpdateQualificationRequestRequest$Type extends MessageType<CreateO
             switch (fieldNo) {
                 case /* resources.qualifications.QualificationRequest request */ 1:
                     message.request = QualificationRequest.internalBinaryRead(reader, reader.uint32(), options, message.request);
+                    break;
+                case /* bool skip_notification */ 2:
+                    message.skipNotification = reader.bool();
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -1220,6 +1231,9 @@ class CreateOrUpdateQualificationRequestRequest$Type extends MessageType<CreateO
         /* resources.qualifications.QualificationRequest request = 1; */
         if (message.request)
             QualificationRequest.internalBinaryWrite(message.request, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
+        /* bool skip_notification = 2; */
+        if (message.skipNotification !== false)
+            writer.tag(2, WireType.Varint).bool(message.skipNotification);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);

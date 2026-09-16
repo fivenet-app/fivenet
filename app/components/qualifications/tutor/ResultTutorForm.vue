@@ -6,7 +6,7 @@ import { useCompletorStore } from '~/stores/completor';
 import { getQualificationsQualificationsClient } from '~~/gen/ts/clients';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 import type { ExamGrading } from '~~/gen/ts/resources/qualifications/exam/exam';
-import { ResultStatus } from '~~/gen/ts/resources/qualifications/qualifications';
+import { type QualificationShort, ResultStatus } from '~~/gen/ts/resources/qualifications/qualifications';
 import type { UserShort } from '~~/gen/ts/resources/users/short/user';
 import type { CreateOrUpdateQualificationResultResponse } from '~~/gen/ts/services/qualifications/qualifications';
 import { resultStatusToBadgeColor } from '../helpers';
@@ -14,18 +14,22 @@ import { resultStatusToBadgeColor } from '../helpers';
 const props = withDefaults(
     defineProps<{
         qualificationId: number;
+        qualification?: QualificationShort;
         userId?: number;
         resultId?: number;
         score?: number;
         viewOnly?: boolean;
         grading?: ExamGrading | undefined;
+        fullscreen?: boolean;
     }>(),
     {
         userId: undefined,
+        qualification: undefined,
         resultId: undefined,
         score: undefined,
         viewOnly: false,
         grading: undefined,
+        fullscreen: true,
     },
 );
 
@@ -35,6 +39,7 @@ const emit = defineEmits<{
 }>();
 
 const { activeChar } = useAuth();
+const { t } = useI18n();
 
 const completorStore = useCompletorStore();
 
@@ -49,6 +54,15 @@ const availableStatus = [
 ];
 
 const selectedUser = ref<undefined | UserShort>(undefined);
+
+const modalTitle = computed(() => {
+    const qualificationTitle = [props.qualification?.abbreviation?.trim(), props.qualification?.title?.trim()]
+        .filter(Boolean)
+        .join(': ');
+    const title = t('components.qualifications.result_modal.title');
+
+    return qualificationTitle ? `${title} - ${qualificationTitle}` : title;
+});
 
 const schema = z.object({
     status: z.enum(ResultStatus),
@@ -142,15 +156,11 @@ async function closeModal(): Promise<void> {
 </script>
 
 <template>
-    <UModal
-        :title="$t('components.qualifications.result_modal.title')"
-        :close="false"
-        :dismissible="!hasUnsavedChanges && canSubmit"
-    >
+    <UModal :title="modalTitle" :close="false" :dismissible="!hasUnsavedChanges && canSubmit" :fullscreen="fullscreen">
         <template #header>
             <div class="flex w-full items-center justify-between">
                 <h3 class="flex-1 text-2xl leading-6 font-semibold">
-                    {{ $t('components.qualifications.result_modal.title') }}
+                    {{ modalTitle }}
                 </h3>
 
                 <UButton color="neutral" variant="ghost" icon="i-mdi-window-close" :disabled="!canSubmit" @click="closeModal" />
@@ -158,7 +168,7 @@ async function closeModal(): Promise<void> {
         </template>
 
         <template #body>
-            <UForm ref="formRef" :schema="schema" :state="state" @submit="onSubmitThrottle">
+            <UForm ref="formRef" :schema="schema" :state="state" class="space-y-2" @submit="onSubmitThrottle">
                 <slot />
 
                 <template v-if="!viewOnly">
@@ -249,7 +259,9 @@ async function closeModal(): Promise<void> {
                         />
                     </UFormField>
 
-                    <USwitch v-model="state.notifyUser" :label="$t('components.jobs.groups.details.notify_user')" />
+                    <UFormField class="flex-1" name="notifyUser">
+                        <USwitch v-model="state.notifyUser" :label="$t('components.jobs.groups.details.notify_user')" />
+                    </UFormField>
                 </template>
             </UForm>
         </template>

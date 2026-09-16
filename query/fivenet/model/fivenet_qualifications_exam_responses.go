@@ -10,6 +10,7 @@ package model
 type FivenetQualificationsExamResponses struct {
 	QualificationID int64   `sql:"primary_key" json:"qualification_id"`
 	UserID          int32   `sql:"primary_key" json:"user_id"`
+	AttemptID       string  `sql:"primary_key" json:"attempt_id"`
 	Responses       *string `json:"responses"`
 	Grading         *string `json:"grading"`
 }

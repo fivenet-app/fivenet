@@ -34,18 +34,22 @@ const modes = ref<{ mode: AutoGradeMode; selected?: boolean }[]>([
 ]);
 
 const { moveUp, moveDown } = useListReorder(toRef(exam.value.questions));
+
+function nextLocalQuestionID(): number {
+    return Math.min(0, ...exam.value.questions.map((question) => question.id)) - 1;
+}
 </script>
 
 <script lang="ts">
 export const examSettingsSchema = z.object({
     time: zodProtoDurationSchema({
         required: true,
-        min: { seconds: 60, nanos: 0 },
-        max: { seconds: 60 * 60 * 12, nanos: 0 },
+        min: { seconds: 5 * 60, nanos: 0 },
+        max: { seconds: 24 * 60 * 60, nanos: 0 },
     }),
     autoGrade: z.coerce.boolean().default(false),
     autoGradeMode: z.enum(AutoGradeMode).default(AutoGradeMode.STRICT),
-    minimumPoints: z.coerce.number().min(0).default(0),
+    minimumPoints: z.coerce.number().min(0).max(10_000).default(0),
 });
 
 export type ExamSettingsSchema = z.output<typeof examSettingsSchema>;
@@ -88,9 +92,9 @@ export type ExamSettingsSchema = z.output<typeof examSettingsSchema>;
                             class="w-full"
                             mode="composite"
                             :units="['hour', 'minute', 'second']"
-                            :min="secondsToDuration(60)"
+                            :min="secondsToDuration(5 * 60)"
                             :step="0.1"
-                            :max="secondsToDuration(60 * 60 * 12)"
+                            :max="secondsToDuration(24 * 60 * 60)"
                         />
                     </UFormField>
 
@@ -167,7 +171,7 @@ export type ExamSettingsSchema = z.output<typeof examSettingsSchema>;
                     >
                         <ExamEditorQuestion
                             v-for="(question, idx) in exam?.questions"
-                            :key="idx"
+                            :key="question.id"
                             v-model="exam.questions[idx]"
                             :qualification-id="props.qualificationId"
                             :question="question"
@@ -184,7 +188,7 @@ export type ExamSettingsSchema = z.output<typeof examSettingsSchema>;
                         icon="i-mdi-plus"
                         @click="
                             exam.questions.push({
-                                id: 0,
+                                id: nextLocalQuestionID(),
                                 qualificationId: props.qualificationId,
                                 title: '',
                                 description: '',

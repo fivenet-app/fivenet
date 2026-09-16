@@ -3,6 +3,7 @@ import type { UForm } from '#components';
 import type { FormSubmitEvent } from '@nuxt/ui';
 import type { JSONContent } from '@tiptap/core';
 import { z } from 'zod';
+import { areExamChoicesUnique } from '~/utils/qualificationExam';
 import AccessManager from '~/components/partials/access/AccessManager.vue';
 import { enumToAccessLevelEnums, normalizeAccessEntryIds, type AccessType } from '~/components/partials/access/helpers';
 import TiptapEditor from '~/components/partials/editor/TiptapEditor.vue';
@@ -52,129 +53,205 @@ const qualificationsQualificationsClient = await getQualificationsQualifications
 
 const { maxAccessEntries, maxContentLength } = useAppConfig();
 
-const schema = z.object({
-    weight: z.coerce.number(),
-    abbreviation: z.coerce.string().min(3).max(20),
-    title: z.coerce.string().min(3).max(255),
-    description: z.union([z.string().min(3).max(512), z.string().length(0).optional()]),
-    content: z.custom<JSONContent | string>().optional(),
-    closed: z.coerce.boolean(),
-    draft: z.coerce.boolean(),
-    public: z.coerce.boolean(),
-    discordSyncEnabled: z.coerce.boolean(),
-    discordSettings: z.object({
-        roleName: z.string().max(64).optional(),
-        roleFormat: z.string().max(64).optional(),
-    }),
-    examMode: z.enum(QualificationExamMode).default(QualificationExamMode.DISABLED),
-    examSettings: examSettingsSchema,
-    exam: z.object({
-        questions: z
-            .object({
-                id: z.coerce.number(),
-                qualificationId: z.coerce.number().default(props.qualificationId),
-                title: z.coerce.string().min(0).max(512),
-                description: z.string().max(1024).optional(),
-                data: z
-                    .object({
-                        data: z.union([
-                            z.object({
-                                oneofKind: z.literal(undefined),
-                            }),
-                            z.object({
-                                oneofKind: z.literal('separator'),
-                                separator: z.custom<ExamQuestionSeparator>().default({}),
-                            }),
-                            z.object({
-                                oneofKind: z.literal('image'),
-                                image: z.object({
-                                    image: z.custom<File>().optional(),
-                                    alt: z.string().max(128).optional(),
+const schema = z
+    .object({
+        weight: z.coerce.number(),
+        abbreviation: z.coerce.string().min(3).max(20),
+        title: z.coerce.string().min(3).max(255),
+        description: z.union([z.string().min(3).max(512), z.string().length(0).optional()]),
+        content: z.custom<JSONContent | string>().optional(),
+        closed: z.coerce.boolean(),
+        draft: z.coerce.boolean(),
+        public: z.coerce.boolean(),
+        discordSyncEnabled: z.coerce.boolean(),
+        discordSettings: z.object({
+            roleName: z.string().max(64).optional(),
+            roleFormat: z.string().max(64).optional(),
+        }),
+        examMode: z.enum(QualificationExamMode).default(QualificationExamMode.DISABLED),
+        examSettings: examSettingsSchema,
+        exam: z.object({
+            questions: z
+                .object({
+                    id: z.coerce.number(),
+                    qualificationId: z.coerce.number().default(props.qualificationId),
+                    title: z.coerce.string().min(0).max(512),
+                    description: z.string().max(1024).optional(),
+                    data: z
+                        .object({
+                            data: z.union([
+                                z.object({
+                                    oneofKind: z.literal(undefined),
                                 }),
-                            }),
-                            z.object({
-                                oneofKind: z.literal('yesno'),
-                                yesno: z.custom<ExamQuestionYesNo>().default({}),
-                            }),
-                            z.object({
-                                oneofKind: z.literal('freeText'),
-                                freeText: z.object({
-                                    minLength: z.coerce.number().nonnegative(),
-                                    maxLength: z.coerce.number().nonnegative(),
+                                z.object({
+                                    oneofKind: z.literal('separator'),
+                                    separator: z.custom<ExamQuestionSeparator>().default({}),
                                 }),
-                            }),
-                            z.object({
-                                oneofKind: z.literal('singleChoice'),
-                                singleChoice: z.object({
-                                    choices: z.coerce.string().max(255).array().max(10).default([]),
+                                z.object({
+                                    oneofKind: z.literal('image'),
+                                    image: z.object({
+                                        image: z.custom<File>().optional(),
+                                        alt: z.string().max(128).optional(),
+                                    }),
                                 }),
-                            }),
-                            z.object({
-                                oneofKind: z.literal('multipleChoice'),
-                                multipleChoice: z.object({
-                                    choices: z.coerce.string().max(255).array().max(10).default([]),
-                                    limit: z.coerce.number().positive().min(0).max(10).default(10).optional(),
+                                z.object({
+                                    oneofKind: z.literal('yesno'),
+                                    yesno: z.custom<ExamQuestionYesNo>().default({}),
                                 }),
-                            }),
-                        ]),
-                    })
-                    .default({ data: { oneofKind: undefined } })
-                    .optional(),
-                answer: z
-                    .object({
-                        answerKey: z.coerce.string().max(1024),
-                        answer: z.union([
-                            z.object({
-                                oneofKind: z.literal(undefined),
-                            }),
-                            z.object({
-                                oneofKind: z.literal('yesno'),
-                                yesno: z.object({
-                                    value: z.coerce.boolean().default(false),
+                                z.object({
+                                    oneofKind: z.literal('freeText'),
+                                    freeText: z.object({
+                                        minLength: z.coerce.number().nonnegative().max(500000),
+                                        maxLength: z.coerce.number().nonnegative().max(500000),
+                                    }),
                                 }),
-                            }),
-                            z.object({
-                                oneofKind: z.literal('freeText'),
-                                freeText: z.object({
-                                    text: z.coerce.string().max(2048).default(''),
+                                z.object({
+                                    oneofKind: z.literal('singleChoice'),
+                                    singleChoice: z.object({
+                                        choices: z.coerce.string().trim().min(1).max(512).array().min(1).max(10).default([]),
+                                    }),
                                 }),
-                            }),
-                            z.object({
-                                oneofKind: z.literal('singleChoice'),
-                                singleChoice: z.object({
-                                    choice: z.coerce.string().max(255).default(''),
+                                z.object({
+                                    oneofKind: z.literal('multipleChoice'),
+                                    multipleChoice: z.object({
+                                        choices: z.coerce.string().trim().min(1).max(512).array().min(1).max(10).default([]),
+                                        limit: z.coerce.number().nonnegative().max(10).default(10).optional(),
+                                    }),
                                 }),
-                            }),
-                            z.object({
-                                oneofKind: z.literal('multipleChoice'),
-                                multipleChoice: z.object({
-                                    choices: z.coerce.string().max(255).array().max(10).default([]),
+                            ]),
+                        })
+                        .default({ data: { oneofKind: undefined } })
+                        .optional(),
+                    answer: z
+                        .object({
+                            answerKey: z.coerce.string().max(1024),
+                            answer: z.union([
+                                z.object({
+                                    oneofKind: z.literal(undefined),
                                 }),
-                            }),
-                        ]),
-                    })
-                    .default({
-                        answerKey: '',
-                        answer: { oneofKind: undefined },
-                    })
-                    .optional(),
-                points: z.coerce.number().min(0).max(99999).optional(),
-                order: z.coerce.number().min(1).max(99999).default(0),
-            })
-            .array()
-            .max(100)
-            .default([]),
-    }),
-    access: z.object({
-        jobs: jobsAccessEntries(t).max(maxAccessEntries).default([]),
-        users: z.custom<UserAccess>().array().default([]),
-        qualifications: z.custom<QualificationAccess>().array().default([]),
-    }),
-    labelSyncEnabled: z.coerce.boolean(),
-    labelSyncFormat: z.string().max(128).optional(),
-    files: z.custom<File>().array().max(5).default([]),
-    requirements: z.custom<QualificationRequirement>().array().max(10).default([]),
-});
+                                z.object({
+                                    oneofKind: z.literal('yesno'),
+                                    yesno: z.object({
+                                        value: z.coerce.boolean().default(false),
+                                    }),
+                                }),
+                                z.object({
+                                    oneofKind: z.literal('freeText'),
+                                    freeText: z.object({
+                                        text: z.coerce.string().max(2048).default(''),
+                                    }),
+                                }),
+                                z.object({
+                                    oneofKind: z.literal('singleChoice'),
+                                    singleChoice: z.object({
+                                        choice: z.coerce.string().max(255).default(''),
+                                    }),
+                                }),
+                                z.object({
+                                    oneofKind: z.literal('multipleChoice'),
+                                    multipleChoice: z.object({
+                                        choices: z.coerce.string().max(255).array().max(10).default([]),
+                                    }),
+                                }),
+                            ]),
+                        })
+                        .default({
+                            answerKey: '',
+                            answer: { oneofKind: undefined },
+                        })
+                        .optional(),
+                    points: z.coerce.number().min(0).max(99999).optional(),
+                    order: z.coerce.number().min(1).max(99999).default(0),
+                })
+                .array()
+                .max(100)
+                .default([]),
+        }),
+        access: z.object({
+            jobs: jobsAccessEntries(t).max(maxAccessEntries).default([]),
+            users: z.custom<UserAccess>().array().default([]),
+            qualifications: z.custom<QualificationAccess>().array().default([]),
+        }),
+        labelSyncEnabled: z.coerce.boolean(),
+        labelSyncFormat: z.string().max(128).optional(),
+        files: z.custom<File>().array().max(5).default([]),
+        requirements: z.custom<QualificationRequirement>().array().max(10).default([]),
+    })
+    .superRefine((value, ctx) => {
+        const questions = value.exam.questions;
+        let autoGradePoints = 0;
+        let hasManualQuestion = false;
+
+        questions.forEach((question, index) => {
+            const data = question.data?.data;
+            if (!data) return;
+            if (data.oneofKind === 'freeText') {
+                if (data.freeText.maxLength > 0 && data.freeText.minLength > data.freeText.maxLength) {
+                    ctx.addIssue({
+                        code: 'custom',
+                        path: ['exam', 'questions', index, 'data', 'data', 'freeText', 'maxLength'],
+                        message: 'zod.custom.qualification_editor.maximum_length_order',
+                    });
+                }
+                hasManualQuestion = true;
+                return;
+            }
+            if (data.oneofKind === 'singleChoice' || data.oneofKind === 'multipleChoice') {
+                const choices = data.oneofKind === 'singleChoice' ? data.singleChoice.choices : data.multipleChoice.choices;
+                if (!areExamChoicesUnique(choices)) {
+                    ctx.addIssue({
+                        code: 'custom',
+                        path: ['exam', 'questions', index, 'data'],
+                        message: 'zod.custom.qualification_editor.choices_unique',
+                    });
+                }
+                if (
+                    data.oneofKind === 'multipleChoice' &&
+                    data.multipleChoice.limit &&
+                    data.multipleChoice.limit > choices.length
+                ) {
+                    ctx.addIssue({
+                        code: 'custom',
+                        path: ['exam', 'questions', index, 'data', 'data', 'multipleChoice', 'limit'],
+                        message: 'zod.custom.qualification_editor.selection_limit',
+                    });
+                }
+                if (
+                    value.examSettings.autoGrade &&
+                    data.oneofKind === 'multipleChoice' &&
+                    (data.multipleChoice.limit ?? 0) > 0 &&
+                    (question.answer?.answer.oneofKind === 'multipleChoice'
+                        ? question.answer.answer.multipleChoice.choices.length
+                        : 0) > data.multipleChoice.limit!
+                ) {
+                    // The candidate limit must be at least the number of configured correct choices.
+                    ctx.addIssue({
+                        code: 'custom',
+                        path: ['exam', 'questions', index, 'answer'],
+                        message: 'zod.custom.qualification_editor.answer_limit',
+                    });
+                }
+            }
+            if (data.oneofKind === 'yesno' || data.oneofKind === 'singleChoice' || data.oneofKind === 'multipleChoice') {
+                autoGradePoints += question.points ?? 0;
+            }
+        });
+
+        if (value.examSettings.autoGrade && hasManualQuestion) {
+            ctx.addIssue({
+                code: 'custom',
+                path: ['examSettings', 'autoGrade'],
+                message: 'zod.custom.qualification_editor.manual_grading_required',
+            });
+        }
+        if (value.examSettings.autoGrade && value.examSettings.minimumPoints > autoGradePoints) {
+            ctx.addIssue({
+                code: 'custom',
+                path: ['examSettings', 'minimumPoints'],
+                message: 'zod.custom.qualification_editor.minimum_points',
+            });
+        }
+    });
 
 type Schema = z.output<typeof schema>;
 
@@ -390,8 +467,11 @@ async function updateQualification(values: Schema): Promise<UpdateQualificationR
                             q.answer.answer.singleChoice.choice = '';
                         }
                     }
-                    q.order = idx + 1; // Ensure order is set correctly
-                    return q;
+                    return {
+                        ...q,
+                        id: q.id < 0 ? 0 : q.id,
+                        order: idx + 1,
+                    };
                 }),
             },
             access: values.access,

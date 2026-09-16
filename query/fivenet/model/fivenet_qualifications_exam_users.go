@@ -14,6 +14,7 @@ import (
 type FivenetQualificationsExamUsers struct {
 	QualificationID int64      `sql:"primary_key" json:"qualification_id"`
 	UserID          int32      `sql:"primary_key" json:"user_id"`
+	AttemptID       string     `json:"attempt_id"`
 	CreatedAt       *time.Time `json:"created_at"`
 	StartedAt       *time.Time `json:"started_at"`
 	EndsAt          *time.Time `json:"ends_at"`

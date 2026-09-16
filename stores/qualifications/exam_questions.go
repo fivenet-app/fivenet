@@ -3,12 +3,14 @@ package qualificationsstore
 import (
 	"context"
 	"database/sql"
-	"slices"
+	"errors"
+	"fmt"
 
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/file"
 	qualificationsexam "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/qualifications/exam"
 	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
 	"github.com/go-jet/jet/v2/mysql"
+	"google.golang.org/protobuf/proto"
 )
 
 func (s *Store) HandleExamQuestionsChanges(
@@ -37,11 +39,18 @@ func (s *Store) HandleExamQuestionsChanges(
 	if err != nil {
 		return nil, err
 	}
+	currentByID := make(map[int64]*qualificationsexam.ExamQuestion, len(current.GetQuestions()))
+	for _, question := range current.GetQuestions() {
+		currentByID[question.GetId()] = question
+	}
 
-	toCreate, toUpdate, toDelete := compareExamQuestions(
+	toCreate, toUpdate, toDelete, err := compareExamQuestions(
 		current.GetQuestions(),
 		questions.GetQuestions(),
 	)
+	if err != nil {
+		return nil, err
+	}
 
 	for _, question := range toCreate {
 		if question.GetData() == nil {
@@ -51,7 +60,7 @@ func (s *Store) HandleExamQuestionsChanges(
 		switch data := question.GetData().GetData().(type) {
 		case *qualificationsexam.ExamQuestionData_Image:
 			if data.Image.GetImage() == nil {
-				continue
+				return nil, errors.New("image question requires an image")
 			}
 			files = append(files, data.Image.GetImage())
 		}
@@ -86,9 +95,16 @@ func (s *Store) HandleExamQuestionsChanges(
 			switch data := question.GetData().GetData().(type) {
 			case *qualificationsexam.ExamQuestionData_Image:
 				if data.Image.GetImage() == nil {
-					continue
+					currentQuestion := currentByID[question.GetId()]
+					currentImage := currentQuestion.GetData().GetImage().GetImage()
+					if currentImage == nil {
+						return nil, errors.New("image question requires an image")
+					}
+					data.Image.SetImage(proto.Clone(currentImage).(*file.File))
 				}
-				files = append(files, data.Image.GetImage())
+				if data.Image.GetImage() != nil {
+					files = append(files, data.Image.GetImage())
+				}
 			}
 		}
 
@@ -144,37 +160,42 @@ func (s *Store) HandleExamQuestionsChanges(
 
 func compareExamQuestions(
 	current, in []*qualificationsexam.ExamQuestion,
-) ([]*qualificationsexam.ExamQuestion, []*qualificationsexam.ExamQuestion, []*qualificationsexam.ExamQuestion) {
+) ([]*qualificationsexam.ExamQuestion, []*qualificationsexam.ExamQuestion, []*qualificationsexam.ExamQuestion, error) {
 	toCreate := []*qualificationsexam.ExamQuestion{}
 	toUpdate := []*qualificationsexam.ExamQuestion{}
 	toDelete := []*qualificationsexam.ExamQuestion{}
-	if len(current) == 0 {
-		return in, toUpdate, toDelete
+	persisted := make(map[int64]*qualificationsexam.ExamQuestion, len(current))
+	for _, question := range current {
+		if question == nil || question.GetId() <= 0 {
+			return nil, nil, nil, errors.New("invalid persisted exam question")
+		}
+		persisted[question.GetId()] = question
 	}
 
-	slices.SortFunc(current, func(a, b *qualificationsexam.ExamQuestion) int {
-		return int(a.GetId() - b.GetId())
-	})
-
-	foundTracker := []int{}
-	for _, cj := range current {
-		idx := slices.IndexFunc(in, func(a *qualificationsexam.ExamQuestion) bool {
-			return cj.GetId() == a.GetId()
-		})
-		if idx == -1 {
-			toDelete = append(toDelete, cj)
+	incoming := make(map[int64]*qualificationsexam.ExamQuestion, len(in))
+	for _, question := range in {
+		if question == nil {
+			return nil, nil, nil, errors.New("invalid exam question")
+		}
+		if question.GetId() <= 0 {
+			toCreate = append(toCreate, question)
 			continue
 		}
-
-		foundTracker = append(foundTracker, idx)
-		toUpdate = append(toUpdate, in[idx])
+		if _, duplicate := incoming[question.GetId()]; duplicate {
+			return nil, nil, nil, fmt.Errorf("duplicate exam question id %d", question.GetId())
+		}
+		if _, exists := persisted[question.GetId()]; !exists {
+			return nil, nil, nil, fmt.Errorf("unknown exam question id %d", question.GetId())
+		}
+		incoming[question.GetId()] = question
+		toUpdate = append(toUpdate, question)
 	}
 
-	for i, eq := range in {
-		if idx := slices.Index(foundTracker, i); idx == -1 {
-			toCreate = append(toCreate, eq)
+	for _, question := range current {
+		if _, exists := incoming[question.GetId()]; !exists {
+			toDelete = append(toDelete, question)
 		}
 	}
 
-	return toCreate, toUpdate, toDelete
+	return toCreate, toUpdate, toDelete, nil
 }
