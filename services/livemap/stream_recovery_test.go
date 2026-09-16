@@ -117,10 +117,8 @@ var (
 func TestStreamRecoversAfterUserConsumerDeletion(t *testing.T) {
 	t.Parallel()
 
-	conn, js, shutdown, err := nats.NewInProcessNATSServer()
-	require.NoError(t, err)
-	defer func() { require.NoError(t, shutdown()) }()
-	defer conn.Close()
+	natsServer := nats.NewServer(t, nats.ServerOptions{InProcess: true})
+	js := natsServer.GetJS()
 
 	ctx, cancel := context.WithCancel(t.Context())
 	defer cancel()

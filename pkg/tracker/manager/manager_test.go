@@ -33,7 +33,7 @@ func newTrackerManagerForTest(t *testing.T) (*Manager, *sql.DB, *tracker.TestTra
 
 	ctx := t.Context()
 	dbServer := servers.NewDBServer(ctx, t, true)
-	natsServer := servers.NewNATSServer(t, true)
+	natsServer := servers.NewNATSServer(t)
 
 	var manager *Manager
 	var trackerStub *tracker.TestTracker

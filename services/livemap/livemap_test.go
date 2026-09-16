@@ -25,7 +25,7 @@ func TestBasicLivemapFlow(t *testing.T) {
 	t.Parallel()
 	ctx := t.Context()
 	dbServer := servers.NewDBServer(ctx, t, true)
-	natsServer := servers.NewNATSServer(t, true)
+	natsServer := servers.NewNATSServer(t)
 
 	clientConn, grpcSrvModule, err := modules.TestGRPCServer(ctx)
 	require.NoError(t, err)

@@ -17,9 +17,7 @@ import (
 func TestDispatchCleanupWatcherOnlyActsOnPurge(t *testing.T) {
 	t.Parallel()
 
-	_, js, shutdown, err := nats.NewInProcessNATSServer()
-	require.NoError(t, err)
-	t.Cleanup(func() { require.NoError(t, shutdown()) })
+	js := nats.NewServer(t, nats.ServerOptions{InProcess: true}).GetJS()
 
 	kv, err := js.CreateOrUpdateKeyValue(t.Context(), jetstream.KeyValueConfig{
 		Bucket:         "test_dispatch_cleanup_watch",

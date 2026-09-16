@@ -536,7 +536,7 @@ func (m *Manager) refreshUserLocations(ctx context.Context, initial bool) error 
 
 	removed, err := m.cleanupUserIDs(ctx, foundUserIds)
 	if err != nil {
-		return err
+		errs = multierr.Append(errs, err)
 	}
 
 	m.logger.Debug(

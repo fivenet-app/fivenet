@@ -144,7 +144,10 @@ func (s *Housekeeper) dispatchCleanupWatcher(ctx context.Context) error {
 	return s.watchDispatchCleanup(ctx, s.dispatches.IdleStore())
 }
 
-func (s *Housekeeper) watchDispatchCleanup(ctx context.Context, idleStore jetstream.KeyValue) error {
+func (s *Housekeeper) watchDispatchCleanup(
+	ctx context.Context,
+	idleStore jetstream.KeyValue,
+) error {
 	watch, err := idleStore.Watch(ctx, "cleanup.*")
 	if err != nil {
 		return err

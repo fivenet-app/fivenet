@@ -9,12 +9,145 @@ import (
 	"testing"
 	"time"
 
+	testnats "github.com/fivenet-app/fivenet/v2026/internal/tests/nats"
 	"github.com/fivenet-app/fivenet/v2026/pkg/utils/protoutils"
 	"github.com/nats-io/nats.go/jetstream"
 	"github.com/stretchr/testify/require"
 	"go.uber.org/zap"
+	"google.golang.org/protobuf/proto"
 	"google.golang.org/protobuf/types/known/wrapperspb"
 )
+
+func TestCacheStartReturnsWhenCanceledBeforeInitialSnapshot(t *testing.T) {
+	t.Parallel()
+	ctx, cancel := context.WithCancel(t.Context())
+	t.Cleanup(cancel)
+
+	natsServer := testnats.NewServer(t, testnats.ServerOptions{InProcess: true})
+	kv, err := natsServer.GetJetStream().CreateOrUpdateKeyValue(ctx, jetstream.KeyValueConfig{
+		Bucket:  "cache_start_canceled",
+		Storage: jetstream.MemoryStorage,
+	})
+	require.NoError(t, err)
+
+	watchKV := &heldInitialWatchKV{KeyValue: kv, watcher: newFakeWatcher()}
+	c, err := New[wrapperspb.StringValue, *wrapperspb.StringValue](
+		ctx,
+		zap.NewNop(),
+		nil,
+		kv.Bucket(),
+		withKeyValue[wrapperspb.StringValue, *wrapperspb.StringValue](watchKV),
+	)
+	require.NoError(t, err)
+
+	done := make(chan error, 1)
+	go func() { done <- c.Start(ctx, true) }()
+	require.Eventually(
+		t,
+		func() bool { return watchKV.called.Load() },
+		time.Second,
+		10*time.Millisecond,
+	)
+	cancel()
+
+	select {
+	case err := <-done:
+		require.NoError(t, err)
+	case <-time.After(time.Second):
+		t.Fatal("cache start did not return after cancellation before the initial snapshot")
+	}
+}
+
+func TestCacheRestartsWatcherAfterClosure(t *testing.T) {
+	t.Parallel()
+	ctx, cancel := context.WithCancel(t.Context())
+	t.Cleanup(cancel)
+
+	natsServer := testnats.NewServer(t, testnats.ServerOptions{InProcess: true})
+	kv, err := natsServer.GetJetStream().CreateOrUpdateKeyValue(ctx, jetstream.KeyValueConfig{
+		Bucket:  "cache_watcher_restart",
+		Storage: jetstream.MemoryStorage,
+	})
+	require.NoError(t, err)
+
+	watchKV := &capturedWatchKV{KeyValue: kv}
+	c, err := New[wrapperspb.StringValue, *wrapperspb.StringValue](
+		ctx,
+		zap.NewNop(),
+		nil,
+		kv.Bucket(),
+		withKeyValue[wrapperspb.StringValue, *wrapperspb.StringValue](watchKV),
+	)
+	require.NoError(t, err)
+	require.NoError(t, c.Start(ctx, true))
+	first := watchKV.waitForWatcher(t, 1)
+	require.NoError(t, first.Stop())
+	watchKV.waitForWatcher(t, 2)
+
+	value, err := proto.Marshal(&wrapperspb.StringValue{Value: "after restart"})
+	require.NoError(t, err)
+	_, err = kv.Put(ctx, "restarted", value)
+	require.NoError(t, err)
+
+	require.Eventually(t, func() bool {
+		item, err := c.Get("restarted")
+		return err == nil && item.GetValue() == "after restart"
+	}, 3*time.Second, 10*time.Millisecond)
+}
+
+func TestCacheMirrorsExternalNATSChanges(t *testing.T) {
+	t.Parallel()
+	ctx := t.Context()
+	natsServer := testnats.NewServer(t, testnats.ServerOptions{InProcess: true})
+	kv, err := natsServer.GetJetStream().CreateOrUpdateKeyValue(ctx, jetstream.KeyValueConfig{
+		Bucket:  "cache_external_changes",
+		Storage: jetstream.MemoryStorage,
+	})
+	require.NoError(t, err)
+
+	c, err := New[wrapperspb.StringValue, *wrapperspb.StringValue](
+		ctx,
+		zap.NewNop(),
+		nil,
+		kv.Bucket(),
+		withKeyValue[wrapperspb.StringValue, *wrapperspb.StringValue](kv),
+	)
+	require.NoError(t, err)
+	require.NoError(t, c.Start(ctx, true))
+
+	put := func(key, value string) {
+		t.Helper()
+		data, err := proto.Marshal(&wrapperspb.StringValue{Value: value})
+		require.NoError(t, err)
+		_, err = kv.Put(ctx, key, data)
+		require.NoError(t, err)
+	}
+
+	put("external", "first")
+	require.Eventually(t, func() bool {
+		item, err := c.Get("external")
+		return err == nil && item.GetValue() == "first"
+	}, time.Second, 10*time.Millisecond)
+
+	put("external", "updated")
+	require.Eventually(t, func() bool {
+		item, err := c.Get("external")
+		return err == nil && item.GetValue() == "updated"
+	}, time.Second, 10*time.Millisecond)
+
+	require.NoError(t, kv.Delete(ctx, "external"))
+	require.Eventually(
+		t,
+		func() bool { return !c.Has("external") },
+		time.Second,
+		10*time.Millisecond,
+	)
+
+	put("purged", "value")
+	require.Eventually(t, func() bool { return c.Has("purged") }, time.Second, 10*time.Millisecond)
+	require.NoError(t, kv.Purge(ctx, "purged"))
+	require.Eventually(t, func() bool { return !c.Has("purged") }, time.Second, 10*time.Millisecond)
+}
 
 func TestCachePutGetAndDelete(t *testing.T) {
 	t.Parallel()
@@ -486,3 +619,55 @@ func (e *fakeEntry) Revision() uint64                { return e.revision }
 func (e *fakeEntry) Created() time.Time              { return e.created }
 func (e *fakeEntry) Delta() uint64                   { return 0 }
 func (e *fakeEntry) Operation() jetstream.KeyValueOp { return e.op }
+
+type heldInitialWatchKV struct {
+	jetstream.KeyValue
+
+	watcher *fakeWatcher
+	called  atomic.Bool
+}
+
+func (kv *heldInitialWatchKV) Watch(
+	context.Context,
+	string,
+	...jetstream.WatchOpt,
+) (jetstream.KeyWatcher, error) {
+	kv.called.Store(true)
+	return kv.watcher, nil
+}
+
+type capturedWatchKV struct {
+	jetstream.KeyValue
+
+	mu       sync.Mutex
+	watchers []jetstream.KeyWatcher
+}
+
+func (kv *capturedWatchKV) Watch(
+	ctx context.Context,
+	keys string,
+	opts ...jetstream.WatchOpt,
+) (jetstream.KeyWatcher, error) {
+	watcher, err := kv.KeyValue.Watch(ctx, keys, opts...)
+	if err != nil {
+		return nil, err
+	}
+
+	kv.mu.Lock()
+	kv.watchers = append(kv.watchers, watcher)
+	kv.mu.Unlock()
+	return watcher, nil
+}
+
+func (kv *capturedWatchKV) waitForWatcher(t *testing.T, count int) jetstream.KeyWatcher {
+	t.Helper()
+	require.Eventually(t, func() bool {
+		kv.mu.Lock()
+		defer kv.mu.Unlock()
+		return len(kv.watchers) >= count
+	}, 3*time.Second, 10*time.Millisecond)
+
+	kv.mu.Lock()
+	defer kv.mu.Unlock()
+	return kv.watchers[count-1]
+}

@@ -198,9 +198,7 @@ func TestCheckAndUpdateUnitUsersRemovesCrossJobUsers(t *testing.T) {
 func TestWatchUnitAssignmentsRecoversAfterCleanupFailure(t *testing.T) {
 	t.Parallel()
 
-	_, js, shutdown, err := nats.NewInProcessNATSServer()
-	require.NoError(t, err)
-	t.Cleanup(func() { require.NoError(t, shutdown()) })
+	js := nats.NewServer(t, nats.ServerOptions{InProcess: true}).GetJS()
 
 	ctx, cancel := context.WithCancel(t.Context())
 	t.Cleanup(cancel)
@@ -371,9 +369,7 @@ func TestUserMarkerKeyContext(t *testing.T) {
 func TestUserMarkerDeleteReconcilesParsedUserID(t *testing.T) {
 	t.Parallel()
 
-	_, js, shutdown, err := nats.NewInProcessNATSServer()
-	require.NoError(t, err)
-	t.Cleanup(func() { require.NoError(t, shutdown()) })
+	js := nats.NewServer(t, nats.ServerOptions{InProcess: true}).GetJS()
 
 	ctx, cancel := context.WithCancel(t.Context())
 	t.Cleanup(cancel)
@@ -448,9 +444,7 @@ func TestUserMarkerDeleteReconcilesParsedUserID(t *testing.T) {
 func TestUserMarkerDeleteRetainsCanonicalDispatcherState(t *testing.T) {
 	t.Parallel()
 
-	_, js, shutdown, err := nats.NewInProcessNATSServer()
-	require.NoError(t, err)
-	t.Cleanup(func() { require.NoError(t, shutdown()) })
+	js := nats.NewServer(t, nats.ServerOptions{InProcess: true}).GetJS()
 
 	ctx, cancel := context.WithCancel(t.Context())
 	t.Cleanup(cancel)
@@ -528,9 +522,7 @@ func TestUserMarkerDeleteRetainsCanonicalDispatcherState(t *testing.T) {
 func TestUserMarkerDeleteRetainsSameJobDispatcherStateAcrossGradeChange(t *testing.T) {
 	t.Parallel()
 
-	_, js, shutdown, err := nats.NewInProcessNATSServer()
-	require.NoError(t, err)
-	t.Cleanup(func() { require.NoError(t, shutdown()) })
+	js := nats.NewServer(t, nats.ServerOptions{InProcess: true}).GetJS()
 
 	ctx, cancel := context.WithCancel(t.Context())
 	t.Cleanup(cancel)

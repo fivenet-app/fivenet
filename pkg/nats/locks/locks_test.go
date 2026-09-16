@@ -10,6 +10,7 @@ import (
 	"testing"
 	"time"
 
+	testnats "github.com/fivenet-app/fivenet/v2026/internal/tests/nats"
 	"github.com/fivenet-app/fivenet/v2026/internal/tests/servers"
 	"github.com/nats-io/nats.go/jetstream"
 	"github.com/stretchr/testify/require"
@@ -21,6 +22,15 @@ func getNatsClient(
 	js jetstream.JetStream,
 	bucket string,
 ) (*Locks, error) {
+	return getNatsClientWithTTL(ctx, js, bucket, 6*time.Second)
+}
+
+func getNatsClientWithTTL(
+	ctx context.Context,
+	js jetstream.JetStream,
+	bucket string,
+	maxLockAge time.Duration,
+) (*Locks, error) {
 	lBucket := fmt.Sprintf("%s_locks", bucket)
 	kv, err := js.CreateOrUpdateKeyValue(ctx, jetstream.KeyValueConfig{
 		Bucket:         lBucket,
@@ -28,19 +38,19 @@ func getNatsClient(
 		History:        1,
 		MaxBytes:       -1,
 		Storage:        jetstream.MemoryStorage,
-		LimitMarkerTTL: 3 * time.Minute, // Set a limit marker TTL to avoid stale locks
+		LimitMarkerTTL: 3 * maxLockAge, // Set a limit marker TTL to avoid stale locks
 	})
 	if err != nil {
 		return nil, err
 	}
 
-	n := NewWithKV(zap.NewNop(), kv, bucket, 6*time.Second)
+	n := NewWithKV(zap.NewNop(), kv, bucket, maxLockAge)
 	return n, nil
 }
 
 //nolint:paralleltest // This test is not safe to run in parallel due to shared state in the NATS server and lock keys.
 func TestNats_LockUnlock(t *testing.T) {
-	natsServer := servers.NewNATSServer(t, true)
+	natsServer := servers.NewNATSServer(t)
 	js := natsServer.GetJS()
 
 	ctx := t.Context()
@@ -62,7 +72,7 @@ func TestNats_LockUnlock(t *testing.T) {
 
 //nolint:paralleltest // This test is not safe to run in parallel due to shared state in the NATS server and lock keys.
 func TestNats_MultipleLocks(t *testing.T) {
-	natsServer := servers.NewNATSServer(t, true)
+	natsServer := servers.NewNATSServer(t)
 	js := natsServer.GetJS()
 
 	lockKey := path.Join("acme", "example.com", "sites", "example.com")
@@ -131,4 +141,42 @@ func TestNats_MultipleLocks(t *testing.T) {
 	}
 
 	wg.Wait()
+}
+
+func TestNats_StaleUnlockCannotReleaseNewOwner(t *testing.T) {
+	t.Parallel()
+
+	natsServer := testnats.NewServer(t, testnats.ServerOptions{InProcess: true})
+	js := natsServer.GetJetStream()
+	ctx := t.Context()
+
+	const maxLockAge = time.Second
+	first, err := getNatsClientWithTTL(ctx, js, "stale_unlock", maxLockAge)
+	require.NoError(t, err)
+	second, err := getNatsClientWithTTL(ctx, js, "stale_unlock", maxLockAge)
+	require.NoError(t, err)
+
+	const key = "dispatch.42"
+	locked, err := first.TryLock(ctx, key)
+	require.NoError(t, err)
+	require.True(t, locked)
+
+	require.Eventually(t, func() bool {
+		firstLocked, err := first.IsLocked(ctx, key)
+		return err == nil && !firstLocked
+	}, 3*time.Second, 20*time.Millisecond, "the first owner's per-key TTL should expire")
+
+	locked, err = second.TryLock(ctx, key)
+	require.NoError(t, err)
+	require.True(t, locked)
+
+	require.Error(
+		t,
+		first.Unlock(ctx, key),
+		"a stale revision must not delete the new owner's lock",
+	)
+	locked, err = second.IsLocked(ctx, key)
+	require.NoError(t, err)
+	require.True(t, locked, "the second owner must retain its lock after stale unlock")
+	require.NoError(t, second.Unlock(ctx, key))
 }

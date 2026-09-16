@@ -1,69 +1,118 @@
 package nats
 
 import (
-	"errors"
-	"fmt"
-	"os"
+	"testing"
 	"time"
 
 	"github.com/fivenet-app/fivenet/v2026/pkg/config"
 	"github.com/fivenet-app/fivenet/v2026/pkg/events"
 	"github.com/nats-io/nats-server/v2/server"
-	nats "github.com/nats-io/nats.go"
+	natsgo "github.com/nats-io/nats.go"
 	"github.com/nats-io/nats.go/jetstream"
+	"go.uber.org/fx"
 )
 
-// NewInProcessNATSServer based on a-h "Adrian Hesketh" code from <https://github.com/nats-io/nats.go/issues/467#issuecomment-1771424369>
-// Used to create an in-process NATS server for testing purposes.
-// It returns a connection to the server, a JetStream client, a cleanup function to call after tests, and an error if any.
-func NewInProcessNATSServer() (*nats.Conn, *events.JSWrapper, func() error, error) {
-	tmp, err := os.MkdirTemp("", "nats_test")
-	if err != nil {
-		err = fmt.Errorf("failed to create temp directory for NATS storage. %w", err)
-		return nil, nil, nil, err
+// ServerOptions configures a test NATS server.
+type ServerOptions struct {
+	// InProcess connects the client directly to the server, without opening a TCP listener.
+	InProcess bool
+	// Config configures the JetStream wrapper returned by GetJS.
+	Config config.NATS
+}
+
+// Server is a NATS server, client connection, and JetStream client owned by a test.
+type Server struct {
+	server *server.Server
+	conn   *natsgo.Conn
+	rawJS  jetstream.JetStream
+	cfg    config.NATS
+}
+
+// NewServer starts a JetStream-enabled NATS server and registers cleanup with t.
+func NewServer(t *testing.T, opts ServerOptions) *Server {
+	t.Helper()
+	if opts.Config.Replicas == 0 {
+		opts.Config.Replicas = 1
 	}
-	server, err := server.NewServer(&server.Options{
-		DontListen: true, // Don't make a TCP socket.
+
+	tmp := t.TempDir()
+	ns, err := server.NewServer(&server.Options{
 		JetStream:  true,
 		StoreDir:   tmp,
+		Port:       -1,
+		DontListen: opts.InProcess,
 	})
 	if err != nil {
-		err = fmt.Errorf("failed to create NATS server. %w", err)
-		return nil, nil, nil, err
+		t.Fatalf("create NATS server: %v", err)
 	}
-	// Add logs to stdout.
-	// server.ConfigureLogger()
-	server.Start()
-	cleanup := func() error {
-		server.Shutdown()
-		if err := os.RemoveAll(tmp); err != nil {
-			return fmt.Errorf("failed to remove temp directory for NATS storage. %w", err)
+
+	s := &Server{
+		server: ns,
+		cfg:    opts.Config,
+	}
+	ns.Start()
+	if !ns.ReadyForConnections(8 * time.Second) {
+		_ = s.Close()
+		t.Fatal("NATS server was not ready for connections after 8 seconds")
+	}
+
+	if opts.InProcess {
+		s.conn, err = natsgo.Connect("", natsgo.InProcessServer(ns))
+	} else {
+		s.conn, err = natsgo.Connect(ns.ClientURL())
+	}
+	if err != nil {
+		_ = s.Close()
+		t.Fatalf("connect to NATS server: %v", err)
+	}
+
+	s.rawJS, err = jetstream.New(s.conn)
+	if err != nil {
+		_ = s.Close()
+		t.Fatalf("create JetStream client: %v", err)
+	}
+
+	t.Cleanup(func() {
+		if err := s.Close(); err != nil {
+			t.Errorf("clean up NATS server: %v", err)
 		}
+	})
+
+	return s
+}
+
+func (s *Server) GetConn() *natsgo.Conn {
+	return s.conn
+}
+
+// GetJetStream returns the unwrapped JetStream client.
+func (s *Server) GetJetStream() jetstream.JetStream {
+	return s.rawJS
+}
+
+// GetJS returns a JetStream client that applies the fixture's NATS configuration.
+func (s *Server) GetJS() *events.JSWrapper {
+	return s.NewJSWrapper(s.cfg, nil)
+}
+
+// NewJSWrapper returns a JetStream wrapper using cfg and shutdowner.
+func (s *Server) NewJSWrapper(cfg config.NATS, shutdowner fx.Shutdowner) *events.JSWrapper {
+	return events.NewJSWrapper(s.rawJS, cfg, shutdowner)
+}
+
+// Close stops the client and server, and removes the server's storage directory.
+func (s *Server) Close() error {
+	if s == nil {
 		return nil
 	}
-
-	if !server.ReadyForConnections(5 * time.Second) {
-		err = errors.New("failed to start server after 5 seconds")
-		return nil, nil, nil, err
+	if s.conn != nil {
+		s.conn.Close()
+		s.conn = nil
+	}
+	if s.server != nil {
+		s.server.Shutdown()
+		s.server = nil
 	}
 
-	// Create a connection.
-	conn, err := nats.Connect("", nats.InProcessServer(server))
-	if err != nil {
-		err = fmt.Errorf("failed to connect to server. %w", err)
-		return nil, nil, nil, err
-	}
-
-	// Create a JetStream client.
-	rawJs, err := jetstream.New(conn)
-	if err != nil {
-		err = fmt.Errorf("failed to create jetstream. %w", err)
-		return nil, nil, nil, err
-	}
-
-	js := events.NewJSWrapper(rawJs, config.NATS{
-		Replicas: 1,
-	}, nil)
-
-	return conn, js, cleanup, err
+	return nil
 }

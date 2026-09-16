@@ -24,11 +24,7 @@ import (
 func newFeedHubTestServer(t *testing.T) (*Server, context.CancelFunc) {
 	t.Helper()
 
-	_, js, cleanup, err := testnats.NewInProcessNATSServer()
-	require.NoError(t, err)
-	t.Cleanup(func() {
-		require.NoError(t, cleanup())
-	})
+	js := testnats.NewServer(t, testnats.ServerOptions{InProcess: true}).GetJS()
 
 	ctx, cancel := context.WithCancel(t.Context())
 	srv := &Server{
@@ -39,7 +35,7 @@ func newFeedHubTestServer(t *testing.T) (*Server, context.CancelFunc) {
 		metrics:    centrummetrics.Get(),
 	}
 
-	_, err = eventscentrum.RegisterStream(ctx, js)
+	_, err := eventscentrum.RegisterStream(ctx, js)
 	require.NoError(t, err)
 	_, err = js.CreateOrUpdateKeyValue(ctx, jetstream.KeyValueConfig{Bucket: "centrum_settings"})
 	require.NoError(t, err)

@@ -27,6 +27,7 @@ type scriptedWatchKV struct {
 
 type capturedWatchKV struct {
 	jetstream.KeyValue
+
 	watchers chan jetstream.KeyWatcher
 }
 
@@ -68,7 +69,10 @@ type scriptedKeyWatcher struct {
 	updates chan jetstream.KeyValueEntry
 }
 
-func newScriptedKeyWatcher(closeAfter bool, entries ...jetstream.KeyValueEntry) *scriptedKeyWatcher {
+func newScriptedKeyWatcher(
+	closeAfter bool,
+	entries ...jetstream.KeyValueEntry,
+) *scriptedKeyWatcher {
 	w := &scriptedKeyWatcher{updates: make(chan jetstream.KeyValueEntry, len(entries))}
 	for _, entry := range entries {
 		w.updates <- entry
@@ -120,20 +124,19 @@ func newScriptedStore(
 		WithJetstreamKV[tests.SimpleObject](kv),
 		WithLocks[tests.SimpleObject](nil),
 	)
-	store, err := New[tests.SimpleObject](t.Context(), zaptest.NewLogger(t), nil, "scripted", opts...)
+	store, err := New[tests.SimpleObject](
+		t.Context(),
+		zaptest.NewLogger(t),
+		nil,
+		"scripted",
+		opts...)
 	require.NoError(t, err)
 	return store
 }
 
 func TestBasicStoreCreateAndUse(t *testing.T) {
 	t.Parallel()
-	_, js, shutdown, err := nats.NewInProcessNATSServer()
-	require.NoError(t, err)
-	defer func() {
-		if err := shutdown(); err != nil {
-			t.Error(err)
-		}
-	}()
+	js := nats.NewServer(t, nats.ServerOptions{InProcess: true}).GetJS()
 
 	logger := zaptest.NewLogger(t)
 	ctx := t.Context()
@@ -248,9 +251,7 @@ func TestBasicStoreCreateAndUse(t *testing.T) {
 func TestRangeWithKVPrefixUsesCallerKeys(t *testing.T) {
 	t.Parallel()
 
-	_, js, shutdown, err := nats.NewInProcessNATSServer()
-	require.NoError(t, err)
-	t.Cleanup(func() { require.NoError(t, shutdown()) })
+	js := nats.NewServer(t, nats.ServerOptions{InProcess: true}).GetJS()
 
 	ctx := t.Context()
 	store, err := New[tests.SimpleObject](
@@ -281,9 +282,7 @@ func TestRangeWithKVPrefixUsesCallerKeys(t *testing.T) {
 func TestPrefixedStoresAreIsolatedInSharedBucket(t *testing.T) {
 	t.Parallel()
 
-	_, js, shutdown, err := nats.NewInProcessNATSServer()
-	require.NoError(t, err)
-	t.Cleanup(func() { require.NoError(t, shutdown()) })
+	js := nats.NewServer(t, nats.ServerOptions{InProcess: true}).GetJS()
 
 	ctx := t.Context()
 	newStore := func(prefix string) *Store[tests.SimpleObject, *tests.SimpleObject] {
@@ -334,9 +333,7 @@ func TestPrefixedStoresAreIsolatedInSharedBucket(t *testing.T) {
 func TestRangeWithKVPrefixRespectsIgnoredKeysAndClonesValues(t *testing.T) {
 	t.Parallel()
 
-	_, js, shutdown, err := nats.NewInProcessNATSServer()
-	require.NoError(t, err)
-	t.Cleanup(func() { require.NoError(t, shutdown()) })
+	js := nats.NewServer(t, nats.ServerOptions{InProcess: true}).GetJS()
 
 	ctx := t.Context()
 	store, err := New[tests.SimpleObject](
@@ -369,9 +366,7 @@ func TestRangeWithKVPrefixRespectsIgnoredKeysAndClonesValues(t *testing.T) {
 func TestWatchAllClosesUpdatesWhenCanceled(t *testing.T) {
 	t.Parallel()
 
-	_, js, shutdown, err := nats.NewInProcessNATSServer()
-	require.NoError(t, err)
-	defer func() { require.NoError(t, shutdown()) }()
+	js := nats.NewServer(t, nats.ServerOptions{InProcess: true}).GetJS()
 
 	ctx, cancel := context.WithCancel(t.Context())
 	store, err := New[tests.SimpleObject](ctx, zaptest.NewLogger(t), js, "watch_close")
@@ -392,9 +387,7 @@ func TestWatchAllClosesUpdatesWhenCanceled(t *testing.T) {
 func TestReconcileWatcherSnapshotRemovesOnlyMissingKeys(t *testing.T) {
 	t.Parallel()
 
-	_, js, shutdown, err := nats.NewInProcessNATSServer()
-	require.NoError(t, err)
-	t.Cleanup(func() { require.NoError(t, shutdown()) })
+	js := nats.NewServer(t, nats.ServerOptions{InProcess: true}).GetJS()
 
 	store, err := New[tests.SimpleObject](
 		t.Context(),
@@ -522,7 +515,12 @@ func TestStoreStopsRetryingWatcherAfterCancellation(t *testing.T) {
 
 	// The initial watcher closed before readiness, so Start remains blocked
 	// while replacement watcher creation is retried.
-	require.Eventually(t, func() bool { return kv.calls.Load() >= 2 }, 2*time.Second, 10*time.Millisecond)
+	require.Eventually(
+		t,
+		func() bool { return kv.calls.Load() >= 2 },
+		2*time.Second,
+		10*time.Millisecond,
+	)
 	cancel()
 
 	select {
@@ -536,9 +534,7 @@ func TestStoreStopsRetryingWatcherAfterCancellation(t *testing.T) {
 func TestStoreRecoversAfterNATSWatcherStops(t *testing.T) {
 	t.Parallel()
 
-	_, js, shutdown, err := nats.NewInProcessNATSServer()
-	require.NoError(t, err)
-	t.Cleanup(func() { require.NoError(t, shutdown()) })
+	js := nats.NewServer(t, nats.ServerOptions{InProcess: true}).GetJS()
 
 	ctx, cancel := context.WithCancel(t.Context())
 	t.Cleanup(cancel)

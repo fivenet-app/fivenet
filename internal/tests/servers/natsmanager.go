@@ -2,88 +2,34 @@ package servers
 
 import (
 	"testing"
-	"time"
 
+	testnats "github.com/fivenet-app/fivenet/v2026/internal/tests/nats"
 	"github.com/fivenet-app/fivenet/v2026/pkg/config"
 	"github.com/fivenet-app/fivenet/v2026/pkg/events"
-	"github.com/nats-io/nats-server/v2/server"
 	"github.com/nats-io/nats.go"
 	"github.com/nats-io/nats.go/jetstream"
-	"github.com/stretchr/testify/require"
 	"go.uber.org/fx"
 )
 
 type natsServer struct {
-	t *testing.T
-
-	server *server.Server
+	server *testnats.Server
 }
 
-func NewNATSServer(t *testing.T, setup bool) *natsServer {
+func NewNATSServer(t *testing.T) *natsServer {
 	t.Helper()
-
-	s := &natsServer{
-		t: t,
-	}
-
-	if setup {
-		s.Setup()
-	}
-
-	return s
-}
-
-func (m *natsServer) Setup() {
-	opts := &server.Options{
-		JetStream: true,
-		Port:      -1,
-	}
-
-	// Initialize new server with options
-	ns, err := server.NewServer(opts)
-	if err != nil {
-		m.t.Skipf("skipping NATS-backed tests: failed to create server: %v", err)
-	}
-
-	// Start the server via goroutine
-	go ns.Start()
-	// Wait for server to be ready for connections
-	if !ns.ReadyForConnections(8 * time.Second) {
-		m.t.Skip("skipping NATS-backed tests: server not ready for connections after 8 seconds")
-	}
-	m.server = ns
-
-	// Auto stop server when test is done
-	m.t.Cleanup(m.Stop)
+	return &natsServer{server: testnats.NewServer(t, testnats.ServerOptions{})}
 }
 
 func (m *natsServer) GetURL() string {
-	return m.server.ClientURL()
+	return m.server.GetConn().ConnectedUrl()
 }
 
 func (m *natsServer) GetConn() *nats.Conn {
-	conn, err := nats.Connect(m.GetURL())
-	require.NoError(m.t, err, "failed to get NATS client")
-
-	return conn
+	return m.server.GetConn()
 }
 
 func (m *natsServer) GetJS() jetstream.JetStream {
-	conn := m.GetConn()
-
-	js, err := jetstream.New(conn)
-	require.NoError(m.t, err, "failed to create JetStream client")
-
-	return js
-}
-
-func (m *natsServer) Stop() {
-	if m == nil {
-		return
-	}
-
-	m.server.Shutdown()
-	m.server = nil
+	return m.server.GetJetStream()
 }
 
 func (m *natsServer) FxProvide() fx.Option {
@@ -91,7 +37,7 @@ func (m *natsServer) FxProvide() fx.Option {
 		func(cfg *config.Config, shutdowner fx.Shutdowner) events.Result {
 			return events.Result{
 				NC: m.GetConn(),
-				JS: events.NewJSWrapper(m.GetJS(), cfg.NATS, shutdowner),
+				JS: m.server.NewJSWrapper(cfg.NATS, shutdowner),
 			}
 		},
 	)

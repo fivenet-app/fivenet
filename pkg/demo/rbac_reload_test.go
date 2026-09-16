@@ -22,7 +22,7 @@ func TestDemoSeedRBACReloadsPermsCache(t *testing.T) {
 
 	ctx := t.Context()
 	dbServer := servers.NewDBServer(ctx, t, true)
-	natsServer := servers.NewNATSServer(t, true)
+	natsServer := servers.NewNATSServer(t)
 
 	db, err := dbServer.DB()
 	require.NoError(t, err)

@@ -9,7 +9,6 @@ import (
 	"slices"
 	"strings"
 	"sync"
-	"sync/atomic"
 	"time"
 
 	"github.com/fivenet-app/fivenet/v2026/pkg/events"
@@ -128,45 +127,81 @@ func (c *Cache[T, U]) Start(ctx context.Context, wait bool) error {
 		return fmt.Errorf("failed to start cache kv. %w", err)
 	}
 
-	var ready atomic.Bool
-	var wg sync.WaitGroup
+	ready := make(chan struct{})
+	var readyOnce sync.Once
+	markReady := func() {
+		readyOnce.Do(func() { close(ready) })
+	}
 
-	wg.Add(1)
 	go func() {
-		defer watcher.Stop()
-		updateCh := watcher.Updates()
-
 		for {
+			updateCh := watcher.Updates()
+			watchClosed := false
+			for !watchClosed {
+				select {
+				case <-ctx.Done():
+					_ = watcher.Stop()
+					markReady()
+					return
+
+				case entry, ok := <-updateCh:
+					if !ok {
+						watchClosed = true
+						continue
+					}
+					if entry == nil {
+						markReady()
+						continue
+					}
+
+					key := entry.Key()
+					if c.ignoredKeys != nil && slices.Contains(c.ignoredKeys, key) {
+						continue
+					}
+
+					switch entry.Operation() {
+					case jetstream.KeyValuePut:
+						c.handleWatcherPut(key, entry)
+
+					case jetstream.KeyValueDelete, jetstream.KeyValuePurge:
+						c.handleWatcherDelete(key)
+
+					default:
+						c.logger.Error(
+							"unknown key operation received",
+							zap.String("key", key),
+							zap.Uint8("op", uint8(entry.Operation())),
+						)
+					}
+				}
+			}
+
+			_ = watcher.Stop()
+			if ctx.Err() != nil {
+				markReady()
+				return
+			}
+
+			c.logger.Warn("cache watcher closed; restarting")
 			select {
 			case <-ctx.Done():
+				markReady()
 				return
+			case <-time.After(time.Second):
+			}
 
-			case entry := <-updateCh:
-				if entry == nil {
-					if !ready.Swap(true) {
-						wg.Done()
-					}
-					continue
+			for {
+				watcher, err = c.kv.Watch(ctx, c.prefix+">")
+				if err == nil {
+					break
 				}
 
-				key := entry.Key()
-				if c.ignoredKeys != nil && slices.Contains(c.ignoredKeys, key) {
-					continue
-				}
-
-				switch entry.Operation() {
-				case jetstream.KeyValuePut:
-					c.handleWatcherPut(key, entry)
-
-				case jetstream.KeyValueDelete, jetstream.KeyValuePurge:
-					c.handleWatcherDelete(key)
-
-				default:
-					c.logger.Error(
-						"unknown key operation received",
-						zap.String("key", key),
-						zap.Uint8("op", uint8(entry.Operation())),
-					)
+				c.logger.Warn("failed to restart cache watcher", zap.Error(err))
+				select {
+				case <-ctx.Done():
+					markReady()
+					return
+				case <-time.After(time.Second):
 				}
 			}
 		}
@@ -187,7 +222,7 @@ func (c *Cache[T, U]) Start(ctx context.Context, wait bool) error {
 	}()
 
 	if wait {
-		wg.Wait()
+		<-ready
 	}
 
 	return nil

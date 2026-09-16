@@ -24,9 +24,7 @@ type labelEnricher struct{}
 func TestCreateOrUpdateChangeConsumerUsesCanonicalStreamAndSubject(t *testing.T) {
 	t.Parallel()
 
-	_, js, shutdown, err := nats.NewInProcessNATSServer()
-	require.NoError(t, err)
-	t.Cleanup(func() { require.NoError(t, shutdown()) })
+	js := nats.NewServer(t, nats.ServerOptions{InProcess: true}).GetJS()
 
 	consumer, err := CreateOrUpdateChangeConsumer(
 		t.Context(),
@@ -146,9 +144,7 @@ func TestChangesSubscriberClosesWhenItFallsBehind(t *testing.T) {
 func TestChangesPublishesAndConsumesUserInfoChangedEvent(t *testing.T) {
 	t.Parallel()
 
-	_, js, shutdown, err := nats.NewInProcessNATSServer()
-	require.NoError(t, err)
-	t.Cleanup(func() { require.NoError(t, shutdown()) })
+	js := nats.NewServer(t, nats.ServerOptions{InProcess: true}).GetJS()
 
 	changes := &Changes{
 		logger: zap.NewNop(),
@@ -186,9 +182,7 @@ func TestChangesPublishesAndConsumesUserInfoChangedEvent(t *testing.T) {
 func TestChangesTerminatesInvalidConsumedEvent(t *testing.T) {
 	t.Parallel()
 
-	_, js, shutdown, err := nats.NewInProcessNATSServer()
-	require.NoError(t, err)
-	t.Cleanup(func() { require.NoError(t, shutdown()) })
+	js := nats.NewServer(t, nats.ServerOptions{InProcess: true}).GetJS()
 
 	changes := &Changes{
 		logger: zap.NewNop(),
@@ -256,9 +250,7 @@ func TestPublishUserInfoChangedRejectsInvalidEvents(t *testing.T) {
 func TestChangeConsumerRedeliversUnacknowledgedEventAfterRestart(t *testing.T) {
 	t.Parallel()
 
-	_, js, shutdown, err := nats.NewInProcessNATSServer()
-	require.NoError(t, err)
-	t.Cleanup(func() { require.NoError(t, shutdown()) })
+	js := nats.NewServer(t, nats.ServerOptions{InProcess: true}).GetJS()
 
 	ctx, cancel := context.WithCancel(t.Context())
 	defer cancel()

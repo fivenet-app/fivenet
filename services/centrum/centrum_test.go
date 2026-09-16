@@ -162,7 +162,7 @@ func newCentrumJoinUnitTestServer(
 	require.NoError(t, err)
 
 	dbServer := servers.NewDBServer(ctx, t, true)
-	natsServer := servers.NewNATSServer(t, true)
+	natsServer := servers.NewNATSServer(t)
 	trackerStub := newCentrumJoinUnitTestTracker()
 	jobsCatalog := mstlystcdata.NewTestJobs(map[string]*jobs.Job{
 		"ambulance": {

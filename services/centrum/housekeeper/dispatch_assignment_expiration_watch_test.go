@@ -90,9 +90,7 @@ func newAssignmentExpirationWatcherTest(
 ) (*assignmentExpirationSourceStub, context.CancelFunc, <-chan error) {
 	t.Helper()
 
-	_, js, shutdown, err := nats.NewInProcessNATSServer()
-	require.NoError(t, err)
-	t.Cleanup(func() { require.NoError(t, shutdown()) })
+	js := nats.NewServer(t, nats.ServerOptions{InProcess: true}).GetJS()
 
 	kv, err := js.CreateOrUpdateKeyValue(t.Context(), jetstream.KeyValueConfig{
 		Bucket:         "test_assignment_expiration",
