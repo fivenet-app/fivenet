@@ -14,6 +14,7 @@ import (
 	_ "github.com/fivenet-app/fivenet/v2026/gen/go/proto/codegen/sanitizer"
 	database "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/common/database"
 	file "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/file"
+	timestamp "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/timestamp"
 	users "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/users"
 	activity "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/users/activity"
 	props "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/users/props"
@@ -604,6 +605,8 @@ type ListUserActivityRequest struct {
 	xxx_hidden_Sort       *database.Sort              `protobuf:"bytes,2,opt,name=sort,proto3,oneof"`
 	xxx_hidden_UserId     int32                       `protobuf:"varint,3,opt,name=user_id,json=userId,proto3"`
 	xxx_hidden_Types      []activity.UserActivityType `protobuf:"varint,4,rep,packed,name=types,proto3,enum=resources.users.activity.UserActivityType"`
+	xxx_hidden_From       *timestamp.Timestamp        `protobuf:"bytes,5,opt,name=from,proto3,oneof"`
+	xxx_hidden_To         *timestamp.Timestamp        `protobuf:"bytes,6,opt,name=to,proto3,oneof"`
 	unknownFields         protoimpl.UnknownFields
 	sizeCache             protoimpl.SizeCache
 }
@@ -661,6 +664,20 @@ func (x *ListUserActivityRequest) GetTypes() []activity.UserActivityType {
 	return nil
 }
 
+func (x *ListUserActivityRequest) GetFrom() *timestamp.Timestamp {
+	if x != nil {
+		return x.xxx_hidden_From
+	}
+	return nil
+}
+
+func (x *ListUserActivityRequest) GetTo() *timestamp.Timestamp {
+	if x != nil {
+		return x.xxx_hidden_To
+	}
+	return nil
+}
+
 func (x *ListUserActivityRequest) SetPagination(v *database.PaginationRequest) {
 	x.xxx_hidden_Pagination = v
 }
@@ -677,6 +694,14 @@ func (x *ListUserActivityRequest) SetTypes(v []activity.UserActivityType) {
 	x.xxx_hidden_Types = v
 }
 
+func (x *ListUserActivityRequest) SetFrom(v *timestamp.Timestamp) {
+	x.xxx_hidden_From = v
+}
+
+func (x *ListUserActivityRequest) SetTo(v *timestamp.Timestamp) {
+	x.xxx_hidden_To = v
+}
+
 func (x *ListUserActivityRequest) HasPagination() bool {
 	if x == nil {
 		return false
@@ -691,12 +716,34 @@ func (x *ListUserActivityRequest) HasSort() bool {
 	return x.xxx_hidden_Sort != nil
 }
 
+func (x *ListUserActivityRequest) HasFrom() bool {
+	if x == nil {
+		return false
+	}
+	return x.xxx_hidden_From != nil
+}
+
+func (x *ListUserActivityRequest) HasTo() bool {
+	if x == nil {
+		return false
+	}
+	return x.xxx_hidden_To != nil
+}
+
 func (x *ListUserActivityRequest) ClearPagination() {
 	x.xxx_hidden_Pagination = nil
 }
 
 func (x *ListUserActivityRequest) ClearSort() {
 	x.xxx_hidden_Sort = nil
+}
+
+func (x *ListUserActivityRequest) ClearFrom() {
+	x.xxx_hidden_From = nil
+}
+
+func (x *ListUserActivityRequest) ClearTo() {
+	x.xxx_hidden_To = nil
 }
 
 type ListUserActivityRequest_builder struct {
@@ -707,6 +754,8 @@ type ListUserActivityRequest_builder struct {
 	// Search params
 	UserId int32
 	Types  []activity.UserActivityType
+	From   *timestamp.Timestamp
+	To     *timestamp.Timestamp
 }
 
 func (b0 ListUserActivityRequest_builder) Build() *ListUserActivityRequest {
@@ -717,6 +766,8 @@ func (b0 ListUserActivityRequest_builder) Build() *ListUserActivityRequest {
 	x.xxx_hidden_Sort = b.Sort
 	x.xxx_hidden_UserId = b.UserId
 	x.xxx_hidden_Types = b.Types
+	x.xxx_hidden_From = b.From
+	x.xxx_hidden_To = b.To
 	return m0
 }
 
@@ -1158,7 +1209,7 @@ var File_services_citizens_citizens_proto protoreflect.FileDescriptor
 
 const file_services_citizens_citizens_proto_rawDesc = "" +
 	"\n" +
-	" services/citizens/citizens.proto\x12\x11services.citizens\x1a\x1fcodegen/itemslen/itemslen.proto\x1a\x19codegen/perms/perms.proto\x1a!codegen/sanitizer/sanitizer.proto\x1a(resources/common/database/database.proto\x1a\x1eresources/file/filestore.proto\x1a'resources/users/activity/activity.proto\x1a!resources/users/props/props.proto\x1a\x1aresources/users/user.proto\"\xce\x04\n" +
+	" services/citizens/citizens.proto\x12\x11services.citizens\x1a\x1fcodegen/itemslen/itemslen.proto\x1a\x19codegen/perms/perms.proto\x1a!codegen/sanitizer/sanitizer.proto\x1a(resources/common/database/database.proto\x1a\x1eresources/file/filestore.proto\x1a#resources/timestamp/timestamp.proto\x1a'resources/users/activity/activity.proto\x1a!resources/users/props/props.proto\x1a\x1aresources/users/user.proto\"\xce\x04\n" +
 	"\x13ListCitizensRequest\x12L\n" +
 	"\n" +
 	"pagination\x18\x01 \x01(\v2,.resources.common.database.PaginationRequestR\n" +
@@ -1195,15 +1246,19 @@ const file_services_citizens_citizens_proto_rawDesc = "" +
 	"\n" +
 	"_info_only\"<\n" +
 	"\x0fGetUserResponse\x12)\n" +
-	"\x04user\x18\x01 \x01(\v2\x15.resources.users.UserR\x04user\"\x85\x02\n" +
+	"\x04user\x18\x01 \x01(\v2\x15.resources.users.UserR\x04user\"\x83\x03\n" +
 	"\x17ListUserActivityRequest\x12L\n" +
 	"\n" +
 	"pagination\x18\x01 \x01(\v2,.resources.common.database.PaginationRequestR\n" +
 	"pagination\x128\n" +
 	"\x04sort\x18\x02 \x01(\v2\x1f.resources.common.database.SortH\x00R\x04sort\x88\x01\x01\x12\x17\n" +
 	"\auser_id\x18\x03 \x01(\x05R\x06userId\x12@\n" +
-	"\x05types\x18\x04 \x03(\x0e2*.resources.users.activity.UserActivityTypeR\x05typesB\a\n" +
-	"\x05_sort\"\xb3\x01\n" +
+	"\x05types\x18\x04 \x03(\x0e2*.resources.users.activity.UserActivityTypeR\x05types\x127\n" +
+	"\x04from\x18\x05 \x01(\v2\x1e.resources.timestamp.TimestampH\x01R\x04from\x88\x01\x01\x123\n" +
+	"\x02to\x18\x06 \x01(\v2\x1e.resources.timestamp.TimestampH\x02R\x02to\x88\x01\x01B\a\n" +
+	"\x05_sortB\a\n" +
+	"\x05_fromB\x05\n" +
+	"\x03_to\"\xb3\x01\n" +
 	"\x18ListUserActivityResponse\x12M\n" +
 	"\n" +
 	"pagination\x18\x01 \x01(\v2-.resources.common.database.PaginationResponseR\n" +
@@ -1254,10 +1309,11 @@ var file_services_citizens_citizens_proto_goTypes = []any{
 	(*database.PaginationResponse)(nil), // 14: resources.common.database.PaginationResponse
 	(*users.User)(nil),                  // 15: resources.users.User
 	(activity.UserActivityType)(0),      // 16: resources.users.activity.UserActivityType
-	(*activity.UserActivity)(nil),       // 17: resources.users.activity.UserActivity
-	(*props.UserProps)(nil),             // 18: resources.users.props.UserProps
-	(*file.UploadFileRequest)(nil),      // 19: resources.file.UploadFileRequest
-	(*file.UploadFileResponse)(nil),     // 20: resources.file.UploadFileResponse
+	(*timestamp.Timestamp)(nil),         // 17: resources.timestamp.Timestamp
+	(*activity.UserActivity)(nil),       // 18: resources.users.activity.UserActivity
+	(*props.UserProps)(nil),             // 19: resources.users.props.UserProps
+	(*file.UploadFileRequest)(nil),      // 20: resources.file.UploadFileRequest
+	(*file.UploadFileResponse)(nil),     // 21: resources.file.UploadFileResponse
 }
 var file_services_citizens_citizens_proto_depIdxs = []int32{
 	12, // 0: services.citizens.ListCitizensRequest.pagination:type_name -> resources.common.database.PaginationRequest
@@ -1268,31 +1324,33 @@ var file_services_citizens_citizens_proto_depIdxs = []int32{
 	12, // 5: services.citizens.ListUserActivityRequest.pagination:type_name -> resources.common.database.PaginationRequest
 	13, // 6: services.citizens.ListUserActivityRequest.sort:type_name -> resources.common.database.Sort
 	16, // 7: services.citizens.ListUserActivityRequest.types:type_name -> resources.users.activity.UserActivityType
-	14, // 8: services.citizens.ListUserActivityResponse.pagination:type_name -> resources.common.database.PaginationResponse
-	17, // 9: services.citizens.ListUserActivityResponse.activity:type_name -> resources.users.activity.UserActivity
-	18, // 10: services.citizens.SetUserPropsRequest.props:type_name -> resources.users.props.UserProps
-	18, // 11: services.citizens.SetUserPropsResponse.props:type_name -> resources.users.props.UserProps
-	0,  // 12: services.citizens.CitizensService.ListCitizens:input_type -> services.citizens.ListCitizensRequest
-	2,  // 13: services.citizens.CitizensService.GetUser:input_type -> services.citizens.GetUserRequest
-	4,  // 14: services.citizens.CitizensService.ListUserActivity:input_type -> services.citizens.ListUserActivityRequest
-	6,  // 15: services.citizens.CitizensService.SetUserProps:input_type -> services.citizens.SetUserPropsRequest
-	19, // 16: services.citizens.CitizensService.UploadAvatar:input_type -> resources.file.UploadFileRequest
-	8,  // 17: services.citizens.CitizensService.DeleteAvatar:input_type -> services.citizens.DeleteAvatarRequest
-	19, // 18: services.citizens.CitizensService.UploadMugshot:input_type -> resources.file.UploadFileRequest
-	10, // 19: services.citizens.CitizensService.DeleteMugshot:input_type -> services.citizens.DeleteMugshotRequest
-	1,  // 20: services.citizens.CitizensService.ListCitizens:output_type -> services.citizens.ListCitizensResponse
-	3,  // 21: services.citizens.CitizensService.GetUser:output_type -> services.citizens.GetUserResponse
-	5,  // 22: services.citizens.CitizensService.ListUserActivity:output_type -> services.citizens.ListUserActivityResponse
-	7,  // 23: services.citizens.CitizensService.SetUserProps:output_type -> services.citizens.SetUserPropsResponse
-	20, // 24: services.citizens.CitizensService.UploadAvatar:output_type -> resources.file.UploadFileResponse
-	9,  // 25: services.citizens.CitizensService.DeleteAvatar:output_type -> services.citizens.DeleteAvatarResponse
-	20, // 26: services.citizens.CitizensService.UploadMugshot:output_type -> resources.file.UploadFileResponse
-	11, // 27: services.citizens.CitizensService.DeleteMugshot:output_type -> services.citizens.DeleteMugshotResponse
-	20, // [20:28] is the sub-list for method output_type
-	12, // [12:20] is the sub-list for method input_type
-	12, // [12:12] is the sub-list for extension type_name
-	12, // [12:12] is the sub-list for extension extendee
-	0,  // [0:12] is the sub-list for field type_name
+	17, // 8: services.citizens.ListUserActivityRequest.from:type_name -> resources.timestamp.Timestamp
+	17, // 9: services.citizens.ListUserActivityRequest.to:type_name -> resources.timestamp.Timestamp
+	14, // 10: services.citizens.ListUserActivityResponse.pagination:type_name -> resources.common.database.PaginationResponse
+	18, // 11: services.citizens.ListUserActivityResponse.activity:type_name -> resources.users.activity.UserActivity
+	19, // 12: services.citizens.SetUserPropsRequest.props:type_name -> resources.users.props.UserProps
+	19, // 13: services.citizens.SetUserPropsResponse.props:type_name -> resources.users.props.UserProps
+	0,  // 14: services.citizens.CitizensService.ListCitizens:input_type -> services.citizens.ListCitizensRequest
+	2,  // 15: services.citizens.CitizensService.GetUser:input_type -> services.citizens.GetUserRequest
+	4,  // 16: services.citizens.CitizensService.ListUserActivity:input_type -> services.citizens.ListUserActivityRequest
+	6,  // 17: services.citizens.CitizensService.SetUserProps:input_type -> services.citizens.SetUserPropsRequest
+	20, // 18: services.citizens.CitizensService.UploadAvatar:input_type -> resources.file.UploadFileRequest
+	8,  // 19: services.citizens.CitizensService.DeleteAvatar:input_type -> services.citizens.DeleteAvatarRequest
+	20, // 20: services.citizens.CitizensService.UploadMugshot:input_type -> resources.file.UploadFileRequest
+	10, // 21: services.citizens.CitizensService.DeleteMugshot:input_type -> services.citizens.DeleteMugshotRequest
+	1,  // 22: services.citizens.CitizensService.ListCitizens:output_type -> services.citizens.ListCitizensResponse
+	3,  // 23: services.citizens.CitizensService.GetUser:output_type -> services.citizens.GetUserResponse
+	5,  // 24: services.citizens.CitizensService.ListUserActivity:output_type -> services.citizens.ListUserActivityResponse
+	7,  // 25: services.citizens.CitizensService.SetUserProps:output_type -> services.citizens.SetUserPropsResponse
+	21, // 26: services.citizens.CitizensService.UploadAvatar:output_type -> resources.file.UploadFileResponse
+	9,  // 27: services.citizens.CitizensService.DeleteAvatar:output_type -> services.citizens.DeleteAvatarResponse
+	21, // 28: services.citizens.CitizensService.UploadMugshot:output_type -> resources.file.UploadFileResponse
+	11, // 29: services.citizens.CitizensService.DeleteMugshot:output_type -> services.citizens.DeleteMugshotResponse
+	22, // [22:30] is the sub-list for method output_type
+	14, // [14:22] is the sub-list for method input_type
+	14, // [14:14] is the sub-list for extension type_name
+	14, // [14:14] is the sub-list for extension extendee
+	0,  // [0:14] is the sub-list for field type_name
 }
 
 func init() { file_services_citizens_citizens_proto_init() }

@@ -6,6 +6,7 @@ import (
 
 	database "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/common/database"
 	usersactivity "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/users/activity"
+	"github.com/fivenet-app/fivenet/v2026/pkg/dbutils"
 	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
 	"github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
@@ -22,6 +23,14 @@ func buildUserActivityCondition(
 			types = append(types, mysql.Int32(int32(*t.Enum())))
 		}
 		condition = condition.AND(tUserActivity.Type.IN(types...))
+	}
+	if opts.From != nil {
+		condition = condition.AND(
+			tUserActivity.CreatedAt.GT_EQ(dbutils.TimestampToMySQL(opts.From)),
+		)
+	}
+	if opts.To != nil {
+		condition = condition.AND(tUserActivity.CreatedAt.LT_EQ(dbutils.TimestampToMySQL(opts.To)))
 	}
 
 	return condition

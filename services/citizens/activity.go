@@ -43,6 +43,8 @@ func (s *Server) ListUserActivity(
 	queryOpts := citizensstore.CountUserActivityOptions{
 		UserID: req.GetUserId(),
 		Types:  req.GetTypes(),
+		From:   req.GetFrom(),
+		To:     req.GetTo(),
 	}
 	count, err := s.store.CountUserActivity(ctx, queryOpts)
 	if err != nil {
@@ -58,6 +60,8 @@ func (s *Server) ListUserActivity(
 	activities, err := s.store.ListUserActivity(ctx, citizensstore.ListUserActivityOptions{
 		UserID: req.GetUserId(),
 		Types:  req.GetTypes(),
+		From:   req.GetFrom(),
+		To:     req.GetTo(),
 		Sort:   req.GetSort(),
 		Offset: req.GetPagination().GetOffset(),
 		Limit:  limit,

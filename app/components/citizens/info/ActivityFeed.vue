@@ -4,6 +4,7 @@ import ActivityFeedEntry from '~/components/citizens/info/ActivityFeedEntry.vue'
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
+import InputDateRangePopover, { type DateRange } from '~/components/partials/InputDateRangePopover.vue';
 import Pagination from '~/components/partials/Pagination.vue';
 import SortButton from '~/components/partials/SortButton.vue';
 import type { Form } from '@nuxt/ui';
@@ -44,7 +45,8 @@ const options = activityTypes.map((at) => ({
 }));
 
 const schema = z.object({
-    types: z.enum(UserActivityType).array().max(activityTypes.length).default(activityTypes),
+    types: z.enum(UserActivityType).array().max(activityTypes.length).default([]),
+    dateRange: z.custom<DateRange>().optional(),
     sorting: z
         .object({
             columns: z
@@ -85,6 +87,8 @@ async function listUserActivity(values: Schema, signal: AbortSignal): Promise<Li
                 sort: values.sorting,
                 userId: props.userId,
                 types: values.types,
+                from: toTimestamp(values.dateRange?.start),
+                to: toTimestamp(values.dateRange?.end),
             },
             { abort: signal },
         );
@@ -125,13 +129,13 @@ const denyView = computed(
                                     value-key="value"
                                     :search-input="{ placeholder: $t('common.type', 2) }"
                                 >
-                                    <template #default>
-                                        {{ $t('common.selected', query.types.length) }}
-                                    </template>
-
                                     <template #empty> {{ $t('common.not_found', [$t('common.type', 2)]) }} </template>
                                 </USelectMenu>
                             </ClientOnly>
+                        </UFormField>
+
+                        <UFormField class="flex-1 grow" name="dateRange" :label="$t('common.date')">
+                            <InputDateRangePopover v-model="query.dateRange" class="w-full" clearable time />
                         </UFormField>
 
                         <UFormField label="&nbsp;">

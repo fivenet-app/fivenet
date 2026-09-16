@@ -8,6 +8,7 @@ import "codegen/perms/perms.proto";
 import "codegen/sanitizer/sanitizer.proto";
 import "resources/common/database/database.proto";
 import "resources/file/filestore.proto";
+import "resources/timestamp/timestamp.proto";
 import "resources/users/activity/activity.proto";
 import "resources/users/props/props.proto";
 import "resources/users/user.proto";
@@ -55,6 +56,8 @@ message ListUserActivityRequest {
       enum: {defined_only: true}
     }
   }];
+  optional resources.timestamp.Timestamp from = 5;
+  optional resources.timestamp.Timestamp to = 6;
 }
 
 message ListUserActivityResponse {
