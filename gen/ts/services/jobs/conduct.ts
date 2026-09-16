@@ -36,6 +36,7 @@ export interface ListConductEntriesRequest {
     sort?: Sort;
     /**
      * Search params
+     * Conduct types to filter by. If empty, all conduct types will be returned.
      *
      * @generated from protobuf field: repeated resources.jobs.conduct.ConductType types = 3
      */

@@ -120,6 +120,7 @@ type IStore interface {
 	) (*resqualifications.QualificationResult, error)
 	GetExamUser(
 		ctx context.Context,
+		q qrm.DB,
 		qualificationId int64,
 		userId int32,
 	) (*qualificationsexam.ExamUser, error)

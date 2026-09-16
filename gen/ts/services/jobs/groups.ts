@@ -790,6 +790,8 @@ export interface ListGroupActivityRequest {
      */
     groupId: number;
     /**
+     * Activity types to filter by. If empty, all activity types will be returned.
+     *
      * @generated from protobuf field: repeated resources.jobs.groups.GroupActivityType types = 4
      */
     types: GroupActivityType[];

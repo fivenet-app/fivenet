@@ -40,6 +40,9 @@ message QualificationActivity {
   optional resources.users.short.UserShort target_user = 7;
   resources.timestamp.Timestamp created_at = 8;
   optional QualificationActivityData data = 9;
+  // Internal exam-attempt correlation key. Services clear this before
+  // returning activity records to clients.
+  string attempt_id = 10;
 }
 
 message QualificationActivityData {

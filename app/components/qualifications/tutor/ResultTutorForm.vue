@@ -195,7 +195,7 @@ async function closeModal(): Promise<void> {
                             </template>
 
                             <template #item-label="{ item }">
-                                {{ `${item?.firstname} ${item?.lastname} (${item?.dateofbirth})` }}
+                                {{ userToLabel(item) }}
                             </template>
 
                             <template #empty> {{ $t('common.not_found', [$t('common.citizen', 2)]) }} </template>

@@ -204,7 +204,7 @@ watch(
                                 {{ userToLabel(state.member) }}
                             </template>
                             <template #item-label="{ item }">
-                                {{ `${item?.firstname} ${item?.lastname} (${item?.dateofbirth})` }}
+                                {{ userToLabel(item) }}
                             </template>
                             <template #empty>
                                 {{ $t('common.not_found', [$t('common.colleague', 2)]) }}

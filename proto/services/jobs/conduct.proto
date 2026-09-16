@@ -18,6 +18,7 @@ message ListConductEntriesRequest {
   resources.common.database.PaginationRequest pagination = 1 [(buf.validate.field).required = true];
   optional resources.common.database.Sort sort = 2;
   // Search params
+  // Conduct types to filter by. If empty, all conduct types will be returned.
   repeated resources.jobs.conduct.ConductType types = 3 [(buf.validate.field).repeated = {
     max_items: 10
     items: {

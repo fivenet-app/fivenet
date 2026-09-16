@@ -954,10 +954,12 @@ type ListQualificationActivityRequest_builder struct {
 	Pagination      *database.PaginationRequest
 	Sort            *database.Sort
 	QualificationId int64
-	Types           []activity.QualificationActivityType
-	UserId          *int32
-	From            *timestamp.Timestamp
-	To              *timestamp.Timestamp
+	// Search params
+	// Activity types to filter by. If empty, all activity types will be returned.
+	Types  []activity.QualificationActivityType
+	UserId *int32
+	From   *timestamp.Timestamp
+	To     *timestamp.Timestamp
 }
 
 func (b0 ListQualificationActivityRequest_builder) Build() *ListQualificationActivityRequest {

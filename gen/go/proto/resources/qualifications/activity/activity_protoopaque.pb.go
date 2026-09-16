@@ -123,6 +123,7 @@ type QualificationActivity struct {
 	xxx_hidden_TargetUser      *short.UserShort           `protobuf:"bytes,7,opt,name=target_user,json=targetUser,proto3,oneof"`
 	xxx_hidden_CreatedAt       *timestamp.Timestamp       `protobuf:"bytes,8,opt,name=created_at,json=createdAt,proto3"`
 	xxx_hidden_Data            *QualificationActivityData `protobuf:"bytes,9,opt,name=data,proto3,oneof"`
+	xxx_hidden_AttemptId       string                     `protobuf:"bytes,10,opt,name=attempt_id,json=attemptId,proto3"`
 	XXX_raceDetectHookData     protoimpl.RaceDetectHookData
 	XXX_presence               [1]uint32
 	unknownFields              protoimpl.UnknownFields
@@ -217,6 +218,13 @@ func (x *QualificationActivity) GetData() *QualificationActivityData {
 	return nil
 }
 
+func (x *QualificationActivity) GetAttemptId() string {
+	if x != nil {
+		return x.xxx_hidden_AttemptId
+	}
+	return ""
+}
+
 func (x *QualificationActivity) SetId(v int64) {
 	x.xxx_hidden_Id = v
 }
@@ -231,7 +239,7 @@ func (x *QualificationActivity) SetType(v QualificationActivityType) {
 
 func (x *QualificationActivity) SetActorUserId(v int32) {
 	x.xxx_hidden_ActorUserId = v
-	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 3, 9)
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 3, 10)
 }
 
 func (x *QualificationActivity) SetActorUser(v *short.UserShort) {
@@ -240,7 +248,7 @@ func (x *QualificationActivity) SetActorUser(v *short.UserShort) {
 
 func (x *QualificationActivity) SetTargetUserId(v int32) {
 	x.xxx_hidden_TargetUserId = v
-	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 5, 9)
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 5, 10)
 }
 
 func (x *QualificationActivity) SetTargetUser(v *short.UserShort) {
@@ -253,6 +261,10 @@ func (x *QualificationActivity) SetCreatedAt(v *timestamp.Timestamp) {
 
 func (x *QualificationActivity) SetData(v *QualificationActivityData) {
 	x.xxx_hidden_Data = v
+}
+
+func (x *QualificationActivity) SetAttemptId(v string) {
+	x.xxx_hidden_AttemptId = v
 }
 
 func (x *QualificationActivity) HasActorUserId() bool {
@@ -335,6 +347,9 @@ type QualificationActivity_builder struct {
 	TargetUser      *short.UserShort
 	CreatedAt       *timestamp.Timestamp
 	Data            *QualificationActivityData
+	// Internal exam-attempt correlation key. Services clear this before
+	// returning activity records to clients.
+	AttemptId string
 }
 
 func (b0 QualificationActivity_builder) Build() *QualificationActivity {
@@ -345,17 +360,18 @@ func (b0 QualificationActivity_builder) Build() *QualificationActivity {
 	x.xxx_hidden_QualificationId = b.QualificationId
 	x.xxx_hidden_Type = b.Type
 	if b.ActorUserId != nil {
-		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 3, 9)
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 3, 10)
 		x.xxx_hidden_ActorUserId = *b.ActorUserId
 	}
 	x.xxx_hidden_ActorUser = b.ActorUser
 	if b.TargetUserId != nil {
-		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 5, 9)
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 5, 10)
 		x.xxx_hidden_TargetUserId = *b.TargetUserId
 	}
 	x.xxx_hidden_TargetUser = b.TargetUser
 	x.xxx_hidden_CreatedAt = b.CreatedAt
 	x.xxx_hidden_Data = b.Data
+	x.xxx_hidden_AttemptId = b.AttemptId
 	return m0
 }
 
@@ -502,7 +518,7 @@ var File_resources_qualifications_activity_activity_proto protoreflect.FileDescr
 
 const file_resources_qualifications_activity_activity_proto_rawDesc = "" +
 	"\n" +
-	"0resources/qualifications/activity/activity.proto\x12!resources.qualifications.activity\x1a!codegen/dbscanner/dbscanner.proto\x1a-resources/qualifications/qualifications.proto\x1a#resources/timestamp/timestamp.proto\x1a resources/users/short/user.proto\"\xe9\x04\n" +
+	"0resources/qualifications/activity/activity.proto\x12!resources.qualifications.activity\x1a!codegen/dbscanner/dbscanner.proto\x1a-resources/qualifications/qualifications.proto\x1a#resources/timestamp/timestamp.proto\x1a resources/users/short/user.proto\"\x88\x05\n" +
 	"\x15QualificationActivity\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12)\n" +
 	"\x10qualification_id\x18\x02 \x01(\x03R\x0fqualificationId\x12P\n" +
@@ -515,7 +531,10 @@ const file_resources_qualifications_activity_activity_proto_rawDesc = "" +
 	"targetUser\x88\x01\x01\x12=\n" +
 	"\n" +
 	"created_at\x18\b \x01(\v2\x1e.resources.timestamp.TimestampR\tcreatedAt\x12U\n" +
-	"\x04data\x18\t \x01(\v2<.resources.qualifications.activity.QualificationActivityDataH\x04R\x04data\x88\x01\x01B\x10\n" +
+	"\x04data\x18\t \x01(\v2<.resources.qualifications.activity.QualificationActivityDataH\x04R\x04data\x88\x01\x01\x12\x1d\n" +
+	"\n" +
+	"attempt_id\x18\n" +
+	" \x01(\tR\tattemptIdB\x10\n" +
 	"\x0e_actor_user_idB\r\n" +
 	"\v_actor_userB\x11\n" +
 	"\x0f_target_user_idB\x0e\n" +

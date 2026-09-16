@@ -103,10 +103,14 @@ export interface ListVehicleActivityRequest {
      */
     sort?: Sort;
     /**
+     * Search params
+     *
      * @generated from protobuf field: string plate = 3
      */
     plate: string;
     /**
+     * Activity types to filter by. If empty, all activity types will be returned.
+     *
      * @generated from protobuf field: repeated resources.vehicles.activity.VehicleActivityType types = 4
      */
     types: VehicleActivityType[];

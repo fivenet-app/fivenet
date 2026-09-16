@@ -657,7 +657,8 @@ func (s *Server) ListColleagueActivity(
 		}
 	}
 
-	if len(req.GetActivityTypes()) > 0 {
+	hasActivityTypeFilter := len(req.GetActivityTypes()) > 0
+	if hasActivityTypeFilter {
 		req.ActivityTypes = slices.DeleteFunc(
 			req.GetActivityTypes(),
 			func(t colleaguesactivity.ColleagueActivityType) bool {
@@ -672,7 +673,10 @@ func (s *Server) ListColleagueActivity(
 	}
 
 	activityTypes := req.GetActivityTypes()
-	if len(activityTypes) == 0 {
+	if hasActivityTypeFilter && len(activityTypes) == 0 {
+		return resp, nil
+	}
+	if !hasActivityTypeFilter {
 		activityTypes = []colleaguesactivity.ColleagueActivityType{
 			colleaguesactivity.ColleagueActivityType_COLLEAGUE_ACTIVITY_TYPE_HIRED,
 			colleaguesactivity.ColleagueActivityType_COLLEAGUE_ACTIVITY_TYPE_FIRED,

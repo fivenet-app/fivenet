@@ -136,6 +136,8 @@ export interface ListColleagueActivityRequest {
      */
     users?: UserSelector;
     /**
+     * Activity types to filter by. If empty, all user-permitted activity types will be returned.
+     *
      * @generated from protobuf field: repeated resources.jobs.colleagues.activity.ColleagueActivityType activity_types = 4
      */
     activityTypes: ColleagueActivityType[];

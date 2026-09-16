@@ -19,4 +19,5 @@ type FivenetQualificationsExamUsers struct {
 	StartedAt       *time.Time `json:"started_at"`
 	EndsAt          *time.Time `json:"ends_at"`
 	EndedAt         *time.Time `json:"ended_at"`
+	Snapshot        *string    `json:"snapshot"`
 }

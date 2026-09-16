@@ -26,6 +26,20 @@ func (s *Server) addQualificationActivity(
 	actorUserID, targetUserID int32,
 	data *qualificationsactivity.QualificationActivityData,
 ) error {
+	return s.addQualificationActivityForAttempt(
+		ctx, tx, qualificationID, activityType, actorUserID, targetUserID, "", data,
+	)
+}
+
+func (s *Server) addQualificationActivityForAttempt(
+	ctx context.Context,
+	tx qrm.DB,
+	qualificationID int64,
+	activityType qualificationsactivity.QualificationActivityType,
+	actorUserID, targetUserID int32,
+	attemptID string,
+	data *qualificationsactivity.QualificationActivityData,
+) error {
 	return s.store.CreateQualificationActivity(
 		ctx,
 		tx,
@@ -34,6 +48,7 @@ func (s *Server) addQualificationActivity(
 			Type:            activityType,
 			ActorUserId:     int32PtrOrNil(actorUserID),
 			TargetUserId:    int32PtrOrNil(targetUserID),
+			AttemptId:       attemptID,
 			Data:            data,
 		},
 	)
@@ -91,6 +106,9 @@ func (s *Server) ListQualificationActivity(
 
 	targets := make([]citizenshydrator.BasicTarget, 0, len(resp.GetActivity())*2)
 	for i, activity := range resp.GetActivity() {
+		// Attempt IDs are internal correlation keys and must not be exposed to
+		// clients, even though they are retained on the stored activity.
+		activity.SetAttemptId("")
 		if activity.GetActorUserId() > 0 {
 			targets = append(
 				targets,

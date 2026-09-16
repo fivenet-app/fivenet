@@ -1,4 +1,6 @@
 <script lang="ts" setup>
+import type { Form } from '@nuxt/ui';
+import { z } from 'zod';
 import CitizenInfoPopover from '~/components/partials/citizens/CitizenInfoPopover.vue';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
@@ -25,23 +27,37 @@ const props = defineProps<{ qualificationId: number }>();
 const { t } = useI18n();
 const completorStore = useCompletorStore();
 const qualificationsClient = await getQualificationsQualificationsClient();
-const page = ref(1);
-const types = ref<QualificationActivityType[]>([]);
-const user = ref<UserShort>();
-const dateRange = ref<DateRange>();
-const sorting = ref<{ columns: SortByColumn[] }>({ columns: [{ id: 'createdAt', desc: true }] });
 
-const activityKey = computed(
-    () =>
-        `qualification-activity-${props.qualificationId}-${page.value}-${types.value.join(',')}-${user.value?.userId ?? 0}-${dateRange.value?.start.toISOString() ?? ''}-${dateRange.value?.end.toISOString() ?? ''}-${JSON.stringify(sorting.value)}`,
-);
-const { data, status, error, refresh } = useAuthedLazyAsyncData(
-    'userState',
-    activityKey,
-    ({ signal }) => listActivity(signal),
-    {
-        watch: [() => props.qualificationId, page, types, () => user.value?.userId, dateRange, sorting],
-    },
+const schema = z.object({
+    types: z.enum(QualificationActivityType).array().default([]),
+    user: z.custom<UserShort>().optional(),
+    dateRange: z.custom<DateRange>().optional(),
+    sorting: z
+        .object({
+            columns: z
+                .custom<SortByColumn>()
+                .array()
+                .max(3)
+                .default([
+                    {
+                        id: 'createdAt',
+                        desc: true,
+                    },
+                ]),
+        })
+        .default({ columns: [{ id: 'createdAt', desc: true }] }),
+    page: pageNumberSchema,
+});
+
+type Schema = z.output<typeof schema>;
+
+const query = useSearchForm(`qualification_activity_${props.qualificationId}`, schema);
+const formRef = useTemplateRef<Form<typeof schema>>('formRef');
+const { validatedQuery, commitValidatedQuery } = useFormSearchValidation<typeof schema>(query, formRef);
+
+const activityKey = computed(() => `qualification-activity-${props.qualificationId}-${JSON.stringify(validatedQuery.value)}`);
+const { data, status, error, refresh } = useAuthedLazyAsyncData('userState', activityKey, ({ signal }) =>
+    listActivity(validatedQuery.value, signal),
 );
 const activityItems = computed<QualificationActivity[]>(() => data.value?.activity ?? []);
 
@@ -65,86 +81,82 @@ const activityTypeItems = computed(() =>
         })),
 );
 
-async function listActivity(signal: AbortSignal): Promise<ListQualificationActivityResponse> {
+async function listActivity(values: Schema, signal: AbortSignal): Promise<ListQualificationActivityResponse> {
     const { response } = await qualificationsClient.listQualificationActivity(
         {
             qualificationId: props.qualificationId,
-            pagination: { offset: calculateOffset(page.value, data.value?.pagination) },
-            types: types.value,
-            userId: user.value?.userId,
-            sort: sorting.value,
-            from: toTimestamp(dateRange.value?.start),
-            to: toTimestamp(dateRange.value?.end),
+            pagination: { offset: calculateOffset(values.page, data.value?.pagination) },
+            types: values.types,
+            userId: values.user?.userId,
+            sort: values.sorting,
+            from: toTimestamp(values.dateRange?.start),
+            to: toTimestamp(values.dateRange?.end),
         },
         { abort: signal },
     );
     return response;
 }
-
-watch(
-    [types, () => user.value?.userId, dateRange, sorting],
-    async () => {
-        if (page.value === 1) await refresh();
-        else page.value = 1;
-    },
-    { deep: true },
-);
 </script>
 
 <template>
     <UDashboardPanel :ui="{ root: 'min-h-0', body: 'p-0 sm:p-0 gap-0 sm:gap-0' }">
         <template #header>
             <UDashboardToolbar>
-                <div class="my-2 grid w-full gap-3 md:grid-cols-[repeat(3,minmax(0,1fr))_auto]">
-                    <UFormField class="w-full" :label="$t('common.citizen', 1)">
-                        <SelectMenu
-                            v-model="user"
-                            class="w-full"
-                            :searchable="
-                                async (q: string) =>
-                                    await completorStore.completeCitizens({
-                                        search: q,
-                                        userIds: user?.userId ? [user.userId] : [],
-                                    })
-                            "
-                            searchable-key="qualification-activity-user"
-                            :filter-fields="['firstname', 'lastname']"
-                            :search-input="{ placeholder: $t('common.search_field') }"
-                            clear
-                        >
-                            <template v-if="user" #default>
-                                {{ userToLabel(user) }}
-                            </template>
+                <UForm ref="formRef" class="my-2 w-full" :schema="schema" :state="query" @submit="commitValidatedQuery">
+                    <div class="grid w-full gap-3 md:grid-cols-[repeat(3,minmax(0,1fr))_auto]">
+                        <UFormField class="w-full" name="user" :label="$t('common.citizen', 1)">
+                            <SelectMenu
+                                v-model="query.user"
+                                class="w-full"
+                                :searchable="
+                                    async (q: string) =>
+                                        await completorStore.completeCitizens({
+                                            search: q,
+                                            userIds: query.user?.userId ? [query.user.userId] : [],
+                                        })
+                                "
+                                searchable-key="qualification-activity-user"
+                                :filter-fields="['firstname', 'lastname']"
+                                :search-input="{ placeholder: $t('common.search_field') }"
+                                clear
+                            >
+                                <template v-if="query.user" #default>
+                                    {{ userToLabel(query.user) }}
+                                </template>
 
-                            <template #item-label="{ item }">
-                                {{ userToLabel(item) }}
-                            </template>
+                                <template #item-label="{ item }">
+                                    {{ userToLabel(item) }}
+                                </template>
 
-                            <template #empty> {{ $t('common.not_found', [$t('common.citizen', 2)]) }} </template>
-                        </SelectMenu>
-                    </UFormField>
+                                <template #empty> {{ $t('common.not_found', [$t('common.citizen', 2)]) }} </template>
+                            </SelectMenu>
+                        </UFormField>
 
-                    <UFormField class="w-full" :label="$t('common.type')">
-                        <USelectMenu
-                            v-model="types"
-                            class="w-full"
-                            multiple
-                            :items="activityTypeItems"
-                            value-key="value"
-                            :search-input="{ placeholder: $t('common.search_field') }"
-                        >
-                            <template #empty> {{ $t('common.not_found', [$t('common.type', 2)]) }} </template>
-                        </USelectMenu>
-                    </UFormField>
+                        <UFormField class="w-full" name="types" :label="$t('common.type')">
+                            <USelectMenu
+                                v-model="query.types"
+                                class="w-full"
+                                multiple
+                                :items="activityTypeItems"
+                                value-key="value"
+                                :search-input="{ placeholder: $t('common.search_field') }"
+                            >
+                                <template #empty> {{ $t('common.not_found', [$t('common.type', 2)]) }} </template>
+                            </USelectMenu>
+                        </UFormField>
 
-                    <UFormField class="w-full" :label="$t('common.date')">
-                        <InputDateRangePopover v-model="dateRange" class="w-full" />
-                    </UFormField>
+                        <UFormField class="w-full" name="dateRange" :label="$t('common.date')">
+                            <InputDateRangePopover v-model="query.dateRange" class="w-full" clearable time />
+                        </UFormField>
 
-                    <UFormField label="&nbsp;">
-                        <SortButton v-model="sorting" :fields="[{ label: $t('common.created_at'), value: 'createdAt' }]" />
-                    </UFormField>
-                </div>
+                        <UFormField label="&nbsp;">
+                            <SortButton
+                                v-model="query.sorting"
+                                :fields="[{ label: $t('common.created_at'), value: 'createdAt' }]"
+                            />
+                        </UFormField>
+                    </div>
+                </UForm>
             </UDashboardToolbar>
         </template>
 
@@ -219,7 +231,7 @@ watch(
         <template #footer>
             <Pagination
                 v-if="data?.pagination"
-                v-model="page"
+                v-model="query.page"
                 :pagination="data.pagination"
                 :status="status"
                 :refresh="refresh"

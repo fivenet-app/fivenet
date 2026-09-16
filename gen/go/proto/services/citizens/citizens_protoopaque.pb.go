@@ -753,9 +753,10 @@ type ListUserActivityRequest_builder struct {
 	Sort       *database.Sort
 	// Search params
 	UserId int32
-	Types  []activity.UserActivityType
-	From   *timestamp.Timestamp
-	To     *timestamp.Timestamp
+	// Activity types to filter by. If empty, all activity types will be returned.
+	Types []activity.UserActivityType
+	From  *timestamp.Timestamp
+	To    *timestamp.Timestamp
 }
 
 func (b0 ListUserActivityRequest_builder) Build() *ListUserActivityRequest {

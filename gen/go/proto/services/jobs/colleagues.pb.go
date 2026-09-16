@@ -627,7 +627,8 @@ type ListColleagueActivityRequest struct {
 	Pagination *database.PaginationRequest `protobuf:"bytes,1,opt,name=pagination,proto3" json:"pagination,omitempty"`
 	Sort       *database.Sort              `protobuf:"bytes,2,opt,name=sort,proto3,oneof" json:"sort,omitempty"`
 	// Search params
-	Users         *jobs.UserSelector               `protobuf:"bytes,3,opt,name=users,proto3,oneof" json:"users,omitempty"`
+	Users *jobs.UserSelector `protobuf:"bytes,3,opt,name=users,proto3,oneof" json:"users,omitempty"`
+	// Activity types to filter by. If empty, all user-permitted activity types will be returned.
 	ActivityTypes []activity.ColleagueActivityType `protobuf:"varint,4,rep,packed,name=activity_types,json=activityTypes,proto3,enum=resources.jobs.colleagues.activity.ColleagueActivityType" json:"activity_types,omitempty"`
 	From          *timestamp.Timestamp             `protobuf:"bytes,5,opt,name=from,proto3,oneof" json:"from,omitempty"`
 	To            *timestamp.Timestamp             `protobuf:"bytes,6,opt,name=to,proto3,oneof" json:"to,omitempty"`
@@ -787,7 +788,8 @@ type ListColleagueActivityRequest_builder struct {
 	Pagination *database.PaginationRequest
 	Sort       *database.Sort
 	// Search params
-	Users         *jobs.UserSelector
+	Users *jobs.UserSelector
+	// Activity types to filter by. If empty, all user-permitted activity types will be returned.
 	ActivityTypes []activity.ColleagueActivityType
 	From          *timestamp.Timestamp
 	To            *timestamp.Timestamp

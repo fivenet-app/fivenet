@@ -4545,14 +4545,15 @@ func (b0 DeleteGroupRuleResponse_builder) Build() *DeleteGroupRuleResponse {
 }
 
 type ListGroupActivityRequest struct {
-	state         protoimpl.MessageState      `protogen:"hybrid.v1"`
-	Pagination    *database.PaginationRequest `protobuf:"bytes,1,opt,name=pagination,proto3,oneof" json:"pagination,omitempty"`
-	Sort          *database.Sort              `protobuf:"bytes,2,opt,name=sort,proto3,oneof" json:"sort,omitempty"`
-	GroupId       int64                       `protobuf:"varint,3,opt,name=group_id,json=groupId,proto3" json:"group_id,omitempty"`
-	Types         []groups.GroupActivityType  `protobuf:"varint,4,rep,packed,name=types,proto3,enum=resources.jobs.groups.GroupActivityType" json:"types,omitempty"`
-	UserId        *int32                      `protobuf:"varint,5,opt,name=user_id,json=userId,proto3,oneof" json:"user_id,omitempty"`
-	From          *timestamp.Timestamp        `protobuf:"bytes,6,opt,name=from,proto3,oneof" json:"from,omitempty"`
-	To            *timestamp.Timestamp        `protobuf:"bytes,7,opt,name=to,proto3,oneof" json:"to,omitempty"`
+	state      protoimpl.MessageState      `protogen:"hybrid.v1"`
+	Pagination *database.PaginationRequest `protobuf:"bytes,1,opt,name=pagination,proto3,oneof" json:"pagination,omitempty"`
+	Sort       *database.Sort              `protobuf:"bytes,2,opt,name=sort,proto3,oneof" json:"sort,omitempty"`
+	GroupId    int64                       `protobuf:"varint,3,opt,name=group_id,json=groupId,proto3" json:"group_id,omitempty"`
+	// Activity types to filter by. If empty, all activity types will be returned.
+	Types         []groups.GroupActivityType `protobuf:"varint,4,rep,packed,name=types,proto3,enum=resources.jobs.groups.GroupActivityType" json:"types,omitempty"`
+	UserId        *int32                     `protobuf:"varint,5,opt,name=user_id,json=userId,proto3,oneof" json:"user_id,omitempty"`
+	From          *timestamp.Timestamp       `protobuf:"bytes,6,opt,name=from,proto3,oneof" json:"from,omitempty"`
+	To            *timestamp.Timestamp       `protobuf:"bytes,7,opt,name=to,proto3,oneof" json:"to,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -4720,10 +4721,11 @@ type ListGroupActivityRequest_builder struct {
 	Pagination *database.PaginationRequest
 	Sort       *database.Sort
 	GroupId    int64
-	Types      []groups.GroupActivityType
-	UserId     *int32
-	From       *timestamp.Timestamp
-	To         *timestamp.Timestamp
+	// Activity types to filter by. If empty, all activity types will be returned.
+	Types  []groups.GroupActivityType
+	UserId *int32
+	From   *timestamp.Timestamp
+	To     *timestamp.Timestamp
 }
 
 func (b0 ListGroupActivityRequest_builder) Build() *ListGroupActivityRequest {

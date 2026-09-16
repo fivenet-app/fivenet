@@ -5007,10 +5007,11 @@ type ListGroupActivityRequest_builder struct {
 	Pagination *database.PaginationRequest
 	Sort       *database.Sort
 	GroupId    int64
-	Types      []groups.GroupActivityType
-	UserId     *int32
-	From       *timestamp.Timestamp
-	To         *timestamp.Timestamp
+	// Activity types to filter by. If empty, all activity types will be returned.
+	Types  []groups.GroupActivityType
+	UserId *int32
+	From   *timestamp.Timestamp
+	To     *timestamp.Timestamp
 }
 
 func (b0 ListGroupActivityRequest_builder) Build() *ListGroupActivityRequest {

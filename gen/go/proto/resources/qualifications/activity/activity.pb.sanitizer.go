@@ -3,6 +3,10 @@
 
 package qualificationsactivity
 
+import (
+	htmlsanitizer "github.com/fivenet-app/fivenet/v2026/pkg/sanitizer/html"
+)
+
 // Sanitize sanitizes the message's fields, in case of complex types it calls
 // their Sanitize() method recursively.
 func (m *QualificationActivity) Sanitize() error {
@@ -18,6 +22,9 @@ func (m *QualificationActivity) Sanitize() error {
 			}
 		}
 	}
+
+	// Field: AttemptId
+	m.AttemptId = htmlsanitizer.SanitizeAndUnescape(m.AttemptId)
 
 	// Field: CreatedAt
 	if m.CreatedAt != nil {

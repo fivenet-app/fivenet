@@ -123,8 +123,11 @@ type QualificationActivity struct {
 	TargetUser      *short.UserShort           `protobuf:"bytes,7,opt,name=target_user,json=targetUser,proto3,oneof" json:"target_user,omitempty"`
 	CreatedAt       *timestamp.Timestamp       `protobuf:"bytes,8,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
 	Data            *QualificationActivityData `protobuf:"bytes,9,opt,name=data,proto3,oneof" json:"data,omitempty"`
-	unknownFields   protoimpl.UnknownFields
-	sizeCache       protoimpl.SizeCache
+	// Internal exam-attempt correlation key. Services clear this before
+	// returning activity records to clients.
+	AttemptId     string `protobuf:"bytes,10,opt,name=attempt_id,json=attemptId,proto3" json:"attempt_id,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
 }
 
 func (x *QualificationActivity) Reset() {
@@ -215,6 +218,13 @@ func (x *QualificationActivity) GetData() *QualificationActivityData {
 	return nil
 }
 
+func (x *QualificationActivity) GetAttemptId() string {
+	if x != nil {
+		return x.AttemptId
+	}
+	return ""
+}
+
 func (x *QualificationActivity) SetId(v int64) {
 	x.Id = v
 }
@@ -249,6 +259,10 @@ func (x *QualificationActivity) SetCreatedAt(v *timestamp.Timestamp) {
 
 func (x *QualificationActivity) SetData(v *QualificationActivityData) {
 	x.Data = v
+}
+
+func (x *QualificationActivity) SetAttemptId(v string) {
+	x.AttemptId = v
 }
 
 func (x *QualificationActivity) HasActorUserId() bool {
@@ -329,6 +343,9 @@ type QualificationActivity_builder struct {
 	TargetUser      *short.UserShort
 	CreatedAt       *timestamp.Timestamp
 	Data            *QualificationActivityData
+	// Internal exam-attempt correlation key. Services clear this before
+	// returning activity records to clients.
+	AttemptId string
 }
 
 func (b0 QualificationActivity_builder) Build() *QualificationActivity {
@@ -344,6 +361,7 @@ func (b0 QualificationActivity_builder) Build() *QualificationActivity {
 	x.TargetUser = b.TargetUser
 	x.CreatedAt = b.CreatedAt
 	x.Data = b.Data
+	x.AttemptId = b.AttemptId
 	return m0
 }
 
@@ -469,7 +487,7 @@ var File_resources_qualifications_activity_activity_proto protoreflect.FileDescr
 
 const file_resources_qualifications_activity_activity_proto_rawDesc = "" +
 	"\n" +
-	"0resources/qualifications/activity/activity.proto\x12!resources.qualifications.activity\x1a!codegen/dbscanner/dbscanner.proto\x1a-resources/qualifications/qualifications.proto\x1a#resources/timestamp/timestamp.proto\x1a resources/users/short/user.proto\"\xe9\x04\n" +
+	"0resources/qualifications/activity/activity.proto\x12!resources.qualifications.activity\x1a!codegen/dbscanner/dbscanner.proto\x1a-resources/qualifications/qualifications.proto\x1a#resources/timestamp/timestamp.proto\x1a resources/users/short/user.proto\"\x88\x05\n" +
 	"\x15QualificationActivity\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12)\n" +
 	"\x10qualification_id\x18\x02 \x01(\x03R\x0fqualificationId\x12P\n" +
@@ -482,7 +500,10 @@ const file_resources_qualifications_activity_activity_proto_rawDesc = "" +
 	"targetUser\x88\x01\x01\x12=\n" +
 	"\n" +
 	"created_at\x18\b \x01(\v2\x1e.resources.timestamp.TimestampR\tcreatedAt\x12U\n" +
-	"\x04data\x18\t \x01(\v2<.resources.qualifications.activity.QualificationActivityDataH\x04R\x04data\x88\x01\x01B\x10\n" +
+	"\x04data\x18\t \x01(\v2<.resources.qualifications.activity.QualificationActivityDataH\x04R\x04data\x88\x01\x01\x12\x1d\n" +
+	"\n" +
+	"attempt_id\x18\n" +
+	" \x01(\tR\tattemptIdB\x10\n" +
 	"\x0e_actor_user_idB\r\n" +
 	"\v_actor_userB\x11\n" +
 	"\x0f_target_user_idB\x0e\n" +

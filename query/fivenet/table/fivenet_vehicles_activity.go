@@ -76,7 +76,7 @@ func newFivenetVehiclesActivityTableImpl(schemaName, tableName, alias string) fi
 		DataColumn       = mysql.StringColumn("data")
 		allColumns       = mysql.ColumnList{IDColumn, CreatedAtColumn, CreatorIDColumn, PlateColumn, TypeColumn, CreatorJobColumn, ReasonColumn, DataColumn}
 		mutableColumns   = mysql.ColumnList{CreatedAtColumn, CreatorIDColumn, PlateColumn, TypeColumn, CreatorJobColumn, ReasonColumn, DataColumn}
-		defaultColumns   = mysql.ColumnList{CreatedAtColumn}
+		defaultColumns   = mysql.ColumnList{CreatedAtColumn, CreatorJobColumn}
 	)
 
 	return fivenetVehiclesActivityTable{

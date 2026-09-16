@@ -153,6 +153,9 @@ export interface ListQualificationActivityRequest {
      */
     qualificationId: number;
     /**
+     * Search params
+     * Activity types to filter by. If empty, all activity types will be returned.
+     *
      * @generated from protobuf field: repeated resources.qualifications.activity.QualificationActivityType types = 4
      */
     types: QualificationActivityType[];

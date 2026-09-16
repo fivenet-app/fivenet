@@ -23,6 +23,7 @@ type examResponses struct {
 
 func (s *Store) GetExamUser(
 	ctx context.Context,
+	q qrm.DB,
 	qualificationId int64,
 	userId int32,
 ) (*qualificationsexam.ExamUser, error) {
@@ -46,7 +47,7 @@ func (s *Store) GetExamUser(
 		LIMIT(1)
 
 	var dest qualificationsexam.ExamUser
-	if err := stmt.QueryContext(ctx, s.db, &dest); err != nil {
+	if err := stmt.QueryContext(ctx, q, &dest); err != nil {
 		if !errors.Is(err, qrm.ErrNoRows) {
 			return nil, err
 		}

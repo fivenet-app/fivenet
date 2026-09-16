@@ -125,6 +125,8 @@ export interface ListUserActivityRequest {
      */
     userId: number;
     /**
+     * Activity types to filter by. If empty, all activity types will be returned.
+     *
      * @generated from protobuf field: repeated resources.users.activity.UserActivityType types = 4
      */
     types: UserActivityType[];

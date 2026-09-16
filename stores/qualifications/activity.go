@@ -25,11 +25,16 @@ func (s *Store) CreateQualificationActivity(
 			tActivity.ActorUserID,
 			tActivity.TargetUserID,
 			tActivity.Data,
+			tActivity.AttemptID,
 		).
 		VALUES(
 			activity.GetQualificationId(),
 			int32(activity.GetType()), dbutils.Int32P(activity.GetActorUserId()),
 			dbutils.Int32P(activity.GetTargetUserId()), activity.GetData(),
+			dbutils.StringEmpty(activity.GetAttemptId()),
+		).
+		ON_DUPLICATE_KEY_UPDATE(
+			tActivity.ID.SET(tActivity.ID),
 		).
 		ExecContext(ctx, tx)
 	return err

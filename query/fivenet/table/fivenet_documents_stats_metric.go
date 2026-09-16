@@ -84,7 +84,7 @@ func newFivenetDocumentsStatsMetricTableImpl(schemaName, tableName, alias string
 		UpdatedAtColumn  = mysql.TimestampColumn("updated_at")
 		allColumns       = mysql.ColumnList{IDColumn, DocumentIDColumn, JobColumn, SourceKeyColumn, MetricKeyColumn, Dimension1Column, Dimension2Column, Dimension3Column, ValueColumn, OccurredAtColumn, CreatedAtColumn, UpdatedAtColumn}
 		mutableColumns   = mysql.ColumnList{DocumentIDColumn, JobColumn, SourceKeyColumn, MetricKeyColumn, Dimension1Column, Dimension2Column, Dimension3Column, ValueColumn, OccurredAtColumn, CreatedAtColumn, UpdatedAtColumn}
-		defaultColumns   = mysql.ColumnList{}
+		defaultColumns   = mysql.ColumnList{Dimension1Column, Dimension2Column, Dimension3Column}
 	)
 
 	return fivenetDocumentsStatsMetricTable{

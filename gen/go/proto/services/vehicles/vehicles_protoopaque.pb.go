@@ -655,10 +655,12 @@ type ListVehicleActivityRequest_builder struct {
 
 	Pagination *database.PaginationRequest
 	Sort       *database.Sort
-	Plate      string
-	Types      []activity.VehicleActivityType
-	From       *timestamp.Timestamp
-	To         *timestamp.Timestamp
+	// Search params
+	Plate string
+	// Activity types to filter by. If empty, all activity types will be returned.
+	Types []activity.VehicleActivityType
+	From  *timestamp.Timestamp
+	To    *timestamp.Timestamp
 }
 
 func (b0 ListVehicleActivityRequest_builder) Build() *ListVehicleActivityRequest {

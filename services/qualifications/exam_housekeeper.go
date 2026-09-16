@@ -166,13 +166,14 @@ func (h *ExamHousekeeper) completeExpiredExam(
 	if err != nil || !expired {
 		return err
 	}
-	if err := h.server.addQualificationActivity(
+	if err := h.server.addQualificationActivityForAttempt(
 		ctx,
 		tx,
 		attempt.GetQualificationId(),
 		qualificationsactivity.QualificationActivityType_QUALIFICATION_ACTIVITY_TYPE_EXAM_EXPIRED,
 		0,
 		attempt.GetUserId(),
+		attempt.GetAttemptId(),
 		nil,
 	); err != nil {
 		return err

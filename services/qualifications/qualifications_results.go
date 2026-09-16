@@ -281,7 +281,7 @@ func (s *Server) createOrUpdateQualificationResult(
 
 	if quali.GetExamMode() > qualificationsexam.QualificationExamMode_QUALIFICATION_EXAM_MODE_DISABLED &&
 		grading != nil {
-		examUser, err := s.store.GetExamUser(ctx, quali.GetId(), userId)
+		examUser, err := s.store.GetExamUser(ctx, tx, quali.GetId(), userId)
 		if err != nil {
 			return 0, err
 		}

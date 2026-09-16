@@ -17,9 +17,9 @@ type FivenetDocumentsStatsMetric struct {
 	Job        string    `json:"job"`
 	SourceKey  string    `json:"source_key"`
 	MetricKey  string    `json:"metric_key"`
-	Dimension1 *string   `json:"dimension1"`
-	Dimension2 *string   `json:"dimension2"`
-	Dimension3 *string   `json:"dimension3"`
+	Dimension1 string    `json:"dimension1"`
+	Dimension2 string    `json:"dimension2"`
+	Dimension3 string    `json:"dimension3"`
 	Value      int64     `json:"value"`
 	OccurredAt time.Time `json:"occurred_at"`
 	CreatedAt  time.Time `json:"created_at"`

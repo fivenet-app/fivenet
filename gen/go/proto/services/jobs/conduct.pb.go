@@ -33,6 +33,7 @@ type ListConductEntriesRequest struct {
 	Pagination *database.PaginationRequest `protobuf:"bytes,1,opt,name=pagination,proto3" json:"pagination,omitempty"`
 	Sort       *database.Sort              `protobuf:"bytes,2,opt,name=sort,proto3,oneof" json:"sort,omitempty"`
 	// Search params
+	// Conduct types to filter by. If empty, all conduct types will be returned.
 	Types         []conduct.ConductType `protobuf:"varint,3,rep,packed,name=types,proto3,enum=resources.jobs.conduct.ConductType" json:"types,omitempty"`
 	ShowExpired   *bool                 `protobuf:"varint,4,opt,name=show_expired,json=showExpired,proto3,oneof" json:"show_expired,omitempty"`
 	ShowDrafts    *bool                 `protobuf:"varint,5,opt,name=show_drafts,json=showDrafts,proto3,oneof" json:"show_drafts,omitempty"`
@@ -228,6 +229,7 @@ type ListConductEntriesRequest_builder struct {
 	Pagination *database.PaginationRequest
 	Sort       *database.Sort
 	// Search params
+	// Conduct types to filter by. If empty, all conduct types will be returned.
 	Types       []conduct.ConductType
 	ShowExpired *bool
 	ShowDrafts  *bool

@@ -374,6 +374,7 @@ export interface ListDocumentActivityRequest {
     documentId: number;
     /**
      * Search params
+     * Activity types to filter by. If empty, all activity types will be returned.
      *
      * @generated from protobuf field: repeated resources.documents.activity.DocActivityType activity_types = 3
      */

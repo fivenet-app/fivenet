@@ -55,6 +55,13 @@ export interface QualificationActivity {
      * @generated from protobuf field: optional resources.qualifications.activity.QualificationActivityData data = 9
      */
     data?: QualificationActivityData;
+    /**
+     * Internal exam-attempt correlation key. Services clear this before
+     * returning activity records to clients.
+     *
+     * @generated from protobuf field: string attempt_id = 10
+     */
+    attemptId: string;
 }
 /**
  * @generated from protobuf message resources.qualifications.activity.QualificationActivityData
@@ -158,7 +165,8 @@ class QualificationActivity$Type extends MessageType<QualificationActivity> {
             { no: 6, name: "target_user_id", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/ },
             { no: 7, name: "target_user", kind: "message", T: () => UserShort },
             { no: 8, name: "created_at", kind: "message", T: () => Timestamp },
-            { no: 9, name: "data", kind: "message", T: () => QualificationActivityData }
+            { no: 9, name: "data", kind: "message", T: () => QualificationActivityData },
+            { no: 10, name: "attempt_id", kind: "scalar", T: 9 /*ScalarType.STRING*/ }
         ]);
     }
     create(value?: PartialMessage<QualificationActivity>): QualificationActivity {
@@ -166,6 +174,7 @@ class QualificationActivity$Type extends MessageType<QualificationActivity> {
         message.id = 0;
         message.qualificationId = 0;
         message.type = 0;
+        message.attemptId = "";
         if (value !== undefined)
             reflectionMergePartial<QualificationActivity>(this, message, value);
         return message;
@@ -201,6 +210,9 @@ class QualificationActivity$Type extends MessageType<QualificationActivity> {
                     break;
                 case /* optional resources.qualifications.activity.QualificationActivityData data */ 9:
                     message.data = QualificationActivityData.internalBinaryRead(reader, reader.uint32(), options, message.data);
+                    break;
+                case /* string attempt_id */ 10:
+                    message.attemptId = reader.string();
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -241,6 +253,9 @@ class QualificationActivity$Type extends MessageType<QualificationActivity> {
         /* optional resources.qualifications.activity.QualificationActivityData data = 9; */
         if (message.data)
             QualificationActivityData.internalBinaryWrite(message.data, writer.tag(9, WireType.LengthDelimited).fork(), options).join();
+        /* string attempt_id = 10; */
+        if (message.attemptId !== "")
+            writer.tag(10, WireType.LengthDelimited).string(message.attemptId);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);

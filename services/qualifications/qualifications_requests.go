@@ -177,6 +177,8 @@ func (s *Server) CreateOrUpdateQualificationRequest(
 			return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 		}
 		if request != nil {
+			requestStatus := req.GetRequest().GetStatus()
+
 			if err := s.addQualificationActivity(
 				ctx,
 				tx,
@@ -184,7 +186,9 @@ func (s *Server) CreateOrUpdateQualificationRequest(
 				qualificationsactivity.QualificationActivityType_QUALIFICATION_ACTIVITY_TYPE_REQUEST_UPDATED,
 				userInfo.GetUserId(),
 				request.GetUserId(),
-				&qualificationsactivity.QualificationActivityData{RequestStatus: request.Status},
+				qualificationsactivity.QualificationActivityData_builder{
+					RequestStatus: &requestStatus,
+				}.Build(),
 			); err != nil {
 				return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 			}
@@ -271,7 +275,7 @@ func (s *Server) CreateOrUpdateQualificationRequest(
 		}
 
 		if request != nil &&
-			(request.Status == nil || (request.GetStatus() != qualifications.RequestStatus_REQUEST_STATUS_PENDING &&
+			(!request.HasStatus() || (request.GetStatus() != qualifications.RequestStatus_REQUEST_STATUS_PENDING &&
 				request.GetStatus() != qualifications.RequestStatus_REQUEST_STATUS_COMPLETED)) {
 			return nil, errorsqualifications.ErrFailedQuery
 		}
@@ -279,11 +283,9 @@ func (s *Server) CreateOrUpdateQualificationRequest(
 		if err := s.store.UpsertQualificationRequest(ctx, tx, req.GetRequest()); err != nil {
 			return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 		}
-		requestStatus := req.GetRequest().Status
-		if requestStatus == nil {
-			defaultStatus := qualifications.RequestStatus_REQUEST_STATUS_PENDING
-			requestStatus = &defaultStatus
-		}
+
+		requestStatus := qualifications.RequestStatus_REQUEST_STATUS_PENDING
+
 		if err := s.addQualificationActivity(
 			ctx,
 			tx,
@@ -291,7 +293,9 @@ func (s *Server) CreateOrUpdateQualificationRequest(
 			qualificationsactivity.QualificationActivityType_QUALIFICATION_ACTIVITY_TYPE_REQUEST_CREATED,
 			userInfo.GetUserId(),
 			userInfo.GetUserId(),
-			&qualificationsactivity.QualificationActivityData{RequestStatus: requestStatus},
+			&qualificationsactivity.QualificationActivityData{
+				RequestStatus: &requestStatus,
+			},
 		); err != nil {
 			return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 		}
@@ -470,7 +474,7 @@ func (s *Server) deleteQualificationRequest(
 	if err := s.store.DeleteQualificationRequest(ctx, tx, qualificationId, userId); err != nil {
 		return err
 	}
-	examUser, err := s.store.GetExamUser(ctx, qualificationId, userId)
+	examUser, err := s.store.GetExamUser(ctx, tx, qualificationId, userId)
 	if err != nil {
 		return err
 	}

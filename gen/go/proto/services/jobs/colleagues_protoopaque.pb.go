@@ -822,7 +822,8 @@ type ListColleagueActivityRequest_builder struct {
 	Pagination *database.PaginationRequest
 	Sort       *database.Sort
 	// Search params
-	Users         *jobs.UserSelector
+	Users *jobs.UserSelector
+	// Activity types to filter by. If empty, all user-permitted activity types will be returned.
 	ActivityTypes []activity.ColleagueActivityType
 	From          *timestamp.Timestamp
 	To            *timestamp.Timestamp

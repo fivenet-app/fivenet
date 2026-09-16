@@ -554,7 +554,8 @@ type ListUserActivityRequest struct {
 	Pagination *database.PaginationRequest `protobuf:"bytes,1,opt,name=pagination,proto3" json:"pagination,omitempty"`
 	Sort       *database.Sort              `protobuf:"bytes,2,opt,name=sort,proto3,oneof" json:"sort,omitempty"`
 	// Search params
-	UserId        int32                       `protobuf:"varint,3,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	UserId int32 `protobuf:"varint,3,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	// Activity types to filter by. If empty, all activity types will be returned.
 	Types         []activity.UserActivityType `protobuf:"varint,4,rep,packed,name=types,proto3,enum=resources.users.activity.UserActivityType" json:"types,omitempty"`
 	From          *timestamp.Timestamp        `protobuf:"bytes,5,opt,name=from,proto3,oneof" json:"from,omitempty"`
 	To            *timestamp.Timestamp        `protobuf:"bytes,6,opt,name=to,proto3,oneof" json:"to,omitempty"`
@@ -704,9 +705,10 @@ type ListUserActivityRequest_builder struct {
 	Sort       *database.Sort
 	// Search params
 	UserId int32
-	Types  []activity.UserActivityType
-	From   *timestamp.Timestamp
-	To     *timestamp.Timestamp
+	// Activity types to filter by. If empty, all activity types will be returned.
+	Types []activity.UserActivityType
+	From  *timestamp.Timestamp
+	To    *timestamp.Timestamp
 }
 
 func (b0 ListUserActivityRequest_builder) Build() *ListUserActivityRequest {

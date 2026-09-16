@@ -749,16 +749,18 @@ func (b0 DeleteQualificationResponse_builder) Build() *DeleteQualificationRespon
 }
 
 type ListQualificationActivityRequest struct {
-	state           protoimpl.MessageState               `protogen:"hybrid.v1"`
-	Pagination      *database.PaginationRequest          `protobuf:"bytes,1,opt,name=pagination,proto3" json:"pagination,omitempty"`
-	Sort            *database.Sort                       `protobuf:"bytes,2,opt,name=sort,proto3,oneof" json:"sort,omitempty"`
-	QualificationId int64                                `protobuf:"varint,3,opt,name=qualification_id,json=qualificationId,proto3" json:"qualification_id,omitempty"`
-	Types           []activity.QualificationActivityType `protobuf:"varint,4,rep,packed,name=types,proto3,enum=resources.qualifications.activity.QualificationActivityType" json:"types,omitempty"`
-	UserId          *int32                               `protobuf:"varint,5,opt,name=user_id,json=userId,proto3,oneof" json:"user_id,omitempty"`
-	From            *timestamp.Timestamp                 `protobuf:"bytes,6,opt,name=from,proto3,oneof" json:"from,omitempty"`
-	To              *timestamp.Timestamp                 `protobuf:"bytes,7,opt,name=to,proto3,oneof" json:"to,omitempty"`
-	unknownFields   protoimpl.UnknownFields
-	sizeCache       protoimpl.SizeCache
+	state           protoimpl.MessageState      `protogen:"hybrid.v1"`
+	Pagination      *database.PaginationRequest `protobuf:"bytes,1,opt,name=pagination,proto3" json:"pagination,omitempty"`
+	Sort            *database.Sort              `protobuf:"bytes,2,opt,name=sort,proto3,oneof" json:"sort,omitempty"`
+	QualificationId int64                       `protobuf:"varint,3,opt,name=qualification_id,json=qualificationId,proto3" json:"qualification_id,omitempty"`
+	// Search params
+	// Activity types to filter by. If empty, all activity types will be returned.
+	Types         []activity.QualificationActivityType `protobuf:"varint,4,rep,packed,name=types,proto3,enum=resources.qualifications.activity.QualificationActivityType" json:"types,omitempty"`
+	UserId        *int32                               `protobuf:"varint,5,opt,name=user_id,json=userId,proto3,oneof" json:"user_id,omitempty"`
+	From          *timestamp.Timestamp                 `protobuf:"bytes,6,opt,name=from,proto3,oneof" json:"from,omitempty"`
+	To            *timestamp.Timestamp                 `protobuf:"bytes,7,opt,name=to,proto3,oneof" json:"to,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
 }
 
 func (x *ListQualificationActivityRequest) Reset() {
@@ -924,10 +926,12 @@ type ListQualificationActivityRequest_builder struct {
 	Pagination      *database.PaginationRequest
 	Sort            *database.Sort
 	QualificationId int64
-	Types           []activity.QualificationActivityType
-	UserId          *int32
-	From            *timestamp.Timestamp
-	To              *timestamp.Timestamp
+	// Search params
+	// Activity types to filter by. If empty, all activity types will be returned.
+	Types  []activity.QualificationActivityType
+	UserId *int32
+	From   *timestamp.Timestamp
+	To     *timestamp.Timestamp
 }
 
 func (b0 ListQualificationActivityRequest_builder) Build() *ListQualificationActivityRequest {

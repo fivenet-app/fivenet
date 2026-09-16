@@ -6802,6 +6802,7 @@ User related events
 | `target_user` | [resources.users.short.UserShort](#resourcesusersshortUserShort) | optional |  |
 | `created_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) |  |  |
 | `data` | [QualificationActivityData](#resourcesqualificationsactivityQualificationActivityData) | optional |  |
+| `attempt_id` | [string](#string) |  | Internal exam-attempt correlation key. Services clear this before returning activity records to clients. |
 
 
 
@@ -9369,7 +9370,7 @@ Auth Service handles user authentication, character selection and oauth2 connect
 | `pagination` | [resources.common.database.PaginationRequest](#resourcescommondatabasePaginationRequest) |  |  |
 | `sort` | [resources.common.database.Sort](#resourcescommondatabaseSort) | optional |  |
 | `user_id` | [int32](#int32) |  | Search params |
-| `types` | [resources.users.activity.UserActivityType](#resourcesusersactivityUserActivityType) | repeated |  |
+| `types` | [resources.users.activity.UserActivityType](#resourcesusersactivityUserActivityType) | repeated | Activity types to filter by. If empty, all activity types will be returned. |
 | `from` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
 | `to` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
 
@@ -10442,7 +10443,7 @@ Upsert = insert missing PENDING tasks/slots; will NOT delete existing tasks. Ide
 | ----- | ---- | ----- | ----------- |
 | `pagination` | [resources.common.database.PaginationRequest](#resourcescommondatabasePaginationRequest) |  |  |
 | `document_id` | [int64](#int64) |  |  |
-| `activity_types` | [resources.documents.activity.DocActivityType](#resourcesdocumentsactivityDocActivityType) | repeated | Search params |
+| `activity_types` | [resources.documents.activity.DocActivityType](#resourcesdocumentsactivityDocActivityType) | repeated | Search params Activity types to filter by. If empty, all activity types will be returned. |
 
 
 
@@ -11338,7 +11339,7 @@ Upsert = insert missing PENDING tasks/slots; will NOT delete existing tasks. Ide
 | `pagination` | [resources.common.database.PaginationRequest](#resourcescommondatabasePaginationRequest) |  |  |
 | `sort` | [resources.common.database.Sort](#resourcescommondatabaseSort) | optional |  |
 | `users` | [resources.jobs.UserSelector](#resourcesjobsUserSelector) | optional | Search params |
-| `activity_types` | [resources.jobs.colleagues.activity.ColleagueActivityType](#resourcesjobscolleaguesactivityColleagueActivityType) | repeated |  |
+| `activity_types` | [resources.jobs.colleagues.activity.ColleagueActivityType](#resourcesjobscolleaguesactivityColleagueActivityType) | repeated | Activity types to filter by. If empty, all user-permitted activity types will be returned. |
 | `from` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
 | `to` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
 
@@ -11525,7 +11526,7 @@ Upsert = insert missing PENDING tasks/slots; will NOT delete existing tasks. Ide
 | ----- | ---- | ----- | ----------- |
 | `pagination` | [resources.common.database.PaginationRequest](#resourcescommondatabasePaginationRequest) |  |  |
 | `sort` | [resources.common.database.Sort](#resourcescommondatabaseSort) | optional |  |
-| `types` | [resources.jobs.conduct.ConductType](#resourcesjobsconductConductType) | repeated | Search params |
+| `types` | [resources.jobs.conduct.ConductType](#resourcesjobsconductConductType) | repeated | Search params Conduct types to filter by. If empty, all conduct types will be returned. |
 | `show_expired` | [bool](#bool) | optional |  |
 | `show_drafts` | [bool](#bool) | optional |  |
 | `users` | [resources.jobs.UserSelector](#resourcesjobsUserSelector) | optional |  |
@@ -11844,7 +11845,7 @@ Upsert = insert missing PENDING tasks/slots; will NOT delete existing tasks. Ide
 | `pagination` | [resources.common.database.PaginationRequest](#resourcescommondatabasePaginationRequest) | optional |  |
 | `sort` | [resources.common.database.Sort](#resourcescommondatabaseSort) | optional |  |
 | `group_id` | [int64](#int64) |  |  |
-| `types` | [resources.jobs.groups.GroupActivityType](#resourcesjobsgroupsGroupActivityType) | repeated |  |
+| `types` | [resources.jobs.groups.GroupActivityType](#resourcesjobsgroupsGroupActivityType) | repeated | Activity types to filter by. If empty, all activity types will be returned. |
 | `user_id` | [int32](#int32) | optional |  |
 | `from` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
 | `to` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
@@ -13639,7 +13640,7 @@ Updates one preference scope. Fields omitted from preference inherit from a less
 | `pagination` | [resources.common.database.PaginationRequest](#resourcescommondatabasePaginationRequest) |  |  |
 | `sort` | [resources.common.database.Sort](#resourcescommondatabaseSort) | optional |  |
 | `qualification_id` | [int64](#int64) |  |  |
-| `types` | [resources.qualifications.activity.QualificationActivityType](#resourcesqualificationsactivityQualificationActivityType) | repeated |  |
+| `types` | [resources.qualifications.activity.QualificationActivityType](#resourcesqualificationsactivityQualificationActivityType) | repeated | Search params Activity types to filter by. If empty, all activity types will be returned. |
 | `user_id` | [int32](#int32) | optional |  |
 | `from` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
 | `to` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
@@ -15334,8 +15335,8 @@ Sync Service handles the sync of data (e.g., users, jobs) to this FiveNet instan
 | ----- | ---- | ----- | ----------- |
 | `pagination` | [resources.common.database.PaginationRequest](#resourcescommondatabasePaginationRequest) |  |  |
 | `sort` | [resources.common.database.Sort](#resourcescommondatabaseSort) | optional |  |
-| `plate` | [string](#string) |  |  |
-| `types` | [resources.vehicles.activity.VehicleActivityType](#resourcesvehiclesactivityVehicleActivityType) | repeated |  |
+| `plate` | [string](#string) |  | Search params |
+| `types` | [resources.vehicles.activity.VehicleActivityType](#resourcesvehiclesactivityVehicleActivityType) | repeated | Activity types to filter by. If empty, all activity types will be returned. |
 | `from` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
 | `to` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
 

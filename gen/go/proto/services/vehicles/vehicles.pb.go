@@ -472,10 +472,12 @@ func (b0 SetVehiclePropsResponse_builder) Build() *SetVehiclePropsResponse {
 }
 
 type ListVehicleActivityRequest struct {
-	state         protoimpl.MessageState         `protogen:"hybrid.v1"`
-	Pagination    *database.PaginationRequest    `protobuf:"bytes,1,opt,name=pagination,proto3" json:"pagination,omitempty"`
-	Sort          *database.Sort                 `protobuf:"bytes,2,opt,name=sort,proto3,oneof" json:"sort,omitempty"`
-	Plate         string                         `protobuf:"bytes,3,opt,name=plate,proto3" json:"plate,omitempty"`
+	state      protoimpl.MessageState      `protogen:"hybrid.v1"`
+	Pagination *database.PaginationRequest `protobuf:"bytes,1,opt,name=pagination,proto3" json:"pagination,omitempty"`
+	Sort       *database.Sort              `protobuf:"bytes,2,opt,name=sort,proto3,oneof" json:"sort,omitempty"`
+	// Search params
+	Plate string `protobuf:"bytes,3,opt,name=plate,proto3" json:"plate,omitempty"`
+	// Activity types to filter by. If empty, all activity types will be returned.
 	Types         []activity.VehicleActivityType `protobuf:"varint,4,rep,packed,name=types,proto3,enum=resources.vehicles.activity.VehicleActivityType" json:"types,omitempty"`
 	From          *timestamp.Timestamp           `protobuf:"bytes,5,opt,name=from,proto3,oneof" json:"from,omitempty"`
 	To            *timestamp.Timestamp           `protobuf:"bytes,6,opt,name=to,proto3,oneof" json:"to,omitempty"`
@@ -623,10 +625,12 @@ type ListVehicleActivityRequest_builder struct {
 
 	Pagination *database.PaginationRequest
 	Sort       *database.Sort
-	Plate      string
-	Types      []activity.VehicleActivityType
-	From       *timestamp.Timestamp
-	To         *timestamp.Timestamp
+	// Search params
+	Plate string
+	// Activity types to filter by. If empty, all activity types will be returned.
+	Types []activity.VehicleActivityType
+	From  *timestamp.Timestamp
+	To    *timestamp.Timestamp
 }
 
 func (b0 ListVehicleActivityRequest_builder) Build() *ListVehicleActivityRequest {
