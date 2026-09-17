@@ -35,7 +35,7 @@ require (
 	github.com/gin-gonic/gin v1.12.0
 	github.com/go-jet/jet/v2 v2.16.0
 	github.com/go-playground/validator/v10 v10.30.4
-	github.com/go-sprout/sprout v1.1.1
+	github.com/go-sprout/sprout v1.1.2
 	github.com/go-sql-driver/mysql v1.10.1
 	github.com/goccy/go-yaml v1.19.2
 	github.com/golang-jwt/jwt/v5 v5.3.1
