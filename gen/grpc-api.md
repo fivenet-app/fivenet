@@ -5712,7 +5712,6 @@ ExamSnapshot is immutable once an attempt has started. It ensures later edits to
 | ----- | ---- | ----- | ----------- |
 | `group_ids` | [int64](#int64) | repeated |  |
 | `include_leaders` | [bool](#bool) |  | Include group leaders even if they are not resolved members. |
-| `include_excluded` | [bool](#bool) |  | Normally false: group exclusions should be respected. |
 
 
 

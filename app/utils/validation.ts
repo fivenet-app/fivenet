@@ -186,7 +186,6 @@ export const userSelectorSchema = z
             .object({
                 groupIds: z.coerce.number().int().positive().array().max(5).default([]),
                 includeLeaders: z.coerce.boolean().default(false),
-                includeExcluded: z.coerce.boolean().default(false),
             })
             .optional(),
     })

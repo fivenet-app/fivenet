@@ -263,9 +263,8 @@ func TestGetTimeclockStatsAllowsGroupsWithAccessAll(t *testing.T) {
 	resp, err := srv.GetTimeclockStats(ctx, &pbjobs.GetTimeclockStatsRequest{
 		Users: &jobs.UserSelector{
 			Groups: &jobs.GroupUserSelector{
-				GroupIds:        []int64{10},
-				IncludeLeaders:  true,
-				IncludeExcluded: false,
+				GroupIds:       []int64{10},
+				IncludeLeaders: true,
 			},
 		},
 	})

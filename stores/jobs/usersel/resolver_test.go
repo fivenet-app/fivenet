@@ -221,9 +221,8 @@ func TestResolveUserIDsIgnoresInaccessibleGroups(t *testing.T) {
 		&pbuserinfo.UserInfo{Job: "police"},
 		&jobs.UserSelector{
 			Groups: &jobs.GroupUserSelector{
-				GroupIds:        []int64{10, 20},
-				IncludeLeaders:  true,
-				IncludeExcluded: false,
+				GroupIds:       []int64{10, 20},
+				IncludeLeaders: true,
 			},
 		},
 		ResolveOpts{},
@@ -359,9 +358,8 @@ func TestGroupsOnlyStripsExplicitUsers(t *testing.T) {
 	selector := GroupsOnly(&jobs.UserSelector{
 		UserIds: []int32{1, 2},
 		Groups: &jobs.GroupUserSelector{
-			GroupIds:        []int64{10, 11},
-			IncludeLeaders:  true,
-			IncludeExcluded: false,
+			GroupIds:       []int64{10, 11},
+			IncludeLeaders: true,
 		},
 	})
 
@@ -369,5 +367,4 @@ func TestGroupsOnlyStripsExplicitUsers(t *testing.T) {
 	require.NotNil(t, selector.GetGroups())
 	require.Equal(t, []int64{10, 11}, selector.GetGroups().GetGroupIds())
 	require.True(t, selector.GetGroups().GetIncludeLeaders())
-	require.False(t, selector.GetGroups().GetIncludeExcluded())
 }
