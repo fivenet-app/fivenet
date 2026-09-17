@@ -89,9 +89,8 @@ function emitValue() {
     };
     if (groupIds.length > 0 || includeLeaders.value) {
         selector.groups = {
-            groupIds,
+            groupIds: groupIds,
             includeLeaders: includeLeaders.value,
-            includeExcluded: false,
         };
     }
     emit('update:modelValue', selector);

@@ -170,9 +170,8 @@ func (r *Resolver) filterAccessibleGroups(
 	}
 
 	return &jobs.GroupUserSelector{
-		GroupIds:        filteredGroupIDs,
-		IncludeLeaders:  groupSel.GetIncludeLeaders(),
-		IncludeExcluded: groupSel.GetIncludeExcluded(),
+		GroupIds:       filteredGroupIDs,
+		IncludeLeaders: groupSel.GetIncludeLeaders(),
 	}, nil
 }
 
@@ -195,19 +194,17 @@ func (r *Resolver) resolveGroupMembers(
 		return nil, err
 	}
 
-	excluded := map[int32]struct{}{}
-	if !groupSel.GetIncludeExcluded() {
-		exclusions, err := r.store.ListGroupMemberExclusions(
-			ctx,
-			db,
-			jobsstore.GroupItemsQuery{GroupID: group.GetId()},
-		)
-		if err != nil {
-			return nil, err
-		}
-		for _, exclusion := range exclusions {
-			excluded[exclusion.GetUserId()] = struct{}{}
-		}
+	exclusions, err := r.store.ListGroupMemberExclusions(
+		ctx,
+		db,
+		jobsstore.GroupItemsQuery{GroupID: group.GetId()},
+	)
+	if err != nil {
+		return nil, err
+	}
+	excluded := make(map[int32]struct{}, len(exclusions))
+	for _, exclusion := range exclusions {
+		excluded[exclusion.GetUserId()] = struct{}{}
 	}
 
 	members := map[int32]struct{}{}
@@ -274,9 +271,8 @@ func GroupsOnly(selector *jobs.UserSelector) *jobs.UserSelector {
 
 	return &jobs.UserSelector{
 		Groups: &jobs.GroupUserSelector{
-			GroupIds:        slices.Clone(groupSel.GetGroupIds()),
-			IncludeLeaders:  groupSel.GetIncludeLeaders(),
-			IncludeExcluded: groupSel.GetIncludeExcluded(),
+			GroupIds:       slices.Clone(groupSel.GetGroupIds()),
+			IncludeLeaders: groupSel.GetIncludeLeaders(),
 		},
 	}
 }

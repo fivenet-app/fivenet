@@ -276,6 +276,9 @@ func expectGroupCreateCounts(mock sqlmock.Sqlmock, groupID int64) {
 	mock.ExpectQuery(regexp.QuoteMeta(`FROM fivenet_job_group_leaders`)).
 		WithArgs(groupID).
 		WillReturnRows(sqlmock.NewRows([]string{"data_count.total"}).AddRow(int64(0)))
+	mock.ExpectExec(regexp.QuoteMeta("DELETE FROM fivenet_job_group_members WHERE fivenet_job_group_members.group_id = ?;")).
+		WithArgs(groupID).
+		WillReturnResult(sqlmock.NewResult(0, 0))
 	mock.ExpectExec(regexp.QuoteMeta("UPDATE fivenet_job_groups AS `group` SET")).
 		WithArgs(int64(0), int64(0), int64(0), int64(0), groupID).
 		WillReturnResult(sqlmock.NewResult(0, 1))

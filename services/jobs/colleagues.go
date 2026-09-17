@@ -10,6 +10,7 @@ import (
 	database "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/common/database"
 	jobscolleagues "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/jobs/colleagues"
 	colleaguesactivity "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/jobs/colleagues/activity"
+	groupsshort "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/jobs/groups/short"
 	jobslabels "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/jobs/labels"
 	notificationsclientview "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/notifications/clientview"
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/userinfo"
@@ -105,41 +106,57 @@ func (s *Server) ListColleagues(
 		return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
 	}
 
-	if len(resp.GetColleagues()) > 0 &&
-		(types.Contains(permsjobs.ColleaguesServiceGetColleagueTypesPermValueLabels) || userInfo.GetJobAdmin()) {
+	if len(resp.GetColleagues()) > 0 {
 		userIds := make([]int32, 0, len(resp.GetColleagues()))
 		for _, colleague := range resp.GetColleagues() {
 			userIds = append(userIds, colleague.GetUserId())
 		}
 
-		labels, err := s.store.GetUsersLabels(
-			ctx,
-			s.db,
-			userInfo.GetJob(),
-			userIds,
-			userInfo.GetJobAdmin(),
-		)
-		if err != nil {
-			return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
-		}
-
-		labelsByUser := map[int32]*jobslabels.Labels{}
-		for _, props := range labels {
-			labelsByUser[props.UserId] = props.Labels
-		}
-
-		for i := range resp.GetColleagues() {
-			colleague := resp.GetColleagues()[i]
-			if colleagueLabels, ok := labelsByUser[colleague.GetUserId()]; ok {
-				if colleague.GetProps() == nil {
-					colleague.Props = &jobscolleagues.ColleagueProps{
-						UserId: colleague.GetUserId(),
-						Job:    userInfo.GetJob(),
-					}
-				}
-
-				colleague.Props.Labels = colleagueLabels
+		if types.Contains(permsjobs.ColleaguesServiceGetColleagueTypesPermValueLabels) ||
+			userInfo.GetJobAdmin() {
+			labels, err := s.store.GetUsersLabels(
+				ctx,
+				s.db,
+				userInfo.GetJob(),
+				userIds,
+				userInfo.GetJobAdmin(),
+			)
+			if err != nil {
+				return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
 			}
+
+			labelsByUser := map[int32]*jobslabels.Labels{}
+			for _, props := range labels {
+				labelsByUser[props.UserId] = props.Labels
+			}
+
+			for i := range resp.GetColleagues() {
+				colleague := resp.GetColleagues()[i]
+				if colleagueLabels, ok := labelsByUser[colleague.GetUserId()]; ok {
+					if colleague.GetProps() == nil {
+						colleague.Props = &jobscolleagues.ColleagueProps{
+							UserId: colleague.GetUserId(),
+							Job:    userInfo.GetJob(),
+						}
+					}
+
+					colleague.Props.Labels = colleagueLabels
+				}
+			}
+		}
+
+		if s.perms.Can(userInfo, permsjobs.GroupsService.ListGroups.Perm) {
+			groupsByUserID, err := s.store.ListGroupMemberShortsByUserIDs(
+				ctx,
+				s.db,
+				userInfo.GetJob(),
+				userIds,
+				userInfo,
+			)
+			if err != nil {
+				return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
+			}
+			attachColleagueGroups(resp.GetColleagues(), groupsByUserID)
 		}
 	}
 
@@ -148,6 +165,25 @@ func (s *Server) ListColleagues(
 	}
 
 	return resp, nil
+}
+
+func attachColleagueGroups(
+	colleagues []*jobscolleagues.Colleague,
+	groupsByUserID map[int32][]*groupsshort.GroupMemberShort,
+) {
+	for _, colleague := range colleagues {
+		groups, ok := groupsByUserID[colleague.GetUserId()]
+		if !ok {
+			continue
+		}
+		if colleague.GetProps() == nil {
+			colleague.Props = &jobscolleagues.ColleagueProps{
+				UserId: colleague.GetUserId(),
+				Job:    colleague.GetJob(),
+			}
+		}
+		colleague.Props.Groups = groups
+	}
 }
 
 func (s *Server) getColleague(

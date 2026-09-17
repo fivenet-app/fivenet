@@ -42,12 +42,6 @@ export interface GroupUserSelector {
      * @generated from protobuf field: bool include_leaders = 2
      */
     includeLeaders: boolean;
-    /**
-     * Normally false: group exclusions should be respected.
-     *
-     * @generated from protobuf field: bool include_excluded = 3
-     */
-    includeExcluded: boolean;
 }
 // @generated message type with reflection information, may provide speed optimized methods
 class UserSelector$Type extends MessageType<UserSelector> {
@@ -116,15 +110,13 @@ class GroupUserSelector$Type extends MessageType<GroupUserSelector> {
     constructor() {
         super("resources.jobs.GroupUserSelector", [
             { no: 1, name: "group_ids", kind: "scalar", repeat: 1 /*RepeatType.PACKED*/, T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/, options: { "buf.validate.field": { repeated: { maxItems: "5", items: { int64: { gt: "0" } } } } } },
-            { no: 2, name: "include_leaders", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
-            { no: 3, name: "include_excluded", kind: "scalar", T: 8 /*ScalarType.BOOL*/ }
+            { no: 2, name: "include_leaders", kind: "scalar", T: 8 /*ScalarType.BOOL*/ }
         ]);
     }
     create(value?: PartialMessage<GroupUserSelector>): GroupUserSelector {
         const message = globalThis.Object.create((this.messagePrototype!));
         message.groupIds = [];
         message.includeLeaders = false;
-        message.includeExcluded = false;
         if (value !== undefined)
             reflectionMergePartial<GroupUserSelector>(this, message, value);
         return message;
@@ -143,9 +135,6 @@ class GroupUserSelector$Type extends MessageType<GroupUserSelector> {
                     break;
                 case /* bool include_leaders */ 2:
                     message.includeLeaders = reader.bool();
-                    break;
-                case /* bool include_excluded */ 3:
-                    message.includeExcluded = reader.bool();
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -169,9 +158,6 @@ class GroupUserSelector$Type extends MessageType<GroupUserSelector> {
         /* bool include_leaders = 2; */
         if (message.includeLeaders !== false)
             writer.tag(2, WireType.Varint).bool(message.includeLeaders);
-        /* bool include_excluded = 3; */
-        if (message.includeExcluded !== false)
-            writer.tag(3, WireType.Varint).bool(message.includeExcluded);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);

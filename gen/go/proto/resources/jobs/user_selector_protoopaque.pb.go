@@ -107,12 +107,11 @@ func (b0 UserSelector_builder) Build() *UserSelector {
 }
 
 type GroupUserSelector struct {
-	state                      protoimpl.MessageState `protogen:"opaque.v1"`
-	xxx_hidden_GroupIds        []int64                `protobuf:"varint,1,rep,packed,name=group_ids,json=groupIds,proto3"`
-	xxx_hidden_IncludeLeaders  bool                   `protobuf:"varint,2,opt,name=include_leaders,json=includeLeaders,proto3"`
-	xxx_hidden_IncludeExcluded bool                   `protobuf:"varint,3,opt,name=include_excluded,json=includeExcluded,proto3"`
-	unknownFields              protoimpl.UnknownFields
-	sizeCache                  protoimpl.SizeCache
+	state                     protoimpl.MessageState `protogen:"opaque.v1"`
+	xxx_hidden_GroupIds       []int64                `protobuf:"varint,1,rep,packed,name=group_ids,json=groupIds,proto3"`
+	xxx_hidden_IncludeLeaders bool                   `protobuf:"varint,2,opt,name=include_leaders,json=includeLeaders,proto3"`
+	unknownFields             protoimpl.UnknownFields
+	sizeCache                 protoimpl.SizeCache
 }
 
 func (x *GroupUserSelector) Reset() {
@@ -154,13 +153,6 @@ func (x *GroupUserSelector) GetIncludeLeaders() bool {
 	return false
 }
 
-func (x *GroupUserSelector) GetIncludeExcluded() bool {
-	if x != nil {
-		return x.xxx_hidden_IncludeExcluded
-	}
-	return false
-}
-
 func (x *GroupUserSelector) SetGroupIds(v []int64) {
 	x.xxx_hidden_GroupIds = v
 }
@@ -169,18 +161,12 @@ func (x *GroupUserSelector) SetIncludeLeaders(v bool) {
 	x.xxx_hidden_IncludeLeaders = v
 }
 
-func (x *GroupUserSelector) SetIncludeExcluded(v bool) {
-	x.xxx_hidden_IncludeExcluded = v
-}
-
 type GroupUserSelector_builder struct {
 	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
 
 	GroupIds []int64
 	// Include group leaders even if they are not resolved members.
 	IncludeLeaders bool
-	// Normally false: group exclusions should be respected.
-	IncludeExcluded bool
 }
 
 func (b0 GroupUserSelector_builder) Build() *GroupUserSelector {
@@ -189,7 +175,6 @@ func (b0 GroupUserSelector_builder) Build() *GroupUserSelector {
 	_, _ = b, x
 	x.xxx_hidden_GroupIds = b.GroupIds
 	x.xxx_hidden_IncludeLeaders = b.IncludeLeaders
-	x.xxx_hidden_IncludeExcluded = b.IncludeExcluded
 	return m0
 }
 
@@ -200,11 +185,10 @@ const file_resources_jobs_user_selector_proto_rawDesc = "" +
 	"\"resources/jobs/user_selector.proto\x12\x0eresources.jobs\"d\n" +
 	"\fUserSelector\x12\x19\n" +
 	"\buser_ids\x18\x01 \x03(\x05R\auserIds\x129\n" +
-	"\x06groups\x18\x02 \x01(\v2!.resources.jobs.GroupUserSelectorR\x06groups\"\x84\x01\n" +
+	"\x06groups\x18\x02 \x01(\v2!.resources.jobs.GroupUserSelectorR\x06groups\"_\n" +
 	"\x11GroupUserSelector\x12\x1b\n" +
 	"\tgroup_ids\x18\x01 \x03(\x03R\bgroupIds\x12'\n" +
-	"\x0finclude_leaders\x18\x02 \x01(\bR\x0eincludeLeaders\x12)\n" +
-	"\x10include_excluded\x18\x03 \x01(\bR\x0fincludeExcludedBGZEgithub.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/jobs;jobsb\x06proto3"
+	"\x0finclude_leaders\x18\x02 \x01(\bR\x0eincludeLeadersJ\x04\b\x03\x10\x04BGZEgithub.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/jobs;jobsb\x06proto3"
 
 var file_resources_jobs_user_selector_proto_msgTypes = make([]protoimpl.MessageInfo, 2)
 var file_resources_jobs_user_selector_proto_goTypes = []any{

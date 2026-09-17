@@ -2,12 +2,14 @@ package colleagueshydrator
 
 import (
 	"context"
+	"database/sql/driver"
 	"fmt"
 	"testing"
 
 	"github.com/DATA-DOG/go-sqlmock"
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/common"
 	jobscolleagues "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/jobs/colleagues"
+	groupsshort "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/jobs/groups/short"
 	permissionsattributes "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/permissions/attributes"
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/userinfo"
 	permsjobs "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/jobs/perms"
@@ -65,6 +67,23 @@ type testColleagueStore struct {
 
 	colleagues []*jobscolleagues.Colleague
 	deleted    map[int32]struct{}
+	groups     map[int32][]*groupsshort.GroupMemberShort
+}
+
+func (s *testColleagueStore) ListGroupMemberShortsByUserIDs(
+	_ context.Context,
+	_ qrm.DB,
+	_ string,
+	userIDs []int32,
+	_ *userinfo.UserInfo,
+) (map[int32][]*groupsshort.GroupMemberShort, error) {
+	out := make(map[int32][]*groupsshort.GroupMemberShort)
+	for _, userID := range userIDs {
+		if groups, ok := s.groups[userID]; ok {
+			out[userID] = groups
+		}
+	}
+	return out, nil
 }
 
 func (s *testColleagueStore) ListColleaguesByUserIDs(
@@ -111,8 +130,55 @@ func newTestHydrator(
 			Store:      &jobsstore.Store{},
 			colleagues: colleagues,
 			deleted:    map[int32]struct{}{},
+			groups:     map[int32][]*groupsshort.GroupMemberShort{},
 		},
 	}, mock
+}
+
+func TestListByUserIDIncludesGroupsWhenRequested(t *testing.T) {
+	t.Parallel()
+
+	h, mock := newTestHydrator(t, &jobscolleagues.Colleague{
+		UserId:      1,
+		Job:         "police",
+		JobGrade:    4,
+		Firstname:   "Alice",
+		Lastname:    "Active",
+		Dateofbirth: "1990-02-03",
+	})
+	expectFallbackQuery(mock, 1)
+
+	store := h.store.(*testColleagueStore)
+	store.groups[1] = []*groupsshort.GroupMemberShort{
+		{Id: 10, Job: "police", Name: "Traffic Unit"},
+		{Id: 11, Job: "police", Name: "Command", IsLeader: true},
+	}
+
+	got, err := h.ListByUserID(
+		t.Context(),
+		nil,
+		nil,
+		[]int32{1},
+		ResolveOpts{Scope: JobScope{Mode: JobScopeExplicit, Job: "police"}, IncludeGroups: true},
+	)
+	if err != nil {
+		t.Fatalf("ListByUserID returned error: %v", err)
+	}
+	if len(got) != 1 || got[0].GetProps() == nil {
+		t.Fatalf("expected one colleague with props, got %#v", got)
+	}
+	if len(got[0].GetProps().GetGroups()) != 2 {
+		t.Fatalf("expected two groups, got %d", len(got[0].GetProps().GetGroups()))
+	}
+	if !got[0].GetProps().GetGroups()[1].GetIsLeader() {
+		t.Fatal("expected second group to retain leader status")
+	}
+	if got[0].GetProps().GetGroups()[0].GetIsLeader() {
+		t.Fatal("expected first group not to be marked as leader")
+	}
+	if err := mock.ExpectationsWereMet(); err != nil {
+		t.Fatal(err)
+	}
 }
 
 func TestResolveFieldsRequiresExplicitRequestAndPermission(t *testing.T) {
@@ -185,10 +251,15 @@ func expectFallbackQuery(mock sqlmock.Sqlmock, userIDs ...int32) {
 		)
 	}
 
+	args := make([]driver.Value, 0, len(userIDs)+1)
+	for _, userID := range userIDs {
+		args = append(args, userID)
+	}
+	args = append(args, int64(len(userIDs)))
 	mock.ExpectQuery(
 		`(?s)^SELECT .*FROM fivenet_user AS colleague .*colleague\.deleted_at IS NULL.*LIMIT \?;$`,
 	).
-		WithArgs(userIDs[0], userIDs[1], int64(len(userIDs))).
+		WithArgs(args...).
 		WillReturnRows(rows)
 }
 

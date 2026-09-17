@@ -97,6 +97,18 @@ func (m *ColleagueProps) Sanitize() error {
 		}
 	}
 
+	// Field: Groups
+	for idx, item := range m.Groups {
+		_, _ = idx, item
+
+		if v, ok := any(item).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+
+	}
+
 	// Field: Job
 	m.Job = htmlsanitizer.SanitizeAndUnescape(m.Job)
 

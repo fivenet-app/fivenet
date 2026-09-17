@@ -11,6 +11,7 @@ import { UnknownFieldHandler } from "@protobuf-ts/runtime";
 import type { PartialMessage } from "@protobuf-ts/runtime";
 import { reflectionMergePartial } from "@protobuf-ts/runtime";
 import { MessageType } from "@protobuf-ts/runtime";
+import { GroupMemberShort } from "../groups/short/group_member_short";
 import { Labels } from "../labels/labels";
 import { Timestamp } from "../../timestamp/timestamp";
 /**
@@ -110,6 +111,10 @@ export interface ColleagueProps {
      * @generated from protobuf field: optional string name_suffix = 9
      */
     nameSuffix?: string;
+    /**
+     * @generated from protobuf field: repeated resources.jobs.groups.short.GroupMemberShort groups = 10
+     */
+    groups: GroupMemberShort[];
 }
 // @generated message type with reflection information, may provide speed optimized methods
 class Colleague$Type extends MessageType<Colleague> {
@@ -259,13 +264,15 @@ class ColleagueProps$Type extends MessageType<ColleagueProps> {
             { no: 6, name: "note", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "codegen.sanitizer.sanitizer": { enabled: true, stripHtmlTags: true } } },
             { no: 7, name: "labels", kind: "message", T: () => Labels },
             { no: 8, name: "name_prefix", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "12" } } } },
-            { no: 9, name: "name_suffix", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "12" } } } }
+            { no: 9, name: "name_suffix", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "12" } } } },
+            { no: 10, name: "groups", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => GroupMemberShort }
         ]);
     }
     create(value?: PartialMessage<ColleagueProps>): ColleagueProps {
         const message = globalThis.Object.create((this.messagePrototype!));
         message.userId = 0;
         message.job = "";
+        message.groups = [];
         if (value !== undefined)
             reflectionMergePartial<ColleagueProps>(this, message, value);
         return message;
@@ -301,6 +308,9 @@ class ColleagueProps$Type extends MessageType<ColleagueProps> {
                     break;
                 case /* optional string name_suffix */ 9:
                     message.nameSuffix = reader.string();
+                    break;
+                case /* repeated resources.jobs.groups.short.GroupMemberShort groups */ 10:
+                    message.groups.push(GroupMemberShort.internalBinaryRead(reader, reader.uint32(), options));
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -341,6 +351,9 @@ class ColleagueProps$Type extends MessageType<ColleagueProps> {
         /* optional string name_suffix = 9; */
         if (message.nameSuffix !== undefined)
             writer.tag(9, WireType.LengthDelimited).string(message.nameSuffix);
+        /* repeated resources.jobs.groups.short.GroupMemberShort groups = 10; */
+        for (let i = 0; i < message.groups.length; i++)
+            GroupMemberShort.internalBinaryWrite(message.groups[i], writer.tag(10, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);

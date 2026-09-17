@@ -99,7 +99,7 @@ func (s *Housekeeper) RegisterCronjobs(ctx context.Context, registry croner.IReg
 	}
 	if err := registry.RegisterCronjob(ctx, &cron.Cronjob{
 		Name:     "jobs.groups.recount_cached_counts",
-		Schedule: "*/5 * * * *",
+		Schedule: "*/3 * * * *",
 		Timeout:  durationpb.New(2 * time.Minute),
 	}); err != nil {
 		return err
@@ -311,9 +311,26 @@ func (s *Housekeeper) recountGroupCounts(
 
 	processed := 0
 	for _, groupID := range groupIDs {
-		if err := s.store.RecountGroupStats(ctx, s.db, groupID); err != nil {
+		tx, err := s.db.BeginTx(ctx, nil)
+		if err != nil {
+			return 0, 0, fmt.Errorf(
+				"failed to begin recount transaction for job group %d. %w",
+				groupID,
+				err,
+			)
+		}
+
+		if err := s.store.RecountGroupStats(ctx, tx, groupID); err != nil {
+			_ = tx.Rollback()
 			return 0, 0, fmt.Errorf(
 				"failed to recount cached job group %d stats. %w",
+				groupID,
+				err,
+			)
+		}
+		if err := tx.Commit(); err != nil {
+			return 0, 0, fmt.Errorf(
+				"failed to commit recount transaction for job group %d. %w",
 				groupID,
 				err,
 			)

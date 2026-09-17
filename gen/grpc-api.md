@@ -1422,6 +1422,36 @@ Dummy - DO NOT USE!
 
 
 
+## resources/jobs/groups/short/group_member_short.proto
+
+
+### resources.jobs.groups.short.GroupMemberShort
+Lightweight group information attached to a colleague.
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `id` | [int64](#int64) |  |  |
+| `job` | [string](#string) |  |  |
+| `name` | [string](#string) |  |  |
+| `short_name` | [string](#string) | optional |  |
+| `color` | [string](#string) | optional |  |
+| `is_leader` | [bool](#bool) |  |  |
+
+
+
+
+ <!-- end messages -->
+
+ <!-- end enums -->
+
+ <!-- end HasExtensions -->
+
+ <!-- end services -->
+
+
+
 ## resources/jobs/colleagues/colleagues.proto
 
 
@@ -1462,6 +1492,7 @@ Dummy - DO NOT USE!
 | `labels` | [resources.jobs.labels.Labels](#resourcesjobslabelsLabels) | optional |  |
 | `name_prefix` | [string](#string) | optional |  |
 | `name_suffix` | [string](#string) | optional |  |
+| `groups` | [resources.jobs.groups.short.GroupMemberShort](#resourcesjobsgroupsshortGroupMemberShort) | repeated |  |
 
 
 
@@ -5681,7 +5712,6 @@ ExamSnapshot is immutable once an attempt has started. It ensures later edits to
 | ----- | ---- | ----- | ----------- |
 | `group_ids` | [int64](#int64) | repeated |  |
 | `include_leaders` | [bool](#bool) |  | Include group leaders even if they are not resolved members. |
-| `include_excluded` | [bool](#bool) |  | Normally false: group exclusions should be respected. |
 
 
 

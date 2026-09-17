@@ -693,6 +693,45 @@ func (s *Server) ListGroupMembers(
 		return nil, err
 	}
 
+	materialized := !req.GetIncludeExcluded() &&
+		!req.GetIncludeLeaders() &&
+		!req.GetIncludeReasons() &&
+		len(req.GetSources()) == 0 &&
+		jobsstore.IsSupportedGroupMemberSort(req.GetSort()) &&
+		group.GetState() == jobsgroups.GroupState_GROUP_STATE_ACTIVE
+	if materialized {
+		query := jobsstore.GroupItemsQuery{
+			GroupID: req.GetGroupId(),
+			Search:  req.GetSearch(),
+			Sort:    req.GetSort(),
+		}
+		count, err := s.store.CountGroupMembers(ctx, s.db, query)
+		if err != nil {
+			return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
+		}
+		pag, limit := req.GetPagination().GetResponse(count)
+		resp := &pbjobs.ListGroupMembersResponse{
+			Pagination: pag,
+			Members:    []*jobsgroups.GroupResolvedMember{},
+		}
+		if count <= 0 {
+			grpc_audit.SetAction(ctx, audit.EventAction_EVENT_ACTION_VIEWED)
+			return resp, nil
+		}
+		query.Offset = pag.GetOffset()
+		query.Limit = limit
+		resp.Members, err = s.store.ListGroupMembers(ctx, s.db, query)
+		if err != nil {
+			return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
+		}
+		targets := appendGroupResolvedMemberColleagueTargets(nil, resp.GetMembers())
+		if err := s.hydrateGroupColleagueTargets(ctx, userInfo, targets); err != nil {
+			return nil, err
+		}
+		grpc_audit.SetAction(ctx, audit.EventAction_EVENT_ACTION_VIEWED)
+		return resp, nil
+	}
+
 	members, err := s.resolveGroupMembers(
 		ctx,
 		group,

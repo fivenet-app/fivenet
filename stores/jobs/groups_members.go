@@ -7,6 +7,8 @@ import (
 
 	database "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/common/database"
 	jobsgroups "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/jobs/groups"
+	groupsshort "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/jobs/groups/short"
+	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/userinfo"
 	"github.com/fivenet-app/fivenet/v2026/pkg/dbutils"
 	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
 	groupspolicy "github.com/fivenet-app/fivenet/v2026/stores/jobs/groupspolicy"
@@ -85,6 +87,47 @@ func activeGroupMemberCondition(
 ) mysql.BoolExpression {
 	return groupMemberCondition(groupID, groupIDColumn, search, user).
 		AND(userJobs.Job.EQ(groupJob))
+}
+
+func effectiveGroupMemberIDs(
+	group *jobsgroups.Group,
+	manualMembers []*jobsgroups.GroupManualMember,
+	ruleMatches []*GroupRuleMemberMatch,
+	exclusions []*jobsgroups.GroupMemberExclusion,
+) map[int32]struct{} {
+	excluded := map[int32]struct{}{}
+	for _, exclusion := range exclusions {
+		excluded[exclusion.GetUserId()] = struct{}{}
+	}
+
+	members := map[int32]struct{}{}
+	ruleMemberIDs := map[int32]struct{}{}
+	if groupspolicy.AllowsRules(group.GetType()) {
+		for _, match := range ruleMatches {
+			ruleMemberIDs[match.UserID] = struct{}{}
+			if _, ok := excluded[match.UserID]; !ok {
+				members[match.UserID] = struct{}{}
+			}
+		}
+	}
+	if groupspolicy.AllowsManualMembers(group.GetType()) {
+		for _, member := range manualMembers {
+			if _, ok := excluded[member.GetUserId()]; ok {
+				continue
+			}
+			if groupspolicy.RequiresManualMembersMatchRules(
+				group.GetType(),
+				group.GetMembershipMode(),
+			) {
+				if _, ok := ruleMemberIDs[member.GetUserId()]; !ok {
+					continue
+				}
+			}
+			members[member.GetUserId()] = struct{}{}
+		}
+	}
+
+	return members
 }
 
 func (s *Store) UserInJob(ctx context.Context, db qrm.DB, job string, userID int32) (bool, error) {
@@ -177,36 +220,42 @@ func (s *Store) RecountGroupStats(ctx context.Context, db qrm.DB, groupID int64)
 			return err
 		}
 	}
+	members := effectiveGroupMemberIDs(group, manualMembers, ruleMatches, exclusions)
 
-	excluded := map[int32]struct{}{}
-	for _, exclusion := range exclusions {
-		excluded[exclusion.GetUserId()] = struct{}{}
+	tMaterialized := table.FivenetJobGroupMembers
+	if _, err := tMaterialized.DELETE().
+		WHERE(tMaterialized.GroupID.EQ(mysql.Int64(groupID))).
+		ExecContext(ctx, db); err != nil {
+		return err
 	}
 
-	members := map[int32]struct{}{}
-	ruleMemberIDs := map[int32]struct{}{}
-	if groupspolicy.AllowsRules(group.GetType()) {
-		for _, match := range ruleMatches {
-			ruleMemberIDs[match.UserID] = struct{}{}
-			if _, ok := excluded[match.UserID]; !ok {
-				members[match.UserID] = struct{}{}
-			}
+	if len(members) > 0 {
+		userIDs := make([]mysql.Expression, 0, len(members))
+		for userID := range members {
+			userIDs = append(userIDs, mysql.Int32(userID))
 		}
-	}
-	if groupspolicy.AllowsManualMembers(group.GetType()) {
-		for _, member := range manualMembers {
-			if _, ok := excluded[member.GetUserId()]; ok {
-				continue
-			}
-			if groupspolicy.RequiresManualMembersMatchRules(
-				group.GetType(),
-				group.GetMembershipMode(),
-			) {
-				if _, ok := ruleMemberIDs[member.GetUserId()]; !ok {
-					continue
-				}
-			}
-			members[member.GetUserId()] = struct{}{}
+
+		tUser := table.FivenetUser.AS("user")
+		tLeaders := table.FivenetJobGroupLeaders.AS("leader")
+		insertStmt := tMaterialized.INSERT(
+			tMaterialized.GroupID,
+			tMaterialized.UserID,
+			tMaterialized.IsLeader,
+		).QUERY(tUser.SELECT(
+			mysql.Int64(groupID),
+			tUser.ID,
+			mysql.CASE().
+				WHEN(tLeaders.UserID.IS_NOT_NULL()).
+				THEN(mysql.Bool(true)).
+				ELSE(mysql.Bool(false)),
+		).FROM(
+			tUser.LEFT_JOIN(tLeaders, mysql.AND(
+				tLeaders.GroupID.EQ(mysql.Int64(groupID)),
+				tLeaders.UserID.EQ(tUser.ID),
+			)),
+		).WHERE(tUser.ID.IN(userIDs...)))
+		if _, err := insertStmt.ExecContext(ctx, db); err != nil {
+			return err
 		}
 	}
 
@@ -221,6 +270,200 @@ func (s *Store) RecountGroupStats(ctx context.Context, db qrm.DB, groupID int64)
 		WHERE(tJobGroups.ID.EQ(mysql.Int64(groupID))).
 		ExecContext(ctx, db)
 	return err
+}
+
+func (s *Store) ListGroupMemberShortsByUserIDs(
+	ctx context.Context,
+	db qrm.DB,
+	job string,
+	userIDs []int32,
+	userInfo *userinfo.UserInfo,
+) (map[int32][]*groupsshort.GroupMemberShort, error) {
+	result := make(map[int32][]*groupsshort.GroupMemberShort)
+	if len(userIDs) == 0 {
+		return result, nil
+	}
+
+	visibleGroups := s.visibleGroupsQuery(userInfo, GroupsQuery{Job: job})
+	tGroups := table.FivenetJobGroups.AS("group")
+	tMembers := table.FivenetJobGroupMembers.AS("member")
+	visibleGroupID := mysql.IntegerColumn("id").From(visibleGroups.Table)
+	userIDExprs := make([]mysql.Expression, 0, len(userIDs))
+	for _, userID := range userIDs {
+		userIDExprs = append(userIDExprs, mysql.Int32(userID))
+	}
+
+	type row struct {
+		UserID int32
+		Group  *groupsshort.GroupMemberShort
+	}
+	rows := []*row{}
+	var stmt mysql.Statement = tMembers.
+		SELECT(
+			tMembers.UserID.AS("user_id"),
+			tGroups.ID.AS("group_member_short.id"),
+			tGroups.Job.AS("group_member_short.job"),
+			tGroups.Name.AS("group_member_short.name"),
+			tGroups.ShortName.AS("group_member_short.short_name"),
+			tGroups.Color.AS("group_member_short.color"),
+			tMembers.IsLeader.AS("group_member_short.is_leader"),
+		).
+		FROM(
+			tMembers.
+				INNER_JOIN(tGroups, tGroups.ID.EQ(tMembers.GroupID)).
+				INNER_JOIN(visibleGroups.Table, tGroups.ID.EQ(visibleGroupID)),
+		).
+		WHERE(mysql.AND(
+			tGroups.Job.EQ(mysql.String(job)),
+			tGroups.State.EQ(mysql.Int32(int32(jobsgroups.GroupState_GROUP_STATE_ACTIVE))),
+			tMembers.UserID.IN(userIDExprs...),
+		)).
+		ORDER_BY(tMembers.UserID.ASC(), tGroups.SortRank.ASC(), tGroups.Name.ASC(), tGroups.ID.ASC())
+	if len(visibleGroups.CTEs) > 0 {
+		stmt = mysql.WITH(visibleGroups.CTEs...)(stmt)
+	}
+	if err := stmt.QueryContext(ctx, db, &rows); err != nil {
+		if !errors.Is(err, qrm.ErrNoRows) {
+			return nil, err
+		}
+		return result, nil
+	}
+	for _, row := range rows {
+		result[row.UserID] = append(result[row.UserID], row.Group)
+	}
+	return result, nil
+}
+
+func (s *Store) groupMembersMaterializedQuery(
+	q GroupItemsQuery,
+) (*table.FivenetJobGroupMembersTable, *table.FivenetJobGroupsTable, *table.FivenetUserTable, *table.FivenetUserJobsTable, mysql.BoolExpression) {
+	tMembers := table.FivenetJobGroupMembers.AS("member")
+	tGroups := table.FivenetJobGroups.AS("group")
+	tUser := table.FivenetUser.AS("user")
+	tUserJobs := table.FivenetUserJobs.AS("user_job")
+	condition := mysql.AND(
+		tMembers.GroupID.EQ(mysql.Int64(q.GroupID)),
+		tUser.DeletedAt.IS_NULL(),
+	)
+	if q.Search != "" {
+		if search := groupMemberSearchCondition(q.Search, tUser); search != nil {
+			condition = condition.AND(search)
+		}
+	}
+	return tMembers, tGroups, tUser, tUserJobs, condition
+}
+
+func IsSupportedGroupMemberSort(sort *database.Sort) bool {
+	if sort == nil {
+		return true
+	}
+	for _, column := range sort.GetColumns() {
+		switch column.GetId() {
+		case "user_id", "group_id", "is_member", "is_leader":
+		default:
+			return false
+		}
+	}
+	return true
+}
+
+func groupMemberOrderBy(
+	tMembers *table.FivenetJobGroupMembersTable,
+	sort *database.Sort,
+) []mysql.OrderByClause {
+	orderBy := make([]mysql.OrderByClause, 0, 2+len(sort.GetColumns()))
+	if sort != nil {
+		for _, column := range sort.GetColumns() {
+			if column.GetId() == "is_member" {
+				continue
+			}
+			if column.GetDesc() {
+				switch column.GetId() {
+				case "user_id":
+					orderBy = append(orderBy, tMembers.UserID.DESC())
+				case "group_id":
+					orderBy = append(orderBy, tMembers.GroupID.DESC())
+				case "is_leader":
+					orderBy = append(orderBy, tMembers.IsLeader.DESC())
+				}
+			} else {
+				switch column.GetId() {
+				case "user_id":
+					orderBy = append(orderBy, tMembers.UserID.ASC())
+				case "group_id":
+					orderBy = append(orderBy, tMembers.GroupID.ASC())
+				case "is_leader":
+					orderBy = append(orderBy, tMembers.IsLeader.ASC())
+				}
+			}
+		}
+	}
+	return append(orderBy, tMembers.UserID.ASC(), tMembers.GroupID.ASC())
+}
+
+func (s *Store) CountGroupMembers(
+	ctx context.Context,
+	db qrm.DB,
+	q GroupItemsQuery,
+) (int64, error) {
+	tMembers, tGroups, tUser, tUserJobs, condition := s.groupMembersMaterializedQuery(q)
+	var count database.DataCount
+	if err := tMembers.
+		SELECT(mysql.COUNT(tMembers.UserID).AS("data_count.total")).
+		FROM(tMembers.
+			INNER_JOIN(tGroups, tGroups.ID.EQ(tMembers.GroupID)).
+			INNER_JOIN(tUser, tUser.ID.EQ(tMembers.UserID)).
+			INNER_JOIN(tUserJobs, mysql.AND(
+				tUserJobs.UserID.EQ(tMembers.UserID),
+				tUserJobs.Job.EQ(tGroups.Job),
+			)),
+		).
+		WHERE(condition).
+		QueryContext(ctx, db, &count); err != nil {
+		if errors.Is(err, qrm.ErrNoRows) {
+			return 0, nil
+		}
+		return 0, err
+	}
+	return count.Total, nil
+}
+
+func (s *Store) ListGroupMembers(
+	ctx context.Context,
+	db qrm.DB,
+	q GroupItemsQuery,
+) ([]*jobsgroups.GroupResolvedMember, error) {
+	tMembers, tGroups, tUser, tUserJobs, condition := s.groupMembersMaterializedQuery(q)
+	stmt := tMembers.SELECT(
+		tMembers.GroupID.AS("group_resolved_member.group_id"),
+		tMembers.UserID.AS("group_resolved_member.user_id"),
+		mysql.Bool(true).AS("group_resolved_member.is_member"),
+		tMembers.IsLeader.AS("group_resolved_member.is_leader"),
+	).FROM(
+		tMembers.
+			INNER_JOIN(tGroups, tGroups.ID.EQ(tMembers.GroupID)).
+			INNER_JOIN(tUser, tUser.ID.EQ(tMembers.UserID)).
+			INNER_JOIN(tUserJobs, mysql.AND(
+				tUserJobs.UserID.EQ(tMembers.UserID),
+				tUserJobs.Job.EQ(tGroups.Job),
+			)),
+	).WHERE(condition).
+		ORDER_BY(groupMemberOrderBy(tMembers, q.Sort)...)
+	if q.Offset > 0 {
+		stmt = stmt.OFFSET(q.Offset)
+	}
+	if q.Limit > 0 {
+		stmt = stmt.LIMIT(q.Limit)
+	}
+
+	members := []*jobsgroups.GroupResolvedMember{}
+	if err := stmt.QueryContext(ctx, db, &members); err != nil {
+		if errors.Is(err, qrm.ErrNoRows) {
+			return members, nil
+		}
+		return nil, err
+	}
+	return members, nil
 }
 
 func (s *Store) CountGroupLeaders(

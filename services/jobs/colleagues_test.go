@@ -3,11 +3,32 @@ package jobs
 import (
 	"testing"
 
+	jobscolleagues "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/jobs/colleagues"
+	groupsshort "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/jobs/groups/short"
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/userinfo"
 	permsjobs "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/jobs/perms"
 	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
 	"github.com/stretchr/testify/require"
 )
+
+func TestAttachColleagueGroupsPreservesExistingProps(t *testing.T) {
+	t.Parallel()
+
+	labels := &jobscolleagues.ColleagueProps{UserId: 7, Job: "police"}
+	colleagues := []*jobscolleagues.Colleague{{UserId: 7, Props: labels}}
+	groups := map[int32][]*groupsshort.GroupMemberShort{
+		7: {{Id: 42, Job: "police", Name: "Traffic"}},
+	}
+
+	attachColleagueGroups(colleagues, groups)
+
+	if colleagues[0].GetProps() != labels {
+		t.Fatal("expected existing colleague props to be preserved")
+	}
+	if len(colleagues[0].GetProps().GetGroups()) != 1 {
+		t.Fatalf("expected one group, got %d", len(colleagues[0].GetProps().GetGroups()))
+	}
+}
 
 func TestGetConditionForColleagueAccessUsesJobGradeForRankAccess(t *testing.T) {
 	t.Parallel()

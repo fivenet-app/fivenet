@@ -10,6 +10,7 @@ package jobscolleagues
 
 import (
 	_ "github.com/fivenet-app/fivenet/v2026/gen/go/proto/codegen/sanitizer"
+	short "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/jobs/groups/short"
 	labels "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/jobs/labels"
 	timestamp "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/timestamp"
 	_ "github.com/srikrsna/protoc-gen-gotag/tagger"
@@ -329,16 +330,17 @@ func (b0 Colleague_builder) Build() *Colleague {
 }
 
 type ColleagueProps struct {
-	state         protoimpl.MessageState `protogen:"hybrid.v1"`
-	UserId        int32                  `protobuf:"varint,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
-	Job           string                 `protobuf:"bytes,2,opt,name=job,proto3" json:"job,omitempty"`
-	DeletedAt     *timestamp.Timestamp   `protobuf:"bytes,3,opt,name=deleted_at,json=deletedAt,proto3,oneof" json:"deleted_at,omitempty"`
-	AbsenceBegin  *timestamp.Timestamp   `protobuf:"bytes,4,opt,name=absence_begin,json=absenceBegin,proto3,oneof" json:"absence_begin,omitempty"`
-	AbsenceEnd    *timestamp.Timestamp   `protobuf:"bytes,5,opt,name=absence_end,json=absenceEnd,proto3,oneof" json:"absence_end,omitempty"`
-	Note          *string                `protobuf:"bytes,6,opt,name=note,proto3,oneof" json:"note,omitempty"`
-	Labels        *labels.Labels         `protobuf:"bytes,7,opt,name=labels,proto3,oneof" json:"labels,omitempty"`
-	NamePrefix    *string                `protobuf:"bytes,8,opt,name=name_prefix,json=namePrefix,proto3,oneof" json:"name_prefix,omitempty"`
-	NameSuffix    *string                `protobuf:"bytes,9,opt,name=name_suffix,json=nameSuffix,proto3,oneof" json:"name_suffix,omitempty"`
+	state         protoimpl.MessageState    `protogen:"hybrid.v1"`
+	UserId        int32                     `protobuf:"varint,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	Job           string                    `protobuf:"bytes,2,opt,name=job,proto3" json:"job,omitempty"`
+	DeletedAt     *timestamp.Timestamp      `protobuf:"bytes,3,opt,name=deleted_at,json=deletedAt,proto3,oneof" json:"deleted_at,omitempty"`
+	AbsenceBegin  *timestamp.Timestamp      `protobuf:"bytes,4,opt,name=absence_begin,json=absenceBegin,proto3,oneof" json:"absence_begin,omitempty"`
+	AbsenceEnd    *timestamp.Timestamp      `protobuf:"bytes,5,opt,name=absence_end,json=absenceEnd,proto3,oneof" json:"absence_end,omitempty"`
+	Note          *string                   `protobuf:"bytes,6,opt,name=note,proto3,oneof" json:"note,omitempty"`
+	Labels        *labels.Labels            `protobuf:"bytes,7,opt,name=labels,proto3,oneof" json:"labels,omitempty"`
+	NamePrefix    *string                   `protobuf:"bytes,8,opt,name=name_prefix,json=namePrefix,proto3,oneof" json:"name_prefix,omitempty"`
+	NameSuffix    *string                   `protobuf:"bytes,9,opt,name=name_suffix,json=nameSuffix,proto3,oneof" json:"name_suffix,omitempty"`
+	Groups        []*short.GroupMemberShort `protobuf:"bytes,10,rep,name=groups,proto3" json:"groups,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -431,6 +433,13 @@ func (x *ColleagueProps) GetNameSuffix() string {
 	return ""
 }
 
+func (x *ColleagueProps) GetGroups() []*short.GroupMemberShort {
+	if x != nil {
+		return x.Groups
+	}
+	return nil
+}
+
 func (x *ColleagueProps) SetUserId(v int32) {
 	x.UserId = v
 }
@@ -465,6 +474,10 @@ func (x *ColleagueProps) SetNamePrefix(v string) {
 
 func (x *ColleagueProps) SetNameSuffix(v string) {
 	x.NameSuffix = &v
+}
+
+func (x *ColleagueProps) SetGroups(v []*short.GroupMemberShort) {
+	x.Groups = v
 }
 
 func (x *ColleagueProps) HasDeletedAt() bool {
@@ -556,6 +569,7 @@ type ColleagueProps_builder struct {
 	Labels       *labels.Labels
 	NamePrefix   *string
 	NameSuffix   *string
+	Groups       []*short.GroupMemberShort
 }
 
 func (b0 ColleagueProps_builder) Build() *ColleagueProps {
@@ -571,6 +585,7 @@ func (b0 ColleagueProps_builder) Build() *ColleagueProps {
 	x.Labels = b.Labels
 	x.NamePrefix = b.NamePrefix
 	x.NameSuffix = b.NameSuffix
+	x.Groups = b.Groups
 	return m0
 }
 
@@ -578,7 +593,7 @@ var File_resources_jobs_colleagues_colleagues_proto protoreflect.FileDescriptor
 
 const file_resources_jobs_colleagues_colleagues_proto_rawDesc = "" +
 	"\n" +
-	"*resources/jobs/colleagues/colleagues.proto\x12\x19resources.jobs.colleagues\x1a!codegen/sanitizer/sanitizer.proto\x1a\"resources/jobs/labels/labels.proto\x1a#resources/timestamp/timestamp.proto\x1a\x13tagger/tagger.proto\"\xb6\x05\n" +
+	"*resources/jobs/colleagues/colleagues.proto\x12\x19resources.jobs.colleagues\x1a!codegen/sanitizer/sanitizer.proto\x1a\"resources/jobs/labels/labels.proto\x1a4resources/jobs/groups/short/group_member_short.proto\x1a#resources/timestamp/timestamp.proto\x1a\x13tagger/tagger.proto\"\xb6\x05\n" +
 	"\tColleague\x12(\n" +
 	"\auser_id\x18\x01 \x01(\x05B\x0f\x9a\x84\x9e\x03\n" +
 	"alias:\"id\"R\x06userId\x12\x10\n" +
@@ -600,7 +615,7 @@ const file_resources_jobs_colleagues_colleagues_proto_rawDesc = "" +
 	"\r_phone_numberB\x1a\n" +
 	"\x18_profile_picture_file_idB\x12\n" +
 	"\x10_profile_pictureB\b\n" +
-	"\x06_emailJ\x04\b\x02\x10\x03\"\x9f\x04\n" +
+	"\x06_emailJ\x04\b\x02\x10\x03\"\xe6\x04\n" +
 	"\x0eColleagueProps\x12\x17\n" +
 	"\auser_id\x18\x01 \x01(\x05R\x06userId\x12\x10\n" +
 	"\x03job\x18\x02 \x01(\tR\x03job\x12B\n" +
@@ -614,7 +629,9 @@ const file_resources_jobs_colleagues_colleagues_proto_rawDesc = "" +
 	"\vname_prefix\x18\b \x01(\tH\x05R\n" +
 	"namePrefix\x88\x01\x01\x12$\n" +
 	"\vname_suffix\x18\t \x01(\tH\x06R\n" +
-	"nameSuffix\x88\x01\x01B\r\n" +
+	"nameSuffix\x88\x01\x01\x12E\n" +
+	"\x06groups\x18\n" +
+	" \x03(\v2-.resources.jobs.groups.short.GroupMemberShortR\x06groupsB\r\n" +
 	"\v_deleted_atB\x10\n" +
 	"\x0e_absence_beginB\x0e\n" +
 	"\f_absence_endB\a\n" +
@@ -625,10 +642,11 @@ const file_resources_jobs_colleagues_colleagues_proto_rawDesc = "" +
 
 var file_resources_jobs_colleagues_colleagues_proto_msgTypes = make([]protoimpl.MessageInfo, 2)
 var file_resources_jobs_colleagues_colleagues_proto_goTypes = []any{
-	(*Colleague)(nil),           // 0: resources.jobs.colleagues.Colleague
-	(*ColleagueProps)(nil),      // 1: resources.jobs.colleagues.ColleagueProps
-	(*timestamp.Timestamp)(nil), // 2: resources.timestamp.Timestamp
-	(*labels.Labels)(nil),       // 3: resources.jobs.labels.Labels
+	(*Colleague)(nil),              // 0: resources.jobs.colleagues.Colleague
+	(*ColleagueProps)(nil),         // 1: resources.jobs.colleagues.ColleagueProps
+	(*timestamp.Timestamp)(nil),    // 2: resources.timestamp.Timestamp
+	(*labels.Labels)(nil),          // 3: resources.jobs.labels.Labels
+	(*short.GroupMemberShort)(nil), // 4: resources.jobs.groups.short.GroupMemberShort
 }
 var file_resources_jobs_colleagues_colleagues_proto_depIdxs = []int32{
 	1, // 0: resources.jobs.colleagues.Colleague.props:type_name -> resources.jobs.colleagues.ColleagueProps
@@ -636,11 +654,12 @@ var file_resources_jobs_colleagues_colleagues_proto_depIdxs = []int32{
 	2, // 2: resources.jobs.colleagues.ColleagueProps.absence_begin:type_name -> resources.timestamp.Timestamp
 	2, // 3: resources.jobs.colleagues.ColleagueProps.absence_end:type_name -> resources.timestamp.Timestamp
 	3, // 4: resources.jobs.colleagues.ColleagueProps.labels:type_name -> resources.jobs.labels.Labels
-	5, // [5:5] is the sub-list for method output_type
-	5, // [5:5] is the sub-list for method input_type
-	5, // [5:5] is the sub-list for extension type_name
-	5, // [5:5] is the sub-list for extension extendee
-	0, // [0:5] is the sub-list for field type_name
+	4, // 5: resources.jobs.colleagues.ColleagueProps.groups:type_name -> resources.jobs.groups.short.GroupMemberShort
+	6, // [6:6] is the sub-list for method output_type
+	6, // [6:6] is the sub-list for method input_type
+	6, // [6:6] is the sub-list for extension type_name
+	6, // [6:6] is the sub-list for extension extendee
+	0, // [0:6] is the sub-list for field type_name
 }
 
 func init() { file_resources_jobs_colleagues_colleagues_proto_init() }
