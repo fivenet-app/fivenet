@@ -1086,6 +1086,7 @@
             },
             "document_comments": {
                 "add_comment": "Fügen Sie Ihren Kommentar hinzu.",
+                "commented_on_this": "hat kommentiert",
                 "no_comments": "Noch keine Kommentare veröffentlicht"
             },
             "document_managers": {

@@ -1086,6 +1086,7 @@
             },
             "document_comments": {
                 "add_comment": "Add your comment.",
+                "commented_on_this": "commented on this",
                 "no_comments": "No comments have been posted yet."
             },
             "document_managers": {

@@ -684,7 +684,7 @@ const formRef = useTemplateRef('formRef');
                                         <div>
                                             <UTooltip :text="$t('common.remove')">
                                                 <UButton
-                                                    color="red"
+                                                    color="error"
                                                     icon="i-mdi-close"
                                                     @click="
                                                         () => {

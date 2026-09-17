@@ -220,7 +220,7 @@ onBeforeMount(async () => listJobs());
                 <UTooltip :text="$t('components.access.remove_entry')">
                     <UButton
                         class="flex-initial"
-                        color="red"
+                        color="error"
                         icon="i-mdi-remove"
                         :label="$t('components.access.remove_entry')"
                         :disabled="disabled"

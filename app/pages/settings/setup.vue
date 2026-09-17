@@ -790,7 +790,7 @@ const open = ref<boolean>(false);
                                                                             <UTooltip :text="$t('common.remove')">
                                                                                 <UButton
                                                                                     type="button"
-                                                                                    color="red"
+                                                                                    color="error"
                                                                                     icon="i-mdi-close"
                                                                                     :disabled="!canSubmit || isSubmitting"
                                                                                     @click="removeDefaultPermission(idx)"

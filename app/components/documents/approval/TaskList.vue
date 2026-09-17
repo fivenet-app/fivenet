@@ -142,7 +142,7 @@ async function removeTask(id: number): Promise<DeleteApprovalTasksResponse> {
                             class="inline-flex items-center gap-2"
                         >
                             <UTooltip :text="$t('common.remove')">
-                                <UButton icon="i-mdi-delete" color="red" variant="link" @click="removeTask(task.id)" />
+                                <UButton icon="i-mdi-delete" color="error" variant="link" @click="removeTask(task.id)" />
                             </UTooltip>
                         </div>
                     </div>

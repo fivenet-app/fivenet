@@ -443,7 +443,7 @@ const formRef = useTemplateRef('formRef');
                                         <UTooltip :text="$t('common.delete')">
                                             <UButton
                                                 icon="i-mdi-remove"
-                                                color="red"
+                                                color="error"
                                                 :disabled="!canSubmit"
                                                 @click="() => state.predefinedStatus.unitStatus.splice(idx, 1)"
                                             />
@@ -486,7 +486,7 @@ const formRef = useTemplateRef('formRef');
                                         <UTooltip :text="$t('common.delete')">
                                             <UButton
                                                 icon="i-mdi-remove"
-                                                color="red"
+                                                color="error"
                                                 :disabled="!canSubmit"
                                                 @click="() => state.predefinedStatus.dispatchStatus.splice(idx, 1)"
                                             />

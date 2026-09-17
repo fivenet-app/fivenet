@@ -2,12 +2,9 @@
 import type { FormSubmitEvent } from '@nuxt/ui';
 import type { JSONContent } from '@tiptap/core';
 import { z } from 'zod';
-import CitizenInfoPopover from '~/components/partials/citizens/CitizenInfoPopover.vue';
 import ConfirmModal from '~/components/partials/ConfirmModal.vue';
 import CustomContentRenderer from '~/components/partials/content/CustomContentRenderer.vue';
-import DeletedAtBadge from '~/components/partials/DeletedAtBadge.vue';
 import TiptapEditor from '~/components/partials/editor/TiptapEditor.vue';
-import GenericTime from '~/components/partials/elements/GenericTime.vue';
 import type { HistoryContent } from '~/types/history';
 import { contentToTiptapValue, tiptapToContent } from '~/utils/content';
 import { getDocumentsCommentsClient } from '~~/gen/ts/clients';
@@ -36,6 +33,8 @@ const { t } = useI18n();
 const overlay = useOverlay();
 
 const { can, activeChar, isSuperuser } = useAuth();
+
+const { custom } = useAppConfig();
 
 const notifications = useNotificationsStore();
 
@@ -190,38 +189,41 @@ const confirmModal = overlay.create(ConfirmModal);
 </script>
 
 <template>
-    <li v-if="comment" class="rounded p-2" :class="[comment.deletedAt ? 'bg-warning-800' : '', 'flex-1 space-y-1']">
-        <div v-if="!editing" class="flex flex-col space-x-3">
-            <div class="flex flex-row items-center justify-between gap-2">
-                <div class="flex items-center gap-2">
-                    <CitizenInfoPopover :user="comment.creator" show-avatar-in-name />
-
-                    <GenericTime class="text-sm" :value="comment.createdAt" />
-
-                    <DeletedAtBadge v-if="comment.deletedAt" class="place-center" hide-date :deleted-at="comment.deletedAt" />
-                </div>
-
-                <UFieldGroup v-if="comment.creatorId === activeChar?.userId || isSuperuser">
+    <div
+        v-if="comment"
+        class="group relative mt-2 rounded-md bg-neutral-100 px-3 py-2 text-default ring ring-default dark:bg-neutral-900 dark:ring-neutral-700"
+        :class="comment.deletedAt ? custom.classes.deletedAt : ''"
+    >
+        <div v-if="!editing" class="space-y-2">
+            <div
+                v-if="comment.creatorId === activeChar?.userId || isSuperuser"
+                class="absolute top-2 right-2 z-10 opacity-0 transition-opacity group-focus-within:opacity-100 group-hover:opacity-100"
+            >
+                <UFieldGroup>
                     <UTooltip v-if="canComment" :text="$t('common.edit')">
                         <UButton variant="link" icon="i-mdi-pencil" @click="editing = true" />
                     </UTooltip>
 
-                    <UTooltip v-if="can('documents.CommentsService/DeleteComment').value" :text="$t('common.delete')">
+                    <UTooltip
+                        v-if="can('documents.CommentsService/DeleteComment').value"
+                        :text="!comment.deletedAt ? $t('common.delete') : $t('common.restore')"
+                    >
                         <UButton
+                            :color="!comment.deletedAt ? 'error' : 'success'"
+                            :icon="!comment.deletedAt ? 'i-mdi-delete' : 'i-mdi-restore'"
                             variant="link"
-                            icon="i-mdi-delete"
-                            color="error"
                             @click="
-                                confirmModal.open({
-                                    confirm: async () => deleteComment(comment!.id),
-                                })
+                                () =>
+                                    confirmModal.open({
+                                        confirm: async () => deleteComment(comment!.id),
+                                    })
                             "
                         />
                     </UTooltip>
                 </UFieldGroup>
             </div>
 
-            <div class="rounded-lg bg-neutral-100 p-4 dark:bg-neutral-800">
+            <div class="rounded-lg p-4">
                 <CustomContentRenderer v-if="comment.content" :value="comment.content" />
             </div>
         </div>
@@ -256,7 +258,7 @@ const confirmModal = overlay.create(ConfirmModal);
                             type="button"
                             :disabled="!canSubmit"
                             :loading="!canSubmit"
-                            color="red"
+                            color="error"
                             :label="$t('common.cancel')"
                             @click="cancelEdit"
                         />
@@ -264,5 +266,5 @@ const confirmModal = overlay.create(ConfirmModal);
                 </UForm>
             </div>
         </div>
-    </li>
+    </div>
 </template>

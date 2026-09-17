@@ -449,7 +449,7 @@ const confirmModal = overlay.create(ConfirmModal);
                                             v-if="jobProps.logoFileId"
                                             class="grow-0"
                                             variant="outline"
-                                            color="red"
+                                            color="error"
                                             trailing-icon="i-mdi-clear"
                                             :label="$t('common.clear')"
                                             @click="
@@ -1039,7 +1039,7 @@ const confirmModal = overlay.create(ConfirmModal);
                                                 <UButton
                                                     v-if="canEdit"
                                                     :disabled="!canSubmit"
-                                                    color="red"
+                                                    color="error"
                                                     icon="i-mdi-remove"
                                                     @click="
                                                         () =>
@@ -1238,7 +1238,7 @@ const confirmModal = overlay.create(ConfirmModal);
                                                 v-if="canEdit"
                                                 :disabled="!canSubmit"
                                                 icon="i-mdi-remove"
-                                                color="red"
+                                                color="error"
                                                 @click="
                                                     () =>
                                                         state.discordSyncSettings?.groupSyncSettings.ignoredRoleIds.splice(

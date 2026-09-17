@@ -398,7 +398,7 @@ async function closeModal(): Promise<void> {
                                 v-if="logoFile?.id"
                                 class="grow-0"
                                 variant="outline"
-                                color="red"
+                                color="error"
                                 trailing-icon="i-mdi-clear"
                                 :disabled="!canSubmit"
                                 :label="$t('common.clear')"

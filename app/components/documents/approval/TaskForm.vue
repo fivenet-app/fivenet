@@ -155,7 +155,7 @@ onBeforeMount(async () => listJobs());
                                         <UButton
                                             class="flex-initial"
                                             :class="idx === 0 ? 'pointer-events-none opacity-0' : ''"
-                                            color="red"
+                                            color="error"
                                             icon="i-mdi-remove"
                                             :label="$t('components.access.remove_entry')"
                                             :ui="{ label: 'md:hidden' }"

@@ -105,7 +105,7 @@ const isOpen = ref<boolean>(false);
                             class="w-full"
                             :label="$t('components.partials.tiptap_editor.delete_column')"
                             icon="i-mdi-table-column-remove"
-                            color="red"
+                            color="error"
                             variant="subtle"
                             @click="editor.chain().focus().deleteColumn().run()"
                         />
@@ -113,7 +113,7 @@ const isOpen = ref<boolean>(false);
                             class="w-full"
                             :label="$t('components.partials.tiptap_editor.delete_row')"
                             icon="i-mdi-table-row-remove"
-                            color="red"
+                            color="error"
                             variant="subtle"
                             @click="editor.chain().focus().deleteRow().run()"
                         />
@@ -125,7 +125,7 @@ const isOpen = ref<boolean>(false);
                             block
                             :label="$t('components.partials.tiptap_editor.delete_table')"
                             icon="i-mdi-table-remove"
-                            color="red"
+                            color="error"
                             variant="subtle"
                             @click="editor.chain().focus().deleteTable().run()"
                         />

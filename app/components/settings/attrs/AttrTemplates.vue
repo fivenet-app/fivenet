@@ -80,7 +80,7 @@ const confirmModal = overlay.create(ConfirmModal);
                         <template #footer>
                             <UButton
                                 :label="$t('common.apply')"
-                                color="red"
+                                color="error"
                                 variant="outline"
                                 icon="i-mdi-plus"
                                 @click="

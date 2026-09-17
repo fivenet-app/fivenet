@@ -136,7 +136,7 @@ const confirmModal = overlay.create(ConfirmModalWithReason);
                         <UTooltip v-if="approval.status !== ApprovalStatus.REVOKED" :text="$t('common.revoke')">
                             <UButton
                                 icon="i-mdi-cancel"
-                                color="red"
+                                color="error"
                                 variant="link"
                                 @click="
                                     confirmModal.open({

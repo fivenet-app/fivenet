@@ -1,11 +1,14 @@
 <script setup lang="ts">
-import type { FormSubmitEvent } from '@nuxt/ui';
+import type { FormSubmitEvent, TimelineItem } from '@nuxt/ui';
 import type { JSONContent } from '@tiptap/core';
 import { z } from 'zod';
+import CitizenInfoPopover from '~/components/partials/citizens/CitizenInfoPopover.vue';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
+import DeletedAtBadge from '~/components/partials/DeletedAtBadge.vue';
 import TiptapEditor from '~/components/partials/editor/TiptapEditor.vue';
+import GenericTime from '~/components/partials/elements/GenericTime.vue';
 import Pagination from '~/components/partials/Pagination.vue';
 import type { HistoryContent } from '~/types/history';
 import { tiptapToContent } from '~/utils/content';
@@ -51,6 +54,17 @@ const { data, status, refresh, error } = useAuthedLazyAsyncData(
     {
         immediate: false,
     },
+);
+
+type CommentTimelineItem = TimelineItem & {
+    comment: Comment;
+};
+
+const timelineItems = computed<CommentTimelineItem[]>(() =>
+    (data.value?.comments ?? []).map((comment) => ({
+        comment,
+        icon: 'i-mdi-comment-text-outline',
+    })),
 );
 
 async function getComments(signal: AbortSignal): Promise<GetCommentsResponse> {
@@ -254,16 +268,45 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                 :padded="false"
             />
 
-            <ul v-else class="divide-y divide-default" role="list">
-                <CommentEntry
-                    v-for="(comment, idx) in data.comments"
-                    :key="comment.id"
-                    v-model="data.comments[idx]"
-                    :document-id="documentId"
-                    :can-comment="canComment"
-                    @deleted="removeComment(comment.id)"
-                />
-            </ul>
+            <UTimeline
+                v-else
+                :items="timelineItems"
+                size="xs"
+                :ui="{
+                    date: 'float-end ms-1',
+                    description: 'mt-2 rounded-md text-default',
+                }"
+                class="w-full"
+            >
+                <template #title="{ item }">
+                    <div class="flex items-center gap-2">
+                        <CitizenInfoPopover :user="item.comment.creator" show-avatar-in-name :trailing="false" />
+                        <span class="font-normal text-muted">{{
+                            $t('components.documents.document_comments.commented_on_this')
+                        }}</span>
+
+                        <DeletedAtBadge
+                            v-if="item.comment.deletedAt"
+                            class="place-center"
+                            hide-date
+                            :deleted-at="item.comment.deletedAt"
+                        />
+                    </div>
+                </template>
+
+                <template #date="{ item }">
+                    <GenericTime class="text-sm text-muted" :value="item.comment.createdAt" ago />
+                </template>
+
+                <template #description="{ item }">
+                    <CommentEntry
+                        v-model="item.comment"
+                        :document-id="documentId"
+                        :can-comment="canComment"
+                        @deleted="removeComment(item.comment.id)"
+                    />
+                </template>
+            </UTimeline>
 
             <Pagination
                 v-if="data?.pagination?.totalCount && data?.pagination?.totalCount > 0"

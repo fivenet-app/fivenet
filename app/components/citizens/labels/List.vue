@@ -166,7 +166,7 @@ const columns = computed(
                         can('citizens.LabelsService/DeleteLabel').value
                             ? h(
                                   UTooltip,
-                                  { text: row.original.deletedAt ? t('common.restore') : t('common.delete') },
+                                  { text: !row.original.deletedAt ? t('common.delete') : t('common.restore') },
                                   h(UButton, {
                                       color: !row.original.deletedAt ? 'error' : 'success',
                                       variant: 'link',

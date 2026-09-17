@@ -360,7 +360,7 @@ const taskFormDrawer = overlay.create(TaskForm);
                         @update:policy="($event) => (policy = $event)"
                         @close="(val) => val && refresh()"
                     >
-                        <UButton color="red" icon="i-mdi-close-bold" block size="lg" :label="$t('common.decline')" />
+                        <UButton color="error" icon="i-mdi-close-bold" block size="lg" :label="$t('common.decline')" />
                     </TaskDecideDrawer>
                 </UFieldGroup>
 

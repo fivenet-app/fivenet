@@ -75,7 +75,7 @@ const { dispatchers, anyDispatchersActive, getCurrentMode } = storeToRefs(centru
                                         :text="$t('common.remove')"
                                     >
                                         <UButton
-                                            color="red"
+                                            color="error"
                                             icon="i-mdi-remove"
                                             variant="link"
                                             @click="() => updateDispatchers([dispatcher.userId])"
