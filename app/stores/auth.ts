@@ -1,6 +1,7 @@
 import type { RpcError, RpcOptions } from '@protobuf-ts/runtime-rpc';
 import { defineStore } from 'pinia';
 import { parseQuery } from 'vue-router';
+import { revalidateCurrentRoutePermission } from '~/composables/auth/routePermission';
 import { useGRPCWebsocketTransport } from '~/composables/grpcws';
 import { webSocket } from '~/composables/grpcws/bridge';
 import { isSetupBypassRoute } from '~/composables/setup';
@@ -198,11 +199,11 @@ export const useAuthStore = defineStore(
          */
         const commitQueryContext = (): void => {
             queryContextRevision.value += 1;
-            // Publish the complete new key while requests are still disabled.
-            // Enabling first would start a request with the old key, which is
-            // immediately cancelled when queryContext updates below.
-            queryContext.value = buildQueryContext();
+            // Enable requests before publishing the new key. Nuxt's key watcher
+            // executes synchronously and skips the fetch while `enabled` is
+            // false; changing `enabled` alone does not trigger a fetch later.
             isQueryTransitioning.value = false;
+            queryContext.value = buildQueryContext();
         };
 
         let chooseCharacterPromise: Promise<void> | undefined;
@@ -657,8 +658,12 @@ export const useAuthStore = defineStore(
                       }
                     : null;
                 writeSuperuserRestoreHint(superuserRestoreHint.value);
-                commitQueryContext();
-                await navigateTo('/overview');
+                try {
+                    // Revalidate after applying the new permissions so restricted routes can redirect.
+                    await revalidateCurrentRoutePermission(notifications.add);
+                } finally {
+                    commitQueryContext();
+                }
 
                 // Notify user about the change
                 if (superuser) {

@@ -31,7 +31,7 @@ func TestBasicPerms(t *testing.T) {
 	t.Parallel()
 	ctx := t.Context()
 	dbServer := servers.NewDBServer(ctx, t, true)
-	natsServer := servers.NewNATSServer(t, true)
+	natsServer := servers.NewNATSServer(t)
 
 	var ps perms.Permissions
 	app := fxtest.New(t,

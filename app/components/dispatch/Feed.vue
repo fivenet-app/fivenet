@@ -1,12 +1,25 @@
 <script lang="ts" setup>
 import DispatchFeedItem from '~/components/dispatch/dispatches/DispatchFeedItem.vue';
 import UnitFeedItem from '~/components/dispatch/units/UnitFeedItem.vue';
+import { dispatchStatuses, dispatchStatusToBGColor, unitStatuses, unitStatusToBGColor } from '~/components/dispatch/helpers';
 import type { DispatchStatus } from '~~/gen/ts/resources/centrum/dispatches/dispatches';
 import type { UnitStatus } from '~~/gen/ts/resources/centrum/units/units';
 
 defineProps<{
     items: (DispatchStatus | UnitStatus)[];
 }>();
+
+function timelineIcon(item: DispatchStatus | UnitStatus): string {
+    if ('dispatchId' in item) {
+        return dispatchStatuses.find((status) => status.status === item.status)?.icon ?? 'i-mdi-info-circle';
+    }
+
+    return unitStatuses.find((status) => status.status === item.status)?.icon ?? 'i-mdi-info-circle';
+}
+
+function timelineColor(item: DispatchStatus | UnitStatus): string {
+    return `text-highlighted ${'dispatchId' in item ? dispatchStatusToBGColor(item.status) : unitStatusToBGColor(item.status)}`;
+}
 </script>
 
 <template>
@@ -17,25 +30,16 @@ defineProps<{
             </h2>
         </div>
         <div class="flex-1">
-            <ul class="space-y-2" role="list">
-                <template v-for="(activityItem, activityItemIdx) in items">
-                    <DispatchFeedItem
-                        v-if="'dispatchId' in activityItem"
-                        :key="'dsp' + activityItem.id"
-                        :activity-length="items?.length ?? 0"
-                        :item="activityItem"
-                        :activity-item-idx="activityItemIdx"
-                        show-id
-                    />
-                    <UnitFeedItem
-                        v-else
-                        :key="'unit' + activityItem.id"
-                        :activity-length="items?.length ?? 0"
-                        :item="activityItem"
-                        :activity-item-idx="activityItemIdx"
-                    />
+            <UTimeline
+                :items="items.map((item) => ({ ...item, icon: timelineIcon(item), ui: { indicator: timelineColor(item) } }))"
+                size="xs"
+                :ui="{ wrapper: '!mt-0 !pb-2' }"
+            >
+                <template #wrapper="{ item }">
+                    <DispatchFeedItem v-if="'dispatchId' in item" :item="item" show-id />
+                    <UnitFeedItem v-else :item="item" />
                 </template>
-            </ul>
+            </UTimeline>
         </div>
     </div>
 </template>

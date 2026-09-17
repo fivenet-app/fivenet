@@ -12,7 +12,6 @@ import (
 	"net/http"
 	"strings"
 
-	"golang.org/x/net/http2"
 	"google.golang.org/grpc/grpclog"
 )
 
@@ -74,7 +73,7 @@ func (w *grpcWebResponse) prepareHeaders() {
 	copyHeader(
 		wh, w.headers,
 		skipKeys("trailer"),
-		replaceInKeys(http2.TrailerPrefix, ""),
+		replaceInKeys(http.TrailerPrefix, ""),
 		replaceInVals("Content-Type", grpcContentType, w.contentType),
 		keyCase(http.CanonicalHeaderKey),
 	)
@@ -140,7 +139,7 @@ func extractTrailingHeaders(src http.Header, flushed http.Header) http.Header {
 	copyHeader(
 		th, src,
 		skipKeys(append([]string{"Trailer"}, headerKeys(flushed)...)...),
-		replaceInKeys(http2.TrailerPrefix, ""),
+		replaceInKeys(http.TrailerPrefix, ""),
 		// gRPC-Web spec says that must use lower-case header/trailer names. See
 		// "HTTP wire protocols" section in
 		// https://github.com/grpc/grpc/blob/master/doc/PROTOCOL-WEB.md#protocol-differences-vs-grpc-over-http2

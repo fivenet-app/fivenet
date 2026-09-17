@@ -638,10 +638,10 @@ func TestPublicMarkerMutationRequiresSameJobOrAdmin(t *testing.T) {
 	t.Run("creator id can delete public marker without creator object", func(t *testing.T) {
 		t.Parallel()
 
-		existing := newMarkerRequest(42, new(true))
-		existing.SetCreatorId(10)
+		existingMR := newMarkerRequest(42, new(true))
+		existingMR.SetCreatorId(10)
 
-		store := newMarkerTestStore(existing)
+		store := newMarkerTestStore(existingMR)
 		srv := newMarkerServer(store, &testLivemapPerms{access: []string{"Own"}})
 		ctx := auth.ContextWithUserInfo(t.Context(), newUserInfo(10, "ems", 3, false))
 

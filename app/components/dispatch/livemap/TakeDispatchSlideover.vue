@@ -18,6 +18,7 @@ const centrumDispatchesClient = await getCentrumDispatchesClient();
 
 const selectedDispatches = ref<number[]>([]);
 const queryDispatches = ref('');
+const now = useSecondClock();
 
 async function takeDispatches(resp: TakeDispatchResp): Promise<void> {
     try {
@@ -66,7 +67,7 @@ const canTakeDispatch = computed(
         (pendingDispatches.value.length > 0 || (getCurrentMode.value === CentrumMode.SIMPLIFIED && dispatches.value.size > 0)),
 );
 
-const filteredDispatches = computedAsync(async () => {
+const filteredDispatches = computed(() => {
     const filtered: Dispatch[] = [];
     dispatches.value.forEach((d) => {
         if (d.id.toString().includes(queryDispatches.value) || d.message.includes(queryDispatches.value)) {
@@ -114,6 +115,7 @@ const onSubmitThrottle = useThrottleFn(async (resp: TakeDispatchResp) => {
                             v-for="pd in filteredDispatches"
                             :key="pd"
                             :dispatch="dispatches.get(pd)!"
+                            :now="now"
                             :preselected="false"
                             @selected="selectDispatch(pd, $event)"
                         />
@@ -131,6 +133,7 @@ const onSubmitThrottle = useThrottleFn(async (resp: TakeDispatchResp) => {
                             v-for="pd in pendingDispatches"
                             :key="pd"
                             :dispatch="dispatches.get(pd)!"
+                            :now="now"
                             @selected="selectDispatch(pd, $event)"
                         />
                     </template>

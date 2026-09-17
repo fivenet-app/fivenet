@@ -10,6 +10,7 @@ import (
 	grpcauth "github.com/fivenet-app/fivenet/v2026/pkg/grpc/auth"
 	"github.com/fivenet-app/fivenet/v2026/pkg/housekeeper"
 	"github.com/fivenet-app/fivenet/v2026/pkg/server/admin"
+	"github.com/fivenet-app/fivenet/v2026/pkg/userinfo"
 	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
 	citizenshydrator "github.com/fivenet-app/fivenet/v2026/stores/citizens/hydrator"
 	mailerstore "github.com/fivenet-app/fivenet/v2026/stores/mailer"
@@ -33,15 +34,16 @@ func init() {
 type Server struct {
 	pbnotifications.NotificationsServiceServer
 
-	logger      *zap.Logger
-	ctx         context.Context //nolint:containedctx // Server keeps lifecycle context for stream consumer cleanup.
-	db          *sql.DB
-	js          *events.JSWrapper
-	auth        *grpcauth.GRPCAuth
-	store       notificationsstore.IStore
-	hydrator    citizenshydrator.IHydrator
-	mailerStore mailerstore.IStore
-	metrics     *notificationMetrics
+	logger          *zap.Logger
+	ctx             context.Context //nolint:containedctx // Server keeps lifecycle context for stream consumer cleanup.
+	db              *sql.DB
+	js              *events.JSWrapper
+	auth            *grpcauth.GRPCAuth
+	store           notificationsstore.IStore
+	hydrator        citizenshydrator.IHydrator
+	mailerStore     mailerstore.IStore
+	userinfoChanges userinfo.ChangeSubscriber
+	metrics         *notificationMetrics
 }
 
 type notificationMetrics struct {
@@ -85,28 +87,30 @@ type Params struct {
 
 	LC fx.Lifecycle
 
-	Logger      *zap.Logger
-	DB          *sql.DB
-	JS          *events.JSWrapper
-	Auth        *grpcauth.GRPCAuth
-	Store       notificationsstore.IStore
-	Hydrator    citizenshydrator.IHydrator
-	MailerStore mailerstore.IStore
+	Logger          *zap.Logger
+	DB              *sql.DB
+	JS              *events.JSWrapper
+	Auth            *grpcauth.GRPCAuth
+	Store           notificationsstore.IStore
+	Hydrator        citizenshydrator.IHydrator
+	MailerStore     mailerstore.IStore
+	UserInfoChanges userinfo.ChangeSubscriber
 }
 
 func NewServer(p Params) *Server {
 	ctxCancel, cancel := context.WithCancel(context.Background())
 
 	s := &Server{
-		logger:      p.Logger,
-		ctx:         ctxCancel,
-		db:          p.DB,
-		js:          p.JS,
-		auth:        p.Auth,
-		store:       p.Store,
-		hydrator:    p.Hydrator,
-		mailerStore: p.MailerStore,
-		metrics:     getNotificationMetrics(),
+		logger:          p.Logger,
+		ctx:             ctxCancel,
+		db:              p.DB,
+		js:              p.JS,
+		auth:            p.Auth,
+		store:           p.Store,
+		hydrator:        p.Hydrator,
+		mailerStore:     p.MailerStore,
+		userinfoChanges: p.UserInfoChanges,
+		metrics:         getNotificationMetrics(),
 	}
 
 	p.LC.Append(fx.StopHook(func(_ context.Context) error {

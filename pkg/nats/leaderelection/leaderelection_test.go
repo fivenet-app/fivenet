@@ -25,12 +25,8 @@ func waitForCtx(t *testing.T, ch <-chan context.Context, timeout time.Duration) 
 func TestLeaderElector_StopsHeartbeatAfterStepDown(t *testing.T) {
 	t.Parallel()
 	ctx := t.Context()
-	conn, js, cleanup, err := nats.NewInProcessNATSServer()
-	require.NoError(t, err)
-	t.Cleanup(func() {
-		_ = cleanup()
-		conn.Close()
-	})
+	natsServer := nats.NewServer(t, nats.ServerOptions{InProcess: true})
+	js := natsServer.GetJS()
 
 	started := make(chan context.Context, 2)
 
@@ -90,12 +86,8 @@ func TestLeaderElector_StopsHeartbeatAfterStepDown(t *testing.T) {
 func TestLeaderElector_ReacquiresAfterCompetitorLeaves(t *testing.T) {
 	t.Parallel()
 	ctx := t.Context()
-	conn, js, cleanup, err := nats.NewInProcessNATSServer()
-	require.NoError(t, err)
-	t.Cleanup(func() {
-		_ = cleanup()
-		conn.Close()
-	})
+	natsServer := nats.NewServer(t, nats.ServerOptions{InProcess: true})
+	js := natsServer.GetJS()
 
 	started := make(chan context.Context, 3)
 
@@ -156,4 +148,92 @@ func TestLeaderElector_ReacquiresAfterCompetitorLeaves(t *testing.T) {
 	)
 
 	le.Stop()
+}
+
+func TestLeaderElectorsFailOverWithoutOverlappingLeadership(t *testing.T) {
+	t.Parallel()
+	ctx := t.Context()
+	natsServer := nats.NewServer(t, nats.ServerOptions{InProcess: true})
+	js := natsServer.GetJS()
+
+	type leadershipStart struct {
+		id  string
+		ctx context.Context
+	}
+	starts := make(chan leadershipStart, 4)
+	stops := make(chan string, 4)
+	newElector := func(id string) *LeaderElector {
+		elector, err := New(
+			ctx,
+			zap.NewNop(),
+			js,
+			"le_two_electors",
+			"leader",
+			time.Second,
+			100*time.Millisecond,
+			func(leadershipCtx context.Context) { starts <- leadershipStart{id: id, ctx: leadershipCtx} },
+			func() { stops <- id },
+		)
+		require.NoError(t, err)
+		return elector
+	}
+
+	first := newElector("first")
+	second := newElector("second")
+	first.Start()
+	second.Start()
+
+	initial := func() leadershipStart {
+		select {
+		case start := <-starts:
+			return start
+		case <-time.After(2 * time.Second):
+			t.Fatal("timed out waiting for initial leader")
+			return leadershipStart{}
+		}
+	}()
+
+	select {
+	case duplicate := <-starts:
+		t.Fatalf("both electors became leader before failover: %s and %s", initial.id, duplicate.id)
+	case <-time.After(300 * time.Millisecond):
+	}
+
+	if initial.id == "first" {
+		first.Stop()
+	} else {
+		second.Stop()
+	}
+
+	select {
+	case stopped := <-stops:
+		require.Equal(t, initial.id, stopped)
+	case <-time.After(time.Second):
+		t.Fatal("stopped callback was not called for the initial leader")
+	}
+	select {
+	case <-initial.ctx.Done():
+	case <-time.After(time.Second):
+		t.Fatal("initial leadership context was not canceled after Stop")
+	}
+
+	var failover leadershipStart
+	select {
+	case failover = <-starts:
+	case <-time.After(3 * time.Second):
+		t.Fatal("remaining elector did not take over after the leader key expired")
+	}
+	require.NotEqual(t, initial.id, failover.id)
+
+	if failover.id == "first" {
+		first.Stop()
+	} else {
+		second.Stop()
+	}
+	select {
+	case stopped := <-stops:
+		require.Equal(t, failover.id, stopped)
+	case <-time.After(time.Second):
+		t.Fatal("stopped callback was not called for the failover leader")
+	}
 }

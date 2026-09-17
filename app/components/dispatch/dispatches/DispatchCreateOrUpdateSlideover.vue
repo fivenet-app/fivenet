@@ -38,6 +38,11 @@ const { data: dispatchTargetJobs } = useAuthedLazyAsyncData(
     },
 );
 
+const sortedDispatchTargetJobs = computed(() => {
+    const activeJob = activeChar.value?.job;
+    return [...(dispatchTargetJobs.value ?? [])].sort((a, b) => Number(b.name === activeJob) - Number(a.name === activeJob));
+});
+
 const schema = z.object({
     message: z.coerce.string().min(3).max(255),
     description: z.union([z.string().min(3).max(512), z.string().length(0).optional()]),
@@ -97,14 +102,14 @@ async function createDispatch(values: Schema): Promise<void> {
     }
 }
 
-watch(dispatchTargetJobs, (jobs) => {
+watch(sortedDispatchTargetJobs, (jobs) => {
     if (!jobs || jobs?.length <= 0) {
         state.jobs.jobs = [];
         syncSnapshot();
         return;
     }
 
-    state.jobs.jobs = [jobs[0]?.name ?? activeChar.value!.job];
+    state.jobs.jobs = [jobs[0]!.name];
     syncSnapshot();
 });
 
@@ -222,7 +227,7 @@ async function closeSlideover(): Promise<void> {
                                     :filter-fields="['name', 'label']"
                                     value-key="name"
                                     label-key="label"
-                                    :items="dispatchTargetJobs"
+                                    :items="sortedDispatchTargetJobs"
                                     :search-input="{ placeholder: $t('common.search_field') }"
                                     :disabled="dispatchTargetJobs.length <= 1"
                                 >

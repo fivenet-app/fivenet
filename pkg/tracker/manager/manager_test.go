@@ -33,7 +33,7 @@ func newTrackerManagerForTest(t *testing.T) (*Manager, *sql.DB, *tracker.TestTra
 
 	ctx := t.Context()
 	dbServer := servers.NewDBServer(ctx, t, true)
-	natsServer := servers.NewNATSServer(t, true)
+	natsServer := servers.NewNATSServer(t)
 
 	var manager *Manager
 	var trackerStub *tracker.TestTracker
@@ -261,7 +261,7 @@ func TestCleanupUserIDsDeletesStaleLocationKeyWhenMarkerMissing(t *testing.T) {
 	t.Parallel()
 
 	ctx := t.Context()
-	manager, db, _, stop := newTrackerManagerForTest(t)
+	manager, db, trackerStub, stop := newTrackerManagerForTest(t)
 	defer stop()
 
 	staleUser := &livemapmarkers.UserMarker{
@@ -273,8 +273,9 @@ func TestCleanupUserIDsDeletesStaleLocationKeyWhenMarkerMissing(t *testing.T) {
 	require.NoError(t, manager.userLocStore.Put(ctx, staleKey, staleUser))
 
 	require.NoError(t, dbInsertTestUser(ctx, db, 42, "police"))
-	require.NoError(t, dbInsertDispatcher(ctx, db, "police", 42))
-	require.NoError(t, manager.dispatchers.LoadFromDB(ctx, "police"))
+	trackerStub.SeedUserMarker(staleUser)
+	require.NoError(t, manager.dispatchers.SetUserState(ctx, "police", 42, true))
+	trackerStub.DeleteUserMarker(42)
 
 	removed, err := manager.cleanupUserIDs(ctx, map[int32]any{
 		staleUser.GetUserId(): nil,
@@ -349,17 +350,6 @@ func dbInsertTestUser(ctx context.Context, db *sql.DB, userID int32, job string)
 		userID,
 		userID,
 		job,
-	)
-
-	return err
-}
-
-func dbInsertDispatcher(ctx context.Context, db *sql.DB, job string, userID int32) error {
-	_, err := db.ExecContext(
-		ctx,
-		"INSERT INTO fivenet_centrum_dispatchers (job, user_id) VALUES (?, ?)",
-		job,
-		userID,
 	)
 
 	return err

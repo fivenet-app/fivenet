@@ -2606,6 +2606,10 @@
                     "content": "Bitte treten sie einer Einheit bei!"
                 }
             },
+            "unit_join_restricted": {
+                "title": "Einheitenbeitritt im Superuser-Modus für einen anderen Job nicht verfügbar",
+                "content": "Ihr Charakter kann nur Einheiten seines aktiven Dienstjobs beitreten. Der gewählte Superuser-Job dient nur der Verwaltung und ändert den Job für Einheitenmitgliedschaften nicht."
+            },
             "disabled": {
                 "title": "Leitstelle ist deaktiviert!",
                 "content": "Ihre Leitstelle ist nicht aktiviert, bitte kontaktieren Sie Ihre Fraktionsleitung."

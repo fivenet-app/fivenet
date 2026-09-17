@@ -1056,9 +1056,11 @@ func (b0 UpdateUnitStatusRequest_builder) Build() *UpdateUnitStatusRequest {
 }
 
 type UpdateUnitStatusResponse struct {
-	state         protoimpl.MessageState `protogen:"opaque.v1"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
+	state              protoimpl.MessageState `protogen:"opaque.v1"`
+	xxx_hidden_Status  *units.UnitStatus      `protobuf:"bytes,1,opt,name=status,proto3,oneof"`
+	xxx_hidden_Updated bool                   `protobuf:"varint,2,opt,name=updated,proto3"`
+	unknownFields      protoimpl.UnknownFields
+	sizeCache          protoimpl.SizeCache
 }
 
 func (x *UpdateUnitStatusResponse) Reset() {
@@ -1086,15 +1088,52 @@ func (x *UpdateUnitStatusResponse) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
+func (x *UpdateUnitStatusResponse) GetStatus() *units.UnitStatus {
+	if x != nil {
+		return x.xxx_hidden_Status
+	}
+	return nil
+}
+
+func (x *UpdateUnitStatusResponse) GetUpdated() bool {
+	if x != nil {
+		return x.xxx_hidden_Updated
+	}
+	return false
+}
+
+func (x *UpdateUnitStatusResponse) SetStatus(v *units.UnitStatus) {
+	x.xxx_hidden_Status = v
+}
+
+func (x *UpdateUnitStatusResponse) SetUpdated(v bool) {
+	x.xxx_hidden_Updated = v
+}
+
+func (x *UpdateUnitStatusResponse) HasStatus() bool {
+	if x == nil {
+		return false
+	}
+	return x.xxx_hidden_Status != nil
+}
+
+func (x *UpdateUnitStatusResponse) ClearStatus() {
+	x.xxx_hidden_Status = nil
+}
+
 type UpdateUnitStatusResponse_builder struct {
 	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
 
+	Status  *units.UnitStatus
+	Updated bool
 }
 
 func (b0 UpdateUnitStatusResponse_builder) Build() *UpdateUnitStatusResponse {
 	m0 := &UpdateUnitStatusResponse{}
 	b, x := &b0, m0
 	_, _ = b, x
+	x.xxx_hidden_Status = b.Status
+	x.xxx_hidden_Updated = b.Updated
 	return m0
 }
 
@@ -1144,8 +1183,11 @@ const file_services_centrum_units_proto_rawDesc = "" +
 	"\x06reason\x18\x03 \x01(\tB\x06\xda\xf3\x18\x02\b\x01H\x00R\x06reason\x88\x01\x01\x12\x1f\n" +
 	"\x04code\x18\x04 \x01(\tB\x06\xda\xf3\x18\x02\b\x01H\x01R\x04code\x88\x01\x01B\t\n" +
 	"\a_reasonB\a\n" +
-	"\x05_code\"\x1a\n" +
-	"\x18UpdateUnitStatusResponse2\xb6\b\n" +
+	"\x05_code\"\x81\x01\n" +
+	"\x18UpdateUnitStatusResponse\x12@\n" +
+	"\x06status\x18\x01 \x01(\v2#.resources.centrum.units.UnitStatusH\x00R\x06status\x88\x01\x01\x12\x18\n" +
+	"\aupdated\x18\x02 \x01(\bR\aupdatedB\t\n" +
+	"\a_status2\xb6\b\n" +
 	"\fUnitsService\x12z\n" +
 	"\bJoinUnit\x12!.services.centrum.JoinUnitRequest\x1a\".services.centrum.JoinUnitResponse\"'\xd2\xf3\x18#\b\x01\x12\acentrum\x1a\x0eCentrumService\"\x06Stream\x12}\n" +
 	"\tListUnits\x12\".services.centrum.ListUnitsRequest\x1a#.services.centrum.ListUnitsResponse\"'\xd2\xf3\x18#\b\x01\x12\acentrum\x1a\x0eCentrumService\"\x06Stream\x12\x92\x01\n" +
@@ -1192,27 +1234,28 @@ var file_services_centrum_units_proto_depIdxs = []int32{
 	16, // 6: services.centrum.CreateOrUpdateUnitRequest.unit:type_name -> resources.centrum.units.Unit
 	16, // 7: services.centrum.CreateOrUpdateUnitResponse.unit:type_name -> resources.centrum.units.Unit
 	17, // 8: services.centrum.UpdateUnitStatusRequest.status:type_name -> resources.centrum.units.StatusUnit
-	0,  // 9: services.centrum.UnitsService.JoinUnit:input_type -> services.centrum.JoinUnitRequest
-	2,  // 10: services.centrum.UnitsService.ListUnits:input_type -> services.centrum.ListUnitsRequest
-	4,  // 11: services.centrum.UnitsService.ListUnitActivity:input_type -> services.centrum.ListUnitActivityRequest
-	6,  // 12: services.centrum.UnitsService.CreateOrUpdateUnit:input_type -> services.centrum.CreateOrUpdateUnitRequest
-	8,  // 13: services.centrum.UnitsService.DeleteUnit:input_type -> services.centrum.DeleteUnitRequest
-	10, // 14: services.centrum.UnitsService.ReorderUnits:input_type -> services.centrum.ReorderUnitsRequest
-	12, // 15: services.centrum.UnitsService.AssignUnit:input_type -> services.centrum.AssignUnitRequest
-	14, // 16: services.centrum.UnitsService.UpdateUnitStatus:input_type -> services.centrum.UpdateUnitStatusRequest
-	1,  // 17: services.centrum.UnitsService.JoinUnit:output_type -> services.centrum.JoinUnitResponse
-	3,  // 18: services.centrum.UnitsService.ListUnits:output_type -> services.centrum.ListUnitsResponse
-	5,  // 19: services.centrum.UnitsService.ListUnitActivity:output_type -> services.centrum.ListUnitActivityResponse
-	7,  // 20: services.centrum.UnitsService.CreateOrUpdateUnit:output_type -> services.centrum.CreateOrUpdateUnitResponse
-	9,  // 21: services.centrum.UnitsService.DeleteUnit:output_type -> services.centrum.DeleteUnitResponse
-	11, // 22: services.centrum.UnitsService.ReorderUnits:output_type -> services.centrum.ReorderUnitsResponse
-	13, // 23: services.centrum.UnitsService.AssignUnit:output_type -> services.centrum.AssignUnitResponse
-	15, // 24: services.centrum.UnitsService.UpdateUnitStatus:output_type -> services.centrum.UpdateUnitStatusResponse
-	17, // [17:25] is the sub-list for method output_type
-	9,  // [9:17] is the sub-list for method input_type
-	9,  // [9:9] is the sub-list for extension type_name
-	9,  // [9:9] is the sub-list for extension extendee
-	0,  // [0:9] is the sub-list for field type_name
+	20, // 9: services.centrum.UpdateUnitStatusResponse.status:type_name -> resources.centrum.units.UnitStatus
+	0,  // 10: services.centrum.UnitsService.JoinUnit:input_type -> services.centrum.JoinUnitRequest
+	2,  // 11: services.centrum.UnitsService.ListUnits:input_type -> services.centrum.ListUnitsRequest
+	4,  // 12: services.centrum.UnitsService.ListUnitActivity:input_type -> services.centrum.ListUnitActivityRequest
+	6,  // 13: services.centrum.UnitsService.CreateOrUpdateUnit:input_type -> services.centrum.CreateOrUpdateUnitRequest
+	8,  // 14: services.centrum.UnitsService.DeleteUnit:input_type -> services.centrum.DeleteUnitRequest
+	10, // 15: services.centrum.UnitsService.ReorderUnits:input_type -> services.centrum.ReorderUnitsRequest
+	12, // 16: services.centrum.UnitsService.AssignUnit:input_type -> services.centrum.AssignUnitRequest
+	14, // 17: services.centrum.UnitsService.UpdateUnitStatus:input_type -> services.centrum.UpdateUnitStatusRequest
+	1,  // 18: services.centrum.UnitsService.JoinUnit:output_type -> services.centrum.JoinUnitResponse
+	3,  // 19: services.centrum.UnitsService.ListUnits:output_type -> services.centrum.ListUnitsResponse
+	5,  // 20: services.centrum.UnitsService.ListUnitActivity:output_type -> services.centrum.ListUnitActivityResponse
+	7,  // 21: services.centrum.UnitsService.CreateOrUpdateUnit:output_type -> services.centrum.CreateOrUpdateUnitResponse
+	9,  // 22: services.centrum.UnitsService.DeleteUnit:output_type -> services.centrum.DeleteUnitResponse
+	11, // 23: services.centrum.UnitsService.ReorderUnits:output_type -> services.centrum.ReorderUnitsResponse
+	13, // 24: services.centrum.UnitsService.AssignUnit:output_type -> services.centrum.AssignUnitResponse
+	15, // 25: services.centrum.UnitsService.UpdateUnitStatus:output_type -> services.centrum.UpdateUnitStatusResponse
+	18, // [18:26] is the sub-list for method output_type
+	10, // [10:18] is the sub-list for method input_type
+	10, // [10:10] is the sub-list for extension type_name
+	10, // [10:10] is the sub-list for extension extendee
+	0,  // [0:10] is the sub-list for field type_name
 }
 
 func init() { file_services_centrum_units_proto_init() }
@@ -1222,6 +1265,7 @@ func file_services_centrum_units_proto_init() {
 	}
 	file_services_centrum_units_proto_msgTypes[0].OneofWrappers = []any{}
 	file_services_centrum_units_proto_msgTypes[14].OneofWrappers = []any{}
+	file_services_centrum_units_proto_msgTypes[15].OneofWrappers = []any{}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{

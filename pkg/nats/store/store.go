@@ -30,7 +30,8 @@ import (
 var ErrPrefixAmbiguous = errors.New("multiple keys found with given prefix")
 
 type storeMetrics struct {
-	dataMapCount *prometheus.GaugeVec
+	dataMapCount   *prometheus.GaugeVec
+	writeConflicts *prometheus.CounterVec
 }
 
 var (
@@ -47,9 +48,16 @@ func getStoreMetrics() *storeMetrics {
 				Name:      "datamap_count",
 				Help:      "Count of data map entries.",
 			}, []string{"bucket"}),
+			writeConflicts: prometheus.NewCounterVec(prometheus.CounterOpts{
+				Namespace: admin.MetricsNamespace,
+				Subsystem: "nats_store",
+				Name:      "write_conflicts_total",
+				Help:      "Count of optimistic KV write conflicts retried.",
+			}, []string{"bucket"}),
 		}
 
 		prometheus.MustRegister(storeMetricsInst.dataMapCount)
+		prometheus.MustRegister(storeMetricsInst.writeConflicts)
 	})
 
 	return storeMetricsInst
@@ -192,41 +200,95 @@ func (s *Store[T, U]) Start(ctx context.Context, wait bool) error {
 
 	wg.Add(1)
 	go func() {
-		updateCh := watcher.Updates()
-
 		for {
-			select {
-			case <-ctx.Done():
-				if err := watcher.Stop(); err != nil {
-					if !errors.Is(err, nats.ErrConsumerNotFound) &&
-						!errors.Is(err, nats.ErrBadSubscription) {
-						s.logger.Error("error while stopping watcher", zap.Error(err))
+			updateCh := watcher.Updates()
+			// Watch replays the current KV state before its nil sentinel. Track
+			// that snapshot so a restarted watcher can remove cached keys whose
+			// expiry or delete tombstone was pruned while it was unavailable.
+			seen := make(map[string]struct{})
+		watcherLoop:
+			for {
+				select {
+				case <-ctx.Done():
+					if err := watcher.Stop(); err != nil {
+						if !errors.Is(err, nats.ErrConsumerNotFound) &&
+							!errors.Is(err, nats.ErrBadSubscription) {
+							s.logger.Error("error while stopping watcher", zap.Error(err))
+						}
 					}
-				} else {
-					s.logger.Debug("store watcher done")
-				}
-				return
-
-			case entry := <-updateCh:
-				// After all initial keys have been received, a nil entry is returned
-				if entry == nil {
 					if !ready.Swap(true) {
 						wg.Done()
 					}
-					continue
+					return
+
+				case entry, ok := <-updateCh:
+					if !ok {
+						s.logger.Warn("store watcher channel closed; restarting watcher")
+						// A closed channel before the initial nil sentinel means the
+						// cache has not finished loading; retry the watcher.
+						break watcherLoop
+					}
+
+					// After all initial keys have been received, a nil entry is returned
+					// by the JetStream KV watcher.
+					if entry == nil {
+						s.reconcileWatcherSnapshot(ctx, seen)
+						if !ready.Swap(true) {
+							wg.Done()
+						}
+						continue
+					}
+
+					key := entry.Key()
+					if s.ignoredKeys != nil && slices.Contains(s.ignoredKeys, key) {
+						continue
+					}
+					seen[key] = struct{}{}
+
+					switch entry.Operation() {
+					case jetstream.KeyValueDelete, jetstream.KeyValuePurge:
+						s.handleWatcherDelete(ctx, key, entry)
+
+					case jetstream.KeyValuePut:
+						s.handleWatcherPut(ctx, key, entry)
+					}
 				}
+			}
 
-				key := entry.Key()
-				if s.ignoredKeys != nil && slices.Contains(s.ignoredKeys, key) {
-					continue
+			if err := watcher.Stop(); err != nil &&
+				!errors.Is(err, nats.ErrConsumerNotFound) &&
+				!errors.Is(err, nats.ErrBadSubscription) {
+				s.logger.Error("error while stopping closed store watcher", zap.Error(err))
+			}
+			select {
+			case <-ctx.Done():
+				if !ready.Swap(true) {
+					wg.Done()
 				}
+				return
+			case <-time.After(time.Second):
+			}
 
-				switch entry.Operation() {
-				case jetstream.KeyValueDelete, jetstream.KeyValuePurge:
-					s.handleWatcherDelete(ctx, key, entry)
-
-				case jetstream.KeyValuePut:
-					s.handleWatcherPut(ctx, key, entry)
+			for {
+				nextWatcher, err := s.kv.Watch(ctx, s.prefix+">")
+				if err == nil {
+					watcher = nextWatcher
+					break
+				}
+				if ctx.Err() != nil {
+					if !ready.Swap(true) {
+						wg.Done()
+					}
+					return
+				}
+				s.logger.Error("failed to restart store watcher", zap.Error(err))
+				select {
+				case <-ctx.Done():
+					if !ready.Swap(true) {
+						wg.Done()
+					}
+					return
+				case <-time.After(time.Second):
 				}
 			}
 		}
@@ -250,6 +312,23 @@ func (s *Store[T, U]) Start(ctx context.Context, wait bool) error {
 	}
 
 	return nil
+}
+
+// reconcileWatcherSnapshot removes cached keys missing from a completed watcher
+// snapshot. A normal delete is replayed by Watch, but KV expiry and pruned delete
+// markers are absent from a later snapshot and would otherwise leave stale cache
+// entries after a watcher restart.
+func (s *Store[T, U]) reconcileWatcherSnapshot(ctx context.Context, seen map[string]struct{}) {
+	for key := range s.data.All() {
+		if s.ignoredKeys != nil && slices.Contains(s.ignoredKeys, key) {
+			continue
+		}
+		if _, ok := seen[key]; ok {
+			continue
+		}
+
+		s.handleWatcherDelete(ctx, key, nil)
+	}
 }
 
 func (s *Store[T, U]) handleWatcherDelete(
@@ -607,7 +686,9 @@ func (s *Store[T, U]) Range(fn func(key string, value U) bool) {
 		if _, ok := skip[userKey]; ok {
 			continue // Ignore
 		}
-		v, err := s.Get(internalKey)
+		// Get expects the caller-facing key and applies s.prefix itself.
+		// Passing internalKey here would prefix an already-prefixed key again.
+		v, err := s.Get(userKey)
 		if err != nil {
 			continue // Ignore errors, just skip this entry
 		}
@@ -654,27 +735,39 @@ func (s *Store[T, U]) Put(ctx context.Context, key string, msg U) error {
 	return nil
 }
 
+const maxPutWriteAttempts = 3
+
 func (s *Store[T, U]) put(ctx context.Context, key string, msg U, oldItem U) error {
 	data, err := proto.Marshal(msg)
 	if err != nil {
 		return fmt.Errorf("failed to marshal proto msg for key %s put. %w", key, err)
 	}
 
-	// Attempt to create or update the key in the NATS KeyValue store.
+	// Concurrent workers may read the same revision before writing. Refresh and
+	// retry a bounded number of optimistic-CAS conflicts instead of dropping a
+	// logically idempotent projection update.
+
 	var rev uint64
-	entry, err := s.kv.Get(ctx, key)
-	if err == nil {
-		// Key exists -> optimistic CAS
-		rev, err = s.kv.Update(ctx, key, data, entry.Revision())
-		if err != nil {
-			return fmt.Errorf("failed to update value for key %s in put. %w", key, err)
+	for attempt := 1; attempt <= maxPutWriteAttempts; attempt++ {
+		entry, err := s.kv.Get(ctx, key)
+		if err == nil {
+			rev, err = s.kv.Update(ctx, key, data, entry.Revision())
+		} else if errors.Is(err, jetstream.ErrKeyNotFound) {
+			rev, err = s.kv.Create(ctx, key, data)
 		}
-	} else if errors.Is(err, jetstream.ErrKeyNotFound) {
-		// brand-new key
-		rev, err = s.kv.Create(ctx, key, data)
-		if err != nil {
-			return fmt.Errorf("failed to create value for key %s in put. %w", key, err)
+		if err == nil {
+			break
 		}
+		if !errors.Is(err, jetstream.ErrKeyExists) || attempt == maxPutWriteAttempts {
+			return fmt.Errorf("failed to write value for key %s in put. %w", key, err)
+		}
+
+		s.metrics.writeConflicts.WithLabelValues(s.bucket).Inc()
+		s.logger.Debug(
+			"retrying kv write after revision conflict",
+			zap.String("key", key),
+			zap.Int("attempt", attempt),
+		)
 	}
 
 	item := s.updateFromType(key, msg, true)
@@ -692,6 +785,21 @@ func (s *Store[T, U]) put(ctx context.Context, key string, msg U, oldItem U) err
 	}
 
 	return nil
+}
+
+// PutIfChanged writes msg only when its protobuf content differs from the
+// current value. It avoids redundant KV revisions from idempotent index hooks.
+func (s *Store[T, U]) PutIfChanged(ctx context.Context, key string, msg U) (bool, error) {
+	changed := false
+	err := s.ComputeUpdate(ctx, key, func(_ string, existing U) (U, bool, error) {
+		if existing != nil && proto.Equal(existing, msg) {
+			return existing, false, nil
+		}
+		changed = true
+		return msg, true, nil
+	})
+
+	return changed, err
 }
 
 func (s *Store[T, U]) ComputeUpdate(
@@ -830,9 +938,15 @@ func (s *Store[T, U]) WatchAll(ctx context.Context) (IKVWatcher[T, U], error) {
 				} else {
 					s.logger.Debug("store watcher done")
 				}
+				close(w.ch)
 				return
 
-			case entry := <-updateCh:
+			case entry, ok := <-updateCh:
+				if !ok {
+					s.logger.Warn("store update watcher closed")
+					close(w.ch)
+					return
+				}
 				if entry == nil {
 					continue
 				}
@@ -842,11 +956,16 @@ func (s *Store[T, U]) WatchAll(ctx context.Context) (IKVWatcher[T, U], error) {
 					continue
 				}
 
-				w.ch <- &KeyValueEntry[T, U]{
+				select {
+				case w.ch <- &KeyValueEntry[T, U]{
 					key:       key,
 					operation: entry.Operation(),
 					value:     entry.Value(),
 					revision:  entry.Revision(),
+				}:
+				case <-ctx.Done():
+					close(w.ch)
+					return
 				}
 			}
 		}

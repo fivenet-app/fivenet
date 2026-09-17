@@ -16,6 +16,8 @@ const props = defineProps<{
     statusSelected?: StatusUnit;
 }>();
 
+const open = defineModel<boolean>('open', { default: true });
+
 defineEmits<{
     (e: 'close', v: boolean): void;
 }>();
@@ -32,7 +34,7 @@ const unitStatusColor = computed(() => unitStatusToBGColor(props.unit.status?.st
 </script>
 
 <template>
-    <USlideover :overlay="false">
+    <USlideover v-model:open="open" :overlay="false">
         <template #title>
             <div class="inline-flex flex-row items-center gap-1">
                 <span>{{ $t('common.unit') }}:</span>

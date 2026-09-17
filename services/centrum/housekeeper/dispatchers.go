@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"strconv"
+	"time"
 
 	centrumdispatchers "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/centrum/dispatchers"
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/cron"
@@ -19,6 +20,14 @@ const (
 )
 
 func (s *Housekeeper) runCleanupDispatchers(ctx context.Context, data *cron.CronjobData) error {
+	startedAt := time.Now()
+	defer func() {
+		s.metrics.ObserveHousekeeperDuration(
+			"cleanup_dispatchers",
+			time.Since(startedAt).Seconds(),
+		)
+	}()
+
 	ctx, span := s.tracer.Start(ctx, "centrum.dispatchers_cleanup")
 	defer span.End()
 
@@ -34,6 +43,12 @@ func (s *Housekeeper) runCleanupDispatchers(ctx context.Context, data *cron.Cron
 	)
 	if err != nil {
 		s.logger.Error("failed to remove old dispatchers", zap.Error(err))
+	}
+	s.metrics.SetHousekeeperWork("cleanup_dispatchers", "dispatchers_checked", dispatchersChecked)
+	s.metrics.SetHousekeeperWork("cleanup_dispatchers", "dispatchers_removed", dispatchersRemoved)
+	s.metrics.SetHousekeeperWork("cleanup_dispatchers", "users_processed", usersProcessed)
+	s.metrics.SetHousekeeperWork("cleanup_dispatchers", "jobs_affected", jobsAffected)
+	if err != nil {
 		return err
 	}
 
@@ -60,22 +75,10 @@ func (s *Housekeeper) cleanupDispatchers(ctx context.Context) (int, int, int, in
 		jobsAffected++
 		for _, user := range value.GetDispatchers() {
 			usersProcessed++
-			um, ok, err := s.tracker.GetUserMapping(user.GetUserId())
-			if err != nil {
-				errs = multierr.Append(
-					errs,
-					fmt.Errorf(
-						"unable to get user %d mapping for %s dispatchers. %w",
-						user.GetUserId(),
-						job,
-						err,
-					),
-				)
-				continue
-			}
-
-			// Dispatcher is still valid when the user's job matches the dispatchers list job and the mapping is visible.
-			if user.GetJob() == job && ok && um != nil && !um.Hidden {
+			marker, ok := s.tracker.GetUserMarkerById(user.GetUserId())
+			// Dispatcher state is session-bound: only a visible marker for the
+			// same job keeps the dispatcher signed on.
+			if ok && marker != nil && !marker.GetHidden() && marker.GetJob() == job {
 				continue
 			}
 

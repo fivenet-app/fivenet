@@ -71,8 +71,8 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
 </script>
 
 <template>
-    <UForm class="w-full flex-col" :schema="schema" :state="state" @submit="onSubmitThrottle">
-        <div class="flex items-center">
+    <UForm class="w-full flex-col gap-2" :schema="schema" :state="state" @submit="onSubmitThrottle">
+        <div class="flex flex-row items-center gap-2">
             <h4 v-if="data && (data.motd.length > 0 || canDo)" class="flex-1 text-base leading-6 font-semibold">
                 {{ $t('common.motd') }}
             </h4>
@@ -81,18 +81,25 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                 <UTooltip v-if="!editing" :text="$t('common.edit')">
                     <UButton variant="link" icon="i-mdi-pencil" :loading="!canSubmit" @click="editing = !editing" />
                 </UTooltip>
-                <div v-else class="flex flex-row gap-1">
+                <UFieldGroup v-else class="flex flex-row gap-1">
                     <UTooltip :text="$t('common.save')">
                         <UButton type="submit" variant="link" icon="i-mdi-content-save" :loading="!canSubmit" />
                     </UTooltip>
+
                     <UTooltip :text="$t('common.cancel')">
-                        <UButton variant="link" icon="i-mdi-cancel" :loading="!canSubmit" @click="editing = !editing" />
+                        <UButton
+                            color="error"
+                            icon="i-mdi-cancel"
+                            :loading="!canSubmit"
+                            variant="link"
+                            @click="editing = !editing"
+                        />
                     </UTooltip>
-                </div>
+                </UFieldGroup>
             </template>
         </div>
 
-        <div class="flex">
+        <div class="flex flex-col gap-2">
             <template v-if="!editing">
                 <USkeleton v-if="isRequestPending(status)" class="h-7 w-full" />
                 <div v-else class="w-full flex-1">
@@ -101,11 +108,9 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                     </p>
                 </div>
             </template>
-            <template v-else>
-                <UFormField class="w-full" name="motd">
-                    <UTextarea v-model="state.motd" name="motd" :rows="4" :maxrows="8" resize />
-                </UFormField>
-            </template>
+            <UFormField v-else class="w-full" name="motd">
+                <UTextarea v-model="state.motd" class="w-full" name="motd" :rows="4" :maxrows="8" resize />
+            </UFormField>
         </div>
     </UForm>
 </template>

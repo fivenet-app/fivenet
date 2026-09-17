@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"strconv"
 	"sync"
+	"sync/atomic"
 	"time"
 
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/cron"
@@ -20,11 +21,14 @@ import (
 	"github.com/fivenet-app/fivenet/v2026/pkg/mstlystcdata"
 	"github.com/fivenet-app/fivenet/v2026/pkg/perms"
 	"github.com/fivenet-app/fivenet/v2026/pkg/tracker"
+	pkguserinfo "github.com/fivenet-app/fivenet/v2026/pkg/userinfo"
+	"github.com/fivenet-app/fivenet/v2026/pkg/utils/broker"
 	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
 	"github.com/fivenet-app/fivenet/v2026/services/centrum/dispatchers"
 	"github.com/fivenet-app/fivenet/v2026/services/centrum/dispatches"
 	eventscentrum "github.com/fivenet-app/fivenet/v2026/services/centrum/events"
 	"github.com/fivenet-app/fivenet/v2026/services/centrum/helpers"
+	centrummetrics "github.com/fivenet-app/fivenet/v2026/services/centrum/metrics"
 	"github.com/fivenet-app/fivenet/v2026/services/centrum/settings"
 	"github.com/fivenet-app/fivenet/v2026/services/centrum/units"
 	citizenshydrator "github.com/fivenet-app/fivenet/v2026/stores/citizens/hydrator"
@@ -101,10 +105,21 @@ type Server struct {
 	wg     sync.WaitGroup
 	jsCons jetstream.ConsumeContext
 
+	feedBroker                  *broker.Broker[*feedEvent]
+	feedMu                      sync.Mutex
+	feedSequence                atomic.Uint64
+	pendingProjectionFeedEvents map[projectionFeedEventKey]*pendingProjectionFeedEvent
+	ready                       chan struct{}
+	readyMu                     sync.RWMutex
+	readyErr                    error
+	metrics                     *centrummetrics.Metrics
+
 	db                *sql.DB
 	perms             perms.Permissions
 	js                *events.JSWrapper
 	tracker           tracker.ITracker
+	userinfo          pkguserinfo.UserInfoRetriever
+	userinfoChanges   pkguserinfo.ChangeSubscriber
 	postals           postals.Postals
 	appCfg            appconfig.IConfig
 	enricher          mstlystcdata.IUserAwareEnricher
@@ -132,6 +147,8 @@ type Params struct {
 	Config            *config.Config
 	AppConfig         appconfig.IConfig
 	Tracker           tracker.ITracker
+	UserInfo          pkguserinfo.UserInfoRetriever
+	UserInfoChanges   pkguserinfo.ChangeSubscriber
 	Postals           postals.Postals
 	Enricher          mstlystcdata.IUserAwareEnricher
 	Jobs              mstlystcdata.IJobs
@@ -165,6 +182,8 @@ func NewServer(p Params) Result {
 		perms:             p.Perms,
 		js:                p.JS,
 		tracker:           p.Tracker,
+		userinfo:          p.UserInfo,
+		userinfoChanges:   p.UserInfoChanges,
 		postals:           p.Postals,
 		appCfg:            p.AppConfig,
 		enricher:          p.Enricher,
@@ -177,6 +196,13 @@ func NewServer(p Params) Result {
 		dispatchers: p.Dispatchers,
 		units:       p.Units,
 		dispatches:  p.Dispatches,
+
+		// Snapshot generation may take longer than the default broker queue.
+		// A sequence gap still forces a resync if this buffer is exceeded.
+		feedBroker:                  broker.NewWithResyncOnSlowSubscriber[*feedEvent](512),
+		pendingProjectionFeedEvents: make(map[projectionFeedEventKey]*pendingProjectionFeedEvent),
+		ready:                       make(chan struct{}),
+		metrics:                     centrummetrics.Get(),
 	}
 
 	p.LC.Append(fx.StartHook(func(ctxStartup context.Context) error {
@@ -185,7 +211,23 @@ func NewServer(p Params) Result {
 		}
 
 		s.wg.Go(func() {
-			if err := s.loadData(ctxCancel); err != nil {
+			s.feedBroker.Start(ctxCancel)
+		})
+
+		s.wg.Go(func() {
+			err := s.loadData(ctxCancel)
+			if err == nil {
+				// Feed projections resolve their values through the local stores.
+				// Start them only after the initial store refresh has completed, so
+				// an early KV event cannot be dropped because its projection is not
+				// available locally yet.
+				s.startFeedHub(ctxCancel)
+			}
+			s.readyMu.Lock()
+			s.readyErr = err
+			close(s.ready)
+			s.readyMu.Unlock()
+			if err != nil {
 				s.logger.Error("failed to load initial centrum data", zap.Error(err))
 			}
 		})
@@ -210,6 +252,18 @@ func NewServer(p Params) Result {
 		Server:       s,
 		Service:      s,
 		CronRegister: s,
+	}
+}
+
+func (s *Server) waitForReady(ctx context.Context) error {
+	select {
+	case <-ctx.Done():
+		return ctx.Err()
+
+	case <-s.ready:
+		s.readyMu.RLock()
+		defer s.readyMu.RUnlock()
+		return s.readyErr
 	}
 }
 
@@ -268,13 +322,6 @@ func (s *Server) loadData(ctx context.Context) error {
 	g.Go(func() error {
 		if err := s.settings.LoadFromDB(gctx, ""); err != nil {
 			return fmt.Errorf("failed to load settings from DB. %w", err)
-		}
-		return nil
-	})
-
-	g.Go(func() error {
-		if err := s.dispatchers.LoadFromDB(gctx, ""); err != nil {
-			return fmt.Errorf("failed to load dispatchers from DB. %w", err)
 		}
 		return nil
 	})

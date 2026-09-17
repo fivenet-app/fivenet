@@ -38,7 +38,7 @@ func TestFullAuthFlow(t *testing.T) {
 	t.Parallel()
 	ctx := t.Context()
 	dbServer := servers.NewDBServer(ctx, t, true)
-	natsServer := servers.NewNATSServer(t, true)
+	natsServer := servers.NewNATSServer(t)
 
 	assert := assert.New(t)
 	require := require.New(t)
@@ -257,7 +257,7 @@ func TestChooseCharacterConfigAdminEligibility(t *testing.T) {
 	t.Parallel()
 	ctx := t.Context()
 	dbServer := servers.NewDBServer(ctx, t, true)
-	natsServer := servers.NewNATSServer(t, true)
+	natsServer := servers.NewNATSServer(t)
 	assert := assert.New(t)
 	require := require.New(t)
 
@@ -367,7 +367,7 @@ func TestChooseCharacterFallsBackToAccountSessionWhenUserTokenIsMissingOrInvalid
 	t.Parallel()
 	ctx := t.Context()
 	dbServer := servers.NewDBServer(ctx, t, true)
-	natsServer := servers.NewNATSServer(t, true)
+	natsServer := servers.NewNATSServer(t)
 	assert := assert.New(t)
 	require := require.New(t)
 

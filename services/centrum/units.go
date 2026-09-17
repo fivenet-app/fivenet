@@ -257,7 +257,7 @@ func (s *Server) UpdateUnitStatus(
 		return nil, errorscentrum.ErrNotPartOfUnit
 	}
 
-	if _, err := s.units.UpdateStatus(ctx, unit.GetId(), &centrumunits.UnitStatus{
+	status, updated, err := s.units.UpdateStatus(ctx, unit.GetId(), &centrumunits.UnitStatus{
 		CreatedAt:  timestamp.Now(),
 		UnitId:     unit.GetId(),
 		Status:     req.GetStatus(),
@@ -266,13 +266,17 @@ func (s *Server) UpdateUnitStatus(
 		UserId:     &userInfo.UserId,
 		CreatorId:  &userInfo.UserId,
 		CreatorJob: &userInfo.Job,
-	}); err != nil {
+	})
+	if err != nil {
 		return nil, errswrap.NewError(err, errorscentrum.ErrFailedQuery)
 	}
 
 	grpc_audit.SetAction(ctx, audit.EventAction_EVENT_ACTION_CREATED)
 
-	return &pbcentrum.UpdateUnitStatusResponse{}, nil
+	return &pbcentrum.UpdateUnitStatusResponse{
+		Status:  status,
+		Updated: updated,
+	}, nil
 }
 
 func (s *Server) AssignUnit(
@@ -339,14 +343,21 @@ func (s *Server) JoinUnit(
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
-	// Check if user is on duty, if not make sure to unset any unit id
-	if um, ok := s.tracker.GetUserMarkerById(userInfo.GetUserId()); !ok || um.GetHidden() {
+	// Unit membership follows the active marker's job. A selected superuser
+	// context remains an administrative context and must not create a second,
+	// durable unit identity for the character.
+	marker, onDuty := s.tracker.GetUserMarkerById(userInfo.GetUserId())
+	if !onDuty || marker == nil || marker.GetHidden() ||
+		!s.tracker.IsUserOnDuty(userInfo.GetUserId()) {
 		if err := s.units.SyncUserUnitMapping(ctx, userInfo.GetUserId()); err != nil {
 			return nil, errswrap.NewError(err, errorscentrum.ErrFailedQuery)
 		}
 
 		return nil, errorscentrum.ErrNotOnDuty
 	}
+	effectiveUserInfo := userInfo.Clone()
+	effectiveUserInfo.Job = marker.GetJob()
+	effectiveUserInfo.JobGrade = marker.GetJobGrade()
 
 	currentUnitMapping, ok, err := s.tracker.GetUserMapping(userInfo.GetUserId())
 	if err != nil {
@@ -378,7 +389,7 @@ func (s *Server) JoinUnit(
 	if req.UnitId != nil && req.GetUnitId() > 0 {
 		s.logger.Debug(
 			"user joining unit",
-			zap.String("job", userInfo.GetJob()),
+			zap.String("job", effectiveUserInfo.GetJob()),
 			zap.Int32("user_id", userInfo.GetUserId()),
 			zap.Int64("current_unit_id", currentUnit.GetId()),
 			zap.Int64("unit_id", req.GetUnitId()),
@@ -389,16 +400,27 @@ func (s *Server) JoinUnit(
 			return nil, errswrap.NewError(err, errorscentrum.ErrFailedQuery)
 		}
 
-		if newUnit.GetJob() != userInfo.GetJob() {
+		if newUnit.GetJob() != effectiveUserInfo.GetJob() {
+			return nil, errorscentrum.ErrUnitPermDenied
+		}
+		eligible, err := s.units.IsEligibleUnitMember(ctx, newUnit.GetJob(), userInfo.GetUserId())
+		if err != nil {
+			return nil, errswrap.NewError(err, errorscentrum.ErrFailedQuery)
+		}
+		if !eligible {
 			return nil, errorscentrum.ErrUnitPermDenied
 		}
 
 		// Only check unit access when not empty
 		if newUnit.GetAccess() != nil && !newUnit.GetAccess().IsEmpty() {
 			// Make sure requestor is not a dispatcher
-			if !s.helpers.CheckIfUserIsDispatcher(ctx, userInfo.GetJob(), userInfo.GetUserId()) {
+			if !s.helpers.CheckIfUserIsDispatcher(
+				ctx,
+				effectiveUserInfo.GetJob(),
+				userInfo.GetUserId(),
+			) {
 				check, err := s.units.GetAccess().
-					CanUserAccessTarget(ctx, newUnit.GetId(), userInfo, int32(unitsaccess.UnitAccessLevel_UNIT_ACCESS_LEVEL_JOIN))
+					CanUserAccessTarget(ctx, newUnit.GetId(), effectiveUserInfo, int32(unitsaccess.UnitAccessLevel_UNIT_ACCESS_LEVEL_JOIN))
 				if err != nil {
 					return nil, errswrap.NewError(err, errorscentrum.ErrFailedQuery)
 				}
@@ -414,7 +436,7 @@ func (s *Server) JoinUnit(
 		if currentUnit != nil {
 			if err := s.units.UpdateUnitAssignments(
 				ctx,
-				userInfo.GetJob(),
+				effectiveUserInfo.GetJob(),
 				&userInfo.UserId,
 				currentUnit.GetId(),
 				nil,
@@ -424,14 +446,15 @@ func (s *Server) JoinUnit(
 			}
 		}
 
-		if err := s.units.UpdateUnitAssignments(
+		err = s.units.UpdateUnitAssignments(
 			ctx,
-			userInfo.GetJob(),
+			effectiveUserInfo.GetJob(),
 			&userInfo.UserId,
 			newUnit.GetId(),
 			[]int32{userInfo.GetUserId()},
 			nil,
-		); err != nil {
+		)
+		if err != nil {
 			return nil, errswrap.NewError(err, errorscentrum.ErrFailedQuery)
 		}
 
@@ -446,7 +469,7 @@ func (s *Server) JoinUnit(
 		if currentUnit != nil {
 			if err := s.units.UpdateUnitAssignments(
 				ctx,
-				userInfo.GetJob(),
+				effectiveUserInfo.GetJob(),
 				&userInfo.UserId,
 				currentUnit.GetId(),
 				nil,

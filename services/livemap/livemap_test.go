@@ -25,7 +25,7 @@ func TestBasicLivemapFlow(t *testing.T) {
 	t.Parallel()
 	ctx := t.Context()
 	dbServer := servers.NewDBServer(ctx, t, true)
-	natsServer := servers.NewNATSServer(t, true)
+	natsServer := servers.NewNATSServer(t)
 
 	clientConn, grpcSrvModule, err := modules.TestGRPCServer(ctx)
 	require.NoError(t, err)
@@ -36,6 +36,7 @@ func TestBasicLivemapFlow(t *testing.T) {
 			dbServer.FxProvide(),
 			natsServer.FxProvide(),
 			fx.Provide(modules.TestUserInfoRetriever),
+			fx.Provide(modules.TestUserInfoChanges),
 			fx.Provide(tracker.NewForTests),
 			fx.Provide(grpcSrvModule),
 			fx.Provide(grpcserver.AsService(func(p Params) *Server {

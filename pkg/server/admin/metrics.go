@@ -42,12 +42,16 @@ type AdminServer *http.Server
 
 // Readiness tracks whether the main HTTP server is ready to receive traffic.
 type Readiness struct {
+	logger *zap.Logger
+
 	ready atomic.Bool
 }
 
 // NewReadiness creates the shared application readiness state.
-func NewReadiness() *Readiness {
-	return &Readiness{}
+func NewReadiness(logger *zap.Logger) *Readiness {
+	return &Readiness{
+		logger: logger.Named("readiness"),
+	}
 }
 
 // Ready reports whether the application is ready to receive traffic.
@@ -58,6 +62,7 @@ func (r *Readiness) Ready() bool {
 // SetReady updates the application readiness state.
 func (r *Readiness) SetReady(ready bool) {
 	r.ready.Store(ready)
+	r.logger.Info("readiness state changed", zap.Bool("ready", ready))
 }
 
 // Params contains dependencies for constructing the metrics server.

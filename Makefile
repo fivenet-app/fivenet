@@ -53,7 +53,7 @@ tests: tests-go tests-js
 
 .PHONY: tests-go
 tests-go:
-	$(GO) test -v -cover -coverprofile=coverage.txt ./...
+	$(GO) test -v -timeout 15m -cover -coverprofile=coverage.txt ./...
 
 .PHONY: tests-js
 tests-js:

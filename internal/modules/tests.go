@@ -95,6 +95,22 @@ func TestUserInfoRetriever() userinfo.UserInfoRetriever {
 	return userinfo.NewMockUserInfoRetriever(map[int32]*pbuserinfo.UserInfo{})
 }
 
+type testUserInfoChanges struct{}
+
+func (testUserInfoChanges) SubscribeUserInfoChanges() chan *pbuserinfo.UserInfoChanged {
+	return make(chan *pbuserinfo.UserInfoChanged)
+}
+
+func (testUserInfoChanges) UnsubscribeUserInfoChanges(chan *pbuserinfo.UserInfoChanged) {}
+
+func (testUserInfoChanges) SubscribeAccountGroupsChanges() chan *pbuserinfo.AccountGroupsChanged {
+	return make(chan *pbuserinfo.AccountGroupsChanged)
+}
+
+func (testUserInfoChanges) UnsubscribeAccountGroupsChanges(chan *pbuserinfo.AccountGroupsChanged) {}
+
+func TestUserInfoChanges() userinfo.ChangeSubscriber { return testUserInfoChanges{} }
+
 func TestTokenMgr() *auth.TokenMgr {
 	return auth.NewTokenMgr("")
 }

@@ -2,6 +2,7 @@
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import { compareUnitsBySortOrder } from '~/components/dispatch/helpers';
 import { useCentrumStore } from '~/stores/centrum';
+import { useLivemapStore } from '~/stores/livemap';
 import { getCentrumUnitsClient } from '~~/gen/ts/clients';
 import { UnitAccessLevel } from '~~/gen/ts/resources/centrum/units/access/access';
 import type { Unit } from '~~/gen/ts/resources/centrum/units/units';
@@ -15,6 +16,18 @@ const emit = defineEmits<{
 
 const centrumStore = useCentrumStore();
 const { ownUnitId, getSortedUnits } = storeToRefs(centrumStore);
+
+const livemapStore = useLivemapStore();
+const { ownMarker } = storeToRefs(livemapStore);
+
+const { activeChar, isSuperuser } = useAuth();
+const unitJoinRestricted = computed(
+    () =>
+        isSuperuser.value &&
+        activeChar.value !== null &&
+        ownMarker.value !== undefined &&
+        ownMarker.value.job !== activeChar.value.job,
+);
 
 const centrumUnitsClient = await getCentrumUnitsClient();
 
@@ -40,6 +53,8 @@ async function joinOrLeaveUnit(unitId?: number): Promise<void> {
 
 const canSubmit = ref<boolean>(true);
 const onSubmitThrottle = useThrottleFn(async (unitID?: number) => {
+    if (unitJoinRestricted.value) return;
+
     canSubmit.value = false;
     await joinOrLeaveUnit(unitID).finally(() => useTimeoutFn(() => (canSubmit.value = true), 400));
 }, 1000);
@@ -76,6 +91,15 @@ const filteredUnits = computed(() => ({
             <DataNoDataBlock v-if="getSortedUnits.length === 0" :type="$t('common.unit', 2)" icon="i-mdi-car" />
 
             <div v-else class="flex flex-col gap-y-2">
+                <UAlert
+                    v-if="unitJoinRestricted"
+                    color="warning"
+                    variant="subtle"
+                    icon="i-mdi-information-outline"
+                    :title="$t('notifications.centrum.unit_join_restricted.title')"
+                    :description="$t('notifications.centrum.unit_join_restricted.content')"
+                />
+
                 <UFormField name="search" :label="$t('common.search')">
                     <UInput
                         v-model="queryUnit"
@@ -93,7 +117,7 @@ const filteredUnits = computed(() => ({
                         :key="unit.name"
                         class="flex flex-col"
                         :color="ownUnitId !== undefined && ownUnitId === unit.id ? 'warning' : 'primary'"
-                        :disabled="!canSubmit || !checkUnitAccess(unit.access, UnitAccessLevel.JOIN)"
+                        :disabled="unitJoinRestricted || !canSubmit || !checkUnitAccess(unit.access, UnitAccessLevel.JOIN)"
                         @click="onSubmitThrottle(unit.id)"
                     >
                         <span class="text-base">
@@ -119,7 +143,7 @@ const filteredUnits = computed(() => ({
                             :key="unit.name"
                             class="flex flex-col"
                             :color="ownUnitId !== undefined && ownUnitId === unit.id ? 'warning' : 'primary'"
-                            :disabled="!canSubmit || !checkUnitAccess(unit.access, UnitAccessLevel.JOIN)"
+                            :disabled="unitJoinRestricted || !canSubmit || !checkUnitAccess(unit.access, UnitAccessLevel.JOIN)"
                             @click="onSubmitThrottle(unit.id)"
                         >
                             <span class="text-base">

@@ -10,7 +10,6 @@ import (
 
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/accounts"
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/audit"
-	jobsprops "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/jobs/props"
 	permissionsattributes "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/permissions/attributes"
 	permissionspermissions "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/permissions/permissions"
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/timestamp"
@@ -1023,7 +1022,7 @@ func (s *Server) SetSuperuserMode(
 		req.Job = &job
 	}
 
-	char, _, err := s.getCharacter(ctx, userInfo.GetUserId())
+	char, jobProps, err := s.getCharacter(ctx, userInfo.GetUserId())
 	if err != nil {
 		return nil, errswrap.NewError(
 			fmt.Errorf("failed to get char by id %d. %w", userInfo.GetUserId(), err),
@@ -1034,7 +1033,6 @@ func (s *Server) SetSuperuserMode(
 	origJob := char.GetJob()
 	origGrade := char.GetJobGrade()
 
-	var jobProps *jobsprops.JobProps
 	var ps []*permissionspermissions.Permission
 	var attrs []*permissionsattributes.RoleAttribute
 

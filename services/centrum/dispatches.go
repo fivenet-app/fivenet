@@ -465,7 +465,7 @@ func (s *Server) UpdateDispatchStatus(
 		}
 	}
 
-	if _, err := s.dispatches.UpdateStatus(ctx, dsp.GetId(), &centrumdispatches.DispatchStatus{
+	status, err := s.dispatches.UpdateStatus(ctx, dsp.GetId(), &centrumdispatches.DispatchStatus{
 		CreatedAt:  timestamp.Now(),
 		DispatchId: dsp.GetId(),
 		UnitId:     statusUnitId,
@@ -474,7 +474,8 @@ func (s *Server) UpdateDispatchStatus(
 		Reason:     req.Reason,
 		UserId:     &userInfo.UserId,
 		CreatorJob: &userInfo.Job,
-	}); err != nil {
+	})
+	if err != nil {
 		return nil, errswrap.NewError(err, errorscentrum.ErrFailedQuery)
 	}
 
@@ -485,7 +486,7 @@ func (s *Server) UpdateDispatchStatus(
 			// Set unit to busy when unit accepts a dispatch
 			if unit.GetStatus() == nil ||
 				unit.GetStatus().GetStatus() != centrumunits.StatusUnit_STATUS_UNIT_BUSY {
-				if _, err := s.units.UpdateStatus(ctx, *statusUnitId, &centrumunits.UnitStatus{
+				if _, _, err := s.units.UpdateStatus(ctx, *statusUnitId, &centrumunits.UnitStatus{
 					CreatedAt:  timestamp.Now(),
 					UnitId:     unit.GetId(),
 					Status:     centrumunits.StatusUnit_STATUS_UNIT_BUSY,
@@ -501,7 +502,10 @@ func (s *Server) UpdateDispatchStatus(
 
 	grpc_audit.SetAction(ctx, audit.EventAction_EVENT_ACTION_UPDATED)
 
-	return &pbcentrum.UpdateDispatchStatusResponse{}, nil
+	return &pbcentrum.UpdateDispatchStatusResponse{
+		Status:  status,
+		Updated: status.GetId() != dsp.GetStatus().GetId(),
+	}, nil
 }
 
 func (s *Server) AssignDispatch(
