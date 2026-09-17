@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import type { TabsItem } from '@nuxt/ui';
+import type { AccordionItem, TabsItem } from '@nuxt/ui';
 import { isPast } from 'date-fns';
 import ConfirmModal from '~/components/partials/ConfirmModal.vue';
 import {
@@ -286,16 +286,48 @@ const selectedTab = computed({
     },
 });
 
-const accordionItems = computed(() =>
+// The component survives auth-context changes. If the current character no
+// longer has grade access, the route query may still point at the removed tab.
+// Move to the first available tab so UTabs always has a valid panel selected.
+watch(
+    items,
+    (availableItems) => {
+        const currentTab = route.query.tab as string | undefined;
+        if (!currentTab || availableItems.some((item) => item.value === currentTab)) return;
+
+        const fallbackTab = availableItems[0]?.value;
+        if (fallbackTab === undefined) return;
+
+        void router.replace({
+            query: { ...route.query, tab: fallbackTab },
+            hash: '#control-active-item',
+        });
+    },
+    { flush: 'post' },
+);
+
+const accordionItems = computed<AccordionItem[]>(() =>
     [
         qualification.value?.result
-            ? { slot: 'result' as const, label: t('common.result', 1), icon: 'i-mdi-list-status', defaultOpen: true }
+            ? {
+                  value: 'result',
+                  slot: 'result' as const,
+                  label: t('common.result', 1),
+                  icon: 'i-mdi-list-status',
+              }
             : qualification.value?.request !== undefined
-              ? { slot: 'request' as const, label: t('common.request'), icon: 'i-mdi-mail', defaultOpen: true }
+              ? {
+                    value: 'request',
+                    slot: 'request' as const,
+                    label: t('common.request'),
+                    icon: 'i-mdi-mail',
+                }
               : undefined,
-        { slot: 'access' as const, label: t('common.access'), icon: 'i-mdi-lock', defaultOpen: true },
+        { value: 'access', slot: 'access' as const, label: t('common.access'), icon: 'i-mdi-lock' },
     ].flatMap((item) => (item !== undefined ? [item] : [])),
 );
+
+const accordionDefaultValue = computed(() => accordionItems.value.map((item) => item.value!));
 
 const confirmModal = overlay.create(ConfirmModal);
 const requestUserModal = overlay.create(RequestUserModal);
@@ -527,7 +559,13 @@ const requestUserModal = overlay.create(RequestUserModal);
                                         :description="$t('components.qualifications.content_unavailable')"
                                     />
 
-                                    <UAccordion v-if="qualification" class="p-2 sm:p-2" :items="accordionItems" type="multiple">
+                                    <UAccordion
+                                        v-if="qualification"
+                                        class="p-2 sm:p-2"
+                                        :items="accordionItems"
+                                        type="multiple"
+                                        :default-value="accordionDefaultValue"
+                                    >
                                         <template v-if="qualification.result" #result>
                                             <UContainer class="mb-2">
                                                 <div class="flex flex-col gap-1">

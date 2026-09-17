@@ -304,6 +304,30 @@ const timeRangeModes = computed<TabsItem[]>(() => [
     { label: t('common.timeline'), icon: 'i-mdi-chart-timeline', value: TimeclockMode.TIMELINE, mode: TimeclockMode.TIMELINE },
 ]);
 
+const availableTimeRangeModes = computed(() =>
+    query.viewMode === TimeclockViewMode.SELF
+        ? timeRangeModes.value.filter((item) => item.mode >= TimeclockMode.RANGE)
+        : timeRangeModes.value,
+);
+
+// The available tabs can change when the auth context or view mode changes.
+// Keep the search state aligned with the rendered tabs so a revoked
+// Access=All permission cannot leave the component in the colleagues view,
+// and a mode hidden by the current view cannot remain selected.
+watch(
+    [tabItems, availableTimeRangeModes],
+    ([availableViewModes, availableModes]) => {
+        if (props.userId === undefined && !availableViewModes.some((item) => item.value === query.viewMode)) {
+            query.viewMode = TimeclockViewMode.SELF;
+        }
+
+        if (!availableModes.some((item) => item.value === query.mode)) {
+            query.mode = (availableModes[0]?.value as TimeclockMode | undefined) ?? TimeclockMode.RANGE;
+        }
+    },
+    { immediate: true },
+);
+
 const { game } = useAppConfig();
 </script>
 
