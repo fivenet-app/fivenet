@@ -321,7 +321,7 @@ importers:
     devDependencies:
       '@csmith/release-it-calver-plugin':
         specifier: 2026.7.0
-        version: 2026.7.0(release-it@21.0.2(@types/node@26.5.1)(magicast@0.5.4))
+        version: 2026.7.0(release-it@21.0.3(@types/node@26.5.1)(magicast@0.5.4))
       '@nuxt/eslint':
         specifier: 1.17.0
         version: 1.17.0(@typescript-eslint/utils@8.69.0(eslint@10.10.0(jiti@2.7.0))(typescript-native-bridge@6.0.3-bridge.17.tsgo.7.0.2))(@vue/compiler-sfc@3.5.42)(esbuild@0.28.2)(eslint@10.10.0(jiti@2.7.0))(magic-string@1.2.3)(magicast@0.5.4)(oxc-parser@0.139.0)(rolldown@1.2.7)(rollup@4.63.1)(srvx@0.11.22)(typescript-native-bridge@6.0.3-bridge.17.tsgo.7.0.2)(unplugin@3.3.0(esbuild@0.28.2)(rolldown@1.2.7)(rollup@4.63.1)(vite@8.3.0(@types/node@26.5.1)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.104.1)(terser@5.51.2)(yaml@2.9.0)))(vite@8.3.0(@types/node@26.5.1)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.104.1)(terser@5.51.2)(yaml@2.9.0))
@@ -338,8 +338,8 @@ importers:
         specifier: 'catalog:'
         version: 2.11.1
       '@release-it/bumper':
-        specifier: 8.0.0
-        version: 8.0.0(release-it@21.0.2(@types/node@26.5.1)(magicast@0.5.4))
+        specifier: 8.0.1
+        version: 8.0.1(release-it@21.0.3(@types/node@26.5.1)(magicast@0.5.4))
       '@total-typescript/ts-reset':
         specifier: 0.6.1
         version: 0.6.1
@@ -434,8 +434,8 @@ importers:
         specifier: 0.8.1
         version: 0.8.1(prettier-plugin-organize-imports@4.3.0(prettier@3.9.6)(typescript-native-bridge@6.0.3-bridge.17.tsgo.7.0.2)(vue-tsc@3.3.11(typescript-native-bridge@6.0.3-bridge.17.tsgo.7.0.2)))(prettier@3.9.6)
       release-it:
-        specifier: 21.0.2
-        version: 21.0.2(@types/node@26.5.1)(magicast@0.5.4)
+        specifier: 21.0.3
+        version: 21.0.3(@types/node@26.5.1)(magicast@0.5.4)
       sass:
         specifier: 1.104.1
         version: 1.104.1
@@ -1026,9 +1026,9 @@ packages:
     peerDependencies:
       postcss: ^8.4
 
-  '@decimalturn/toml-patch@2.1.0':
-    resolution: {integrity: sha512-IICXlX7hcD9lGN7k+vDXcVnOfcbOEqMpeQHRnrhnmm7tZ8HluFrSgBKLNC72fQpNXynbJTC7pjtfNCaKrKlGyA==}
-    engines: {node: '>=14'}
+  '@decimalturn/toml-patch@3.1.0':
+    resolution: {integrity: sha512-evgFLNmp5TUs+5R0VvPIMkj4ZLXfDsmSSzaBBR3KScrZ6uQ+/YAwg7UFNrrmILnjxW2qFjN6Dow8y1Zks56iMQ==}
+    engines: {node: '>=16'}
 
   '@dxup/nuxt@0.5.10':
     resolution: {integrity: sha512-54Vehb7LmR7qYpC6KFwjDTSm6CB1CayBu+JXdHrPLrIjjr5xAgb43jvgOU+mnB+tsRh414fSsEy0QjBMKILQ8g==}
@@ -2908,9 +2908,9 @@ packages:
   '@protobuf-ts/runtime@2.11.1':
     resolution: {integrity: sha512-KuDaT1IfHkugM2pyz+FwiY80ejWrkH1pAtOBOZFuR6SXEFTsnb/jiQWQ1rCIrcKx2BtyxnxW6BWwsVSA/Ie+WQ==}
 
-  '@release-it/bumper@8.0.0':
-    resolution: {integrity: sha512-qTDTcSJzwvycZx9oMFdiiV1a7rR0Qdw0j/USSDA+ly6JyiTPSaJ+wpZ+cS8x8jTDeQuObZKf7TN9eYOxDn+JwA==}
-    engines: {node: ^22.21.0 || >=24.0.0}
+  '@release-it/bumper@8.0.1':
+    resolution: {integrity: sha512-C1yKYtdgY/NrLUm034kxHSwcwkK+TRg+EUDGaoIZmaWJlyGyIZm5IBA6Mq3CkAZ2Z5wYGy/NBQ2qJEhm3/yr1Q==}
+    engines: {node: ^22.22.2 || ^24.15.0 || >=26.0.0}
     peerDependencies:
       release-it: ^18.0.0 || ^19.0.0 || ^20.0.0 || ^21.0.0
 
@@ -6464,9 +6464,9 @@ packages:
     resolution: {integrity: sha512-QQnnxNyfvmHFIsj7gkPcYymR8Jdw/o7mp5ZFihxn6h8Ci6fh3Dx4E1gPjpQEpIuPo9XVNY/ZUwh4BPMjGyL01g==}
     engines: {node: ^14.17.0 || ^16.13.0 || >=18.0.0}
 
-  ini@6.0.0:
-    resolution: {integrity: sha512-IBTdIkzZNOpqm7q3dRqJvMaldXjDHWkEDfrwGEQTs5eaQMWV+djAhR+wahyNNMAa+qpbDUhBMVt4ZKNwpPm7xQ==}
-    engines: {node: ^20.17.0 || >=22.9.0}
+  ini@7.0.0:
+    resolution: {integrity: sha512-ifK0CgjALofS5bkrcTy4RaQ9Vx2Knf/eLeIO+NaswQEpH1UblrtTSCIvN71qQDMq0PeQ/SSPojvEJp9vvvfr+w==}
+    engines: {node: ^22.22.2 || ^24.15.0 || >=26.0.0}
 
   internmap@1.0.1:
     resolution: {integrity: sha512-lDB5YccMydFBtasVtxnZ3MRBHuaoE8GKsppq+EchKL2U4nK/DmEpPHNH8MZe5HkMtpSiTSOZwfN0tzYjO/lJEw==}
@@ -6662,8 +6662,8 @@ packages:
     resolution: {integrity: sha512-SFNOvSJ+Dgf/9An904Yx+CgSlIPCkIpao4qo51lpee25TIRejdH3rhR4EZMGoNx3/TP3O+wzWuiTFl4sqbltzA==}
     hasBin: true
 
-  js-yaml@5.4.1:
-    resolution: {integrity: sha512-28R/k+NAjeuf7+CKlTxWZVExJGwVVLwY06DgEnOMz2gEpfNkDcD7QvyiVPT0xy0XXhU8vHsd4Ot42OOPdJG7dQ==}
+  js-yaml@5.4.2:
+    resolution: {integrity: sha512-m+aqu+LwO1O6sIopafj8HUVl5aawITwZQe/yHpMCKjaWBaA/d07B/QdMb3529REftiU+RMMHL3Vlsw3hON7vWg==}
     hasBin: true
 
   jsdoc-type-pratt-parser@8.0.0:
@@ -8552,8 +8552,8 @@ packages:
     peerDependencies:
       vue: 3.5.42
 
-  release-it@21.0.2:
-    resolution: {integrity: sha512-QwyDnWiQNB4d8Hc2b5FLMHcsKz9S2O1dMNnPB7w+0knsL5r8+qbnznDA1X7Bw5D863+Ud7eRHc71Cfth5Tlrgg==}
+  release-it@21.0.3:
+    resolution: {integrity: sha512-Pd5Uqj5hJmVAZzb+QSkkDgfvHJwRBazWryb90x5FYHhPxg35cE+1wX9v1DXk4ENy8C0osHxH/yRk1mvnZi7ZHQ==}
     engines: {node: ^22.21.0 || >=24.0.0}
     hasBin: true
 
@@ -9560,6 +9560,10 @@ packages:
     resolution: {integrity: sha512-zj/ob3UsvJGN0whEAKFp53REA5X66hvffVqoCtVQAakJKnKlH+/PcOfMoFwIG/o4rElqLv/ycAFlx8ZlXUorCg==}
     engines: {node: '>=18.12.0'}
 
+  verkit@0.4.0:
+    resolution: {integrity: sha512-sXMwN6DMHeouPfCxkxWkKAmxphWKEenHYY5H1nIBzU3PmDsmJp6kBXJdshjVdpMZuWCmL9SH7KFRx29AylpP6g==}
+    engines: {node: '>=18.12.0'}
+
   vfile-location@5.0.3:
     resolution: {integrity: sha512-5yXvWDEgqeiYiBe1lbxYF7UMAIm/IcopxMHrMQDq3nvKcjPKIhZklUKL+AE7J7uApI4kwe2snsK+eI6UTj9EHg==}
 
@@ -10319,10 +10323,10 @@ snapshots:
 
   '@colordx/core@6.3.0': {}
 
-  '@csmith/release-it-calver-plugin@2026.7.0(release-it@21.0.2(@types/node@26.5.1)(magicast@0.5.4))':
+  '@csmith/release-it-calver-plugin@2026.7.0(release-it@21.0.3(@types/node@26.5.1)(magicast@0.5.4))':
     dependencies:
       calver: 24.1.0
-      release-it: 21.0.2(@types/node@26.5.1)(magicast@0.5.4)
+      release-it: 21.0.3(@types/node@26.5.1)(magicast@0.5.4)
 
   '@csstools/cascade-layer-name-parser@3.0.0(@csstools/css-parser-algorithms@4.0.0(@csstools/css-tokenizer@4.0.0))(@csstools/css-tokenizer@4.0.0)':
     dependencies:
@@ -10697,7 +10701,7 @@ snapshots:
     dependencies:
       postcss: 8.5.28
 
-  '@decimalturn/toml-patch@2.1.0': {}
+  '@decimalturn/toml-patch@3.1.0': {}
 
   '@dxup/nuxt@0.5.10(esbuild@0.28.2)(magicast@0.5.4)(oxc-parser@0.139.0)(rolldown@1.2.7)(rollup@4.63.1)(vite@8.3.0(@types/node@26.5.1)(esbuild@0.28.2)(jiti@2.7.0)(sass@1.104.1)(terser@5.51.2)(yaml@2.9.0))':
     dependencies:
@@ -13001,18 +13005,18 @@ snapshots:
 
   '@protobuf-ts/runtime@2.11.1': {}
 
-  '@release-it/bumper@8.0.0(release-it@21.0.2(@types/node@26.5.1)(magicast@0.5.4))':
+  '@release-it/bumper@8.0.1(release-it@21.0.3(@types/node@26.5.1)(magicast@0.5.4))':
     dependencies:
-      '@decimalturn/toml-patch': 2.1.0
+      '@decimalturn/toml-patch': 3.1.0
       '@iarna/toml': 3.0.0
       cheerio: 1.2.0
       detect-indent: 7.0.2
       fast-glob: 3.3.3
-      ini: 6.0.0
-      js-yaml: 5.4.1
+      ini: 7.0.0
+      js-yaml: 5.4.2
       lodash-es: 4.18.1
-      release-it: 21.0.2(@types/node@26.5.1)(magicast@0.5.4)
-      semver: 7.8.5
+      release-it: 21.0.3(@types/node@26.5.1)(magicast@0.5.4)
+      verkit: 0.4.0
 
   '@rolldown/binding-android-arm-eabi@1.2.7':
     optional: true
@@ -16752,7 +16756,7 @@ snapshots:
 
   ini@4.1.1: {}
 
-  ini@6.0.0: {}
+  ini@7.0.0: {}
 
   internmap@1.0.1: {}
 
@@ -16930,7 +16934,7 @@ snapshots:
     dependencies:
       argparse: 2.0.1
 
-  js-yaml@5.4.1:
+  js-yaml@5.4.2:
     dependencies:
       argparse: 2.0.1
 
@@ -19392,7 +19396,7 @@ snapshots:
     transitivePeerDependencies:
       - '@vue/composition-api'
 
-  release-it@21.0.2(@types/node@26.5.1)(magicast@0.5.4):
+  release-it@21.0.3(@types/node@26.5.1)(magicast@0.5.4):
     dependencies:
       '@inquirer/prompts': 8.5.2(@types/node@26.5.1)
       '@octokit/rest': 22.0.1
@@ -20597,6 +20601,8 @@ snapshots:
       - '@vue/composition-api'
 
   verkit@0.3.2: {}
+
+  verkit@0.4.0: {}
 
   vfile-location@5.0.3:
     dependencies:
