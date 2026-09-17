@@ -13,6 +13,9 @@ defineProps<{
 <template>
     <li
         class="relative flex justify-between border-default p-2 hover:border-primary-500/25 hover:bg-primary-100/50 sm:px-4 dark:hover:border-primary-400/25 dark:hover:bg-primary-900/10"
+        :class="[
+            qualification.deletedAt ? 'bg-warning-100 hover:bg-warning-200 dark:bg-warning-900 dark:hover:bg-warning-800' : '',
+        ]"
     >
         <div class="flex min-w-0 gap-x-2">
             <div class="min-w-0 flex-auto">
