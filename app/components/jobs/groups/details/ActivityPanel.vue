@@ -79,7 +79,7 @@ async function listGroupActivity(signal: AbortSignal): Promise<ListGroupActivity
             pagination: {
                 offset: calculateOffset(page.value, activity.value?.pagination),
             },
-            sort: { columns: [{ id: 'created_at', desc: true }] },
+            sort: { columns: [{ id: 'createdAt', desc: true }] },
             types: state.types,
             userId: state.user?.userId,
             from: toTimestamp(state.dateRange?.start),

@@ -75,7 +75,7 @@ export function checkQualificationAccess(
         return false;
     }
 
-    if (!checkBaseQualificationAccess(activeChar.value, qualiAccess, creator, level, creatorJob)) {
+    if (!checkBaseQualificationAccess(activeChar.value, qualiAccess, level, creatorJob)) {
         return false;
     }
 
@@ -89,11 +89,13 @@ export function checkQualificationAccess(
 function checkBaseQualificationAccess(
     activeChar: UserShort,
     access: Access | undefined,
-    creator: UserShort | undefined,
     level: AccessLevel,
     creatorJob?: string,
 ): boolean {
-    return checkAccess(activeChar, access, creator, level, creatorJob);
+    // The qualification ACL, rather than creator identity, determines the
+    // effective access level. Creator data is still used below for the
+    // permission attribute checks on edit/delete.
+    return checkAccess(activeChar, access, undefined, level, creatorJob);
 }
 
 function checkIfCanAccessOwnJobQualification(activeChar: User, creator: UserShort, perm: Perms): boolean {
