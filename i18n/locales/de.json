@@ -2678,6 +2678,14 @@
                 "title": "Qualifizierungsanfrage wurde aktualisiert",
                 "content": "Deine Qualifizierungsanfrage wurde aktualisiert."
             },
+            "request_accepted": {
+                "title": "Qualifizierungsanfrage akzeptiert",
+                "content": "Deine Anfrage für die Qualifizierung \"{title}\" wurde akzeptiert."
+            },
+            "request_denied": {
+                "title": "Qualifizierungsanfrage abgelehnt",
+                "content": "Deine Anfrage für die Qualifizierung \"{title}\" wurde abgelehnt."
+            },
             "request_deleted": {
                 "title": "Qualifizierungsanfrage abgebrochen",
                 "content": "Deine Qualifizierungsanfrage wurde abgebrochen."

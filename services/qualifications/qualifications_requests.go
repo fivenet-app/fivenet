@@ -197,6 +197,13 @@ func (s *Server) CreateOrUpdateQualificationRequest(
 			requestID := previousRequest.GetQualificationId()
 			actorID := userInfo.GetUserId()
 			entityType := "qualifications.request"
+			notificationKey := "request_updated"
+			switch req.GetRequest().GetStatus() {
+			case qualifications.RequestStatus_REQUEST_STATUS_ACCEPTED:
+				notificationKey = "request_accepted"
+			case qualifications.RequestStatus_REQUEST_STATUS_DENIED:
+				notificationKey = "request_denied"
+			}
 			notificationData, err := s.qualificationNotificationData(
 				ctx,
 				previousRequest.GetUserId(),
@@ -211,10 +218,10 @@ func (s *Server) CreateOrUpdateQualificationRequest(
 				notifi.NewUserNotification(notifi.UserNotificationParams{
 					UserID: previousRequest.GetUserId(),
 					Title: &common.I18NItem{
-						Key: "notifications.qualifications.request_updated.title",
+						Key: "notifications.qualifications." + notificationKey + ".title",
 					},
 					Content: &common.I18NItem{
-						Key: "notifications.qualifications.request_updated.content",
+						Key: "notifications.qualifications." + notificationKey + ".content",
 						Parameters: map[string]string{
 							"abbreviation": quali.GetAbbreviation(),
 							"title":        quali.GetTitle(),

@@ -2678,6 +2678,14 @@
                 "title": "Qualification Request updated",
                 "content": "Your qualification request has been updated."
             },
+            "request_accepted": {
+                "title": "Qualification Request accepted",
+                "content": "Your request for the qualification \"{title}\" was accepted."
+            },
+            "request_denied": {
+                "title": "Qualification Request denied",
+                "content": "Your request for the qualification \"{title}\" was denied."
+            },
             "request_deleted": {
                 "title": "Qualification Request cancelled",
                 "content": "Your qualification request has been cancelled."
