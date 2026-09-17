@@ -93,6 +93,7 @@ export default defineAppConfig({
     custom: {
         classes: {
             deletedAt: 'bg-warning-100 hover:bg-warning-200 dark:bg-warning-900 dark:hover:bg-warning-800',
+            deletedRow: 'bg-warning-100/10 hover:bg-warning-200/10 dark:bg-warning-900/10 dark:hover:bg-warning-800/10',
         },
         icons: {
             // Custom Icons

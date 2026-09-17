@@ -1,5 +1,6 @@
 <script lang="ts" setup>
 import GenericTime from '~/components/partials/elements/GenericTime.vue';
+import DeletedAtBadge from '~/components/partials/DeletedAtBadge.vue';
 import { type QualificationResult, ResultStatus } from '~~/gen/ts/resources/qualifications/qualifications';
 import { resultStatusToBadgeColor } from '../helpers';
 
@@ -39,16 +40,7 @@ defineProps<{
                     :label="`${$t('common.result')}: ${$t(`enums.qualifications.ResultStatus.${ResultStatus[result.status ?? 0]}`)}`"
                 />
 
-                <UBadge
-                    v-if="result?.deletedAt"
-                    class="inline-flex gap-1"
-                    color="warning"
-                    size="md"
-                    icon="i-mdi-calendar-remove"
-                >
-                    {{ $t('common.deleted') }}
-                    <GenericTime :value="result?.deletedAt" type="short" />
-                </UBadge>
+                <DeletedAtBadge v-if="result?.deletedAt" size="md" :deleted-at="result.deletedAt" type="short" />
 
                 <p v-if="result.createdAt" class="mt-1 text-xs leading-5">
                     {{ $t('common.created_at') }} <GenericTime :value="result.createdAt" />

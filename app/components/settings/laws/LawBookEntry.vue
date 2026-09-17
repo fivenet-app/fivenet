@@ -35,6 +35,8 @@ const { t } = useI18n();
 
 const { can, isSuperuser } = useAuth();
 
+const { custom } = useAppConfig();
+
 const notifications = useNotificationsStore();
 
 const lawBook = defineModel<LawBook | undefined>();
@@ -263,11 +265,7 @@ const meta = computed(
     () =>
         ({
             class: {
-                tr: (row: Row<Law>) => {
-                    return row.original.deletedAt
-                        ? 'bg-warning-100/10 hover:bg-warning-200/10 dark:bg-warning-900/10 dark:hover:bg-warning-800/10'
-                        : '';
-                },
+                tr: (row: Row<Law>) => (row.original.deletedAt ? custom.classes.deletedRow : ''),
             },
         }) as TableMeta<Law>,
 );
@@ -378,11 +376,7 @@ const confirmModal = overlay.create(ConfirmModal);
     <UCard
         v-if="lawBook"
         class="overflow-y-auto"
-        :class="[
-            lawBook.deletedAt
-                ? 'bg-warning-100/10 hover:bg-warning-200/10 dark:bg-warning-900/10 dark:hover:bg-warning-800/10'
-                : '',
-        ]"
+        :class="lawBook.deletedAt ? custom.classes.deletedRow : ''"
         :ui="{
             body: 'p-0 sm:p-0',
         }"

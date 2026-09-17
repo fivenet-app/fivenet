@@ -12,6 +12,7 @@ import ConfirmModal from '~/components/partials/ConfirmModal.vue';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
+import DeletedAtBadge from '~/components/partials/DeletedAtBadge.vue';
 import CategoryBadge from '~/components/partials/documents/CategoryBadge.vue';
 import GenericTime from '~/components/partials/elements/GenericTime.vue';
 import IDCopyBadge from '~/components/partials/IDCopyBadge.vue';
@@ -678,16 +679,12 @@ const reminderDrawer = overlay.create(ReminderDrawer, { props: { documentId: pro
 
                                 <DraftBadge v-if="doc.document?.meta?.draft" />
 
-                                <UBadge
+                                <DeletedAtBadge
                                     v-if="doc.document?.deletedAt"
-                                    class="inline-flex gap-1"
-                                    color="warning"
                                     size="md"
-                                    icon="i-mdi-calendar-remove"
-                                >
-                                    {{ $t('common.deleted') }}
-                                    <GenericTime :value="doc.document?.deletedAt" type="long" />
-                                </UBadge>
+                                    :deleted-at="doc.document.deletedAt"
+                                    type="long"
+                                />
                             </div>
                         </div>
 

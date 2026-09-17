@@ -1,5 +1,6 @@
 <script lang="ts" setup>
 import type { ContextMenuItem } from '@nuxt/ui';
+import DeletedAtBadge from '~/components/partials/DeletedAtBadge.vue';
 import type { CardElement } from '~/utils/types';
 
 withDefaults(
@@ -45,7 +46,7 @@ const { can } = useAuth();
                     <template #title>
                         <span>{{ module.label }}</span>
 
-                        <UBadge v-if="module.deletedAt" icon="i-mdi-delete" :label="$t('common.deleted')" color="warning" />
+                        <DeletedAtBadge v-if="module.deletedAt" hide-date icon="i-mdi-delete" :deleted-at="module.deletedAt" />
                     </template>
 
                     <template v-if="showIcon && module.icon" #leading>

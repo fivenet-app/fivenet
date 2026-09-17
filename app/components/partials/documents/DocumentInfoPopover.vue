@@ -1,5 +1,6 @@
 <script lang="ts" setup>
 import type { BadgeProps } from '@nuxt/ui';
+import DeletedAtBadge from '~/components/partials/DeletedAtBadge.vue';
 import IDCopyBadge from '~/components/partials/IDCopyBadge.vue';
 import CitizenInfoPopover from '~/components/partials/citizens/CitizenInfoPopover.vue';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
@@ -205,10 +206,12 @@ watchOnce(opened, async () => {
                             <GenericTime :value="document.updatedAt" ago />
                         </div>
 
-                        <div v-if="document.deletedAt" class="flex flex-row items-center gap-1 font-bold">
-                            <UIcon class="mr-1.5 size-5 shrink-0" name="i-mdi-delete" />
-                            <span>{{ $t('common.deleted') }}</span>
-                        </div>
+                        <DeletedAtBadge
+                            v-if="document.deletedAt"
+                            hide-date
+                            icon="i-mdi-delete"
+                            :deleted-at="document.deletedAt"
+                        />
                     </div>
 
                     <div v-if="document.creator" class="flex flex-row items-center justify-start gap-1 text-sm">

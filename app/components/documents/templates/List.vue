@@ -4,6 +4,7 @@ import DraggableHandle from '~/components/partials/DraggableHandle.vue';
 import ReorderButtons from '~/components/partials/ReorderButtons.vue';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
+import DeletedAtBadge from '~/components/partials/DeletedAtBadge.vue';
 import type { CardElement } from '~/utils/types';
 import { resolveNeighborMovePayload } from '~/utils/reorder';
 import { getDocumentsTemplatesClient } from '~~/gen/ts/clients';
@@ -250,7 +251,7 @@ watch(movingTemplateId, (movingId) => {
                 <template #title>
                     <span>{{ template.title }}</span>
 
-                    <UBadge v-if="template.deletedAt" icon="i-mdi-delete" :label="$t('common.deleted')" color="warning" />
+                    <DeletedAtBadge v-if="template.deletedAt" hide-date icon="i-mdi-delete" :deleted-at="template.deletedAt" />
                 </template>
 
                 <template #leading>

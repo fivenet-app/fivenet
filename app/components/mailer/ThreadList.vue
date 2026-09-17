@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { isSameDay } from 'date-fns';
 import { computed, ref, watch } from 'vue';
+import DeletedAtBadge from '~/components/partials/DeletedAtBadge.vue';
 import type { Thread } from '~~/gen/ts/resources/mailer/threads/thread';
 
 const props = withDefaults(
@@ -108,13 +109,13 @@ function setThreadRef(threadId: number, el: Element | null): void {
                                 <UChip v-if="!!thread.state?.unread" class="mr-1" />
                             </div>
 
-                            <div
+                            <DeletedAtBadge
                                 v-if="thread.deletedAt"
-                                class="flex shrink-0 flex-row items-center justify-center gap-1.5 font-bold"
-                            >
-                                <UIcon class="size-4 shrink-0" name="i-mdi-delete" />
-                                {{ $t('common.deleted') }}
-                            </div>
+                                class="shrink-0"
+                                hide-date
+                                icon="i-mdi-delete"
+                                :deleted-at="thread.deletedAt"
+                            />
                             <UTooltip v-else class="shrink-0" :text="$d(toDate(thread.updatedAt ?? thread.createdAt), 'long')">
                                 {{
                                     isToday(toDate(thread.updatedAt ?? thread.createdAt))

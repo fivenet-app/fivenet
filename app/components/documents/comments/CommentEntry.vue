@@ -5,6 +5,7 @@ import { z } from 'zod';
 import CitizenInfoPopover from '~/components/partials/citizens/CitizenInfoPopover.vue';
 import ConfirmModal from '~/components/partials/ConfirmModal.vue';
 import CustomContentRenderer from '~/components/partials/content/CustomContentRenderer.vue';
+import DeletedAtBadge from '~/components/partials/DeletedAtBadge.vue';
 import TiptapEditor from '~/components/partials/editor/TiptapEditor.vue';
 import GenericTime from '~/components/partials/elements/GenericTime.vue';
 import type { HistoryContent } from '~/types/history';
@@ -189,46 +190,39 @@ const confirmModal = overlay.create(ConfirmModal);
 </script>
 
 <template>
-    <li v-if="comment" class="py-2">
-        <div v-if="!editing" class="flex space-x-3">
-            <div :class="[comment.deletedAt ? 'bg-warning-800' : '', 'flex-1 space-y-1']">
-                <div class="flex items-center justify-between">
-                    <div class="flex items-center">
-                        <CitizenInfoPopover :user="comment.creator" show-avatar-in-name />
-                    </div>
+    <li v-if="comment" class="rounded p-2" :class="[comment.deletedAt ? 'bg-warning-800' : '', 'flex-1 space-y-1']">
+        <div v-if="!editing" class="flex flex-col space-x-3">
+            <div class="flex flex-row items-center justify-between gap-2">
+                <div class="flex items-center gap-2">
+                    <CitizenInfoPopover :user="comment.creator" show-avatar-in-name />
 
-                    <div class="flex flex-1 items-center">
-                        <GenericTime class="ml-2 text-sm" :value="comment.createdAt" />
-                    </div>
+                    <GenericTime class="text-sm" :value="comment.createdAt" />
 
-                    <div v-if="comment.deletedAt" class="flex flex-1 flex-row items-center justify-center gap-1.5">
-                        <UIcon class="size-5 shrink-0" name="i-mdi-delete" />
-                        <span>{{ $t('common.deleted') }}</span>
-                    </div>
-
-                    <UFieldGroup v-if="comment.creatorId === activeChar?.userId || isSuperuser">
-                        <UTooltip v-if="canComment" :text="$t('common.edit')">
-                            <UButton variant="link" icon="i-mdi-pencil" @click="editing = true" />
-                        </UTooltip>
-
-                        <UTooltip v-if="can('documents.CommentsService/DeleteComment').value" :text="$t('common.delete')">
-                            <UButton
-                                variant="link"
-                                icon="i-mdi-delete"
-                                color="error"
-                                @click="
-                                    confirmModal.open({
-                                        confirm: async () => deleteComment(comment!.id),
-                                    })
-                                "
-                            />
-                        </UTooltip>
-                    </UFieldGroup>
+                    <DeletedAtBadge v-if="comment.deletedAt" class="place-center" hide-date :deleted-at="comment.deletedAt" />
                 </div>
 
-                <div class="rounded-lg bg-neutral-100 p-4 dark:bg-neutral-800">
-                    <CustomContentRenderer v-if="comment.content" :value="comment.content" />
-                </div>
+                <UFieldGroup v-if="comment.creatorId === activeChar?.userId || isSuperuser">
+                    <UTooltip v-if="canComment" :text="$t('common.edit')">
+                        <UButton variant="link" icon="i-mdi-pencil" @click="editing = true" />
+                    </UTooltip>
+
+                    <UTooltip v-if="can('documents.CommentsService/DeleteComment').value" :text="$t('common.delete')">
+                        <UButton
+                            variant="link"
+                            icon="i-mdi-delete"
+                            color="error"
+                            @click="
+                                confirmModal.open({
+                                    confirm: async () => deleteComment(comment!.id),
+                                })
+                            "
+                        />
+                    </UTooltip>
+                </UFieldGroup>
+            </div>
+
+            <div class="rounded-lg bg-neutral-100 p-4 dark:bg-neutral-800">
+                <CustomContentRenderer v-if="comment.content" :value="comment.content" />
             </div>
         </div>
 

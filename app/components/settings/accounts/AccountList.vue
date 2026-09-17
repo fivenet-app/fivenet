@@ -27,6 +27,8 @@ const { accountId } = useAuth();
 const settingsStore = useSettingsStore();
 const { streamerMode } = storeToRefs(settingsStore);
 
+const { custom } = useAppConfig();
+
 const settingsAccountsClient = await getSettingsAccountsClient();
 
 const schema = z.object({
@@ -119,11 +121,7 @@ const meta = computed(
     () =>
         ({
             class: {
-                tr: (row: Row<Account>) => {
-                    return row.original.deletedAt
-                        ? 'bg-warning-100/10 hover:bg-warning-200/10 dark:bg-warning-900/10 dark:hover:bg-warning-800/10'
-                        : '';
-                },
+                tr: (row: Row<Account>) => (row.original.deletedAt ? custom.classes.deletedRow : ''),
             },
         }) as TableMeta<Account>,
 );

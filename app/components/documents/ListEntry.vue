@@ -1,5 +1,6 @@
 <script lang="ts" setup>
 import type { ContextMenuItem } from '@nuxt/ui';
+import DeletedAtBadge from '~/components/partials/DeletedAtBadge.vue';
 import IDCopyBadge from '~/components/partials/IDCopyBadge.vue';
 import OpenClosedBadge from '~/components/partials/OpenClosedBadge.vue';
 import CitizenInfoPopover from '~/components/partials/citizens/CitizenInfoPopover.vue';
@@ -179,13 +180,7 @@ const links = computed(() =>
                             <slot name="default" />
                         </div>
 
-                        <DeletedAtBadge
-                            v-if="document.deletedAt"
-                            class="flex-1 justify-center font-bold"
-                            variant="ghost"
-                            hide-date
-                            :deleted-at="document.deletedAt"
-                        />
+                        <DeletedAtBadge v-if="document.deletedAt" hide-date :deleted-at="document.deletedAt" />
 
                         <div class="flex flex-1 flex-row items-center justify-end gap-1.5">
                             <span>{{ document.creatorJobLabel }}</span>

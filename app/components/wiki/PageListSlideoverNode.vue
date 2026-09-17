@@ -1,5 +1,6 @@
 <script lang="ts" setup>
 import DraggableHandle from '~/components/partials/DraggableHandle.vue';
+import DeletedAtBadge from '~/components/partials/DeletedAtBadge.vue';
 import ReorderButtons from '~/components/partials/ReorderButtons.vue';
 import type { PageShort } from '~~/gen/ts/resources/wiki/page';
 import { pageToURL, sameWikiMoveGroup } from './helpers';
@@ -118,12 +119,13 @@ async function onChildDragEnd(event: { oldIndex?: number; newIndex?: number }): 
                             icon="i-mdi-pencil"
                             :label="$t('common.draft')"
                         />
-                        <UBadge
+                        <DeletedAtBadge
                             v-if="page.deletedAt"
                             color="error"
                             variant="soft"
                             icon="i-mdi-delete"
-                            :label="$t('common.deleted')"
+                            hide-date
+                            :deleted-at="page.deletedAt"
                         />
                     </div>
 

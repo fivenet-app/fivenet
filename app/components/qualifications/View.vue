@@ -18,6 +18,7 @@ import { QualificationExamMode } from '~~/gen/ts/resources/qualifications/exam/e
 import { RequestStatus, ResultStatus } from '~~/gen/ts/resources/qualifications/qualifications';
 import type { DeleteQualificationResponse, GetQualificationResponse } from '~~/gen/ts/services/qualifications/qualifications';
 import AccessBadges from '../partials/access/AccessBadges.vue';
+import DeletedAtBadge from '~/components/partials/DeletedAtBadge.vue';
 import CitizenInfoPopover from '../partials/citizens/CitizenInfoPopover.vue';
 import CustomContentRenderer from '../partials/content/CustomContentRenderer.vue';
 import DataErrorBlock from '../partials/data/DataErrorBlock.vue';
@@ -412,16 +413,13 @@ const requestUserModal = overlay.create(RequestUserModal);
                             <GenericTime :value="qualification?.updatedAt" type="long" />
                         </UBadge>
 
-                        <UBadge
+                        <DeletedAtBadge
                             v-if="qualification?.deletedAt"
                             class="inline-flex gap-1"
-                            icon="i-mdi-calendar-remove"
-                            color="warning"
+                            :deleted-at="qualification.deletedAt"
+                            type="long"
                             size="md"
-                        >
-                            {{ $t('common.deleted') }}
-                            <GenericTime :value="qualification?.deletedAt" type="long" />
-                        </UBadge>
+                        />
                     </div>
 
                     <div v-if="qualification.requirements && qualification.requirements.length > 0" class="mt-2 w-full">

@@ -1,5 +1,6 @@
 <script lang="ts" setup>
 import CitizenInfoPopover from '~/components/partials/citizens/CitizenInfoPopover.vue';
+import DeletedAtBadge from '~/components/partials/DeletedAtBadge.vue';
 import GenericTime from '~/components/partials/elements/GenericTime.vue';
 import { useAuthStore } from '~/stores/auth';
 import { type QualificationRequest, RequestStatus } from '~~/gen/ts/resources/qualifications/qualifications';
@@ -47,16 +48,7 @@ const { activeChar } = storeToRefs(authStore);
                     </span>
                 </UBadge>
 
-                <UBadge
-                    v-if="request?.deletedAt"
-                    class="inline-flex gap-1"
-                    color="warning"
-                    size="md"
-                    icon="i-mdi-calendar-remove"
-                >
-                    {{ $t('common.deleted') }}
-                    <GenericTime :value="request?.deletedAt" type="short" />
-                </UBadge>
+                <DeletedAtBadge v-if="request?.deletedAt" size="md" :deleted-at="request.deletedAt" type="short" />
 
                 <p v-if="request.createdAt" class="mt-1 text-xs leading-5">
                     {{ $t('common.created_at') }} <GenericTime :value="request.createdAt" />

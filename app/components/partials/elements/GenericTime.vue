@@ -1,18 +1,17 @@
 <script lang="ts" setup>
 import type { BadgeProps } from '@nuxt/ui';
 import type { Timestamp } from '~~/gen/ts/resources/timestamp/timestamp';
+import type { I18nDateTimeFormats } from '~/utils/time';
 
 defineOptions({
     inheritAttrs: false,
 });
 
-type dateTimeFormats = 'date' | 'shortDate' | 'longDate' | 'short' | 'long' | 'compact' | 'time';
-
 const props = withDefaults(
     defineProps<{
         value: Date | Timestamp | undefined;
-        type?: dateTimeFormats;
-        tooltipType?: dateTimeFormats;
+        type?: I18nDateTimeFormats;
+        tooltipType?: I18nDateTimeFormats;
         ago?: boolean;
         updateInterval?: number;
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -31,7 +30,7 @@ const props = withDefaults(
     },
 );
 
-const tooltipTypeMap: Partial<{ [key in dateTimeFormats]: dateTimeFormats }> = {
+const tooltipTypeMap: Partial<{ [key in I18nDateTimeFormats]: I18nDateTimeFormats }> = {
     date: 'longDate',
     shortDate: 'longDate',
     short: 'long',

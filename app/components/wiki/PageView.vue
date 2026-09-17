@@ -8,6 +8,7 @@ import ConfirmModal from '~/components/partials/ConfirmModal.vue';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
+import DeletedAtBadge from '~/components/partials/DeletedAtBadge.vue';
 import GenericTime from '~/components/partials/elements/GenericTime.vue';
 import { jsonNodeToTocLinks } from '~/utils/content';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
@@ -363,16 +364,12 @@ const scrollRef = useTemplateRef('scrollRef');
                                         <GenericTime :value="page.meta.updatedAt" type="long" />
                                     </UBadge>
 
-                                    <UBadge
+                                    <DeletedAtBadge
                                         v-if="page.meta.deletedAt"
-                                        class="inline-flex gap-1"
-                                        color="warning"
-                                        icon="i-mdi-calendar-remove"
                                         size="md"
-                                    >
-                                        {{ $t('common.deleted') }}
-                                        <GenericTime :value="page.meta.deletedAt" type="long" />
-                                    </UBadge>
+                                        :deleted-at="page.meta.deletedAt"
+                                        type="long"
+                                    />
 
                                     <DraftBadge v-if="page.meta.draft" />
 

@@ -10,6 +10,8 @@ import {
 import * as googleProtobufTimestamp from '~~/gen/ts/google/protobuf/timestamp';
 import type { Timestamp as resourcesTimestampTimestamp } from '~~/gen/ts/resources/timestamp/timestamp';
 
+export type I18nDateTimeFormats = 'date' | 'shortDate' | 'longDate' | 'short' | 'long' | 'compact' | 'time';
+
 export function toDate(ts: resourcesTimestampTimestamp | undefined, correction?: number): Date {
     if (ts === undefined || ts?.timestamp === undefined) return new Date();
 
