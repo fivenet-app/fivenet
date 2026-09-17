@@ -48,6 +48,8 @@ type ResolveOpts struct {
 	// when the requester has permission or is a job admin. Keep this opt-in
 	// unless labels become part of the standard colleague hydration contract.
 	IncludeLabels bool
+	// IncludeGroups requests the effective visible groups for the colleague's job.
+	IncludeGroups bool
 }
 
 type IHydrator interface {
@@ -231,6 +233,31 @@ func (h *Hydrator) ListByUserID(
 		for _, colleague := range colleagues {
 			colleaguesByUserID[colleague.GetUserId()] = colleague
 		}
+
+		if opts.IncludeGroups {
+			groupsByUserID, err := h.store.ListGroupMemberShortsByUserIDs(
+				ctx,
+				db,
+				jobGroup.job,
+				jobGroup.userIDs,
+				userInfo,
+			)
+			if err != nil {
+				return nil, err
+			}
+			for userID, groups := range groupsByUserID {
+				if colleague, ok := colleaguesByUserID[userID]; ok {
+					if colleague.GetProps() == nil {
+						colleague.Props = &jobscolleagues.ColleagueProps{
+							UserId: userID,
+							Job:    jobGroup.job,
+						}
+					}
+					colleague.Props.Groups = groups
+				}
+			}
+		}
+
 	}
 
 	for _, colleague := range colleaguesByUserID {

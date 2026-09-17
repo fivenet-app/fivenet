@@ -9,6 +9,7 @@ import (
 	colleaguesactivity "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/jobs/colleagues/activity"
 	jobsconduct "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/jobs/conduct"
 	jobsgroups "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/jobs/groups"
+	groupsshort "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/jobs/groups/short"
 	jobslabels "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/jobs/labels"
 	jobsprops "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/jobs/props"
 	jobstimeclock "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/jobs/timeclock"
@@ -151,6 +152,15 @@ type IGroupsQuery interface {
 
 type IStore interface {
 	IGroupsQuery
+	CountGroupMembers(ctx context.Context, db qrm.DB, q GroupItemsQuery) (int64, error)
+	ListGroupMembers(ctx context.Context, db qrm.DB, q GroupItemsQuery) ([]*jobsgroups.GroupResolvedMember, error)
+	ListGroupMemberShortsByUserIDs(
+		ctx context.Context,
+		db qrm.DB,
+		job string,
+		userIDs []int32,
+		userInfo *userinfo.UserInfo,
+	) (map[int32][]*groupsshort.GroupMemberShort, error)
 
 	GetMOTD(ctx context.Context, db qrm.DB, job string) (string, error)
 	SetMOTD(ctx context.Context, db qrm.DB, job string, motd string) error
