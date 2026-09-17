@@ -514,15 +514,9 @@ func (s *Server) UpdateGroup(
 		return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
 	}
 
-	updated, err := s.store.GetGroup(ctx, tx, jobsstore.GroupQuery{
-		Job:             userInfo.GetJob(),
-		IncludeArchived: true,
-	}, group.GetId())
+	updated, err := s.recountAndGetGroup(ctx, tx, userInfo.GetJob(), group.GetId())
 	if err != nil {
-		return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
-	}
-	if updated == nil {
-		return nil, errorsjobs.ErrFailedQuery
+		return nil, err
 	}
 	if err := tx.Commit(); err != nil {
 		return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)

@@ -96,7 +96,7 @@ func TestStoreRecountGroupStats(t *testing.T) {
 			"group_manual_member.reason",
 			"group_manual_member.created_by_user_id",
 			"group_manual_member.created_at",
-		}))
+		}).AddRow(int64(42), int32(7), nil, nil, nil))
 	mock.ExpectQuery(regexp.QuoteMeta(`FROM fivenet_job_group_rules`)).
 		WithArgs(int64(42)).
 		WillReturnRows(sqlmock.NewRows([]string{
@@ -124,22 +124,70 @@ func TestStoreRecountGroupStats(t *testing.T) {
 	mock.ExpectQuery(regexp.QuoteMeta(`FROM fivenet_job_group_rules`)).
 		WithArgs(int64(42)).
 		WillReturnRows(sqlmock.NewRows([]string{"data_count.total"}).AddRow(int64(0)))
-	mock.ExpectQuery(regexp.QuoteMeta(`FROM fivenet_job_group_leaders`)).
-		WithArgs(int64(42)).
-		WillReturnRows(sqlmock.NewRows([]string{
-			"group_leader.group_id",
-			"group_leader.user_id",
-			"group_leader.created_by_user_id",
-			"group_leader.created_at",
-		}))
+
 	mock.ExpectExec(regexp.QuoteMeta("DELETE FROM fivenet_job_group_members WHERE fivenet_job_group_members.group_id = ?;")).
 		WithArgs(int64(42)).
 		WillReturnResult(sqlmock.NewResult(0, 0))
+	mock.ExpectExec(`(?s)INSERT INTO fivenet_job_group_members .* SELECT .* FROM fivenet_user`).
+		WillReturnResult(sqlmock.NewResult(0, 1))
 	mock.ExpectExec(regexp.QuoteMeta("UPDATE fivenet_job_groups AS `group` SET")).
-		WithArgs(int64(0), int64(0), int64(0), int64(0), int64(42)).
+		WithArgs(int64(1), int64(0), int64(0), int64(0), int64(42)).
 		WillReturnResult(sqlmock.NewResult(0, 1))
 
 	require.NoError(t, store.RecountGroupStats(t.Context(), store.db, 42))
+	require.NoError(t, mock.ExpectationsWereMet())
+}
+
+func TestEffectiveGroupMemberIDs(t *testing.T) {
+	t.Parallel()
+
+	group := &jobsgroups.Group{
+		Type:           jobsgroups.GroupType_GROUP_TYPE_MIXED,
+		MembershipMode: jobsgroups.GroupMembershipMode_GROUP_MEMBERSHIP_MODE_STRICT,
+	}
+	members := effectiveGroupMemberIDs(
+		group,
+		[]*jobsgroups.GroupManualMember{
+			{UserId: 7},
+			{UserId: 8},
+		},
+		[]*GroupRuleMemberMatch{
+			{UserID: 7},
+			{UserID: 9},
+		},
+		[]*jobsgroups.GroupMemberExclusion{{UserId: 7}},
+	)
+
+	assert.Equal(t, map[int32]struct{}{9: {}}, members)
+
+	group.MembershipMode = jobsgroups.GroupMembershipMode_GROUP_MEMBERSHIP_MODE_FLEXIBLE
+	members = effectiveGroupMemberIDs(
+		group,
+		[]*jobsgroups.GroupManualMember{{UserId: 7}},
+		[]*GroupRuleMemberMatch{{UserID: 9}},
+		nil,
+	)
+	assert.Equal(t, map[int32]struct{}{7: {}, 9: {}}, members)
+}
+
+func TestStoreListGroupMembersPreservesLeaderFlag(t *testing.T) {
+	t.Parallel()
+
+	store, mock := newTestStore(t)
+	mock.ExpectQuery(`(?s)FROM fivenet_job_group_members AS member .*INNER JOIN fivenet_job_groups AS .*INNER JOIN fivenet_user AS user .*INNER JOIN fivenet_user_jobs AS user_job`).
+		WithArgs(sqlmock.AnyArg(), int64(42)).
+		WillReturnRows(sqlmock.NewRows([]string{
+			"group_resolved_member.group_id",
+			"group_resolved_member.user_id",
+			"group_resolved_member.is_member",
+			"group_resolved_member.is_leader",
+		}).AddRow(int64(42), int32(7), true, true))
+
+	members, err := store.ListGroupMembers(t.Context(), store.db, GroupItemsQuery{GroupID: 42})
+	require.NoError(t, err)
+	require.Len(t, members, 1)
+	assert.True(t, members[0].GetIsMember())
+	assert.True(t, members[0].GetIsLeader())
 	require.NoError(t, mock.ExpectationsWereMet())
 }
 

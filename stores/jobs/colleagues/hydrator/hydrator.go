@@ -257,7 +257,6 @@ func (h *Hydrator) ListByUserID(
 				}
 			}
 		}
-
 	}
 
 	for _, colleague := range colleaguesByUserID {

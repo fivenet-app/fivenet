@@ -185,10 +185,10 @@ const file_resources_jobs_user_selector_proto_rawDesc = "" +
 	"\"resources/jobs/user_selector.proto\x12\x0eresources.jobs\"d\n" +
 	"\fUserSelector\x12\x19\n" +
 	"\buser_ids\x18\x01 \x03(\x05R\auserIds\x129\n" +
-	"\x06groups\x18\x02 \x01(\v2!.resources.jobs.GroupUserSelectorR\x06groups\"Y\n" +
+	"\x06groups\x18\x02 \x01(\v2!.resources.jobs.GroupUserSelectorR\x06groups\"_\n" +
 	"\x11GroupUserSelector\x12\x1b\n" +
 	"\tgroup_ids\x18\x01 \x03(\x03R\bgroupIds\x12'\n" +
-	"\x0finclude_leaders\x18\x02 \x01(\bR\x0eincludeLeadersBGZEgithub.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/jobs;jobsb\x06proto3"
+	"\x0finclude_leaders\x18\x02 \x01(\bR\x0eincludeLeadersJ\x04\b\x03\x10\x04BGZEgithub.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/jobs;jobsb\x06proto3"
 
 var file_resources_jobs_user_selector_proto_msgTypes = make([]protoimpl.MessageInfo, 2)
 var file_resources_jobs_user_selector_proto_goTypes = []any{

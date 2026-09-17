@@ -697,18 +697,23 @@ func (s *Server) ListGroupMembers(
 		!req.GetIncludeLeaders() &&
 		!req.GetIncludeReasons() &&
 		len(req.GetSources()) == 0 &&
+		jobsstore.IsSupportedGroupMemberSort(req.GetSort()) &&
 		group.GetState() == jobsgroups.GroupState_GROUP_STATE_ACTIVE
 	if materialized {
 		query := jobsstore.GroupItemsQuery{
 			GroupID: req.GetGroupId(),
 			Search:  req.GetSearch(),
+			Sort:    req.GetSort(),
 		}
 		count, err := s.store.CountGroupMembers(ctx, s.db, query)
 		if err != nil {
 			return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
 		}
 		pag, limit := req.GetPagination().GetResponse(count)
-		resp := &pbjobs.ListGroupMembersResponse{Pagination: pag, Members: []*jobsgroups.GroupResolvedMember{}}
+		resp := &pbjobs.ListGroupMembersResponse{
+			Pagination: pag,
+			Members:    []*jobsgroups.GroupResolvedMember{},
+		}
 		if count <= 0 {
 			grpc_audit.SetAction(ctx, audit.EventAction_EVENT_ACTION_VIEWED)
 			return resp, nil

@@ -29,4 +29,7 @@ message GroupUserSelector {
 
   // Include group leaders even if they are not resolved members.
   bool include_leaders = 2;
+
+  // Previously used for bool `include_excluded` field.
+  reserved 3;
 }

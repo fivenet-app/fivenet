@@ -114,6 +114,7 @@ type GroupQuery struct {
 type GroupItemsQuery struct {
 	GroupID int64
 	Search  string
+	Sort    *database.Sort
 	Offset  int64
 	Limit   int64
 }
@@ -153,7 +154,11 @@ type IGroupsQuery interface {
 type IStore interface {
 	IGroupsQuery
 	CountGroupMembers(ctx context.Context, db qrm.DB, q GroupItemsQuery) (int64, error)
-	ListGroupMembers(ctx context.Context, db qrm.DB, q GroupItemsQuery) ([]*jobsgroups.GroupResolvedMember, error)
+	ListGroupMembers(
+		ctx context.Context,
+		db qrm.DB,
+		q GroupItemsQuery,
+	) ([]*jobsgroups.GroupResolvedMember, error)
 	ListGroupMemberShortsByUserIDs(
 		ctx context.Context,
 		db qrm.DB,
