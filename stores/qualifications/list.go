@@ -57,6 +57,7 @@ func (s *Store) ListQualifications(
 		)).
 		LIMIT(1)
 	lastResultFilter := tQualiResult.ID.IS_NULL().OR(tQualiResult.ID.EQ(mysql.IntExp(lastResultID)))
+
 	visibleQuery := tQuali.
 		SELECT(mysql.COUNT(mysql.DISTINCT(tQuali.ID)).AS("data_count.total")).
 		FROM(
@@ -192,7 +193,6 @@ func (s *Store) listQualificationsQuery(
 	visibleIDs mysql.SelectTable,
 	ctes []mysql.CommonTableExpression,
 	lastResultFilter mysql.BoolExpression,
-
 	limit int64,
 ) mysql.Statement {
 	visibleQualiID := mysql.IntegerColumn("id").From(visibleIDs)
@@ -209,6 +209,7 @@ func (s *Store) listQualificationsQuery(
 		tQuali.ID,
 		tQuali.CreatedAt,
 		tQuali.UpdatedAt,
+		tQuali.DeletedAt,
 		tQuali.Job,
 		tQuali.Weight,
 		tQuali.Closed,

@@ -32,7 +32,9 @@ func TestStoreCreateQualificationActivityIsIdempotentForExamAttempt(t *testing.T
 		).
 			WithArgs(
 				int64(42),
-				int32(qualificationsactivity.QualificationActivityType_QUALIFICATION_ACTIVITY_TYPE_EXAM_STARTED),
+				int32(
+					qualificationsactivity.QualificationActivityType_QUALIFICATION_ACTIVITY_TYPE_EXAM_STARTED,
+				),
 				int32(7),
 				int32(7),
 				nil,

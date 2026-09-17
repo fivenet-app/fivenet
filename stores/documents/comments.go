@@ -87,6 +87,7 @@ func (s *Store) ListComments(
 			tComments.DocumentID,
 			tComments.CreatedAt,
 			tComments.UpdatedAt,
+			tComments.DeletedAt,
 			tComments.Content,
 			tComments.CreatorID,
 			tComments.CreatorJob,
