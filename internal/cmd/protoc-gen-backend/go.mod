@@ -4,7 +4,7 @@ go 1.27.1
 
 require (
 	github.com/fivenet-app/fivenet/v2026 v2026.9.2
-	github.com/go-sprout/sprout v1.1.1
+	github.com/go-sprout/sprout v1.1.2
 	github.com/lyft/protoc-gen-star/v2 v2.0.4
 	google.golang.org/protobuf v1.36.12
 )
