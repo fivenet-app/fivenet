@@ -3,7 +3,7 @@ package qualificationsstore
 import "github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
 
 const (
-	QualificationsPageSize = 10
+	QualificationsPageSize = 15
 
 	QualificationsLabelDefaultFormat = "%abbr%: %name%"
 )

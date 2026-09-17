@@ -41,6 +41,7 @@ describe('checkAccess', () => {
                             status: result,
                             creatorJob: 'police',
                             creatorId: 1,
+                            autoGraded: false,
                         },
                         creatorJob: 'police',
                         requirements: [],

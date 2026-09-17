@@ -151,6 +151,16 @@ export type ExamSettingsSchema = z.output<typeof examSettingsSchema>;
                         />
                     </UFormField>
                 </UForm>
+
+                <UAlert
+                    v-if="examMode !== QualificationExamMode.DISABLED"
+                    class="mt-4"
+                    color="info"
+                    variant="subtle"
+                    icon="i-mdi-information-outline"
+                    :title="$t('components.qualifications.exam_editor.data_retention.title')"
+                    :description="$t('components.qualifications.exam_editor.data_retention.description')"
+                />
             </UPageCard>
 
             <div class="mb-2">

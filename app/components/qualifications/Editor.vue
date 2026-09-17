@@ -755,6 +755,19 @@ const formRef = useTemplateRef('formRef');
                                             hide-other-jobs
                                             name="access"
                                         />
+
+                                        <UAlert
+                                            v-if="
+                                                qualification.examMode === QualificationExamMode.REQUEST_NEEDED ||
+                                                qualification.examMode === QualificationExamMode.ENABLED
+                                            "
+                                            class="mt-3"
+                                            color="info"
+                                            variant="subtle"
+                                            icon="i-mdi-information-outline"
+                                            :title="$t('components.qualifications.take_access_required.title')"
+                                            :description="$t('components.qualifications.take_access_required.description')"
+                                        />
                                     </UPageCard>
                                 </UContainer>
                             </template>

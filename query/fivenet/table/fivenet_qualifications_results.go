@@ -25,6 +25,8 @@ type fivenetQualificationsResultsTable struct {
 	Status          mysql.ColumnInteger
 	Score           mysql.ColumnFloat
 	Summary         mysql.ColumnString
+	AutoGraded      mysql.ColumnBool
+	ExamAttemptID   mysql.ColumnString
 	CreatorID       mysql.ColumnInteger
 	CreatorJob      mysql.ColumnString
 
@@ -76,10 +78,12 @@ func newFivenetQualificationsResultsTableImpl(schemaName, tableName, alias strin
 		StatusColumn          = mysql.IntegerColumn("status")
 		ScoreColumn           = mysql.FloatColumn("score")
 		SummaryColumn         = mysql.StringColumn("summary")
+		AutoGradedColumn      = mysql.BoolColumn("auto_graded")
+		ExamAttemptIDColumn   = mysql.StringColumn("exam_attempt_id")
 		CreatorIDColumn       = mysql.IntegerColumn("creator_id")
 		CreatorJobColumn      = mysql.StringColumn("creator_job")
-		allColumns            = mysql.ColumnList{IDColumn, CreatedAtColumn, DeletedAtColumn, QualificationIDColumn, UserIDColumn, StatusColumn, ScoreColumn, SummaryColumn, CreatorIDColumn, CreatorJobColumn}
-		mutableColumns        = mysql.ColumnList{CreatedAtColumn, DeletedAtColumn, QualificationIDColumn, UserIDColumn, StatusColumn, ScoreColumn, SummaryColumn, CreatorIDColumn, CreatorJobColumn}
+		allColumns            = mysql.ColumnList{IDColumn, CreatedAtColumn, DeletedAtColumn, QualificationIDColumn, UserIDColumn, StatusColumn, ScoreColumn, SummaryColumn, AutoGradedColumn, ExamAttemptIDColumn, CreatorIDColumn, CreatorJobColumn}
+		mutableColumns        = mysql.ColumnList{CreatedAtColumn, DeletedAtColumn, QualificationIDColumn, UserIDColumn, StatusColumn, ScoreColumn, SummaryColumn, AutoGradedColumn, ExamAttemptIDColumn, CreatorIDColumn, CreatorJobColumn}
 		defaultColumns        = mysql.ColumnList{CreatedAtColumn, StatusColumn}
 	)
 
@@ -95,6 +99,8 @@ func newFivenetQualificationsResultsTableImpl(schemaName, tableName, alias strin
 		Status:          StatusColumn,
 		Score:           ScoreColumn,
 		Summary:         SummaryColumn,
+		AutoGraded:      AutoGradedColumn,
+		ExamAttemptID:   ExamAttemptIDColumn,
 		CreatorID:       CreatorIDColumn,
 		CreatorJob:      CreatorJobColumn,
 

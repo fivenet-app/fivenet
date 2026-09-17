@@ -227,6 +227,8 @@ func (s *Store) listQualificationsQuery(
 		tQualiResult.Status,
 		tQualiResult.Score,
 		tQualiResult.Summary,
+		tQualiResult.AutoGraded,
+		tQualiResult.ExamAttemptID,
 		tQualiResult.CreatorID,
 	}
 
@@ -288,6 +290,8 @@ func (s *Store) getQualificationQuery(
 		tQualiResult.Status,
 		tQualiResult.Score,
 		tQualiResult.Summary,
+		tQualiResult.AutoGraded,
+		tQualiResult.ExamAttemptID,
 		tQualiResult.CreatorID,
 	}
 

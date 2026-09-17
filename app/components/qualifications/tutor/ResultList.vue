@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { UButton, UTooltip } from '#components';
+import { UBadge, UButton, UTooltip } from '#components';
 import type { TableColumn } from '@nuxt/ui';
 import { z } from 'zod';
 import ConfirmModal from '~/components/partials/ConfirmModal.vue';
@@ -245,7 +245,7 @@ const columns = computed(
             {
                 accessorKey: 'score',
                 header: t('common.score'),
-                cell: ({ row }) => (row.original.score ? $n(row.original.score) : null),
+                cell: ({ row }) => (row.original.score !== undefined ? $n(row.original.score) : null),
             },
             {
                 accessorKey: 'summary',
@@ -273,7 +273,12 @@ const columns = computed(
             {
                 accessorKey: 'creator',
                 header: t('common.creator'),
-                cell: ({ row }) => (row.original.creator ? h(CitizenInfoPopover, { user: row.original.creator }) : null),
+                cell: ({ row }) =>
+                    row.original.autoGraded
+                        ? h(UBadge, { color: 'info', icon: 'i-mdi-robot', label: t('components.qualifications.auto_graded') })
+                        : row.original.creator
+                          ? h(CitizenInfoPopover, { user: row.original.creator })
+                          : null,
             },
         ] as TableColumn<QualificationResult>[],
 );

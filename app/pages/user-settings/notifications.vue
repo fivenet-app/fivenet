@@ -32,7 +32,13 @@ const calendarReminderTimes = computed(() => [
                 :label="$t('components.auth.user_settings.calendar_notifications.reminder_times.name')"
             >
                 <ClientOnly>
-                    <USelectMenu v-model="calendar.reminderTimes" multiple :items="calendarReminderTimes" value-key="value">
+                    <USelectMenu
+                        v-model="calendar.reminderTimes"
+                        class="w-full"
+                        multiple
+                        :items="calendarReminderTimes"
+                        value-key="value"
+                    >
                         <template #default>
                             {{
                                 calendar.reminderTimes.length > 0

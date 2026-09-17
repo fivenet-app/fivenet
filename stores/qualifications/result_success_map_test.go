@@ -21,7 +21,7 @@ func TestStoreCreateQualificationResultUpsertsSuccessMap(t *testing.T) {
 	store := New(testParams(db))
 
 	mock.ExpectExec("(?s)INSERT INTO .*fivenet_qualifications_results.*").
-		WithArgs(int64(42), int32(7), int32(resqualifications.ResultStatus_RESULT_STATUS_SUCCESSFUL), nil, "ok", int32(1), "police").
+		WithArgs(int64(42), int32(7), int32(resqualifications.ResultStatus_RESULT_STATUS_SUCCESSFUL), nil, "ok", false, nil, int32(1), "police").
 		WillReturnResult(sqlmock.NewResult(99, 1))
 	mock.ExpectExec("(?s)DELETE FROM .*fivenet_qualifications_result_success_map.*LIMIT \\?.*").
 		WithArgs(int64(99), int64(1)).
@@ -39,10 +39,36 @@ func TestStoreCreateQualificationResultUpsertsSuccessMap(t *testing.T) {
 		resqualifications.ResultStatus_RESULT_STATUS_SUCCESSFUL,
 		nil,
 		"ok",
+		false,
+		nil,
 		creator,
 	)
 	require.NoError(t, err)
 	require.Equal(t, int64(99), resultID)
+	require.NoError(t, mock.ExpectationsWereMet())
+}
+
+func TestStoreCreateQualificationResultPersistsExamAttemptID(t *testing.T) {
+	t.Parallel()
+
+	db, mock, err := sqlmock.New()
+	require.NoError(t, err)
+	t.Cleanup(func() { _ = db.Close() })
+
+	store := New(testParams(db))
+	attemptID := "attempt-auto-graded"
+	mock.ExpectExec("(?s)INSERT INTO .*fivenet_qualifications_results.*").
+		WithArgs(int64(42), int32(7), int32(resqualifications.ResultStatus_RESULT_STATUS_FAILED), nil, "failed", true, attemptID, int32(1), "police").
+		WillReturnResult(sqlmock.NewResult(100, 1))
+
+	resultID, err := store.CreateQualificationResult(
+		t.Context(), db, 42, 7,
+		resqualifications.ResultStatus_RESULT_STATUS_FAILED,
+		nil, "failed", true, &attemptID,
+		&userinfo.UserInfo{UserId: 1, Job: "police"},
+	)
+	require.NoError(t, err)
+	require.Equal(t, int64(100), resultID)
 	require.NoError(t, mock.ExpectationsWereMet())
 }
 

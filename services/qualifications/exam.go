@@ -61,9 +61,25 @@ func (s *Server) GetExamInfo(
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 	}
+	// An ended attempt without an active result is stale, for example after
+	// its result was soft-deleted. It must not bypass the request check and be
+	// presented as the user's next exam attempt.
+	if isStaleExamAttempt(examUser, quali.GetResult()) {
+		examUser = nil
+	}
+	if examUser != nil && examUser.GetEndedAt() != nil &&
+		quali.GetResult().GetStatus() == qualifications.ResultStatus_RESULT_STATUS_FAILED {
+		canRetake, err := s.checkIfUserCanTakeExam(ctx, quali, userInfo)
+		if err != nil {
+			return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
+		}
+		if canRetake {
+			examUser = nil
+		}
+	}
 	// A completed or pending-grading attempt remains viewable even though its
 	// request no longer passes the eligibility check for starting a new exam.
-	if examUser == nil {
+	if examUser == nil && quali.GetResult() == nil {
 		check, err = s.checkIfUserCanTakeExam(ctx, quali, userInfo)
 		if err != nil {
 			return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
@@ -251,6 +267,19 @@ func (s *Server) TakeExam(
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 	}
+	if isStaleExamAttempt(examUser, quali.GetResult()) {
+		if err := s.deleteExamAttempt(ctx, tx, examUser.GetAttemptId()); err != nil {
+			return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
+		}
+		examUser = nil
+	}
+	if examUser != nil && examUser.GetEndedAt() != nil &&
+		quali.GetResult().GetStatus() == qualifications.ResultStatus_RESULT_STATUS_FAILED {
+		if err := s.deleteExamAttempt(ctx, tx, examUser.GetAttemptId()); err != nil {
+			return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
+		}
+		examUser = nil
+	}
 
 	timesUp := examUser != nil && examUser.GetEndsAt() != nil &&
 		!time.Now().Before(examUser.GetEndsAt().AsTime())
@@ -321,6 +350,17 @@ func (s *Server) TakeExam(
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 	}
+	if examUser.GetAttemptId() != "" {
+		if err := s.store.SetQualificationRequestExamAttemptID(
+			ctx,
+			tx,
+			req.GetQualificationId(),
+			userInfo.GetUserId(),
+			examUser.GetAttemptId(),
+		); err != nil {
+			return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
+		}
+	}
 	if err := s.addQualificationActivityForAttempt(
 		ctx,
 		tx,
@@ -347,6 +387,20 @@ func (s *Server) TakeExam(
 
 		TimesUp: timesUp,
 	}, nil
+}
+
+func isStaleExamAttempt(
+	examUser *qualificationsexam.ExamUser,
+	result *qualifications.QualificationResult,
+) bool {
+	return examUser != nil && examUser.GetEndedAt() != nil && result == nil
+}
+
+func (s *Server) deleteExamAttempt(ctx context.Context, tx qrm.DB, attemptID string) error {
+	if err := s.store.DeleteExamResponses(ctx, tx, attemptID); err != nil {
+		return err
+	}
+	return s.store.DeleteExamUser(ctx, tx, attemptID)
 }
 
 func (s *Server) SubmitExam(
@@ -552,22 +606,13 @@ func (s *Server) gradeExam(
 				status,
 				&score,
 				"",
+				true,
 				grading,
 				false,
 				publishNotifications,
 			); err != nil {
 				return err
 			}
-		}
-
-		if err := s.store.UpdateRequestStatus(
-			ctx,
-			tx,
-			qualificationId,
-			userId,
-			qualifications.RequestStatus_REQUEST_STATUS_COMPLETED,
-		); err != nil {
-			return err
 		}
 	} else {
 		if err := s.store.UpdateRequestStatus(

@@ -158,6 +158,7 @@ func (s *Store) ListQualificationRequests(
 		tQualiReq.ApproverComment,
 		tQualiReq.ApproverID,
 		tQualiReq.ApproverJob,
+		tQualiReq.ExamAttemptID,
 	}
 
 	var stmt mysql.Statement
@@ -208,6 +209,27 @@ func (s *Store) GetQualificationRequest(
 	userId int32,
 	userInfo *userinfo.UserInfo,
 ) (*resqualifications.QualificationRequest, error) {
+	return s.getQualificationRequest(ctx, s.db, qualificationId, userId, userInfo, false)
+}
+
+func (s *Store) GetQualificationRequestForUpdate(
+	ctx context.Context,
+	q qrm.DB,
+	qualificationId int64,
+	userId int32,
+	userInfo *userinfo.UserInfo,
+) (*resqualifications.QualificationRequest, error) {
+	return s.getQualificationRequest(ctx, q, qualificationId, userId, userInfo, true)
+}
+
+func (s *Store) getQualificationRequest(
+	ctx context.Context,
+	q qrm.DB,
+	qualificationId int64,
+	userId int32,
+	userInfo *userinfo.UserInfo,
+	forUpdate bool,
+) (*resqualifications.QualificationRequest, error) {
 	columns := mysql.ProjectionList{
 		tQualiReq.CreatedAt,
 		tQualiReq.DeletedAt,
@@ -229,15 +251,14 @@ func (s *Store) GetQualificationRequest(
 		tQualiReq.ApproverComment,
 		tQualiReq.ApproverID,
 		tQualiReq.ApproverJob,
+		tQualiReq.ExamAttemptID,
 	}
 
 	condition := mysql.AND(
 		tQualiReq.QualificationID.EQ(mysql.Int64(qualificationId)),
 		tQualiReq.UserID.EQ(mysql.Int32(userId)),
+		tQualiReq.DeletedAt.IS_NULL(),
 	)
-	if !userInfo.GetJobAdmin() {
-		condition = condition.AND(tQualiReq.DeletedAt.IS_NULL())
-	}
 
 	stmt := tQualiReq.
 		SELECT(columns[0], columns[1:]...).
@@ -248,9 +269,12 @@ func (s *Store) GetQualificationRequest(
 		ORDER_BY(tQualiReq.CreatedAt.DESC()).
 		WHERE(condition).
 		LIMIT(1)
+	if forUpdate {
+		stmt = stmt.FOR(mysql.UPDATE())
+	}
 
 	var request resqualifications.QualificationRequest
-	if err := stmt.QueryContext(ctx, s.db, &request); err != nil {
+	if err := stmt.QueryContext(ctx, q, &request); err != nil {
 		if !errors.Is(err, qrm.ErrNoRows) {
 			return nil, err
 		}
@@ -274,6 +298,73 @@ func (s *Store) DeleteQualificationRequest(
 		WHERE(mysql.AND(
 			tQualiReq.QualificationID.EQ(mysql.Int64(qualificationId)),
 			tQualiReq.UserID.EQ(mysql.Int32(userId)),
+		)).
+		LIMIT(1)
+
+	_, err := stmt.ExecContext(ctx, tx)
+	return err
+}
+
+func (s *Store) DeleteQualificationRequestByAttemptID(
+	ctx context.Context,
+	tx qrm.DB,
+	attemptId string,
+) error {
+	tQualiReq := table.FivenetQualificationsRequests
+	stmt := tQualiReq.
+		UPDATE(tQualiReq.DeletedAt).
+		SET(mysql.CURRENT_TIMESTAMP()).
+		WHERE(tQualiReq.ExamAttemptID.EQ(mysql.String(attemptId))).
+		LIMIT(1)
+
+	_, err := stmt.ExecContext(ctx, tx)
+	return err
+}
+
+func (s *Store) RestoreQualificationRequest(
+	ctx context.Context,
+	tx qrm.DB,
+	qualificationId int64,
+	userId int32,
+	status resqualifications.RequestStatus,
+	attemptId string,
+) error {
+	tQualiReq := table.FivenetQualificationsRequests
+	stmt := tQualiReq.
+		UPDATE(
+			tQualiReq.DeletedAt,
+			tQualiReq.Status,
+		).
+		SET(
+			mysql.NULL,
+			status,
+		).
+		WHERE(mysql.AND(
+			tQualiReq.QualificationID.EQ(mysql.Int64(qualificationId)),
+			tQualiReq.UserID.EQ(mysql.Int32(userId)),
+			tQualiReq.ExamAttemptID.EQ(mysql.String(attemptId)),
+		)).
+		LIMIT(1)
+
+	_, err := stmt.ExecContext(ctx, tx)
+	return err
+}
+
+func (s *Store) SetQualificationRequestExamAttemptID(
+	ctx context.Context,
+	tx qrm.DB,
+	qualificationId int64,
+	userId int32,
+	attemptId string,
+) error {
+	tQualiReq := table.FivenetQualificationsRequests
+	stmt := tQualiReq.
+		UPDATE(tQualiReq.ExamAttemptID).
+		SET(mysql.String(attemptId)).
+		WHERE(mysql.AND(
+			tQualiReq.QualificationID.EQ(mysql.Int64(qualificationId)),
+			tQualiReq.UserID.EQ(mysql.Int32(userId)),
+			tQualiReq.DeletedAt.IS_NULL(),
 		)).
 		LIMIT(1)
 
@@ -367,6 +458,7 @@ func (s *Store) UpsertQualificationRequest(
 			tQualiReq.ApproverComment.SET(mysql.StringExp(mysql.NULL)),
 			tQualiReq.ApproverID.SET(mysql.IntExp(mysql.NULL)),
 			tQualiReq.ApproverJob.SET(mysql.StringExp(mysql.NULL)),
+			tQualiReq.ExamAttemptID.SET(mysql.StringExp(mysql.NULL)),
 		)
 
 	_, err := stmt.ExecContext(ctx, tx)

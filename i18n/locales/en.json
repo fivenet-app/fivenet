@@ -1539,6 +1539,11 @@
                 "title": "Update Qualification Request"
             },
             "content_unavailable": "Qualification content will be available once your request has been accepted.",
+            "take_access_required": {
+                "title": "Exam access required",
+                "description": "The \"Take\" access level is required to take this qualification's exam."
+            },
+            "auto_graded": "Auto graded",
             "exam_editor": {
                 "question_types": {
                     "separator": "Separator",
@@ -1557,6 +1562,10 @@
                 "auto_grade_mode": {
                     "title": "Grade Mode",
                     "description": "The mode for the automatic grading. 'Strict mode' gives no points for partial answers (e.g., all multiple choice answers must be selected and correct.)"
+                },
+                "data_retention": {
+                    "title": "Exam data retention",
+                    "description": "Deleted exam results can only be restored while the related exam attempt is retained. Exam responses are deleted immediately when a result is deleted."
                 }
             },
             "result_modal": {
@@ -1564,6 +1573,24 @@
             },
             "exam_view": {
                 "times_up": "Time's up! Your exam will be graded soon.",
+                "result_successful": {
+                    "title": "🎉 Exam completed successfully! 🎉",
+                    "description": "Excellent work! Your answers were graded automatically. 🥳",
+                    "manual_description": "Excellent work! Your exam was passed and has been reviewed by a tutor. 🥳"
+                },
+                "result_failed": {
+                    "title": "Exam completed",
+                    "description": "Your answers were graded automatically. You can try again after submitting a new request.",
+                    "manual_description": "Your exam was reviewed by a tutor. You can try again after submitting a new request."
+                },
+                "submitted": {
+                    "title": "✅ Exam submitted",
+                    "description": "Your exam was submitted and will be graded by a tutor."
+                },
+                "expired": {
+                    "title": "⏰ Exam time expired",
+                    "description": "Your saved answers were submitted and your exam will be graded soon."
+                },
                 "cancel": {
                     "title": "Cancel exam?",
                     "description": "Your saved answers will be deleted and you will need to start the exam again."
@@ -3084,6 +3111,18 @@
                 "ErrQualificationClosed": {
                     "title": "Qualification closed",
                     "content": "Can't request or take a closed qualification!"
+                },
+                "ErrQualificationRequestActive": {
+                    "title": "Qualification request already active",
+                    "content": "You already have an active request for this qualification."
+                },
+                "ErrQualificationRequestInvalidTransition": {
+                    "title": "Invalid request status",
+                    "content": "The qualification request cannot be changed from its current status to the selected status."
+                },
+                "ErrQualificationAlreadySuccessful": {
+                    "title": "Qualification already completed",
+                    "content": "You have already successfully completed this qualification."
                 },
                 "ErrExamDisabled": {
                     "title": "Exam disabled",

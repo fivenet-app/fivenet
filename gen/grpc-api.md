@@ -4952,6 +4952,7 @@ ExamSnapshot is immutable once an attempt has started. It ensures later edits to
 | `approver_id` | [int32](#int32) | optional |  |
 | `approver` | [resources.users.short.UserShort](#resourcesusersshortUserShort) | optional |  |
 | `approver_job` | [string](#string) | optional |  |
+| `exam_attempt_id` | [string](#string) | optional |  |
 
 
 
@@ -4990,6 +4991,8 @@ ExamSnapshot is immutable once an attempt has started. It ensures later edits to
 | `creator_id` | [int32](#int32) |  |  |
 | `creator` | [resources.users.short.UserShort](#resourcesusersshortUserShort) |  |  |
 | `creator_job` | [string](#string) |  |  |
+| `auto_graded` | [bool](#bool) |  |  |
+| `exam_attempt_id` | [string](#string) | optional |  |
 
 
 

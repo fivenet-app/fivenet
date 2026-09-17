@@ -311,6 +311,10 @@ export interface QualificationRequest {
      * @generated from protobuf field: optional string approver_job = 13
      */
     approverJob?: string;
+    /**
+     * @generated from protobuf field: optional string exam_attempt_id = 14
+     */
+    examAttemptId?: string;
 }
 /**
  * @generated from protobuf message resources.qualifications.QualificationResult
@@ -368,6 +372,14 @@ export interface QualificationResult {
      * @generated from protobuf field: string creator_job = 13
      */
     creatorJob: string;
+    /**
+     * @generated from protobuf field: bool auto_graded = 14
+     */
+    autoGraded: boolean;
+    /**
+     * @generated from protobuf field: optional string exam_attempt_id = 15
+     */
+    examAttemptId?: string;
 }
 /**
  * @generated from protobuf enum resources.qualifications.RequestStatus
@@ -1001,7 +1013,8 @@ class QualificationRequest$Type extends MessageType<QualificationRequest> {
             { no: 10, name: "approver_comment", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "512" } }, "codegen.sanitizer.sanitizer": { enabled: true, stripHtmlTags: true } } },
             { no: 11, name: "approver_id", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/, options: { "buf.validate.field": { int32: { gt: 0 } } } },
             { no: 12, name: "approver", kind: "message", T: () => UserShort, options: { "tagger.tags": "alias:\"approver\"" } },
-            { no: 13, name: "approver_job", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/ }
+            { no: 13, name: "approver_job", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/ },
+            { no: 14, name: "exam_attempt_id", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/ }
         ]);
     }
     create(value?: PartialMessage<QualificationRequest>): QualificationRequest {
@@ -1056,6 +1069,9 @@ class QualificationRequest$Type extends MessageType<QualificationRequest> {
                 case /* optional string approver_job */ 13:
                     message.approverJob = reader.string();
                     break;
+                case /* optional string exam_attempt_id */ 14:
+                    message.examAttemptId = reader.string();
+                    break;
                 default:
                     let u = options.readUnknownField;
                     if (u === "throw")
@@ -1107,6 +1123,9 @@ class QualificationRequest$Type extends MessageType<QualificationRequest> {
         /* optional string approver_job = 13; */
         if (message.approverJob !== undefined)
             writer.tag(13, WireType.LengthDelimited).string(message.approverJob);
+        /* optional string exam_attempt_id = 14; */
+        if (message.examAttemptId !== undefined)
+            writer.tag(14, WireType.LengthDelimited).string(message.examAttemptId);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -1133,7 +1152,9 @@ class QualificationResult$Type extends MessageType<QualificationResult> {
             { no: 10, name: "summary", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "512" } }, "codegen.sanitizer.sanitizer": { enabled: true, stripHtmlTags: true } } },
             { no: 11, name: "creator_id", kind: "scalar", T: 5 /*ScalarType.INT32*/, options: { "buf.validate.field": { int32: { gt: 0 } } } },
             { no: 12, name: "creator", kind: "message", T: () => UserShort, options: { "tagger.tags": "alias:\"creator\"" } },
-            { no: 13, name: "creator_job", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "20" } } } }
+            { no: 13, name: "creator_job", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "20" } } } },
+            { no: 14, name: "auto_graded", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
+            { no: 15, name: "exam_attempt_id", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/ }
         ]);
     }
     create(value?: PartialMessage<QualificationResult>): QualificationResult {
@@ -1145,6 +1166,7 @@ class QualificationResult$Type extends MessageType<QualificationResult> {
         message.summary = "";
         message.creatorId = 0;
         message.creatorJob = "";
+        message.autoGraded = false;
         if (value !== undefined)
             reflectionMergePartial<QualificationResult>(this, message, value);
         return message;
@@ -1192,6 +1214,12 @@ class QualificationResult$Type extends MessageType<QualificationResult> {
                     break;
                 case /* string creator_job */ 13:
                     message.creatorJob = reader.string();
+                    break;
+                case /* bool auto_graded */ 14:
+                    message.autoGraded = reader.bool();
+                    break;
+                case /* optional string exam_attempt_id */ 15:
+                    message.examAttemptId = reader.string();
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -1244,6 +1272,12 @@ class QualificationResult$Type extends MessageType<QualificationResult> {
         /* string creator_job = 13; */
         if (message.creatorJob !== "")
             writer.tag(13, WireType.LengthDelimited).string(message.creatorJob);
+        /* bool auto_graded = 14; */
+        if (message.autoGraded !== false)
+            writer.tag(14, WireType.Varint).bool(message.autoGraded);
+        /* optional string exam_attempt_id = 15; */
+        if (message.examAttemptId !== undefined)
+            writer.tag(15, WireType.LengthDelimited).string(message.examAttemptId);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);

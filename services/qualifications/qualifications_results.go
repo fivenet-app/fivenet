@@ -147,6 +147,7 @@ func (s *Server) CreateOrUpdateQualificationResult(
 		//nolint:protogetter // The value is needed as a pointer
 		req.GetResult().Score,
 		req.GetResult().GetSummary(),
+		false,
 		req.GetGrading(),
 		req.GetSkipNotification(),
 		&publishNotifications,
@@ -191,6 +192,7 @@ func (s *Server) createOrUpdateQualificationResult(
 	status qualifications.ResultStatus,
 	score *float32,
 	summary string,
+	autoGraded bool,
 	grading *qualificationsexam.ExamGrading,
 	skipNotification bool,
 	publishNotifications *[]func(context.Context) error,
@@ -229,6 +231,19 @@ func (s *Server) createOrUpdateQualificationResult(
 	if err != nil {
 		return 0, err
 	}
+	var examAttemptID *string
+	if resultId <= 0 &&
+		quali.GetExamMode() > qualificationsexam.QualificationExamMode_QUALIFICATION_EXAM_MODE_DISABLED &&
+		grading != nil {
+		examUser, err := s.store.GetExamUser(ctx, tx, quali.GetId(), userId)
+		if err != nil {
+			return 0, err
+		}
+		if examUser != nil && examUser.GetAttemptId() != "" {
+			attemptID := examUser.GetAttemptId()
+			examAttemptID = &attemptID
+		}
+	}
 
 	// There is currently no result with status successful
 	if resultId <= 0 &&
@@ -241,6 +256,8 @@ func (s *Server) createOrUpdateQualificationResult(
 			status,
 			score,
 			summary,
+			autoGraded,
+			examAttemptID,
 			userInfo,
 		)
 		if err != nil {
@@ -318,8 +335,10 @@ func (s *Server) createOrUpdateQualificationResult(
 			return 0, err
 		}
 	} else {
-		// If failed or other status, delete the request + exam user
-		if err := s.deleteQualificationRequest(ctx, tx, qualificationId, userId); err != nil {
+		// Keep the failed attempt and responses available to tutors until the
+		// regular retention cleanup. Only the request is soft-deleted here;
+		// starting a later retake removes the old attempt atomically.
+		if err := s.softDeleteQualificationRequest(ctx, tx, qualificationId, userId); err != nil {
 			return 0, err
 		}
 	}
@@ -514,6 +533,18 @@ func (s *Server) DeleteQualificationResult(
 			return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 		}
 		if result.GetStatus() == qualifications.ResultStatus_RESULT_STATUS_SUCCESSFUL {
+			if result.GetExamAttemptId() != "" {
+				if err := s.store.RestoreQualificationRequest(
+					ctx,
+					tx,
+					result.GetQualificationId(),
+					result.GetUserId(),
+					qualifications.RequestStatus_REQUEST_STATUS_COMPLETED,
+					result.GetExamAttemptId(),
+				); err != nil {
+					return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
+				}
+			}
 			if err := s.syncQualificationResultLabel(
 				ctx,
 				tx,
@@ -535,6 +566,14 @@ func (s *Server) DeleteQualificationResult(
 	if err := s.store.DeleteQualificationResult(ctx, tx, result.GetId()); err != nil {
 		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 	}
+	if attemptID := result.GetExamAttemptId(); attemptID != "" {
+		// Keep the ended exam-user row as a short-lived attempt tombstone so a
+		// deleted result can still restore its matching request. Responses are
+		// removed immediately; the housekeeper removes the attempt row later.
+		if err := s.deleteQualificationResultAttempt(ctx, tx, result); err != nil {
+			return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
+		}
+	}
 	if err := s.addQualificationActivity(
 		ctx,
 		tx,
@@ -546,9 +585,6 @@ func (s *Server) DeleteQualificationResult(
 	); err != nil {
 		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 	}
-	// Keep the exam attempt and its responses until their regular housekeeper cleanup.
-	// This lets a soft-deleted result be restored with its original exam data intact.
-
 	if result.GetStatus() == qualifications.ResultStatus_RESULT_STATUS_SUCCESSFUL {
 		if err := s.syncQualificationResultLabel(
 			ctx,
@@ -607,6 +643,21 @@ func (s *Server) DeleteQualificationResult(
 	grpc_audit.SetAction(ctx, audit.EventAction_EVENT_ACTION_DELETED)
 
 	return &pbqualifications.DeleteQualificationResultResponse{}, nil
+}
+
+func (s *Server) deleteQualificationResultAttempt(
+	ctx context.Context,
+	tx qrm.DB,
+	result *qualifications.QualificationResult,
+) error {
+	attemptID := result.GetExamAttemptId()
+	if attemptID == "" {
+		return nil
+	}
+	if err := s.store.DeleteQualificationRequestByAttemptID(ctx, tx, attemptID); err != nil {
+		return err
+	}
+	return s.store.DeleteExamResponses(ctx, tx, attemptID)
 }
 
 // syncQualificationResultLabel keeps the externally visible label in step with

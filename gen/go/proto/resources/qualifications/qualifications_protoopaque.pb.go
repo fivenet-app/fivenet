@@ -1425,6 +1425,7 @@ type QualificationRequest struct {
 	xxx_hidden_ApproverId      int32                  `protobuf:"varint,11,opt,name=approver_id,json=approverId,proto3,oneof"`
 	xxx_hidden_Approver        *short.UserShort       `protobuf:"bytes,12,opt,name=approver,proto3,oneof"`
 	xxx_hidden_ApproverJob     *string                `protobuf:"bytes,13,opt,name=approver_job,json=approverJob,proto3,oneof"`
+	xxx_hidden_ExamAttemptId   *string                `protobuf:"bytes,14,opt,name=exam_attempt_id,json=examAttemptId,proto3,oneof"`
 	XXX_raceDetectHookData     protoimpl.RaceDetectHookData
 	XXX_presence               [1]uint32
 	unknownFields              protoimpl.UnknownFields
@@ -1558,6 +1559,16 @@ func (x *QualificationRequest) GetApproverJob() string {
 	return ""
 }
 
+func (x *QualificationRequest) GetExamAttemptId() string {
+	if x != nil {
+		if x.xxx_hidden_ExamAttemptId != nil {
+			return *x.xxx_hidden_ExamAttemptId
+		}
+		return ""
+	}
+	return ""
+}
+
 func (x *QualificationRequest) SetCreatedAt(v *timestamp.Timestamp) {
 	x.xxx_hidden_CreatedAt = v
 }
@@ -1584,12 +1595,12 @@ func (x *QualificationRequest) SetUser(v *short.UserShort) {
 
 func (x *QualificationRequest) SetUserComment(v string) {
 	x.xxx_hidden_UserComment = &v
-	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 6, 13)
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 6, 14)
 }
 
 func (x *QualificationRequest) SetStatus(v RequestStatus) {
 	x.xxx_hidden_Status = v
-	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 7, 13)
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 7, 14)
 }
 
 func (x *QualificationRequest) SetApprovedAt(v *timestamp.Timestamp) {
@@ -1598,12 +1609,12 @@ func (x *QualificationRequest) SetApprovedAt(v *timestamp.Timestamp) {
 
 func (x *QualificationRequest) SetApproverComment(v string) {
 	x.xxx_hidden_ApproverComment = &v
-	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 9, 13)
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 9, 14)
 }
 
 func (x *QualificationRequest) SetApproverId(v int32) {
 	x.xxx_hidden_ApproverId = v
-	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 10, 13)
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 10, 14)
 }
 
 func (x *QualificationRequest) SetApprover(v *short.UserShort) {
@@ -1612,7 +1623,12 @@ func (x *QualificationRequest) SetApprover(v *short.UserShort) {
 
 func (x *QualificationRequest) SetApproverJob(v string) {
 	x.xxx_hidden_ApproverJob = &v
-	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 12, 13)
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 12, 14)
+}
+
+func (x *QualificationRequest) SetExamAttemptId(v string) {
+	x.xxx_hidden_ExamAttemptId = &v
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 13, 14)
 }
 
 func (x *QualificationRequest) HasCreatedAt() bool {
@@ -1692,6 +1708,13 @@ func (x *QualificationRequest) HasApproverJob() bool {
 	return protoimpl.X.Present(&(x.XXX_presence[0]), 12)
 }
 
+func (x *QualificationRequest) HasExamAttemptId() bool {
+	if x == nil {
+		return false
+	}
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 13)
+}
+
 func (x *QualificationRequest) ClearCreatedAt() {
 	x.xxx_hidden_CreatedAt = nil
 }
@@ -1741,6 +1764,11 @@ func (x *QualificationRequest) ClearApproverJob() {
 	x.xxx_hidden_ApproverJob = nil
 }
 
+func (x *QualificationRequest) ClearExamAttemptId() {
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 13)
+	x.xxx_hidden_ExamAttemptId = nil
+}
+
 type QualificationRequest_builder struct {
 	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
 
@@ -1757,6 +1785,7 @@ type QualificationRequest_builder struct {
 	ApproverId      *int32
 	Approver        *short.UserShort
 	ApproverJob     *string
+	ExamAttemptId   *string
 }
 
 func (b0 QualificationRequest_builder) Build() *QualificationRequest {
@@ -1770,26 +1799,30 @@ func (b0 QualificationRequest_builder) Build() *QualificationRequest {
 	x.xxx_hidden_UserId = b.UserId
 	x.xxx_hidden_User = b.User
 	if b.UserComment != nil {
-		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 6, 13)
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 6, 14)
 		x.xxx_hidden_UserComment = b.UserComment
 	}
 	if b.Status != nil {
-		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 7, 13)
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 7, 14)
 		x.xxx_hidden_Status = *b.Status
 	}
 	x.xxx_hidden_ApprovedAt = b.ApprovedAt
 	if b.ApproverComment != nil {
-		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 9, 13)
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 9, 14)
 		x.xxx_hidden_ApproverComment = b.ApproverComment
 	}
 	if b.ApproverId != nil {
-		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 10, 13)
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 10, 14)
 		x.xxx_hidden_ApproverId = *b.ApproverId
 	}
 	x.xxx_hidden_Approver = b.Approver
 	if b.ApproverJob != nil {
-		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 12, 13)
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 12, 14)
 		x.xxx_hidden_ApproverJob = b.ApproverJob
+	}
+	if b.ExamAttemptId != nil {
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 13, 14)
+		x.xxx_hidden_ExamAttemptId = b.ExamAttemptId
 	}
 	return m0
 }
@@ -1809,6 +1842,8 @@ type QualificationResult struct {
 	xxx_hidden_CreatorId       int32                  `protobuf:"varint,11,opt,name=creator_id,json=creatorId,proto3"`
 	xxx_hidden_Creator         *short.UserShort       `protobuf:"bytes,12,opt,name=creator,proto3"`
 	xxx_hidden_CreatorJob      string                 `protobuf:"bytes,13,opt,name=creator_job,json=creatorJob,proto3"`
+	xxx_hidden_AutoGraded      bool                   `protobuf:"varint,14,opt,name=auto_graded,json=autoGraded,proto3"`
+	xxx_hidden_ExamAttemptId   *string                `protobuf:"bytes,15,opt,name=exam_attempt_id,json=examAttemptId,proto3,oneof"`
 	XXX_raceDetectHookData     protoimpl.RaceDetectHookData
 	XXX_presence               [1]uint32
 	unknownFields              protoimpl.UnknownFields
@@ -1931,6 +1966,23 @@ func (x *QualificationResult) GetCreatorJob() string {
 	return ""
 }
 
+func (x *QualificationResult) GetAutoGraded() bool {
+	if x != nil {
+		return x.xxx_hidden_AutoGraded
+	}
+	return false
+}
+
+func (x *QualificationResult) GetExamAttemptId() string {
+	if x != nil {
+		if x.xxx_hidden_ExamAttemptId != nil {
+			return *x.xxx_hidden_ExamAttemptId
+		}
+		return ""
+	}
+	return ""
+}
+
 func (x *QualificationResult) SetId(v int64) {
 	x.xxx_hidden_Id = v
 }
@@ -1965,7 +2017,7 @@ func (x *QualificationResult) SetStatus(v ResultStatus) {
 
 func (x *QualificationResult) SetScore(v float32) {
 	x.xxx_hidden_Score = v
-	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 8, 13)
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 8, 15)
 }
 
 func (x *QualificationResult) SetSummary(v string) {
@@ -1982,6 +2034,15 @@ func (x *QualificationResult) SetCreator(v *short.UserShort) {
 
 func (x *QualificationResult) SetCreatorJob(v string) {
 	x.xxx_hidden_CreatorJob = v
+}
+
+func (x *QualificationResult) SetAutoGraded(v bool) {
+	x.xxx_hidden_AutoGraded = v
+}
+
+func (x *QualificationResult) SetExamAttemptId(v string) {
+	x.xxx_hidden_ExamAttemptId = &v
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 14, 15)
 }
 
 func (x *QualificationResult) HasCreatedAt() bool {
@@ -2026,6 +2087,13 @@ func (x *QualificationResult) HasCreator() bool {
 	return x.xxx_hidden_Creator != nil
 }
 
+func (x *QualificationResult) HasExamAttemptId() bool {
+	if x == nil {
+		return false
+	}
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 14)
+}
+
 func (x *QualificationResult) ClearCreatedAt() {
 	x.xxx_hidden_CreatedAt = nil
 }
@@ -2051,6 +2119,11 @@ func (x *QualificationResult) ClearCreator() {
 	x.xxx_hidden_Creator = nil
 }
 
+func (x *QualificationResult) ClearExamAttemptId() {
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 14)
+	x.xxx_hidden_ExamAttemptId = nil
+}
+
 type QualificationResult_builder struct {
 	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
 
@@ -2067,6 +2140,8 @@ type QualificationResult_builder struct {
 	CreatorId       int32
 	Creator         *short.UserShort
 	CreatorJob      string
+	AutoGraded      bool
+	ExamAttemptId   *string
 }
 
 func (b0 QualificationResult_builder) Build() *QualificationResult {
@@ -2082,13 +2157,18 @@ func (b0 QualificationResult_builder) Build() *QualificationResult {
 	x.xxx_hidden_User = b.User
 	x.xxx_hidden_Status = b.Status
 	if b.Score != nil {
-		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 8, 13)
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 8, 15)
 		x.xxx_hidden_Score = *b.Score
 	}
 	x.xxx_hidden_Summary = b.Summary
 	x.xxx_hidden_CreatorId = b.CreatorId
 	x.xxx_hidden_Creator = b.Creator
 	x.xxx_hidden_CreatorJob = b.CreatorJob
+	x.xxx_hidden_AutoGraded = b.AutoGraded
+	if b.ExamAttemptId != nil {
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 14, 15)
+		x.xxx_hidden_ExamAttemptId = b.ExamAttemptId
+	}
 	return m0
 }
 
@@ -2197,7 +2277,7 @@ const file_resources_qualifications_qualifications_proto_rawDesc = "" +
 	"roleFormat\x88\x01\x01:\x06\xe2\xf3\x18\x02\b\x01B\f\n" +
 	"\n" +
 	"_role_nameB\x0e\n" +
-	"\f_role_format\"\x8c\b\n" +
+	"\f_role_format\"\xcd\b\n" +
 	"\x14QualificationRequest\x12B\n" +
 	"\n" +
 	"created_at\x18\x01 \x01(\v2\x1e.resources.timestamp.TimestampH\x00R\tcreatedAt\x88\x01\x01\x12B\n" +
@@ -2216,7 +2296,9 @@ const file_resources_qualifications_qualifications_proto_rawDesc = "" +
 	"\vapprover_id\x18\v \x01(\x05H\aR\n" +
 	"approverId\x88\x01\x01\x12X\n" +
 	"\bapprover\x18\f \x01(\v2 .resources.users.short.UserShortB\x15\x9a\x84\x9e\x03\x10alias:\"approver\"H\bR\bapprover\x88\x01\x01\x12&\n" +
-	"\fapprover_job\x18\r \x01(\tH\tR\vapproverJob\x88\x01\x01B\r\n" +
+	"\fapprover_job\x18\r \x01(\tH\tR\vapproverJob\x88\x01\x01\x12+\n" +
+	"\x0fexam_attempt_id\x18\x0e \x01(\tH\n" +
+	"R\rexamAttemptId\x88\x01\x01B\r\n" +
 	"\v_created_atB\r\n" +
 	"\v_deleted_atB\x10\n" +
 	"\x0e_qualificationB\x0f\n" +
@@ -2226,7 +2308,8 @@ const file_resources_qualifications_qualifications_proto_rawDesc = "" +
 	"\x11_approver_commentB\x0e\n" +
 	"\f_approver_idB\v\n" +
 	"\t_approverB\x0f\n" +
-	"\r_approver_job\"\x81\x06\n" +
+	"\r_approver_jobB\x12\n" +
+	"\x10_exam_attempt_id\"\xe3\x06\n" +
 	"\x13QualificationResult\x121\n" +
 	"\x02id\x18\x01 \x01(\x03B!\x9a\x84\x9e\x03\x1csql:\"primary_key\" alias:\"id\"R\x02id\x12B\n" +
 	"\n" +
@@ -2245,11 +2328,15 @@ const file_resources_qualifications_qualifications_proto_rawDesc = "" +
 	"creator_id\x18\v \x01(\x05R\tcreatorId\x12P\n" +
 	"\acreator\x18\f \x01(\v2 .resources.users.short.UserShortB\x14\x9a\x84\x9e\x03\x0falias:\"creator\"R\acreator\x12\x1f\n" +
 	"\vcreator_job\x18\r \x01(\tR\n" +
-	"creatorJobB\r\n" +
+	"creatorJob\x12\x1f\n" +
+	"\vauto_graded\x18\x0e \x01(\bR\n" +
+	"autoGraded\x12+\n" +
+	"\x0fexam_attempt_id\x18\x0f \x01(\tH\x04R\rexamAttemptId\x88\x01\x01B\r\n" +
 	"\v_created_atB\r\n" +
 	"\v_deleted_atB\x10\n" +
 	"\x0e_qualificationB\b\n" +
-	"\x06_score*\xe3\x01\n" +
+	"\x06_scoreB\x12\n" +
+	"\x10_exam_attempt_id*\xe3\x01\n" +
 	"\rRequestStatus\x12\x1e\n" +
 	"\x1aREQUEST_STATUS_UNSPECIFIED\x10\x00\x12\x1a\n" +
 	"\x16REQUEST_STATUS_PENDING\x10\x01\x12\x19\n" +

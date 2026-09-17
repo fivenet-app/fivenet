@@ -149,7 +149,7 @@ const columns = computed(
                 id: 'actions',
                 cell: ({ row }) =>
                     h('div', [
-                        row.original.status !== RequestStatus.DENIED &&
+                        (row.original.status === RequestStatus.PENDING || row.original.status === RequestStatus.ACCEPTED) &&
                             h(UTooltip, { text: t('common.decline') }, () =>
                                 h(UButton, {
                                     variant: 'link',
@@ -164,9 +164,7 @@ const columns = computed(
                                     },
                                 }),
                             ),
-                        row.original.status !== RequestStatus.ACCEPTED &&
-                            row.original.status !== RequestStatus.EXAM_STARTED &&
-                            row.original.status !== RequestStatus.EXAM_GRADING &&
+                        (row.original.status === RequestStatus.PENDING || row.original.status === RequestStatus.DENIED) &&
                             h(UTooltip, { text: t('common.accept') }, () =>
                                 h(UButton, {
                                     variant: 'link',

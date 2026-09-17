@@ -22,4 +22,5 @@ type FivenetQualificationsRequests struct {
 	ApproverComment *string    `json:"approver_comment"`
 	ApproverID      *int32     `json:"approver_id"`
 	ApproverJob     *string    `json:"approver_job"`
+	ExamAttemptID   *string    `json:"exam_attempt_id"`
 }

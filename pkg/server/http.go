@@ -109,6 +109,12 @@ func New(p Params) (Result, error) {
 		}
 		p.Logger.Info("http server listening", zap.String("address", srv.Addr))
 		go srv.Serve(ln)
+
+		select {
+		case <-time.After(3 * time.Second):
+		case <-ctx.Done():
+			return ctx.Err()
+		}
 		p.Readiness.SetReady(true)
 
 		return nil

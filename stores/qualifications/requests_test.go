@@ -40,6 +40,91 @@ func TestStoreUpdateRequestStatus(t *testing.T) {
 	require.NoError(t, mock.ExpectationsWereMet())
 }
 
+func TestStoreDeleteQualificationRequestByAttemptIDScopesToAttempt(t *testing.T) {
+	t.Parallel()
+
+	db, mock, err := sqlmock.New()
+	require.NoError(t, err)
+	t.Cleanup(func() { _ = db.Close() })
+
+	store := New(testParams(db))
+	mock.ExpectExec("(?s)UPDATE fivenet_qualifications_requests SET deleted_at = CURRENT_TIMESTAMP.*WHERE fivenet_qualifications_requests\\.exam_attempt_id = \\?.*LIMIT \\?;").
+		WithArgs("attempt-older", int64(1)).
+		WillReturnResult(sqlmock.NewResult(0, 1))
+
+	require.NoError(
+		t,
+		store.DeleteQualificationRequestByAttemptID(t.Context(), db, "attempt-older"),
+	)
+	require.NoError(t, mock.ExpectationsWereMet())
+}
+
+func TestStoreRestoreQualificationRequestScopesToAttempt(t *testing.T) {
+	t.Parallel()
+
+	db, mock, err := sqlmock.New()
+	require.NoError(t, err)
+	t.Cleanup(func() { _ = db.Close() })
+
+	store := New(testParams(db))
+	mock.ExpectExec("(?s)UPDATE fivenet_qualifications_requests SET deleted_at = NULL, status = \\?.*WHERE .*qualification_id = \\?.*user_id = \\?.*exam_attempt_id = \\?.*LIMIT \\?;").
+		WithArgs(int32(resqualifications.RequestStatus_REQUEST_STATUS_COMPLETED), int64(42), int32(7), "attempt-current", int64(1)).
+		WillReturnResult(sqlmock.NewResult(0, 1))
+
+	require.NoError(t, store.RestoreQualificationRequest(
+		t.Context(), db, 42, 7,
+		resqualifications.RequestStatus_REQUEST_STATUS_COMPLETED,
+		"attempt-current",
+	))
+	require.NoError(t, mock.ExpectationsWereMet())
+}
+
+func TestStoreSetQualificationRequestExamAttemptIDIgnoresDeletedRequest(t *testing.T) {
+	t.Parallel()
+
+	db, mock, err := sqlmock.New()
+	require.NoError(t, err)
+	t.Cleanup(func() { _ = db.Close() })
+
+	store := New(testParams(db))
+	mock.ExpectExec("(?s)UPDATE fivenet_qualifications_requests SET exam_attempt_id = \\?.*WHERE .*qualification_id = \\?.*user_id = \\?.*deleted_at IS NULL.*LIMIT \\?;").
+		WithArgs("attempt-new", int64(42), int32(7), int64(1)).
+		WillReturnResult(sqlmock.NewResult(0, 0))
+
+	require.NoError(
+		t,
+		store.SetQualificationRequestExamAttemptID(t.Context(), db, 42, 7, "attempt-new"),
+	)
+	require.NoError(t, mock.ExpectationsWereMet())
+}
+
+func TestStoreUpsertQualificationRequestClearsPreviousExamAttempt(t *testing.T) {
+	t.Parallel()
+
+	db, mock, err := sqlmock.New()
+	require.NoError(t, err)
+	t.Cleanup(func() { _ = db.Close() })
+
+	store := New(testParams(db))
+	mock.ExpectExec("(?s)INSERT INTO .*fivenet_qualifications_requests.*ON DUPLICATE KEY UPDATE.*exam_attempt_id = NULL.*").
+		WithArgs(
+			int64(42), int32(7), nil,
+			int32(resqualifications.RequestStatus_REQUEST_STATUS_PENDING),
+			int32(resqualifications.RequestStatus_REQUEST_STATUS_PENDING),
+		).
+		WillReturnResult(sqlmock.NewResult(0, 1))
+
+	require.NoError(
+		t,
+		store.UpsertQualificationRequest(t.Context(), db, &resqualifications.QualificationRequest{
+			QualificationId: 42,
+			UserId:          7,
+			UserComment:     nil,
+		}),
+	)
+	require.NoError(t, mock.ExpectationsWereMet())
+}
+
 func TestStoreListQualificationRequestsUsesVisibilityCte(t *testing.T) {
 	t.Parallel()
 

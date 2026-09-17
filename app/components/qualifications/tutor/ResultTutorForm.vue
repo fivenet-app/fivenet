@@ -105,6 +105,7 @@ async function createOrUpdateQualificationResult(
                 summary: values.summary,
                 creatorId: activeChar.value!.userId,
                 creatorJob: activeChar.value!.job,
+                autoGraded: false,
             },
             grading: props.grading,
             skipNotification: !values.notifyUser,

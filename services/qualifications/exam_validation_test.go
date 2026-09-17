@@ -3,9 +3,11 @@ package qualifications
 import (
 	"context"
 	"testing"
+	"time"
 
 	qualificationspb "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/qualifications"
 	qualificationsexam "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/qualifications/exam"
+	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/timestamp"
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/userinfo"
 	errorsqualifications "github.com/fivenet-app/fivenet/v2026/services/qualifications/errors"
 	qualificationsstore "github.com/fivenet-app/fivenet/v2026/stores/qualifications"
@@ -20,6 +22,19 @@ type effectiveExamTestStore struct {
 	exam            *qualificationsexam.ExamQuestions
 	qualificationID int64
 	withAnswers     bool
+}
+
+func TestIsStaleExamAttemptOnlyTreatsEndedAttemptsWithoutResultsAsStale(t *testing.T) {
+	t.Parallel()
+
+	attempt := &qualificationsexam.ExamUser{EndedAt: timestamp.New(time.Unix(100, 0))}
+
+	assert.True(t, isStaleExamAttempt(attempt, nil))
+	assert.False(t, isStaleExamAttempt(attempt, &qualificationspb.QualificationResult{
+		Status: qualificationspb.ResultStatus_RESULT_STATUS_FAILED,
+	}))
+	assert.False(t, isStaleExamAttempt(&qualificationsexam.ExamUser{}, nil))
+	assert.False(t, isStaleExamAttempt(nil, nil))
 }
 
 func (s *effectiveExamTestStore) GetExamQuestions(

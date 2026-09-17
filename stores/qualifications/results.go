@@ -77,6 +77,8 @@ func (s *Store) ListQualificationsResults(
 		tQualiResult.Status,
 		tQualiResult.Score,
 		tQualiResult.Summary,
+		tQualiResult.AutoGraded,
+		tQualiResult.ExamAttemptID,
 		tQualiResult.CreatorID,
 		tQuali.ID,
 		tQuali.CreatedAt,
@@ -228,6 +230,8 @@ func (s *Store) GetQualificationResult(
 		tQualiResult.Status,
 		tQualiResult.Score,
 		tQualiResult.Summary,
+		tQualiResult.AutoGraded,
+		tQualiResult.ExamAttemptID,
 		tQualiResult.CreatorID,
 		tQualiResult.CreatorJob,
 	}
@@ -305,6 +309,8 @@ func (s *Store) CreateQualificationResult(
 	status resqualifications.ResultStatus,
 	score *float32,
 	summary string,
+	autoGraded bool,
+	examAttemptID *string,
 	creator *userinfo.UserInfo,
 ) (int64, error) {
 	var creatorId mysql.Expression
@@ -322,6 +328,8 @@ func (s *Store) CreateQualificationResult(
 			tQualiResult.Status,
 			tQualiResult.Score,
 			tQualiResult.Summary,
+			tQualiResult.AutoGraded,
+			tQualiResult.ExamAttemptID,
 			tQualiResult.CreatorID,
 			tQualiResult.CreatorJob,
 		).
@@ -331,6 +339,8 @@ func (s *Store) CreateQualificationResult(
 			status,
 			score,
 			summary,
+			autoGraded,
+			examAttemptID,
 			creatorId,
 			creator.GetJob(),
 		)

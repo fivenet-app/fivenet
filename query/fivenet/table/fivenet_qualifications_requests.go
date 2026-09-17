@@ -27,6 +27,7 @@ type fivenetQualificationsRequestsTable struct {
 	ApproverComment mysql.ColumnString
 	ApproverID      mysql.ColumnInteger
 	ApproverJob     mysql.ColumnString
+	ExamAttemptID   mysql.ColumnString
 
 	AllColumns     mysql.ColumnList
 	MutableColumns mysql.ColumnList
@@ -78,8 +79,9 @@ func newFivenetQualificationsRequestsTableImpl(schemaName, tableName, alias stri
 		ApproverCommentColumn = mysql.StringColumn("approver_comment")
 		ApproverIDColumn      = mysql.IntegerColumn("approver_id")
 		ApproverJobColumn     = mysql.StringColumn("approver_job")
-		allColumns            = mysql.ColumnList{CreatedAtColumn, DeletedAtColumn, QualificationIDColumn, UserIDColumn, UserCommentColumn, StatusColumn, ApprovedAtColumn, ApproverCommentColumn, ApproverIDColumn, ApproverJobColumn}
-		mutableColumns        = mysql.ColumnList{CreatedAtColumn, DeletedAtColumn, QualificationIDColumn, UserIDColumn, UserCommentColumn, StatusColumn, ApprovedAtColumn, ApproverCommentColumn, ApproverIDColumn, ApproverJobColumn}
+		ExamAttemptIDColumn   = mysql.StringColumn("exam_attempt_id")
+		allColumns            = mysql.ColumnList{CreatedAtColumn, DeletedAtColumn, QualificationIDColumn, UserIDColumn, UserCommentColumn, StatusColumn, ApprovedAtColumn, ApproverCommentColumn, ApproverIDColumn, ApproverJobColumn, ExamAttemptIDColumn}
+		mutableColumns        = mysql.ColumnList{CreatedAtColumn, DeletedAtColumn, QualificationIDColumn, UserIDColumn, UserCommentColumn, StatusColumn, ApprovedAtColumn, ApproverCommentColumn, ApproverIDColumn, ApproverJobColumn, ExamAttemptIDColumn}
 		defaultColumns        = mysql.ColumnList{CreatedAtColumn, StatusColumn}
 	)
 
@@ -97,6 +99,7 @@ func newFivenetQualificationsRequestsTableImpl(schemaName, tableName, alias stri
 		ApproverComment: ApproverCommentColumn,
 		ApproverID:      ApproverIDColumn,
 		ApproverJob:     ApproverJobColumn,
+		ExamAttemptID:   ExamAttemptIDColumn,
 
 		AllColumns:     allColumns,
 		MutableColumns: mutableColumns,

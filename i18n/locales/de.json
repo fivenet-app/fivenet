@@ -1539,6 +1539,11 @@
                 "title": "Qualifizierungsantrag bearbeiten"
             },
             "content_unavailable": "Der Inhalt der Qualifizierung wird verfügbar sein, sobald Ihr Antrag angenommen wurde.",
+            "take_access_required": {
+                "title": "Prüfungszugriff erforderlich",
+                "description": "Die Zugriffsstufe \"Prüfung absolvieren\" ist erforderlich, um die Prüfung dieser Qualifizierung abzulegen."
+            },
+            "auto_graded": "Automatisch benotet",
             "exam_editor": {
                 "question_types": {
                     "separator": "Trenner",
@@ -1557,6 +1562,10 @@
                 "auto_grade_mode": {
                     "title": "Bewertungsmodus",
                     "description": "Der Modus für die automatische Bewertung. 'Strikter Modus' gibt keine Punkte für teilweise richtige Antworten (z. B. müssen alle Multiple-Choice-Antworten ausgewählt und korrekt sein.)"
+                },
+                "data_retention": {
+                    "title": "Aufbewahrung von Prüfungsdaten",
+                    "description": "Gelöschte Prüfungsergebnisse können nur wiederhergestellt werden, solange der zugehörige Prüfungsversuch aufbewahrt wird. Prüfungsantworten werden beim Löschen eines Ergebnisses sofort gelöscht."
                 }
             },
             "result_modal": {
@@ -1564,6 +1573,24 @@
             },
             "exam_view": {
                 "times_up": "Die Zeit ist um! Ihre Prüfung wird bald benotet werden.",
+                "result_successful": {
+                    "title": "🎉 Prüfung erfolgreich bestanden! 🎉",
+                    "description": "Hervorragende Arbeit! Ihre Antworten wurden automatisch benotet. 🥳",
+                    "manual_description": "Hervorragende Arbeit! Sie haben die Prüfung bestanden und sie wurde von einem Tutor bewertet. 🥳"
+                },
+                "result_failed": {
+                    "title": "Prüfung abgeschlossen",
+                    "description": "Ihre Antworten wurden automatisch benotet. Nach einer neuen Anfrage können Sie die Prüfung erneut ablegen.",
+                    "manual_description": "Ihre Prüfung wurde von einem Tutor bewertet. Nach einer neuen Anfrage können Sie die Prüfung erneut ablegen."
+                },
+                "submitted": {
+                    "title": "✅ Prüfung abgegeben",
+                    "description": "Ihre Prüfung wurde abgegeben und wird von einem Tutor benotet."
+                },
+                "expired": {
+                    "title": "⏰ Prüfungszeit abgelaufen",
+                    "description": "Ihre gespeicherten Antworten wurden abgegeben und Ihre Prüfung wird bald benotet."
+                },
                 "cancel": {
                     "title": "Prüfung abbrechen?",
                     "description": "Ihre gespeicherten Antworten werden gelöscht und Sie müssen die Prüfung erneut beginnen."
@@ -3084,6 +3111,18 @@
                 "ErrQualificationClosed": {
                     "title": "Qualifizierung geschlossen",
                     "content": "Sie können keine Anfrage an eine geschlossene Qualifizierung stellen!"
+                },
+                "ErrQualificationRequestActive": {
+                    "title": "Qualifizierungsanfrage bereits aktiv",
+                    "content": "Sie haben bereits eine aktive Anfrage für diese Qualifizierung."
+                },
+                "ErrQualificationRequestInvalidTransition": {
+                    "title": "Ungültiger Anfragestatus",
+                    "content": "Die Qualifizierungsanfrage kann nicht von ihrem aktuellen Status in den ausgewählten Status geändert werden."
+                },
+                "ErrQualificationAlreadySuccessful": {
+                    "title": "Qualifizierung bereits abgeschlossen",
+                    "content": "Sie haben diese Qualifizierung bereits erfolgreich abgeschlossen."
                 },
                 "ErrExamDisabled": {
                     "title": "Prüfung deaktiviert",

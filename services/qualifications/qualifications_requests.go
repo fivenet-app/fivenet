@@ -142,11 +142,14 @@ func (s *Server) CreateOrUpdateQualificationRequest(
 	}
 	defer tx.Rollback()
 	var publishNotification func(context.Context) error
+	responseUserID := userInfo.GetUserId()
 
 	// If user can grade a qualification, they are treated as an "approver" of requests
 	if canGrade && req.GetRequest().GetUserId() > 0 {
-		previousRequest, err := s.getQualificationRequest(
+		responseUserID = req.GetRequest().GetUserId()
+		previousRequest, err := s.store.GetQualificationRequestForUpdate(
 			ctx,
+			tx,
 			req.GetRequest().GetQualificationId(),
 			req.GetRequest().GetUserId(),
 			userInfo,
@@ -154,10 +157,16 @@ func (s *Server) CreateOrUpdateQualificationRequest(
 		if err != nil {
 			return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 		}
-		previousStatus := qualifications.RequestStatus_REQUEST_STATUS_UNSPECIFIED
-		if previousRequest != nil {
-			previousStatus = previousRequest.GetStatus()
+		if previousRequest == nil {
+			return nil, errorsqualifications.ErrQualificationRequestInvalidTransition
 		}
+		if !isValidQualificationRequestStatusTransition(
+			previousRequest.GetStatus(),
+			req.GetRequest().GetStatus(),
+		) {
+			return nil, errorsqualifications.ErrQualificationRequestInvalidTransition
+		}
+		previousStatus := previousRequest.GetStatus()
 		if err := s.store.ApproveQualificationRequest(
 			ctx,
 			tx,
@@ -167,42 +176,30 @@ func (s *Server) CreateOrUpdateQualificationRequest(
 			return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 		}
 
-		request, err := s.getQualificationRequest(
+		requestStatus := req.GetRequest().GetStatus()
+		if err := s.addQualificationActivity(
 			ctx,
-			req.GetRequest().GetQualificationId(),
-			req.GetRequest().GetUserId(),
-			userInfo,
-		)
-		if err != nil {
+			tx,
+			previousRequest.GetQualificationId(),
+			qualificationsactivity.QualificationActivityType_QUALIFICATION_ACTIVITY_TYPE_REQUEST_UPDATED,
+			userInfo.GetUserId(),
+			previousRequest.GetUserId(),
+			qualificationsactivity.QualificationActivityData_builder{
+				RequestStatus: &requestStatus,
+			}.Build(),
+		); err != nil {
 			return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
-		}
-		if request != nil {
-			requestStatus := req.GetRequest().GetStatus()
-
-			if err := s.addQualificationActivity(
-				ctx,
-				tx,
-				request.GetQualificationId(),
-				qualificationsactivity.QualificationActivityType_QUALIFICATION_ACTIVITY_TYPE_REQUEST_UPDATED,
-				userInfo.GetUserId(),
-				request.GetUserId(),
-				qualificationsactivity.QualificationActivityData_builder{
-					RequestStatus: &requestStatus,
-				}.Build(),
-			); err != nil {
-				return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
-			}
 		}
 
 		// Only send notification when the status actually changed.
-		if !req.GetSkipNotification() && request != nil && previousStatus != request.GetStatus() &&
-			request.GetUserId() != userInfo.GetUserId() {
-			requestID := request.GetQualificationId()
+		if !req.GetSkipNotification() && previousStatus != req.GetRequest().GetStatus() &&
+			previousRequest.GetUserId() != userInfo.GetUserId() {
+			requestID := previousRequest.GetQualificationId()
 			actorID := userInfo.GetUserId()
 			entityType := "qualifications.request"
 			notificationData, err := s.qualificationNotificationData(
 				ctx,
-				request.GetUserId(),
+				previousRequest.GetUserId(),
 				requestID,
 			)
 			if err != nil {
@@ -212,7 +209,7 @@ func (s *Server) CreateOrUpdateQualificationRequest(
 				ctx,
 				tx,
 				notifi.NewUserNotification(notifi.UserNotificationParams{
-					UserID: request.GetUserId(),
+					UserID: previousRequest.GetUserId(),
 					Title: &common.I18NItem{
 						Key: "notifications.qualifications.request_updated.title",
 					},
@@ -264,8 +261,9 @@ func (s *Server) CreateOrUpdateQualificationRequest(
 			return nil, errorsqualifications.ErrRequirementsMissing
 		}
 
-		request, err := s.getQualificationRequest(
+		request, err := s.store.GetQualificationRequestForUpdate(
 			ctx,
+			tx,
 			req.GetRequest().GetQualificationId(),
 			userInfo.GetUserId(),
 			userInfo,
@@ -274,10 +272,17 @@ func (s *Server) CreateOrUpdateQualificationRequest(
 			return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 		}
 
-		if request != nil &&
-			(!request.HasStatus() || (request.GetStatus() != qualifications.RequestStatus_REQUEST_STATUS_PENDING &&
+		// A user may submit a new request after a denial or completed attempt,
+		// but an active request must not be overwritten by another submission.
+		if request != nil && (!request.HasStatus() ||
+			(request.GetStatus() != qualifications.RequestStatus_REQUEST_STATUS_DENIED &&
 				request.GetStatus() != qualifications.RequestStatus_REQUEST_STATUS_COMPLETED)) {
-			return nil, errorsqualifications.ErrFailedQuery
+			return nil, errorsqualifications.ErrQualificationRequestActive
+		}
+		if request != nil &&
+			request.GetStatus() == qualifications.RequestStatus_REQUEST_STATUS_COMPLETED &&
+			quali.GetResult().GetStatus() == qualifications.ResultStatus_RESULT_STATUS_SUCCESSFUL {
+			return nil, errorsqualifications.ErrQualificationAlreadySuccessful
 		}
 		req.Request.UserId = userInfo.GetUserId()
 		if err := s.store.UpsertQualificationRequest(ctx, tx, req.GetRequest()); err != nil {
@@ -310,7 +315,7 @@ func (s *Server) CreateOrUpdateQualificationRequest(
 	request, err := s.getQualificationRequest(
 		ctx,
 		req.GetRequest().GetQualificationId(),
-		userInfo.GetUserId(),
+		responseUserID,
 		userInfo,
 	)
 	if err != nil {
@@ -320,6 +325,27 @@ func (s *Server) CreateOrUpdateQualificationRequest(
 	return &pbqualifications.CreateOrUpdateQualificationRequestResponse{
 		Request: request,
 	}, nil
+}
+
+func isValidQualificationRequestStatusTransition(
+	previous qualifications.RequestStatus,
+	current qualifications.RequestStatus,
+) bool {
+	switch previous {
+	case qualifications.RequestStatus_REQUEST_STATUS_PENDING:
+		return current == qualifications.RequestStatus_REQUEST_STATUS_PENDING ||
+			current == qualifications.RequestStatus_REQUEST_STATUS_ACCEPTED ||
+			current == qualifications.RequestStatus_REQUEST_STATUS_DENIED
+	case qualifications.RequestStatus_REQUEST_STATUS_DENIED:
+		return current == qualifications.RequestStatus_REQUEST_STATUS_PENDING ||
+			current == qualifications.RequestStatus_REQUEST_STATUS_ACCEPTED ||
+			current == qualifications.RequestStatus_REQUEST_STATUS_DENIED
+	case qualifications.RequestStatus_REQUEST_STATUS_ACCEPTED:
+		return current == qualifications.RequestStatus_REQUEST_STATUS_ACCEPTED ||
+			current == qualifications.RequestStatus_REQUEST_STATUS_DENIED
+	default:
+		return false
+	}
 }
 
 func (s *Server) getQualificationRequest(
@@ -471,7 +497,7 @@ func (s *Server) deleteQualificationRequest(
 	qualificationId int64,
 	userId int32,
 ) error {
-	if err := s.store.DeleteQualificationRequest(ctx, tx, qualificationId, userId); err != nil {
+	if err := s.softDeleteQualificationRequest(ctx, tx, qualificationId, userId); err != nil {
 		return err
 	}
 	examUser, err := s.store.GetExamUser(ctx, tx, qualificationId, userId)
@@ -481,13 +507,18 @@ func (s *Server) deleteQualificationRequest(
 	if examUser == nil {
 		return nil
 	}
-	if err := s.store.DeleteExamResponses(ctx, tx, examUser.GetAttemptId()); err != nil {
-		return err
-	}
-
-	if err := s.store.DeleteExamUser(ctx, tx, examUser.GetAttemptId()); err != nil {
+	if err := s.deleteExamAttempt(ctx, tx, examUser.GetAttemptId()); err != nil {
 		return err
 	}
 
 	return nil
+}
+
+func (s *Server) softDeleteQualificationRequest(
+	ctx context.Context,
+	tx qrm.DB,
+	qualificationId int64,
+	userId int32,
+) error {
+	return s.store.DeleteQualificationRequest(ctx, tx, qualificationId, userId)
 }

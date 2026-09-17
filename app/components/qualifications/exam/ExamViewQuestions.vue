@@ -311,7 +311,15 @@ if (!props.responses) {
                 await submitExam(state.value, true);
                 finalSaveSucceeded = true;
             } catch {
-                // The RPC error has already been surfaced by submitExam.
+                // Retry once after a short delay so a transient failure does not
+                // lose the user's final answers.
+                await new Promise((resolve) => setTimeout(resolve, 4000));
+                try {
+                    await submitExam(state.value, true);
+                    finalSaveSucceeded = true;
+                } catch {
+                    // The RPC error has already been surfaced by submitExam.
+                }
             }
 
             disabled.value = true;
@@ -433,20 +441,6 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
 
             <UDashboardToolbar v-if="!responses">
                 <template #left>
-                    <div class="flex gap-1">
-                        <UBadge v-if="props.examUser.startedAt" class="inline-flex gap-1">
-                            <span class="font-semibold">{{ $t('common.begins_at') }}:</span>
-                            <span>{{ $d(toDate(props.examUser.startedAt), 'long') }}</span>
-                        </UBadge>
-
-                        <UBadge v-if="props.examUser.endsAt" class="inline-flex gap-1">
-                            <span class="font-semibold">{{ $t('common.ends_at') }}:</span>
-                            <span>{{ $d(toDate(props.examUser.endsAt), 'long') }}</span>
-                        </UBadge>
-                    </div>
-                </template>
-
-                <template #right>
                     <div class="flex justify-between gap-2">
                         <div class="flex gap-2">
                             <UBadge
@@ -461,6 +455,20 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                 :label="`${$t('common.count')}: ${exam.questions.length} ${$t('common.question', exam.questions.length)}`"
                             />
                         </div>
+                    </div>
+                </template>
+
+                <template #right>
+                    <div class="flex gap-1">
+                        <UBadge v-if="props.examUser.startedAt" class="inline-flex gap-1">
+                            <span class="font-semibold">{{ $t('common.begins_at') }}:</span>
+                            <span>{{ $d(toDate(props.examUser.startedAt), 'long') }}</span>
+                        </UBadge>
+
+                        <UBadge v-if="props.examUser.endsAt" class="inline-flex gap-1">
+                            <span class="font-semibold">{{ $t('common.ends_at') }}:</span>
+                            <span>{{ $d(toDate(props.examUser.endsAt), 'long') }}</span>
+                        </UBadge>
                     </div>
                 </template>
             </UDashboardToolbar>

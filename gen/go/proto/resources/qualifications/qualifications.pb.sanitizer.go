@@ -235,6 +235,11 @@ func (m *QualificationRequest) Sanitize() error {
 		}
 	}
 
+	// Field: ExamAttemptId
+	if m.ExamAttemptId != nil {
+		*m.ExamAttemptId = htmlsanitizer.SanitizeAndUnescape(*m.ExamAttemptId)
+	}
+
 	// Field: Qualification
 	if m.Qualification != nil {
 		if v, ok := any(m.GetQualification()).(interface{ Sanitize() error }); ok {
@@ -324,6 +329,11 @@ func (m *QualificationResult) Sanitize() error {
 				return err
 			}
 		}
+	}
+
+	// Field: ExamAttemptId
+	if m.ExamAttemptId != nil {
+		*m.ExamAttemptId = htmlsanitizer.SanitizeAndUnescape(*m.ExamAttemptId)
 	}
 
 	// Field: Qualification

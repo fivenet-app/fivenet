@@ -167,6 +167,7 @@ message QualificationRequest {
   optional int32 approver_id = 11 [(buf.validate.field).int32.gt = 0];
   optional resources.users.short.UserShort approver = 12 [(tagger.tags) = "alias:\"approver\""];
   optional string approver_job = 13;
+  optional string exam_attempt_id = 14;
 }
 
 enum ResultStatus {
@@ -199,4 +200,6 @@ message QualificationResult {
   int32 creator_id = 11 [(buf.validate.field).int32.gt = 0];
   resources.users.short.UserShort creator = 12 [(tagger.tags) = "alias:\"creator\""];
   string creator_job = 13 [(buf.validate.field).string.max_len = 20];
+  bool auto_graded = 14;
+  optional string exam_attempt_id = 15;
 }

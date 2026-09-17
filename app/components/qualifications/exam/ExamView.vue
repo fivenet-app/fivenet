@@ -1,11 +1,13 @@
 <script lang="ts" setup>
 import { isPast } from 'date-fns';
+import { emojiBlasts } from 'emoji-blast';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
 import ConfirmModal from '~/components/partials/ConfirmModal.vue';
 import { getQualificationsExamClient } from '~~/gen/ts/clients';
 import type { ExamQuestions, ExamResponses, ExamUser } from '~~/gen/ts/resources/qualifications/exam/exam';
+import { ResultStatus } from '~~/gen/ts/resources/qualifications/qualifications';
 import type { GetExamInfoResponse, TakeExamResponse } from '~~/gen/ts/services/qualifications/exam';
 import ExamViewQuestions from './ExamViewQuestions.vue';
 
@@ -54,10 +56,16 @@ async function takeExam(cancel = false): Promise<TakeExamResponse> {
         });
         const { response } = await call;
 
-        timesUp.value = response.timesUp;
         examResponses.value = response.responses;
         exam.value = response.exam;
         examUser.value = response.examUser;
+
+        if (response.timesUp) {
+            examExpired.value = true;
+            exam.value = undefined;
+            examResponses.value = undefined;
+            examUser.value = undefined;
+        }
 
         return response;
     } catch (e) {
@@ -66,13 +74,43 @@ async function takeExam(cancel = false): Promise<TakeExamResponse> {
     }
 }
 
-const timesUp = ref<boolean>(false);
 const exam = ref<ExamQuestions | undefined>();
 const examUser = ref<ExamUser | undefined>();
 const examResponses = ref<ExamResponses | undefined>();
+const examExpired = ref(false);
+
+const submitted = computed(() => data.value?.examUser?.endedAt !== undefined);
+const expired = computed(() => {
+    const endsAt = data.value?.examUser?.endsAt;
+    return examExpired.value || (!submitted.value && endsAt !== undefined && isPast(toDate(endsAt)));
+});
+const result = computed(() => data.value?.qualification?.result);
+const celebratedResultId = ref<number>();
+
+watch(
+    result,
+    (value) => {
+        if (import.meta.server || value?.status !== ResultStatus.SUCCESSFUL || value.id === celebratedResultId.value) return;
+
+        celebratedResultId.value = value.id;
+        const { cancel } = emojiBlasts({
+            emojis: ['🎉', '🥳', '🎊', '🏆', '✨', '🙌', '💯'],
+        });
+        useTimeoutFn(cancel, 5000);
+    },
+    { immediate: true },
+);
 
 async function cancelExam(): Promise<void> {
     await takeExam(true);
+    exam.value = undefined;
+    examResponses.value = undefined;
+    examUser.value = undefined;
+    await refresh();
+}
+
+async function handleExpired(): Promise<void> {
+    examExpired.value = true;
     exam.value = undefined;
     examResponses.value = undefined;
     examUser.value = undefined;
@@ -90,7 +128,12 @@ function openCancelExamConfirmation(): void {
 }
 
 watch(data, async () => {
-    if (data.value?.examUser?.endsAt !== undefined && data.value?.examUser?.endedAt === undefined) {
+    if (
+        !examExpired.value &&
+        data.value?.examUser?.endsAt !== undefined &&
+        data.value?.examUser?.endedAt === undefined &&
+        !isPast(toDate(data.value.examUser.endsAt))
+    ) {
         await takeExam(false);
     }
 });
@@ -98,7 +141,7 @@ watch(data, async () => {
 
 <template>
     <ExamViewQuestions
-        v-if="data && exam && examUser && examUser?.endsAt && !examUser?.endedAt"
+        v-if="data && !examExpired && exam && examUser && examUser?.endsAt && !examUser?.endedAt"
         :qualification-id="qualificationId"
         :exam="exam"
         :exam-user="examUser"
@@ -111,7 +154,7 @@ watch(data, async () => {
                 refresh();
             }
         "
-        @expired="refresh"
+        @expired="handleExpired"
     />
 
     <UDashboardPanel v-else :ui="{ root: 'pb-(--page-content-bottom-offset)' }">
@@ -176,12 +219,80 @@ watch(data, async () => {
 
             <template v-else>
                 <UCard>
-                    <template v-if="data?.examUser?.endedAt || isPast(toDate(data.examUser?.endsAt))">
+                    <template v-if="result?.status === ResultStatus.SUCCESSFUL">
                         <UAlert
-                            :title="$t('components.qualifications.exam_view.times_up')"
-                            color="info"
+                            color="success"
                             variant="subtle"
-                            icon="i-mdi-clock"
+                            icon="i-mdi-party-popper"
+                            :ui="{ icon: 'size-8', title: 'text-xl' }"
+                        >
+                            <template #title>
+                                {{ $t('components.qualifications.exam_view.result_successful.title') }}
+                            </template>
+                            <template #description>
+                                <div class="space-y-1">
+                                    <p v-if="result.autoGraded">
+                                        {{ $t('components.qualifications.exam_view.result_successful.description') }}
+                                    </p>
+                                    <p v-else>
+                                        {{ $t('components.qualifications.exam_view.result_successful.manual_description') }}
+                                    </p>
+                                    <p class="font-semibold">
+                                        {{ $t('common.score') }}: {{ $t('common.point', result.score ?? 0) }} 🏆
+                                    </p>
+                                    <p v-if="result.summary">{{ result.summary }}</p>
+                                </div>
+                            </template>
+                        </UAlert>
+
+                        <PartialsBackButton class="mt-4" block :to="`/qualifications/${qualificationId}`" />
+                    </template>
+                    <template v-else-if="result?.status === ResultStatus.FAILED">
+                        <UAlert
+                            :title="$t('components.qualifications.exam_view.result_failed.title')"
+                            color="error"
+                            variant="subtle"
+                            icon="i-mdi-close-circle-outline"
+                            :ui="{ icon: 'size-8', title: 'text-xl' }"
+                        >
+                            <template #description>
+                                <div class="space-y-1">
+                                    <p v-if="result.autoGraded">
+                                        {{ $t('components.qualifications.exam_view.result_failed.description') }}
+                                    </p>
+                                    <p v-else>
+                                        {{ $t('components.qualifications.exam_view.result_failed.manual_description') }}
+                                    </p>
+                                    <p class="font-semibold">
+                                        {{ $t('common.score') }}:
+                                        {{ $t('common.point', result.score ?? 0) }}
+                                    </p>
+                                    <p v-if="result.summary">{{ result.summary }}</p>
+                                </div>
+                            </template>
+                        </UAlert>
+
+                        <PartialsBackButton class="mt-4" block :to="`/qualifications/${qualificationId}`" />
+                    </template>
+                    <template v-else-if="submitted">
+                        <UAlert
+                            :title="$t('components.qualifications.exam_view.submitted.title')"
+                            color="success"
+                            variant="subtle"
+                            icon="i-mdi-check-circle-outline"
+                            :description="$t('components.qualifications.exam_view.submitted.description')"
+                            :ui="{ icon: 'size-8', title: 'text-xl' }"
+                        />
+
+                        <PartialsBackButton class="mt-4" block :to="`/qualifications/${qualificationId}`" />
+                    </template>
+                    <template v-else-if="expired">
+                        <UAlert
+                            :title="$t('components.qualifications.exam_view.expired.title')"
+                            color="warning"
+                            variant="subtle"
+                            icon="i-mdi-clock-alert-outline"
+                            :description="$t('components.qualifications.exam_view.expired.description')"
                             :ui="{ icon: 'size-8', title: 'text-xl' }"
                         />
 

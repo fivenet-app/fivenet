@@ -21,6 +21,8 @@ type FivenetQualificationsResults struct {
 	Status          *int16           `json:"status"`
 	Score           *decimal.Decimal `json:"score"`
 	Summary         *string          `json:"summary"`
+	AutoGraded      bool             `json:"auto_graded"`
+	ExamAttemptID   *string          `json:"exam_attempt_id"`
 	CreatorID       *int32           `json:"creator_id"`
 	CreatorJob      string           `json:"creator_job"`
 }

@@ -155,13 +155,9 @@ const canDo = computed(() => ({
 const actionItems = computed<ResponsiveActionEntry[]>(() => {
     if (!qualification.value) return [];
 
-    const requestDisabled =
-        qualification.value.closed ||
-        !requirementsFullfilled(qualification.value.requirements) ||
-        qualification.value.request?.status === RequestStatus.PENDING ||
-        qualification.value.request?.status === RequestStatus.ACCEPTED ||
-        qualification.value.request?.status === RequestStatus.EXAM_STARTED ||
-        qualification.value.request?.status === RequestStatus.EXAM_GRADING;
+    const requestStatus = qualification.value.request?.status;
+    const canRequest =
+        !qualification.value.request || requestStatus === RequestStatus.DENIED || requestStatus === RequestStatus.COMPLETED;
     const takeDisabled =
         qualification.value.closed ||
         !requirementsFullfilled(qualification.value.requirements) ||
@@ -171,13 +167,18 @@ const actionItems = computed<ResponsiveActionEntry[]>(() => {
 
     const items: ResponsiveActionEntry[] = [];
     if (!canDo.value.edit) {
-        if (canDo.value.request && qualification.value.examMode !== QualificationExamMode.ENABLED) {
+        if (
+            canDo.value.request &&
+            canRequest &&
+            qualification.value.examMode !== QualificationExamMode.ENABLED &&
+            qualification.value.result?.status !== ResultStatus.SUCCESSFUL
+        ) {
             items.push({
                 label: t('common.request'),
                 tooltip: t('common.request'),
                 icon: 'i-mdi-account-school',
                 variant: 'ghost',
-                disabled: requestDisabled,
+                disabled: qualification.value.closed || !requirementsFullfilled(qualification.value.requirements),
                 onClick: () => {
                     requestUserModal.open({
                         qualificationId: qualification.value!.id,
@@ -553,7 +554,14 @@ const requestUserModal = overlay.create(RequestUserModal);
                                                         {{ $t('common.point', qualification.result?.score ?? 0) }}
                                                     </div>
 
-                                                    <div v-if="qualification.result?.creator" class="inline-flex gap-1">
+                                                    <div v-if="qualification.result?.autoGraded" class="inline-flex gap-1">
+                                                        <UBadge
+                                                            color="info"
+                                                            icon="i-mdi-robot"
+                                                            :label="$t('components.qualifications.auto_graded')"
+                                                        />
+                                                    </div>
+                                                    <div v-else-if="qualification.result?.creator" class="inline-flex gap-1">
                                                         <span class="font-semibold">{{ $t('common.created_by') }}:</span>
                                                         <CitizenInfoPopover :user="qualification.result?.creator" />
                                                     </div>

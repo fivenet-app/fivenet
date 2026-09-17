@@ -29,6 +29,33 @@ var (
 			Key: "errors.qualifications.QualificationsService.ErrQualificationClosed.title",
 		},
 	)
+	ErrQualificationRequestActive = common.NewI18nErr(
+		codes.FailedPrecondition,
+		&common.I18NItem{
+			Key: "errors.qualifications.QualificationsService.ErrQualificationRequestActive.content",
+		},
+		&common.I18NItem{
+			Key: "errors.qualifications.QualificationsService.ErrQualificationRequestActive.title",
+		},
+	)
+	ErrQualificationRequestInvalidTransition = common.NewI18nErr(
+		codes.InvalidArgument,
+		&common.I18NItem{
+			Key: "errors.qualifications.QualificationsService.ErrQualificationRequestInvalidTransition.content",
+		},
+		&common.I18NItem{
+			Key: "errors.qualifications.QualificationsService.ErrQualificationRequestInvalidTransition.title",
+		},
+	)
+	ErrQualificationAlreadySuccessful = common.NewI18nErr(
+		codes.FailedPrecondition,
+		&common.I18NItem{
+			Key: "errors.qualifications.QualificationsService.ErrQualificationAlreadySuccessful.content",
+		},
+		&common.I18NItem{
+			Key: "errors.qualifications.QualificationsService.ErrQualificationAlreadySuccessful.title",
+		},
+	)
 	ErrExamDisabled = common.NewI18nErr(
 		codes.InvalidArgument,
 		&common.I18NItem{

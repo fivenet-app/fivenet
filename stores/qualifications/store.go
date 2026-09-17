@@ -104,6 +104,13 @@ type IStore interface {
 		userId int32,
 		userInfo *userinfo.UserInfo,
 	) (*resqualifications.QualificationRequest, error)
+	GetQualificationRequestForUpdate(
+		ctx context.Context,
+		q qrm.DB,
+		qualificationId int64,
+		userId int32,
+		userInfo *userinfo.UserInfo,
+	) (*resqualifications.QualificationRequest, error)
 	ListQualificationsResults(
 		ctx context.Context,
 		opts ListQualificationsResultsOptions,
@@ -162,6 +169,8 @@ type IStore interface {
 		status resqualifications.ResultStatus,
 		score *float32,
 		summary string,
+		autoGraded bool,
+		examAttemptID *string,
 		creator *userinfo.UserInfo,
 	) (int64, error)
 	UpdateQualificationResult(
@@ -241,6 +250,22 @@ type IStore interface {
 		tx qrm.DB,
 		qualificationId int64,
 		userId int32,
+	) error
+	DeleteQualificationRequestByAttemptID(ctx context.Context, tx qrm.DB, attemptId string) error
+	RestoreQualificationRequest(
+		ctx context.Context,
+		tx qrm.DB,
+		qualificationId int64,
+		userId int32,
+		status resqualifications.RequestStatus,
+		attemptId string,
+	) error
+	SetQualificationRequestExamAttemptID(
+		ctx context.Context,
+		tx qrm.DB,
+		qualificationId int64,
+		userId int32,
+		attemptId string,
 	) error
 	UpdateRequestStatus(
 		ctx context.Context,
