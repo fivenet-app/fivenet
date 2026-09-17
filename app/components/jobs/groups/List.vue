@@ -30,8 +30,6 @@ import {
 const { t } = useI18n();
 
 const overlay = useOverlay();
-const route = useRoute();
-const router = useRouter();
 
 const { can } = useAuth();
 
@@ -43,6 +41,7 @@ const schema = z.object({
     search: z.coerce.string().max(100).default(''),
     status: z.enum(['active', 'inactive', 'archived', 'all']).default('active'),
     kind: z.enum(['all', 'manual', 'smart', 'mixed']).default('all'),
+    groupId: z.coerce.number().int().positive().optional(),
     sorting: z
         .object({
             columns: z
@@ -238,26 +237,14 @@ function openCreateGroup(): void {
 }
 
 function openGroupDetails(group: Group): void {
-    detailsSlideover.open({
-        group,
-        onChanged: async () => refresh(),
-        onClose: clearGroupDeepLink,
-    });
+    query.groupId = group.id;
 }
 
-const groupIDFromDeepLink = computed(() => {
-    const value = route.query.group;
-    if (typeof value !== 'string') return undefined;
-
-    const groupID = Number(value);
-    return Number.isSafeInteger(groupID) && groupID > 0 ? groupID : undefined;
-});
-
 watch(
-    groupIDFromDeepLink,
-    (groupID) => {
-        if (groupID === undefined) return;
-        void openGroupDetailsByID(groupID);
+    () => query.groupId,
+    (groupId) => {
+        if (groupId === undefined) return;
+        void openGroupDetailsByID(groupId);
     },
     { immediate: true },
 );
@@ -266,19 +253,12 @@ async function openGroupDetailsByID(groupID: number): Promise<void> {
     detailsSlideover.open({
         groupId: groupID,
         onChanged: async () => refresh(),
-        onClose: clearGroupDeepLink,
+        onClose: clearGroupId,
     });
 }
 
-async function clearGroupDeepLink(): Promise<void> {
-    if (route.query.group === undefined) return;
-
-    await router.replace({
-        query: {
-            ...route.query,
-            group: undefined,
-        },
-    });
+function clearGroupId(): void {
+    query.groupId = undefined;
 }
 </script>
 

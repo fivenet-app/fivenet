@@ -5,6 +5,7 @@ import PhoneNumberBlock from '~/components/partials/citizens/PhoneNumberBlock.vu
 import ProfilePictureImg from '~/components/partials/citizens/ProfilePictureImg.vue';
 import GenericTime from '~/components/partials/elements/GenericTime.vue';
 import type { Colleague } from '~~/gen/ts/resources/jobs/colleagues/colleagues';
+import type { GroupMemberShort } from '~~/gen/ts/resources/jobs/groups/short/group_member_short';
 import ColleagueName from './ColleagueName.vue';
 
 const props = withDefaults(
@@ -15,6 +16,7 @@ const props = withDefaults(
         showContact?: boolean;
         showLabels?: boolean;
         showAbsence?: boolean;
+        showGroups?: boolean;
         compact?: boolean;
     }>(),
     {
@@ -30,6 +32,7 @@ const props = withDefaults(
 
 const emit = defineEmits<{
     label: [label: NonNullable<NonNullable<Colleague['props']>['labels']>['list'][number]];
+    group: [group: GroupMemberShort];
 }>();
 
 const { t } = useI18n();
@@ -131,6 +134,27 @@ const gradeLabel = computed(() => {
                                 :style="{ backgroundColor: label.color }"
                                 :ui="{ label: 'block min-w-0 truncate' }"
                                 @click="emit('label', label)"
+                            />
+                        </div>
+                    </div>
+
+                    <div v-if="showGroups" class="flex min-w-0 items-start gap-1 overflow-x-hidden">
+                        <UIcon class="size-4 shrink-0 self-start" name="i-mdi-users-group-outline" />
+
+                        <span v-if="!colleague?.props?.groups || !colleague?.props.groups.length">
+                            {{ $t('common.none', [$t('common.group', 2)]) }}
+                        </span>
+                        <div v-else class="flex min-w-0 flex-1 basis-0 flex-row flex-wrap gap-1 overflow-hidden">
+                            <UButton
+                                v-for="group in colleague.props.groups"
+                                :key="group.id"
+                                class="max-w-full min-w-0 cursor-pointer overflow-hidden"
+                                :class="isColorBright(hexToRgb(group.color ?? '', rgbBlack)!) ? 'text-black!' : 'text-white!'"
+                                size="xs"
+                                :label="group.shortName ? `${group.shortName}: ${group.name}` : group.name"
+                                :style="{ backgroundColor: group.color }"
+                                :ui="{ label: 'block min-w-0 truncate' }"
+                                @click="emit('group', group)"
                             />
                         </div>
                     </div>

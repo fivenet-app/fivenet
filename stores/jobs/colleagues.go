@@ -73,7 +73,8 @@ func (s *Store) CountColleagues(
 			userIds[i] = mysql.Int32(q.UserIDs[i])
 		}
 		condition = condition.AND(tColleague.ID.IN(userIds...))
-	} else if search := dbutils.PrepareForLikeSearch(q.Search); search != "" {
+	}
+	if search := dbutils.PrepareForLikeSearch(q.Search); search != "" {
 		condition = condition.AND(
 			mysql.CONCAT(tColleague.Firstname, mysql.String(" "), tColleague.Lastname).
 				LIKE(mysql.String(search)),
@@ -167,7 +168,8 @@ func (s *Store) ListColleagues(
 			userIds[i] = mysql.Int32(q.UserIDs[i])
 		}
 		condition = condition.AND(tColleague.ID.IN(userIds...))
-	} else if search := dbutils.PrepareForLikeSearch(q.Search); search != "" {
+	}
+	if search := dbutils.PrepareForLikeSearch(q.Search); search != "" {
 		condition = condition.AND(
 			mysql.CONCAT(tColleague.Firstname, mysql.String(" "), tColleague.Lastname).
 				LIKE(mysql.String(search)),

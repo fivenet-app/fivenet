@@ -4,6 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"errors"
+	"fmt"
 
 	database "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/common/database"
 	jobsgroups "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/jobs/groups"
@@ -294,13 +295,13 @@ func (s *Store) ListGroupMemberShortsByUserIDs(
 	}
 
 	type row struct {
-		UserID int32
+		UserID int32 `alias:"user_id"`
 		Group  *groupsshort.GroupMemberShort
 	}
-	rows := []*row{}
+
 	var stmt mysql.Statement = tMembers.
 		SELECT(
-			tMembers.UserID.AS("user_id"),
+			tMembers.UserID.AS("row.user_id"),
 			tGroups.ID.AS("group_member_short.id"),
 			tGroups.Job.AS("group_member_short.job"),
 			tGroups.Name.AS("group_member_short.name"),
@@ -318,16 +319,24 @@ func (s *Store) ListGroupMemberShortsByUserIDs(
 			tGroups.State.EQ(mysql.Int32(int32(jobsgroups.GroupState_GROUP_STATE_ACTIVE))),
 			tMembers.UserID.IN(userIDExprs...),
 		)).
-		ORDER_BY(tMembers.UserID.ASC(), tGroups.SortRank.ASC(), tGroups.Name.ASC(), tGroups.ID.ASC())
+		ORDER_BY(
+			tMembers.UserID.ASC(),
+			tGroups.SortRank.ASC(),
+			tGroups.Name.ASC(),
+			tGroups.ID.ASC(),
+		)
+	fmt.Println(stmt.DebugSql())
+
 	if len(visibleGroups.CTEs) > 0 {
 		stmt = mysql.WITH(visibleGroups.CTEs...)(stmt)
 	}
+	rows := []*row{}
 	if err := stmt.QueryContext(ctx, db, &rows); err != nil {
 		if !errors.Is(err, qrm.ErrNoRows) {
 			return nil, err
 		}
-		return result, nil
 	}
+
 	for _, row := range rows {
 		result[row.UserID] = append(result[row.UserID], row.Group)
 	}

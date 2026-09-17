@@ -1619,7 +1619,7 @@ func (s *Server) prepareGroupUserNotification(
 		if s.perms.CanServiceMethod(targetUserInfo, "jobs.GroupsService/ListGroups") {
 			notification.Data = &notifications.Data{
 				Link: &notifications.Link{
-					To: "/jobs/groups?group=" + strconv.FormatInt(groupID, 10),
+					To: "/jobs/groups?groupId=" + strconv.FormatInt(groupID, 10),
 				},
 			}
 		}

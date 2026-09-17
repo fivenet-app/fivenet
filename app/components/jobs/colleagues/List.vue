@@ -19,6 +19,7 @@ import { useSettingsStore } from '~/stores/settings';
 import { getJobsColleaguesClient } from '~~/gen/ts/clients';
 import type { SortByColumn } from '~~/gen/ts/resources/common/database/database';
 import type { Colleague } from '~~/gen/ts/resources/jobs/colleagues/colleagues';
+import type { GroupMemberShort } from '~~/gen/ts/resources/jobs/groups/short/group_member_short';
 import type { Label } from '~~/gen/ts/resources/jobs/labels/labels';
 import type { Timestamp } from '~~/gen/ts/resources/timestamp/timestamp';
 import type { GetColleagueLabelsResponse, ListColleaguesResponse } from '~~/gen/ts/services/jobs/colleagues';
@@ -139,6 +140,26 @@ function toggleLabelInSearch(label: Label): void {
         query.labels.splice(idx, 1);
     } else {
         query.labels.push(label.id);
+    }
+}
+
+function toggleGroupInSearch(group: GroupMemberShort): void {
+    const groupIds = query.users.groups?.groupIds ?? [];
+    const idx = groupIds.findIndex((id) => id === group.id);
+
+    if (idx > -1) {
+        const nextGroupIds = groupIds.filter((id) => id !== group.id);
+        query.users.groups = nextGroupIds.length
+            ? {
+                  groupIds: nextGroupIds,
+                  includeLeaders: query.users.groups?.includeLeaders ?? false,
+              }
+            : undefined;
+    } else {
+        query.users.groups = {
+            groupIds: [...groupIds, group.id],
+            includeLeaders: query.users.groups?.includeLeaders ?? false,
+        };
     }
 }
 
@@ -522,7 +543,9 @@ defineShortcuts({
                             :colleague="colleague"
                             :active="colleague.userId === activeChar!.userId"
                             :show-labels="attr('jobs.ColleaguesService/GetColleague', 'Types', 'Labels').value"
+                            :show-groups="can('jobs.GroupsService/ListGroups').value"
                             @label="toggleLabelInSearch"
+                            @group="toggleGroupInSearch"
                         >
                             <template
                                 v-if="
