@@ -427,6 +427,13 @@ watch(
 
         <UCard v-if="canManageRules" variant="subtle">
             <div class="grid gap-3">
+                <UAlert
+                    color="info"
+                    icon="i-mdi-information-outline"
+                    :title="$t('components.jobs.groups.policy.membership_evaluation.title')"
+                    :description="$t('components.jobs.groups.policy.membership_evaluation.description')"
+                />
+
                 <div class="flex flex-1 gap-3 lg:flex-row lg:items-end">
                     <UFormField class="w-full" :label="$t('common.type')">
                         <USelectMenu

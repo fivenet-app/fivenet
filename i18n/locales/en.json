@@ -1448,7 +1448,11 @@
                     "unavailable_title": "Policy restriction",
                     "manual_members_disabled": "Manual members are not available for this group type.",
                     "rules_disabled": "Rules are not available for this group type.",
-                    "exclusions_disabled": "Exclusions are not available for this group type."
+                    "exclusions_disabled": "Exclusions are not available for this group type.",
+                    "membership_evaluation": {
+                        "title": "Membership updates",
+                        "description": "Rule changes are applied immediately. Cached member counts may take up to 5 minutes to refresh."
+                    }
                 },
                 "details": {
                     "member": "Member",

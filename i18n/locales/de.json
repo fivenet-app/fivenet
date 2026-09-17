@@ -1448,7 +1448,11 @@
                     "unavailable_title": "Richtlinienbeschränkung",
                     "manual_members_disabled": "Manuelle Mitglieder sind für diesen Gruppentyp nicht verfügbar.",
                     "rules_disabled": "Regeln sind für diesen Gruppentyp nicht verfügbar.",
-                    "exclusions_disabled": "Ausschlüsse sind für diesen Gruppentyp nicht verfügbar."
+                    "exclusions_disabled": "Ausschlüsse sind für diesen Gruppentyp nicht verfügbar.",
+                    "membership_evaluation": {
+                        "title": "Mitgliedschaftsaktualisierungen",
+                        "description": "Änderungen an den Regeln werden sofort angewendet. Zwischengespeicherte Mitgliederzahlen können bis zu 5 Minuten benötigen, um aktualisiert zu werden."
+                    }
                 },
                 "details": {
                     "member": "Mitglied",
