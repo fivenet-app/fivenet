@@ -35,9 +35,12 @@ const emit = defineEmits<{
     (e: 'counted', count: number): void;
     (e: 'newComment'): void;
     (e: 'deletedComment'): void;
+    (e: 'restoredComment'): void;
 }>();
 
 const { t } = useI18n();
+
+const { isSuperuser } = useAuth();
 
 const notifications = useNotificationsStore();
 
@@ -194,16 +197,24 @@ async function addComment(documentId: number, values: Schema): Promise<void> {
 
 async function removeComment(id: number): Promise<void> {
     if (!data.value) return;
+    // If the user is a superuser, we don't remove the comment from the list, as superusers can see deleted comments
+    if (isSuperuser.value) return;
 
-    const idx = data.value.comments.findIndex((c) => {
-        return c.id === id;
-    });
-
-    if (idx > -1) {
-        data.value.comments.splice(idx, 1);
-    }
+    const idx = data.value.comments.findIndex((c) => c.id === id);
+    if (idx > -1) data.value.comments.splice(idx, 1);
 
     emit('deletedComment');
+}
+
+function restoreComment(id: number): void {
+    if (!data.value) return;
+
+    const idx = data.value.comments.findIndex((c) => c.id === id);
+    if (idx > -1 && data.value.comments[idx]) {
+        data.value.comments[idx].deletedAt = undefined;
+    }
+
+    emit('restoredComment');
 }
 
 const commentsEl = useTemplateRef('commentsEl');
@@ -304,6 +315,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                         :document-id="documentId"
                         :can-comment="canComment"
                         @deleted="removeComment(item.comment.id)"
+                        @restored="restoreComment(item.comment.id)"
                     />
                 </template>
             </UTimeline>

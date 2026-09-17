@@ -538,6 +538,20 @@ const actionItems = computed<ResponsiveActionEntry[]>(() => {
     return items;
 });
 
+// Comment handling
+
+function onDeletedComment(): void {
+    if (!doc.value?.document?.meta || doc.value.document?.meta.commentCount === undefined) return;
+    if (doc.value.document.meta.commentCount <= 0) return;
+
+    doc.value.document.meta.commentCount--;
+}
+function onRestoredComment(): void {
+    if (!doc.value?.document?.meta || doc.value.document?.meta.commentCount === undefined) return;
+
+    doc.value.document.meta.commentCount++;
+}
+
 const scrollRef = useTemplateRef('scrollRef');
 
 const confirmModal = overlay.create(ConfirmModal);
@@ -790,12 +804,9 @@ const reminderDrawer = overlay.create(ReminderDrawer, { props: { documentId: pro
                                     :closed="doc.document?.meta?.closed"
                                     :can-comment="checkDocAccess(doc.access, doc.document?.creator, AccessLevel.COMMENT)"
                                     @counted="($event) => setCommentCount($event)"
-                                    @new-comment="doc.document?.meta?.commentCount && doc.document.meta.commentCount++"
-                                    @deleted-comment="
-                                        doc?.document?.meta?.commentCount &&
-                                        doc.document?.meta?.commentCount > 0 &&
-                                        doc.document.meta.commentCount--
-                                    "
+                                    @new-comment="onRestoredComment"
+                                    @deleted-comment="onDeletedComment"
+                                    @restored-comment="onRestoredComment"
                                 />
                             </UContainer>
                         </template>

@@ -24,6 +24,7 @@ const props = withDefaults(
 
 const emit = defineEmits<{
     (e: 'deleted', id: number | undefined): void;
+    (e: 'restored', id: number | undefined): void;
 }>();
 
 const comment = defineModel<Comment | undefined>();
@@ -153,7 +154,15 @@ async function deleteComment(id: number): Promise<void> {
             type: NotificationType.SUCCESS,
         });
 
-        emit('deleted', comment.value?.id);
+        if (comment.value) {
+            if (comment.value.deletedAt) {
+                comment.value.deletedAt = undefined;
+                emit('restored', comment.value?.id);
+            } else {
+                emit('deleted', comment.value?.id);
+                comment.value.deletedAt = toTimestamp();
+            }
+        }
     } catch (e) {
         handleGRPCError(e as RpcError);
         throw e;
@@ -191,10 +200,10 @@ const confirmModal = overlay.create(ConfirmModal);
 <template>
     <div
         v-if="comment"
-        class="group relative mt-2 rounded-md bg-neutral-100 px-3 py-2 text-default ring ring-default dark:bg-neutral-900 dark:ring-neutral-700"
+        class="group relative rounded-md bg-neutral-100 px-2 py-2 text-default ring ring-default dark:bg-neutral-900 dark:ring-neutral-700"
         :class="comment.deletedAt ? custom.classes.deletedAt : ''"
     >
-        <div v-if="!editing" class="space-y-2">
+        <div v-if="!editing" class="relative">
             <div
                 v-if="comment.creatorId === activeChar?.userId || isSuperuser"
                 class="absolute top-2 right-2 z-10 opacity-0 transition-opacity group-focus-within:opacity-100 group-hover:opacity-100"
@@ -223,7 +232,7 @@ const confirmModal = overlay.create(ConfirmModal);
                 </UFieldGroup>
             </div>
 
-            <div class="rounded-lg p-4">
+            <div class="rounded-lg p-2">
                 <CustomContentRenderer v-if="comment.content" :value="comment.content" />
             </div>
         </div>
@@ -249,16 +258,16 @@ const confirmModal = overlay.create(ConfirmModal);
                         <UButton
                             type="submit"
                             :disabled="!canSubmit"
+                            :label="$t('common.edit')"
                             :loading="!canSubmit"
                             trailing-icon="i-mdi-comment-edit"
-                            :label="$t('common.edit')"
                         />
 
                         <UButton
                             type="button"
+                            color="error"
                             :disabled="!canSubmit"
                             :loading="!canSubmit"
-                            color="error"
                             :label="$t('common.cancel')"
                             @click="cancelEdit"
                         />
