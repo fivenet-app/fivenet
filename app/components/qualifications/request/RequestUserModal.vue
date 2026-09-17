@@ -42,6 +42,7 @@ async function createOrUpdateQualificationRequest(
                 userId: 0,
                 userComment: values.userComment,
             },
+            skipNotification: false,
         });
         const { response } = await call;
 

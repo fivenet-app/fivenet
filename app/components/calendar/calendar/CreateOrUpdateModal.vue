@@ -451,11 +451,11 @@ async function closeModal(): Promise<void> {
                                     name="discordSettings.channelId"
                                     :disabled="!canConfigureDiscordReminders"
                                     :searchable="
-                                        () =>
+                                        async () =>
                                             searchChannels().then((channels) =>
                                                 channels.map((channel) => ({
                                                     id: channel.id,
-                                                    type: 'item',
+                                                    type: 'item' as const,
                                                     label: `${channel.name} (${channel.id})`,
                                                     item: channel,
                                                 })),

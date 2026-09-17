@@ -17,6 +17,8 @@ const { t } = useI18n();
 
 const { can, attr, isSuperuser } = useAuth();
 
+const { custom } = useAppConfig();
+
 const documentsDocuments = await useDocumentsDocuments();
 
 const links = computed(() =>
@@ -63,9 +65,7 @@ const links = computed(() =>
     <UContextMenu :items="links">
         <li
             class="flex-initial p-1 hover:border-primary-500/25 hover:bg-primary-100/50 dark:hover:border-primary-400/25 dark:hover:bg-primary-900/10"
-            :class="[
-                document.deletedAt ? 'bg-warning-100 hover:bg-warning-200 dark:bg-warning-900 dark:hover:bg-warning-800' : '',
-            ]"
+            :class="document.deletedAt ? custom.classes.deletedAt : ''"
         >
             <ULink
                 :to="{
@@ -179,13 +179,13 @@ const links = computed(() =>
                             <slot name="default" />
                         </div>
 
-                        <div
+                        <DeletedAtBadge
                             v-if="document.deletedAt"
-                            class="flex flex-1 flex-row items-center justify-center gap-1.5 font-bold"
-                        >
-                            <UIcon class="size-4 shrink-0" name="i-mdi-delete" />
-                            {{ $t('common.deleted') }}
-                        </div>
+                            class="flex-1 justify-center font-bold"
+                            variant="ghost"
+                            hide-date
+                            :deleted-at="document.deletedAt"
+                        />
 
                         <div class="flex flex-1 flex-row items-center justify-end gap-1.5">
                             <span>{{ document.creatorJobLabel }}</span>

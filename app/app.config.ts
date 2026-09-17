@@ -91,6 +91,9 @@ export default defineAppConfig({
     },
 
     custom: {
+        classes: {
+            deletedAt: 'bg-warning-100 hover:bg-warning-200 dark:bg-warning-900 dark:hover:bg-warning-800',
+        },
         icons: {
             // Custom Icons
             sort: 'i-mdi-sort',

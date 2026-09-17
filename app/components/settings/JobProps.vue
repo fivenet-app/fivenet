@@ -676,11 +676,11 @@ const confirmModal = overlay.create(ConfirmModal);
                                             !canEdit
                                         "
                                         :searchable="
-                                            () =>
+                                            async () =>
                                                 searchChannels().then((channels) =>
                                                     channels.map((c) => ({
                                                         id: c.id,
-                                                        type: 'item',
+                                                        type: 'item' as const,
                                                         label: `${c.name} (${c.id})`,
                                                         item: c,
                                                     })),
