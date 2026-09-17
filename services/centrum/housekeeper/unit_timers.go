@@ -48,7 +48,7 @@ func (s *Housekeeper) unitKVPing(ctx context.Context) error {
 
 		case e, ok := <-watch.Updates():
 			if !ok {
-				return errWatcherUpdatesClosed
+				return watcherUpdatesClosedError(ctx)
 			}
 			// Ignore nil event
 			if e == nil {

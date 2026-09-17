@@ -51,6 +51,14 @@ var Module = fx.Module("centrum_housekeeper",
 
 var errWatcherUpdatesClosed = errors.New("watcher updates channel closed")
 
+func watcherUpdatesClosedError(ctx context.Context) error {
+	if err := ctx.Err(); err != nil {
+		return err
+	}
+
+	return errWatcherUpdatesClosed
+}
+
 type Housekeeper struct {
 	ctx    context.Context //nolint:containedctx // Housekeeper retains lifecycle context for watcher loops across files.
 	logger *zap.Logger

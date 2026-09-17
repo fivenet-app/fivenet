@@ -115,7 +115,7 @@ func (s *Housekeeper) watchUserChanges(
 
 		case e, ok := <-watch.Updates():
 			if !ok {
-				return errWatcherUpdatesClosed
+				return watcherUpdatesClosedError(ctx)
 			}
 			if e == nil {
 				s.logger.Error("received nil user changes event, skipping")

@@ -42,7 +42,7 @@ func (s *Housekeeper) watchUnitAssignments(ctx context.Context) error {
 			return nil
 		case event, ok := <-watch.Updates():
 			if !ok {
-				return errWatcherUpdatesClosed
+				return watcherUpdatesClosedError(ctx)
 			}
 			if event == nil || event.Operation() != jetstream.KeyValuePut {
 				continue

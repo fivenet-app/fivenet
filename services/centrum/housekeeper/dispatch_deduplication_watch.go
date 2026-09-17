@@ -47,7 +47,7 @@ func (s *Housekeeper) watchDispatches(ctx context.Context) error {
 
 		case e, ok := <-watch.Updates():
 			if !ok {
-				return errWatcherUpdatesClosed
+				return watcherUpdatesClosedError(ctx)
 			}
 			if e == nil { // heartbeat
 				continue

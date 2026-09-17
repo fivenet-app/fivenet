@@ -31,7 +31,7 @@ func (s *Housekeeper) dispatchAssignmentExpirationWatcher(ctx context.Context) e
 			return ctx.Err()
 		case event, ok := <-watch.Updates():
 			if !ok {
-				return errWatcherUpdatesClosed
+				return watcherUpdatesClosedError(ctx)
 			}
 			if event == nil || event.Operation() != jetstream.KeyValuePurge {
 				continue
@@ -113,7 +113,7 @@ func (s *Housekeeper) idleWatcher(ctx context.Context) error {
 
 		case e, ok := <-watch.Updates():
 			if !ok {
-				return errWatcherUpdatesClosed
+				return watcherUpdatesClosedError(ctx)
 			}
 			// Ignore nil event
 			if e == nil {
@@ -161,7 +161,7 @@ func (s *Housekeeper) watchDispatchCleanup(
 
 		case e, ok := <-watch.Updates():
 			if !ok {
-				return errWatcherUpdatesClosed
+				return watcherUpdatesClosedError(ctx)
 			}
 			// A regular Delete cancels the timer when a completed dispatch becomes
 			// active again. KeyTTL expiry emits a Purge marker, which is the only
@@ -214,7 +214,7 @@ func (s *Housekeeper) projectionCleanupWatcher(ctx context.Context) error {
 
 		case e, ok := <-watch.Updates():
 			if !ok {
-				return errWatcherUpdatesClosed
+				return watcherUpdatesClosedError(ctx)
 			}
 			if e == nil ||
 				(e.Operation() != jetstream.KeyValueDelete && e.Operation() != jetstream.KeyValuePurge) {

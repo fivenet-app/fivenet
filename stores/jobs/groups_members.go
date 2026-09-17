@@ -4,7 +4,6 @@ import (
 	"context"
 	"database/sql"
 	"errors"
-	"fmt"
 
 	database "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/common/database"
 	jobsgroups "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/jobs/groups"
@@ -325,7 +324,6 @@ func (s *Store) ListGroupMemberShortsByUserIDs(
 			tGroups.Name.ASC(),
 			tGroups.ID.ASC(),
 		)
-	fmt.Println(stmt.DebugSql())
 
 	if len(visibleGroups.CTEs) > 0 {
 		stmt = mysql.WITH(visibleGroups.CTEs...)(stmt)
