@@ -210,7 +210,7 @@ export const statusOrder = [
 export const unitStatuses: {
     icon: string;
     name: string;
-    status?: StatusUnit;
+    status: StatusUnit;
 }[] = [
     { icon: 'i-mdi-cancel', name: 'Unavailable', status: StatusUnit.UNAVAILABLE },
     { icon: 'i-mdi-calendar-check', name: 'Available', status: StatusUnit.AVAILABLE },
@@ -221,7 +221,7 @@ export const unitStatuses: {
 export const dispatchStatuses: {
     icon: string;
     name: string;
-    status?: StatusDispatch;
+    status: StatusDispatch;
 }[] = [
     { icon: 'i-mdi-car-back', name: 'En Route', status: StatusDispatch.EN_ROUTE },
     { icon: 'i-mdi-map-marker-check', name: 'On Scene', status: StatusDispatch.ON_SCENE },

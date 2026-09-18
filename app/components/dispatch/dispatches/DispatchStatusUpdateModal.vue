@@ -137,17 +137,13 @@ async function closeModal(): Promise<void> {
                                 <div class="grid w-full grid-cols-2 gap-1">
                                     <UButton
                                         v-for="item in dispatchStatuses"
-                                        :key="item.name"
+                                        :key="item.status"
                                         class="group flex w-full flex-col items-center rounded-md p-1.5 text-xs font-medium hover:transition-all"
                                         :class="state.status == item.status ? 'bg-neutral-500 hover:bg-neutral-400' : ''"
                                         :color="dispatchStatusToBadgeColor(item.status)"
                                         :disabled="state.status == item.status"
                                         :icon="item.icon"
-                                        :label="
-                                            item.status
-                                                ? $t(`enums.centrum.StatusDispatch.${StatusDispatch[item.status ?? 0]}`)
-                                                : $t(item.name)
-                                        "
+                                        :label="$t(`enums.centrum.StatusDispatch.${StatusDispatch[item.status ?? 0]}`)"
                                         @click="() => (state.status = item.status ?? StatusDispatch.NEW)"
                                     />
                                 </div>

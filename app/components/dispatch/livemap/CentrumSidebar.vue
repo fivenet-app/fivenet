@@ -386,6 +386,8 @@ defineShortcuts({
     'm-h': () => getOwnUnit.value?.homePostal && setWaypointPLZ(getOwnUnit.value.homePostal),
     'c-u': () => getOwnUnit.value && onSubmitUnitStatusThrottle(getOwnUnit.value.id),
     'c-d': () => getOwnUnit.value && onSubmitDispatchStatusThrottle(),
+    's-u': () => getOwnUnit.value && onSubmitUnitStatusThrottle(getOwnUnit.value.id),
+    's-d': () => getOwnUnit.value && onSubmitDispatchStatusThrottle(),
 });
 </script>
 
@@ -571,25 +573,22 @@ defineShortcuts({
                             <template v-if="getOwnUnit !== undefined">
                                 <ul role="list">
                                     <li class="inline-flex items-center gap-1 text-xs leading-6 font-semibold">
-                                        <span>{{ $t('common.units') }}</span>
+                                        <span>{{ $t('common.unit') }}</span>
                                         <UIcon v-if="!canSubmitUnitStatus" class="size-4 animate-spin" name="i-mdi-loading" />
                                     </li>
 
                                     <li>
-                                        <div class="grid grid-cols-2 gap-0.5">
+                                        <div class="grid grid-cols-2 gap-px overflow-hidden rounded-md bg-default">
                                             <UButton
                                                 v-for="item in unitStatuses"
-                                                :key="item.name"
+                                                :key="item.status"
+                                                class="rounded-none"
                                                 :color="unitStatusToBadgeColor(item.status)"
                                                 size="xs"
-                                                :disabled="!canSubmitUnitStatus"
+                                                :disabled="!canSubmitUnitStatus || getOwnUnit.status?.status === item.status"
                                                 :icon="item.icon"
                                                 truncate
-                                                :label="
-                                                    item.status
-                                                        ? $t(`enums.centrum.StatusUnit.${StatusUnit[item.status ?? 0]}`)
-                                                        : $t(item.name)
-                                                "
+                                                :label="$t(`enums.centrum.StatusUnit.${StatusUnit[item.status ?? 0]}`)"
                                                 :ui="{ label: 'line-clamp-2' }"
                                                 @click="onSubmitUnitStatusThrottle(getOwnUnit.id!, item.status)"
                                             />
@@ -603,6 +602,7 @@ defineShortcuts({
                                                     variant="soft"
                                                     color="primary"
                                                     size="xs"
+                                                    class="rounded-none"
                                                     block
                                                     :label="$t('components.dispatch.update_unit_status.title')"
                                                     @click="onSubmitUnitStatusThrottle(getOwnUnit.id)"
@@ -614,7 +614,7 @@ defineShortcuts({
 
                                 <ul role="list">
                                     <li class="inline-flex items-center gap-1 text-xs leading-6 font-semibold">
-                                        <span>{{ $t('common.dispatch') }} {{ $t('common.status') }}</span>
+                                        <span>{{ $t('common.dispatch') }}</span>
                                         <UIcon
                                             v-if="!canSubmitDispatchStatus"
                                             class="size-4 animate-spin"
@@ -623,29 +623,25 @@ defineShortcuts({
                                     </li>
 
                                     <li>
-                                        <div class="grid grid-cols-2 gap-0.5">
+                                        <div class="grid grid-cols-2 gap-px overflow-hidden rounded-md bg-default">
                                             <UButton
                                                 v-for="item in dispatchStatuses.filter(
                                                     (s) => s.status !== StatusDispatch.CANCELLED,
                                                 )"
-                                                :key="item.name"
+                                                :key="item.status"
+                                                class="rounded-none"
                                                 :color="dispatchStatusToBadgeColor(item.status)"
                                                 size="xs"
-                                                :disabled="!canSubmitDispatchStatus"
+                                                :disabled="
+                                                    !canSubmitDispatchStatus ||
+                                                    !selectedDispatch ||
+                                                    dispatches.get(selectedDispatch)?.status?.status === item.status
+                                                "
                                                 :icon="item.icon"
+                                                :label="$t(`enums.centrum.StatusDispatch.${StatusDispatch[item.status ?? 0]}`)"
                                                 :ui="{ label: 'line-clamp-2' }"
                                                 @click="onSubmitDispatchStatusThrottle(selectedDispatch, item.status)"
-                                            >
-                                                <span class="line-clamp-2">
-                                                    {{
-                                                        item.status
-                                                            ? $t(
-                                                                  `enums.centrum.StatusDispatch.${StatusDispatch[item.status ?? 0]}`,
-                                                              )
-                                                            : $t(item.name)
-                                                    }}
-                                                </span>
-                                            </UButton>
+                                            />
 
                                             <UTooltip
                                                 class="col-span-2"
@@ -656,6 +652,7 @@ defineShortcuts({
                                                     variant="soft"
                                                     color="primary"
                                                     size="xs"
+                                                    class="rounded-none"
                                                     block
                                                     :label="$t('components.dispatch.update_dispatch_status.title')"
                                                     @click="updateDspStatus(selectedDispatch)"
