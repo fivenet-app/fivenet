@@ -131,27 +131,22 @@ func (ps *Perms) register(ctx context.Context, defaultRolePerms []string) error 
 }
 
 func (ps *Perms) SetDefaultRolePerms(ctx context.Context, defaultPerms []string) error {
-	if len(defaultPerms) == 0 {
-		return nil
-	}
-
-	role, err := ps.CreateRole(ctx, DefaultRoleJob, ps.startJobGrade)
-	if err != nil {
-		return fmt.Errorf("failed to create role. %w", err)
-	}
-
 	addPerms := []AddPerm{}
 	for _, perm := range defaultPerms {
 		permId, ok := ps.permsGuardToIDMap.Load(perm)
 		if !ok {
-			ps.logger.Warn("default perm not found, skipping", zap.String("guard", perm))
-			continue
+			return fmt.Errorf("default permission not found: %s", perm)
 		}
 
 		addPerms = append(addPerms, AddPerm{
 			Id:  permId,
 			Val: true,
 		})
+	}
+
+	role, err := ps.CreateRole(ctx, DefaultRoleJob, ps.startJobGrade)
+	if err != nil {
+		return fmt.Errorf("failed to create role. %w", err)
 	}
 
 	currentPerms, err := ps.GetRolePermissions(ctx, role.GetId())
@@ -187,8 +182,41 @@ func (ps *Perms) SetDefaultRolePerms(ctx context.Context, defaultPerms []string)
 		}
 	}
 
+	if len(defaultPerms) > 0 {
+		if err := ps.removeDefaultPermissionOverrides(ctx, defaultPerms); err != nil {
+			return fmt.Errorf("failed to remove default permission overrides. %w", err)
+		}
+	}
+
 	if err := ps.loadRolePermissions(ctx, role.GetId()); err != nil {
 		return fmt.Errorf("failed to load role permissions. %w", err)
+	}
+
+	return nil
+}
+
+func (ps *Perms) removeDefaultPermissionOverrides(ctx context.Context, defaultPerms []string) error {
+	if len(defaultPerms) == 0 {
+		return nil
+	}
+
+	permissionIDs := make([]int64, 0, len(defaultPerms))
+	for _, guard := range defaultPerms {
+		permissionID, ok := ps.permsGuardToIDMap.Load(guard)
+		if !ok {
+			return fmt.Errorf("default permission not found: %s", guard)
+		}
+		permissionIDs = append(permissionIDs, permissionID)
+	}
+
+	roles, err := ps.GetRoles(ctx, true)
+	if err != nil {
+		return err
+	}
+	for _, role := range roles {
+		if err := ps.RemovePermissionsFromRole(ctx, role.GetId(), permissionIDs...); err != nil {
+			return err
+		}
 	}
 
 	return nil

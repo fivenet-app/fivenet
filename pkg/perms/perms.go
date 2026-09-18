@@ -4,7 +4,6 @@ import (
 	"context"
 	"database/sql"
 	"fmt"
-	"strings"
 	"sync"
 	"time"
 
@@ -170,6 +169,7 @@ type Perms struct {
 	logger *zap.Logger
 	db     *sql.DB
 	wg     sync.WaitGroup
+	appCfg appconfig.IConfig
 
 	tracer trace.Tracer
 
@@ -232,6 +232,7 @@ func New(p Params) (Permissions, error) {
 		logger: logger,
 		db:     p.DB,
 		wg:     sync.WaitGroup{},
+		appCfg: p.AppConfig,
 
 		tracer: p.TP.Tracer("perms"),
 
@@ -312,15 +313,11 @@ func (ps *Perms) init(ctxCancel context.Context, ctxStartup context.Context, par
 	cfgDefaultPerms := params.AppConfig.Get().GetPerms().GetDefault()
 	defaultPerms := make([]string, len(cfgDefaultPerms))
 	for i := range cfgDefaultPerms {
-		split := strings.Split(cfgDefaultPerms[i].GetCategory(), ".")
-		namespace := strings.Join(split[:len(split)-1], ".")
-		svc := split[len(split)-1]
-
-		defaultPerms[i] = BuildGuard(
-			Namespace(namespace),
-			Service(svc),
-			Name(cfgDefaultPerms[i].GetName()),
-		)
+		guard, err := DefaultPermGuard(cfgDefaultPerms[i].GetCategory(), cfgDefaultPerms[i].GetName())
+		if err != nil {
+			return err
+		}
+		defaultPerms[i] = guard
 	}
 
 	if err := ps.loadData(ctxStartup); err != nil {

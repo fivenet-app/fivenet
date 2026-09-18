@@ -25,16 +25,19 @@ const (
 )
 
 type Permission struct {
-	state         protoimpl.MessageState `protogen:"hybrid.v1"`
-	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
-	CreatedAt     *timestamp.Timestamp   `protobuf:"bytes,2,opt,name=created_at,json=createdAt,proto3,oneof" json:"created_at,omitempty"`
-	Namespace     string                 `protobuf:"bytes,3,opt,name=namespace,proto3" json:"namespace,omitempty"`
-	Service       string                 `protobuf:"bytes,4,opt,name=service,proto3" json:"service,omitempty"`
-	Name          string                 `protobuf:"bytes,5,opt,name=name,proto3" json:"name,omitempty"`
-	GuardName     string                 `protobuf:"bytes,6,opt,name=guard_name,json=guardName,proto3" json:"guard_name,omitempty"`
-	Val           bool                   `protobuf:"varint,7,opt,name=val,proto3" json:"val,omitempty"`
-	Order         *int32                 `protobuf:"varint,8,opt,name=order,proto3,oneof" json:"order,omitempty"`
-	Icon          *string                `protobuf:"bytes,9,opt,name=icon,proto3,oneof" json:"icon,omitempty"`
+	state     protoimpl.MessageState `protogen:"hybrid.v1"`
+	Id        int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	CreatedAt *timestamp.Timestamp   `protobuf:"bytes,2,opt,name=created_at,json=createdAt,proto3,oneof" json:"created_at,omitempty"`
+	Namespace string                 `protobuf:"bytes,3,opt,name=namespace,proto3" json:"namespace,omitempty"`
+	Service   string                 `protobuf:"bytes,4,opt,name=service,proto3" json:"service,omitempty"`
+	Name      string                 `protobuf:"bytes,5,opt,name=name,proto3" json:"name,omitempty"`
+	GuardName string                 `protobuf:"bytes,6,opt,name=guard_name,json=guardName,proto3" json:"guard_name,omitempty"`
+	Val       bool                   `protobuf:"varint,7,opt,name=val,proto3" json:"val,omitempty"`
+	Order     *int32                 `protobuf:"varint,8,opt,name=order,proto3,oneof" json:"order,omitempty"`
+	Icon      *string                `protobuf:"bytes,9,opt,name=icon,proto3,oneof" json:"icon,omitempty"`
+	// True when this permission is granted through the AppConfig default list.
+	// This is metadata for consumers; override behavior is enforced separately.
+	IsDefault     bool `protobuf:"varint,10,opt,name=is_default,json=isDefault,proto3" json:"is_default,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -127,6 +130,13 @@ func (x *Permission) GetIcon() string {
 	return ""
 }
 
+func (x *Permission) GetIsDefault() bool {
+	if x != nil {
+		return x.IsDefault
+	}
+	return false
+}
+
 func (x *Permission) SetId(v int64) {
 	x.Id = v
 }
@@ -161,6 +171,10 @@ func (x *Permission) SetOrder(v int32) {
 
 func (x *Permission) SetIcon(v string) {
 	x.Icon = &v
+}
+
+func (x *Permission) SetIsDefault(v bool) {
+	x.IsDefault = v
 }
 
 func (x *Permission) HasCreatedAt() bool {
@@ -208,6 +222,9 @@ type Permission_builder struct {
 	Val       bool
 	Order     *int32
 	Icon      *string
+	// True when this permission is granted through the AppConfig default list.
+	// This is metadata for consumers; override behavior is enforced separately.
+	IsDefault bool
 }
 
 func (b0 Permission_builder) Build() *Permission {
@@ -223,6 +240,7 @@ func (b0 Permission_builder) Build() *Permission {
 	x.Val = b.Val
 	x.Order = b.Order
 	x.Icon = b.Icon
+	x.IsDefault = b.IsDefault
 	return m0
 }
 
@@ -489,7 +507,7 @@ var File_resources_permissions_permissions_permissions_proto protoreflect.FileDe
 
 const file_resources_permissions_permissions_permissions_proto_rawDesc = "" +
 	"\n" +
-	"3resources/permissions/permissions/permissions.proto\x12!resources.permissions.permissions\x1a1resources/permissions/attributes/attributes.proto\x1a#resources/timestamp/timestamp.proto\"\xb3\x02\n" +
+	"3resources/permissions/permissions/permissions.proto\x12!resources.permissions.permissions\x1a1resources/permissions/attributes/attributes.proto\x1a#resources/timestamp/timestamp.proto\"\xd2\x02\n" +
 	"\n" +
 	"Permission\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12B\n" +
@@ -502,7 +520,10 @@ const file_resources_permissions_permissions_permissions_proto_rawDesc = "" +
 	"guard_name\x18\x06 \x01(\tR\tguardName\x12\x10\n" +
 	"\x03val\x18\a \x01(\bR\x03val\x12\x19\n" +
 	"\x05order\x18\b \x01(\x05H\x01R\x05order\x88\x01\x01\x12\x17\n" +
-	"\x04icon\x18\t \x01(\tH\x02R\x04icon\x88\x01\x01B\r\n" +
+	"\x04icon\x18\t \x01(\tH\x02R\x04icon\x88\x01\x01\x12\x1d\n" +
+	"\n" +
+	"is_default\x18\n" +
+	" \x01(\bR\tisDefaultB\r\n" +
 	"\v_created_atB\b\n" +
 	"\x06_orderB\a\n" +
 	"\x05_icon\"\xa4\x03\n" +

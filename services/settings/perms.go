@@ -94,6 +94,32 @@ outer:
 	return filtered, nil
 }
 
+func (s *Server) markDefaultPermissions(ps []*permissionspermissions.Permission) {
+	if s.appCfg == nil {
+		return
+	}
+
+	defaultPerms := s.appCfg.Get().GetPerms().GetDefault()
+	if len(defaultPerms) == 0 {
+		return
+	}
+
+	defaultGuards := make(map[string]struct{}, len(defaultPerms))
+	for _, defaultPerm := range defaultPerms {
+		guard, err := perms.DefaultPermGuard(defaultPerm.GetCategory(), defaultPerm.GetName())
+		if err != nil {
+			continue
+		}
+		defaultGuards[guard] = struct{}{}
+	}
+
+	for _, permission := range ps {
+		if _, ok := defaultGuards[permission.GetGuardName()]; ok {
+			permission.SetIsDefault(true)
+		}
+	}
+}
+
 func (s *Server) filterPermissionIDs(
 	ctx context.Context,
 	job string,
@@ -191,6 +217,7 @@ func (s *Server) GetRole(
 	if err != nil {
 		return nil, errswrap.NewError(err, errorssettings.ErrInvalidRequest)
 	}
+	s.markDefaultPermissions(fPerms)
 
 	resp := &pbsettings.GetRoleResponse{
 		Role: &permissionspermissions.Role{
@@ -464,6 +491,7 @@ func (s *Server) GetPermissions(
 	if err != nil {
 		return nil, errswrap.NewError(err, errorssettings.ErrInvalidRequest)
 	}
+	s.markDefaultPermissions(filtered)
 
 	resp := &pbsettings.GetPermissionsResponse{}
 	resp.Permissions = filtered
@@ -506,6 +534,7 @@ func (s *Server) GetEffectivePermissions(
 	if err != nil {
 		return nil, errswrap.NewError(err, errorssettings.ErrFailedQuery)
 	}
+	s.markDefaultPermissions(perms)
 
 	attrs, err := s.perms.GetEffectiveRoleAttributes(ctx, role.GetJob(), role.GetGrade())
 	if err != nil {

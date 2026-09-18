@@ -5,7 +5,9 @@ import (
 	"time"
 
 	permissionsattributes "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/permissions/attributes"
+	settings "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/settings"
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/userinfo"
+	"github.com/fivenet-app/fivenet/v2026/pkg/config/appconfig"
 	"github.com/fivenet-app/fivenet/v2026/pkg/utils/cache"
 	"github.com/puzpuzpuz/xsync/v4"
 	"github.com/stretchr/testify/assert"
@@ -53,7 +55,7 @@ func TestCanServiceMethodUsesSplitService(t *testing.T) {
 	assert.False(t, ps.CanServiceMethod(user, "calendar.CalendarService/DeleteCalendar"))
 }
 
-func TestCanResolvesDefaultFallbackAndGradeOverrides(t *testing.T) {
+func TestCanResolvesDefaultFallbackAndGradeOverridesForUnconfiguredPermission(t *testing.T) {
 	t.Parallel()
 
 	ps := newTestPerms()
@@ -112,6 +114,104 @@ func TestCanResolvesDefaultFallbackAndGradeOverrides(t *testing.T) {
 		ps.CanRaw(user, testNamespace, testService, "Admin"),
 		"superusers bypass role checks for known permissions",
 	)
+}
+
+func TestConfiguredDefaultCannotBeOverriddenByJobDeny(t *testing.T) {
+	t.Parallel()
+
+	ps := newTestPerms()
+	addTestPermission(ps, 1, testNamespace, testService, testNameView)
+	addTestPermission(ps, 2, testNamespace, testService, testNameEdit)
+	setTestDefaultPermissions(ps, &settings.Perm{
+		Category: testNamespace + "." + testService,
+		Name:     testNameView,
+	})
+
+	// The role cache deliberately contains stale denies, including one for
+	// the configured default permission.
+	addTestRole(ps, 100, DefaultRoleJob, 0, map[int64]bool{1: false})
+	addTestRole(ps, 200, "police", 0, map[int64]bool{
+		1: false,
+		2: false,
+	})
+
+	user := &userinfo.UserInfo{
+		UserId:   10,
+		Job:      "police",
+		JobGrade: 0,
+	}
+
+	assert.True(t, ps.CanRaw(user, testNamespace, testService, testNameView))
+	assert.False(t, ps.CanRaw(user, testNamespace, testService, testNameEdit))
+}
+
+func TestConfiguredDefaultIsIncludedDespiteStaleJobDeny(t *testing.T) {
+	t.Parallel()
+
+	ps := newTestPerms()
+	addTestPermission(ps, 1, testNamespace, testService, testNameView)
+	addTestPermission(ps, 2, testNamespace, testService, testNameEdit)
+	setTestDefaultPermissions(ps, &settings.Perm{
+		Category: testNamespace + "." + testService,
+		Name:     testNameView,
+	})
+	addTestRole(ps, 100, DefaultRoleJob, 0, map[int64]bool{1: false})
+	addTestRole(ps, 200, "police", 0, map[int64]bool{
+		1: false,
+		2: false,
+	})
+
+	permissions, err := ps.GetPermissionsOfUser(&userinfo.UserInfo{
+		UserId:   10,
+		Job:      "police",
+		JobGrade: 0,
+	})
+	require.NoError(t, err)
+	require.Len(t, permissions, 1)
+	assert.Equal(t, BuildGuard(testNamespace, testService, testNameView), permissions[0].GetGuardName())
+}
+
+func TestRemovingConfiguredDefaultRestoresRoleDeny(t *testing.T) {
+	t.Parallel()
+
+	ps := newTestPerms()
+	addTestPermission(ps, 1, testNamespace, testService, testNameView)
+	setTestDefaultPermissions(ps, &settings.Perm{
+		Category: testNamespace + "." + testService,
+		Name:     testNameView,
+	})
+	addTestRole(ps, 100, DefaultRoleJob, 0, map[int64]bool{1: false})
+	addTestRole(ps, 200, "police", 0, map[int64]bool{1: false})
+
+	user := &userinfo.UserInfo{UserId: 10, Job: "police", JobGrade: 0}
+	require.True(t, ps.CanRaw(user, testNamespace, testService, testNameView))
+
+	cfg := ps.appCfg.Get()
+	cfg.Perms.Default = nil
+	ps.appCfg.Set(cfg)
+	ps.clearUserCanCache()
+
+	assert.False(t, ps.CanRaw(user, testNamespace, testService, testNameView))
+}
+
+func TestAddingConfiguredDefaultInvalidatesCachedDeny(t *testing.T) {
+	t.Parallel()
+
+	ps := newTestPerms()
+	addTestPermission(ps, 1, testNamespace, testService, testNameView)
+	addTestRole(ps, 100, DefaultRoleJob, 0, map[int64]bool{1: false})
+	addTestRole(ps, 200, "police", 0, map[int64]bool{1: false})
+
+	user := &userinfo.UserInfo{UserId: 10, Job: "police", JobGrade: 0}
+	require.False(t, ps.CanRaw(user, testNamespace, testService, testNameView))
+
+	setTestDefaultPermissions(ps, &settings.Perm{
+		Category: testNamespace + "." + testService,
+		Name:     testNameView,
+	})
+	ps.clearUserCanCache()
+
+	assert.True(t, ps.CanRaw(user, testNamespace, testService, testNameView))
 }
 
 func TestCanCacheKeyIncludesJobAndGrade(t *testing.T) {
@@ -197,11 +297,8 @@ func TestGetPermissionsOfUserFiltersDeniedPermissions(t *testing.T) {
 	})
 	require.NoError(t, err)
 
-	assert.ElementsMatch(
-		t,
-		[]string{BuildGuard(testNamespace, testService, testNameEdit)},
-		[]string{perms[0].GetGuardName()},
-	)
+	require.Len(t, perms, 1)
+	assert.Equal(t, BuildGuard(testNamespace, testService, testNameEdit), perms[0].GetGuardName())
 }
 
 func TestAttrUsesClosestRoleGradeAndReturnsClone(t *testing.T) {
@@ -281,6 +378,16 @@ func newTestPerms() *Perms {
 		userCanCacheTTL: time.Hour,
 		userCanCache:    cache.NewLRUCache[userCacheKey, bool](64),
 	}
+}
+
+func setTestDefaultPermissions(ps *Perms, defaults ...*settings.Perm) {
+	cfg := &settings.AppConfig{}
+	cfg.Default()
+	cfg.Perms.Default = defaults
+
+	appCfg := &appconfig.TestConfig{}
+	appCfg.Set(cfg)
+	ps.appCfg = appCfg
 }
 
 func addTestPermission(p *Perms, id int64, namespace Namespace, service Service, name Name) {

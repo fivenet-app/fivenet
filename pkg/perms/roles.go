@@ -451,6 +451,9 @@ func (p *Perms) GetEffectiveRolePermissions(
 			}
 		}
 	}
+	for permissionID := range p.configuredDefaultPermissionIDs() {
+		perms[permissionID] = true
+	}
 
 	ps := []*permissionspermissions.Permission{}
 	for i, v := range perms {
@@ -480,6 +483,22 @@ func (p *Perms) GetEffectiveRolePermissions(
 }
 
 func (ps *Perms) UpdateRolePermissions(ctx context.Context, roleId int64, perms ...AddPerm) error {
+	role, err := ps.GetRole(ctx, roleId)
+	if err != nil {
+		return fmt.Errorf("failed to get role %d: %w", roleId, err)
+	}
+	if role == nil {
+		return fmt.Errorf("role %d not found", roleId)
+	}
+
+	if role.GetJob() != DefaultRoleJob {
+		for _, perm := range perms {
+			if !perm.Val && ps.isConfiguredDefaultPermission(perm.Id) {
+				return fmt.Errorf("cannot deny configured default permission %d", perm.Id)
+			}
+		}
+	}
+
 	rolePerms := make([]struct {
 		RoleID       int64
 		PermissionID int64
@@ -533,6 +552,30 @@ func (ps *Perms) UpdateRolePermissions(ctx context.Context, roleId int64, perms 
 	}
 
 	return nil
+}
+
+func (ps *Perms) isConfiguredDefaultPermission(permissionID int64) bool {
+	_, ok := ps.configuredDefaultPermissionIDs()[permissionID]
+	return ok
+}
+
+func (ps *Perms) configuredDefaultPermissionIDs() map[int64]struct{} {
+	ids := map[int64]struct{}{}
+	if ps.appCfg == nil || ps.appCfg.Get() == nil {
+		return ids
+	}
+
+	for _, defaultPerm := range ps.appCfg.Get().GetPerms().GetDefault() {
+		guard, err := DefaultPermGuard(defaultPerm.GetCategory(), defaultPerm.GetName())
+		if err != nil {
+			continue
+		}
+		if id, ok := ps.permsGuardToIDMap.Load(guard); ok {
+			ids[id] = struct{}{}
+		}
+	}
+
+	return ids
 }
 
 func (ps *Perms) RemovePermissionsFromRole(

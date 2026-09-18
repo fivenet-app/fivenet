@@ -59,6 +59,9 @@ func (p *Perms) getRolePermissionsFromCache(roleIds []int64) []*cachePerm {
 			}
 		}
 	}
+	for permissionID := range p.configuredDefaultPermissionIDs() {
+		perms[permissionID] = true
+	}
 
 	ps := []*cachePerm{}
 	for i, v := range perms {
@@ -125,6 +128,10 @@ func (ps *Perms) can(
 }
 
 func (ps *Perms) checkIfCan(permId int64, userInfo *userinfo.UserInfo) bool {
+	if ps.isConfiguredDefaultPermission(permId) {
+		return true
+	}
+
 	if check, ok := ps.checkRoleJob(userInfo.GetJob(), userInfo.GetJobGrade(), permId); ok {
 		return check
 	}

@@ -53,6 +53,13 @@ export interface Permission {
      * @generated from protobuf field: optional string icon = 9
      */
     icon?: string;
+    /**
+     * True when this permission is granted through the AppConfig default list.
+     * This is metadata for consumers; override behavior is enforced separately.
+     *
+     * @generated from protobuf field: bool is_default = 10
+     */
+    isDefault: boolean;
 }
 /**
  * @generated from protobuf message resources.permissions.permissions.Role
@@ -116,7 +123,8 @@ class Permission$Type extends MessageType<Permission> {
             { no: 6, name: "guard_name", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "255" } } } },
             { no: 7, name: "val", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
             { no: 8, name: "order", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/, options: { "buf.validate.field": { int32: { gte: 0 } } } },
-            { no: 9, name: "icon", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "128" } } } }
+            { no: 9, name: "icon", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "128" } } } },
+            { no: 10, name: "is_default", kind: "scalar", T: 8 /*ScalarType.BOOL*/ }
         ]);
     }
     create(value?: PartialMessage<Permission>): Permission {
@@ -127,6 +135,7 @@ class Permission$Type extends MessageType<Permission> {
         message.name = "";
         message.guardName = "";
         message.val = false;
+        message.isDefault = false;
         if (value !== undefined)
             reflectionMergePartial<Permission>(this, message, value);
         return message;
@@ -162,6 +171,9 @@ class Permission$Type extends MessageType<Permission> {
                     break;
                 case /* optional string icon */ 9:
                     message.icon = reader.string();
+                    break;
+                case /* bool is_default */ 10:
+                    message.isDefault = reader.bool();
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -202,6 +214,9 @@ class Permission$Type extends MessageType<Permission> {
         /* optional string icon = 9; */
         if (message.icon !== undefined)
             writer.tag(9, WireType.LengthDelimited).string(message.icon);
+        /* bool is_default = 10; */
+        if (message.isDefault !== false)
+            writer.tag(10, WireType.Varint).bool(message.isDefault);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);

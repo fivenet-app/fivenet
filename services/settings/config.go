@@ -2,6 +2,7 @@ package settings
 
 import (
 	"context"
+	"fmt"
 	"strings"
 	"time"
 
@@ -55,15 +56,29 @@ func (s *Server) UpdateAppConfig(
 	cfgDefaultperms := req.GetConfig().GetPerms().GetDefault()
 	defaultPerms := make([]string, len(req.GetConfig().GetPerms().GetDefault()))
 	for i := range cfgDefaultperms {
-		split := strings.Split(cfgDefaultperms[i].GetCategory(), ".")
-		namespace := strings.Join(split[:len(split)-1], ".")
-		svc := split[len(split)-1]
+		guard, err := perms.DefaultPermGuard(
+			cfgDefaultperms[i].GetCategory(),
+			cfgDefaultperms[i].GetName(),
+		)
+		if err != nil {
+			return nil, err
+		}
 
-		defaultPerms[i] = perms.BuildGuard(
-			perms.Namespace(namespace),
-			perms.Service(svc),
+		separator := strings.LastIndexByte(cfgDefaultperms[i].GetCategory(), '.')
+		permission, err := s.perms.GetPermission(
+			ctx,
+			perms.Namespace(cfgDefaultperms[i].GetCategory()[:separator]),
+			perms.Service(cfgDefaultperms[i].GetCategory()[separator+1:]),
 			perms.Name(cfgDefaultperms[i].GetName()),
 		)
+		if err != nil {
+			return nil, err
+		}
+		if permission == nil {
+			return nil, fmt.Errorf("default permission not found: %s", guard)
+		}
+
+		defaultPerms[i] = guard
 	}
 	if err := s.perms.SetDefaultRolePerms(ctx, defaultPerms); err != nil {
 		return nil, err

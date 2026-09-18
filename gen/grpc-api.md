@@ -6760,6 +6760,7 @@ User related events
 | `val` | [bool](#bool) |  |  |
 | `order` | [int32](#int32) | optional |  |
 | `icon` | [string](#string) | optional |  |
+| `is_default` | [bool](#bool) |  | True when this permission is granted through the AppConfig default list. This is metadata for consumers; override behavior is enforced separately. |
 
 
 

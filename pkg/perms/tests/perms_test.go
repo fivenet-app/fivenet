@@ -5,11 +5,13 @@ import (
 	"testing"
 
 	permissionsattributes "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/permissions/attributes"
+	settings "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/settings"
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/userinfo"
 	permsdocuments "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/documents/perms"
 	"github.com/fivenet-app/fivenet/v2026/internal/modules"
 	"github.com/fivenet-app/fivenet/v2026/internal/tests/servers"
 	"github.com/fivenet-app/fivenet/v2026/internal/tests/testdata"
+	"github.com/fivenet-app/fivenet/v2026/pkg/config/appconfig"
 	"github.com/fivenet-app/fivenet/v2026/pkg/perms"
 	"github.com/gosimple/slug"
 	"github.com/stretchr/testify/assert"
@@ -34,12 +36,16 @@ func TestBasicPerms(t *testing.T) {
 	natsServer := servers.NewNATSServer(t)
 
 	var ps perms.Permissions
+	var appCfg appconfig.IConfig
 	app := fxtest.New(t,
 		modules.GetFxTestOpts(
 			dbServer.FxProvide(),
 			natsServer.FxProvide(),
 			fx.Invoke(func(p perms.Permissions) {
 				ps = p
+			}),
+			fx.Invoke(func(c appconfig.IConfig) {
+				appCfg = c
 			}),
 		)...,
 	)
@@ -187,4 +193,36 @@ func TestBasicPerms(t *testing.T) {
 	require.NoError(t, err, "GetEffectiveRoleAttributes should not return an error")
 	attributes = flattenRoleAttributes(roleAttrs)
 	assert.Empty(t, attributes, "GetEffectiveRoleAttributes should now return 0 attributes")
+
+	// Configured default permissions cannot be denied by job roles.
+	defaultPerm, err := ps.GetPermission(ctx, "settings", "LawsService", "CreateOrUpdateLawBook")
+	require.NoError(t, err)
+	require.NotNil(t, defaultPerm)
+
+	cfg := appCfg.Get()
+	cfg.Perms.Default = []*settings.Perm{{
+		Category: "settings.LawsService",
+		Name:     "CreateOrUpdateLawBook",
+	}}
+	appCfg.Set(cfg)
+	require.NoError(t, ps.SetDefaultRolePerms(ctx, []string{defaultPerm.GetGuardName()}))
+
+	jobUser := &userinfo.UserInfo{
+		Job:      testdata.Users[0].GetJob(),
+		JobGrade: testdata.Users[0].GetJobGrade(),
+	}
+	role, err = ps.GetRoleByJobAndGrade(ctx, jobUser.GetJob(), jobUser.GetJobGrade())
+	require.NoError(t, err)
+	require.NotNil(t, role)
+
+	err = ps.UpdateRolePermissions(ctx, role.GetId(), perms.AddPerm{
+		Id:  defaultPerm.GetId(),
+		Val: false,
+	})
+	assert.Error(t, err, "job roles must not deny configured default permissions")
+	assert.True(
+		t,
+		ps.CanRaw(jobUser, "settings", "LawsService", "CreateOrUpdateLawBook"),
+		"configured default permissions must remain effective",
+	)
 }

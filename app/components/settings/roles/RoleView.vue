@@ -136,7 +136,18 @@ async function genPermissionCategories(): Promise<void> {
 async function propogateRolePermissionStates(role: Role): Promise<void> {
     permStates.value.clear();
 
-    role.permissions.forEach((perm) => permStates.value.set(perm.id, Boolean(perm.val)));
+    permList.value.forEach((perm) => {
+        if (perm.isDefault) {
+            permStates.value.set(perm.id, true);
+        }
+    });
+
+    role.permissions.forEach((perm) => {
+        const configuredDefault = permList.value.find((value) => value.id === perm.id)?.isDefault;
+        if (!configuredDefault) {
+            permStates.value.set(perm.id, Boolean(perm.val));
+        }
+    });
 
     role.attributes.forEach((attr) => {
         const idx = attrList.value.findIndex((a) => a.attrId === attr.attrId);
@@ -643,7 +654,7 @@ const actionItems = computed<ResponsiveActionEntry[]>(() => {
                                 <UFieldGroup class="inline-flex flex-initial">
                                     <UButton
                                         color="success"
-                                        :variant="permStates.get(perm.id) ? 'solid' : 'soft'"
+                                        :variant="perm.isDefault || permStates.get(perm.id) ? 'solid' : 'soft'"
                                         icon="i-mdi-check"
                                         :disabled="!canUpdate"
                                         @click="updatePermissionState(perm.id, true)"
@@ -655,17 +666,19 @@ const actionItems = computed<ResponsiveActionEntry[]>(() => {
                                             !permStates.has(perm.id) || permStates.get(perm.id) === undefined ? 'solid' : 'soft'
                                         "
                                         icon="i-mdi-minus"
-                                        :disabled="!canUpdate"
+                                        :disabled="!canUpdate || perm.isDefault"
                                         @click="updatePermissionState(perm.id, undefined)"
                                     />
 
                                     <UButton
                                         color="error"
                                         :variant="
-                                            permStates.get(perm.id) !== undefined && !permStates.get(perm.id) ? 'solid' : 'soft'
+                                            !perm.isDefault && permStates.get(perm.id) !== undefined && !permStates.get(perm.id)
+                                                ? 'solid'
+                                                : 'soft'
                                         "
                                         icon="i-mdi-close"
-                                        :disabled="!canUpdate"
+                                        :disabled="!canUpdate || perm.isDefault"
                                         @click="updatePermissionState(perm.id, false)"
                                     />
                                 </UFieldGroup>
@@ -709,7 +722,7 @@ const actionItems = computed<ResponsiveActionEntry[]>(() => {
                                         <UFieldGroup class="inline-flex flex-initial">
                                             <UButton
                                                 color="success"
-                                                :variant="permStates.get(perm.id) ? 'solid' : 'soft'"
+                                                :variant="perm.isDefault || permStates.get(perm.id) ? 'solid' : 'soft'"
                                                 icon="i-mdi-check"
                                                 :disabled="!canUpdate"
                                                 @click="updatePermissionState(perm.id, true)"
@@ -723,19 +736,21 @@ const actionItems = computed<ResponsiveActionEntry[]>(() => {
                                                         : 'soft'
                                                 "
                                                 icon="i-mdi-minus"
-                                                :disabled="!canUpdate"
+                                                :disabled="!canUpdate || perm.isDefault"
                                                 @click="updatePermissionState(perm.id, undefined)"
                                             />
 
                                             <UButton
                                                 color="error"
                                                 :variant="
-                                                    permStates.get(perm.id) !== undefined && !permStates.get(perm.id)
+                                                    !perm.isDefault &&
+                                                    permStates.get(perm.id) !== undefined &&
+                                                    !permStates.get(perm.id)
                                                         ? 'solid'
                                                         : 'soft'
                                                 "
                                                 icon="i-mdi-close"
-                                                :disabled="!canUpdate"
+                                                :disabled="!canUpdate || perm.isDefault"
                                                 @click="updatePermissionState(perm.id, false)"
                                             />
                                         </UFieldGroup>

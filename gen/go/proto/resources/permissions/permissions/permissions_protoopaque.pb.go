@@ -35,6 +35,7 @@ type Permission struct {
 	xxx_hidden_Val         bool                   `protobuf:"varint,7,opt,name=val,proto3"`
 	xxx_hidden_Order       int32                  `protobuf:"varint,8,opt,name=order,proto3,oneof"`
 	xxx_hidden_Icon        *string                `protobuf:"bytes,9,opt,name=icon,proto3,oneof"`
+	xxx_hidden_IsDefault   bool                   `protobuf:"varint,10,opt,name=is_default,json=isDefault,proto3"`
 	XXX_raceDetectHookData protoimpl.RaceDetectHookData
 	XXX_presence           [1]uint32
 	unknownFields          protoimpl.UnknownFields
@@ -132,6 +133,13 @@ func (x *Permission) GetIcon() string {
 	return ""
 }
 
+func (x *Permission) GetIsDefault() bool {
+	if x != nil {
+		return x.xxx_hidden_IsDefault
+	}
+	return false
+}
+
 func (x *Permission) SetId(v int64) {
 	x.xxx_hidden_Id = v
 }
@@ -162,12 +170,16 @@ func (x *Permission) SetVal(v bool) {
 
 func (x *Permission) SetOrder(v int32) {
 	x.xxx_hidden_Order = v
-	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 7, 9)
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 7, 10)
 }
 
 func (x *Permission) SetIcon(v string) {
 	x.xxx_hidden_Icon = &v
-	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 8, 9)
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 8, 10)
+}
+
+func (x *Permission) SetIsDefault(v bool) {
+	x.xxx_hidden_IsDefault = v
 }
 
 func (x *Permission) HasCreatedAt() bool {
@@ -217,6 +229,9 @@ type Permission_builder struct {
 	Val       bool
 	Order     *int32
 	Icon      *string
+	// True when this permission is granted through the AppConfig default list.
+	// This is metadata for consumers; override behavior is enforced separately.
+	IsDefault bool
 }
 
 func (b0 Permission_builder) Build() *Permission {
@@ -231,13 +246,14 @@ func (b0 Permission_builder) Build() *Permission {
 	x.xxx_hidden_GuardName = b.GuardName
 	x.xxx_hidden_Val = b.Val
 	if b.Order != nil {
-		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 7, 9)
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 7, 10)
 		x.xxx_hidden_Order = *b.Order
 	}
 	if b.Icon != nil {
-		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 8, 9)
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 8, 10)
 		x.xxx_hidden_Icon = b.Icon
 	}
+	x.xxx_hidden_IsDefault = b.IsDefault
 	return m0
 }
 
@@ -526,7 +542,7 @@ var File_resources_permissions_permissions_permissions_proto protoreflect.FileDe
 
 const file_resources_permissions_permissions_permissions_proto_rawDesc = "" +
 	"\n" +
-	"3resources/permissions/permissions/permissions.proto\x12!resources.permissions.permissions\x1a1resources/permissions/attributes/attributes.proto\x1a#resources/timestamp/timestamp.proto\"\xb3\x02\n" +
+	"3resources/permissions/permissions/permissions.proto\x12!resources.permissions.permissions\x1a1resources/permissions/attributes/attributes.proto\x1a#resources/timestamp/timestamp.proto\"\xd2\x02\n" +
 	"\n" +
 	"Permission\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12B\n" +
@@ -539,7 +555,10 @@ const file_resources_permissions_permissions_permissions_proto_rawDesc = "" +
 	"guard_name\x18\x06 \x01(\tR\tguardName\x12\x10\n" +
 	"\x03val\x18\a \x01(\bR\x03val\x12\x19\n" +
 	"\x05order\x18\b \x01(\x05H\x01R\x05order\x88\x01\x01\x12\x17\n" +
-	"\x04icon\x18\t \x01(\tH\x02R\x04icon\x88\x01\x01B\r\n" +
+	"\x04icon\x18\t \x01(\tH\x02R\x04icon\x88\x01\x01\x12\x1d\n" +
+	"\n" +
+	"is_default\x18\n" +
+	" \x01(\bR\tisDefaultB\r\n" +
 	"\v_created_atB\b\n" +
 	"\x06_orderB\a\n" +
 	"\x05_icon\"\xa4\x03\n" +
