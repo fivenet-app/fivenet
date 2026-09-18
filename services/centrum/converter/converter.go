@@ -52,18 +52,18 @@ func New(p Params) *Converter {
 		p.Logger.Debug("dispatch center converter is disabled")
 		return nil
 	}
-	if len(p.Config.DispatchCenter.ConvertJobs) == 0 {
-		p.Logger.Warn("dispatch center converter is enabled but no convert jobs are configured")
-		return nil
-	}
-
 	ctxCancel, cancel := context.WithCancel(context.Background())
 
 	convertJobs := make([]string, 0, len(p.Config.DispatchCenter.ConvertJobs))
 	for _, job := range p.Config.DispatchCenter.ConvertJobs {
+		job = strings.TrimSpace(job)
 		if job != "" {
 			convertJobs = append(convertJobs, job)
 		}
+	}
+	if len(convertJobs) == 0 {
+		p.Logger.Warn("dispatch center converter is enabled but no valid convert jobs are configured")
+		return nil
 	}
 
 	c := &Converter{
@@ -178,6 +178,16 @@ func (s *Converter) convertGKSPhoneJobMsgToDispatch(ctx context.Context) error {
 	s.logger.Debug("converting gksphone dispatch to fivenet", zap.Int("dispatch_count", len(dest)))
 	for _, msg := range dest {
 		job := strings.TrimSuffix(strings.TrimPrefix(*msg.Jobm, "[\""), "\"]")
+		if strings.TrimSpace(job) == "" {
+			s.logger.Warn(
+				"skipping gksphone dispatch with empty target job",
+				zap.Int32("phone_dsp_id", msg.ID),
+			)
+			if err := s.closeGKSPhoneJobMsg(ctx, msg.ID); err != nil {
+				return err
+			}
+			continue
+		}
 		gps, _ := strings.CutPrefix(*msg.Gps, "GPS: ")
 		gpsSplit := strings.Split(gps, ", ")
 		x, err := strconv.ParseFloat(gpsSplit[0], 32)
@@ -313,6 +323,16 @@ func (s *Converter) convertLBPhoneJobMsgToDispatch(ctx context.Context) error {
 
 	s.logger.Debug("converting lbphone dispatch to fivenet", zap.Int("dispatch_count", len(dest)))
 	for _, msg := range dest {
+		if strings.TrimSpace(msg.Job) == "" {
+			s.logger.Warn(
+				"skipping lbphone dispatch with empty target job",
+				zap.Int32("phone_dsp_id", msg.ID),
+			)
+			if err := s.closeLBPhoneJobMsg(ctx, msg.ID); err != nil {
+				return err
+			}
+			continue
+		}
 		message := "N/A"
 		if msg.Message != "" {
 			if len(msg.Message) > 250 {
