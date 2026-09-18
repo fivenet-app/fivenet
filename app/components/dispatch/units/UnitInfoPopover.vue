@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 import type { ButtonProps } from '@nuxt/ui';
 import PhoneNumberBlock from '~/components/partials/citizens/PhoneNumberBlock.vue';
+import { hexToRgb, isColorBright, rgbBlack } from '~/utils/color';
 import { useCentrumStore } from '~/stores/centrum';
 import type { DispatchAssignment } from '~~/gen/ts/resources/centrum/dispatches/dispatches';
 import { StatusUnit, type Unit } from '~~/gen/ts/resources/centrum/units/units';
@@ -35,6 +36,24 @@ const unit = computed(() =>
 );
 
 const unitStatusColor = computed(() => unitStatusToBGColor(props.unit?.status?.status));
+const unitTriggerTextColor = computed(() => {
+    if (!unit.value?.color) return undefined;
+
+    return isColorBright(hexToRgb(unit.value.color, rgbBlack)!) ? '#000000' : '#ffffff';
+});
+const unitTriggerTextClass = computed(() => {
+    if (!unitTriggerTextColor.value) return undefined;
+
+    return unitTriggerTextColor.value === '#000000' ? 'text-black!' : 'text-white!';
+});
+const unitTriggerStyle = computed(() =>
+    unit.value?.color
+        ? {
+              backgroundColor: unit.value.color,
+              borderColor: unitTriggerTextColor.value,
+          }
+        : undefined,
+);
 </script>
 
 <template>
@@ -46,14 +65,18 @@ const unitStatusColor = computed(() => unitStatusToBGColor(props.unit?.status?.s
     </template>
 
     <UPopover v-else>
-        <UButton class="inline-flex items-center gap-1 p-0.5 px-1" variant="outline" :size="props.size">
+        <UButton
+            class="inline-flex items-center gap-1 p-0.5 px-1"
+            :class="unitTriggerTextClass"
+            :size="props.size"
+            :style="unitTriggerStyle"
+        >
             <slot name="before" />
 
             <UIcon
                 v-if="showIcon && unit.icon && unit.icon !== defaultUnitIcon"
-                class="size-3"
+                class="size-3 text-inherit"
                 :name="convertComponentIconNameToDynamic(unit.icon)"
-                :style="{ color: unit.color ?? 'currentColor' }"
             />
 
             <span>
