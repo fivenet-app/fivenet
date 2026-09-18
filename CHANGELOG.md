@@ -2,6 +2,96 @@
 
 All notable changes to this project will be documented in this file.
 
+## [2026.9.3] - 2026-09-18
+
+### 🚀 Features
+
+- *(qualifications)* Cleanup of exam service and ui
+- *(qualifications)* Add activity feed
+- *(citizens)* Filter activity by time range
+- *(vehicles)* Filter activity by time range
+- *(jobs)* Filter colleague activity by time range
+- *(ui)* Add generic deleted at badge
+- *(ui)* Use deleted at badge in more components
+- *(documents,ui)* Use timeline for comments and consistent use of
+- *(qualifications)* Improve exam grading, attempt retention, and result lifecycle
+- *(qualifications)* Add dedicated request accepted/rejected texts
+- *(dispatch,units)* Use nuxt timeline componet for feeds
+- *(centrum)* Own dispatch entry button styling and useSecondClock
+- *(auth)* Keep current route when enabling superuser mode
+- *(notifications)* Forward account group changes to streams
+- *(colleagues)* Add groups list hydrator and resolved members table
+- *(groups)* Remove include excluded field from user_selector
+- *(colleagues)* Add groups to card list display
+- *(perms)* Make configured default permissions non-deniable
+- *(centrum)* Add pick location for dispatch creation
+- *(centrum)* Re-design dispatch and unit detail slideovers using cards
+- *(centrum)* Increase page size for dispatch and unit activity
+- *(ui)* Add bg-content class
+
+### 🐛 Bug Fixes
+
+- *(config)* Log compression name field
+- *(config)* Remove unused config fields/options
+- *(osv)* Ignore golang.org/x/mod/* CVEs
+- *(livemap)* Bottom padding for banners
+- *(ui,time)* Add useMinuteClock for reactive "is today" handling
+- *(qualifications)* Exam handling review feedback
+- *(qualifications)* Harden exam validation and grading
+- *(ci)* Oscv-scanner job name issue
+- *(qualifications)* Harden exam data handling
+- *(tests)* Retry container create test setup failures
+- *(activity)* Align activity filters with perms and improve user labels
+- *(qualifications)* Show deleted at badge for list
+- *(documents,qualifications)* Not returning deletedAt column for
+- *(documents)* Improve comment count handling
+- *(auth)* Keep permission tabs valid after context changes
+- *(qualifications)* Respect ACL levels for creators
+- *(groups)* Add info alert for memership evaluation time
+- *(centrum)* Ephemeral dispatchers
+- *(centrum)* Improve housekeeper and status logic
+- *(userinfo)* Replace polling with sync events
+- *(centrum)* React to canonical user changes
+- *(centrum)* Target state reconciliation and cleanup
+- *(centrum)* Harden feed stream delivery
+- *(centrum)* Reconcile frontend stream state
+- *(grpcws)* Use standard trailer prefix
+- *(centrum)* Code review points of centrum changes
+- *(centrum)* Harden state reconciliation and cleanup
+- *(centrum)* Add more tests and address some issues
+- *(centrum)* Dispatches not appearing/disappearing on create/delete
+- *(centrum)* Assignment and expiration issues
+- *(centrum)* Review feedback points
+- *(nats)* Harden cache watcher recovery and add jetstream lifecycle tests
+- *(query)* Update migration file names due to rebase
+- *(tests)* Improve db container re-use logic
+- *(livemap)* Take dispatch button bottom padding
+- *(centrum)* Phone dispatch converter not starting in goroutine
+- *(admin)* Log when readiness state is set
+- *(centrum)* Add const for per run conversion limit
+- *(auth)* Toggle superuser mode data not refreshing issue
+- *(jobs)* Motd textarea not full wide
+- *(userinfo)* Add account groups changed broker/stream
+- *(centrum)* Use active duty job for unit membership
+- *(groups)* Recalculate members on group update
+- *(centrum)* Preserve context cancellation in watcher shutdown
+- *(ci)* Update chart-release workflow to update dev channel too
+- *(perms)* Enforce unconditional default permissions
+- *(centrum)* Adjust housekeeper cron times
+- *(centrum)* Clean up expired assignments for archived dispatches
+- *(cron)* Use more explicit cron tags for common times
+- *(centrum)* Make dispatch assignment expiry race-safe
+- *(auth)* Full flow test issue after default perms changes
+- *(centrum)* Test and dispatch creation job issues
+- *(centrum)* Prevent dispatches with empty jobs
+- *(centrum)* Alias expired assignment unit IDs correctly
+- *(demo)* Issues with units created by demo mode
+- *(demo)* Test issue
+- *(centrum)* Unit info popover button use unit color
+- *(livemap)* Don't run stream recovery test in parallel and format
+- *(ui)* Clean up text and bg css class usages
+- *(lint)* Run golangci-lint --fix
+
 ## [2026.9.2] - 2026-09-14
 
 ### 🚀 Features
