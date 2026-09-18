@@ -63,11 +63,13 @@ func TestHandleDispatchAssignmentExpirationFallsBackToSQLWithoutKVTimer(t *testi
 		assignmentExpirationWriter: writer,
 	}
 
-	expired, dispatches, jobs, units, backlog, err := h.handleDispatchAssignmentExpiration(
+	expired, deleted, archivedDeleted, dispatches, jobs, units, backlog, err := h.handleDispatchAssignmentExpiration(
 		t.Context(),
 	)
 	require.NoError(t, err)
 	require.Equal(t, 2, expired)
+	require.Equal(t, 2, deleted)
+	require.Zero(t, archivedDeleted)
 	require.Equal(t, 1, dispatches)
 	require.Equal(t, 1, jobs)
 	require.Equal(t, 2, units)
@@ -96,11 +98,13 @@ func TestHandleDispatchAssignmentExpirationCleansArchivedDispatch(t *testing.T) 
 		assignmentExpirationWriter: writer,
 	}
 
-	expired, dispatches, jobs, units, backlog, err := h.handleDispatchAssignmentExpiration(
+	expired, deleted, archivedDeleted, dispatches, jobs, units, backlog, err := h.handleDispatchAssignmentExpiration(
 		t.Context(),
 	)
 	require.NoError(t, err)
 	assert.Equal(t, 1, expired)
+	assert.Zero(t, deleted)
+	assert.Zero(t, archivedDeleted)
 	assert.Equal(t, 1, dispatches)
 	assert.Equal(t, 1, jobs)
 	assert.Equal(t, 1, units)

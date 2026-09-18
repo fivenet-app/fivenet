@@ -270,7 +270,7 @@ func (s *Server) waitForReady(ctx context.Context) error {
 func (s *Server) RegisterCronjobs(ctx context.Context, registry croner.IRegistry) error {
 	if err := registry.RegisterCronjob(ctx, &cron.Cronjob{
 		Name:     "centrum.dispatch.heatmap",
-		Schedule: "*/5 * * * *", // Every 5 minutes
+		Schedule: "@5minutes", // Every 5 minutes
 		Timeout:  durationpb.New(3 * time.Minute),
 	}); err != nil {
 		return err

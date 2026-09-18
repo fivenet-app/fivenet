@@ -63,7 +63,7 @@ func NewHousekeeper(p HousekeeperParams) HousekeeperResult {
 func (h *Housekeeper) RegisterCronjobs(ctx context.Context, registry croner.IRegistry) error {
 	if err := registry.RegisterCronjob(ctx, &cron.Cronjob{
 		Name:     "access.subjects.cleanup",
-		Schedule: "*/10 * * * *",
+		Schedule: "@10minutes",
 		Timeout:  durationpb.New(1 * time.Minute),
 	}); err != nil {
 		return err

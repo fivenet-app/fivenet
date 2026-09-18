@@ -30,6 +30,8 @@ const (
 	maxKVDispatchDeletesPerRun     = 100
 
 	dispatchAssignmentExpiredAttr  = "expired_assignments"
+	dispatchAssignmentDeletedAttr  = "assignments_deleted"
+	dispatchAssignmentArchivedAttr = "archived_assignments_deleted"
 	dispatchAssignmentAffectedAttr = "dispatches_affected"
 	dispatchAssignmentJobsAttr     = "jobs_affected"
 	dispatchAssignmentUnitsAttr    = "units_affected"
@@ -289,14 +291,15 @@ func (s *Housekeeper) runHandleDispatchAssignmentExpiration(
 		)
 	}
 
-	expired, dispatchesAffected, jobsAffected, unitsAffected, backlog, err := s.handleDispatchAssignmentExpiration(
+	expired, deleted, archivedDeleted, dispatchesAffected, jobsAffected, unitsAffected, backlog, err := s.handleDispatchAssignmentExpiration(
 		ctx,
 	)
-	if err != nil {
-		s.logger.Error("failed to handle expired dispatch assignments", zap.Error(err))
-		return err
-	}
+	s.metrics.SetHousekeeperWork("dispatch_assignment_expiration", "expired", expired)
+	s.metrics.SetHousekeeperWork("dispatch_assignment_expiration", "deleted", deleted)
+	s.metrics.SetHousekeeperWork("dispatch_assignment_expiration", "archived_deleted", archivedDeleted)
 	dest.SetAttribute(dispatchAssignmentExpiredAttr, strconv.Itoa(expired))
+	dest.SetAttribute(dispatchAssignmentDeletedAttr, strconv.Itoa(deleted))
+	dest.SetAttribute(dispatchAssignmentArchivedAttr, strconv.Itoa(archivedDeleted))
 	dest.SetAttribute(dispatchAssignmentAffectedAttr, strconv.Itoa(dispatchesAffected))
 	dest.SetAttribute(dispatchAssignmentJobsAttr, strconv.Itoa(jobsAffected))
 	dest.SetAttribute(dispatchAssignmentUnitsAttr, strconv.Itoa(unitsAffected))
@@ -306,6 +309,10 @@ func (s *Housekeeper) runHandleDispatchAssignmentExpiration(
 		boolToInt(backlog),
 	)
 	setBacklogAttribute(dest, dispatchAssignmentBacklogAttr, backlog)
+	if err != nil {
+		s.logger.Error("failed to handle expired dispatch assignments", zap.Error(err))
+		return err
+	}
 	if err := data.MarshalFrom(dest); err != nil {
 		return fmt.Errorf(
 			"failed to marshal updated dispatch assignment expiration cron data. %w",
@@ -317,7 +324,7 @@ func (s *Housekeeper) runHandleDispatchAssignmentExpiration(
 
 func (s *Housekeeper) handleDispatchAssignmentExpiration(
 	ctx context.Context,
-) (int, int, int, int, bool, error) {
+) (int, int, int, int, int, int, bool, error) {
 	assignmentsTable := table.FivenetCentrumDispatchesAsgmts
 	unitsTable := table.FivenetCentrumUnits
 	stmt := assignmentsTable.SELECT(
@@ -339,7 +346,7 @@ func (s *Housekeeper) handleDispatchAssignmentExpiration(
 		Job        string
 	}
 	if err := stmt.QueryContext(ctx, s.db, &rows); err != nil {
-		return 0, 0, 0, 0, false, err
+		return 0, 0, 0, 0, 0, 0, false, err
 	}
 	rows, backlog := capWorkItems(rows, maxExpiredDispatchAssignmentsPerRun)
 	grouped := map[string]map[int64][]int64{}
@@ -350,6 +357,9 @@ func (s *Housekeeper) handleDispatchAssignmentExpiration(
 		grouped[row.Job][row.DispatchID] = append(grouped[row.Job][row.DispatchID], row.UnitID)
 	}
 	dispatchIDs, jobs := map[int64]struct{}{}, map[string]struct{}{}
+	errs := multierr.Combine()
+	deleted := 0
+	archivedDeleted := 0
 	for job, dispatches := range grouped {
 		jobs[job] = struct{}{}
 		for id := range dispatches {
@@ -368,35 +378,40 @@ func (s *Housekeeper) handleDispatchAssignmentExpiration(
 				time.Time{},
 			); err != nil {
 				if errors.Is(err, jetstream.ErrKeyNotFound) {
-					deleted, cleanupErr := s.assignmentExpirationWriter.DeleteExpiredAssignments(
+					cleanupDeleted, cleanupErr := s.assignmentExpirationWriter.DeleteExpiredAssignments(
 						ctx,
 						dispatchID,
 						units,
 					)
 					if cleanupErr != nil {
-						return 0, 0, 0, 0, backlog, fmt.Errorf(
+						errs = multierr.Append(errs, fmt.Errorf(
 							"failed to delete expired assignments for archived dispatch %d. %w",
 							dispatchID,
 							cleanupErr,
-						)
+						))
+						continue
 					}
+					deleted += int(cleanupDeleted)
+					archivedDeleted += int(cleanupDeleted)
 					s.logger.Debug(
 						"deleted expired assignments for archived dispatch",
 						zap.Int64("dispatch_id", dispatchID),
 						zap.Int("requested_assignments", len(units)),
-						zap.Int64("deleted_assignments", deleted),
+						zap.Int64("deleted_assignments", cleanupDeleted),
 					)
 					continue
 				}
-				return 0, 0, 0, 0, backlog, fmt.Errorf(
+				errs = multierr.Append(errs, fmt.Errorf(
 					"failed to update dispatch %d assignments. %w",
 					dispatchID,
 					err,
-				)
+				))
+				continue
 			}
+			deleted += len(units)
 		}
 	}
-	return len(rows), len(dispatchIDs), len(jobs), len(rows), backlog, nil
+	return len(rows), deleted, archivedDeleted, len(dispatchIDs), len(jobs), len(rows), backlog, errs
 }
 
 func (s *Housekeeper) runDeleteOldDispatchesFromKV(

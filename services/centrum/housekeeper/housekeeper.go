@@ -38,9 +38,9 @@ const (
 	DeleteDispatchDays = 14
 	DeleteUnitDays     = 14
 
-	cancelOldDispatchesSchedule      = "*/5 * * * *"
-	auditEmptyUnitDispatchesSchedule = "*/5 * * * *"
-	deleteOldDispatchesKVSchedule    = "*/30 * * * *"
+	cancelOldDispatchesSchedule      = "@5minutes"
+	auditEmptyUnitDispatchesSchedule = "@5minutes"
+	deleteOldDispatchesKVSchedule    = "@30minutes"
 	reconcileUserInfoStateSchedule   = "0 4,16 * * *"
 )
 
