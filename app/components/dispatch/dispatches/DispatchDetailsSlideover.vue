@@ -274,7 +274,6 @@ const dispatchStatusUpdateModal = overlay.create(DispatchStatusUpdateModal);
                                         v-if="unit.expiresAt"
                                         class="ml-2 inline-flex min-w-0 flex-1 items-center truncate text-muted"
                                     >
-                                        -
                                         {{ formatTimeAgo(toDate(unit.expiresAt, timeCorrection), { showSecond: true }, now) }}
                                     </span>
                                 </div>
