@@ -21,6 +21,8 @@ import (
 	"github.com/fivenet-app/fivenet/v2026/pkg/perms"
 	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
 	"github.com/fivenet-app/fivenet/v2026/services/centrum/dispatches"
+	centrumsettingsdb "github.com/fivenet-app/fivenet/v2026/services/centrum/settings"
+	centrumunitsdb "github.com/fivenet-app/fivenet/v2026/services/centrum/units"
 	calendarstore "github.com/fivenet-app/fivenet/v2026/stores/calendar"
 	livemapstore "github.com/fivenet-app/fivenet/v2026/stores/livemap"
 	"github.com/go-jet/jet/v2/mysql"
@@ -55,8 +57,6 @@ var (
 	tUserProps            = table.FivenetUserProps
 	tOwnedVehicles        = table.FivenetOwnedVehicles
 	tVehicleProps         = table.FivenetVehiclesProps
-	tCentrumSettings      = table.FivenetCentrumSettings
-	tCentrumUnits         = table.FivenetCentrumUnits
 )
 
 var Module = fx.Module(
@@ -107,6 +107,8 @@ type Demo struct {
 	logger         *zap.Logger
 	db             *sql.DB
 	dispatches     *dispatches.DispatchDB
+	settings       *centrumsettingsdb.SettingsDB
+	units          *centrumunitsdb.UnitDB
 	calendars      calendarstore.IStore
 	cfg            *config.Config
 	appCfg         appconfig.IConfig
@@ -136,6 +138,8 @@ type Params struct {
 	Cfg            *config.Config
 	DB             *sql.DB
 	Dispatches     *dispatches.DispatchDB
+	Settings       *centrumsettingsdb.SettingsDB
+	Units          *centrumunitsdb.UnitDB
 	Calendars      calendarstore.IStore
 	CalendarAccess *access.CalendarObjectAccess
 	Jobs           mstlystcdata.IJobs
@@ -157,6 +161,8 @@ func New(p Params) *Demo {
 		logger:         logger,
 		db:             p.DB,
 		dispatches:     p.Dispatches,
+		settings:       p.Settings,
+		units:          p.Units,
 		calendars:      p.Calendars,
 		cfg:            p.Cfg,
 		appCfg:         p.AppConfig,

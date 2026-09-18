@@ -576,9 +576,10 @@ func (s *UnitDB) CreateUnit(
 
 	// A new unit should have a status, so we make sure we add one
 	if unit.Status, err = s.AddStatus(ctx, tx, &centrumunits.UnitStatus{
-		CreatedAt: timestamp.Now(),
-		UnitId:    unit.GetId(),
-		Status:    centrumunits.StatusUnit_STATUS_UNIT_UNAVAILABLE,
+		CreatedAt:  timestamp.Now(),
+		UnitId:     unit.GetId(),
+		Status:     centrumunits.StatusUnit_STATUS_UNIT_UNAVAILABLE,
+		CreatorJob: &creatorJob,
 	}); err != nil {
 		return nil, err
 	}

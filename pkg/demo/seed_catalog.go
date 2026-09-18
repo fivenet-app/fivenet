@@ -8,6 +8,7 @@ import (
 	"strconv"
 
 	centrumsettings "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/centrum/settings"
+	centrumunits "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/centrum/units"
 	"github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
 )
@@ -82,73 +83,58 @@ func (d *Demo) upsertDemoJobProps(ctx context.Context) error {
 }
 
 func (d *Demo) upsertDemoCentrumSettings(ctx context.Context) error {
-	stmt := tCentrumSettings.
-		INSERT(
-			tCentrumSettings.Job,
-			tCentrumSettings.Enabled,
-			tCentrumSettings.Type,
-			tCentrumSettings.Public,
-			tCentrumSettings.Mode,
-			tCentrumSettings.FallbackMode,
-		).
-		VALUES(
-			d.targetJobName(),
-			true,
-			centrumsettings.CentrumType_CENTRUM_TYPE_DISPATCH,
-			true,
-			centrumsettings.CentrumMode_CENTRUM_MODE_MANUAL,
-			centrumsettings.CentrumMode_CENTRUM_MODE_AUTO_ROUND_ROBIN,
-		).
-		ON_DUPLICATE_KEY_UPDATE(
-			tCentrumSettings.DeletedAt.SET(mysql.TimestampExp(mysql.NULL)),
-			tCentrumSettings.Enabled.SET(mysql.RawBool("VALUES(`enabled`)")),
-			tCentrumSettings.Type.SET(mysql.RawInt("VALUES(`type`)")),
-			tCentrumSettings.Public.SET(mysql.RawBool("VALUES(`public`)")),
-			tCentrumSettings.Mode.SET(mysql.RawInt("VALUES(`mode`)")),
-			tCentrumSettings.FallbackMode.SET(mysql.RawInt("VALUES(`fallback_mode`)")),
-		)
+	job := d.targetJobName()
+	settings, err := d.settings.Get(ctx, job)
+	if err != nil {
+		return fmt.Errorf("failed to get demo centrum settings. %w", err)
+	}
+	settings.SetEnabled(true)
+	settings.SetType(centrumsettings.CentrumType_CENTRUM_TYPE_DISPATCH)
+	settings.SetPublic(true)
+	settings.SetMode(centrumsettings.CentrumMode_CENTRUM_MODE_MANUAL)
+	settings.SetFallbackMode(centrumsettings.CentrumMode_CENTRUM_MODE_AUTO_ROUND_ROBIN)
 
-	if _, err := stmt.ExecContext(ctx, d.db); err != nil {
-		return fmt.Errorf("failed to upsert demo centrum settings. %w", err)
+	if _, err := d.settings.Update(ctx, job, settings); err != nil {
+		return fmt.Errorf("failed to update demo centrum settings. %w", err)
 	}
 
 	return nil
 }
 
 func (d *Demo) upsertDemoCentrumUnits(ctx context.Context) error {
-	stmt := tCentrumUnits.
-		INSERT(
-			tCentrumUnits.Job,
-			tCentrumUnits.Name,
-			tCentrumUnits.Initials,
-			tCentrumUnits.Color,
-			tCentrumUnits.Icon,
-			tCentrumUnits.Description,
-		)
-
-	for _, unit := range demoSeedCentrumUnits {
-		stmt = stmt.VALUES(
-			d.targetJobName(),
-			unit.Name,
-			unit.Initials,
-			unit.Color,
-			unit.Icon,
-			unit.Description,
-		)
+	job := d.targetJobName()
+	existing := make(map[string]*centrumunits.Unit)
+	for _, unit := range d.units.List(ctx, []string{job}) {
+		existing[unit.GetName()] = unit
 	}
 
-	stmt = stmt.
-		ON_DUPLICATE_KEY_UPDATE(
-			tCentrumUnits.DeletedAt.SET(mysql.TimestampExp(mysql.NULL)),
-			tCentrumUnits.Name.SET(mysql.RawString("VALUES(`name`)")),
-			tCentrumUnits.Initials.SET(mysql.RawString("VALUES(`initials`)")),
-			tCentrumUnits.Color.SET(mysql.RawString("VALUES(`color`)")),
-			tCentrumUnits.Icon.SET(mysql.RawString("VALUES(`icon`)")),
-			tCentrumUnits.Description.SET(mysql.RawString("VALUES(`description`)")),
-		)
+	for _, unit := range demoSeedCentrumUnits {
+		seeded := &centrumunits.Unit{
+			Job:         job,
+			Name:        unit.Name,
+			Initials:    unit.Initials,
+			Color:       unit.Color,
+			Icon:        &unit.Icon,
+			Description: &unit.Description,
+		}
 
-	if _, err := stmt.ExecContext(ctx, d.db); err != nil {
-		return fmt.Errorf("failed to upsert demo centrum units. %w", err)
+		if current, ok := existing[unit.Name]; ok {
+			seeded.SetId(current.Id)
+			seeded.SetAccess(current.Access)
+			seeded.SetAttributes(current.Attributes)
+			if current.GetHomePostal() != "" {
+				seeded.SetHomePostal(current.GetHomePostal())
+			}
+
+			if _, err := d.units.Update(ctx, 1, seeded); err != nil {
+				return fmt.Errorf("failed to update demo centrum unit %q. %w", unit.Name, err)
+			}
+			continue
+		}
+
+		if _, err := d.units.CreateUnit(ctx, job, 1, seeded); err != nil {
+			return fmt.Errorf("failed to create demo centrum unit %q. %w", unit.Name, err)
+		}
 	}
 
 	return nil
@@ -203,9 +189,10 @@ func (d *Demo) upsertDemoJobsAndGrades(ctx context.Context) error {
 	for _, job := range demoSeedJobs {
 		stmt = stmt.VALUES(job.Name, job.Label)
 	}
-	stmt = stmt.ON_DUPLICATE_KEY_UPDATE(
-		tJobs.Label.SET(mysql.RawString("VALUES(`label`)")),
-	)
+	stmt = stmt.
+		ON_DUPLICATE_KEY_UPDATE(
+			tJobs.Label.SET(mysql.RawString("VALUES(`label`)")),
+		)
 
 	if _, err := stmt.ExecContext(ctx, tx); err != nil {
 		return fmt.Errorf("failed to upsert demo jobs. %w", err)
@@ -236,10 +223,11 @@ func (d *Demo) upsertDemoJobGrades(ctx context.Context, tx *sql.Tx) error {
 	for _, grade := range demoSeedJobGrades {
 		stmt = stmt.VALUES(grade.JobName, grade.Grade, grade.Label)
 	}
-	stmt = stmt.ON_DUPLICATE_KEY_UPDATE(
-		tJobsGrades.Grade.SET(mysql.RawInt("VALUES(`grade`)")),
-		tJobsGrades.Label.SET(mysql.RawString("VALUES(`label`)")),
-	)
+	stmt = stmt.
+		ON_DUPLICATE_KEY_UPDATE(
+			tJobsGrades.Grade.SET(mysql.RawInt("VALUES(`grade`)")),
+			tJobsGrades.Label.SET(mysql.RawString("VALUES(`label`)")),
+		)
 
 	if _, err := stmt.ExecContext(ctx, tx); err != nil {
 		return fmt.Errorf("failed to upsert demo job grades. %w", err)
@@ -294,16 +282,19 @@ func (d *Demo) upsertDemoLawbooks(ctx context.Context) error {
 			return fmt.Errorf("failed to find demo lawbook. %w", err)
 		}
 		if existing.ID > 0 {
-			if _, err := tLawbooks.UPDATE(
-				tLawbooks.Name, tLawbooks.Description, tLawbooks.DeletedAt,
-			).SET(lawbook.Name, lawbook.Description, mysql.NULL).
+			if _, err := tLawbooks.
+				UPDATE(
+					tLawbooks.Name, tLawbooks.Description, tLawbooks.DeletedAt,
+				).
+				SET(lawbook.Name, lawbook.Description, mysql.NULL).
 				WHERE(tLawbooks.ID.EQ(mysql.Int64(existing.ID))).
 				LIMIT(1).ExecContext(ctx, d.db); err != nil {
 				return fmt.Errorf("failed to update demo lawbook. %w", err)
 			}
 			continue
 		}
-		if _, err := tLawbooks.INSERT(tLawbooks.ID, tLawbooks.Name, tLawbooks.Description).
+		if _, err := tLawbooks.
+			INSERT(tLawbooks.ID, tLawbooks.Name, tLawbooks.Description).
 			VALUES(lawbook.ID, lawbook.Name, lawbook.Description).
 			ExecContext(ctx, d.db); err != nil {
 			return fmt.Errorf("failed to insert demo lawbook. %w", err)
@@ -335,31 +326,55 @@ func (d *Demo) upsertDemoLaws(ctx context.Context) error {
 			return fmt.Errorf("failed to find demo law. %w", err)
 		}
 		if existing.ID > 0 {
-			if _, err := tLawbooksLaws.UPDATE(
-				tLawbooksLaws.LawbookID, tLawbooksLaws.Name, tLawbooksLaws.Description,
-				tLawbooksLaws.Hint, tLawbooksLaws.Fine, tLawbooksLaws.DetentionTime,
-				tLawbooksLaws.StvoPoints, tLawbooksLaws.DeletedAt,
-			).SET(
-				law.LawbookID, law.Name, law.Description, law.Hint, law.Fine,
-				law.DetentionTime, law.StvoPoints, mysql.NULL,
-			).WHERE(tLawbooksLaws.ID.EQ(mysql.Int64(existing.ID))).LIMIT(1).ExecContext(ctx, d.db); err != nil {
+			if _, err := tLawbooksLaws.
+				UPDATE(
+					tLawbooksLaws.LawbookID,
+					tLawbooksLaws.Name,
+					tLawbooksLaws.Description,
+					tLawbooksLaws.Hint,
+					tLawbooksLaws.Fine,
+					tLawbooksLaws.DetentionTime,
+					tLawbooksLaws.StvoPoints,
+					tLawbooksLaws.DeletedAt,
+				).
+				SET(
+					law.LawbookID,
+					law.Name,
+					law.Description,
+					law.Hint,
+					law.Fine,
+					law.DetentionTime,
+					law.StvoPoints,
+					mysql.NULL,
+				).
+				WHERE(tLawbooksLaws.ID.EQ(mysql.Int64(existing.ID))).
+				LIMIT(1).ExecContext(ctx, d.db); err != nil {
 				return fmt.Errorf("failed to update demo law. %w", err)
 			}
 			continue
 		}
-		if _, err := tLawbooksLaws.INSERT(
-			tLawbooksLaws.ID,
-			tLawbooksLaws.LawbookID,
-			tLawbooksLaws.Name,
-			tLawbooksLaws.Description,
-			tLawbooksLaws.Hint,
-			tLawbooksLaws.Fine,
-			tLawbooksLaws.DetentionTime,
-			tLawbooksLaws.StvoPoints,
-		).VALUES(
-			law.ID, law.LawbookID, law.Name, law.Description, law.Hint, law.Fine,
-			law.DetentionTime, law.StvoPoints,
-		).ExecContext(ctx, d.db); err != nil {
+		if _, err := tLawbooksLaws.
+			INSERT(
+				tLawbooksLaws.ID,
+				tLawbooksLaws.LawbookID,
+				tLawbooksLaws.Name,
+				tLawbooksLaws.Description,
+				tLawbooksLaws.Hint,
+				tLawbooksLaws.Fine,
+				tLawbooksLaws.DetentionTime,
+				tLawbooksLaws.StvoPoints,
+			).
+			VALUES(
+				law.ID,
+				law.LawbookID,
+				law.Name,
+				law.Description,
+				law.Hint,
+				law.Fine,
+				law.DetentionTime,
+				law.StvoPoints,
+			).
+			ExecContext(ctx, d.db); err != nil {
 			return fmt.Errorf("failed to insert demo law. %w", err)
 		}
 	}
