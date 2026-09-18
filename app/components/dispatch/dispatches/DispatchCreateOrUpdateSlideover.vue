@@ -80,7 +80,7 @@ async function createDispatch(values: Schema): Promise<void> {
                 id: 0,
                 job: '',
                 jobs: {
-                    jobs: [],
+                    jobs: values.jobs.jobs.map((name) => ({ name })),
                 },
                 message: values.message,
                 description: values.description,

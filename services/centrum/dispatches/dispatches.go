@@ -173,6 +173,9 @@ func New(p Params) *DispatchDB {
 		}
 		d.jobMapping = jobSt
 		ensureJobMapping := func(ctx context.Context, job string, dispatchID int64, source string, refresh bool) error {
+			if strings.TrimSpace(job) == "" {
+				return nil
+			}
 			key := centrumutils.JobIdKey(job, dispatchID)
 			mapping := &common.IDMapping{Id: dispatchID}
 			var changed bool
@@ -228,6 +231,9 @@ func New(p Params) *DispatchDB {
 
 					newJobSet := make(map[string]struct{}, len(dispatch.GetJobs().GetJobStrings()))
 					for _, job := range dispatch.GetJobs().GetJobStrings() {
+						if strings.TrimSpace(job) == "" {
+							continue
+						}
 						newJobSet[job] = struct{}{}
 						if err := ensureJobMapping(
 							ctx,
@@ -251,6 +257,9 @@ func New(p Params) *DispatchDB {
 
 					if old != nil && old.GetJobs() != nil {
 						for _, oldJob := range old.GetJobs().GetJobStrings() {
+							if strings.TrimSpace(oldJob) == "" {
+								continue
+							}
 							if _, ok := newJobSet[oldJob]; ok {
 								continue
 							}
@@ -291,6 +300,9 @@ func New(p Params) *DispatchDB {
 
 					var errs error
 					for _, job := range dispatch.GetJobs().GetJobStrings() {
+						if strings.TrimSpace(job) == "" {
+							continue
+						}
 						if err := jobSt.Delete(
 							ctx,
 							centrumutils.JobIdKey(job, dispatch.GetId()),
@@ -333,6 +345,9 @@ func New(p Params) *DispatchDB {
 
 					newJobSet := make(map[string]struct{}, len(dispatch.GetJobs().GetJobStrings()))
 					for _, job := range dispatch.GetJobs().GetJobStrings() {
+						if strings.TrimSpace(job) == "" {
+							continue
+						}
 						newJobSet[job] = struct{}{}
 						if err := ensureJobMapping(
 							ctx,
@@ -352,6 +367,9 @@ func New(p Params) *DispatchDB {
 
 					if old != nil && old.GetJobs() != nil {
 						for _, oldJob := range old.GetJobs().GetJobStrings() {
+							if strings.TrimSpace(oldJob) == "" {
+								continue
+							}
 							if _, ok := newJobSet[oldJob]; ok {
 								continue
 							}
@@ -374,6 +392,9 @@ func New(p Params) *DispatchDB {
 						centrumutils.IsStatusDispatchComplete(dispatch.GetStatus().GetStatus())
 					// Ensure the dispatch has a valid ID
 					for _, job := range dispatch.GetJobs().GetJobStrings() {
+						if strings.TrimSpace(job) == "" {
+							continue
+						}
 						locs := d.GetLocations(job)
 						if locs == nil {
 							continue
@@ -413,6 +434,9 @@ func New(p Params) *DispatchDB {
 					if dispatch != nil {
 						var errs error
 						for _, job := range dispatch.GetJobs().GetJobStrings() {
+							if strings.TrimSpace(job) == "" {
+								continue
+							}
 							if err := jobSt.Delete(
 								ctx,
 								centrumutils.JobIdKey(job, dispatch.GetId()),
@@ -430,6 +454,9 @@ func New(p Params) *DispatchDB {
 						}
 
 						for _, job := range dispatch.GetJobs().GetJobStrings() {
+							if strings.TrimSpace(job) == "" {
+								continue
+							}
 							if locs := d.GetLocations(job); locs != nil {
 								locs.Remove(
 									nil,
@@ -722,6 +749,9 @@ func (s *DispatchDB) Create(
 	}
 
 	for _, job := range dsp.GetJobs().GetJobs() {
+		if strings.TrimSpace(job.GetName()) == "" {
+			return nil, errorscentrum.ErrDispatchNoJobs
+		}
 		s.enricher.EnrichJobName(job)
 	}
 

@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"errors"
 	"slices"
+	"strings"
 	"time"
 
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/audit"
@@ -343,11 +344,17 @@ func (s *Server) CreateDispatch(
 			return nil, errorscentrum.ErrFailedQuery
 		}
 		for _, job := range req.GetDispatch().GetJobs().GetJobStrings() {
+			if strings.TrimSpace(job) == "" {
+				return nil, errorscentrum.ErrDispatchNoJobs
+			}
 			if !s.jobs.Has(job) || !slices.Contains(jobs, job) {
 				return nil, errorscentrum.ErrDispatchJobPermDenied
 			}
 		}
 	} else {
+		if strings.TrimSpace(userInfo.GetJob()) == "" {
+			return nil, errorscentrum.ErrDispatchNoJobs
+		}
 		req.Dispatch.Jobs = &centrum.JobList{
 			Jobs: []*centrum.JobListEntry{
 				{
