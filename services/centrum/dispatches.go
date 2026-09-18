@@ -531,7 +531,13 @@ func (s *Server) AssignDispatch(
 
 	dsp, err := s.dispatches.Get(ctx, req.GetDispatchId())
 	if err != nil {
+		if errors.Is(err, jetstream.ErrKeyNotFound) {
+			return nil, errorscentrum.ErrDispatchNotFound
+		}
 		return nil, errswrap.NewError(err, errorscentrum.ErrFailedQuery)
+	}
+	if dsp == nil {
+		return nil, errorscentrum.ErrDispatchNotFound
 	}
 
 	if !slices.Contains(dsp.GetJobs().GetJobStrings(), userInfo.GetJob()) {
@@ -552,6 +558,9 @@ func (s *Server) AssignDispatch(
 		req.GetToRemove(),
 		expiresAt,
 	); err != nil {
+		if errors.Is(err, errorscentrum.ErrDispatchNotFound) {
+			return nil, errorscentrum.ErrDispatchNotFound
+		}
 		return nil, errswrap.NewError(err, errorscentrum.ErrFailedQuery)
 	}
 

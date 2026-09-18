@@ -57,6 +57,11 @@ var (
 		&common.I18NItem{Key: "errors.centrum.CentrumService.ErrDispatchAlreadyCompleted.content"},
 		&common.I18NItem{Key: "errors.centrum.CentrumService.ErrDispatchAlreadyCompleted.title"},
 	)
+	ErrDispatchNotFound = common.NewI18nErr(
+		codes.NotFound,
+		&common.I18NItem{Key: "errors.centrum.CentrumService.ErrDispatchNotFound.content"},
+		&common.I18NItem{Key: "errors.centrum.CentrumService.ErrDispatchNotFound.title"},
+	)
 	ErrDispatchNoJobs = common.NewI18nErr(
 		codes.InvalidArgument,
 		&common.I18NItem{Key: "errors.centrum.CentrumService.ErrDispatchNoJobs.content"},

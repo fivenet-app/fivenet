@@ -3,6 +3,7 @@ package centrumconverter
 import (
 	"context"
 	"database/sql"
+	"errors"
 	"regexp"
 	"strconv"
 	"strings"
@@ -18,6 +19,7 @@ import (
 	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
 	"github.com/fivenet-app/fivenet/v2026/services/centrum/dispatches"
 	"github.com/go-jet/jet/v2/mysql"
+	"github.com/go-jet/jet/v2/qrm"
 	"go.uber.org/fx"
 	"go.uber.org/zap"
 )
@@ -28,7 +30,7 @@ type Converter struct {
 	logger *zap.Logger
 	db     *sql.DB
 
-	dispatches *dispatches.DispatchDB
+	dispatchCreateFn func(ctx context.Context, dsp *centrumdispatches.Dispatch) (*centrumdispatches.Dispatch, error)
 
 	converterType string
 	convertJobs   []string
@@ -71,7 +73,7 @@ func New(p Params) *Converter {
 		logger: p.Logger.Named("centrum.converter"),
 		db:     p.DB,
 
-		dispatches: p.Dispatches,
+		dispatchCreateFn: p.Dispatches.Create,
 
 		converterType: p.Config.DispatchCenter.Type,
 		convertJobs:   convertJobs,
@@ -175,7 +177,9 @@ func (s *Converter) convertGKSPhoneJobMsgToDispatch(ctx context.Context) error {
 		UserId int32
 	}
 	if err := stmt.QueryContext(ctx, s.db, &dest); err != nil {
-		return err
+		if !errors.Is(err, qrm.ErrNoRows) {
+			return err
+		}
 	}
 
 	s.logger.Debug("converting gksphone dispatch to fivenet", zap.Int("dispatch_count", len(dest)))
@@ -239,7 +243,7 @@ func (s *Converter) convertGKSPhoneJobMsgToDispatch(ctx context.Context) error {
 			zap.Int32("creator_id", msg.UserId),
 			zap.Int32("phone_dsp_id", msg.ID),
 		)
-		if _, err := s.dispatches.Create(ctx, dsp); err != nil {
+		if _, err := s.dispatchCreateFn(ctx, dsp); err != nil {
 			return err
 		}
 
@@ -285,12 +289,12 @@ func (s *Converter) convertLBPhoneJobMsgToDispatch(ctx context.Context) error {
 
 	stmt := tPhoneServicesChannels.
 		SELECT(
-			tPhoneServicesChannels.ID,
-			tPhoneServicesChannels.Company,
-			tPhoneServicesChannels.PhoneNumber,
-			tPhoneServicesMessages.Message,
-			tPhoneServicesMessages.XPos,
-			tPhoneServicesMessages.YPos,
+			tPhoneServicesChannels.ID.AS("id"),
+			tPhoneServicesChannels.Company.AS("company"),
+			tPhoneServicesChannels.PhoneNumber.AS("phone_number"),
+			tPhoneServicesMessages.Message.AS("message"),
+			tPhoneServicesMessages.XPos.AS("x_pos"),
+			tPhoneServicesMessages.YPos.AS("y_pos"),
 			tUsers.ID.AS("userid"),
 		).
 		FROM(
@@ -309,6 +313,7 @@ func (s *Converter) convertLBPhoneJobMsgToDispatch(ctx context.Context) error {
 			// The target job is stored in the `company` field directly.
 			tPhoneServicesChannels.Company.IN(targetJobsExp...),
 		)).
+		ORDER_BY(tPhoneServicesChannels.ID.DESC()).
 		LIMIT(maxDispatchConvertCount)
 
 	var dest []struct {
@@ -321,7 +326,9 @@ func (s *Converter) convertLBPhoneJobMsgToDispatch(ctx context.Context) error {
 		UserId      int32
 	}
 	if err := stmt.QueryContext(ctx, s.db, &dest); err != nil {
-		return err
+		if !errors.Is(err, qrm.ErrNoRows) {
+			return err
+		}
 	}
 
 	s.logger.Debug("converting lbphone dispatch to fivenet", zap.Int("dispatch_count", len(dest)))
@@ -368,7 +375,7 @@ func (s *Converter) convertLBPhoneJobMsgToDispatch(ctx context.Context) error {
 			zap.Int32("creator_id", msg.UserId),
 			zap.Int32("phone_dsp_id", msg.ID),
 		)
-		if _, err := s.dispatches.Create(ctx, dsp); err != nil {
+		if _, err := s.dispatchCreateFn(ctx, dsp); err != nil {
 			return err
 		}
 

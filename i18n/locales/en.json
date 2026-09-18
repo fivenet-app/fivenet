@@ -3037,6 +3037,10 @@
                     "title": "Dispatch already in completed state!",
                     "content": "You can't accept/decline completed dispatches."
                 },
+                "ErrDispatchNotFound": {
+                    "title": "Dispatch not found",
+                    "content": "This dispatch no longer exists. Please refresh the dispatch center."
+                },
                 "ErrNotPartOfUnit": {
                     "title": "Unit membership required",
                     "content": "You are not part of this unit!"

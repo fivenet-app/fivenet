@@ -99,6 +99,23 @@ func TestAssignDispatchCreatesThirtySecondPendingAssignment(t *testing.T) {
 	require.NoError(t, err)
 }
 
+func TestAssignDispatchReturnsNotFoundWhenDispatchWasDeleted(t *testing.T) {
+	t.Parallel()
+
+	srv, _, _, dispatchID := newDispatchAssignmentFixture(t)
+	ctx := auth.ContextWithUserInfo(
+		t.Context(),
+		&userinfo.UserInfo{UserId: 1, Job: "ambulance", JobGrade: 1},
+	)
+	require.NoError(t, srv.dispatches.Delete(ctx, dispatchID, true))
+
+	_, err := srv.AssignDispatch(ctx, &pbcentrum.AssignDispatchRequest{
+		DispatchId: dispatchID,
+		ToAdd:      []int64{1},
+	})
+	require.ErrorIs(t, err, errorscentrum.ErrDispatchNotFound)
+}
+
 func TestTakeDispatchAcceptsUnassignedDispatch(t *testing.T) {
 	t.Parallel()
 

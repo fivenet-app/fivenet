@@ -170,6 +170,25 @@ func (s *DispatchDB) updateAssignments(
 	// Defer a rollback in case anything fails
 	defer tx.Rollback()
 
+	// The dispatch projection can briefly outlive its database row (for example
+	// while a delete event is propagating). Lock the source row before writing
+	// assignments so this race becomes a normal not-found result instead of a
+	// foreign-key error.
+	dispatchExists := struct {
+		ID int64 `alias:"id"`
+	}{}
+	dispatchStmt := table.FivenetCentrumDispatches.
+		SELECT(table.FivenetCentrumDispatches.ID).
+		FROM(table.FivenetCentrumDispatches).
+		WHERE(table.FivenetCentrumDispatches.ID.EQ(mysql.Int64(dspId))).
+		FOR(mysql.UPDATE())
+	if err := dispatchStmt.QueryContext(ctx, tx, &dispatchExists); err != nil {
+		if errors.Is(err, qrm.ErrNoRows) {
+			return 0, errorscentrum.ErrDispatchNotFound
+		}
+		return 0, err
+	}
+
 	existingRows := []struct {
 		UnitID int64 `alias:"unit_id"`
 	}{}

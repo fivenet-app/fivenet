@@ -3037,6 +3037,10 @@
                     "title": "Einsatz ist bereits abgeschlossen!",
                     "content": "Abgeschlossene Einsätze können nicht akzeptiert/abgelehnt werden!"
                 },
+                "ErrDispatchNotFound": {
+                    "title": "Einsatz nicht gefunden",
+                    "content": "Dieser Einsatz existiert nicht mehr. Bitte aktualisieren Sie die Leitstelle."
+                },
                 "ErrNotPartOfUnit": {
                     "title": "Einheitszugehörigkeit erforderlich",
                     "content": "Sie sind nicht Teil der Einheit!"

@@ -2,6 +2,7 @@ package centrumbot
 
 import (
 	"context"
+	"errors"
 	"math/rand/v2"
 	"sort"
 	"time"
@@ -11,6 +12,7 @@ import (
 	centrumunits "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/centrum/units"
 	"github.com/fivenet-app/fivenet/v2026/pkg/tracker"
 	"github.com/fivenet-app/fivenet/v2026/services/centrum/dispatches"
+	errorscentrum "github.com/fivenet-app/fivenet/v2026/services/centrum/errors"
 	"github.com/fivenet-app/fivenet/v2026/services/centrum/helpers"
 	"github.com/fivenet-app/fivenet/v2026/services/centrum/settings"
 	"github.com/fivenet-app/fivenet/v2026/services/centrum/units"
@@ -135,8 +137,15 @@ func (b *Bot) Run() {
 				nil,
 				b.settings.DispatchAssignmentExpirationTime(),
 			); err != nil {
+				if errors.Is(err, errorscentrum.ErrDispatchNotFound) {
+					b.logger.Debug(
+						"dispatch disappeared before auto assignment",
+						zap.Int64("dispatch_id", dsp.GetId()),
+					)
+					continue
+				}
 				b.logger.Error(
-					"failed to assgin unit to dispatch",
+					"failed to assign unit to dispatch",
 					zap.Int64("dispatch_id", dsp.GetId()),
 					zap.Int64("unit_id", unit.GetId()),
 					zap.Error(err),
