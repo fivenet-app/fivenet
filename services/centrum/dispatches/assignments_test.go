@@ -14,7 +14,14 @@ func TestDeleteExpiredAssignmentsKeepsExpiryPredicate(t *testing.T) {
 	require.NoError(t, err)
 	t.Cleanup(func() { _ = db.Close() })
 
-	mock.ExpectExec("(?s)DELETE FROM.*fivenet_centrum_dispatches_asgmts.*expires_at.*CURRENT_TIMESTAMP").WithArgs(int64(42), int64(7), int64(8), int64(2)).WillReturnResult(sqlmock.NewResult(0, 1))
+	mock.ExpectBegin()
+	mock.ExpectQuery("(?s)SELECT.*unit_id.*FROM.*fivenet_centrum_dispatches_asgmts.*expires_at.*CURRENT_TIMESTAMP.*FOR UPDATE").
+		WithArgs(int64(42), int64(7), int64(8)).
+		WillReturnRows(sqlmock.NewRows([]string{"unit_id"}).AddRow(7))
+	mock.ExpectExec("(?s)DELETE FROM.*fivenet_centrum_dispatches_asgmts").
+		WithArgs(int64(42), int64(7), int64(1)).
+		WillReturnResult(sqlmock.NewResult(0, 1))
+	mock.ExpectCommit()
 
 	dispatches := &DispatchDB{db: db}
 	deleted, err := dispatches.DeleteExpiredAssignments(t.Context(), 42, []int64{7, 8})

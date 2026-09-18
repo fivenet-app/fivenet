@@ -66,6 +66,31 @@ func (s *DispatchDB) UpdateAssignments(
 	toRemove []int64,
 	expiresAt time.Time,
 ) error {
+	_, err := s.updateAssignments(ctx, creatorJob, creatorId, dspId, toAdd, toRemove, expiresAt, false)
+	return err
+}
+
+// UpdateExpiredAssignments removes only assignments that are still expired at
+// the time of the mutation, then updates the live projection and statuses.
+func (s *DispatchDB) UpdateExpiredAssignments(
+	ctx context.Context,
+	creatorJob *string,
+	dspId int64,
+	toRemove []int64,
+) (int, error) {
+	return s.updateAssignments(ctx, creatorJob, nil, dspId, nil, toRemove, time.Time{}, true)
+}
+
+func (s *DispatchDB) updateAssignments(
+	ctx context.Context,
+	creatorJob *string,
+	creatorId *int32,
+	dspId int64,
+	toAdd []int64,
+	toRemove []int64,
+	expiresAt time.Time,
+	expiredOnly bool,
+) (int, error) {
 	s.logger.Debug(
 		"updating dispatch assignments",
 		zap.Int32p("user_id", creatorId),
@@ -75,7 +100,7 @@ func (s *DispatchDB) UpdateAssignments(
 	)
 
 	if len(toAdd) == 0 && len(toRemove) == 0 {
-		return nil
+		return 0, nil
 	}
 
 	var x, y *float64
@@ -121,17 +146,17 @@ func (s *DispatchDB) UpdateAssignments(
 	pendingStatuses := []pendingDispatchStatus{}
 	dsp, err := s.Get(ctx, dspId)
 	if err != nil {
-		return err
+		return 0, err
 	}
 	if dsp == nil {
-		return fmt.Errorf("dispatch %d not found", dspId)
+		return 0, fmt.Errorf("dispatch %d not found", dspId)
 	}
 	jobs := slices.Clone(dsp.GetJobs().GetJobStrings())
 
 	// Begin transaction
 	tx, err := s.db.BeginTx(ctx, nil)
 	if err != nil {
-		return err
+		return 0, err
 	}
 	// Defer a rollback in case anything fails
 	defer tx.Rollback()
@@ -143,9 +168,12 @@ func (s *DispatchDB) UpdateAssignments(
 		SELECT(tDispatchUnit.UnitID.AS("unit_id")).
 		FROM(tDispatchUnit).
 		WHERE(tDispatchUnit.DispatchID.EQ(mysql.Int64(dspId)))
+	if expiredOnly {
+		stmt = stmt.FOR(mysql.UPDATE())
+	}
 	if err := stmt.QueryContext(ctx, tx, &existingRows); err != nil {
 		if !errors.Is(err, qrm.ErrNoRows) {
-			return err
+			return 0, err
 		}
 	}
 
@@ -154,6 +182,16 @@ func (s *DispatchDB) UpdateAssignments(
 	for _, row := range existingRows {
 		existingUnits[row.UnitID] = struct{}{}
 		existingAssignmentIDs = append(existingAssignmentIDs, row.UnitID)
+	}
+	expiredUnits := map[int64]struct{}{}
+	if expiredOnly {
+		expiredIDs, err := selectExpiredAssignmentIDs(ctx, tx, dspId, toRemove)
+		if err != nil {
+			return 0, err
+		}
+		for _, unitID := range expiredIDs {
+			expiredUnits[unitID] = struct{}{}
+		}
 	}
 	slices.Sort(existingAssignmentIDs)
 	s.logger.Debug(
@@ -164,6 +202,11 @@ func (s *DispatchDB) UpdateAssignments(
 
 	actualRemove := make([]int64, 0, len(toRemove))
 	for _, unitId := range toRemove {
+		if expiredOnly {
+			if _, ok := expiredUnits[unitId]; !ok {
+				continue
+			}
+		}
 		if _, ok := existingUnits[unitId]; ok {
 			actualRemove = append(actualRemove, unitId)
 			delete(existingUnits, unitId)
@@ -175,7 +218,11 @@ func (s *DispatchDB) UpdateAssignments(
 	// A requested removal must reconcile an assignment that remains only in the
 	// KV projection and emit the corresponding status transition.
 	effectiveRemove := slices.Clone(actualRemove)
-	for _, unitId := range toRemove {
+	removeCandidates := toRemove
+	if expiredOnly {
+		removeCandidates = actualRemove
+	}
+	for _, unitId := range removeCandidates {
 		if slices.ContainsFunc(
 			dsp.GetUnits(),
 			func(assignment *centrumdispatches.DispatchAssignment) bool {
@@ -212,22 +259,33 @@ func (s *DispatchDB) UpdateAssignments(
 		zap.String("current_status", dsp.GetStatus().GetStatus().String()),
 	)
 
-	if len(toRemove) > 0 {
-		removeIds := make([]mysql.Expression, len(toRemove))
-		for i := range toRemove {
-			removeIds[i] = mysql.Int64(toRemove[i])
+	if len(actualRemove) > 0 {
+		removeIds := make([]mysql.Expression, len(actualRemove))
+		for i := range actualRemove {
+			removeIds[i] = mysql.Int64(actualRemove[i])
+		}
+
+		removeWhere := mysql.AND(
+			tDispatchUnit.DispatchID.EQ(mysql.Int64(dspId)),
+			tDispatchUnit.UnitID.IN(removeIds...),
+		)
+		if expiredOnly {
+			removeWhere = mysql.AND(
+				removeWhere,
+				tDispatchUnit.ExpiresAt.IS_NOT_NULL(),
+				tDispatchUnit.ExpiresAt.LT_EQ(
+					mysql.CURRENT_TIMESTAMP().SUB(mysql.INTERVAL(2, mysql.SECOND)),
+				),
+			)
 		}
 
 		stmt := tDispatchUnit.
 			DELETE().
-			WHERE(mysql.AND(
-				tDispatchUnit.DispatchID.EQ(mysql.Int64(dspId)),
-				tDispatchUnit.UnitID.IN(removeIds...),
-			)).
-			LIMIT(int64(len(removeIds)))
+			WHERE(removeWhere).
+			LIMIT(int64(len(actualRemove)))
 
 		if _, err := stmt.ExecContext(ctx, tx); err != nil {
-			return err
+			return 0, err
 		}
 	}
 
@@ -244,7 +302,7 @@ func (s *DispatchDB) UpdateAssignments(
 			expiresAtVal,
 			true,
 		); err != nil {
-			return err
+			return 0, err
 		}
 	}
 
@@ -312,7 +370,7 @@ func (s *DispatchDB) UpdateAssignments(
 	for i := range pendingStatuses {
 		status, err := s.AddDispatchStatus(ctx, tx, pendingStatuses[i].status)
 		if err != nil {
-			return err
+			return 0, err
 		}
 
 		if pendingStatuses[i].status.GetStatus() == centrumdispatches.StatusDispatch_STATUS_DISPATCH_UNASSIGNED {
@@ -327,12 +385,12 @@ func (s *DispatchDB) UpdateAssignments(
 
 	// Commit assignment and status rows before updating dispatch KV or publishing events.
 	if err := tx.Commit(); err != nil {
-		return err
+		return 0, err
 	}
 
 	finalAssignments, err := s.LoadDispatchAssignments(ctx, dspId)
 	if err != nil {
-		return err
+		return 0, err
 	}
 	finalAssignmentIDs := make([]int64, 0, len(finalAssignments))
 	for _, assignment := range finalAssignments {
@@ -383,7 +441,7 @@ func (s *DispatchDB) UpdateAssignments(
 			return dsp, changed, nil
 		},
 	); err != nil {
-		return err
+		return 0, err
 	}
 
 	// Timers are an optimization for prompt expiry notification. The committed
@@ -404,11 +462,54 @@ func (s *DispatchDB) UpdateAssignments(
 			persistedStatuses[i].status,
 			persistedStatuses[i].jobs,
 		); err != nil {
-			return err
+			return 0, err
 		}
 	}
 
-	return nil
+	return len(actualRemove), nil
+}
+
+func selectExpiredAssignmentIDs(
+	ctx context.Context,
+	tx *sql.Tx,
+	dspID int64,
+	unitIDs []int64,
+) ([]int64, error) {
+	if len(unitIDs) == 0 {
+		return nil, nil
+	}
+
+	removeIDs := make([]mysql.Expression, len(unitIDs))
+	for i := range unitIDs {
+		removeIDs[i] = mysql.Int64(unitIDs[i])
+	}
+
+	tDispatchAssignment := table.FivenetCentrumDispatchesAsgmts
+	stmt := tDispatchAssignment.
+		SELECT(tDispatchAssignment.UnitID).
+		FROM(tDispatchAssignment).
+		WHERE(mysql.AND(
+			tDispatchAssignment.DispatchID.EQ(mysql.Int64(dspID)),
+			tDispatchAssignment.UnitID.IN(removeIDs...),
+			tDispatchAssignment.ExpiresAt.IS_NOT_NULL(),
+			tDispatchAssignment.ExpiresAt.LT_EQ(
+				mysql.CURRENT_TIMESTAMP().SUB(mysql.INTERVAL(2, mysql.SECOND)),
+			),
+		)).
+		FOR(mysql.UPDATE())
+
+	var rows []struct {
+		UnitID int64
+	}
+	if err := stmt.QueryContext(ctx, tx, &rows); err != nil {
+		return nil, err
+	}
+
+	result := make([]int64, 0, len(rows))
+	for _, row := range rows {
+		result = append(result, row.UnitID)
+	}
+	return result, nil
 }
 
 // DeleteExpiredAssignments removes only assignments that have actually
@@ -420,13 +521,23 @@ func (s *DispatchDB) DeleteExpiredAssignments(
 	dspID int64,
 	unitIDs []int64,
 ) (int64, error) {
-	if len(unitIDs) == 0 {
-		return 0, nil
+	tx, err := s.db.BeginTx(ctx, nil)
+	if err != nil {
+		return 0, err
+	}
+	defer tx.Rollback()
+
+	expiredIDs, err := selectExpiredAssignmentIDs(ctx, tx, dspID, unitIDs)
+	if err != nil {
+		return 0, err
+	}
+	if len(expiredIDs) == 0 {
+		return 0, tx.Commit()
 	}
 
-	removeIDs := make([]mysql.Expression, len(unitIDs))
-	for i := range unitIDs {
-		removeIDs[i] = mysql.Int64(unitIDs[i])
+	removeIDs := make([]mysql.Expression, len(expiredIDs))
+	for i := range expiredIDs {
+		removeIDs[i] = mysql.Int64(expiredIDs[i])
 	}
 
 	tDispatchAssignment := table.FivenetCentrumDispatchesAsgmts
@@ -435,19 +546,22 @@ func (s *DispatchDB) DeleteExpiredAssignments(
 		WHERE(mysql.AND(
 			tDispatchAssignment.DispatchID.EQ(mysql.Int64(dspID)),
 			tDispatchAssignment.UnitID.IN(removeIDs...),
-			tDispatchAssignment.ExpiresAt.IS_NOT_NULL(),
-			tDispatchAssignment.ExpiresAt.LT_EQ(
-				mysql.CURRENT_TIMESTAMP().SUB(mysql.INTERVAL(2, mysql.SECOND)),
-			),
 		)).
-		LIMIT(int64(len(unitIDs)))
+		LIMIT(int64(len(expiredIDs)))
 
-	result, err := stmt.ExecContext(ctx, s.db)
+	result, err := stmt.ExecContext(ctx, tx)
 	if err != nil {
 		return 0, err
 	}
 
-	return result.RowsAffected()
+	deleted, err := result.RowsAffected()
+	if err != nil {
+		return 0, err
+	}
+	if err := tx.Commit(); err != nil {
+		return 0, err
+	}
+	return deleted, nil
 }
 
 // insertDispatchAssignments persists one or more assignments in the caller's

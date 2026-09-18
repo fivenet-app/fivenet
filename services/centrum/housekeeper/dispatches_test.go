@@ -20,18 +20,18 @@ type assignmentExpirationWriterStub struct {
 	updateErr   error
 }
 
-func (s *assignmentExpirationWriterStub) UpdateAssignments(
+func (s *assignmentExpirationWriterStub) UpdateExpiredAssignments(
 	_ context.Context,
 	_ *string,
-	_ *int32,
 	dispatchID int64,
-	_ []int64,
 	unitIDs []int64,
-	_ time.Time,
-) error {
+) (int, error) {
 	s.dispatchID = dispatchID
 	s.unitIDs = append([]int64(nil), unitIDs...)
-	return s.updateErr
+	if s.updateErr != nil {
+		return 0, s.updateErr
+	}
+	return len(unitIDs), nil
 }
 
 func (s *assignmentExpirationWriterStub) DeleteExpiredAssignments(

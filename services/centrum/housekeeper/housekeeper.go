@@ -94,7 +94,7 @@ type dispatchAssignmentExpirationSource interface {
 }
 
 type dispatchAssignmentExpirationWriter interface {
-	UpdateAssignments(context.Context, *string, *int32, int64, []int64, []int64, time.Time) error
+	UpdateExpiredAssignments(context.Context, *string, int64, []int64) (int, error)
 	DeleteExpiredAssignments(context.Context, int64, []int64) (int64, error)
 }
 

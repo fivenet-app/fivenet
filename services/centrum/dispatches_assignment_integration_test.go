@@ -340,6 +340,90 @@ func TestTakeDispatchTwoSecondGraceBoundary(t *testing.T) {
 	})
 }
 
+func TestUpdateExpiredAssignmentsRemovesOnlyExpiredRows(t *testing.T) {
+	t.Parallel()
+
+	srv, db, unitID, dispatchID := newDispatchAssignmentFixture(t)
+	ctx := auth.ContextWithUserInfo(
+		t.Context(),
+		&userinfo.UserInfo{UserId: 1, Job: "ambulance", JobGrade: 1},
+	)
+	_, err := srv.AssignDispatch(
+		ctx,
+		&pbcentrum.AssignDispatchRequest{DispatchId: dispatchID, ToAdd: []int64{unitID}},
+	)
+	require.NoError(t, err)
+
+	_, err = db.Exec(
+		"UPDATE fivenet_centrum_dispatches_asgmts SET expires_at = DATE_SUB(CURRENT_TIMESTAMP(), INTERVAL 3 SECOND) WHERE dispatch_id = ? AND unit_id = ?",
+		dispatchID,
+		unitID,
+	)
+	require.NoError(t, err)
+	_, err = srv.dispatches.UpdateExpiredAssignments(ctx, new("ambulance"), dispatchID, []int64{unitID})
+	require.NoError(t, err)
+
+	var count int
+	require.NoError(t, db.QueryRow(
+		"SELECT COUNT(*) FROM fivenet_centrum_dispatches_asgmts WHERE dispatch_id = ? AND unit_id = ?",
+		dispatchID,
+		unitID,
+	).Scan(&count))
+	require.Zero(t, count)
+}
+
+func TestUpdateExpiredAssignmentsSkipsAssignmentsWithinGracePeriod(t *testing.T) {
+	t.Parallel()
+
+	srv, db, unitID, dispatchID := newDispatchAssignmentFixture(t)
+	ctx := auth.ContextWithUserInfo(
+		t.Context(),
+		&userinfo.UserInfo{UserId: 1, Job: "ambulance", JobGrade: 1},
+	)
+	_, err := srv.AssignDispatch(
+		ctx,
+		&pbcentrum.AssignDispatchRequest{DispatchId: dispatchID, ToAdd: []int64{unitID}},
+	)
+	require.NoError(t, err)
+
+	_, err = db.Exec(
+		"UPDATE fivenet_centrum_dispatches_asgmts SET expires_at = DATE_SUB(CURRENT_TIMESTAMP(), INTERVAL 1 SECOND) WHERE dispatch_id = ? AND unit_id = ?",
+		dispatchID,
+		unitID,
+	)
+	require.NoError(t, err)
+	_, err = srv.dispatches.UpdateExpiredAssignments(ctx, new("ambulance"), dispatchID, []int64{unitID})
+	require.NoError(t, err)
+	require.True(t, assignmentExpiryForTest(t, db, dispatchID, unitID).Valid)
+}
+
+func TestDeleteExpiredAssignmentsRetainsValidRows(t *testing.T) {
+	t.Parallel()
+
+	srv, db, unitID, dispatchID := newDispatchAssignmentFixture(t)
+	ctx := auth.ContextWithUserInfo(
+		t.Context(),
+		&userinfo.UserInfo{UserId: 1, Job: "ambulance", JobGrade: 1},
+	)
+	_, err := srv.AssignDispatch(
+		ctx,
+		&pbcentrum.AssignDispatchRequest{DispatchId: dispatchID, ToAdd: []int64{unitID}},
+	)
+	require.NoError(t, err)
+
+	deleted, err := srv.dispatches.DeleteExpiredAssignments(ctx, dispatchID, []int64{unitID})
+	require.NoError(t, err)
+	require.Zero(t, deleted)
+	require.True(t, assignmentExpiryForTest(t, db, dispatchID, unitID).Valid)
+
+	err = takeDispatchForTest(t, srv, dispatchID, centrumdispatches.TakeDispatchResp_TAKE_DISPATCH_RESP_ACCEPTED)
+	require.NoError(t, err)
+	deleted, err = srv.dispatches.DeleteExpiredAssignments(ctx, dispatchID, []int64{unitID})
+	require.NoError(t, err)
+	require.Zero(t, deleted)
+	require.False(t, assignmentExpiryForTest(t, db, dispatchID, unitID).Valid)
+}
+
 func TestEmptyUnitCleanupRemovesAssignmentAndTimer(t *testing.T) {
 	t.Parallel()
 

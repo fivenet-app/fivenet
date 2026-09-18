@@ -368,15 +368,13 @@ func (s *Housekeeper) handleDispatchAssignmentExpiration(
 	}
 	for job, dispatches := range grouped {
 		for dispatchID, units := range dispatches {
-			if err := s.assignmentExpirationWriter.UpdateAssignments(
+			liveDeleted, err := s.assignmentExpirationWriter.UpdateExpiredAssignments(
 				ctx,
 				new(job),
-				nil,
 				dispatchID,
-				nil,
 				units,
-				time.Time{},
-			); err != nil {
+			)
+			if err != nil {
 				if errors.Is(err, jetstream.ErrKeyNotFound) {
 					cleanupDeleted, cleanupErr := s.assignmentExpirationWriter.DeleteExpiredAssignments(
 						ctx,
@@ -408,7 +406,7 @@ func (s *Housekeeper) handleDispatchAssignmentExpiration(
 				))
 				continue
 			}
-			deleted += len(units)
+			deleted += liveDeleted
 		}
 	}
 	return len(rows), deleted, archivedDeleted, len(dispatchIDs), len(jobs), len(rows), backlog, errs
