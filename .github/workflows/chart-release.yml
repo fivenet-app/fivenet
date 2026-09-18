@@ -1,4 +1,4 @@
-name: Update Stable Channel After Chart Release
+name: Update Channels After Chart Release
 
 on:
   repository_dispatch:
@@ -9,7 +9,7 @@ permissions:
 
 jobs:
   update-stable-channel:
-    name: Update Stable Channel
+    name: Update Channels
     uses: ./.github/workflows/update-channel.yml
     secrets: inherit
     with:
