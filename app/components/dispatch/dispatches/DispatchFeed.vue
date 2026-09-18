@@ -2,37 +2,51 @@
 import DispatchFeedItem from '~/components/dispatch/dispatches/DispatchFeedItem.vue';
 import { dispatchStatuses, dispatchStatusToBGColor } from '~/components/dispatch/helpers';
 import { getCentrumDispatchesClient } from '~~/gen/ts/clients';
-import RefreshButton from '~/components/partials/RefreshButton.vue';
 import type { ListDispatchActivityResponse } from '~~/gen/ts/services/centrum/dispatches';
 
 const props = defineProps<{
     dispatchId?: number | undefined;
 }>();
 
-const centrumDispatchesClient = await getCentrumDispatchesClient();
+const page = defineModel<number>('page', { default: 1 });
 
-const offset = ref(0);
+const centrumDispatchesClientPromise = getCentrumDispatchesClient();
+
+const lastSuccessfulData = shallowRef<ListDispatchActivityResponse>();
+const activityData = computed(() => data.value ?? lastSuccessfulData.value);
+const pageSize = computed(() => activityData.value?.pagination?.pageSize ?? 10);
+const offset = computed(() => (page.value - 1) * pageSize.value);
 const dispatchId = computed(() => props.dispatchId ?? 0);
 const hasDispatchId = computed(() => dispatchId.value > 0);
 
 const timelineItems = computed(() =>
-    (data.value?.activity ?? []).map((item) => ({
+    (activityData.value?.activity ?? []).map((item) => ({
         ...item,
         icon: dispatchStatuses.find((status) => status.status === item.status)?.icon ?? 'i-mdi-info-circle',
         ui: { indicator: 'text-highlighted ' + dispatchStatusToBGColor(item.status) },
     })),
 );
 
-const activityKey = computed(() => `centrum-dispatch-${dispatchId.value}-activity-${offset.value}`);
+const activityKey = computed(() => `centrum-dispatch-${dispatchId.value}-activity-page-${page.value}`);
 
 const { data, status, refresh } = useAuthedLazyAsyncData(
     'userState',
     activityKey,
     ({ signal }) => listDispatchActivity(signal),
     {
-        default: () => ({ activity: [] }),
+        default: (): ListDispatchActivityResponse => ({ activity: [] }),
         immediate: false,
     },
+);
+
+watch(
+    data,
+    (value) => {
+        if (value !== undefined) {
+            lastSuccessfulData.value = value;
+        }
+    },
+    { immediate: true },
 );
 
 async function listDispatchActivity(signal: AbortSignal): Promise<ListDispatchActivityResponse> {
@@ -41,6 +55,7 @@ async function listDispatchActivity(signal: AbortSignal): Promise<ListDispatchAc
     }
 
     try {
+        const centrumDispatchesClient = await centrumDispatchesClientPromise;
         const call = centrumDispatchesClient.listDispatchActivity(
             {
                 pagination: {
@@ -93,22 +108,18 @@ watch(
     },
     { immediate: true },
 );
+
+defineExpose({
+    pagination: computed(() => activityData.value?.pagination),
+    refresh,
+    status,
+});
 </script>
 
 <template>
-    <div class="my-1 flex flex-col gap-2 px-1">
-        <div class="flex justify-between">
-            <h2 class="inline-flex flex-1 items-center text-base leading-6 font-semibold">{{ $t('common.feed') }}</h2>
-
-            <RefreshButton icon-only :disabled="!hasDispatchId" :loading="isRequestPending(status)" @click="() => refresh()" />
-        </div>
-
-        <div class="flex flex-col">
-            <UTimeline :items="timelineItems" size="xs" :ui="{ wrapper: '!mt-0 !pb-2' }">
-                <template #wrapper="{ item }">
-                    <DispatchFeedItem :item="item" />
-                </template>
-            </UTimeline>
-        </div>
-    </div>
+    <UTimeline :items="timelineItems" size="xs" :ui="{ wrapper: '!mt-0 !pb-2' }">
+        <template #wrapper="{ item }">
+            <DispatchFeedItem :item="item" />
+        </template>
+    </UTimeline>
 </template>

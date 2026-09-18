@@ -1,12 +1,19 @@
 <script lang="ts" setup>
-import DispatchDetailsByIDSlideover from '~/components/dispatch/dispatches//DispatchDetailsByIDSlideover.vue';
+import type { ButtonProps } from '@nuxt/ui';
+import DispatchDetailsByIDSlideover from '~/components/dispatch/dispatches/DispatchDetailsByIDSlideover.vue';
 import { useCentrumStore } from '~/stores/centrum';
 import type { DispatchStatus } from '~~/gen/ts/resources/centrum/dispatches/dispatches';
 import DispatchStatusBadge from '../partials/DispatchStatusBadge.vue';
 
-const props = defineProps<{
-    status: DispatchStatus | undefined;
-}>();
+const props = withDefaults(
+    defineProps<{
+        status: DispatchStatus | undefined;
+        size?: ButtonProps['size'];
+    }>(),
+    {
+        size: 'xs',
+    },
+);
 
 const overlay = useOverlay();
 
@@ -28,7 +35,7 @@ const dispatch = props.status?.dispatchId ? centrumStore.dispatches.get(props.st
         </span>
     </template>
     <UPopover v-else>
-        <UButton class="inline-flex items-center p-0.5" variant="outline" size="xs" trailing-icon="i-mdi-chevron-down">
+        <UButton class="inline-flex items-center p-0.5" variant="outline" :size="props.size" trailing-icon="i-mdi-chevron-down">
             <slot name="before" />
             <span> DSP-{{ status.dispatchId }} </span>
             <slot name="after" />

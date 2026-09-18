@@ -1,4 +1,5 @@
 <script lang="ts" setup>
+import type { ButtonProps } from '@nuxt/ui';
 import PhoneNumberBlock from '~/components/partials/citizens/PhoneNumberBlock.vue';
 import { useCentrumStore } from '~/stores/centrum';
 import type { DispatchAssignment } from '~~/gen/ts/resources/centrum/dispatches/dispatches';
@@ -17,6 +18,7 @@ const props = withDefaults(
         initialsOnly?: boolean;
         assignment?: DispatchAssignment;
         showIcon?: boolean;
+        size?: ButtonProps['size'];
     }>(),
     {
         unitId: undefined,
@@ -24,6 +26,7 @@ const props = withDefaults(
         initialsOnly: false,
         assignment: undefined,
         showIcon: false,
+        size: 'xs',
     },
 );
 
@@ -43,7 +46,7 @@ const unitStatusColor = computed(() => unitStatusToBGColor(props.unit?.status?.s
     </template>
 
     <UPopover v-else>
-        <UButton class="inline-flex items-center gap-1 p-0.5 px-1" variant="outline" size="xs">
+        <UButton class="inline-flex items-center gap-1 p-0.5 px-1" variant="outline" :size="props.size">
             <slot name="before" />
 
             <UIcon

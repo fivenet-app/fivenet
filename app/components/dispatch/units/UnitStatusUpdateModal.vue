@@ -123,11 +123,11 @@ async function closeModal(): Promise<void> {
                             :label="$t('common.status')"
                             required
                         >
-                            <div class="grid w-full grid-cols-2 gap-0.5">
+                            <div class="grid w-full grid-cols-2 gap-1">
                                 <UButton
                                     v-for="item in unitStatuses"
                                     :key="item.name"
-                                    class="group my-0.5 flex w-full flex-col items-center rounded-md p-1.5 text-xs font-medium hover:transition-all"
+                                    class="group flex w-full flex-col items-center rounded-md p-1.5 text-xs font-medium hover:transition-all"
                                     :class="state.status == item.status ? 'bg-neutral-500 hover:bg-neutral-400' : ''"
                                     :color="unitStatusToBadgeColor(item.status)"
                                     :disabled="state.status == item.status"

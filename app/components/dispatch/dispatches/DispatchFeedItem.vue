@@ -20,7 +20,7 @@ const { gotoCoords } = useLivemapStore();
 </script>
 
 <template>
-    <div class="flex min-w-0 flex-auto justify-between gap-2 text-xs leading-5 text-gray-200">
+    <div class="flex min-w-0 flex-auto justify-between gap-2 text-xs leading-5 text-muted">
         <div class="flex min-w-0 flex-col gap-0.5">
             <span class="inline-flex items-center gap-1">
                 <span class="text-sm font-medium text-highlighted">{{

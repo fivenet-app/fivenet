@@ -134,11 +134,11 @@ async function closeModal(): Promise<void> {
                         </dt>
                         <dd class="mt-1 text-sm leading-6 sm:col-span-2 sm:mt-0">
                             <UFormField name="status">
-                                <div class="grid w-full grid-cols-2 gap-0.5">
+                                <div class="grid w-full grid-cols-2 gap-1">
                                     <UButton
                                         v-for="item in dispatchStatuses"
                                         :key="item.name"
-                                        class="group my-0.5 flex w-full flex-col items-center rounded-md p-1.5 text-xs font-medium hover:transition-all"
+                                        class="group flex w-full flex-col items-center rounded-md p-1.5 text-xs font-medium hover:transition-all"
                                         :class="state.status == item.status ? 'bg-neutral-500 hover:bg-neutral-400' : ''"
                                         :color="dispatchStatusToBadgeColor(item.status)"
                                         :disabled="state.status == item.status"
