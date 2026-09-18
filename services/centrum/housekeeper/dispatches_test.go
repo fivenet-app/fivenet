@@ -73,7 +73,7 @@ func TestDispatchHousekeeperSchedules(t *testing.T) {
 	}{
 		{"targeted cancellation recovery", cancelOldDispatchesSchedule, time.Date(2026, time.January, 1, 0, 5, 0, 0, time.UTC)},
 		{"empty unit dispatch recovery", auditEmptyUnitDispatchesSchedule, time.Date(2026, time.January, 1, 0, 5, 0, 0, time.UTC)},
-		{"kv recovery audit", deleteOldDispatchesKVSchedule, time.Date(2026, time.January, 1, 2, 15, 0, 0, time.UTC)},
+		{"kv recovery audit", deleteOldDispatchesKVSchedule, time.Date(2026, time.January, 1, 0, 30, 0, 0, time.UTC)},
 		{"authoritative user info recovery audit", reconcileUserInfoStateSchedule, time.Date(2026, time.January, 1, 4, 0, 0, 0, time.UTC)},
 	} {
 		t.Run(test.name, func(t *testing.T) {

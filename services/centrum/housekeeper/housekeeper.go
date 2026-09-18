@@ -38,10 +38,10 @@ const (
 	DeleteDispatchDays = 14
 	DeleteUnitDays     = 14
 
-	cancelOldDispatchesSchedule      = "0 */5 * * * *"
-	auditEmptyUnitDispatchesSchedule = "0 */5 * * * *"
-	deleteOldDispatchesKVSchedule    = "0 15 2,14 * * *"
-	reconcileUserInfoStateSchedule   = "0 0 4,16 * * *"
+	cancelOldDispatchesSchedule      = "*/5 * * * *"
+	auditEmptyUnitDispatchesSchedule = "*/5 * * * *"
+	deleteOldDispatchesKVSchedule    = "*/30 * * * *"
+	reconcileUserInfoStateSchedule   = "0 4,16 * * *"
 )
 
 var Module = fx.Module("centrum_housekeeper",
