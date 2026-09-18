@@ -13,7 +13,9 @@ const emits = defineEmits<{
     (e: 'close', v: boolean): void;
 }>();
 
-const vehicleProps = defineModel<VehicleProps>('vehicleProps');
+const vehicleProps = defineModel<VehicleProps>('vehicleProps', {
+    required: true,
+});
 
 const notifications = useNotificationsStore();
 
@@ -47,7 +49,9 @@ async function setWantedState(values: Schema): Promise<void> {
         });
         const { response } = await call;
 
-        vehicleProps.value = response.props;
+        if (response.props) {
+            vehicleProps.value = response.props;
+        }
 
         notifications.add({
             title: { key: 'notifications.action_successful.title', parameters: {} },

@@ -16,7 +16,7 @@ const emits = defineEmits<{
     (e: 'close', v: boolean): void;
 }>();
 
-const policy = defineModel<ApprovalPolicy | undefined>();
+const policy = defineModel<ApprovalPolicy | undefined>({ default: undefined });
 
 const notifications = useNotificationsStore();
 

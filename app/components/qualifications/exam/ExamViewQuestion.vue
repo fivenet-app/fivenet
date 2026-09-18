@@ -12,7 +12,9 @@ withDefaults(
     },
 );
 
-const modelValue = defineModel<ExamResponse | undefined>();
+const modelValue = defineModel<ExamResponse | undefined>({
+    required: true,
+});
 
 function enforceMultipleChoiceLimit(choices: string[]): void {
     if (

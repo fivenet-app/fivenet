@@ -17,7 +17,7 @@ const emit = defineEmits<{
     (e: 'close', v: boolean): void;
 }>();
 
-const reminderTime = defineModel<Timestamp | undefined>('reminderTime');
+const reminderTime = defineModel<Timestamp | undefined>('reminderTime', { default: undefined });
 
 const notifications = useNotificationsStore();
 

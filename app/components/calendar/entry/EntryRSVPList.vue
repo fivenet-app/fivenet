@@ -34,7 +34,7 @@ const { activeChar } = storeToRefs(authStore);
 
 const calendarStore = useCalendarStore();
 
-const ownEntry = defineModel<CalendarEntryRSVP | undefined>();
+const ownEntry = defineModel<CalendarEntryRSVP | undefined>({ default: undefined });
 
 const page = ref<number>(1);
 type RsvpScope = 'series' | 'occurrence';

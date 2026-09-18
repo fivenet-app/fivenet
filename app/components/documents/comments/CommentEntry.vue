@@ -27,7 +27,7 @@ const emit = defineEmits<{
     (e: 'restored', id: number | undefined): void;
 }>();
 
-const comment = defineModel<Comment | undefined>();
+const comment = defineModel<Comment | undefined>({ default: undefined });
 
 const { t } = useI18n();
 

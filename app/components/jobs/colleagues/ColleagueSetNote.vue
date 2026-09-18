@@ -13,7 +13,7 @@ const emit = defineEmits<{
     (e: 'refresh'): void;
 }>();
 
-const modelValue = defineModel<string | undefined>();
+const modelValue = defineModel<string | undefined>({ default: undefined });
 
 const notifications = useNotificationsStore();
 

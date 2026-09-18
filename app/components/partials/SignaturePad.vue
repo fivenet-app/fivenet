@@ -4,7 +4,7 @@ defineProps<{
     disabled?: boolean;
 }>();
 
-const signatureSvg = defineModel<string | undefined>();
+const signatureSvg = defineModel<string | undefined>({ default: undefined });
 
 const settingsStore = useSettingsStore();
 const { signature: signatureSettings } = storeToRefs(settingsStore);

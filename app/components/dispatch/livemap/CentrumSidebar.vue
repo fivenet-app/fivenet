@@ -59,8 +59,8 @@ const sidebarPlacementClassMap = computed(() => ({
         ? 'h-full min-h-0 overflow-x-hidden overflow-y-auto md:overflow-hidden'
         : 'overflow-x-hidden overflow-y-auto',
     splitContainer: isVerticalSidebarPlacement.value ? 'h-full min-h-0 p-1' : 'p-1',
-    firstColumn: isVerticalSidebarPlacement.value ? 'flex flex-col gap-2 min-h-0 md:overflow-y-auto' : 'flex flex-col gap-2',
-    secondColumn: isVerticalSidebarPlacement.value ? 'flex flex-col gap-2 min-h-0 md:h-full' : 'flex flex-col gap-2',
+    firstColumn: isVerticalSidebarPlacement.value ? 'flex flex-col gap-2 md:overflow-y-auto' : 'flex flex-col gap-2',
+    secondColumn: isVerticalSidebarPlacement.value ? 'flex flex-col gap-2 md:h-full' : 'flex flex-col gap-2',
     ownDispatchesScroll: isVerticalSidebarPlacement.value ? 'min-h-0 flex-1 md:overflow-hidden' : '',
     ownDispatchesList: isVerticalSidebarPlacement.value ? 'h-full min-h-0 md:overflow-y-auto md:pr-1' : '',
     sidebarPanelSize: isVerticalSidebarPlacement.value ? 'w-full h-72 max-h-[32svh]' : 'w-[25rem] max-w-[25rem]',
@@ -498,13 +498,10 @@ defineShortcuts({
         <UDashboardPanel
             v-if="canStream && open"
             id="centrum-sidebar"
-            :class="[
-                'min-h-0 min-w-0 shrink-0',
-                sidebarPlacementClassMap.sidebarPanelSize,
-                isSidebarFirst ? 'order-1' : 'order-2',
-            ]"
+            :class="['min-h-0 min-w-0', sidebarPlacementClassMap.sidebarPanelSize, isSidebarFirst ? 'order-1' : 'order-2']"
             :resizable="!isVerticalSidebarPlacement"
-            :min-size="isVerticalSidebarPlacement ? undefined : 13"
+            :collapsible="false"
+            :min-size="isVerticalSidebarPlacement ? undefined : 10"
             :max-size="isVerticalSidebarPlacement ? undefined : 26"
             :default-size="isVerticalSidebarPlacement ? undefined : 16"
             :ui="{
@@ -520,7 +517,11 @@ defineShortcuts({
                                     v-if="getOwnUnit !== undefined"
                                     class="inline-flex flex-col rounded-b-none px-0.5 py-1"
                                     :color="ownUnitStatus"
-                                    icon="i-mdi-information-outline"
+                                    :icon="
+                                        getOwnUnit.icon
+                                            ? convertComponentIconNameToDynamic(getOwnUnit.icon)
+                                            : 'i-mdi-information-outline'
+                                    "
                                     block
                                     :ui="{ label: '' }"
                                     @click="

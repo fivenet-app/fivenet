@@ -28,6 +28,7 @@ defineOptions({
 });
 
 const icon = defineModel<string | undefined>('modelValue', {
+    default: undefined,
     set: (value) => value ?? undefined,
 });
 

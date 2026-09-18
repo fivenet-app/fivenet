@@ -13,6 +13,8 @@ const props = withDefaults(
     },
 );
 
+const { t } = useI18n();
+
 const overlay = useOverlay();
 
 const dispatcherDrawer = overlay.create(DispatcherDrawer);
@@ -47,6 +49,12 @@ if (!props.hideJoin) {
         'c-q': () => onSubmitThrottle(!isDispatcher.value),
     });
 }
+
+const dispatchersLabel = computed(() =>
+    getCurrentMode.value !== CentrumMode.AUTO_ROUND_ROBIN
+        ? t('common.dispatcher', dispatchers.value.dispatchers.length)
+        : t('enums.centrum.CentrumMode.AUTO_ROUND_ROBIN'),
+);
 </script>
 
 <template>
@@ -59,12 +67,13 @@ if (!props.hideJoin) {
                     :icon="!isDispatcher ? 'i-mdi-location-enter' : 'i-mdi-location-exit'"
                     :color="!isDispatcher ? 'primary' : 'warning'"
                     :label="!isDispatcher ? $t('common.join', 1) : $t('common.leave', 1)"
+                    :ui="{ label: 'hidden truncate md:block' }"
                     @click="onSubmitThrottle(!isDispatcher)"
                 />
             </UTooltip>
         </template>
 
-        <UTooltip :text="usersToLabel(dispatchers.dispatchers)">
+        <UTooltip :text="dispatchersLabel">
             <UButton
                 :icon="getCurrentMode !== CentrumMode.AUTO_ROUND_ROBIN ? 'i-mdi-monitor' : 'i-mdi-robot'"
                 :color="
@@ -75,11 +84,8 @@ if (!props.hideJoin) {
                           : 'success'
                 "
                 truncate
-                :label="
-                    getCurrentMode !== CentrumMode.AUTO_ROUND_ROBIN
-                        ? $t('common.dispatcher', dispatchers.dispatchers.length)
-                        : $t('enums.centrum.CentrumMode.AUTO_ROUND_ROBIN')
-                "
+                :label="dispatchersLabel"
+                :ui="{ label: 'hidden truncate md:block' }"
                 @click="dispatcherDrawer.open({})"
             />
         </UTooltip>

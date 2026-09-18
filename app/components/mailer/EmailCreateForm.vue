@@ -18,7 +18,6 @@ const props = withDefaults(
         hideLabel?: boolean;
     }>(),
     {
-        modelValue: undefined,
         personalEmail: false,
         disabled: false,
         hideLabel: false,
@@ -30,7 +29,7 @@ const emit = defineEmits<{
     (e: 'dirty-change', value: boolean): void;
 }>();
 
-const email = defineModel<Email | undefined>();
+const email = defineModel<Email | undefined>({ default: undefined });
 
 const { t } = useI18n();
 

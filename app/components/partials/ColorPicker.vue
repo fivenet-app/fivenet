@@ -16,7 +16,7 @@ defineOptions({
     inheritAttrs: false,
 });
 
-const modelValue = defineModel<string>();
+const modelValue = defineModel<string | undefined>({ default: undefined });
 
 const notifications = useNotificationsStore();
 

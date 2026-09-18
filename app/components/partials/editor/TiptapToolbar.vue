@@ -28,7 +28,9 @@ const emits = defineEmits<{
     (e: 'update:content', val: JSONContent | string | undefined): void;
 }>();
 
-const files = defineModel<FileGrpc[]>('files');
+const files = defineModel<FileGrpc[]>('files', {
+    required: true,
+});
 
 const overlay = useOverlay();
 

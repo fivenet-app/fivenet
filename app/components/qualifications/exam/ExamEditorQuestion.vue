@@ -26,7 +26,7 @@ const emit = defineEmits<{
     (e: 'move-up'): void;
 }>();
 
-const question = defineModel<ExamQuestion>();
+const question = defineModel<ExamQuestion | undefined>({ default: undefined });
 
 const appConfig = useAppConfig();
 const settingsStore = useSettingsStore();

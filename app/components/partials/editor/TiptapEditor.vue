@@ -82,7 +82,9 @@ defineOptions({
 });
 
 const modelValue = defineModel<JSONContent | string | undefined>({ required: true });
-const files = defineModel<FileGrpc[]>('files');
+const files = defineModel<FileGrpc[]>('files', {
+    required: true,
+});
 
 provide('tiptap:disablePenaltyCalculatorBlockEditing', toRef(props, 'disablePenaltyCalculatorBlockEditing'));
 provide('tiptap:enablePenaltyCalculatorBlockRemoval', toRef(props, 'enablePenaltyCalculatorBlockRemoval'));

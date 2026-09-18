@@ -28,7 +28,7 @@ defineEmits<{
     (e: 'close', v: boolean): void;
 }>();
 
-const docMeta = defineModel<DocumentMeta | undefined>('docMeta');
+const docMeta = defineModel<DocumentMeta | undefined>('docMeta', { default: undefined });
 
 const overlay = useOverlay();
 

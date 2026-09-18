@@ -18,7 +18,7 @@ const props = defineProps<{
 
 const { attr, can } = useAuth();
 
-const labels = defineModel<Labels | undefined>();
+const labels = defineModel<Labels | undefined>({ default: undefined });
 
 const notifications = useNotificationsStore();
 

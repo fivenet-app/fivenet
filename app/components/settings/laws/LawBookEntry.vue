@@ -39,7 +39,9 @@ const { custom } = useAppConfig();
 
 const notifications = useNotificationsStore();
 
-const lawBook = defineModel<LawBook | undefined>();
+const lawBook = defineModel<LawBook | undefined>({
+    required: true,
+});
 const laws = defineModel<Law[]>('laws', { required: true });
 
 const overlay = useOverlay();
