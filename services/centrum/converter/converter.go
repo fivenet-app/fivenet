@@ -52,7 +52,6 @@ func New(p Params) *Converter {
 		p.Logger.Debug("dispatch center converter is disabled")
 		return nil
 	}
-	ctxCancel, cancel := context.WithCancel(context.Background())
 
 	convertJobs := make([]string, 0, len(p.Config.DispatchCenter.ConvertJobs))
 	for _, job := range p.Config.DispatchCenter.ConvertJobs {
@@ -77,6 +76,8 @@ func New(p Params) *Converter {
 		converterType: p.Config.DispatchCenter.Type,
 		convertJobs:   convertJobs,
 	}
+
+	ctxCancel, cancel := context.WithCancel(context.Background())
 
 	p.LC.Append(fx.StartHook(func(ctxStartup context.Context) error {
 		c.wg.Go(func() {
