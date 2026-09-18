@@ -10,6 +10,8 @@ import (
 	"github.com/fivenet-app/fivenet/v2026/internal/tests/servers"
 	"github.com/fivenet-app/fivenet/v2026/pkg/config"
 	"github.com/fivenet-app/fivenet/v2026/pkg/perms"
+	centrumsettingsdb "github.com/fivenet-app/fivenet/v2026/services/centrum/settings"
+	centrumunitsdb "github.com/fivenet-app/fivenet/v2026/services/centrum/units"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"go.uber.org/fx"
@@ -31,12 +33,18 @@ func TestDemoSeedRBACReloadsPermsCache(t *testing.T) {
 	require.NoError(t, cleanupDemoRBACForJob(ctx, db, targetJob))
 
 	var loadedPerms perms.Permissions
+	var settingsDB *centrumsettingsdb.SettingsDB
+	var unitsDB *centrumunitsdb.UnitDB
 	app := fxtest.New(t,
 		modules.GetFxTestOpts(
 			dbServer.FxProvide(),
 			natsServer.FxProvide(),
 			fx.Invoke(func(p perms.Permissions) {
 				loadedPerms = p
+			}),
+			fx.Invoke(func(settings *centrumsettingsdb.SettingsDB, units *centrumunitsdb.UnitDB) {
+				settingsDB = settings
+				unitsDB = units
 			}),
 		)...,
 	)
@@ -46,6 +54,8 @@ func TestDemoSeedRBACReloadsPermsCache(t *testing.T) {
 	t.Cleanup(app.RequireStop)
 
 	require.NotNil(t, loadedPerms)
+	require.NotNil(t, settingsDB)
+	require.NotNil(t, unitsDB)
 
 	demoCfg := &config.Config{
 		Demo: config.Demo{
@@ -54,10 +64,12 @@ func TestDemoSeedRBACReloadsPermsCache(t *testing.T) {
 		},
 	}
 	d := &Demo{
-		logger: zap.NewNop(),
-		db:     db,
-		cfg:    demoCfg,
-		perms:  loadedPerms,
+		logger:   zap.NewNop(),
+		db:       db,
+		cfg:      demoCfg,
+		perms:    loadedPerms,
+		settings: settingsDB,
+		units:    unitsDB,
 	}
 	d.initRandomizers()
 
