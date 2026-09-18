@@ -34,7 +34,7 @@
         "@nuxt/fonts": "0.14.0",
         "@nuxt/image": "2.1.0",
         "@nuxt/ui": "4.11.1",
-        "@nuxtjs/robots": "6.2.2",
+        "@nuxtjs/robots": "6.2.3",
         "@pinia/nuxt": "1.0.2",
         "@protobuf-ts/grpcweb-transport": "2.11.1",
         "@samemichaeltadele/tiptap-compare": "0.0.3",
@@ -146,7 +146,7 @@
         "eslint": "10.10.0",
         "eslint-config-prettier": "10.1.8",
         "eslint-plugin-prettier": "5.5.6",
-        "h3-next": "npm:h3@2.0.1-rc.31",
+        "h3-next": "npm:h3@2.0.1-rc.32",
         "happy-dom": "20.14.5",
         "nuxt": "4.5.2",
         "nuxt-tiptap-editor": "3.4.0",
@@ -163,7 +163,7 @@
         "tailwindcss": "4.3.3",
         "typescript": "catalog:",
         "vite": "8.3.0",
-        "vitest": "5.0.0",
+        "vitest": "5.0.1",
         "vue-router": "5.3.1",
         "vue-tsc": "3.3.11",
         "westures": "1.1.1"
@@ -177,12 +177,12 @@
     },
     "pnpm": {
         "overrides": {
-            "@unhead/vue": "3.4.0",
+            "@unhead/vue": "3.4.1",
             "fontless>esbuild": "0.28.2",
             "nuxt-typed-router>defu": "6.1.7",
             "nuxt-typed-router>lodash-es": "4.18.1",
             "nuxt-typed-router>nanoid": "6.0.1",
-            "unhead": "3.4.0",
+            "unhead": "3.4.1",
             "vue": "3.5.42"
         }
     },
