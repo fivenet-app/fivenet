@@ -129,7 +129,7 @@ const isLinkOpen = ref<boolean>(false);
         <UFieldGroup>
             <UTooltip :text="$t('components.partials.tiptap_editor.bold')">
                 <UButton
-                    :class="{ 'bg-neutral-300 dark:bg-neutral-900': ui.bold }"
+                    :class="{ 'bg-accented': ui.bold }"
                     :disabled="disabled || !ui.canBold"
                     color="neutral"
                     variant="ghost"
@@ -140,7 +140,7 @@ const isLinkOpen = ref<boolean>(false);
 
             <UTooltip :text="$t('components.partials.tiptap_editor.italic')">
                 <UButton
-                    :class="{ 'bg-neutral-300 dark:bg-neutral-900': ui.italic }"
+                    :class="{ 'bg-accented': ui.italic }"
                     :disabled="disabled || !ui.canItalic"
                     color="neutral"
                     variant="ghost"
@@ -151,7 +151,7 @@ const isLinkOpen = ref<boolean>(false);
 
             <UTooltip :text="$t('components.partials.tiptap_editor.underline')">
                 <UButton
-                    :class="{ 'bg-neutral-300 dark:bg-neutral-900': ui.underline }"
+                    :class="{ 'bg-accented': ui.underline }"
                     :disabled="disabled || !ui.canUnderline"
                     color="neutral"
                     variant="ghost"
@@ -162,7 +162,7 @@ const isLinkOpen = ref<boolean>(false);
 
             <UTooltip :text="$t('components.partials.tiptap_editor.strike')">
                 <UButton
-                    :class="{ 'bg-neutral-300 dark:bg-neutral-900': ui.strike }"
+                    :class="{ 'bg-accented': ui.strike }"
                     :disabled="disabled || !ui.canStrike"
                     color="neutral"
                     variant="ghost"
@@ -183,7 +183,7 @@ const isLinkOpen = ref<boolean>(false);
 
             <UTooltip :text="$t('components.partials.tiptap_editor.superscript')">
                 <UButton
-                    :class="{ 'bg-neutral-300 dark:bg-neutral-900': ui.superscript }"
+                    :class="{ 'bg-accented': ui.superscript }"
                     :disabled="disabled"
                     color="neutral"
                     variant="ghost"
@@ -194,7 +194,7 @@ const isLinkOpen = ref<boolean>(false);
 
             <UTooltip :text="$t('components.partials.tiptap_editor.subscript')">
                 <UButton
-                    :class="{ 'bg-neutral-300 dark:bg-neutral-900': ui.subscript }"
+                    :class="{ 'bg-accented': ui.subscript }"
                     :disabled="disabled"
                     color="neutral"
                     variant="ghost"
@@ -205,7 +205,7 @@ const isLinkOpen = ref<boolean>(false);
 
             <UTooltip :text="$t('components.partials.tiptap_editor.code')">
                 <UButton
-                    :class="{ 'bg-neutral-300 dark:bg-neutral-900': ui.code }"
+                    :class="{ 'bg-accented': ui.code }"
                     :disabled="disabled"
                     color="neutral"
                     variant="ghost"
@@ -216,7 +216,7 @@ const isLinkOpen = ref<boolean>(false);
 
             <UTooltip :text="$t('components.partials.tiptap_editor.invisible_characters')">
                 <UButton
-                    :class="{ 'bg-neutral-300 dark:bg-neutral-900': editorSettings.showInvisibleCharacters }"
+                    :class="{ 'bg-accented': editorSettings.showInvisibleCharacters }"
                     :disabled="disabled"
                     color="neutral"
                     variant="ghost"
@@ -232,7 +232,7 @@ const isLinkOpen = ref<boolean>(false);
         <UFieldGroup>
             <UTooltip :text="$t('components.partials.tiptap_editor.align_left')">
                 <UButton
-                    :class="{ 'bg-neutral-300 dark:bg-neutral-900': ui.textAlign === 'left' }"
+                    :class="{ 'bg-accented': ui.textAlign === 'left' }"
                     color="neutral"
                     variant="ghost"
                     icon="i-mdi-format-align-left"
@@ -243,7 +243,7 @@ const isLinkOpen = ref<boolean>(false);
 
             <UTooltip :text="$t('components.partials.tiptap_editor.align_center')">
                 <UButton
-                    :class="{ 'bg-neutral-300 dark:bg-neutral-900': ui.textAlign === 'center' }"
+                    :class="{ 'bg-accented': ui.textAlign === 'center' }"
                     color="neutral"
                     variant="ghost"
                     icon="i-mdi-format-align-center"
@@ -254,7 +254,7 @@ const isLinkOpen = ref<boolean>(false);
 
             <UTooltip :text="$t('components.partials.tiptap_editor.align_right')">
                 <UButton
-                    :class="{ 'bg-neutral-300 dark:bg-neutral-900': ui.textAlign === 'right' }"
+                    :class="{ 'bg-accented': ui.textAlign === 'right' }"
                     color="neutral"
                     variant="ghost"
                     icon="i-mdi-format-align-right"
@@ -265,7 +265,7 @@ const isLinkOpen = ref<boolean>(false);
 
             <UTooltip :text="$t('components.partials.tiptap_editor.align_justify')">
                 <UButton
-                    :class="{ 'bg-neutral-300 dark:bg-neutral-900': ui.textAlign === 'justify' }"
+                    :class="{ 'bg-accented': ui.textAlign === 'justify' }"
                     color="neutral"
                     variant="ghost"
                     icon="i-mdi-format-align-justify"
@@ -314,7 +314,7 @@ const isLinkOpen = ref<boolean>(false);
                 <UTooltip :text="$t('components.partials.tiptap_editor.font_color')">
                     <UButton
                         :class="{
-                            'bg-neutral-300 dark:bg-neutral-900': ui.fontColor === selectedFontColor,
+                            'bg-accented': ui.fontColor === selectedFontColor,
                         }"
                         color="neutral"
                         variant="ghost"
@@ -358,7 +358,7 @@ const isLinkOpen = ref<boolean>(false);
             <!-- Paragraph + Headers -->
             <UTooltip :text="$t('components.partials.tiptap_editor.paragraph')">
                 <UButton
-                    :class="{ 'bg-neutral-300 dark:bg-neutral-900': ui.paragraph }"
+                    :class="{ 'bg-accented': ui.paragraph }"
                     color="neutral"
                     variant="ghost"
                     icon="i-mdi-format-paragraph"
@@ -369,7 +369,7 @@ const isLinkOpen = ref<boolean>(false);
 
             <UTooltip :text="$t('components.partials.tiptap_editor.heading_1')">
                 <UButton
-                    :class="{ 'bg-neutral-300 dark:bg-neutral-900': ui.headingLevel === 1 }"
+                    :class="{ 'bg-accented': ui.headingLevel === 1 }"
                     color="neutral"
                     variant="ghost"
                     icon="i-mdi-format-header-1"
@@ -380,7 +380,7 @@ const isLinkOpen = ref<boolean>(false);
 
             <UTooltip :text="$t('components.partials.tiptap_editor.heading_2')">
                 <UButton
-                    :class="{ 'bg-neutral-300 dark:bg-neutral-900': ui.headingLevel === 2 }"
+                    :class="{ 'bg-accented': ui.headingLevel === 2 }"
                     color="neutral"
                     variant="ghost"
                     icon="i-mdi-format-header-2"
@@ -391,7 +391,7 @@ const isLinkOpen = ref<boolean>(false);
 
             <UTooltip :text="$t('components.partials.tiptap_editor.heading_3')">
                 <UButton
-                    :class="{ 'bg-neutral-300 dark:bg-neutral-900': ui.headingLevel === 3 }"
+                    :class="{ 'bg-accented': ui.headingLevel === 3 }"
                     color="neutral"
                     variant="ghost"
                     icon="i-mdi-format-header-3"
@@ -402,7 +402,7 @@ const isLinkOpen = ref<boolean>(false);
 
             <UTooltip :text="$t('components.partials.tiptap_editor.heading_4')">
                 <UButton
-                    :class="{ 'bg-neutral-300 dark:bg-neutral-900': ui.headingLevel === 4 }"
+                    :class="{ 'bg-accented': ui.headingLevel === 4 }"
                     color="neutral"
                     variant="ghost"
                     icon="i-mdi-format-header-4"
@@ -413,7 +413,7 @@ const isLinkOpen = ref<boolean>(false);
 
             <UTooltip :text="$t('components.partials.tiptap_editor.heading_5')">
                 <UButton
-                    :class="{ 'bg-neutral-300 dark:bg-neutral-900': ui.headingLevel === 5 }"
+                    :class="{ 'bg-accented': ui.headingLevel === 5 }"
                     color="neutral"
                     variant="ghost"
                     icon="i-mdi-format-header-5"
@@ -428,7 +428,7 @@ const isLinkOpen = ref<boolean>(false);
         <UFieldGroup>
             <UTooltip :text="$t('components.partials.tiptap_editor.highlight')">
                 <UButton
-                    :class="{ 'bg-neutral-300 dark:bg-neutral-900': ui.highlight }"
+                    :class="{ 'bg-accented': ui.highlight }"
                     color="neutral"
                     variant="ghost"
                     icon="i-mdi-format-color-highlight"
@@ -441,8 +441,7 @@ const isLinkOpen = ref<boolean>(false);
                 <UTooltip :text="$t('components.partials.tiptap_editor.highlight_color')">
                     <UButton
                         :class="{
-                            'bg-neutral-300 dark:bg-neutral-900':
-                                ui.highlight && selectedHighlightColor.value === ui.highlightColor,
+                            'bg-accented': ui.highlight && selectedHighlightColor.value === ui.highlightColor,
                         }"
                         color="neutral"
                         variant="ghost"
@@ -487,7 +486,7 @@ const isLinkOpen = ref<boolean>(false);
         <UFieldGroup>
             <UTooltip :text="$t('components.partials.tiptap_editor.bullet_list')">
                 <UButton
-                    :class="{ 'bg-neutral-300 dark:bg-neutral-900': ui.bulletList }"
+                    :class="{ 'bg-accented': ui.bulletList }"
                     color="neutral"
                     variant="ghost"
                     icon="i-mdi-format-list-bulleted"
@@ -498,7 +497,7 @@ const isLinkOpen = ref<boolean>(false);
 
             <UTooltip :text="$t('components.partials.tiptap_editor.ordered_list')">
                 <UButton
-                    :class="{ 'bg-neutral-300 dark:bg-neutral-900': ui.orderedList }"
+                    :class="{ 'bg-accented': ui.orderedList }"
                     color="neutral"
                     variant="ghost"
                     icon="i-mdi-format-list-numbered"
@@ -509,7 +508,7 @@ const isLinkOpen = ref<boolean>(false);
 
             <UTooltip :text="$t('components.partials.tiptap_editor.task_list')">
                 <UButton
-                    :class="{ 'bg-neutral-300 dark:bg-neutral-900': ui.taskList }"
+                    :class="{ 'bg-accented': ui.taskList }"
                     icon="i-mdi-format-list-checks"
                     color="neutral"
                     variant="ghost"
@@ -520,7 +519,7 @@ const isLinkOpen = ref<boolean>(false);
 
             <UTooltip :text="$t('components.partials.tiptap_editor.checkbox')">
                 <UButton
-                    :class="{ 'bg-neutral-300 dark:bg-neutral-900': ui.checkboxStandalone }"
+                    :class="{ 'bg-accented': ui.checkboxStandalone }"
                     icon="i-mdi-checkbox-marked-outline"
                     color="neutral"
                     variant="ghost"
@@ -555,7 +554,7 @@ const isLinkOpen = ref<boolean>(false);
         <UPopover v-model:open="isLinkOpen">
             <UTooltip :text="$t('components.partials.tiptap_editor.link')">
                 <UButton
-                    :class="{ 'bg-neutral-300 dark:bg-neutral-900': ui.link }"
+                    :class="{ 'bg-accented': ui.link }"
                     color="neutral"
                     variant="ghost"
                     icon="i-mdi-link"
@@ -605,7 +604,7 @@ const isLinkOpen = ref<boolean>(false);
         <UFieldGroup>
             <UTooltip :text="$t('components.partials.tiptap_editor.block_quote')">
                 <UButton
-                    :class="{ 'bg-neutral-300 dark:bg-neutral-900': ui.blockquote }"
+                    :class="{ 'bg-accented': ui.blockquote }"
                     color="neutral"
                     variant="ghost"
                     icon="i-mdi-format-quote-open"
@@ -616,7 +615,7 @@ const isLinkOpen = ref<boolean>(false);
 
             <UTooltip :text="$t('components.partials.tiptap_editor.code_block')">
                 <UButton
-                    :class="{ 'bg-neutral-300 dark:bg-neutral-900': ui.codeBlock }"
+                    :class="{ 'bg-accented': ui.codeBlock }"
                     color="neutral"
                     variant="ghost"
                     icon="i-mdi-code-block-braces"
@@ -637,7 +636,7 @@ const isLinkOpen = ref<boolean>(false);
 
             <UTooltip :text="$t('components.partials.tiptap_editor.details')">
                 <UButton
-                    :class="{ 'bg-neutral-300 dark:bg-neutral-900': ui.details }"
+                    :class="{ 'bg-accented': ui.details }"
                     color="neutral"
                     variant="ghost"
                     icon="i-mdi-details"
@@ -677,7 +676,7 @@ const isLinkOpen = ref<boolean>(false);
 
         <UTooltip :text="$t('components.partials.tiptap_editor.focus_mode')">
             <UButton
-                :class="{ 'bg-neutral-300 dark:bg-neutral-900': editorSettings.focusMode }"
+                :class="{ 'bg-accented': editorSettings.focusMode }"
                 :disabled="disabled"
                 color="neutral"
                 variant="ghost"

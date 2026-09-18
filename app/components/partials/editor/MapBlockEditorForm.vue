@@ -69,7 +69,7 @@ function openFullscreen(): void {
         </UFormField>
 
         <div class="flex flex-col gap-1">
-            <div class="flex items-center justify-between gap-2 text-xs text-neutral-500 dark:text-neutral-400">
+            <div class="flex items-center justify-between gap-2 text-xs text-dimmed">
                 <span>{{ $t('common.select') }}</span>
                 <div class="inline-flex items-center gap-2">
                     <span>{{ draft.x.toFixed(2) }}, {{ draft.y.toFixed(2) }} · {{ $t('common.zoom') }} {{ draft.zoom }}</span>

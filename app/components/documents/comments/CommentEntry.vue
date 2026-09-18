@@ -200,7 +200,7 @@ const confirmModal = overlay.create(ConfirmModal);
 <template>
     <div
         v-if="comment"
-        class="group relative rounded-md bg-neutral-100 px-2 py-2 text-default ring ring-default dark:bg-neutral-900 dark:ring-neutral-700"
+        class="group relative rounded-md bg-elevated px-2 py-2 text-default ring ring-default dark:ring-neutral-700"
         :class="comment.deletedAt ? custom.classes.deletedAt : ''"
     >
         <div v-if="!editing" class="relative">

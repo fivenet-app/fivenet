@@ -67,7 +67,7 @@ watch(
                                 <p class="font-semibold">
                                     {{ version.name || $t('common.untitled') }}
                                 </p>
-                                <p class="text-sm text-gray-500">{{ date(version.date) }}</p>
+                                <p class="text-sm text-muted">{{ date(version.date) }}</p>
                                 <p v-if="version.name" class="text-xs italic">{{ version.name }}</p>
                             </div>
 

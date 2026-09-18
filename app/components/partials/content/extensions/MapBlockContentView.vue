@@ -40,7 +40,7 @@ function openFullscreen(): void {
                 <div class="flex items-start gap-3 p-1">
                     <div class="min-w-0 flex-1">
                         <div class="font-medium">{{ postal || $t('common.map') }}</div>
-                        <div class="mt-0.5 truncate text-xs text-neutral-500 dark:text-neutral-400">
+                        <div class="mt-0.5 truncate text-xs text-dimmed">
                             {{ displayCoords }} · {{ $t(activeLayer.label) }} · {{ $t('common.zoom') }} {{ zoom }}
                         </div>
                     </div>
@@ -69,7 +69,7 @@ function openFullscreen(): void {
                 <div class="flex items-start justify-between gap-4">
                     <div>
                         <div class="font-medium">{{ postal || $t('common.map') }}</div>
-                        <div class="text-xs text-neutral-500 dark:text-neutral-400">
+                        <div class="text-xs text-dimmed">
                             {{ displayCoords }} · {{ $t(activeLayer.label) }} · {{ $t('common.zoom') }} {{ zoom }}
                         </div>
                     </div>

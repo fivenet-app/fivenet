@@ -174,7 +174,7 @@ const { moveUp, moveDown } = useListReorder(blocks);
     <div class="flex flex-col gap-2">
         <VueDraggable
             v-model="blocks"
-            class="flex min-h-[48px] flex-wrap items-center gap-2 rounded-sm bg-neutral-100 p-2 dark:bg-neutral-800"
+            class="flex min-h-[48px] flex-wrap items-center gap-2 rounded-sm bg-elevated p-2"
             :item-key="'id'"
             handle=".handle"
             :ghost-class="'opacity-50'"

@@ -94,9 +94,7 @@ async function getTemplate(signal: AbortSignal): Promise<Template> {
                 </div>
 
                 <UFormField name="content" :label="$t('common.content')">
-                    <div
-                        class="mx-auto w-full max-w-(--breakpoint-xl) rounded-lg bg-neutral-100 p-4 break-words dark:bg-neutral-800"
-                    >
+                    <div class="mx-auto w-full max-w-(--breakpoint-xl) rounded-lg bg-content p-4 break-words">
                         <!-- eslint-disable vue/no-v-html -->
                         <div
                             class="tiptap prose prose-sm max-w-full min-w-full break-words sm:prose-base lg:prose-lg dark:prose-invert"

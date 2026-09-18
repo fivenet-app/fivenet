@@ -30,5 +30,5 @@ withDefaults(
         :value="value?.content ?? { attrs: {}, content: [], tag: '', type: NodeType.DOC }"
         v-bind="$attrs"
     />
-    <span v-else-if="placeholder" class="text-neutral-500 italic dark:text-neutral-400">{{ placeholder }}</span>
+    <span v-else-if="placeholder" class="text-dimmed italic">{{ placeholder }}</span>
 </template>

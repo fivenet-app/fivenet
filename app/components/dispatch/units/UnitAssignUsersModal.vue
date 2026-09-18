@@ -138,7 +138,7 @@ async function closeModal(): Promise<void> {
                             </SelectMenu>
                         </UFormField>
 
-                        <div class="mt-2 overflow-hidden rounded-md bg-neutral-100 dark:bg-neutral-900">
+                        <div class="mt-2 overflow-hidden rounded-md bg-elevated">
                             <ul class="divide-y divide-default text-sm font-medium text-toned" role="list">
                                 <li v-for="user in state.users" :key="user.userId" class="inline-flex items-center px-4 py-2">
                                     <ColleagueInfoPopover :user="user" />

@@ -497,9 +497,7 @@ async function closeThread(): Promise<void> {
                         </div>
                     </div>
 
-                    <div
-                        class="mx-auto w-full max-w-(--breakpoint-xl) rounded-lg bg-content p-4 break-words"
-                    >
+                    <div class="mx-auto w-full max-w-(--breakpoint-xl) rounded-lg bg-content p-4 break-words">
                         <CustomContentRenderer v-if="message.content" :value="message.content" />
                     </div>
 

@@ -43,7 +43,7 @@ const isBright = computed(() => isColorBright(unitColorHex.value));
                     <span>{{ unit.name }}</span>
                 </div>
 
-                <p class="text-sm" :class="unit.users.length === 0 ? 'text-gray-400' : 'text-gray-300'">
+                <p class="text-sm text-muted">
                     {{ $t('common.member', unit.users.length) }}
                 </p>
             </div>

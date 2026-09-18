@@ -45,7 +45,7 @@ const { attr, can } = useAuth();
                         <dt class="text-sm font-medium sm:w-40 sm:shrink-0 lg:w-48">
                             {{ $t('common.date_of_birth') }}
                         </dt>
-                        <dd class="text-base-800 dark:text-base-300 mt-1 text-sm sm:col-span-2 sm:mt-0 sm:ml-6">
+                        <dd class="mt-1 text-sm text-toned sm:col-span-2 sm:mt-0 sm:ml-6">
                             {{ colleague.dateofbirth }}
                         </dd>
                     </div>
@@ -54,7 +54,7 @@ const { attr, can } = useAuth();
                         <dt class="text-sm font-medium sm:w-40 sm:shrink-0 lg:w-48">
                             {{ $t('common.phone_number') }}
                         </dt>
-                        <dd class="text-base-800 dark:text-base-300 mt-1 text-sm sm:col-span-2 sm:mt-0 sm:ml-6">
+                        <dd class="mt-1 text-sm text-toned sm:col-span-2 sm:mt-0 sm:ml-6">
                             <PhoneNumberBlock :number="colleague.phoneNumber" />
                         </dd>
                     </div>
@@ -63,7 +63,7 @@ const { attr, can } = useAuth();
                         <dt class="text-sm font-medium sm:w-40 sm:shrink-0 lg:w-48">
                             {{ $t('common.mail') }}
                         </dt>
-                        <dd class="text-base-800 dark:text-base-300 mt-1 text-sm sm:col-span-2 sm:mt-0 sm:ml-6">
+                        <dd class="mt-1 text-sm text-toned sm:col-span-2 sm:mt-0 sm:ml-6">
                             <EmailInfoPopover :email="colleague.email" />
                         </dd>
                     </div>
@@ -72,7 +72,7 @@ const { attr, can } = useAuth();
                         <dt class="text-sm font-medium sm:w-40 sm:shrink-0 lg:w-48">
                             {{ $t('common.name') }}
                         </dt>
-                        <dd class="text-base-800 dark:text-base-300 mt-1 text-sm sm:col-span-2 sm:mt-0 sm:ml-6">
+                        <dd class="mt-1 text-sm text-toned sm:col-span-2 sm:mt-0 sm:ml-6">
                             <ColleagueSetName
                                 v-if="
                                     can('jobs.ColleaguesService/SetColleagueProps').value &&
@@ -98,7 +98,7 @@ const { attr, can } = useAuth();
                         <dt class="text-sm font-medium sm:w-40 sm:shrink-0 lg:w-48">
                             {{ $t('common.label', 2) }}
                         </dt>
-                        <dd class="text-base-800 dark:text-base-300 mt-1 text-sm sm:col-span-2 sm:mt-0 sm:ml-6">
+                        <dd class="mt-1 text-sm text-toned sm:col-span-2 sm:mt-0 sm:ml-6">
                             <ColleagueSetLabels
                                 v-if="
                                     can('jobs.ColleaguesService/SetColleagueProps').value &&
@@ -140,9 +140,7 @@ const { attr, can } = useAuth();
                         <dt class="text-sm font-medium sm:w-40 sm:shrink-0 lg:w-48">
                             {{ $t('common.note') }}
                         </dt>
-                        <dd
-                            class="text-base-800 dark:text-base-300 mt-1 flex w-full flex-1 text-sm sm:col-span-2 sm:mt-0 sm:ml-6"
-                        >
+                        <dd class="mt-1 flex w-full flex-1 text-sm text-toned sm:col-span-2 sm:mt-0 sm:ml-6">
                             <ColleagueSetNote
                                 v-model="colleague.props!.note"
                                 :user-id="colleague.userId"

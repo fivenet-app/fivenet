@@ -397,9 +397,7 @@ const scrollRef = useTemplateRef('scrollRef');
                         </UPageHeader>
 
                         <UPageBody v-if="page.content">
-                            <div
-                                class="mx-auto w-full max-w-(--breakpoint-xl) rounded-lg bg-content p-4 break-words"
-                            >
+                            <div class="mx-auto w-full max-w-(--breakpoint-xl) rounded-lg bg-content p-4 break-words">
                                 <CustomContentRenderer :value="page.content" :placeholder="$t('common.no_content')" />
                             </div>
 

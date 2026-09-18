@@ -748,9 +748,7 @@ const reminderDrawer = overlay.create(ReminderDrawer, { props: { documentId: pro
 
             <template v-else>
                 <div ref="scrollRef">
-                    <div
-                        class="mx-auto w-full max-w-(--breakpoint-xl) rounded-lg bg-content p-4 break-words"
-                    >
+                    <div class="mx-auto w-full max-w-(--breakpoint-xl) rounded-lg bg-content p-4 break-words">
                         <CustomContentRenderer
                             v-if="doc.document?.content"
                             :value="doc.document.content"

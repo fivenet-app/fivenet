@@ -62,6 +62,7 @@ async function setJobsUserNote(values: Schema): Promise<undefined | SetColleague
                 job: '',
                 namePrefix: values.prefix,
                 nameSuffix: values.suffix,
+                groups: [],
             },
         });
         const { response } = await call;

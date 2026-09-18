@@ -165,7 +165,7 @@ defineShortcuts({
                         </UCollapsible>
                     </template>
 
-                    <p v-else class="text-sm text-neutral-500 dark:text-neutral-400">
+                    <p v-else class="text-sm text-dimmed">
                         {{ $t('common.read_only') }}
                     </p>
                 </template>

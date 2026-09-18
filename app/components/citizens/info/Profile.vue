@@ -25,7 +25,7 @@ const numberFormatter = useDisplayNumberFormat();
                         <dt class="text-sm font-medium sm:w-40 sm:shrink-0 lg:w-48">
                             {{ $t('common.date_of_birth') }}
                         </dt>
-                        <dd class="text-base-800 dark:text-base-300 mt-1 text-sm sm:col-span-2 sm:mt-0 sm:ml-6">
+                        <dd class="mt-1 text-sm text-toned sm:col-span-2 sm:mt-0 sm:ml-6">
                             {{ user.dateofbirth }}
                         </dd>
                     </div>
@@ -36,9 +36,7 @@ const numberFormatter = useDisplayNumberFormat();
                         <dt class="text-sm font-medium sm:w-40 sm:shrink-0 lg:w-48">
                             {{ $t('common.sex') }}
                         </dt>
-                        <dd
-                            class="text-base-800 dark:text-base-300 mt-1 inline-flex items-center gap-2 text-sm sm:col-span-2 sm:mt-0 sm:ml-6"
-                        >
+                        <dd class="mt-1 inline-flex items-center gap-2 text-sm text-toned sm:col-span-2 sm:mt-0 sm:ml-6">
                             <span>{{ $t(`common.sex_mapping.${user?.sex?.toLowerCase() ?? 'n'}`) }} </span>
                             <CharSexBadge :sex="user?.sex ? user?.sex : ''" />
                         </dd>
@@ -50,7 +48,7 @@ const numberFormatter = useDisplayNumberFormat();
                         <dt class="text-sm font-medium sm:w-40 sm:shrink-0 lg:w-48">
                             {{ $t('common.height') }}
                         </dt>
-                        <dd class="text-base-800 dark:text-base-300 mt-1 text-sm sm:col-span-2 sm:mt-0 sm:ml-6">
+                        <dd class="mt-1 text-sm text-toned sm:col-span-2 sm:mt-0 sm:ml-6">
                             {{ user?.height ? user.height + 'cm' : $t('common.unknown') }}
                         </dd>
                     </div>
@@ -62,7 +60,7 @@ const numberFormatter = useDisplayNumberFormat();
                         <dt class="text-sm font-medium sm:w-40 sm:shrink-0 lg:w-48">
                             {{ $t('common.phone_number') }}
                         </dt>
-                        <dd class="text-base-800 dark:text-base-300 mt-1 text-sm sm:col-span-2 sm:mt-0 sm:ml-6">
+                        <dd class="mt-1 text-sm text-toned sm:col-span-2 sm:mt-0 sm:ml-6">
                             <PhoneNumberBlock :number="user.phoneNumber" />
                         </dd>
                     </div>
@@ -86,7 +84,7 @@ const numberFormatter = useDisplayNumberFormat();
                         <dt class="text-sm font-medium sm:w-40 sm:shrink-0 lg:w-48">
                             {{ $t('common.blood_type') }}
                         </dt>
-                        <dd class="text-base-800 dark:text-base-300 mt-1 text-sm sm:col-span-2 sm:mt-0 sm:ml-6">
+                        <dd class="mt-1 text-sm text-toned sm:col-span-2 sm:mt-0 sm:ml-6">
                             {{ user?.props?.bloodType ?? $t('common.na') }}
                         </dd>
                     </div>
@@ -101,7 +99,7 @@ const numberFormatter = useDisplayNumberFormat();
                             {{ $t('common.traffic_infraction_points', 2) }}
                         </dt>
                         <dd
-                            class="text-base-800 dark:text-base-300 mt-1 text-sm sm:col-span-2 sm:mt-0 sm:ml-6"
+                            class="mt-1 text-sm text-toned sm:col-span-2 sm:mt-0 sm:ml-6"
                             :class="(user?.props?.trafficInfractionPoints ?? 0) >= 10 ? 'text-error-500' : ''"
                         >
                             {{ $t('common.point', user?.props?.trafficInfractionPoints ?? 0) }}
@@ -115,7 +113,7 @@ const numberFormatter = useDisplayNumberFormat();
                         <dt class="text-sm font-medium sm:w-40 sm:shrink-0 lg:w-48">
                             {{ $t('common.fine') }}
                         </dt>
-                        <dd class="text-base-800 dark:text-base-300 mt-1 text-sm sm:col-span-2 sm:mt-0 sm:ml-6">
+                        <dd class="mt-1 text-sm text-toned sm:col-span-2 sm:mt-0 sm:ml-6">
                             <span v-if="(user.props?.openFines ?? 0) <= 0">
                                 {{ $t('common.no_open_fine') }}
                             </span>
@@ -132,7 +130,7 @@ const numberFormatter = useDisplayNumberFormat();
                         <dt class="text-sm font-medium sm:w-40 sm:shrink-0 lg:w-48">
                             {{ $t('common.label', 2) }}
                         </dt>
-                        <dd class="text-base-800 dark:text-base-300 mt-1 text-sm sm:col-span-2 sm:mt-0 sm:ml-6">
+                        <dd class="mt-1 text-sm text-toned sm:col-span-2 sm:mt-0 sm:ml-6">
                             <p v-if="!user.props?.labels?.list.length" class="text-sm leading-6">
                                 {{ $t('common.none', [$t('common.label', 2)]) }}
                             </p>
@@ -151,7 +149,7 @@ const numberFormatter = useDisplayNumberFormat();
                         <dt class="text-sm font-medium sm:w-40 sm:shrink-0 lg:w-48">
                             {{ $t('common.mail', 1) }}
                         </dt>
-                        <dd class="text-base-800 dark:text-base-300 mt-1 text-sm sm:col-span-2 sm:mt-0 sm:ml-6">
+                        <dd class="mt-1 text-sm text-toned sm:col-span-2 sm:mt-0 sm:ml-6">
                             <EmailInfoPopover :email="user?.props?.email" />
                         </dd>
                     </div>
@@ -163,7 +161,7 @@ const numberFormatter = useDisplayNumberFormat();
                         <dt class="text-sm font-medium sm:w-40 sm:shrink-0 lg:w-48">
                             {{ $t('common.license', 2) }}
                         </dt>
-                        <dd class="text-base-800 dark:text-base-300 mt-1 w-full text-sm sm:col-span-2 sm:mt-0 sm:ml-6">
+                        <dd class="mt-1 w-full text-sm text-toned sm:col-span-2 sm:mt-0 sm:ml-6">
                             <span v-if="user?.licenses.length === 0">
                                 {{ $t('common.no_licenses') }}
                             </span>

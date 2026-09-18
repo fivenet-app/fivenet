@@ -45,7 +45,7 @@ const pagePath = computed(() => pageToURL(props.page));
 const cardClass = computed(() =>
     isCurrentPage.value
         ? 'border-primary-300 bg-primary-50/80 ring-1 ring-inset ring-primary-200 dark:border-primary-800 dark:bg-primary-950/20 dark:ring-primary-900/60'
-        : 'border-neutral-200 bg-white dark:border-neutral-800 dark:bg-neutral-900',
+        : 'border-neutral-200 dark:border-neutral-800',
 );
 
 function moveUp(idx: number): void {
@@ -129,7 +129,7 @@ async function onChildDragEnd(event: { oldIndex?: number; newIndex?: number }): 
                         />
                     </div>
 
-                    <p v-if="page.description" class="mt-1 line-clamp-2 text-sm text-neutral-500 dark:text-neutral-400">
+                    <p v-if="page.description" class="mt-1 line-clamp-2 text-sm text-dimmed">
                         {{ page.description }}
                     </p>
                 </div>

@@ -58,6 +58,7 @@ async function setJobsUserNote(values: Schema): Promise<undefined | SetColleague
                 userId: props.userId,
                 job: '',
                 note: values.note,
+                groups: [],
             },
         });
         const { response } = await call;
@@ -111,7 +112,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
         <div class="flex flex-1 flex-col gap-2 sm:flex-row">
             <UFormField class="flex-1" name="note" :label="$t('common.note')">
                 <UTextarea v-if="editing" v-model="state.note" class="w-full" block :rows="6" :maxrows="10" name="note" />
-                <p v-else class="text-base-800 dark:text-base-300 prose whitespace-pre-wrap dark:prose-invert">
+                <p v-else class="prose whitespace-pre-wrap text-toned dark:prose-invert">
                     {{ modelValue ?? $t('common.na') }}
                 </p>
             </UFormField>

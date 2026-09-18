@@ -1,4 +1,5 @@
 <script lang="ts" setup>
+import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
 import RefreshButton from '~/components/partials/RefreshButton.vue';
@@ -32,6 +33,8 @@ const docMeta = defineModel<DocumentMeta | undefined>('docMeta');
 const overlay = useOverlay();
 
 const { can } = useAuth();
+
+const notifications = useNotificationsStore();
 
 const approvalClient = await getDocumentsApprovalClient();
 
@@ -75,6 +78,12 @@ async function recomputeApprovalPolicyCounters() {
             documentId: props.documentId,
         });
         await call;
+
+        notifications.add({
+            title: { key: 'notifications.action_successful.title', parameters: {} },
+            description: { key: 'notifications.action_successful.content', parameters: {} },
+            type: NotificationType.SUCCESS,
+        });
 
         refresh();
     } catch (e) {
@@ -193,15 +202,15 @@ const taskFormDrawer = overlay.create(TaskForm);
 
                                             <template #content>
                                                 <div class="flex flex-col gap-1">
-                                                    <p class="text-muted-foreground text-sm">
+                                                    <p class="text-sm text-muted">
                                                         {{ $t('common.approved') }}:
                                                         <span class="text-success">{{ policy?.approvedCount }}</span>
                                                     </p>
-                                                    <p class="text-muted-foreground text-sm">
+                                                    <p class="text-sm text-muted">
                                                         {{ $t('common.declined') }}:
                                                         <span class="text-error">{{ policy?.declinedCount }}</span>
                                                     </p>
-                                                    <p class="text-muted-foreground text-sm">
+                                                    <p class="text-sm text-muted">
                                                         {{ $t('enums.documents.ApprovalTaskStatus.PENDING') }}:
                                                         <span class="text-info">{{ policy?.pendingCount }}</span>
                                                     </p>
@@ -290,9 +299,12 @@ const taskFormDrawer = overlay.create(TaskForm);
                                             "
                                         />
 
-                                        <UTooltip :text="$t('components.documents.approval.recompute_counters')">
+                                        <UTooltip
+                                            v-if="can('documents.ApprovalService/RevokeApproval').value"
+                                            :text="$t('components.documents.approval.recompute_counters')"
+                                        >
                                             <UButton
-                                                v-if="can('documents.ApprovalService/RevokeApproval').value"
+                                                :disabled="!policy"
                                                 icon="i-mdi-calculator-variant"
                                                 variant="outline"
                                                 @click="() => recomputeApprovalPolicyCounters()"

@@ -41,7 +41,7 @@ const openModel = computed({
             <div class="flex items-start justify-between gap-4">
                 <div>
                     <div class="font-medium">{{ title }}</div>
-                    <div class="text-xs text-neutral-500 dark:text-neutral-400">
+                    <div class="text-xs text-dimmed">
                         {{ summary }}
                     </div>
                 </div>

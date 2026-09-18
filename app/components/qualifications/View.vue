@@ -542,10 +542,7 @@ const requestUserModal = overlay.create(RequestUserModal);
                                         :ui="{ icon: 'size-8', title: 'text-xl' }"
                                     />
 
-                                    <div
-                                        v-if="qualification.content"
-                                        class="w-full rounded-lg bg-content p-4 break-words"
-                                    >
+                                    <div v-if="qualification.content" class="w-full rounded-lg bg-content p-4 break-words">
                                         <CustomContentRenderer
                                             :value="qualification.content"
                                             :placeholder="$t('common.no_content')"
