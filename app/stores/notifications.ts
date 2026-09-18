@@ -3,6 +3,7 @@ import { defineStore } from 'pinia';
 import { revalidateCurrentRoutePermission } from '~/composables/auth/routePermission';
 import { useGRPCWebsocketTransport } from '~/composables/grpcws';
 import { notificationsEvents } from '~/composables/useClientUpdate';
+import { useFaviconBlip } from '~/composables/useFaviconBlip';
 import { notificationToastEvents } from '~/composables/useNotificationToasts';
 import type { Notification } from '~/types/notifications';
 import { getNotificationsNotificationsClient } from '~~/gen/ts/clients';
@@ -204,6 +205,7 @@ export const useNotificationsStore = defineStore(
             // muted transient delivery through Do Not Disturb.
             if (n.id > 0) {
                 useNotificationCenterStore().notifyNewNotification();
+                useFaviconBlip();
             }
 
             if (doNotDisturb.value) return;

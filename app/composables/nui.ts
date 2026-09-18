@@ -23,7 +23,7 @@ const _isNUIEnabled = (): Ref<boolean> => {
     return nuiEnabled;
 };
 
-const isNUIEnabled = createSharedComposable(_isNUIEnabled);
+export const isNUIEnabled = createSharedComposable(_isNUIEnabled);
 
 function getParentResourceName(): string {
     return useSettingsStore().nuiResourceName ?? 'fivenet';
