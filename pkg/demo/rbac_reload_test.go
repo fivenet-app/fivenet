@@ -8,8 +8,10 @@ import (
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/userinfo"
 	"github.com/fivenet-app/fivenet/v2026/internal/modules"
 	"github.com/fivenet-app/fivenet/v2026/internal/tests/servers"
+	"github.com/fivenet-app/fivenet/v2026/pkg/access"
 	"github.com/fivenet-app/fivenet/v2026/pkg/config"
 	"github.com/fivenet-app/fivenet/v2026/pkg/perms"
+	"github.com/fivenet-app/fivenet/v2026/pkg/tracker"
 	centrumsettingsdb "github.com/fivenet-app/fivenet/v2026/services/centrum/settings"
 	centrumunitsdb "github.com/fivenet-app/fivenet/v2026/services/centrum/units"
 	"github.com/stretchr/testify/assert"
@@ -39,6 +41,11 @@ func TestDemoSeedRBACReloadsPermsCache(t *testing.T) {
 		modules.GetFxTestOpts(
 			dbServer.FxProvide(),
 			natsServer.FxProvide(),
+			fx.Provide(tracker.NewForTests),
+			fx.Provide(centrumsettingsdb.New),
+			fx.Provide(centrumunitsdb.New),
+			fx.Provide(access.NewJobGroupsSubjectObjectAccess),
+			fx.Provide(access.NewCentrumUnitsSubjectObjectAccess),
 			fx.Invoke(func(p perms.Permissions) {
 				loadedPerms = p
 			}),

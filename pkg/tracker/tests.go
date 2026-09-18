@@ -2,9 +2,15 @@ package tracker
 
 import (
 	"context"
+	"errors"
+	"fmt"
+	"sync"
 
 	livemapmarkers "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/livemap/markers"
+	permissionsattributes "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/permissions/attributes"
+	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/timestamp"
 	pbtracker "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/tracker"
+	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/userinfo"
 	"github.com/fivenet-app/fivenet/v2026/pkg/nats/store"
 	"github.com/fivenet-app/fivenet/v2026/pkg/utils/broker"
 	"github.com/fivenet-app/fivenet/v2026/pkg/utils/protoutils"
@@ -13,13 +19,13 @@ import (
 )
 
 type TestTracker struct {
-	ITracker
-
 	broker *broker.Broker[*store.KeyValueEntry[livemapmarkers.UserMarker, *livemapmarkers.UserMarker]]
 
-	jobs       []string
-	usersCache *xsync.Map[string, *xsync.Map[int32, *livemapmarkers.UserMarker]]
-	usersIDs   *xsync.Map[int32, *livemapmarkers.UserMarker]
+	jobs         []string
+	usersCache   *xsync.Map[string, *xsync.Map[int32, *livemapmarkers.UserMarker]]
+	usersIDs     *xsync.Map[int32, *livemapmarkers.UserMarker]
+	mappingsMu   sync.RWMutex
+	userMappings map[int32]*pbtracker.UserMapping
 }
 
 type TestParams struct {
@@ -30,8 +36,9 @@ type TestParams struct {
 
 func NewForTests(p TestParams) ITracker {
 	t := &TestTracker{
-		usersCache: xsync.NewMap[string, *xsync.Map[int32, *livemapmarkers.UserMarker]](),
-		usersIDs:   xsync.NewMap[int32, *livemapmarkers.UserMarker](),
+		usersCache:   xsync.NewMap[string, *xsync.Map[int32, *livemapmarkers.UserMarker]](),
+		usersIDs:     xsync.NewMap[int32, *livemapmarkers.UserMarker](),
+		userMappings: map[int32]*pbtracker.UserMapping{},
 
 		broker: broker.New[*store.KeyValueEntry[livemapmarkers.UserMarker, *livemapmarkers.UserMarker]](),
 	}
@@ -121,8 +128,65 @@ func (s *TestTracker) GetUserMarkerById(id int32) (*livemapmarkers.UserMarker, b
 	return s.GetUserByJobAndID(info.GetJob(), id)
 }
 
-func (s *TestTracker) GetUserMapping(_ int32) (*pbtracker.UserMapping, bool, error) {
-	return nil, false, nil
+func (s *TestTracker) GetUserMapping(userId int32) (*pbtracker.UserMapping, bool, error) {
+	s.mappingsMu.RLock()
+	defer s.mappingsMu.RUnlock()
+
+	mapping, ok := s.userMappings[userId]
+	return mapping, ok, nil
+}
+
+func (s *TestTracker) SetUserMapping(_ context.Context, mapping *pbtracker.UserMapping) error {
+	if mapping == nil {
+		return errors.New("mapping cannot be nil")
+	}
+	if mapping.GetUserId() <= 0 {
+		return fmt.Errorf("invalid user ID: %d", mapping.GetUserId())
+	}
+	if mapping.UnitId != nil && mapping.GetUnitId() == 0 {
+		mapping.UnitId = nil
+	}
+	if mapping.GetCreatedAt() == nil {
+		mapping.CreatedAt = timestamp.Now()
+	}
+
+	s.mappingsMu.Lock()
+	defer s.mappingsMu.Unlock()
+	s.userMappings[mapping.GetUserId()] = mapping
+	return nil
+}
+
+func (s *TestTracker) SetUserMappingForUser(
+	ctx context.Context,
+	userId int32,
+	unitId *int64,
+) error {
+	return s.SetUserMapping(ctx, &pbtracker.UserMapping{
+		UserId: userId,
+		UnitId: unitId,
+	})
+}
+
+func (s *TestTracker) UnsetUnitIDForUser(ctx context.Context, userId int32) error {
+	return s.SetUserMappingForUser(ctx, userId, nil)
+}
+
+func (s *TestTracker) DeleteUserMapping(_ context.Context, userId int32) error {
+	s.mappingsMu.Lock()
+	defer s.mappingsMu.Unlock()
+	delete(s.userMappings, userId)
+	return nil
+}
+
+func (s *TestTracker) ListUserMappings(_ context.Context) (map[int32]*pbtracker.UserMapping, error) {
+	s.mappingsMu.RLock()
+	defer s.mappingsMu.RUnlock()
+
+	mappings := make(map[int32]*pbtracker.UserMapping, len(s.userMappings))
+	for userID, mapping := range s.userMappings {
+		mappings[userID] = mapping
+	}
+	return mappings, nil
 }
 
 func (s *TestTracker) Subscribe(
@@ -131,6 +195,31 @@ func (s *TestTracker) Subscribe(
 	return &TestKVWatcher[livemapmarkers.UserMarker, *livemapmarkers.UserMarker]{
 		broker: s.broker,
 	}, nil
+}
+
+func (s *TestTracker) GetFilteredUserMarkers(
+	acl *permissionsattributes.JobGradeList,
+	userInfo *userinfo.UserInfo,
+) []*livemapmarkers.UserMarker {
+	markers := []*livemapmarkers.UserMarker{}
+	s.usersIDs.Range(func(_ int32, marker *livemapmarkers.UserMarker) bool {
+		if marker == nil || marker.GetHidden() {
+			return true
+		}
+
+		grade := marker.GetUser().GetJobGrade()
+		if marker.JobGrade != nil {
+			grade = marker.GetJobGrade()
+		}
+		if userInfo != nil && !userInfo.GetJobAdmin() &&
+			(acl == nil || !acl.HasJobGrade(marker.GetJob(), grade)) {
+			return true
+		}
+
+		markers = append(markers, marker)
+		return true
+	})
+	return markers
 }
 
 type TestKVWatcher[T any, U protoutils.ProtoMessageWithMerge[T]] struct {
