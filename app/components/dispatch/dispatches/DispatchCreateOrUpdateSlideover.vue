@@ -18,7 +18,7 @@ const emit = defineEmits<{
 const { activeChar } = useAuth();
 
 const livemapStore = useLivemapStore();
-const { location: storeLocation } = storeToRefs(livemapStore);
+const { location: storeLocation, showLocationMarker, markerCoordPickerActive } = storeToRefs(livemapStore);
 
 const centrumDispatchesClient = await getCentrumDispatchesClient();
 
@@ -47,6 +47,8 @@ const schema = z.object({
     message: z.coerce.string().min(3).max(255),
     description: z.union([z.string().min(3).max(512), z.string().length(0).optional()]),
     anon: z.coerce.boolean(),
+    x: z.coerce.number(),
+    y: z.coerce.number(),
     jobs: z.object({
         jobs: z.coerce.string().min(1).max(32).array().min(0).max(5).default([]),
     }),
@@ -54,10 +56,15 @@ const schema = z.object({
 
 type Schema = z.output<typeof schema>;
 
+const initialX = props.location?.x ?? storeLocation.value?.x ?? 0;
+const initialY = props.location?.y ?? storeLocation.value?.y ?? 0;
+
 const state = reactive<Schema>({
     message: '',
     description: '',
     anon: false,
+    x: initialX,
+    y: initialY,
     jobs: {
         jobs: [],
     },
@@ -69,12 +76,44 @@ const { hasUnsavedChanges, confirmLeave, syncSnapshot } = useSnapshotChanges(sta
             message: value.message,
             description: value.description,
             anon: value.anon,
+            x: value.x,
+            y: value.y,
             jobs: [...value.jobs.jobs].sort(),
         }),
 });
 
+const isPickingCoordinates = computed<boolean>(() => markerCoordPickerActive.value === true);
+
+function stopCoordinatePicking(): void {
+    markerCoordPickerActive.value = false;
+    showLocationMarker.value = false;
+}
+
+watch(
+    () => storeLocation.value,
+    (location) => {
+        if (!isPickingCoordinates.value || !location) return;
+
+        state.x = location.x;
+        state.y = location.y;
+    },
+);
+
+function toggleCoordinatePicker(): void {
+    if (markerCoordPickerActive.value) {
+        stopCoordinatePicking();
+        return;
+    }
+
+    markerCoordPickerActive.value = true;
+    storeLocation.value = { x: state.x, y: state.y };
+    showLocationMarker.value = true;
+}
+
 async function createDispatch(values: Schema): Promise<void> {
     try {
+        stopCoordinatePicking();
+
         const call = centrumDispatchesClient.createDispatch({
             dispatch: {
                 id: 0,
@@ -88,8 +127,8 @@ async function createDispatch(values: Schema): Promise<void> {
                 attributes: {
                     list: [],
                 },
-                x: props.location?.x ?? storeLocation.value?.x ?? 0,
-                y: props.location?.y ?? storeLocation.value?.y ?? 0,
+                x: values.x,
+                y: values.y,
                 units: [],
             },
         });
@@ -126,14 +165,34 @@ async function closeSlideover(): Promise<void> {
 
     emit('close', false);
 }
+
+const initialDismissGuard = ref<boolean>(true);
+const { start: startInitialDismissGuardTimeout, stop: stopInitialDismissGuardTimeout } = useTimeoutFn(
+    () => {
+        initialDismissGuard.value = false;
+    },
+    250,
+    { immediate: false },
+);
+
+onMounted(() => {
+    startInitialDismissGuardTimeout();
+});
+
+onBeforeUnmount(() => {
+    stopInitialDismissGuardTimeout();
+    stopCoordinatePicking();
+});
 </script>
 
 <template>
     <USlideover
         :title="$t('components.dispatch.create_dispatch.title')"
         :close="false"
-        :dismissible="!hasUnsavedChanges && canSubmit"
+        :modal="false"
+        :dismissible="!initialDismissGuard && !isPickingCoordinates && !hasUnsavedChanges && canSubmit"
         :overlay="false"
+        :ui="{ content: isPickingCoordinates ? 'max-w-sm' : 'max-w-xl' }"
     >
         <template #header>
             <div class="flex w-full items-center justify-between gap-2">
@@ -237,47 +296,57 @@ async function closeSlideover(): Promise<void> {
                         </dd>
                     </div>
 
-                    <template v-if="location">
-                        <div class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
-                            <dt class="text-sm leading-6 font-medium">
-                                <label class="block text-sm leading-6 font-medium" for="anon">
-                                    {{ $t('common.longitude') }}
-                                </label>
-                            </dt>
-                            <dd class="mt-1 text-sm leading-6 sm:col-span-2 sm:mt-0">
-                                <UFormField name="x">
-                                    <UInputNumber
-                                        :model-value="location.x"
-                                        class="w-full"
-                                        disabled
-                                        name="x"
-                                        :step="0.00001"
-                                        :placeholder="$t('common.longitude')"
-                                    />
-                                </UFormField>
-                            </dd>
-                        </div>
+                    <div class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
+                        <dt class="text-sm leading-6 font-medium">
+                            <label class="block text-sm leading-6 font-medium" for="x">
+                                {{ $t('common.longitude') }}
+                            </label>
+                        </dt>
+                        <dd class="mt-1 text-sm leading-6 sm:col-span-2 sm:mt-0">
+                            <UFormField name="x">
+                                <UInputNumber
+                                    v-model="state.x"
+                                    class="w-full"
+                                    name="x"
+                                    :step="0.00001"
+                                    :placeholder="$t('common.longitude')"
+                                />
+                            </UFormField>
+                        </dd>
+                    </div>
 
-                        <div class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
-                            <dt class="text-sm leading-6 font-medium">
-                                <label class="block text-sm leading-6 font-medium" for="anon">
-                                    {{ $t('common.latitude') }}
-                                </label>
-                            </dt>
-                            <dd class="mt-1 text-sm leading-6 sm:col-span-2 sm:mt-0">
-                                <UFormField name="y">
-                                    <UInputNumber
-                                        :model-value="location.y"
-                                        class="w-full"
-                                        disabled
-                                        name="y"
-                                        :step="0.00001"
-                                        :placeholder="$t('common.latitude')"
-                                    />
-                                </UFormField>
-                            </dd>
-                        </div>
-                    </template>
+                    <div class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
+                        <dt class="text-sm leading-6 font-medium">
+                            <label class="block text-sm leading-6 font-medium" for="y">
+                                {{ $t('common.latitude') }}
+                            </label>
+                        </dt>
+                        <dd class="mt-1 text-sm leading-6 sm:col-span-2 sm:mt-0">
+                            <UFormField name="y">
+                                <UInputNumber
+                                    v-model="state.y"
+                                    class="w-full"
+                                    name="y"
+                                    :step="0.00001"
+                                    :placeholder="$t('common.latitude')"
+                                />
+                            </UFormField>
+                        </dd>
+                    </div>
+
+                    <div class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
+                        <dt class="text-sm leading-6 font-medium" />
+                        <dd class="mt-1 text-sm leading-6 sm:col-span-2 sm:mt-0">
+                            <UButton
+                                :variant="isPickingCoordinates ? 'solid' : 'soft'"
+                                :color="isPickingCoordinates ? 'warning' : 'neutral'"
+                                icon="i-mdi-crosshairs-gps"
+                                :label="isPickingCoordinates ? $t('common.apply') : $t('common.select')"
+                                type="button"
+                                @click="toggleCoordinatePicker"
+                            />
+                        </dd>
+                    </div>
                 </dl>
             </UForm>
         </template>

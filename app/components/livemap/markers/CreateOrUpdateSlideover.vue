@@ -773,7 +773,7 @@ onBeforeUnmount(() => {
                                 :variant="isPickingCoordinates ? 'solid' : 'soft'"
                                 :color="isPickingCoordinates ? 'warning' : 'neutral'"
                                 icon="i-mdi-crosshairs-gps"
-                                :label="isPickingCoordinates ? $t('common.cancel') : $t('common.select')"
+                                :label="isPickingCoordinates ? $t('common.apply') : $t('common.select')"
                                 type="button"
                                 @click="toggleCoordinatePicker"
                             />
