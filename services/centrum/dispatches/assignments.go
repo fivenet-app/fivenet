@@ -66,7 +66,16 @@ func (s *DispatchDB) UpdateAssignments(
 	toRemove []int64,
 	expiresAt time.Time,
 ) error {
-	_, err := s.updateAssignments(ctx, creatorJob, creatorId, dspId, toAdd, toRemove, expiresAt, false)
+	_, err := s.updateAssignments(
+		ctx,
+		creatorJob,
+		creatorId,
+		dspId,
+		toAdd,
+		toRemove,
+		expiresAt,
+		false,
+	)
 	return err
 }
 

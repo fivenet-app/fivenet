@@ -178,7 +178,9 @@ func (s *TestTracker) DeleteUserMapping(_ context.Context, userId int32) error {
 	return nil
 }
 
-func (s *TestTracker) ListUserMappings(_ context.Context) (map[int32]*pbtracker.UserMapping, error) {
+func (s *TestTracker) ListUserMappings(
+	_ context.Context,
+) (map[int32]*pbtracker.UserMapping, error) {
 	s.mappingsMu.RLock()
 	defer s.mappingsMu.RUnlock()
 

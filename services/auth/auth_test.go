@@ -216,7 +216,7 @@ func TestFullAuthFlow(t *testing.T) {
 		Val: false,
 	})
 	require.Error(err)
-	assert.ErrorContains(err, "cannot deny configured default permission")
+	require.ErrorContains(err, "cannot deny configured default permission")
 	chooseCharReq.CharId = 1
 	chooseCharRes, err = client.ChooseCharacter(ctx, chooseCharReq)
 	require.NoError(err)

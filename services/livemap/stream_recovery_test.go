@@ -123,9 +123,8 @@ var (
 	_ grpc.ServerStream                     = (*streamRecoveryServer)(nil)
 )
 
+//nolint:paralleltest // Embedded JetStream recovery timing is not reliable when this test runs in parallel with other tests.
 func TestStreamRecoversAfterUserConsumerDeletion(t *testing.T) {
-	t.Parallel()
-
 	natsServer := nats.NewServer(t, nats.ServerOptions{InProcess: true})
 	js := natsServer.GetJS()
 

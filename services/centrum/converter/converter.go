@@ -62,7 +62,9 @@ func New(p Params) *Converter {
 		}
 	}
 	if len(convertJobs) == 0 {
-		p.Logger.Warn("dispatch center converter is enabled but no valid convert jobs are configured")
+		p.Logger.Warn(
+			"dispatch center converter is enabled but no valid convert jobs are configured",
+		)
 		return nil
 	}
 

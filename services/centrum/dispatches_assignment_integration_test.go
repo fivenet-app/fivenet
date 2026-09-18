@@ -405,7 +405,12 @@ func TestUpdateExpiredAssignmentsSkipsAssignmentsWithinGracePeriod(t *testing.T)
 		unitID,
 	)
 	require.NoError(t, err)
-	_, err = srv.dispatches.UpdateExpiredAssignments(ctx, new("ambulance"), dispatchID, []int64{unitID})
+	_, err = srv.dispatches.UpdateExpiredAssignments(
+		ctx,
+		new("ambulance"),
+		dispatchID,
+		[]int64{unitID},
+	)
 	require.NoError(t, err)
 	require.True(t, assignmentExpiryForTest(t, db, dispatchID, unitID).Valid)
 }
@@ -429,7 +434,12 @@ func TestDeleteExpiredAssignmentsRetainsValidRows(t *testing.T) {
 	require.Zero(t, deleted)
 	require.True(t, assignmentExpiryForTest(t, db, dispatchID, unitID).Valid)
 
-	err = takeDispatchForTest(t, srv, dispatchID, centrumdispatches.TakeDispatchResp_TAKE_DISPATCH_RESP_ACCEPTED)
+	err = takeDispatchForTest(
+		t,
+		srv,
+		dispatchID,
+		centrumdispatches.TakeDispatchResp_TAKE_DISPATCH_RESP_ACCEPTED,
+	)
 	require.NoError(t, err)
 	deleted, err = srv.dispatches.DeleteExpiredAssignments(ctx, dispatchID, []int64{unitID})
 	require.NoError(t, err)

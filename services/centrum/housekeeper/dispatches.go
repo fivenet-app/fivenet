@@ -296,7 +296,11 @@ func (s *Housekeeper) runHandleDispatchAssignmentExpiration(
 	)
 	s.metrics.SetHousekeeperWork("dispatch_assignment_expiration", "expired", expired)
 	s.metrics.SetHousekeeperWork("dispatch_assignment_expiration", "deleted", deleted)
-	s.metrics.SetHousekeeperWork("dispatch_assignment_expiration", "archived_deleted", archivedDeleted)
+	s.metrics.SetHousekeeperWork(
+		"dispatch_assignment_expiration",
+		"archived_deleted",
+		archivedDeleted,
+	)
 	dest.SetAttribute(dispatchAssignmentExpiredAttr, strconv.Itoa(expired))
 	dest.SetAttribute(dispatchAssignmentDeletedAttr, strconv.Itoa(deleted))
 	dest.SetAttribute(dispatchAssignmentArchivedAttr, strconv.Itoa(archivedDeleted))
@@ -409,7 +413,15 @@ func (s *Housekeeper) handleDispatchAssignmentExpiration(
 			deleted += liveDeleted
 		}
 	}
-	return len(rows), deleted, archivedDeleted, len(dispatchIDs), len(jobs), len(rows), backlog, errs
+	return len(
+			rows,
+		), deleted, archivedDeleted, len(
+			dispatchIDs,
+		), len(
+			jobs,
+		), len(
+			rows,
+		), backlog, errs
 }
 
 func (s *Housekeeper) runDeleteOldDispatchesFromKV(
