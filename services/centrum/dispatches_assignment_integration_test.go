@@ -360,8 +360,21 @@ func TestUpdateExpiredAssignmentsRemovesOnlyExpiredRows(t *testing.T) {
 		unitID,
 	)
 	require.NoError(t, err)
-	_, err = srv.dispatches.UpdateExpiredAssignments(ctx, new("ambulance"), dispatchID, []int64{unitID})
+	var expired bool
+	require.NoError(t, db.QueryRow(
+		"SELECT expires_at <= DATE_SUB(CURRENT_TIMESTAMP(), INTERVAL 2 SECOND) FROM fivenet_centrum_dispatches_asgmts WHERE dispatch_id = ? AND unit_id = ?",
+		dispatchID,
+		unitID,
+	).Scan(&expired))
+	require.True(t, expired)
+	deleted, err := srv.dispatches.UpdateExpiredAssignments(
+		ctx,
+		new("ambulance"),
+		dispatchID,
+		[]int64{unitID},
+	)
 	require.NoError(t, err)
+	require.Equal(t, 1, deleted)
 
 	var count int
 	require.NoError(t, db.QueryRow(

@@ -284,8 +284,22 @@ func (s *DispatchDB) updateAssignments(
 			WHERE(removeWhere).
 			LIMIT(int64(len(actualRemove)))
 
-		if _, err := stmt.ExecContext(ctx, tx); err != nil {
+		result, err := stmt.ExecContext(ctx, tx)
+		if err != nil {
 			return 0, err
+		}
+		if expiredOnly {
+			deleted, err := result.RowsAffected()
+			if err != nil {
+				return 0, err
+			}
+			if deleted != int64(len(actualRemove)) {
+				return 0, fmt.Errorf(
+					"expired assignment delete race: expected %d rows, deleted %d",
+					len(actualRemove),
+					deleted,
+				)
+			}
 		}
 	}
 
@@ -486,7 +500,7 @@ func selectExpiredAssignmentIDs(
 
 	tDispatchAssignment := table.FivenetCentrumDispatchesAsgmts
 	stmt := tDispatchAssignment.
-		SELECT(tDispatchAssignment.UnitID).
+		SELECT(tDispatchAssignment.UnitID.AS("unit_id")).
 		FROM(tDispatchAssignment).
 		WHERE(mysql.AND(
 			tDispatchAssignment.DispatchID.EQ(mysql.Int64(dspID)),
@@ -499,7 +513,7 @@ func selectExpiredAssignmentIDs(
 		FOR(mysql.UPDATE())
 
 	var rows []struct {
-		UnitID int64
+		UnitID int64 `alias:"unit_id"`
 	}
 	if err := stmt.QueryContext(ctx, tx, &rows); err != nil {
 		return nil, err
