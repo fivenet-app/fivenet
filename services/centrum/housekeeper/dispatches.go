@@ -2,6 +2,7 @@ package housekeeper
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"strconv"
 	"time"
@@ -12,6 +13,7 @@ import (
 	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
 	centrumutils "github.com/fivenet-app/fivenet/v2026/services/centrum/utils"
 	"github.com/go-jet/jet/v2/mysql"
+	"github.com/nats-io/nats.go/jetstream"
 	"go.uber.org/multierr"
 	"go.uber.org/zap"
 )
@@ -365,6 +367,27 @@ func (s *Housekeeper) handleDispatchAssignmentExpiration(
 				units,
 				time.Time{},
 			); err != nil {
+				if errors.Is(err, jetstream.ErrKeyNotFound) {
+					deleted, cleanupErr := s.assignmentExpirationWriter.DeleteExpiredAssignments(
+						ctx,
+						dispatchID,
+						units,
+					)
+					if cleanupErr != nil {
+						return 0, 0, 0, 0, backlog, fmt.Errorf(
+							"failed to delete expired assignments for archived dispatch %d. %w",
+							dispatchID,
+							cleanupErr,
+						)
+					}
+					s.logger.Debug(
+						"deleted expired assignments for archived dispatch",
+						zap.Int64("dispatch_id", dispatchID),
+						zap.Int("requested_assignments", len(units)),
+						zap.Int64("deleted_assignments", deleted),
+					)
+					continue
+				}
 				return 0, 0, 0, 0, backlog, fmt.Errorf(
 					"failed to update dispatch %d assignments. %w",
 					dispatchID,

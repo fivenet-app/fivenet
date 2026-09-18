@@ -7,14 +7,17 @@ import (
 
 	"github.com/DATA-DOG/go-sqlmock"
 	"github.com/adhocore/gronx"
+	"github.com/nats-io/nats.go/jetstream"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"go.uber.org/zap"
 )
 
 type assignmentExpirationWriterStub struct {
-	dispatchID int64
-	unitIDs    []int64
+	dispatchID  int64
+	unitIDs     []int64
+	deleteCalls int
+	updateErr   error
 }
 
 func (s *assignmentExpirationWriterStub) UpdateAssignments(
@@ -28,7 +31,16 @@ func (s *assignmentExpirationWriterStub) UpdateAssignments(
 ) error {
 	s.dispatchID = dispatchID
 	s.unitIDs = append([]int64(nil), unitIDs...)
-	return nil
+	return s.updateErr
+}
+
+func (s *assignmentExpirationWriterStub) DeleteExpiredAssignments(
+	_ context.Context,
+	_ int64,
+	_ []int64,
+) (int64, error) {
+	s.deleteCalls++
+	return 0, nil
 }
 
 func TestHandleDispatchAssignmentExpirationFallsBackToSQLWithoutKVTimer(t *testing.T) {
@@ -62,6 +74,38 @@ func TestHandleDispatchAssignmentExpirationFallsBackToSQLWithoutKVTimer(t *testi
 	require.False(t, backlog)
 	require.Equal(t, int64(42), writer.dispatchID)
 	require.ElementsMatch(t, []int64{7, 8}, writer.unitIDs)
+	require.NoError(t, mock.ExpectationsWereMet())
+}
+
+func TestHandleDispatchAssignmentExpirationCleansArchivedDispatch(t *testing.T) {
+	t.Parallel()
+
+	db, mock, err := sqlmock.New()
+	require.NoError(t, err)
+	t.Cleanup(func() { _ = db.Close() })
+
+	rows := sqlmock.NewRows([]string{"dispatch_id", "unit_id", "job"})
+	rows.AddRow(509171, 7, "ambulance")
+	mock.ExpectQuery("SELECT .*dispatch_id AS.*unit_id AS.*job AS.*FROM.*expires_at.*LIMIT").
+		WillReturnRows(rows)
+
+	writer := &assignmentExpirationWriterStub{updateErr: jetstream.ErrKeyNotFound}
+	h := &Housekeeper{
+		db:                         db,
+		logger:                     zap.NewNop(),
+		assignmentExpirationWriter: writer,
+	}
+
+	expired, dispatches, jobs, units, backlog, err := h.handleDispatchAssignmentExpiration(
+		t.Context(),
+	)
+	require.NoError(t, err)
+	assert.Equal(t, 1, expired)
+	assert.Equal(t, 1, dispatches)
+	assert.Equal(t, 1, jobs)
+	assert.Equal(t, 1, units)
+	assert.False(t, backlog)
+	assert.Equal(t, 1, writer.deleteCalls)
 	require.NoError(t, mock.ExpectationsWereMet())
 }
 

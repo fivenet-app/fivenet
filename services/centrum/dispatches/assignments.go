@@ -411,6 +411,45 @@ func (s *DispatchDB) UpdateAssignments(
 	return nil
 }
 
+// DeleteExpiredAssignments removes only assignments that have actually
+// expired. It is used for dispatches whose live KV projection was already
+// removed for archival, so no dispatch projection or status event can be
+// updated.
+func (s *DispatchDB) DeleteExpiredAssignments(
+	ctx context.Context,
+	dspID int64,
+	unitIDs []int64,
+) (int64, error) {
+	if len(unitIDs) == 0 {
+		return 0, nil
+	}
+
+	removeIDs := make([]mysql.Expression, len(unitIDs))
+	for i := range unitIDs {
+		removeIDs[i] = mysql.Int64(unitIDs[i])
+	}
+
+	tDispatchAssignment := table.FivenetCentrumDispatchesAsgmts
+	stmt := tDispatchAssignment.
+		DELETE().
+		WHERE(mysql.AND(
+			tDispatchAssignment.DispatchID.EQ(mysql.Int64(dspID)),
+			tDispatchAssignment.UnitID.IN(removeIDs...),
+			tDispatchAssignment.ExpiresAt.IS_NOT_NULL(),
+			tDispatchAssignment.ExpiresAt.LT_EQ(
+				mysql.CURRENT_TIMESTAMP().SUB(mysql.INTERVAL(2, mysql.SECOND)),
+			),
+		)).
+		LIMIT(int64(len(unitIDs)))
+
+	result, err := stmt.ExecContext(ctx, s.db)
+	if err != nil {
+		return 0, err
+	}
+
+	return result.RowsAffected()
+}
+
 // insertDispatchAssignments persists one or more assignments in the caller's
 // transaction. Upsert is used by explicit assignment updates; self-taking
 // passes false so a missing unit-specific assignment is handled separately.
