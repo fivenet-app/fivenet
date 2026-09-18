@@ -210,12 +210,13 @@ func TestFullAuthFlow(t *testing.T) {
 	// user-1: Choose valid character, the job role doesn't have permissions but the **default permissions** should still allow us to login
 	err = srv.perms.RemovePermissionsFromRole(ctx, role.GetId(), perm.GetId())
 	require.NoError(err)
-	// Disable choose char perm but the **default permissions** will still allow us to login
+	// Configured default permissions cannot be disabled on job roles.
 	err = srv.perms.UpdateRolePermissions(ctx, role.GetId(), perms.AddPerm{
 		Id:  perm.GetId(),
 		Val: false,
 	})
-	require.NoError(err)
+	require.Error(err)
+	assert.ErrorContains(err, "cannot deny configured default permission")
 	chooseCharReq.CharId = 1
 	chooseCharRes, err = client.ChooseCharacter(ctx, chooseCharReq)
 	require.NoError(err)
