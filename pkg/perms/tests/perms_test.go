@@ -215,11 +215,33 @@ func TestBasicPerms(t *testing.T) {
 	require.NoError(t, err)
 	require.NotNil(t, role)
 
+	db, err := dbServer.DB()
+	require.NoError(t, err)
+	_, err = db.ExecContext(
+		ctx,
+		"INSERT INTO fivenet_rbac_roles_permissions (role_id, permission_id, val) VALUES (?, ?, FALSE) ON DUPLICATE KEY UPDATE val = FALSE",
+		role.GetId(),
+		defaultPerm.GetId(),
+	)
+	require.NoError(t, err)
+	require.NoError(t, ps.ReloadJob(ctx, jobUser.GetJob()))
+
+	// Reconciliation removes stale overrides that predate the configured default.
+	require.NoError(t, ps.SetDefaultRolePerms(ctx, []string{defaultPerm.GetGuardName()}))
+	var overrideCount int
+	require.NoError(t, db.QueryRowContext(
+		ctx,
+		"SELECT COUNT(*) FROM fivenet_rbac_roles_permissions WHERE role_id = ? AND permission_id = ?",
+		role.GetId(),
+		defaultPerm.GetId(),
+	).Scan(&overrideCount))
+	assert.Zero(t, overrideCount, "default permission overrides must be removed from job roles")
+
 	err = ps.UpdateRolePermissions(ctx, role.GetId(), perms.AddPerm{
 		Id:  defaultPerm.GetId(),
 		Val: false,
 	})
-	assert.Error(t, err, "job roles must not deny configured default permissions")
+	require.Error(t, err, "job roles must not deny configured default permissions")
 	assert.True(
 		t,
 		ps.CanRaw(jobUser, "settings", "LawsService", "CreateOrUpdateLawBook"),

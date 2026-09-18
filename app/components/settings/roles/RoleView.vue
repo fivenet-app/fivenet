@@ -67,6 +67,7 @@ const { hasUnsavedChanges, markChanged, resetChanged } = useUnsavedChanges({
 const permList = ref<Permission[]>([]);
 const permNamespaces = ref<PermissionNamespaceGroup[]>([]);
 const permStates = ref(new Map<number, boolean | undefined>());
+const permissionsById = computed(() => new Map(permList.value.map((permission) => [permission.id, permission])));
 
 const attrList = ref<RoleAttribute[]>([]);
 
@@ -143,7 +144,7 @@ async function propogateRolePermissionStates(role: Role): Promise<void> {
     });
 
     role.permissions.forEach((perm) => {
-        const configuredDefault = permList.value.find((value) => value.id === perm.id)?.isDefault;
+        const configuredDefault = permissionsById.value.get(perm.id)?.isDefault;
         if (!configuredDefault) {
             permStates.value.set(perm.id, Boolean(perm.val));
         }

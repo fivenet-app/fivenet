@@ -16,6 +16,11 @@ var (
 		&common.I18NItem{Key: "errors.settings.SettingsService.ErrInvalidRequest.content"},
 		&common.I18NItem{Key: "errors.settings.SettingsService.ErrInvalidRequest.title"},
 	)
+	ErrInvalidDefaultPerms = common.NewI18nErr(
+		codes.InvalidArgument,
+		&common.I18NItem{Key: "errors.settings.SettingsService.ErrInvalidDefaultPerms.content"},
+		&common.I18NItem{Key: "errors.settings.SettingsService.ErrInvalidDefaultPerms.title"},
+	)
 	ErrNoPermission = common.NewI18nErr(
 		codes.PermissionDenied,
 		&common.I18NItem{Key: "errors.settings.SettingsService.ErrNoPermission.content"},

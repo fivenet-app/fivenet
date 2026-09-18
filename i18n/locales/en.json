@@ -3527,6 +3527,10 @@
                     "title": "Invalid role action",
                     "content": "Invalid role action requested!"
                 },
+                "ErrInvalidDefaultPerms": {
+                    "title": "Invalid default permissions",
+                    "content": "One or more configured default permissions are invalid or no longer available."
+                },
                 "ErrNoPermission": {
                     "title": "Permission required",
                     "content": "No permission to create, change, or delete this role!"

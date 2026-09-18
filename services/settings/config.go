@@ -11,9 +11,11 @@ import (
 	notificationsevents "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/notifications/events"
 	pbsettings "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/settings"
 	grpcauth "github.com/fivenet-app/fivenet/v2026/pkg/grpc/auth"
+	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/errswrap"
 	grpc_audit "github.com/fivenet-app/fivenet/v2026/pkg/grpc/interceptors/audit"
 	"github.com/fivenet-app/fivenet/v2026/pkg/perms"
 	"github.com/fivenet-app/fivenet/v2026/pkg/utils"
+	errorssettings "github.com/fivenet-app/fivenet/v2026/services/settings/errors"
 )
 
 func (s *Server) GetAppConfig(
@@ -61,7 +63,7 @@ func (s *Server) UpdateAppConfig(
 			cfgDefaultperms[i].GetName(),
 		)
 		if err != nil {
-			return nil, err
+			return nil, errswrap.NewError(err, errorssettings.ErrInvalidDefaultPerms)
 		}
 
 		separator := strings.LastIndexByte(cfgDefaultperms[i].GetCategory(), '.')
@@ -72,21 +74,24 @@ func (s *Server) UpdateAppConfig(
 			perms.Name(cfgDefaultperms[i].GetName()),
 		)
 		if err != nil {
-			return nil, err
+			return nil, errswrap.NewError(err, errorssettings.ErrFailedQuery)
 		}
 		if permission == nil {
-			return nil, fmt.Errorf("default permission not found: %s", guard)
+			return nil, errswrap.NewError(
+				fmt.Errorf("default permission not found: %s", guard),
+				errorssettings.ErrInvalidDefaultPerms,
+			)
 		}
 
 		defaultPerms[i] = guard
 	}
-	if err := s.perms.SetDefaultRolePerms(ctx, defaultPerms); err != nil {
-		return nil, err
-	}
-
 	// Update config state
 	if err := s.appCfg.Update(ctx, req.GetConfig()); err != nil {
 		return nil, err
+	}
+
+	if err := s.perms.SetDefaultRolePerms(ctx, defaultPerms); err != nil {
+		return nil, errswrap.NewError(err, errorssettings.ErrFailedQuery)
 	}
 
 	grpc_audit.SetAction(ctx, audit.EventAction_EVENT_ACTION_UPDATED)

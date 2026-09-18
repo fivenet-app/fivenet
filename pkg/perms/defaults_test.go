@@ -26,6 +26,7 @@ func TestDefaultPermGuardRejectsMalformedValues(t *testing.T) {
 		{category: "ConfigService", name: "GetAppConfig"},
 		{category: "settings.", name: "GetAppConfig"},
 		{category: ".ConfigService", name: "GetAppConfig"},
+		{category: "settings..ConfigService", name: "GetAppConfig"},
 		{category: "settings.ConfigService", name: ""},
 	} {
 		_, err := DefaultPermGuard(test.category, test.name)

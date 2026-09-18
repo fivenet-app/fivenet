@@ -3527,6 +3527,10 @@
                     "title": "Ungültige Rollenaktion",
                     "content": "Ungültige Rollen Anfrage!"
                 },
+                "ErrInvalidDefaultPerms": {
+                    "title": "Ungültige Standardberechtigungen",
+                    "content": "Eine oder mehrere konfigurierte Standardberechtigungen sind ungültig oder nicht mehr verfügbar."
+                },
                 "ErrNoPermission": {
                     "title": "Berechtigung erforderlich",
                     "content": "Keine Berechtigung um Rollen zu erstellen, ändern oder löschen!"

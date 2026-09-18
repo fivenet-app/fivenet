@@ -313,7 +313,10 @@ func (ps *Perms) init(ctxCancel context.Context, ctxStartup context.Context, par
 	cfgDefaultPerms := params.AppConfig.Get().GetPerms().GetDefault()
 	defaultPerms := make([]string, len(cfgDefaultPerms))
 	for i := range cfgDefaultPerms {
-		guard, err := DefaultPermGuard(cfgDefaultPerms[i].GetCategory(), cfgDefaultPerms[i].GetName())
+		guard, err := DefaultPermGuard(
+			cfgDefaultPerms[i].GetCategory(),
+			cfgDefaultPerms[i].GetName(),
+		)
 		if err != nil {
 			return err
 		}

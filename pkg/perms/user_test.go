@@ -168,7 +168,11 @@ func TestConfiguredDefaultIsIncludedDespiteStaleJobDeny(t *testing.T) {
 	})
 	require.NoError(t, err)
 	require.Len(t, permissions, 1)
-	assert.Equal(t, BuildGuard(testNamespace, testService, testNameView), permissions[0].GetGuardName())
+	assert.Equal(
+		t,
+		BuildGuard(testNamespace, testService, testNameView),
+		permissions[0].GetGuardName(),
+	)
 }
 
 func TestRemovingConfiguredDefaultRestoresRoleDeny(t *testing.T) {

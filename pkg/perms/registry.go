@@ -195,29 +195,81 @@ func (ps *Perms) SetDefaultRolePerms(ctx context.Context, defaultPerms []string)
 	return nil
 }
 
-func (ps *Perms) removeDefaultPermissionOverrides(ctx context.Context, defaultPerms []string) error {
+func (ps *Perms) removeDefaultPermissionOverrides(
+	ctx context.Context,
+	defaultPerms []string,
+) error {
 	if len(defaultPerms) == 0 {
 		return nil
 	}
 
 	permissionIDs := make([]int64, 0, len(defaultPerms))
+	permissionExpressions := make([]mysql.Expression, 0, len(defaultPerms))
 	for _, guard := range defaultPerms {
 		permissionID, ok := ps.permsGuardToIDMap.Load(guard)
 		if !ok {
 			return fmt.Errorf("default permission not found: %s", guard)
 		}
 		permissionIDs = append(permissionIDs, permissionID)
+		permissionExpressions = append(permissionExpressions, mysql.Int64(permissionID))
 	}
 
-	roles, err := ps.GetRoles(ctx, true)
-	if err != nil {
-		return err
-	}
-	for _, role := range roles {
-		if err := ps.RemovePermissionsFromRole(ctx, role.GetId(), permissionIDs...); err != nil {
-			return err
+	roleStmt := tRolePerms.
+		SELECT(tRolePerms.RoleID).
+		FROM(tRolePerms.
+			INNER_JOIN(tRoles,
+				tRoles.ID.EQ(tRolePerms.RoleID),
+			),
+		).
+		WHERE(mysql.AND(
+			tRoles.Job.NOT_EQ(mysql.String(DefaultRoleJob)),
+			tRolePerms.PermissionID.IN(permissionExpressions...),
+		)).
+		GROUP_BY(tRolePerms.RoleID)
+
+	var roleIDs []int64
+	if err := roleStmt.QueryContext(ctx, ps.db, &roleIDs); err != nil {
+		if !errors.Is(err, qrm.ErrNoRows) {
+			return fmt.Errorf("failed to find default permission overrides. %w", err)
 		}
 	}
+	if len(roleIDs) == 0 {
+		return nil
+	}
+
+	roleExpressions := make([]mysql.Expression, 0, len(roleIDs))
+	for _, roleID := range roleIDs {
+		roleExpressions = append(roleExpressions, mysql.Int64(roleID))
+	}
+
+	deleteStmt := tRolePerms.
+		DELETE().
+		WHERE(mysql.AND(
+			tRolePerms.RoleID.IN(roleExpressions...),
+			tRolePerms.PermissionID.IN(permissionExpressions...),
+		))
+	if _, err := deleteStmt.ExecContext(ctx, ps.db); err != nil {
+		return fmt.Errorf("failed to remove default permission overrides. %w", err)
+	}
+
+	for _, roleID := range roleIDs {
+		if rolePerms, ok := ps.permsRoleMap.Load(roleID); ok {
+			for _, permissionID := range permissionIDs {
+				rolePerms.Delete(permissionID)
+			}
+		}
+
+		if err := ps.publishMessage(ctx, RolePermUpdateSubject, &permissionsevents.RoleIDEvent{
+			RoleId: roleID,
+		}); err != nil {
+			return fmt.Errorf(
+				"failed to publish default permission override update for role %d. %w",
+				roleID,
+				err,
+			)
+		}
+	}
+	ps.clearUserCanCache()
 
 	return nil
 }
