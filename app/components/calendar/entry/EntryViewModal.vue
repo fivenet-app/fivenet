@@ -356,7 +356,7 @@ onUnmounted(() => {
                             ]"
                             :ui="{ icon: 'size-6' }"
                         />
-                        <div v-else class="rounded-lg bg-neutral-100 p-4 dark:bg-neutral-800">
+                        <div v-else class="rounded-lg bg-content p-4">
                             <CustomContentRenderer :value="entry.content" :placeholder="$t('common.na')" />
                         </div>
                     </div>

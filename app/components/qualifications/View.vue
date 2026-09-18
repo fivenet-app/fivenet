@@ -544,7 +544,7 @@ const requestUserModal = overlay.create(RequestUserModal);
 
                                     <div
                                         v-if="qualification.content"
-                                        class="w-full rounded-lg bg-neutral-100 p-4 break-words dark:bg-neutral-800"
+                                        class="w-full rounded-lg bg-content p-4 break-words"
                                     >
                                         <CustomContentRenderer
                                             :value="qualification.content"

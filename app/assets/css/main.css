@@ -29,6 +29,10 @@
     background-color: var(--color-olive-400);
 }
 
+@theme inline {
+    --color-content: var(--ui-bg-elevated);
+}
+
 @theme static {
     --color-black: rgb(0, 0, 0);
     --color-white: rgb(255, 255, 255);

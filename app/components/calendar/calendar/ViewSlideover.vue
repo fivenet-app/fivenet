@@ -132,7 +132,7 @@ defineShortcuts({
                         </div>
 
                         <div class="mx-auto w-full max-w-(--breakpoint-xl) break-words">
-                            <div class="rounded-lg bg-neutral-100 p-4 dark:bg-neutral-800">
+                            <div class="rounded-lg bg-content p-4">
                                 <CustomContentRenderer :value="calendar.description" :placeholder="$t('common.na')" />
                             </div>
                         </div>
