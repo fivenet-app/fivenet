@@ -108,6 +108,9 @@ func New(p Params) Result {
 		}
 	}
 
+	if !p.Config.DispatchCenter.Enabled {
+		p.Logger.Warn("dispatch converter is disabled, skipping cron job")
+	}
 	if p.Config.DispatchCenter.Enabled && len(convertJobs) == 0 {
 		p.Logger.Warn(
 			"dispatch center converter is enabled but no valid convert jobs are configured",
@@ -142,12 +145,7 @@ func (s *Converter) RegisterCronjobs(ctx context.Context, registry croner.IRegis
 
 func (s *Converter) RegisterCronjobHandlers(h *croner.Handlers) error {
 	h.Add(converterCronName, func(ctx context.Context, data *cron.CronjobData) error {
-		if !s.enabled {
-			s.logger.Debug("dispatch converter is disabled, skipping cron job")
-			return nil
-		}
-		if len(s.convertJobs) == 0 {
-			s.logger.Debug("no convert jobs configured, skipping dispatch converter cron job")
+		if !s.enabled || len(s.convertJobs) == 0 {
 			return nil
 		}
 
