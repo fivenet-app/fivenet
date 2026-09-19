@@ -17,6 +17,7 @@ type phoneServicesMessagesTable struct {
 	mysql.Table
 
 	// Columns
+	ID        mysql.ColumnInteger
 	ChannelID mysql.ColumnInteger
 	Message   mysql.ColumnString
 	XPos      mysql.ColumnInteger
@@ -63,12 +64,13 @@ func newPhoneServicesMessagesTable(schemaName, tableName, alias string) *PhoneSe
 
 func newPhoneServicesMessagesTableImpl(schemaName, tableName, alias string) phoneServicesMessagesTable {
 	var (
+		IDColumn        = mysql.IntegerColumn("id")
 		ChannelIDColumn = mysql.IntegerColumn("channel_id")
 		MessageColumn   = mysql.StringColumn("message")
 		XPosColumn      = mysql.IntegerColumn("x_pos")
 		YPosColumn      = mysql.IntegerColumn("y_pos")
 		TimestampColumn = mysql.TimestampColumn("timestamp")
-		allColumns      = mysql.ColumnList{ChannelIDColumn, MessageColumn, XPosColumn, YPosColumn, TimestampColumn}
+		allColumns      = mysql.ColumnList{IDColumn, ChannelIDColumn, MessageColumn, XPosColumn, YPosColumn, TimestampColumn}
 		mutableColumns  = mysql.ColumnList{ChannelIDColumn, MessageColumn, XPosColumn, YPosColumn, TimestampColumn}
 		defaultColumns  = mysql.ColumnList{TimestampColumn}
 	)
@@ -77,6 +79,7 @@ func newPhoneServicesMessagesTableImpl(schemaName, tableName, alias string) phon
 		Table: mysql.NewTable(schemaName, tableName, alias, allColumns...),
 
 		//Columns
+		ID:        IDColumn,
 		ChannelID: ChannelIDColumn,
 		Message:   MessageColumn,
 		XPos:      XPosColumn,

@@ -383,6 +383,23 @@ func (s *Converter) convertLBPhoneJobMsgToDispatchWithCursor(
 		targetJobsExp = append(targetJobsExp, mysql.String(job))
 	}
 
+	firstMessages := tPhoneServicesMessages.
+		SELECT(
+			tPhoneServicesMessages.ChannelID,
+			mysql.MIN(tPhoneServicesMessages.ID).AS("message_id"),
+		).
+		FROM(tPhoneServicesMessages).
+		WHERE(mysql.AND(
+			// Require coordinates to be present
+			tPhoneServicesMessages.XPos.IS_NOT_NULL(),
+			tPhoneServicesMessages.YPos.IS_NOT_NULL(),
+		)).
+		GROUP_BY(tPhoneServicesMessages.ChannelID).
+		AsTable("first_messages")
+
+	fmChannelID := tPhoneServicesMessages.ChannelID.From(firstMessages)
+	fmMessageID := mysql.IntegerColumn("message_id").From(firstMessages)
+
 	stmt := tPhoneServicesChannels.
 		SELECT(
 			tPhoneServicesChannels.ID.AS("id"),
@@ -391,12 +408,15 @@ func (s *Converter) convertLBPhoneJobMsgToDispatchWithCursor(
 			tPhoneServicesMessages.Message.AS("message"),
 			tPhoneServicesMessages.XPos.AS("x_pos"),
 			tPhoneServicesMessages.YPos.AS("y_pos"),
-			tUsers.ID.AS("userid"),
+			tUsers.ID.AS("user_id"),
 		).
 		FROM(
 			tPhoneServicesChannels.
+				INNER_JOIN(firstMessages,
+					fmChannelID.EQ(tPhoneServicesChannels.ID),
+				).
 				INNER_JOIN(tPhoneServicesMessages,
-					tPhoneServicesMessages.ChannelID.EQ(tPhoneServicesChannels.ID),
+					tPhoneServicesMessages.ID.EQ(fmMessageID),
 				).
 				INNER_JOIN(tPhonePhones,
 					tPhonePhones.PhoneNumber.EQ(tPhoneServicesChannels.PhoneNumber),

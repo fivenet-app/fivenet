@@ -19,8 +19,8 @@ includeTables:
     - phone_number
   "phone_services_channels":
     - id
-    - company
     - phone_number
+    - company
     - timestamp
   "phone_services_messages":
     - channel_id
