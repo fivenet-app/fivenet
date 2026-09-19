@@ -86,7 +86,7 @@ func NewRegistry(p RegistryParams) (RegistryResult, error) {
 		storeKV, err := r.js.CreateOrUpdateKeyValue(ctxStartup, jetstream.KeyValueConfig{
 			Bucket:      BucketName,
 			Description: BucketName + " Store",
-			History:     2,
+			History:     1,
 			Storage:     jetstream.MemoryStorage,
 		})
 		if err != nil {

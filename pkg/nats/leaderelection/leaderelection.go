@@ -82,6 +82,7 @@ func New(
 		Bucket:         bucket,
 		TTL:            ttl,
 		Description:    "Leader election bucket",
+		History:        1,
 		LimitMarkerTTL: 2 * ttl, // ensure we have enough time to handle re-election
 	})
 	if err != nil {

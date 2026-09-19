@@ -48,6 +48,7 @@ func runMigrations(
 	kv, err := js.CreateOrUpdateKeyValue(ctx, jetstream.KeyValueConfig{
 		Bucket:      migrationBucket,
 		Description: "Tracks applied migrations",
+		History:     1,
 	})
 	if err != nil {
 		return fmt.Errorf("failed to ensure migration KV bucket. %w", err)
