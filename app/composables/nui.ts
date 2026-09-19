@@ -31,20 +31,47 @@ function getParentResourceName(): string {
 
 export const focusNUITargets = ['input', 'textarea', 'select'] as const;
 
+let textInputFocused = false;
+let focusUpdateQueued = false;
+
+export function isNUITextTarget(target: EventTarget | null): target is HTMLElement {
+    if (!(target instanceof HTMLElement)) return false;
+
+    return (
+        focusNUITargets.includes(target.tagName.toLowerCase() as (typeof focusNUITargets)[number]) || target.isContentEditable
+    );
+}
+
+function updateNUIInputFocus(): void {
+    if (focusUpdateQueued) return;
+
+    focusUpdateQueued = true;
+
+    // focusout and focusin are emitted as separate events when focus moves
+    // between controls. Read activeElement after both events have settled so
+    // we only send the final state to FiveM.
+    queueMicrotask(() => {
+        focusUpdateQueued = false;
+
+        const nextState = isNUITextTarget(document.activeElement);
+        if (nextState === textInputFocused) return;
+
+        textInputFocused = nextState;
+        logger.debug('text input focus changed:', nextState);
+        void focusTablet(nextState);
+    });
+}
+
 /**
  *
  * @param event FocusEvent `focusin`/`focusout` event
- * @returns void promise
+ * @returns void
  */
-export async function onFocusHandler(event: FocusEvent): Promise<void> {
-    if (event.target === window) return;
+export function onFocusHandler(event: FocusEvent): void {
+    if (!isNUITextTarget(event.target) && !isNUITextTarget(document.activeElement)) return;
 
-    const element = event.target as HTMLElement;
-    if (!focusNUITargets.includes(element.tagName.toLowerCase())) return;
-    event.stopPropagation();
-    logger.debug('focus handler event:', event.type, element.tagName.toLowerCase());
-
-    await focusTablet(event.type === 'focusin');
+    logger.debug('focus handler event:', event.type);
+    updateNUIInputFocus();
 }
 
 type NUIRequest = boolean | string | object;

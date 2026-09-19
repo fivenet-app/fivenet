@@ -304,8 +304,6 @@ const editor = useEditor({
     },
     editable: !disabled.value,
     extensions: [...extensions, ...markRaw(props.extensions)],
-    onFocus: () => focusTablet(true),
-    onBlur: () => focusTablet(false),
     onCreate: () => {
         if (props.filestoreService && props.filestoreNamespace && fileUploadHandler) {
             unref(editor)?.registerPlugin(imageUploadPlugin(unref(editor)!, fileUploadHandler));

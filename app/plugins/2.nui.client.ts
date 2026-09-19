@@ -1,4 +1,4 @@
-import { focusNUITargets, onFocusHandler, onNUIMessage, toggleTablet } from '~/composables/nui';
+import { isNUITextTarget, onFocusHandler, onNUIMessage, toggleTablet } from '~/composables/nui';
 
 export default defineNuxtPlugin({
     name: 'nui',
@@ -37,7 +37,7 @@ export default defineNuxtPlugin({
 
             // Close tablet on escape presses outside of inputs and overlays.
             const stopEscapeKey = onKeyStroke('Escape', (event: KeyboardEvent) => {
-                if (event.target instanceof HTMLElement && focusNUITargets.includes(event.target.tagName.toLowerCase())) {
+                if (isNUITextTarget(event.target)) {
                     return;
                 }
 
