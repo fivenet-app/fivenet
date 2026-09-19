@@ -23,20 +23,36 @@ const emit = defineEmits<{
 }>();
 
 const notifications = useNotificationsStore();
+const { t } = useI18n();
 
 const qualificationsQualificationsClient = await getQualificationsQualificationsClient();
 
-const availableStatus = [
-    { status: RequestStatus.ACCEPTED },
-    { status: RequestStatus.DENIED },
-    { status: RequestStatus.PENDING },
-];
-
-const schema = z.object({
-    status: z.enum(RequestStatus),
-    approverComment: z.coerce.string().max(255),
-    notifyUser: z.coerce.boolean().default(true),
+const availableStatus = computed(() => {
+    switch (props.status) {
+        case RequestStatus.ACCEPTED:
+            return [{ status: RequestStatus.ACCEPTED }];
+        case RequestStatus.DENIED:
+            return [{ status: RequestStatus.DENIED }];
+        default:
+            return [{ status: RequestStatus.ACCEPTED }, { status: RequestStatus.DENIED }, { status: RequestStatus.PENDING }];
+    }
 });
+
+const schema = z
+    .object({
+        status: z.enum(RequestStatus),
+        approverComment: z.coerce.string().max(255),
+        notifyUser: z.coerce.boolean().default(true),
+    })
+    .superRefine((values, ctx) => {
+        if (values.status === RequestStatus.DENIED && values.approverComment.trim().length === 0) {
+            ctx.addIssue({
+                code: 'custom',
+                path: ['approverComment'],
+                message: t('components.qualifications.request_tutor_modal.denial_reason_required'),
+            });
+        }
+    });
 
 type Schema = z.output<typeof schema>;
 

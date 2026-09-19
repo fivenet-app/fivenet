@@ -21,6 +21,7 @@ defineEmits<{
         :qualification="qualification"
         :user-id="userId"
         :result-id="resultId"
+        :title="$t('components.qualifications.result_modal.add_title')"
         @refresh="$emit('refresh')"
         @close="$emit('close', false)"
     />

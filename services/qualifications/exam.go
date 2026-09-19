@@ -579,40 +579,40 @@ func (s *Server) gradeExam(
 	}
 	if settings != nil && settings.GetAutoGrade() &&
 		validateExamAutoGrading(exam, settings) == nil {
-		if exam != nil && len(exam.GetQuestions()) > 0 {
-			// Auto grading is enabled, we can grade the exam now
-			score, grading := exam.Grade(
-				settings.GetAutoGradeMode(),
-				responses,
-			)
-			var status qualifications.ResultStatus
-			if score >= float32(settings.GetMinimumPoints()) {
-				status = qualifications.ResultStatus_RESULT_STATUS_SUCCESSFUL
-			} else {
-				status = qualifications.ResultStatus_RESULT_STATUS_FAILED
-			}
+		// Auto grading is enabled, so grade the exam even when it has no
+		// questions. An empty exam has a score of zero and is successful when
+		// the configured minimum is also zero.
+		score, grading := exam.Grade(
+			settings.GetAutoGradeMode(),
+			responses,
+		)
+		var status qualifications.ResultStatus
+		if score >= float32(settings.GetMinimumPoints()) {
+			status = qualifications.ResultStatus_RESULT_STATUS_SUCCESSFUL
+		} else {
+			status = qualifications.ResultStatus_RESULT_STATUS_FAILED
+		}
 
-			if _, err := s.createOrUpdateQualificationResult(
-				ctx,
-				tx,
-				qualificationId,
-				0,
-				&userinfo.UserInfo{
-					Superuser: true,
-					Job:       quali.GetCreatorJob(),
-					UserId:    0,
-				},
-				userId,
-				status,
-				&score,
-				"",
-				true,
-				grading,
-				false,
-				publishNotifications,
-			); err != nil {
-				return err
-			}
+		if _, err := s.createOrUpdateQualificationResult(
+			ctx,
+			tx,
+			qualificationId,
+			0,
+			&userinfo.UserInfo{
+				Superuser: true,
+				Job:       quali.GetCreatorJob(),
+				UserId:    0,
+			},
+			userId,
+			status,
+			&score,
+			"",
+			true,
+			grading,
+			false,
+			publishNotifications,
+		); err != nil {
+			return err
 		}
 	} else {
 		if err := s.store.UpdateRequestStatus(

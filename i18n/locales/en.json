@@ -574,6 +574,7 @@
         "requests": "No requests | {n} request | {n} requests",
         "begins_at": "Begins at",
         "ends_at": "Ends at",
+        "ended_at": "Ended at",
         "hide": "Hide",
         "approve": "Approve | Approved",
         "na": "N/A",
@@ -1540,7 +1541,8 @@
                 "title": "Request Qualification"
             },
             "request_tutor_modal": {
-                "title": "Update Qualification Request"
+                "title": "Update Qualification Request",
+                "denial_reason_required": "Please provide a reason when denying a request."
             },
             "content_unavailable": "Qualification content will be available once your request has been accepted.",
             "take_access_required": {
@@ -1573,14 +1575,77 @@
                 }
             },
             "result_modal": {
-                "title": "Qualification Result"
+                "title": "Qualification Result",
+                "add_title": "Add Qualification Result",
+                "grade_exam": "Grade Exam",
+                "view_exam": "View Exam Result"
             },
             "exam_view": {
+                "start": "Start Exam",
+                "resume": "Resume Exam",
+                "progress": "Progress",
+                "section": "Section",
+                "question_navigator": "Question navigator",
+                "question_navigator_description": "Select a question to jump to it. Check marks show answered questions.",
+                "review_unanswered": "Review unanswered ({count})",
+                "answered": "Answered",
+                "unanswered": "Unanswered",
+                "flagged": "Flagged",
+                "question_types": {
+                    "yesno": "Yes or no",
+                    "free_text": "Free text",
+                    "single_choice": "Single choice",
+                    "multiple_choice": "Multiple choice"
+                },
+                "flag": "Mark for review",
+                "unflag": "Remove review mark",
+                "review_flagged": "Review flagged ({count})",
+                "restored": {
+                    "title": "Answers restored",
+                    "description": "Your answers from before the reload were restored locally. They will continue to autosave to the server."
+                },
+                "local_conflict": {
+                    "title": "Local and server answers differ",
+                    "description": "Some answers saved in this browser differ from the latest server copy. Review the questions before submitting."
+                },
+                "timer": {
+                    "final_warning_title": "Less than one minute remaining",
+                    "final_warning_description": "Only {time} remains. Finish your answer and submit before time expires.",
+                    "announcement_60": "One minute or less remains.",
+                    "announcement_30": "Thirty seconds or less remains.",
+                    "announcement_10": "Ten seconds or less remains.",
+                    "announcement_5": "Five seconds or less remains."
+                },
+                "auto_save": {
+                    "ready": "Autosave ready",
+                    "saving": "Saving answers",
+                    "saved": "Answers saved",
+                    "error": "Autosave failed",
+                    "last_saved": "Last saved: {time}"
+                },
+                "start_confirm": {
+                    "title": "Start exam?",
+                    "description": "The exam timer will begin immediately. Your answers will be autosaved while you work."
+                },
+                "resume_confirm": {
+                    "title": "Resume exam?",
+                    "description": "You will continue your active exam attempt with the remaining time."
+                },
+                "submit": {
+                    "title": "Submit exam?",
+                    "description": "You answered {answered} of {total} questions. {flagged} questions are marked for review. Your answers will be submitted and you will not be able to change them afterwards.",
+                    "incomplete_title": "Submit exam with unanswered questions?",
+                    "incomplete_description": "You answered {answered} of {total} questions. {unanswered} questions are still unanswered and {flagged} are marked for review. Your answers will be submitted and you will not be able to change them afterwards."
+                },
                 "times_up": "Time's up! Your exam will be graded soon.",
                 "result_successful": {
                     "title": "🎉 Exam completed successfully! 🎉",
                     "description": "Excellent work! Your answers were graded automatically. 🥳",
                     "manual_description": "Excellent work! Your exam was passed and has been reviewed by a tutor. 🥳"
+                },
+                "result_pending": {
+                    "title": "Exam submitted for review",
+                    "description": "Your exam was submitted successfully and is waiting for a tutor to complete the grading."
                 },
                 "result_failed": {
                     "title": "Exam completed",
@@ -1593,7 +1658,7 @@
                 },
                 "expired": {
                     "title": "⏰ Exam time expired",
-                    "description": "Your saved answers were submitted and your exam will be graded soon."
+                    "description": "The time limit expired. Your latest saved answers were submitted automatically and will be graded soon."
                 },
                 "cancel": {
                     "title": "Cancel exam?",

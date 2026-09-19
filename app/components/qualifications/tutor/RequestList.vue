@@ -1,8 +1,9 @@
 <script lang="ts" setup>
-import { UButton, UTooltip } from '#components';
-import type { TableColumn } from '@nuxt/ui';
+import { UButton, UDropdownMenu, UTooltip } from '#components';
+import type { DropdownMenuItem, TableColumn } from '@nuxt/ui';
 import { z } from 'zod';
 import ConfirmModal from '~/components/partials/ConfirmModal.vue';
+import DeletedAtBadge from '~/components/partials/DeletedAtBadge.vue';
 import Pagination from '~/components/partials/Pagination.vue';
 import CitizenInfoPopover from '~/components/partials/citizens/CitizenInfoPopover.vue';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
@@ -82,14 +83,30 @@ const query = reactive<Schema>({
     },
     page: 1,
 });
+const selectedStatuses = ref<RequestStatus[]>(props.status ?? []);
 const notifyUser = ref(true);
+
+const statusOptions = computed(() =>
+    [
+        RequestStatus.PENDING,
+        RequestStatus.ACCEPTED,
+        RequestStatus.EXAM_STARTED,
+        RequestStatus.EXAM_GRADING,
+        RequestStatus.COMPLETED,
+        RequestStatus.DENIED,
+    ].map((status) => ({
+        status,
+        label: t(`enums.qualifications.RequestStatus.${RequestStatus[status]}`),
+    })),
+);
+
 const { data, status, refresh, error } = useAuthedLazyAsyncData(
     'userState',
-    `qualifications-requests:${query.page}-${JSON.stringify(query)}-${props.qualification.id}-${JSON.stringify(props.searchQuery)}`,
+    `qualifications-requests:${query.page}-${JSON.stringify(query)}-${JSON.stringify(selectedStatuses.value)}-${props.qualification.id}-${JSON.stringify(props.searchQuery)}`,
     ({ signal }) => listQualificationRequests(props.qualification.id, undefined, signal),
 );
 
-useDebouncedRefresh([query, () => props.searchQuery], refresh, { debounce: 250, maxWait: 1250 });
+useDebouncedRefresh([query, selectedStatuses, () => props.searchQuery], refresh, { debounce: 250, maxWait: 1250 });
 
 defineExpose({
     refresh,
@@ -110,7 +127,7 @@ async function listQualificationRequests(
                 },
                 sort: query.sorting,
                 qualificationId: qualificationId,
-                status: status ?? [],
+                status: selectedStatuses.value.length > 0 ? selectedStatuses.value : (status ?? []),
                 userIds: props.searchQuery.users,
             },
             { abort: signal },
@@ -142,92 +159,133 @@ async function deleteQualificationRequest(qualificationId: number, userId: numbe
     }
 }
 
+function getRowActions(request: QualificationRequest): DropdownMenuItem[][] {
+    const actions: DropdownMenuItem[] = [];
+
+    if (request.deletedAt) {
+        actions.push({
+            label: t('common.restore'),
+            icon: 'i-mdi-restore',
+            color: 'success',
+            onSelect: () =>
+                confirmModal.open({
+                    color: 'success',
+                    icon: 'i-mdi-restore',
+                    confirm: async () => deleteQualificationRequest(request.qualificationId, request.userId),
+                }),
+        });
+        return [actions];
+    }
+
+    if (request.status === RequestStatus.PENDING || request.status === RequestStatus.ACCEPTED) {
+        actions.push({
+            label: t('common.decline'),
+            icon: 'i-mdi-close-thick',
+            color: 'warning',
+            onSelect: () => requestTutorModal.open({ request, status: RequestStatus.DENIED, onRefresh }),
+        });
+    }
+
+    if (request.status === RequestStatus.PENDING || request.status === RequestStatus.DENIED) {
+        actions.push({
+            label: t('common.accept'),
+            icon: 'i-mdi-check-bold',
+            color: 'success',
+            onSelect: () => requestTutorModal.open({ request, status: RequestStatus.ACCEPTED, onRefresh }),
+        });
+    }
+
+    if (request.status === RequestStatus.ACCEPTED || request.status === RequestStatus.EXAM_GRADING) {
+        actions.push({
+            label: t('common.grade'),
+            icon: 'i-mdi-star',
+            color: 'warning',
+            onSelect: () =>
+                (request.status === RequestStatus.EXAM_GRADING ? examViewResultModal : resultTutorModal).open({
+                    qualificationId: request.qualificationId,
+                    qualification: props.qualification,
+                    examMode: props.examMode,
+                    userId: request.userId,
+                    onRefresh,
+                }),
+        });
+    }
+
+    if (
+        checkQualificationAccess(
+            props.qualification.access,
+            props.qualification.creator,
+            AccessLevel.EDIT,
+            undefined,
+            props.qualification.creatorJob,
+        )
+    ) {
+        actions.push({
+            label: t('common.delete'),
+            icon: 'i-mdi-delete',
+            color: 'error',
+            onSelect: () =>
+                confirmModal.open({
+                    notifyUser: notifyUser.value,
+                    onNotifyUserUpdate: (value) => (notifyUser.value = value),
+                    confirm: async () => deleteQualificationRequest(request.qualificationId, request.userId),
+                }),
+        });
+    }
+
+    return [actions];
+}
+
 const columns = computed(
     () =>
         [
             {
                 id: 'actions',
-                cell: ({ row }) =>
-                    h('div', [
-                        (row.original.status === RequestStatus.PENDING || row.original.status === RequestStatus.ACCEPTED) &&
-                            h(UTooltip, { text: t('common.decline') }, () =>
-                                h(UButton, {
-                                    variant: 'link',
-                                    icon: 'i-mdi-close-thick',
-                                    color: 'orange',
-                                    onClick: () => {
-                                        requestTutorModal.open({
-                                            request: row.original,
-                                            status: RequestStatus.DENIED,
-                                            onRefresh: onRefresh,
-                                        });
-                                    },
-                                }),
-                            ),
-                        (row.original.status === RequestStatus.PENDING || row.original.status === RequestStatus.DENIED) &&
-                            h(UTooltip, { text: t('common.accept') }, () =>
-                                h(UButton, {
-                                    variant: 'link',
-                                    icon: 'i-mdi-check-bold',
-                                    color: 'success',
-                                    onClick: () => {
-                                        requestTutorModal.open({
-                                            request: row.original,
-                                            status: RequestStatus.ACCEPTED,
-                                            onRefresh: onRefresh,
-                                        });
-                                    },
-                                }),
-                            ),
-                        (row.original.status === RequestStatus.ACCEPTED ||
-                            row.original.status === RequestStatus.EXAM_GRADING) &&
-                            h(UTooltip, { text: t('common.grade') }, () =>
-                                h(UButton, {
-                                    variant: 'link',
-                                    icon: 'i-mdi-star',
-                                    color: 'warning',
-                                    onClick: () => {
-                                        (row.original.status === RequestStatus.EXAM_GRADING
-                                            ? examViewResultModal
-                                            : resultTutorModal
-                                        ).open({
-                                            qualificationId: row.original.qualificationId,
-                                            qualification: props.qualification,
-                                            examMode: props.examMode,
-                                            userId: row.original.userId,
-                                            onRefresh: onRefresh,
-                                        });
-                                    },
-                                }),
-                            ),
-                        checkQualificationAccess(
-                            props.qualification.access,
-                            props.qualification.creator,
-                            AccessLevel.EDIT,
-                            undefined,
-                            props.qualification?.creatorJob,
-                        ) &&
-                            h(UTooltip, { text: t('common.delete') }, () =>
-                                h(UButton, {
-                                    variant: 'link',
-                                    icon: 'i-mdi-delete',
-                                    color: 'error',
-                                    onClick: () => {
-                                        confirmModal.open({
-                                            notifyUser: notifyUser.value,
-                                            onNotifyUserUpdate: (value) => (notifyUser.value = value),
-                                            confirm: async () =>
-                                                deleteQualificationRequest(row.original.qualificationId, row.original.userId),
-                                        });
-                                    },
-                                }),
-                            ),
-                    ]),
+                cell: ({ row }) => {
+                    const items = getRowActions(row.original);
+                    return h(
+                        'div',
+                        { class: 'flex min-h-7 items-center' },
+                        items.length > 0
+                            ? h(
+                                  UDropdownMenu,
+                                  { items, content: { align: 'end' } },
+                                  {
+                                      default: () =>
+                                          h(
+                                              UTooltip,
+                                              { text: t('common.action', 2) },
+                                              {
+                                                  default: () =>
+                                                      h(UButton, {
+                                                          color: 'neutral',
+                                                          variant: 'ghost',
+                                                          icon: 'i-mdi-dots-vertical',
+                                                          'aria-label': t('common.action', 2),
+                                                      }),
+                                              },
+                                          ),
+                                  },
+                              )
+                            : undefined,
+                    );
+                },
             },
             {
                 accessorKey: 'citizen',
                 header: t('common.citizen'),
-                cell: ({ row }) => h(CitizenInfoPopover, { user: row.original.user }),
+                cell: ({ row }) =>
+                    h('div', { class: 'flex items-center gap-2' }, [
+                        h(CitizenInfoPopover, { user: row.original.user }),
+                        row.original.deletedAt
+                            ? h(DeletedAtBadge, {
+                                  deletedAt: row.original.deletedAt,
+                                  iconOnly: true,
+                                  'aria-label': t('common.deleted'),
+                                  title: t('common.deleted'),
+                              })
+                            : null,
+                    ]),
             },
             {
                 accessorKey: 'userComment',
@@ -299,7 +357,28 @@ const examViewResultModal = overlay.create(ExamViewResultModal);
 </script>
 
 <template>
-    <div class="overflow-x-hidden">
+    <div class="flex h-full min-h-0 flex-col overflow-x-hidden">
+        <UDashboardToolbar>
+            <div class="flex w-full items-center justify-between gap-2">
+                <h2 class="text-lg font-semibold text-highlighted">{{ $t('common.request', 2) }}</h2>
+
+                <USelectMenu
+                    v-model="selectedStatuses"
+                    class="w-full sm:w-64"
+                    multiple
+                    value-key="status"
+                    :items="statusOptions"
+                    :placeholder="$t('common.status', 2)"
+                >
+                    <template #default>
+                        <span v-if="selectedStatuses.length === 0">{{ $t('common.all') }}</span>
+                        <span v-else>{{ $t('common.selected', selectedStatuses.length) }}</span>
+                    </template>
+                    <template #item-label="{ item }">{{ item.label }}</template>
+                </USelectMenu>
+            </div>
+        </UDashboardToolbar>
+
         <DataErrorBlock
             v-if="error"
             :title="$t('common.unable_to_load', [$t('common.request', 2)])"
@@ -310,6 +389,7 @@ const examViewResultModal = overlay.create(ExamViewResultModal);
         <template v-else>
             <UTable
                 v-model:sorting="query.sorting.columns"
+                class="my-0 min-h-0 flex-1 overflow-auto"
                 :columns="columns"
                 :data="data?.requests"
                 :loading="isRequestPending(status)"

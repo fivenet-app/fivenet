@@ -2,6 +2,7 @@ package qualifications
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"time"
 
@@ -76,8 +77,12 @@ func (h *ExamHousekeeper) RegisterCronjobHandlers(handlers *croner.Handlers) err
 		if err != nil {
 			return fmt.Errorf("expire exam attempts: %w", err)
 		}
+		var failed error
+		failedCount := 0
 		for _, attempt := range attempts {
 			if err := h.completeExpiredExam(ctx, attempt); err != nil {
+				failedCount++
+				failed = errors.Join(failed, err)
 				h.logger.Error(
 					"failed to complete expired exam",
 					zap.Int64("qualification_id", attempt.GetQualificationId()),
@@ -85,6 +90,13 @@ func (h *ExamHousekeeper) RegisterCronjobHandlers(handlers *croner.Handlers) err
 					zap.Error(err),
 				)
 			}
+		}
+		if failed != nil {
+			return fmt.Errorf(
+				"failed to complete %d expired exam attempts: %w",
+				failedCount,
+				failed,
+			)
 		}
 		return nil
 	})
@@ -97,8 +109,12 @@ func (h *ExamHousekeeper) RegisterCronjobHandlers(handlers *croner.Handlers) err
 		if err != nil {
 			return fmt.Errorf("list expired exam retention data: %w", err)
 		}
+		var failed error
+		failedCount := 0
 		for _, attempt := range attempts {
 			if err := h.deleteRetainedExamData(ctx, attempt); err != nil {
+				failedCount++
+				failed = errors.Join(failed, err)
 				h.logger.Error(
 					"failed to delete retained exam data",
 					zap.Int64("qualification_id", attempt.GetQualificationId()),
@@ -106,6 +122,9 @@ func (h *ExamHousekeeper) RegisterCronjobHandlers(handlers *croner.Handlers) err
 					zap.Error(err),
 				)
 			}
+		}
+		if failed != nil {
+			return fmt.Errorf("failed to delete %d retained exam attempts: %w", failedCount, failed)
 		}
 		return nil
 	})

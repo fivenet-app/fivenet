@@ -169,7 +169,6 @@ const isDev = import.meta.dev;
                     <div class="flex flex-col gap-2">
                         <div class="grid w-full grid-cols-3 gap-2">
                             <UButton
-                                class=""
                                 color="primary"
                                 icon="i-mdi-home"
                                 size="lg"

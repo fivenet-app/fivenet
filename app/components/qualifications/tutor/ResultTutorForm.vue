@@ -21,6 +21,7 @@ const props = withDefaults(
         viewOnly?: boolean;
         grading?: ExamGrading | undefined;
         fullscreen?: boolean;
+        title?: string;
     }>(),
     {
         userId: undefined,
@@ -30,6 +31,7 @@ const props = withDefaults(
         viewOnly: false,
         grading: undefined,
         fullscreen: true,
+        title: undefined,
     },
 );
 
@@ -59,7 +61,7 @@ const modalTitle = computed(() => {
     const qualificationTitle = [props.qualification?.abbreviation?.trim(), props.qualification?.title?.trim()]
         .filter(Boolean)
         .join(': ');
-    const title = t('components.qualifications.result_modal.title');
+    const title = props.title ?? t('components.qualifications.result_modal.title');
 
     return qualificationTitle ? `${title} - ${qualificationTitle}` : title;
 });

@@ -180,7 +180,6 @@ defineShortcuts({
 
                 <template #right>
                     <UButton
-                        class=""
                         trailing-icon="i-mdi-pin"
                         color="neutral"
                         truncate

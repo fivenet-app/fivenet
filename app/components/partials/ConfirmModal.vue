@@ -53,10 +53,15 @@ async function handleCancel(): Promise<void> {
 
 <template>
     <UModal
-        :title="props.title ?? $t('components.partials.confirm_dialog.title')"
         :description="props.description ?? $t('components.partials.confirm_dialog.description')"
+        :ui="{ title: 'inline-flex items-center gap-2' }"
         @update:model-value="props.cancel && props.cancel()"
     >
+        <template #title>
+            <UIcon v-if="props.icon" :name="props.icon" class="size-6" :class="props.iconClass" />
+            <span>{{ props.title ?? $t('components.partials.confirm_dialog.title') }}</span>
+        </template>
+
         <template v-if="notifyUser !== undefined" #body>
             <USwitch v-model="notifyUser" :label="$t('components.jobs.groups.details.notify_user')" />
         </template>

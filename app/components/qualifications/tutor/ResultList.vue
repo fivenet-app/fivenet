@@ -1,8 +1,9 @@
 <script lang="ts" setup>
-import { UBadge, UButton, UTooltip } from '#components';
-import type { TableColumn } from '@nuxt/ui';
+import { UBadge, UButton, UDropdownMenu, UTooltip } from '#components';
+import type { DropdownMenuItem, TableColumn } from '@nuxt/ui';
 import { z } from 'zod';
 import ConfirmModal from '~/components/partials/ConfirmModal.vue';
+import DeletedAtBadge from '~/components/partials/DeletedAtBadge.vue';
 import Pagination from '~/components/partials/Pagination.vue';
 import CitizenInfoPopover from '~/components/partials/citizens/CitizenInfoPopover.vue';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
@@ -76,15 +77,24 @@ const query = reactive<Schema>({
     },
     page: 1,
 });
+const selectedStatuses = ref<ResultStatus[]>(props.status ?? []);
 const notifyUser = ref(true);
+
+const statusOptions = computed(() =>
+    [ResultStatus.PENDING, ResultStatus.SUCCESSFUL, ResultStatus.FAILED].map((status) => ({
+        status,
+        label: t(`enums.qualifications.ResultStatus.${ResultStatus[status]}`),
+    })),
+);
+
 const { data, status, refresh, error } = useAuthedLazyAsyncData(
     'userState',
     () =>
-        `qualifications-results:${query.page}-${JSON.stringify(query)}-${props.qualification.id}-${JSON.stringify(props.searchQuery)}`,
-    ({ signal }) => listQualificationResults(props.qualification.id, props.status, signal),
+        `qualifications-results:${query.page}-${JSON.stringify(query)}-${JSON.stringify(selectedStatuses.value)}-${props.qualification.id}-${JSON.stringify(props.searchQuery)}`,
+    ({ signal }) => listQualificationResults(props.qualification.id, selectedStatuses.value, signal),
 );
 
-useDebouncedRefresh([query, () => props.searchQuery], refresh, { debounce: 250, maxWait: 1250 });
+useDebouncedRefresh([query, selectedStatuses, () => props.searchQuery], refresh, { debounce: 250, maxWait: 1250 });
 
 defineExpose({
     refresh,
@@ -105,7 +115,7 @@ async function listQualificationResults(
                 },
                 sort: query.sorting,
                 qualificationId: qualificationId,
-                status: status ?? [],
+                status: selectedStatuses.value.length > 0 ? selectedStatuses.value : (status ?? []),
                 userIds: props.searchQuery.users,
             },
             { abort: signal },
@@ -139,87 +149,119 @@ async function deleteQualificationResult(
     }
 }
 
+function getRowActions(result: QualificationResult): DropdownMenuItem[][] {
+    const actions: DropdownMenuItem[] = [];
+
+    if (result.status === ResultStatus.PENDING && !result.deletedAt) {
+        actions.push({
+            label: t('common.grade'),
+            icon: 'i-mdi-star',
+            onSelect: () =>
+                examViewResultModal.open({
+                    qualificationId: result.qualificationId,
+                    qualification: props.qualification,
+                    userId: result.userId,
+                    resultId: result.id,
+                    examMode: props.examMode,
+                    onRefresh,
+                }),
+        });
+    } else if (props.examMode > QualificationExamMode.DISABLED) {
+        actions.push({
+            label: t('common.show'),
+            icon: 'i-mdi-eye',
+            onSelect: () =>
+                examViewResultModal.open({
+                    qualificationId: result.qualificationId,
+                    qualification: props.qualification,
+                    userId: result.userId,
+                    resultId: result.id,
+                    examMode: props.examMode,
+                    viewOnly: true,
+                    onRefresh,
+                }),
+        });
+    }
+
+    if (
+        checkQualificationAccess(
+            props.qualification.access,
+            props.qualification.creator,
+            AccessLevel.EDIT,
+            undefined,
+            props.qualification.creatorJob,
+        )
+    ) {
+        actions.push({
+            label: t(result.deletedAt ? 'common.restore' : 'common.delete'),
+            icon: result.deletedAt ? 'i-mdi-restore' : 'i-mdi-delete',
+            color: result.deletedAt ? 'success' : 'error',
+            onSelect: () => {
+                confirmModal.open({
+                    color: result.deletedAt ? 'success' : 'error',
+                    icon: result.deletedAt ? 'i-mdi-restore' : 'i-mdi-warning-circle',
+                    notifyUser: result.deletedAt ? undefined : notifyUser.value,
+                    onNotifyUserUpdate: result.deletedAt ? undefined : (value) => (notifyUser.value = value),
+                    confirm: async () =>
+                        deleteQualificationResult(result.id, result.deletedAt !== undefined || !notifyUser.value),
+                });
+            },
+        });
+    }
+
+    return [actions];
+}
+
 const columns = computed(
     () =>
         [
             {
                 id: 'actions',
-                cell: ({ row }) =>
-                    h('div', [
-                        row.original.status === ResultStatus.PENDING &&
-                            !row.original.deletedAt &&
-                            h(UTooltip, { text: t('common.grade') }, () =>
-                                h(UButton, {
-                                    variant: 'link',
-                                    icon: 'i-mdi-star',
-                                    color: 'warning',
-                                    onClick: () => {
-                                        examViewResultModal.open({
-                                            qualificationId: row.original.qualificationId,
-                                            qualification: props.qualification,
-                                            userId: row.original.userId,
-                                            resultId: row.original.id,
-                                            examMode: props.examMode,
-                                            onRefresh: onRefresh,
-                                        });
-                                    },
-                                }),
-                            ),
-                        props.examMode > QualificationExamMode.DISABLED &&
-                            h(UTooltip, { text: t('common.show') }, () =>
-                                h(UButton, {
-                                    variant: 'link',
-                                    icon: 'i-mdi-star',
-                                    color: 'warning',
-                                    onClick: () => {
-                                        examViewResultModal.open({
-                                            qualificationId: row.original.qualificationId,
-                                            qualification: props.qualification,
-                                            userId: row.original.userId,
-                                            resultId: row.original.id,
-                                            examMode: props.examMode,
-                                            viewOnly: true,
-                                            onRefresh: onRefresh,
-                                        });
-                                    },
-                                }),
-                            ),
-                        checkQualificationAccess(
-                            props.qualification.access,
-                            props.qualification.creator,
-                            AccessLevel.EDIT,
-                            undefined,
-                            props.qualification?.creatorJob,
-                        ) &&
-                            h(UTooltip, { text: t(row.original.deletedAt ? 'common.restore' : 'common.delete') }, () =>
-                                h(UButton, {
-                                    class: 'flex-initial',
-                                    variant: 'link',
-                                    icon: row.original.deletedAt ? 'i-mdi-restore' : 'i-mdi-delete',
-                                    color: row.original.deletedAt ? 'success' : 'error',
-                                    onClick: () => {
-                                        confirmModal.open({
-                                            color: row.original.deletedAt ? 'success' : 'error',
-                                            icon: row.original.deletedAt ? 'i-mdi-restore' : 'i-mdi-warning-circle',
-                                            notifyUser: row.original.deletedAt ? undefined : notifyUser.value,
-                                            onNotifyUserUpdate: row.original.deletedAt
-                                                ? undefined
-                                                : (value) => (notifyUser.value = value),
-                                            confirm: async () =>
-                                                deleteQualificationResult(
-                                                    row.original.id,
-                                                    row.original.deletedAt !== undefined || !notifyUser.value,
-                                                ),
-                                        });
-                                    },
-                                }),
-                            ),
-                    ]),
+                cell: ({ row }) => {
+                    const items = getRowActions(row.original);
+                    return h(
+                        'div',
+                        { class: 'flex min-h-7 items-center' },
+                        items.length > 0
+                            ? h(
+                                  UDropdownMenu,
+                                  { items, content: { align: 'end' } },
+                                  {
+                                      default: () =>
+                                          h(
+                                              UTooltip,
+                                              { text: t('common.action', 2) },
+                                              {
+                                                  default: () =>
+                                                      h(UButton, {
+                                                          color: 'neutral',
+                                                          variant: 'ghost',
+                                                          icon: 'i-mdi-dots-vertical',
+                                                          'aria-label': t('common.action', 2),
+                                                      }),
+                                              },
+                                          ),
+                                  },
+                              )
+                            : undefined,
+                    );
+                },
             },
             {
                 accessorKey: 'citizen',
                 header: t('common.citizen'),
-                cell: ({ row }) => h(CitizenInfoPopover, { user: row.original.user }),
+                cell: ({ row }) =>
+                    h('div', { class: 'flex items-center gap-2' }, [
+                        h(CitizenInfoPopover, { user: row.original.user }),
+                        row.original.deletedAt
+                            ? h(DeletedAtBadge, {
+                                  deletedAt: row.original.deletedAt,
+                                  iconOnly: true,
+                                  'aria-label': t('common.deleted'),
+                                  title: t('common.deleted'),
+                              })
+                            : null,
+                    ]),
             },
             {
                 accessorKey: 'status',
@@ -293,7 +335,32 @@ const confirmModal = overlay.create(ConfirmModal);
 </script>
 
 <template>
-    <div class="overflow-x-hidden">
+    <div class="flex h-full min-h-0 flex-col overflow-x-hidden">
+        <UDashboardToolbar>
+            <div class="flex w-full items-center justify-between gap-2">
+                <h2 class="text-lg font-semibold text-highlighted">{{ $t('common.result', 2) }}</h2>
+
+                <div class="flex items-center gap-2">
+                    <USelectMenu
+                        v-model="selectedStatuses"
+                        class="w-full sm:w-64"
+                        multiple
+                        value-key="status"
+                        :items="statusOptions"
+                        :placeholder="$t('common.status', 2)"
+                    >
+                        <template #default>
+                            <span v-if="selectedStatuses.length === 0">{{ $t('common.all') }}</span>
+                            <span v-else>{{ $t('common.selected', selectedStatuses.length) }}</span>
+                        </template>
+                        <template #item-label="{ item }">{{ item.label }}</template>
+                    </USelectMenu>
+
+                    <slot name="actions" />
+                </div>
+            </div>
+        </UDashboardToolbar>
+
         <DataErrorBlock
             v-if="error"
             :title="$t('common.unable_to_load', [$t('common.qualifications', 2)])"
@@ -304,6 +371,7 @@ const confirmModal = overlay.create(ConfirmModal);
         <template v-else>
             <UTable
                 v-model:sorting="query.sorting.columns"
+                class="my-0 min-h-0 flex-1 overflow-auto"
                 :columns="columns"
                 :data="data?.results"
                 :loading="isRequestPending(status)"

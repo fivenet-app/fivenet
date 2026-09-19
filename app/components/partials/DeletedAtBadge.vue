@@ -7,11 +7,13 @@ import type { I18nDateTimeFormats } from '~/utils/time';
 interface Props extends /* @vue-ignore */ BadgeProps {
     deletedAt: Date | Timestamp;
     hideDate?: boolean;
+    iconOnly?: boolean;
     type?: I18nDateTimeFormats;
 }
 
 const props = withDefaults(defineProps<Props>(), {
     hideDate: false,
+    iconOnly: false,
     type: 'short',
     color: 'warning',
     size: 'sm',
@@ -21,7 +23,7 @@ const props = withDefaults(defineProps<Props>(), {
 const attrs = useAttrs();
 
 const badgeProps = computed(() => {
-    const { deletedAt: _, hideDate: __, type: ___, ...propsWithoutDeletedAt } = props;
+    const { deletedAt: _, hideDate: __, iconOnly: ___, type: ____, ...propsWithoutDeletedAt } = props;
 
     return Object.assign(
         {
@@ -41,8 +43,8 @@ defineOptions({
 
 <template>
     <UBadge class="inline-flex gap-1 font-bold" v-bind="badgeProps">
-        <span>{{ $t('common.deleted') }}</span>
+        <span v-if="!iconOnly">{{ $t('common.deleted') }}</span>
 
-        <GenericTime v-if="!hideDate" :value="deletedAt" :type="type" />
+        <GenericTime v-if="!iconOnly && !hideDate" :value="deletedAt" :type="type" />
     </UBadge>
 </template>

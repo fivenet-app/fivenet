@@ -179,7 +179,8 @@ func TestStoreListExamUsersPastRetentionExcludesPendingGrading(t *testing.T) {
 	store := New(testParams(db))
 	expectedQuery := regexp.QuoteMeta(`FROM fivenet_qualifications_exam_users`) +
 		`(?s).*` + regexp.QuoteMeta(`INNER JOIN fivenet_qualifications_requests AS qualification_request`) +
-		`(?s).*` + regexp.QuoteMeta(`qualification_request.status = ?`)
+		`(?s).*` + regexp.QuoteMeta(`qualification_request.status = ?`) +
+		`(?s).*` + regexp.QuoteMeta(`qualification_request.deleted_at IS NOT NULL`)
 	mock.ExpectQuery(expectedQuery).
 		WithArgs(sqlmock.AnyArg(), int32(resqualifications.RequestStatus_REQUEST_STATUS_COMPLETED), int64(1000)).
 		WillReturnRows(sqlmock.NewRows([]string{

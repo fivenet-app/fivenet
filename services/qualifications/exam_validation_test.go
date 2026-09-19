@@ -6,6 +6,7 @@ import (
 	"time"
 
 	qualificationspb "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/qualifications"
+	qualificationsactivity "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/qualifications/activity"
 	qualificationsexam "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/qualifications/exam"
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/timestamp"
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/userinfo"
@@ -22,6 +23,122 @@ type effectiveExamTestStore struct {
 	exam            *qualificationsexam.ExamQuestions
 	qualificationID int64
 	withAnswers     bool
+}
+
+type emptyAutoGradeTestStore struct {
+	qualificationsstore.IStore
+
+	createdStatus qualificationspb.ResultStatus
+	createdScore  float32
+	requestStatus qualificationspb.RequestStatus
+}
+
+func (s *emptyAutoGradeTestStore) GetQualificationResult(
+	context.Context,
+	int64,
+	int64,
+	[]qualificationspb.ResultStatus,
+	*userinfo.UserInfo,
+	int32,
+	bool,
+) (*qualificationspb.QualificationResult, error) {
+	return nil, nil
+}
+
+func (s *emptyAutoGradeTestStore) GetQualification(
+	context.Context,
+	int64,
+	*userinfo.UserInfo,
+	bool,
+) (*qualificationspb.Qualification, error) {
+	return &qualificationspb.Qualification{
+		ExamMode: qualificationsexam.QualificationExamMode_QUALIFICATION_EXAM_MODE_ENABLED,
+	}, nil
+}
+
+func (s *emptyAutoGradeTestStore) GetExamUser(
+	context.Context,
+	qrm.DB,
+	int64,
+	int32,
+) (*qualificationsexam.ExamUser, error) {
+	return &qualificationsexam.ExamUser{AttemptId: "empty-attempt"}, nil
+}
+
+func (s *emptyAutoGradeTestStore) CreateQualificationResult(
+	_ context.Context,
+	_ qrm.DB,
+	_ int64,
+	_ int32,
+	status qualificationspb.ResultStatus,
+	score *float32,
+	_ string,
+	_ bool,
+	_ *string,
+	_ *userinfo.UserInfo,
+) (int64, error) {
+	s.createdStatus = status
+	if score != nil {
+		s.createdScore = *score
+	}
+	return 1, nil
+}
+
+func (s *emptyAutoGradeTestStore) UpdateExamResponseGrading(
+	context.Context,
+	qrm.DB,
+	string,
+	*qualificationsexam.ExamGrading,
+) error {
+	return nil
+}
+
+func (s *emptyAutoGradeTestStore) UpdateRequestStatus(
+	_ context.Context,
+	_ qrm.DB,
+	_ int64,
+	_ int32,
+	status qualificationspb.RequestStatus,
+) error {
+	s.requestStatus = status
+	return nil
+}
+
+func (s *emptyAutoGradeTestStore) CreateQualificationActivity(
+	context.Context,
+	qrm.DB,
+	*qualificationsactivity.QualificationActivity,
+) error {
+	return nil
+}
+
+func TestGradeExamAutoGradesEmptyExamAsSuccessfulWhenMinimumIsZero(t *testing.T) {
+	t.Parallel()
+
+	store := &emptyAutoGradeTestStore{}
+	server := &Server{store: store}
+	err := server.gradeExam(
+		t.Context(),
+		nil,
+		42,
+		0,
+		&qualificationspb.Qualification{
+			ExamMode: qualificationsexam.QualificationExamMode_QUALIFICATION_EXAM_MODE_ENABLED,
+			ExamSettings: &qualificationsexam.QualificationExamSettings{
+				AutoGrade: true,
+			},
+		},
+		&qualificationsexam.ExamSnapshot{
+			Exam: &qualificationsexam.ExamQuestions{},
+		},
+		&qualificationsexam.ExamResponses{},
+		new([]func(context.Context) error),
+	)
+
+	require.NoError(t, err)
+	assert.Equal(t, qualificationspb.ResultStatus_RESULT_STATUS_SUCCESSFUL, store.createdStatus)
+	assert.Zero(t, store.createdScore)
+	assert.Equal(t, qualificationspb.RequestStatus_REQUEST_STATUS_COMPLETED, store.requestStatus)
 }
 
 func TestIsStaleExamAttemptOnlyTreatsEndedAttemptsWithoutResultsAsStale(t *testing.T) {
@@ -251,6 +368,15 @@ func TestValidateExamAutoGradingRejectsInvalidConfigurations(t *testing.T) {
 	settings := &qualificationsexam.QualificationExamSettings{AutoGrade: true}
 
 	err := validateExamAutoGrading(
+		&qualificationsexam.ExamQuestions{},
+		&qualificationsexam.QualificationExamSettings{
+			AutoGrade:     true,
+			MinimumPoints: 1,
+		},
+	)
+	require.ErrorIs(t, err, errorsqualifications.ErrExamAutoGradingInvalid)
+
+	err = validateExamAutoGrading(
 		&qualificationsexam.ExamQuestions{Questions: []*qualificationsexam.ExamQuestion{
 			{
 				Data: &qualificationsexam.ExamQuestionData{

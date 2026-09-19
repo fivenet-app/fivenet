@@ -671,8 +671,8 @@ const requestUserModal = overlay.create(RequestUserModal);
                     </template>
 
                     <template v-if="canDo.grade" #tutor>
-                        <div class="w-full overflow-y-auto">
-                            <div class="mx-auto w-full max-w-(--breakpoint-xl)">
+                        <div class="flex min-h-0 w-full flex-1 flex-col overflow-hidden">
+                            <div class="mx-auto flex h-full min-h-0 w-full max-w-(--breakpoint-xl) flex-1 flex-col">
                                 <TutorView :qualification="qualification" />
                             </div>
                         </div>

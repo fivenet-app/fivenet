@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import type { Form } from '@nuxt/ui';
+import type { Form, TabsItem } from '@nuxt/ui';
 import { z } from 'zod';
 import SelectMenu from '~/components/partials/SelectMenu.vue';
 import RequestList from '~/components/qualifications/tutor/RequestList.vue';
@@ -12,6 +12,8 @@ import type { UserShort } from '~~/gen/ts/resources/users/short/user';
 const props = defineProps<{
     qualification: Qualification;
 }>();
+
+const { t } = useI18n();
 
 const completorStore = useCompletorStore();
 
@@ -35,13 +37,20 @@ const { validatedQuery, commitValidatedQuery } = useFormSearchValidation<typeof 
 
 const requests = ref<InstanceType<typeof RequestList> | null>(null);
 const results = ref<InstanceType<typeof ResultList> | null>(null);
+
+const tabs = computed<TabsItem[]>(() => [
+    { slot: 'requests' as const, label: t('common.request', 2), icon: 'i-mdi-account-school', value: 'requests' },
+    { slot: 'results' as const, label: t('common.result', 2), icon: 'i-mdi-list-status', value: 'results' },
+]);
+
+const activeTab = ref('requests');
 </script>
 
 <template>
-    <UDashboardPanel :ui="{ root: 'h-full min-h-0 pb-(--page-content-bottom-offset)' }">
+    <UDashboardPanel :ui="{ root: 'h-full min-h-0', body: 'p-0 sm:p-0 gap-0 sm:gap-0' }">
         <template #header>
             <UDashboardToolbar>
-                <UForm ref="formRef" class="mb-2 flex-1" :schema="schema" :state="query" @submit="commitValidatedQuery">
+                <UForm ref="formRef" class="my-2 flex-1" :schema="schema" :state="query" @submit="commitValidatedQuery">
                     <UFormField class="flex-1" name="users" :label="$t('common.search')">
                         <SelectMenu
                             v-model="query.users"
@@ -76,51 +85,51 @@ const results = ref<InstanceType<typeof ResultList> | null>(null);
         </template>
 
         <template #body>
-            <UPageCard :title="$t('common.request', 2)" :ui="{ body: '' }">
-                <template #default>
+            <UTabs
+                v-model="activeTab"
+                class="flex min-h-0 flex-1 flex-col"
+                :items="tabs"
+                variant="link"
+                :ui="{ content: 'flex min-h-0 flex-1 flex-col overflow-hidden' }"
+            >
+                <template #requests>
                     <RequestList
                         ref="requests"
-                        class="-mx-4 -mb-4 sm:-mx-6 sm:-mb-6"
                         :qualification="qualification"
                         :exam-mode="qualification.examMode"
                         :search-query="validatedQuery"
                         @refresh="() => results?.refresh()"
                     />
                 </template>
-            </UPageCard>
 
-            <UPageCard :ui="{ body: 'flex flex-col w-full', title: 'flex flex-row flex-1 items-center w-full' }">
-                <template #title>
-                    <div class="flex-1">{{ $t('common.result', 2) }}</div>
-
-                    <UTooltip :text="$t('common.add')">
-                        <UButton
-                            color="neutral"
-                            variant="outline"
-                            icon="i-mdi-plus"
-                            :label="$t('common.add')"
-                            @click="
-                                resultTutorModal.open({
-                                    qualificationId: qualification.id,
-                                    qualification,
-                                    onRefresh: () => results?.refresh(),
-                                })
-                            "
-                        />
-                    </UTooltip>
-                </template>
-
-                <template #default>
+                <template #results>
                     <ResultList
                         ref="results"
-                        class="-mx-4 -mb-4 sm:-mx-6 sm:-mb-6"
                         :qualification="qualification"
                         :exam-mode="qualification.examMode"
                         :search-query="validatedQuery"
                         @refresh="() => requests?.refresh()"
-                    />
+                    >
+                        <template #actions>
+                            <UTooltip :text="$t('common.add')">
+                                <UButton
+                                    color="neutral"
+                                    variant="outline"
+                                    icon="i-mdi-plus"
+                                    :label="$t('common.add')"
+                                    @click="
+                                        resultTutorModal.open({
+                                            qualificationId: qualification.id,
+                                            qualification,
+                                            onRefresh: () => results?.refresh(),
+                                        })
+                                    "
+                                />
+                            </UTooltip>
+                        </template>
+                    </ResultList>
                 </template>
-            </UPageCard>
+            </UTabs>
         </template>
     </UDashboardPanel>
 </template>

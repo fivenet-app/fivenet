@@ -291,7 +291,7 @@ func (s *Store) ListExpiredExamUsers(
 	ctx context.Context,
 	limit int64,
 ) ([]*qualificationsexam.ExamUser, error) {
-	tExamUser := table.FivenetQualificationsExamUsers
+	tExamUser := table.FivenetQualificationsExamUsers.AS("exam_user")
 	stmt := tExamUser.
 		SELECT(
 			tExamUser.QualificationID,
@@ -324,14 +324,14 @@ func (s *Store) ListExpiredExamUsers(
 	return attempts, nil
 }
 
-// ListExamUsersPastRetention returns only attempts whose requests completed.
+// ListExamUsersPastRetention returns completed or soft-deleted attempts.
 // In particular, manually graded exams remain available while grading is pending.
 func (s *Store) ListExamUsersPastRetention(
 	ctx context.Context,
 	olderThan time.Time,
 	limit int64,
 ) ([]*qualificationsexam.ExamUser, error) {
-	tExamUser := table.FivenetQualificationsExamUsers
+	tExamUser := table.FivenetQualificationsExamUsers.AS("exam_user")
 	stmt := tExamUser.
 		SELECT(
 			tExamUser.QualificationID,
@@ -349,9 +349,12 @@ func (s *Store) ListExamUsersPastRetention(
 		WHERE(mysql.AND(
 			tExamUser.EndedAt.IS_NOT_NULL(),
 			tExamUser.EndedAt.LT_EQ(mysql.TimestampT(olderThan)),
-			tQualiReq.Status.EQ(mysql.Int32(int32(
-				resqualifications.RequestStatus_REQUEST_STATUS_COMPLETED,
-			))),
+			mysql.OR(
+				tQualiReq.Status.EQ(mysql.Int32(int32(
+					resqualifications.RequestStatus_REQUEST_STATUS_COMPLETED,
+				))),
+				tQualiReq.DeletedAt.IS_NOT_NULL(),
+			),
 		)).
 		ORDER_BY(tExamUser.EndedAt.ASC()).
 		LIMIT(limit)

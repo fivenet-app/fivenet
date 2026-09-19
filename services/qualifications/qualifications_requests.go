@@ -425,6 +425,47 @@ func (s *Server) DeleteQualificationReq(
 		return nil, errorsqualifications.ErrFailedQuery
 	}
 
+	if re.GetDeletedAt() != nil {
+		if !userInfo.GetJobAdmin() {
+			return nil, errorsqualifications.ErrFailedQuery
+		}
+
+		tx, err := s.db.BeginTx(ctx, nil)
+		if err != nil {
+			return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
+		}
+		defer tx.Rollback()
+
+		if err := s.store.RestoreQualificationRequest(
+			ctx,
+			tx,
+			re.GetQualificationId(),
+			re.GetUserId(),
+			re.GetStatus(),
+			re.GetExamAttemptId(),
+		); err != nil {
+			return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
+		}
+		if err := s.addQualificationActivity(
+			ctx,
+			tx,
+			re.GetQualificationId(),
+			qualificationsactivity.QualificationActivityType_QUALIFICATION_ACTIVITY_TYPE_RESTORED,
+			userInfo.GetUserId(),
+			re.GetUserId(),
+			nil,
+		); err != nil {
+			return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
+		}
+
+		if err := tx.Commit(); err != nil {
+			return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
+		}
+
+		grpc_audit.SetAction(ctx, audit.EventAction_EVENT_ACTION_RESTORED)
+		return &pbqualifications.DeleteQualificationReqResponse{}, nil
+	}
+
 	tx, err := s.db.BeginTx(ctx, nil)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)

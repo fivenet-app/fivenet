@@ -83,6 +83,7 @@ func (s *Store) ListQualificationsResults(
 		tQuali.ID,
 		tQuali.CreatedAt,
 		tQuali.UpdatedAt,
+		tQuali.DeletedAt,
 		tQuali.Job,
 		tQuali.Closed,
 		tQuali.Draft,

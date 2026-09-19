@@ -5,8 +5,15 @@ import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
 import ConfirmModal from '~/components/partials/ConfirmModal.vue';
+import DraftBadge from '~/components/partials/DraftBadge.vue';
+import OpenClosedBadge from '~/components/partials/OpenClosedBadge.vue';
 import { getQualificationsExamClient } from '~~/gen/ts/clients';
-import type { ExamQuestions, ExamResponses, ExamUser } from '~~/gen/ts/resources/qualifications/exam/exam';
+import {
+    QualificationExamMode,
+    type ExamQuestions,
+    type ExamResponses,
+    type ExamUser,
+} from '~~/gen/ts/resources/qualifications/exam/exam';
 import { ResultStatus } from '~~/gen/ts/resources/qualifications/qualifications';
 import type { GetExamInfoResponse, TakeExamResponse } from '~~/gen/ts/services/qualifications/exam';
 import ExamViewQuestions from './ExamViewQuestions.vue';
@@ -78,6 +85,7 @@ const exam = ref<ExamQuestions | undefined>();
 const examUser = ref<ExamUser | undefined>();
 const examResponses = ref<ExamResponses | undefined>();
 const examExpired = ref(false);
+const takingExam = ref(false);
 
 const submitted = computed(() => data.value?.examUser?.endedAt !== undefined);
 const expired = computed(() => {
@@ -85,6 +93,26 @@ const expired = computed(() => {
     return examExpired.value || (!submitted.value && endsAt !== undefined && isPast(toDate(endsAt)));
 });
 const result = computed(() => data.value?.qualification?.result);
+const submittedAt = computed(() => {
+    const endedAt = data.value?.examUser?.endedAt;
+    return endedAt ? toDate(endedAt) : undefined;
+});
+const submissionDuration = computed(() => {
+    const startedAt = data.value?.examUser?.startedAt;
+    const endedAt = data.value?.examUser?.endedAt;
+    if (!startedAt || !endedAt) return undefined;
+
+    return formatDuration({
+        seconds: Math.max(0, Math.floor((toDate(endedAt).getTime() - toDate(startedAt).getTime()) / 1_000)),
+        nanos: 0,
+    });
+});
+const qualificationTitle = computed(() => {
+    const qualification = data.value?.qualification;
+    if (!qualification) return t('pages.qualifications.id.exam.title');
+
+    return [qualification.abbreviation, qualification.title].filter(Boolean).join(': ') || t('common.untitled');
+});
 const celebratedResultId = ref<number>();
 
 watch(
@@ -109,6 +137,17 @@ async function cancelExam(): Promise<void> {
     await refresh();
 }
 
+async function startOrResumeExam(): Promise<void> {
+    if (takingExam.value) return;
+
+    takingExam.value = true;
+    try {
+        await takeExam(false);
+    } finally {
+        takingExam.value = false;
+    }
+}
+
 async function handleExpired(): Promise<void> {
     examExpired.value = true;
     exam.value = undefined;
@@ -118,12 +157,34 @@ async function handleExpired(): Promise<void> {
 }
 
 const cancelExamModal = overlay.create(ConfirmModal);
+const startExamModal = overlay.create(ConfirmModal);
 
 function openCancelExamConfirmation(): void {
     cancelExamModal.open({
         title: t('components.qualifications.exam_view.cancel.title'),
         description: t('components.qualifications.exam_view.cancel.description'),
         confirm: cancelExam,
+    });
+}
+
+function openStartExamConfirmation(): void {
+    const isResume = data.value?.examUser?.startedAt !== undefined;
+
+    startExamModal.open({
+        title: t(
+            isResume
+                ? 'components.qualifications.exam_view.resume_confirm.title'
+                : 'components.qualifications.exam_view.start_confirm.title',
+        ),
+        description: t(
+            isResume
+                ? 'components.qualifications.exam_view.resume_confirm.description'
+                : 'components.qualifications.exam_view.start_confirm.description',
+        ),
+        color: isResume ? 'primary' : 'success',
+        icon: isResume ? 'i-mdi-play' : 'i-mdi-play-circle-outline',
+        iconClass: isResume ? 'text-primary-500 dark:text-primary-400' : 'text-green-500 dark:text-green-400',
+        confirm: startOrResumeExam,
     });
 }
 
@@ -170,6 +231,39 @@ watch(data, async () => {
             </UDashboardNavbar>
 
             <UDashboardToolbar v-if="data">
+                <div class="flex flex-1 flex-row flex-wrap items-center justify-between gap-2">
+                    <div class="flex-1">
+                        <h1 class="px-0.5 py-1 text-4xl font-bold break-words sm:pl-1">
+                            {{ qualificationTitle }}
+                        </h1>
+                        <p v-if="data.qualification?.description" class="px-0.5 py-1 text-base font-bold break-words sm:pl-1">
+                            {{ data.qualification.description }}
+                        </p>
+                    </div>
+
+                    <div class="flex flex-wrap gap-2">
+                        <OpenClosedBadge :closed="data.qualification?.closed" />
+                        <DraftBadge v-if="data.qualification?.draft" />
+                        <UBadge
+                            v-if="data.qualification?.public"
+                            class="inline-flex gap-1"
+                            icon="i-mdi-earth"
+                            color="neutral"
+                            :label="$t('common.public')"
+                        />
+                        <UBadge
+                            v-if="data.qualification?.examMode"
+                            class="inline-flex gap-1"
+                            icon="i-mdi-test-tube"
+                            :label="`${$t('common.exam', 1)}: ${$t(
+                                `enums.qualifications.QualificationExamMode.${QualificationExamMode[data.qualification.examMode]}`,
+                            )}`"
+                        />
+                    </div>
+                </div>
+            </UDashboardToolbar>
+
+            <UDashboardToolbar v-if="data">
                 <template #left>
                     <div class="flex gap-2">
                         <UBadge
@@ -204,117 +298,147 @@ watch(data, async () => {
         </template>
 
         <template #body>
-            <DataPendingBlock v-if="isRequestPending(status)" :message="$t('common.loading', [$t('common.exam', 1)])" />
-            <DataErrorBlock
-                v-else-if="error"
-                :title="$t('common.unable_to_load', [$t('common.exam', 1)])"
-                :error="error"
-                :retry="refresh"
-            />
-            <DataNoDataBlock
-                v-else-if="!data"
-                icon="i-mdi-account-school"
-                :message="$t('common.not_found', [$t('common.qualification', 1)])"
-            />
+            <UContainer>
+                <DataPendingBlock v-if="isRequestPending(status)" :message="$t('common.loading', [$t('common.exam', 1)])" />
+                <DataErrorBlock
+                    v-else-if="error"
+                    :title="$t('common.unable_to_load', [$t('common.exam', 1)])"
+                    :error="error"
+                    :retry="refresh"
+                />
+                <DataNoDataBlock
+                    v-else-if="!data"
+                    icon="i-mdi-account-school"
+                    :message="$t('common.not_found', [$t('common.qualification', 1)])"
+                />
 
-            <template v-else>
-                <UCard>
-                    <template v-if="result?.status === ResultStatus.SUCCESSFUL">
-                        <UAlert
-                            color="success"
-                            variant="subtle"
-                            icon="i-mdi-party-popper"
-                            :ui="{ icon: 'size-8', title: 'text-xl' }"
-                        >
-                            <template #title>
-                                {{ $t('components.qualifications.exam_view.result_successful.title') }}
-                            </template>
-                            <template #description>
-                                <div class="space-y-1">
-                                    <p v-if="result.autoGraded">
-                                        {{ $t('components.qualifications.exam_view.result_successful.description') }}
-                                    </p>
-                                    <p v-else>
-                                        {{ $t('components.qualifications.exam_view.result_successful.manual_description') }}
-                                    </p>
-                                    <p class="font-semibold">
-                                        {{ $t('common.score') }}: {{ $t('common.point', result.score ?? 0) }} 🏆
-                                    </p>
-                                    <p v-if="result.summary">{{ result.summary }}</p>
-                                </div>
-                            </template>
-                        </UAlert>
+                <template v-else>
+                    <UCard :ui="{ body: 'p-4 sm:p-4' }">
+                        <div v-if="submittedAt || submissionDuration" class="mb-4 flex flex-wrap gap-2">
+                            <UBadge v-if="submittedAt" icon="i-mdi-calendar-check" class="inline-flex gap-1">
+                                <span class="font-semibold">{{ $t('common.ended_at') }}:</span>
+                                <span>{{ $d(submittedAt, 'long') }}</span>
+                            </UBadge>
 
-                        <PartialsBackButton class="mt-4" block :to="`/qualifications/${qualificationId}`" />
-                    </template>
-                    <template v-else-if="result?.status === ResultStatus.FAILED">
-                        <UAlert
-                            :title="$t('components.qualifications.exam_view.result_failed.title')"
-                            color="error"
-                            variant="subtle"
-                            icon="i-mdi-close-circle-outline"
-                            :ui="{ icon: 'size-8', title: 'text-xl' }"
-                        >
-                            <template #description>
-                                <div class="space-y-1">
-                                    <p v-if="result.autoGraded">
-                                        {{ $t('components.qualifications.exam_view.result_failed.description') }}
-                                    </p>
-                                    <p v-else>
-                                        {{ $t('components.qualifications.exam_view.result_failed.manual_description') }}
-                                    </p>
-                                    <p class="font-semibold">
-                                        {{ $t('common.score') }}:
-                                        {{ $t('common.point', result.score ?? 0) }}
-                                    </p>
-                                    <p v-if="result.summary">{{ result.summary }}</p>
-                                </div>
-                            </template>
-                        </UAlert>
+                            <UBadge v-if="submissionDuration" icon="i-mdi-timer-outline" class="inline-flex gap-1">
+                                <span class="font-semibold">{{ $t('common.duration') }}:</span>
+                                <span>{{ submissionDuration }}</span>
+                            </UBadge>
+                        </div>
 
-                        <PartialsBackButton class="mt-4" block :to="`/qualifications/${qualificationId}`" />
-                    </template>
-                    <template v-else-if="submitted">
-                        <UAlert
-                            :title="$t('components.qualifications.exam_view.submitted.title')"
-                            color="success"
-                            variant="subtle"
-                            icon="i-mdi-check-circle-outline"
-                            :description="$t('components.qualifications.exam_view.submitted.description')"
-                            :ui="{ icon: 'size-8', title: 'text-xl' }"
+                        <template v-if="result?.status === ResultStatus.PENDING">
+                            <UAlert
+                                :title="$t('components.qualifications.exam_view.result_pending.title')"
+                                color="warning"
+                                variant="subtle"
+                                icon="i-mdi-clock-outline"
+                                :description="$t('components.qualifications.exam_view.result_pending.description')"
+                                :ui="{ icon: 'size-8', title: 'text-xl' }"
+                            />
+
+                            <PartialsBackButton class="mt-4" block :to="`/qualifications/${qualificationId}`" />
+                        </template>
+                        <template v-else-if="result?.status === ResultStatus.SUCCESSFUL">
+                            <UAlert
+                                color="success"
+                                variant="subtle"
+                                icon="i-mdi-party-popper"
+                                :ui="{ icon: 'size-8', title: 'text-xl' }"
+                            >
+                                <template #title>
+                                    {{ $t('components.qualifications.exam_view.result_successful.title') }}
+                                </template>
+                                <template #description>
+                                    <div class="space-y-1">
+                                        <p v-if="result.autoGraded">
+                                            {{ $t('components.qualifications.exam_view.result_successful.description') }}
+                                        </p>
+                                        <p v-else>
+                                            {{ $t('components.qualifications.exam_view.result_successful.manual_description') }}
+                                        </p>
+                                        <p class="font-semibold">
+                                            {{ $t('common.score') }}: {{ $t('common.point', result.score ?? 0) }} 🏆
+                                        </p>
+                                        <p v-if="result.summary">{{ result.summary }}</p>
+                                    </div>
+                                </template>
+                            </UAlert>
+
+                            <PartialsBackButton class="mt-4" block :to="`/qualifications/${qualificationId}`" />
+                        </template>
+                        <template v-else-if="result?.status === ResultStatus.FAILED">
+                            <UAlert
+                                :title="$t('components.qualifications.exam_view.result_failed.title')"
+                                color="error"
+                                variant="subtle"
+                                icon="i-mdi-close-circle-outline"
+                                :ui="{ icon: 'size-8', title: 'text-xl' }"
+                            >
+                                <template #description>
+                                    <div class="space-y-1">
+                                        <p v-if="result.autoGraded">
+                                            {{ $t('components.qualifications.exam_view.result_failed.description') }}
+                                        </p>
+                                        <p v-else>
+                                            {{ $t('components.qualifications.exam_view.result_failed.manual_description') }}
+                                        </p>
+                                        <p class="font-semibold">
+                                            {{ $t('common.score') }}:
+                                            {{ $t('common.point', result.score ?? 0) }}
+                                        </p>
+                                        <p v-if="result.summary">{{ result.summary }}</p>
+                                    </div>
+                                </template>
+                            </UAlert>
+
+                            <PartialsBackButton class="mt-4" block :to="`/qualifications/${qualificationId}`" />
+                        </template>
+                        <template v-else-if="submitted">
+                            <UAlert
+                                :title="$t('components.qualifications.exam_view.submitted.title')"
+                                color="success"
+                                variant="subtle"
+                                icon="i-mdi-check-circle-outline"
+                                :description="$t('components.qualifications.exam_view.submitted.description')"
+                                :ui="{ icon: 'size-8', title: 'text-xl' }"
+                            />
+
+                            <PartialsBackButton class="mt-4" block :to="`/qualifications/${qualificationId}`" />
+                        </template>
+                        <template v-else-if="expired">
+                            <UAlert
+                                :title="$t('components.qualifications.exam_view.expired.title')"
+                                color="warning"
+                                variant="subtle"
+                                icon="i-mdi-clock-alert-outline"
+                                :description="$t('components.qualifications.exam_view.expired.description')"
+                                :ui="{ icon: 'size-8', title: 'text-xl' }"
+                            />
+
+                            <PartialsBackButton class="mt-4" block :to="`/qualifications/${qualificationId}`" />
+                        </template>
+
+                        <UButton
+                            v-else-if="!data?.examUser?.endedAt"
+                            class="w-full"
+                            size="xl"
+                            color="neutral"
+                            icon="i-mdi-play"
+                            block
+                            :loading="takingExam"
+                            :disabled="takingExam"
+                            :label="
+                                $t(
+                                    data?.examUser?.startedAt
+                                        ? 'components.qualifications.exam_view.resume'
+                                        : 'components.qualifications.exam_view.start',
+                                )
+                            "
+                            @click="openStartExamConfirmation"
                         />
-
-                        <PartialsBackButton class="mt-4" block :to="`/qualifications/${qualificationId}`" />
-                    </template>
-                    <template v-else-if="expired">
-                        <UAlert
-                            :title="$t('components.qualifications.exam_view.expired.title')"
-                            color="warning"
-                            variant="subtle"
-                            icon="i-mdi-clock-alert-outline"
-                            :description="$t('components.qualifications.exam_view.expired.description')"
-                            :ui="{ icon: 'size-8', title: 'text-xl' }"
-                        />
-
-                        <PartialsBackButton class="mt-4" block :to="`/qualifications/${qualificationId}`" />
-                    </template>
-
-                    <UButton
-                        v-else-if="!data?.examUser?.endedAt"
-                        class="w-full"
-                        size="xl"
-                        color="neutral"
-                        icon="i-mdi-play"
-                        block
-                        :label="$t('components.qualifications.take_test')"
-                        @click="
-                            () => {
-                                takeExam(false);
-                            }
-                        "
-                    />
-                </UCard>
-            </template>
+                    </UCard>
+                </template>
+            </UContainer>
         </template>
     </UDashboardPanel>
 </template>

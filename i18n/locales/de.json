@@ -574,6 +574,7 @@
         "requests": "Keine Anfragen | {n} Anfrage | {n} Anfragen",
         "begins_at": "Beginnt am",
         "ends_at": "Endet am",
+        "ended_at": "Beendet am",
         "hide": "Verstecken",
         "approve": "Genehmigen | Genehmigt",
         "na": "k. A.",
@@ -1540,7 +1541,8 @@
                 "title": "Qualifizierung anfragen"
             },
             "request_tutor_modal": {
-                "title": "Qualifizierungsantrag bearbeiten"
+                "title": "Qualifizierungsantrag bearbeiten",
+                "denial_reason_required": "Bitte geben Sie beim Ablehnen eines Antrags einen Grund an."
             },
             "content_unavailable": "Der Inhalt der Qualifizierung wird verfügbar sein, sobald Ihr Antrag angenommen wurde.",
             "take_access_required": {
@@ -1573,14 +1575,77 @@
                 }
             },
             "result_modal": {
-                "title": "Qualifizierungsergebnis"
+                "title": "Qualifizierungsergebnis",
+                "add_title": "Qualifizierungsergebnis hinzufügen",
+                "grade_exam": "Prüfung bewerten",
+                "view_exam": "Prüfungsergebnis anzeigen"
             },
             "exam_view": {
+                "start": "Prüfung beginnen",
+                "resume": "Prüfung fortsetzen",
+                "progress": "Fortschritt",
+                "section": "Abschnitt",
+                "question_navigator": "Fragenübersicht",
+                "question_navigator_description": "Wählen Sie eine Frage aus, um zu ihr zu springen. Häkchen zeigen beantwortete Fragen.",
+                "review_unanswered": "Unbeantwortete prüfen ({count})",
+                "answered": "Beantwortet",
+                "unanswered": "Unbeantwortet",
+                "flagged": "Markiert",
+                "question_types": {
+                    "yesno": "Ja oder Nein",
+                    "free_text": "Freitext",
+                    "single_choice": "Einzelauswahl",
+                    "multiple_choice": "Mehrfachauswahl"
+                },
+                "flag": "Zur Überprüfung markieren",
+                "unflag": "Überprüfungsmarkierung entfernen",
+                "review_flagged": "Markierte prüfen ({count})",
+                "restored": {
+                    "title": "Antworten wiederhergestellt",
+                    "description": "Ihre Antworten vor dem Neuladen wurden lokal wiederhergestellt. Sie werden weiterhin automatisch auf dem Server gespeichert."
+                },
+                "local_conflict": {
+                    "title": "Lokale und Server-Antworten unterscheiden sich",
+                    "description": "Einige im Browser gespeicherte Antworten unterscheiden sich von der aktuellen Serverversion. Bitte prüfen Sie die Fragen vor dem Absenden."
+                },
+                "timer": {
+                    "final_warning_title": "Weniger als eine Minute verbleibt",
+                    "final_warning_description": "Es verbleiben nur noch {time}. Beenden Sie Ihre Antwort und geben Sie die Prüfung vor Ablauf der Zeit ab.",
+                    "announcement_60": "Eine Minute oder weniger verbleibt.",
+                    "announcement_30": "Dreißig Sekunden oder weniger verbleiben.",
+                    "announcement_10": "Zehn Sekunden oder weniger verbleiben.",
+                    "announcement_5": "Fünf Sekunden oder weniger verbleiben."
+                },
+                "auto_save": {
+                    "ready": "Autospeicherung bereit",
+                    "saving": "Antworten werden gespeichert",
+                    "saved": "Antworten gespeichert",
+                    "error": "Autospeicherung fehlgeschlagen",
+                    "last_saved": "Zuletzt gespeichert: {time}"
+                },
+                "start_confirm": {
+                    "title": "Prüfung beginnen?",
+                    "description": "Die Prüfungszeit beginnt sofort. Ihre Antworten werden während der Prüfung automatisch gespeichert."
+                },
+                "resume_confirm": {
+                    "title": "Prüfung fortsetzen?",
+                    "description": "Sie setzen Ihren aktiven Prüfungsversuch mit der verbleibenden Zeit fort."
+                },
+                "submit": {
+                    "title": "Prüfung abgeben?",
+                    "description": "Sie haben {answered} von {total} Fragen beantwortet. {flagged} Fragen sind zur Überprüfung markiert. Ihre Antworten werden abgegeben und können danach nicht mehr geändert werden.",
+                    "incomplete_title": "Prüfung mit unbeantworteten Fragen abgeben?",
+                    "incomplete_description": "Sie haben {answered} von {total} Fragen beantwortet. {unanswered} Fragen sind noch unbeantwortet und {flagged} zur Überprüfung markiert. Ihre Antworten werden abgegeben und können danach nicht mehr geändert werden."
+                },
                 "times_up": "Die Zeit ist um! Ihre Prüfung wird bald benotet werden.",
                 "result_successful": {
                     "title": "🎉 Prüfung erfolgreich bestanden! 🎉",
                     "description": "Hervorragende Arbeit! Ihre Antworten wurden automatisch benotet. 🥳",
                     "manual_description": "Hervorragende Arbeit! Sie haben die Prüfung bestanden und sie wurde von einem Tutor bewertet. 🥳"
+                },
+                "result_pending": {
+                    "title": "Prüfung zur Bewertung abgegeben",
+                    "description": "Ihre Prüfung wurde erfolgreich abgegeben und wartet auf die Bewertung durch einen Tutor."
                 },
                 "result_failed": {
                     "title": "Prüfung abgeschlossen",
@@ -1593,7 +1658,7 @@
                 },
                 "expired": {
                     "title": "⏰ Prüfungszeit abgelaufen",
-                    "description": "Ihre gespeicherten Antworten wurden abgegeben und Ihre Prüfung wird bald benotet."
+                    "description": "Die Zeitbegrenzung ist abgelaufen. Ihre zuletzt gespeicherten Antworten wurden automatisch abgegeben und werden bald bewertet."
                 },
                 "cancel": {
                     "title": "Prüfung abbrechen?",

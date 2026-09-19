@@ -140,6 +140,7 @@ func (s *Store) ListQualificationRequests(
 
 	columns := mysql.ProjectionList{
 		tQualiReq.CreatedAt,
+		tQualiReq.DeletedAt,
 		tQualiReq.QualificationID,
 		tQuali.ID,
 		tQuali.CreatedAt,
@@ -237,6 +238,7 @@ func (s *Store) getQualificationRequest(
 		tQuali.ID,
 		tQuali.CreatedAt,
 		tQuali.UpdatedAt,
+		tQuali.DeletedAt,
 		tQuali.Job,
 		tQuali.Closed,
 		tQuali.Draft,
@@ -257,8 +259,10 @@ func (s *Store) getQualificationRequest(
 	condition := mysql.AND(
 		tQualiReq.QualificationID.EQ(mysql.Int64(qualificationId)),
 		tQualiReq.UserID.EQ(mysql.Int32(userId)),
-		tQualiReq.DeletedAt.IS_NULL(),
 	)
+	if userInfo == nil || !userInfo.GetJobAdmin() {
+		condition = condition.AND(tQualiReq.DeletedAt.IS_NULL())
+	}
 
 	stmt := tQualiReq.
 		SELECT(columns[0], columns[1:]...).

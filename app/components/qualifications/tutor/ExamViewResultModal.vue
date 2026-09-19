@@ -70,7 +70,7 @@ async function getUserExam(signal: AbortSignal): Promise<GetUserExamResponse> {
         response.grading?.responses.push({
             questionId: q.questionId,
             checked: false,
-            points: q.question?.points ?? 0,
+            points: 0,
         });
     });
 
@@ -94,6 +94,13 @@ const correctCount = computed(() => data.value?.grading?.responses.filter((a) =>
         :qualification="qualification"
         :user-id="userId"
         :result-id="resultId"
+        :title="
+            $t(
+                viewOnly
+                    ? 'components.qualifications.result_modal.view_exam'
+                    : 'components.qualifications.result_modal.grade_exam',
+            )
+        "
         :score="pointCount"
         :view-only="viewOnly"
         :grading="data?.grading"
@@ -112,6 +119,33 @@ const correctCount = computed(() => data.value?.grading?.responses.filter((a) =>
             <DataNoDataBlock v-else-if="!data.examUser" :type="$t('common.exam')" icon="i-mdi-sigma" />
 
             <template v-if="data?.responses">
+                <UCard v-if="data.examUser" class="sticky top-0 z-10 mb-4" :ui="{ body: 'p-3 sm:p-3' }">
+                    <div class="flex flex-wrap items-center justify-between gap-2">
+                        <div class="flex flex-wrap gap-2">
+                            <UBadge
+                                v-if="data.examUser.startedAt"
+                                icon="i-mdi-play"
+                                :label="`${$t('common.begins_at')}: ${$d(toDate(data.examUser.startedAt), 'long')}`"
+                            />
+                            <UBadge
+                                v-if="data.examUser.endedAt"
+                                icon="i-mdi-stop"
+                                :label="`${$t('common.ended_at')}: ${$d(toDate(data.examUser.endedAt), 'long')}`"
+                            />
+                        </div>
+                        <div class="flex gap-3 text-sm">
+                            <span>
+                                <span class="font-semibold">{{ $t('common.corrected') }}:</span>
+                                {{ correctCount }} / {{ totalQuestions }}
+                            </span>
+                            <span>
+                                <span class="font-semibold">{{ $t('common.points', 2) }}:</span>
+                                {{ pointCount }} / {{ totalPoints }}
+                            </span>
+                        </div>
+                    </div>
+                </UCard>
+
                 <DataNoDataBlock
                     v-if="data.responses.responses.length === 0"
                     :type="`${$t('common.answer', 2)}/${$t('common.question', 2)}`"
@@ -180,19 +214,6 @@ const correctCount = computed(() => data.value?.grading?.responses.filter((a) =>
                             </div>
                         </template>
                     </ExamViewResult>
-
-                    <div class="sticky bottom-0 flex flex-1 justify-end p-0.5">
-                        <UCard :ui="{ body: 'p-2 sm:p-2' }">
-                            <p class="text-sm">
-                                <span class="font-semibold">{{ $t('common.corrected') }}</span
-                                >: {{ correctCount }} / {{ totalQuestions }} {{ $t('common.question', 2) }}
-                            </p>
-                            <p class="text-sm">
-                                <span class="font-semibold">{{ $t('common.points', 2) }}</span
-                                >: {{ pointCount }} / {{ totalPoints }} {{ $t('common.points', 2) }}
-                            </p>
-                        </UCard>
-                    </div>
 
                     <USeparator v-if="!viewOnly" class="mt-2 mb-4" />
                 </template>
