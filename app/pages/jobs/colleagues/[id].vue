@@ -81,17 +81,20 @@ useHead({
 });
 
 function updateColleageAbsence(value: { userId: number; absenceBegin?: Timestamp; absenceEnd?: Timestamp }): void {
-    if (colleague.value?.colleague === undefined) return;
+    const colleagueEntry = colleague.value?.colleague;
+    if (colleagueEntry === undefined) return;
 
-    if (colleague.value.colleague?.props === undefined) {
-        colleague.value.colleague.props = {
-            userId: colleague.value.colleague.userId,
-            job: colleague.value.colleague.job,
+    if (colleagueEntry.props === undefined) {
+        colleagueEntry.props = {
+            userId: colleagueEntry.userId,
+            job: colleagueEntry.job,
+            groups: [],
         };
     }
 
-    colleague.value.colleague.props.absenceBegin = value.absenceBegin;
-    colleague.value.colleague.props.absenceEnd = value.absenceEnd;
+    const colleagueProps = colleagueEntry.props;
+    colleagueProps.absenceBegin = value.absenceBegin;
+    colleagueProps.absenceEnd = value.absenceEnd;
 }
 
 // Handle the client update event

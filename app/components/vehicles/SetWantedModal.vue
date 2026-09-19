@@ -13,8 +13,8 @@ const emits = defineEmits<{
     (e: 'close', v: boolean): void;
 }>();
 
-const vehicleProps = defineModel<VehicleProps>('vehicleProps', {
-    required: true,
+const vehicleProps = defineModel<VehicleProps | undefined>('vehicleProps', {
+    default: undefined,
 });
 
 const notifications = useNotificationsStore();

@@ -742,13 +742,13 @@ const formRef = useTemplateRef('formRef');
                                         <TiptapEditor
                                             v-model="state.content"
                                             class="min-h-120 flex-1 overflow-y-hidden"
-                                            name="content"
+                                            content-type="html"
                                             :extensions="extensions"
+                                            name="content"
                                             :limit="125_000"
                                             show-penalty-calculator-button
                                             disable-penalty-calculator-block-editing
                                             enable-penalty-calculator-block-removal
-                                            content-type="html"
                                         >
                                             <template #toolbar="{ editor }">
                                                 <ToolbarButtons :editor="editor" />

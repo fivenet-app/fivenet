@@ -69,6 +69,7 @@ async function setAbsenceDate(values: Schema): Promise<void> {
     const userProps: ColleagueProps = {
         userId: props.userId,
         job: '',
+        groups: [],
         absenceBegin: values.absence?.start ? toTimestamp(values.absence.start) : {},
         absenceEnd: values.absence?.end ? toTimestamp(values.absence.end) : {},
     };

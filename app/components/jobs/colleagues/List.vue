@@ -125,6 +125,7 @@ function updateAbsenceDates(value: { userId: number; absenceBegin?: Timestamp; a
         colleague.props = {
             userId: colleague.userId,
             job: colleague.job,
+            groups: [],
             absenceBegin: value.absenceBegin,
             absenceEnd: value.absenceEnd,
         };

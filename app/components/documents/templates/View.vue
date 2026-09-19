@@ -268,8 +268,8 @@ const templatePreviewModal = overlay.create(PreviewModal, { props: { templateId:
                                         class="mt-2 min-h-64"
                                         content-type="html"
                                         disabled
-                                        hide-toolbar
                                         :extensions="[TemplateVar, TemplateBlock, TemplateBlockEnd]"
+                                        hide-toolbar
                                     />
                                 </template>
                             </UCollapsible>

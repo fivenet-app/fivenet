@@ -82,6 +82,7 @@ async function setUserJobProp(userId: number, values: Schema): Promise<SetCollea
     const jobsUserProps: ColleagueProps = {
         userId: userId,
         job: '',
+        groups: [],
         labels: {
             list: values.labels,
         },
