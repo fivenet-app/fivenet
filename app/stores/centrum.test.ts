@@ -310,6 +310,145 @@ describe('useCentrumStore', () => {
         expect(store.dispatches.get(21)?.status?.status).toBe(StatusDispatch.NEW);
     });
 
+    it.each([StatusDispatch.EN_ROUTE, StatusDispatch.ON_SCENE, StatusDispatch.NEED_ASSISTANCE])(
+        'does not regress operational status %s for unit acceptance or decline events',
+        (operationalStatus) => {
+            const store = useCentrumStore();
+            store.addOrUpdateDispatch(
+                dispatch({
+                    id: 21,
+                    status: {
+                        id: 10,
+                        dispatchId: 21,
+                        status: operationalStatus,
+                    },
+                    units: [
+                        { dispatchId: 21, unitId: 7 } as DispatchAssignment,
+                        { dispatchId: 21, unitId: 8 } as DispatchAssignment,
+                    ],
+                }),
+            );
+
+            store.updateDispatchStatus({
+                id: 11,
+                dispatchId: 21,
+                unitId: 8,
+                status: StatusDispatch.UNIT_ACCEPTED,
+            } as DispatchStatus);
+            expect(store.dispatches.get(21)?.status?.status).toBe(operationalStatus);
+
+            store.updateDispatchStatus({
+                id: 12,
+                dispatchId: 21,
+                unitId: 8,
+                status: StatusDispatch.UNIT_DECLINED,
+            } as DispatchStatus);
+            expect(store.dispatches.get(21)?.status?.status).toBe(operationalStatus);
+        },
+    );
+
+    it('keeps additive assignment projections stable regardless of event order', () => {
+        const store = useCentrumStore();
+        store.addOrUpdateDispatch(
+            dispatch({
+                id: 21,
+                status: { id: 10, dispatchId: 21, status: StatusDispatch.EN_ROUTE },
+                units: [{ dispatchId: 21, unitId: 7 } as DispatchAssignment],
+            }),
+        );
+
+        store.addOrUpdateDispatch(
+            dispatch({
+                id: 21,
+                status: { id: 11, dispatchId: 21, status: StatusDispatch.UNIT_ACCEPTED },
+                units: [
+                    { dispatchId: 21, unitId: 7 } as DispatchAssignment,
+                    { dispatchId: 21, unitId: 8 } as DispatchAssignment,
+                ],
+            }),
+        );
+        expect(store.dispatches.get(21)?.status?.status).toBe(StatusDispatch.EN_ROUTE);
+        expect(store.dispatches.get(21)?.units.map((assignment) => assignment.unitId)).toEqual([7, 8]);
+
+        store.updateDispatchStatus({
+            id: 12,
+            dispatchId: 21,
+            unitId: 8,
+            status: StatusDispatch.UNIT_ACCEPTED,
+        } as DispatchStatus);
+        expect(store.dispatches.get(21)?.status?.status).toBe(StatusDispatch.EN_ROUTE);
+        expect(store.dispatches.get(21)?.units.map((assignment) => assignment.unitId)).toEqual([7, 8]);
+    });
+
+    it('does not change own dispatch lists for another unit acceptance or decline', () => {
+        const store = useCentrumStore();
+        store.ownUnitId = 7;
+        store.addOrUpdateDispatch(dispatch({ id: 21, units: [{ dispatchId: 21, unitId: 7 } as DispatchAssignment] }));
+
+        store.updateDispatchStatus({
+            id: 11,
+            dispatchId: 21,
+            unitId: 8,
+            status: StatusDispatch.UNIT_ACCEPTED,
+        } as DispatchStatus);
+        store.updateDispatchStatus({
+            id: 12,
+            dispatchId: 21,
+            unitId: 8,
+            status: StatusDispatch.UNIT_DECLINED,
+        } as DispatchStatus);
+
+        expect(store.ownDispatches).toEqual([21]);
+        expect(store.pendingDispatches).toEqual([]);
+    });
+
+    it('rebuilds own dispatches from all accepted units after an additive update', () => {
+        const store = useCentrumStore();
+        store.ownUnitId = 7;
+        store.dispatches = new Map([
+            [
+                21,
+                dispatch({
+                    id: 21,
+                    units: [
+                        { dispatchId: 21, unitId: 7 } as DispatchAssignment,
+                        { dispatchId: 21, unitId: 8 } as DispatchAssignment,
+                    ],
+                }),
+            ],
+        ]);
+
+        store.rebuildOwnDispatches();
+
+        expect(store.ownDispatches).toEqual([21]);
+        expect(store.pendingDispatches).toEqual([]);
+    });
+
+    it('applies final-unit removal and the resulting declined projection', () => {
+        const store = useCentrumStore();
+        store.addOrUpdateDispatch(
+            dispatch({
+                id: 21,
+                status: { id: 10, dispatchId: 21, status: StatusDispatch.EN_ROUTE },
+                units: [{ dispatchId: 21, unitId: 7 } as DispatchAssignment],
+            }),
+        );
+
+        store.updateDispatchStatus({
+            id: 11,
+            dispatchId: 21,
+            unitId: 7,
+            status: StatusDispatch.UNIT_UNASSIGNED,
+        } as DispatchStatus);
+        expect(store.dispatches.get(21)?.units).toEqual([]);
+        expect(store.dispatches.get(21)?.status?.status).toBe(StatusDispatch.EN_ROUTE);
+
+        store.addOrUpdateDispatch(
+            dispatch({ id: 21, status: { id: 12, dispatchId: 21, status: StatusDispatch.UNIT_DECLINED }, units: [] }),
+        );
+        expect(store.dispatches.get(21)?.status?.status).toBe(StatusDispatch.UNIT_DECLINED);
+    });
+
     it('removes only the unassigned unit from a dispatch', () => {
         const store = useCentrumStore();
         store.addOrUpdateDispatch(

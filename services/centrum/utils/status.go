@@ -17,6 +17,15 @@ func IsStatusDispatchUnassigned(in centrumdispatches.StatusDispatch) bool {
 		in == centrumdispatches.StatusDispatch_STATUS_DISPATCH_UNASSIGNED
 }
 
+// IsStatusDispatchOperational reports statuses that represent active work on
+// a dispatch. Unit assignment response events must not regress these statuses
+// when another unit joins or leaves an already active dispatch.
+func IsStatusDispatchOperational(in centrumdispatches.StatusDispatch) bool {
+	return in == centrumdispatches.StatusDispatch_STATUS_DISPATCH_EN_ROUTE ||
+		in == centrumdispatches.StatusDispatch_STATUS_DISPATCH_ON_SCENE ||
+		in == centrumdispatches.StatusDispatch_STATUS_DISPATCH_NEED_ASSISTANCE
+}
+
 func IsDispatchUnassigned(in *centrumdispatches.Dispatch) bool {
 	if in == nil {
 		return false

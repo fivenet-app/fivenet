@@ -888,6 +888,14 @@ func (s *DispatchDB) TakeDispatch(
 					return errswrap.NewError(err, errorscentrum.ErrFailedQuery)
 				}
 			}
+			if rows, err := result.RowsAffected(); err != nil {
+				return errswrap.NewError(err, errorscentrum.ErrFailedQuery)
+			} else if rows == 0 {
+				// Declining is not additive: a unit may only decline its own
+				// pending/accepted assignment and must not emit a status event
+				// for a dispatch it was never assigned to.
+				return errorscentrum.ErrNotPartOfDispatch
+			}
 		}
 
 		rowsAffected := int64(-1)
@@ -936,6 +944,7 @@ func (s *DispatchDB) TakeDispatch(
 				}
 
 				var status centrumdispatches.StatusDispatch
+				preserveOperationalStatus := false
 
 				// Dispatch accepted
 				if resp == centrumdispatches.TakeDispatchResp_TAKE_DISPATCH_RESP_ACCEPTED {
@@ -964,6 +973,7 @@ func (s *DispatchDB) TakeDispatch(
 							CreatedAt:  timestamp.Now(),
 						})
 					}
+					preserveOperationalStatus = centrumutils.IsStatusDispatchOperational(dsp.GetStatus().GetStatus())
 
 					// Set unit to busy when unit accepts a dispatch.
 					if unit.GetStatus() == nil ||
@@ -997,6 +1007,8 @@ func (s *DispatchDB) TakeDispatch(
 							return in.GetUnitId() == unit.GetId()
 						},
 					)
+					preserveOperationalStatus = len(dsp.GetUnits()) > 0 &&
+						centrumutils.IsStatusDispatchOperational(dsp.GetStatus().GetStatus())
 				}
 
 				persistedStatus, err := s.AddDispatchStatus(
@@ -1017,7 +1029,9 @@ func (s *DispatchDB) TakeDispatch(
 				if err != nil {
 					return nil, false, err
 				}
-				dsp.SetStatus(persistedStatus)
+				if !preserveOperationalStatus {
+					dsp.SetStatus(persistedStatus)
+				}
 				statusToPublish = persistedStatus
 				publishJobs = slices.Clone(dsp.GetJobs().GetJobStrings())
 

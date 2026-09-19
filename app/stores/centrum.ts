@@ -157,6 +157,11 @@ export const useCentrumStore = defineStore(
             return status === StatusDispatch.UNIT_ASSIGNED || status === StatusDispatch.UNIT_UNASSIGNED;
         };
 
+        const isOperationalDispatchStatus = (status?: StatusDispatch): boolean =>
+            status === StatusDispatch.EN_ROUTE ||
+            status === StatusDispatch.ON_SCENE ||
+            status === StatusDispatch.NEED_ASSISTANCE;
+
         const normalizeUnit = (unit: Unit): Unit => {
             if (!unit.access) {
                 unit.access = {
@@ -475,6 +480,17 @@ export const useCentrumStore = defineStore(
                         disp.units.splice(idx, 1);
                     }
                 }
+                return true;
+            }
+
+            // Acceptance/decline events still drive per-unit assignment
+            // handling below, but must not regress the aggregate display while
+            // another unit has already moved the dispatch into active work.
+            if (
+                (status.status === StatusDispatch.UNIT_ACCEPTED || status.status === StatusDispatch.UNIT_DECLINED) &&
+                disp.units.length > 0 &&
+                isOperationalDispatchStatus(disp.status?.status)
+            ) {
                 return true;
             }
 

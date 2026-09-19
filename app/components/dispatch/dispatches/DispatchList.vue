@@ -41,7 +41,15 @@ const overlay = useOverlay();
 const { gotoCoords } = useLivemapStore();
 
 const centrumStore = useCentrumStore();
-const { getSortedDispatches, settings, abort, stopping } = storeToRefs(centrumStore);
+const { canDo, checkIfUnitAssignedToDispatch, selfAssign } = centrumStore;
+const { getSortedDispatches, settings, abort, stopping, ownUnitId } = storeToRefs(centrumStore);
+
+const canSelfAssign = (dispatch: Dispatch): boolean =>
+    !props.hideActions &&
+    ownUnitId.value !== undefined &&
+    canDo('TakeDispatch', dispatch) &&
+    checkDispatchAccess(dispatch.jobs, CentrumAccessLevel.PARTICIPATE) &&
+    !checkIfUnitAssignedToDispatch(dispatch, ownUnitId.value);
 
 const settingsStore = useSettingsStore();
 const { centrum } = storeToRefs(settingsStore);
@@ -94,6 +102,21 @@ const columns = [
                                     dispatchId: row.original.id,
                                 });
                             },
+                        }),
+                    ],
+                ),
+                h(
+                    UTooltip,
+                    {
+                        text: t('common.self_assign'),
+                        vIf: canSelfAssign(row.original),
+                    },
+                    [
+                        h(UButton, {
+                            variant: 'link',
+                            icon: 'i-mdi-plus',
+                            ui: { base: 'px-0.5 py-1' },
+                            onClick: () => void selfAssign(row.original.id),
                         }),
                     ],
                 ),
@@ -324,6 +347,15 @@ const dispatchDetailsSlideover = overlay.create(DispatchDetailsByIDSlideover);
                                                             });
                                                         }
                                                     "
+                                                />
+                                            </UTooltip>
+
+                                            <UTooltip v-if="canSelfAssign(dispatch)" :text="$t('common.self_assign')">
+                                                <UButton
+                                                    variant="link"
+                                                    icon="i-mdi-plus"
+                                                    :ui="{ base: 'px-0.5 py-1' }"
+                                                    @click="() => void selfAssign(dispatch.id)"
                                                 />
                                             </UTooltip>
 
