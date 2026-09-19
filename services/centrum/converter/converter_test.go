@@ -62,6 +62,7 @@ func TestConverterGKSPhoneQueryScansIntoDestination(t *testing.T) {
 				db:               db,
 				dispatchCreateFn: dispatchDB.Create,
 				convertJobs:      []string{"police"},
+				metrics:          getConverterMetrics(),
 			}
 
 			_, err = c.convertGKSPhoneJobMsgToDispatchWithCursor(t.Context(), 0)
@@ -111,6 +112,7 @@ func TestConverterLBPhoneQueryScansIntoDestination(t *testing.T) {
 				db:               db,
 				dispatchCreateFn: dispatchDB.Create,
 				convertJobs:      []string{"police"},
+				metrics:          getConverterMetrics(),
 			}
 
 			_, err = c.convertLBPhoneJobMsgToDispatchWithCursor(t.Context(), 0)
