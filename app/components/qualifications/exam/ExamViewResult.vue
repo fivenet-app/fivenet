@@ -11,7 +11,7 @@ defineProps<{
 </script>
 
 <template>
-    <UContainer>
+    <div class="mx-auto w-full max-w-(--ui-container)">
         <div class="flex flex-col gap-4">
             <ExamViewQuestion
                 v-for="(question, idx) in responses?.responses"
@@ -28,5 +28,5 @@ defineProps<{
                 </template>
             </ExamViewQuestion>
         </div>
-    </UContainer>
+    </div>
 </template>

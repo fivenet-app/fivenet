@@ -119,7 +119,7 @@ const correctCount = computed(() => data.value?.grading?.responses.filter((a) =>
             <DataNoDataBlock v-else-if="!data.examUser" :type="$t('common.exam')" icon="i-mdi-sigma" />
 
             <template v-if="data?.responses">
-                <UCard v-if="data.examUser" class="sticky top-0 z-10 mb-4" :ui="{ body: 'p-3 sm:p-3' }">
+                <UCard v-if="data.examUser" class="sticky top-0 z-10 w-full" :ui="{ body: 'p-3 sm:p-3' }">
                     <div class="flex flex-wrap items-center justify-between gap-2">
                         <div class="flex flex-wrap gap-2">
                             <UBadge
@@ -215,7 +215,7 @@ const correctCount = computed(() => data.value?.grading?.responses.filter((a) =>
                         </template>
                     </ExamViewResult>
 
-                    <USeparator v-if="!viewOnly" class="mt-2 mb-4" />
+                    <USeparator v-if="!viewOnly" />
                 </template>
             </template>
         </template>

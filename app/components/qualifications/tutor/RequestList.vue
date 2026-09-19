@@ -141,12 +141,16 @@ async function listQualificationRequests(
     }
 }
 
-async function deleteQualificationRequest(qualificationId: number, userId: number): Promise<DeleteQualificationReqResponse> {
+async function deleteOrRestoreQualificationRequest(
+    qualificationId: number,
+    userId: number,
+    skipNotification: boolean,
+): Promise<DeleteQualificationReqResponse> {
     try {
         const call = qualificationsQualificationsClient.deleteQualificationReq({
-            qualificationId: qualificationId,
+            qualificationId,
             userId,
-            skipNotification: !notifyUser.value,
+            skipNotification,
         });
         const { response } = await call;
 
@@ -171,7 +175,7 @@ function getRowActions(request: QualificationRequest): DropdownMenuItem[][] {
                 confirmModal.open({
                     color: 'success',
                     icon: 'i-mdi-restore',
-                    confirm: async () => deleteQualificationRequest(request.qualificationId, request.userId),
+                    confirm: async () => deleteOrRestoreQualificationRequest(request.qualificationId, request.userId, true),
                 }),
         });
         return [actions];
@@ -220,6 +224,7 @@ function getRowActions(request: QualificationRequest): DropdownMenuItem[][] {
             props.qualification.creatorJob,
         )
     ) {
+        actions.push({ type: 'separator' as const });
         actions.push({
             label: t('common.delete'),
             icon: 'i-mdi-delete',
@@ -228,7 +233,8 @@ function getRowActions(request: QualificationRequest): DropdownMenuItem[][] {
                 confirmModal.open({
                     notifyUser: notifyUser.value,
                     onNotifyUserUpdate: (value) => (notifyUser.value = value),
-                    confirm: async () => deleteQualificationRequest(request.qualificationId, request.userId),
+                    confirm: async () =>
+                        deleteOrRestoreQualificationRequest(request.qualificationId, request.userId, !notifyUser.value),
                 }),
         });
     }

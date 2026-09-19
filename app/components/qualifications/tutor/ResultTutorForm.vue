@@ -171,7 +171,13 @@ async function closeModal(): Promise<void> {
         </template>
 
         <template #body>
-            <UForm ref="formRef" :schema="schema" :state="state" class="space-y-2" @submit="onSubmitThrottle">
+            <UForm
+                ref="formRef"
+                :schema="schema"
+                :state="state"
+                class="mx-auto w-full max-w-(--ui-container) space-y-4"
+                @submit="onSubmitThrottle"
+            >
                 <slot />
 
                 <template v-if="!viewOnly">

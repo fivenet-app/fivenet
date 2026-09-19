@@ -31,6 +31,13 @@ const yesNoValue = computed(() => {
     return modelValue.value.response.response.yesno.value;
 });
 
+// In the live exam, yesNoAnswered distinguishes an unanswered question from
+// an explicitly selected "No". Read-only result views do not have that local
+// tracker, so the persisted response itself is the source of truth there.
+const isYesNoAnswered = computed(() =>
+    yesNoAnswered === undefined ? modelValue.value?.response?.response.oneofKind === 'yesno' : yesNoAnswered,
+);
+
 function setYesNoValue(value: boolean): void {
     if (modelValue.value?.response?.response.oneofKind !== 'yesno') {
         return;
@@ -103,7 +110,7 @@ function enforceMultipleChoiceLimit(choices: string[]): void {
                 <UFieldGroup>
                     <UButton
                         class="w-20"
-                        :variant="yesNoAnswered && yesNoValue ? 'solid' : 'outline'"
+                        :variant="isYesNoAnswered && yesNoValue ? 'solid' : 'outline'"
                         color="success"
                         :label="$t('common.yes')"
                         block
@@ -112,7 +119,7 @@ function enforceMultipleChoiceLimit(choices: string[]): void {
                     />
                     <UButton
                         class="w-20"
-                        :variant="yesNoAnswered && yesNoValue === false ? 'solid' : 'outline'"
+                        :variant="isYesNoAnswered && yesNoValue === false ? 'solid' : 'outline'"
                         color="error"
                         :label="$t('common.no')"
                         block

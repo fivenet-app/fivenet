@@ -26,7 +26,8 @@ import (
 )
 
 const (
-	QualificationsPageSize = 10
+	PageSize         = 10
+	ActivityPageSize = 15
 
 	QualificationsLabelDefaultFormat = "%abbr%: %name%"
 )

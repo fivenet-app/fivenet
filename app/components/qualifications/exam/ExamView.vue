@@ -187,17 +187,6 @@ function openStartExamConfirmation(): void {
         confirm: startOrResumeExam,
     });
 }
-
-watch(data, async () => {
-    if (
-        !examExpired.value &&
-        data.value?.examUser?.endsAt !== undefined &&
-        data.value?.examUser?.endedAt === undefined &&
-        !isPast(toDate(data.value.examUser.endsAt))
-    ) {
-        await takeExam(false);
-    }
-});
 </script>
 
 <template>

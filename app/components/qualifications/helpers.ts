@@ -10,6 +10,7 @@ import type { User } from '~~/gen/ts/resources/users/user';
 export function qualificationActivityTypeColor(type: QualificationActivityType | undefined): string {
     switch (type) {
         case QualificationActivityType.CREATED:
+        case QualificationActivityType.RESTORED:
         case QualificationActivityType.REQUEST_CREATED:
         case QualificationActivityType.RESULT_CREATED:
         case QualificationActivityType.RESULT_RESTORED:

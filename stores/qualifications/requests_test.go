@@ -79,6 +79,26 @@ func TestStoreRestoreQualificationRequestScopesToAttempt(t *testing.T) {
 	require.NoError(t, mock.ExpectationsWereMet())
 }
 
+func TestStoreRestoreQualificationRequestWithoutAttemptID(t *testing.T) {
+	t.Parallel()
+
+	db, mock, err := sqlmock.New()
+	require.NoError(t, err)
+	t.Cleanup(func() { _ = db.Close() })
+
+	store := New(testParams(db))
+	mock.ExpectExec("(?s)UPDATE fivenet_qualifications_requests SET deleted_at = NULL, status = \\?.*WHERE .*qualification_id = \\?.*user_id = \\?.*\\(.*exam_attempt_id IS NULL.*OR.*exam_attempt_id = \\?.*\\).*LIMIT \\?;").
+		WithArgs(int32(resqualifications.RequestStatus_REQUEST_STATUS_DENIED), int64(42), int32(7), "", int64(1)).
+		WillReturnResult(sqlmock.NewResult(0, 1))
+
+	require.NoError(t, store.RestoreQualificationRequest(
+		t.Context(), db, 42, 7,
+		resqualifications.RequestStatus_REQUEST_STATUS_DENIED,
+		"",
+	))
+	require.NoError(t, mock.ExpectationsWereMet())
+}
+
 func TestStoreSetQualificationRequestExamAttemptIDIgnoresDeletedRequest(t *testing.T) {
 	t.Parallel()
 

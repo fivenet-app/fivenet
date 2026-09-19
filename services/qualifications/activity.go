@@ -89,7 +89,7 @@ func (s *Server) ListQualificationActivity(
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 	}
-	pagination, limit := req.GetPagination().GetResponseWithPageSize(count, QualificationsPageSize)
+	pagination, limit := req.GetPagination().GetResponseWithPageSize(count, ActivityPageSize)
 	resp := &pbqualifications.ListQualificationActivityResponse{
 		Pagination: pagination,
 		Activity:   []*qualificationsactivity.QualificationActivity{},

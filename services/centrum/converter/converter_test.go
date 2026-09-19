@@ -24,6 +24,8 @@ func (m *dispatchDBMock) Create(
 }
 
 func TestConverterGKSPhoneQueryScansIntoDestination(t *testing.T) {
+	t.Parallel()
+
 	for _, tc := range []struct {
 		name          string
 		jobm          string
@@ -83,6 +85,8 @@ func TestConverterGKSPhoneQueryScansIntoDestination(t *testing.T) {
 }
 
 func TestConverterLBPhoneQueryScansIntoDestination(t *testing.T) {
+	t.Parallel()
+
 	for _, tc := range []struct {
 		name         string
 		job          string

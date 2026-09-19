@@ -334,6 +334,14 @@ func (s *Store) RestoreQualificationRequest(
 	attemptId string,
 ) error {
 	tQualiReq := table.FivenetQualificationsRequests
+	attemptCondition := tQualiReq.ExamAttemptID.EQ(mysql.String(attemptId))
+	if attemptId == "" {
+		attemptCondition = mysql.OR(
+			tQualiReq.ExamAttemptID.IS_NULL(),
+			tQualiReq.ExamAttemptID.EQ(mysql.String("")),
+		)
+	}
+
 	stmt := tQualiReq.
 		UPDATE(
 			tQualiReq.DeletedAt,
@@ -346,7 +354,8 @@ func (s *Store) RestoreQualificationRequest(
 		WHERE(mysql.AND(
 			tQualiReq.QualificationID.EQ(mysql.Int64(qualificationId)),
 			tQualiReq.UserID.EQ(mysql.Int32(userId)),
-			tQualiReq.ExamAttemptID.EQ(mysql.String(attemptId)),
+			tQualiReq.DeletedAt.IS_NOT_NULL(),
+			attemptCondition,
 		)).
 		LIMIT(1)
 
