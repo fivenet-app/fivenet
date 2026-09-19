@@ -35,9 +35,8 @@ func (c *Config) registerSubscriptions(ctxCancel context.Context) error {
 
 func (c *Config) handleMessageFunc(ctx context.Context) nats.MsgHandler {
 	return func(msg *nats.Msg) {
-		if err := msg.Ack(); err != nil {
-			c.logger.Error("failed to ack message", zap.Error(err))
-		}
+		// This is a Core NATS subscription, not a JetStream consumer.
+		// Core NATS messages do not require acknowledgements.
 
 		split := strings.Split(msg.Subject, ".")
 
