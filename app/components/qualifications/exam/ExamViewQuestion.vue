@@ -3,7 +3,7 @@ import GenericImg from '~/components/partials/elements/GenericImg.vue';
 import type { ExamResponse } from '~~/gen/ts/resources/qualifications/exam/exam';
 import ExamViewQuestionHeader from './ExamViewQuestionHeader.vue';
 
-withDefaults(
+const props = withDefaults(
     defineProps<{
         disabled?: boolean;
         yesNoAnswered?: boolean;
@@ -35,7 +35,7 @@ const yesNoValue = computed(() => {
 // an explicitly selected "No". Read-only result views do not have that local
 // tracker, so the persisted response itself is the source of truth there.
 const isYesNoAnswered = computed(() =>
-    yesNoAnswered === undefined ? modelValue.value?.response?.response.oneofKind === 'yesno' : yesNoAnswered,
+    props.yesNoAnswered === undefined ? modelValue.value?.response?.response.oneofKind === 'yesno' : props.yesNoAnswered,
 );
 
 function setYesNoValue(value: boolean): void {
