@@ -748,9 +748,10 @@ func (s *DispatchDB) acceptDispatchAssignment(
 		return assignmentRow.ExpiresAt, nil
 	}
 
-	// This lookup is scoped to the dispatch and unit. ErrNoRows therefore
-	// means this unit has no persisted assignment, which is the valid
-	// self-take case for an unassigned dispatch.
+	// This lookup is scoped to the dispatch and unit. ErrNoRows means that this
+	// unit has not been added to the dispatch yet. In self-take mode, accepting
+	// the dispatch is additive: the unit may join an already assigned dispatch
+	// without removing its existing units.
 	expiresAt, assignmentErr := loadAssignment()
 	switch {
 	case assignmentErr == nil:
@@ -780,12 +781,10 @@ func (s *DispatchDB) acceptDispatchAssignment(
 		}
 
 	case errors.Is(assignmentErr, qrm.ErrNoRows):
-		// A missing row is valid only for self-taking a dispatch that is
-		// currently unassigned. NEW and UNIT_DECLINED both represent an
-		// available dispatch to self-assign.
-		if !allowSelfTake ||
-			(!centrumutils.IsStatusDispatchUnassigned(currentStatus) &&
-				currentStatus != centrumdispatches.StatusDispatch_STATUS_DISPATCH_UNIT_DECLINED) {
+		// Self-taking is additive. A unit may join a dispatch that is already
+		// assigned/accepted; only the explicit assignment API may remove or
+		// replace other units.
+		if !allowSelfTake {
 			return errorscentrum.ErrNotPartOfDispatch
 		}
 

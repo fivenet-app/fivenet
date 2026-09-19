@@ -7,6 +7,7 @@ import (
 	"time"
 
 	centrumdispatches "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/centrum/dispatches"
+	livemapmarkers "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/livemap/markers"
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/userinfo"
 	pbcentrum "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/centrum"
 	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/auth"
@@ -62,10 +63,20 @@ func takeDispatchForTest(
 	dispatchID int64,
 	resp centrumdispatches.TakeDispatchResp,
 ) error {
+	return takeDispatchForUserForTest(t, srv, 1, dispatchID, resp)
+}
+
+func takeDispatchForUserForTest(
+	t *testing.T,
+	srv *Server,
+	userID int32,
+	dispatchID int64,
+	resp centrumdispatches.TakeDispatchResp,
+) error {
 	t.Helper()
 	ctx := auth.ContextWithUserInfo(
 		t.Context(),
-		&userinfo.UserInfo{UserId: 1, Job: "ambulance", JobGrade: 1},
+		&userinfo.UserInfo{UserId: userID, Job: "ambulance", JobGrade: 1},
 	)
 	_, err := srv.TakeDispatch(ctx, &pbcentrum.TakeDispatchRequest{
 		DispatchIds: []int64{dispatchID},
@@ -138,7 +149,7 @@ func TestTakeDispatchAcceptsUnassignedDispatch(t *testing.T) {
 	require.Equal(t, unitID, dsp.GetUnits()[0].GetUnitId())
 }
 
-func TestTakeDispatchRejectsMissingAssignmentOnAssignedDispatch(t *testing.T) {
+func TestTakeDispatchAddsUnitToAssignedDispatch(t *testing.T) {
 	t.Parallel()
 
 	srv, db, unitID, dispatchID := newDispatchAssignmentFixture(t)
@@ -146,26 +157,48 @@ func TestTakeDispatchRejectsMissingAssignmentOnAssignedDispatch(t *testing.T) {
 		t.Context(),
 		&userinfo.UserInfo{UserId: 1, Job: "ambulance", JobGrade: 1},
 	)
+	trackerStub := srv.tracker.(*centrumJoinUnitTestTracker)
+	trackerStub.markers[2] = &livemapmarkers.UserMarker{UserId: 2, Job: "ambulance"}
+	upsertUserJobForTest(t, db, 2, "ambulance", 1)
+	secondUnit := createUnitForTest(t, srv, ctx, "Assignment-Test-Second")
+	secondCtx := auth.ContextWithUserInfo(
+		t.Context(),
+		&userinfo.UserInfo{UserId: 2, Job: "ambulance", JobGrade: 1},
+	)
+	require.NoError(t, srv.units.UpdateUnitAssignments(
+		secondCtx,
+		"ambulance",
+		new(int32(2)),
+		secondUnit.GetId(),
+		[]int32{2},
+		nil,
+	))
 
 	_, err := srv.AssignDispatch(
 		ctx,
 		&pbcentrum.AssignDispatchRequest{DispatchId: dispatchID, ToAdd: []int64{unitID}},
 	)
 	require.NoError(t, err)
-	_, err = db.Exec(
-		"DELETE FROM fivenet_centrum_dispatches_asgmts WHERE dispatch_id = ? AND unit_id = ?",
-		dispatchID,
-		unitID,
-	)
-	require.NoError(t, err)
-
-	err = takeDispatchForTest(
+	require.NoError(t, takeDispatchForTest(
 		t,
 		srv,
 		dispatchID,
 		centrumdispatches.TakeDispatchResp_TAKE_DISPATCH_RESP_ACCEPTED,
-	)
-	require.ErrorIs(t, err, errorscentrum.ErrNotPartOfDispatch)
+	))
+
+	require.NoError(t, takeDispatchForUserForTest(
+		t,
+		srv,
+		2,
+		dispatchID,
+		centrumdispatches.TakeDispatchResp_TAKE_DISPATCH_RESP_ACCEPTED,
+	))
+
+	dsp, err := srv.dispatches.Get(ctx, dispatchID)
+	require.NoError(t, err)
+	require.Len(t, dsp.GetUnits(), 2)
+	require.Equal(t, unitID, dsp.GetUnits()[0].GetUnitId())
+	require.Equal(t, secondUnit.GetId(), dsp.GetUnits()[1].GetUnitId())
 }
 
 func TestTakeDispatchConcurrentSelfTakeCreatesOneAssignment(t *testing.T) {
