@@ -1296,7 +1296,6 @@ github.com/felixge/fgprof v0.9.3/go.mod h1:RdbpDgzqYVh/T9fPELJyV7EYJuHB55UTEULNu
 github.com/firefart/nonamedreturns v1.0.6/go.mod h1:R8NisJnSIpvPWheCq0mNRXJok6D8h7fagJTF8EMEwCo=
 github.com/fivenet-app/fivenet/v2026 v2026.3.2/go.mod h1:ToRBJtWAFilzPWek5dvdPyzZ3f6/CLz/IAil8bwO2u8=
 github.com/fivenet-app/fivenet/v2026 v2026.6.2/go.mod h1:BKTi3/tiIfCFW/i/jvO7J4k2T3EJV5KRoEUXO51/NTk=
-github.com/fivenet-app/fivenet/v2026 v2026.9.2/go.mod h1:ZbONZwCVY/BdYaCkANSQrwlR+YlATdedMi624lDBvaU=
 github.com/flosch/pongo2/v4 v4.0.2/go.mod h1:B5ObFANs/36VwxxlgKpdchIJHMvHB562PW+BWPhwZD8=
 github.com/flynn/go-shlex v0.0.0-20150515145356-3f9db97f8568/go.mod h1:xEzjJPgXI435gkrCt3MPfRiAkVrwSbHsst4LCFVfpJc=
 github.com/form3tech-oss/jwt-go v3.2.5+incompatible/go.mod h1:pbq4aXjuKjdthFRnoDwaVPLA+WlJuPGy+QneDUgJi2k=
@@ -1694,6 +1693,8 @@ github.com/nats-io/nats-server/v2 v2.12.7 h1:prQ9cPiWHcnwfT81Wi5lU9LL8TLY+7pxDru
 github.com/nats-io/nats-server/v2 v2.12.7/go.mod h1:dOnmkprKMluTmTF7/QHZioxlau3sKHUM/LBPy9AiBPw=
 github.com/nats-io/nats-server/v2 v2.14.2 h1:Q7dRhCY03Y00rETFW3KV+KGaCIajlDfWgWUVgbMxyuk=
 github.com/nats-io/nats-server/v2 v2.14.2/go.mod h1:lWpb1bSpRELZfRdlMkdz8E7lbXKKyNe8RIn0vvepIHs=
+github.com/nats-io/nats.go v1.54.0 h1:vsXoOxjHp/GmPUN+EcI7uOf/uB+iAP+kEsAFNQN0yzA=
+github.com/nats-io/nats.go v1.54.0/go.mod h1:y+DZoD1oBOYfZTU681eTUiUjI0vbqYGixNVFHcjHJ0k=
 github.com/neelance/astrewrite v0.0.0-20160511093645-99348263ae86/go.mod h1:kHJEU3ofeGjhHklVoIGuVj85JJwZ6kWPaJwCIxgnFmo=
 github.com/neelance/sourcemap v0.0.0-20151028013722-8c68805598ab/go.mod h1:Qr6/a/Q4r9LP1IltGz7tA7iOK1WonHEYhu1HRBA7ZiM=
 github.com/neo4j/neo4j-go-driver v1.8.1-0.20200803113522-b626aa943eba/go.mod h1:ncO5VaFWh0Nrt+4KT4mOZboaczBZcLuHrG+/sUeP8gI=
