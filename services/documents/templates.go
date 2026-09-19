@@ -282,7 +282,7 @@ func (s *Server) GetTemplate(
 		return nil, errorsdocuments.ErrTemplateNoPerms
 	}
 
-	if req.Render == nil || !req.GetRender() {
+	if !req.GetRender() {
 		templateAccess, err := s.templateAccess.ListTargetAccess(
 			ctx,
 			s.db,
@@ -296,8 +296,14 @@ func (s *Server) GetTemplate(
 		if err := s.sanitizeTemplateAccess(resp.GetTemplate(), true, true); err != nil {
 			return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 		}
-	} else if req.Render != nil && req.GetRender() && req.GetSelection() != nil {
-		data, err := s.resolveTemplateData(ctx, resp.GetTemplate(), req.GetSelection(), userInfo)
+	} else if req.GetRender() && req.GetSelection() != nil {
+		data, err := s.resolveTemplateData(
+			ctx,
+			resp.GetTemplate(),
+			req.GetSelection(),
+			userInfo,
+			req.GetAllowMissing(),
+		)
 		if err != nil {
 			return nil, err
 		}
@@ -336,6 +342,7 @@ func (s *Server) resolveTemplateData(
 	tmpl *documentstemplates.Template,
 	selection *documentstemplates.TemplateSelection,
 	userInfo *userinfo.UserInfo,
+	allowMissing bool,
 ) (*resolvedTemplateData, error) {
 	activeChar, err := s.colleagueHydrator.GetBasicByUserID(
 		ctx,
@@ -363,6 +370,9 @@ func (s *Server) resolveTemplateData(
 		ActiveChar: activeChar,
 	}
 	if selection == nil {
+		if allowMissing {
+			return data, nil
+		}
 		return data, validateTemplateRequirements(tmpl, data)
 	}
 
@@ -464,6 +474,9 @@ func (s *Server) resolveTemplateData(
 		}
 	}
 
+	if allowMissing {
+		return data, nil
+	}
 	return data, validateTemplateRequirements(tmpl, data)
 }
 

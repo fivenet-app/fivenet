@@ -52,6 +52,7 @@ async function getTemplate(signal: AbortSignal): Promise<Template> {
                 templateId: props.templateId,
                 selection: selection,
                 render: true,
+                allowMissing: true,
             },
             { abort: signal },
         );

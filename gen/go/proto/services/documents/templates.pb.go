@@ -130,6 +130,7 @@ type GetTemplateRequest struct {
 	TemplateId    int64                        `protobuf:"varint,1,opt,name=template_id,json=templateId,proto3" json:"template_id,omitempty"`
 	Render        *bool                        `protobuf:"varint,3,opt,name=render,proto3,oneof" json:"render,omitempty"`
 	Selection     *templates.TemplateSelection `protobuf:"bytes,4,opt,name=selection,proto3,oneof" json:"selection,omitempty"`
+	AllowMissing  *bool                        `protobuf:"varint,5,opt,name=allow_missing,json=allowMissing,proto3,oneof" json:"allow_missing,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -180,6 +181,13 @@ func (x *GetTemplateRequest) GetSelection() *templates.TemplateSelection {
 	return nil
 }
 
+func (x *GetTemplateRequest) GetAllowMissing() bool {
+	if x != nil && x.AllowMissing != nil {
+		return *x.AllowMissing
+	}
+	return false
+}
+
 func (x *GetTemplateRequest) SetTemplateId(v int64) {
 	x.TemplateId = v
 }
@@ -190,6 +198,10 @@ func (x *GetTemplateRequest) SetRender(v bool) {
 
 func (x *GetTemplateRequest) SetSelection(v *templates.TemplateSelection) {
 	x.Selection = v
+}
+
+func (x *GetTemplateRequest) SetAllowMissing(v bool) {
+	x.AllowMissing = &v
 }
 
 func (x *GetTemplateRequest) HasRender() bool {
@@ -206,6 +218,13 @@ func (x *GetTemplateRequest) HasSelection() bool {
 	return x.Selection != nil
 }
 
+func (x *GetTemplateRequest) HasAllowMissing() bool {
+	if x == nil {
+		return false
+	}
+	return x.AllowMissing != nil
+}
+
 func (x *GetTemplateRequest) ClearRender() {
 	x.Render = nil
 }
@@ -214,12 +233,17 @@ func (x *GetTemplateRequest) ClearSelection() {
 	x.Selection = nil
 }
 
+func (x *GetTemplateRequest) ClearAllowMissing() {
+	x.AllowMissing = nil
+}
+
 type GetTemplateRequest_builder struct {
 	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
 
-	TemplateId int64
-	Render     *bool
-	Selection  *templates.TemplateSelection
+	TemplateId   int64
+	Render       *bool
+	Selection    *templates.TemplateSelection
+	AllowMissing *bool
 }
 
 func (b0 GetTemplateRequest_builder) Build() *GetTemplateRequest {
@@ -229,6 +253,7 @@ func (b0 GetTemplateRequest_builder) Build() *GetTemplateRequest {
 	x.TemplateId = b.TemplateId
 	x.Render = b.Render
 	x.Selection = b.Selection
+	x.AllowMissing = b.AllowMissing
 	return m0
 }
 
@@ -832,15 +857,17 @@ const file_services_documents_templates_proto_rawDesc = "" +
 	"\"services/documents/templates.proto\x12\x12services.documents\x1a\x1fcodegen/itemslen/itemslen.proto\x1a\x19codegen/perms/perms.proto\x1a-resources/documents/templates/templates.proto\"\x16\n" +
 	"\x14ListTemplatesRequest\"i\n" +
 	"\x15ListTemplatesResponse\x12P\n" +
-	"\ttemplates\x18\x01 \x03(\v2,.resources.documents.templates.TemplateShortB\x04\xc8\xf3\x18\x01R\ttemplates\"\xc6\x01\n" +
+	"\ttemplates\x18\x01 \x03(\v2,.resources.documents.templates.TemplateShortB\x04\xc8\xf3\x18\x01R\ttemplates\"\x82\x02\n" +
 	"\x12GetTemplateRequest\x12\x1f\n" +
 	"\vtemplate_id\x18\x01 \x01(\x03R\n" +
 	"templateId\x12\x1b\n" +
 	"\x06render\x18\x03 \x01(\bH\x00R\x06render\x88\x01\x01\x12S\n" +
-	"\tselection\x18\x04 \x01(\v20.resources.documents.templates.TemplateSelectionH\x01R\tselection\x88\x01\x01B\t\n" +
+	"\tselection\x18\x04 \x01(\v20.resources.documents.templates.TemplateSelectionH\x01R\tselection\x88\x01\x01\x12(\n" +
+	"\rallow_missing\x18\x05 \x01(\bH\x02R\fallowMissing\x88\x01\x01B\t\n" +
 	"\a_renderB\f\n" +
 	"\n" +
-	"_selectionJ\x04\b\x02\x10\x03\"v\n" +
+	"_selectionB\x10\n" +
+	"\x0e_allow_missingJ\x04\b\x02\x10\x03\"v\n" +
 	"\x13GetTemplateResponse\x12C\n" +
 	"\btemplate\x18\x01 \x01(\v2'.resources.documents.templates.TemplateR\btemplate\x12\x1a\n" +
 	"\brendered\x18\x02 \x01(\bR\brendered\"\\\n" +

@@ -20,6 +20,7 @@ message GetTemplateRequest {
   optional bool render = 3;
   reserved 2;
   optional resources.documents.templates.TemplateSelection selection = 4;
+  optional bool allow_missing = 5;
 }
 
 message GetTemplateResponse {

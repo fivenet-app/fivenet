@@ -334,7 +334,13 @@ func (s *Server) CreateDocument(
 			return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 		}
 
-		resolvedData, err = s.resolveTemplateData(ctx, tmpl, req.GetTemplateSelection(), userInfo)
+		resolvedData, err = s.resolveTemplateData(
+			ctx,
+			tmpl,
+			req.GetTemplateSelection(),
+			userInfo,
+			false,
+		)
 		if err != nil {
 			return nil, errswrap.NewError(err, errorsdocuments.ErrTemplateRenderFailed)
 		}

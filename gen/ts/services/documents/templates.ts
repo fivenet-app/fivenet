@@ -45,6 +45,10 @@ export interface GetTemplateRequest {
      * @generated from protobuf field: optional resources.documents.templates.TemplateSelection selection = 4
      */
     selection?: TemplateSelection;
+    /**
+     * @generated from protobuf field: optional bool allow_missing = 5
+     */
+    allowMissing?: boolean;
 }
 /**
  * @generated from protobuf message services.documents.GetTemplateResponse
@@ -222,7 +226,8 @@ class GetTemplateRequest$Type extends MessageType<GetTemplateRequest> {
         super("services.documents.GetTemplateRequest", [
             { no: 1, name: "template_id", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ },
             { no: 3, name: "render", kind: "scalar", opt: true, T: 8 /*ScalarType.BOOL*/ },
-            { no: 4, name: "selection", kind: "message", T: () => TemplateSelection }
+            { no: 4, name: "selection", kind: "message", T: () => TemplateSelection },
+            { no: 5, name: "allow_missing", kind: "scalar", opt: true, T: 8 /*ScalarType.BOOL*/ }
         ]);
     }
     create(value?: PartialMessage<GetTemplateRequest>): GetTemplateRequest {
@@ -246,6 +251,9 @@ class GetTemplateRequest$Type extends MessageType<GetTemplateRequest> {
                 case /* optional resources.documents.templates.TemplateSelection selection */ 4:
                     message.selection = TemplateSelection.internalBinaryRead(reader, reader.uint32(), options, message.selection);
                     break;
+                case /* optional bool allow_missing */ 5:
+                    message.allowMissing = reader.bool();
+                    break;
                 default:
                     let u = options.readUnknownField;
                     if (u === "throw")
@@ -267,6 +275,9 @@ class GetTemplateRequest$Type extends MessageType<GetTemplateRequest> {
         /* optional resources.documents.templates.TemplateSelection selection = 4; */
         if (message.selection)
             TemplateSelection.internalBinaryWrite(message.selection, writer.tag(4, WireType.LengthDelimited).fork(), options).join();
+        /* optional bool allow_missing = 5; */
+        if (message.allowMissing !== undefined)
+            writer.tag(5, WireType.Varint).bool(message.allowMissing);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);

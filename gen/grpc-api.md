@@ -11093,6 +11093,7 @@ Upsert = insert missing PENDING tasks/slots; will NOT delete existing tasks. Ide
 | `template_id` | [int64](#int64) |  |  |
 | `render` | [bool](#bool) | optional |  |
 | `selection` | [resources.documents.templates.TemplateSelection](#resourcesdocumentstemplatesTemplateSelection) | optional |  |
+| `allow_missing` | [bool](#bool) | optional |  |
 
 
 
