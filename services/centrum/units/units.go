@@ -16,6 +16,7 @@ import (
 	"github.com/fivenet-app/fivenet/v2026/pkg/access"
 	"github.com/fivenet-app/fivenet/v2026/pkg/config"
 	"github.com/fivenet-app/fivenet/v2026/pkg/coords/postals"
+	"github.com/fivenet-app/fivenet/v2026/pkg/dbutils"
 	"github.com/fivenet-app/fivenet/v2026/pkg/events"
 	"github.com/fivenet-app/fivenet/v2026/pkg/mstlystcdata"
 	"github.com/fivenet-app/fivenet/v2026/pkg/nats/store"
@@ -559,7 +560,7 @@ func (s *UnitDB) CreateUnit(
 			unit.Icon,
 			unit.Description,
 			unit.GetAttributes(),
-			unit.HomePostal,
+			dbutils.StringEmpty(unit.GetHomePostal()),
 		)
 
 	result, err := stmt.ExecContext(ctx, tx)
@@ -673,7 +674,7 @@ func (s *UnitDB) Update(
 			unit.GetIcon(),
 			unit.GetDescription(),
 			unit.GetAttributes(),
-			unit.GetHomePostal(),
+			dbutils.StringEmpty(unit.GetHomePostal()),
 		).
 		WHERE(mysql.AND(
 			tUnits.ID.EQ(mysql.Int64(unit.GetId())),
