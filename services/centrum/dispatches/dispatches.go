@@ -168,7 +168,7 @@ func New(p Params) *DispatchDB {
 			return err
 		}
 
-		if err := jobSt.Start(ctxCancel, false); err != nil {
+		if err := jobSt.Start(ctxCancel, true); err != nil {
 			return err
 		}
 		d.jobMapping = jobSt
@@ -516,7 +516,7 @@ func New(p Params) *DispatchDB {
 			return err
 		}
 
-		if err := st.Start(ctxCancel, false); err != nil {
+		if err := st.Start(ctxCancel, true); err != nil {
 			return err
 		}
 		d.store = st
@@ -534,6 +534,12 @@ func New(p Params) *DispatchDB {
 }
 
 func (s *DispatchDB) LoadFromDB(ctx context.Context, cond mysql.BoolExpression) (int, error) {
+	if cond == nil {
+		if err := s.removeOrphanedProjections(ctx); err != nil {
+			return 0, err
+		}
+	}
+
 	tDispatch := table.FivenetCentrumDispatches.AS("dispatch")
 	tDispatchStatus := table.FivenetCentrumDispatchesStatus.AS("dispatch_status")
 
@@ -722,6 +728,52 @@ func (s *DispatchDB) LoadFromDB(ctx context.Context, cond mysql.BoolExpression) 
 	}
 
 	return len(dsps), nil
+}
+
+func (s *DispatchDB) removeOrphanedProjections(ctx context.Context) error {
+	tDispatch := table.FivenetCentrumDispatches
+	var orphaned []*centrumdispatches.Dispatch
+
+	s.store.Range(func(_ string, dispatch *centrumdispatches.Dispatch) bool {
+		if dispatch != nil {
+			orphaned = append(orphaned, dispatch)
+		}
+		return true
+	})
+
+	for _, dispatch := range orphaned {
+		var existing struct {
+			ID int64 `alias:"id"`
+		}
+		stmt := tDispatch.
+			SELECT(tDispatch.ID).
+			WHERE(tDispatch.ID.EQ(mysql.Int64(dispatch.GetId())))
+
+		err := stmt.QueryContext(ctx, s.db, &existing)
+		if err == nil {
+			continue
+		}
+		if !errors.Is(err, qrm.ErrNoRows) {
+			return fmt.Errorf("failed to check dispatch projection %d: %w", dispatch.GetId(), err)
+		}
+
+		if err := s.store.Delete(ctx, centrumutils.IdKey(dispatch.GetId())); err != nil &&
+			!errors.Is(err, jetstream.ErrKeyNotFound) {
+			return fmt.Errorf("failed to remove orphaned dispatch projection %d: %w", dispatch.GetId(), err)
+		}
+
+		for _, job := range dispatch.GetJobs().GetJobStrings() {
+			if strings.TrimSpace(job) == "" {
+				continue
+			}
+			if err := s.jobMapping.Delete(ctx, centrumutils.JobIdKey(job, dispatch.GetId())); err != nil &&
+				!errors.Is(err, jetstream.ErrKeyNotFound) {
+				return fmt.Errorf("failed to remove orphaned dispatch job mapping %d: %w", dispatch.GetId(), err)
+			}
+		}
+	}
+
+	return nil
 }
 
 func (s *DispatchDB) Create(

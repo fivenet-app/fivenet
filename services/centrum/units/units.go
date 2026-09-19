@@ -140,7 +140,7 @@ func New(p Params) *UnitDB {
 			return err
 		}
 
-		if err := jobSt.Start(ctxCancel, false); err != nil {
+		if err := jobSt.Start(ctxCancel, true); err != nil {
 			return err
 		}
 		d.jobMapping = jobSt
@@ -330,7 +330,7 @@ func New(p Params) *UnitDB {
 			return err
 		}
 
-		if err := st.Start(ctxCancel, false); err != nil {
+		if err := st.Start(ctxCancel, true); err != nil {
 			return err
 		}
 		d.store = st
@@ -352,6 +352,11 @@ func (s *UnitDB) LoadFromDB(ctx context.Context, id int64) error {
 	if err != nil {
 		return err
 	}
+	if id == 0 {
+		if err := s.removeOrphanedProjections(ctx, units); err != nil {
+			return err
+		}
+	}
 
 	if id > 0 && len(units) == 0 {
 		return s.syncMissingUnitMembership(ctx, id)
@@ -360,6 +365,44 @@ func (s *UnitDB) LoadFromDB(ctx context.Context, id int64) error {
 	for i := range units {
 		if err := s.syncLoadedUnitMembership(ctx, units[i]); err != nil {
 			return err
+		}
+	}
+
+	return nil
+}
+
+func (s *UnitDB) removeOrphanedProjections(
+	ctx context.Context,
+	units []*centrumunits.Unit,
+) error {
+	existing := make(map[int64]struct{}, len(units))
+	for _, unit := range units {
+		if unit != nil {
+			existing[unit.GetId()] = struct{}{}
+		}
+	}
+
+	var orphaned []*centrumunits.Unit
+	s.store.Range(func(_ string, unit *centrumunits.Unit) bool {
+		if unit != nil {
+			if _, ok := existing[unit.GetId()]; !ok {
+				orphaned = append(orphaned, unit)
+			}
+		}
+		return true
+	})
+
+	for _, unit := range orphaned {
+		if err := s.store.Delete(ctx, centrumutils.IdKey(unit.GetId())); err != nil &&
+			!errors.Is(err, jetstream.ErrKeyNotFound) {
+			return fmt.Errorf("failed to remove orphaned unit projection %d: %w", unit.GetId(), err)
+		}
+
+		if unit.GetJob() != "" {
+			if err := s.jobMapping.Delete(ctx, centrumutils.JobIdKey(unit.GetJob(), unit.GetId())); err != nil &&
+				!errors.Is(err, jetstream.ErrKeyNotFound) {
+				return fmt.Errorf("failed to remove orphaned unit job mapping %d: %w", unit.GetId(), err)
+			}
 		}
 	}
 
@@ -681,8 +724,14 @@ func (s *UnitDB) Update(
 		)).
 		LIMIT(1)
 
-	if _, err := stmt.ExecContext(ctx, tx); err != nil {
+	result, err := stmt.ExecContext(ctx, tx)
+	if err != nil {
 		return nil, err
+	}
+	if affected, err := result.RowsAffected(); err != nil {
+		return nil, err
+	} else if affected != 1 {
+		return nil, sql.ErrNoRows
 	}
 
 	highestGrade := userGrade

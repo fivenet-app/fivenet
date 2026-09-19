@@ -214,23 +214,22 @@ func NewServer(p Params) Result {
 			s.feedBroker.Start(ctxCancel)
 		})
 
-		s.wg.Go(func() {
-			err := s.loadData(ctxCancel)
-			if err == nil {
-				// Feed projections resolve their values through the local stores.
-				// Start them only after the initial store refresh has completed, so
-				// an early KV event cannot be dropped because its projection is not
-				// available locally yet.
-				s.startFeedHub(ctxCancel)
-			}
-			s.readyMu.Lock()
-			s.readyErr = err
-			close(s.ready)
-			s.readyMu.Unlock()
-			if err != nil {
-				s.logger.Error("failed to load initial centrum data", zap.Error(err))
-			}
-		})
+		// Initial loading is deliberately synchronous. The initial SQL load also
+		// reconciles stale KV projections, so housekeeper recovery and demo startup
+		// must not run against an unreconciled cache.
+		err := s.loadData(ctxStartup)
+		if err == nil {
+			// Feed projections resolve their values through the local stores.
+			s.startFeedHub(ctxCancel)
+		}
+		s.readyMu.Lock()
+		s.readyErr = err
+		close(s.ready)
+		s.readyMu.Unlock()
+		if err != nil {
+			s.logger.Error("failed to load initial centrum data", zap.Error(err))
+			return err
+		}
 
 		return nil
 	}))
