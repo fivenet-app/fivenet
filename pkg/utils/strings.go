@@ -6,6 +6,8 @@ import (
 	"unicode/utf8"
 )
 
+const ellipsis = "..."
+
 // StringFirstN returns the first n runes of a string, handling multi-byte characters safely.
 // Taken from "KAdot" here: https://stackoverflow.com/a/41604514
 func StringFirstN(s string, n int) string {
@@ -17,6 +19,14 @@ func StringFirstN(s string, n int) string {
 		i++
 	}
 	return s
+}
+
+// StringFirstNWithEllipsis returns the first n runes of a string, appending an ellipsis if the string is longer than n runes.
+func StringFirstNWithEllipsis(s string, n int) string {
+	if len([]rune(s)) <= n {
+		return s
+	}
+	return StringFirstN(s, n) + ellipsis
 }
 
 // StringFirstToLower lowercases the first rune of a string, if possible.

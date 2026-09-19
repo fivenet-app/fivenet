@@ -9,6 +9,26 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
+func TestStringFirstN(t *testing.T) {
+	t.Parallel()
+	tests := []struct {
+		input    string
+		n        int
+		expected string
+	}{
+		{"Hello, 世界", 5, "Hello"},
+		{"Hello, 世界", 7, "Hello, "},
+		{"Hello, 世界", 8, "Hello, 世"},
+		{"Hello, 世界", 9, "Hello, 世界"},
+		{"Hello, 世界", 10, "Hello, 世界"},
+	}
+
+	for _, test := range tests {
+		result := StringFirstN(test.input, test.n)
+		assert.Equal(t, test.expected, result)
+	}
+}
+
 var benchmarkInputs = []string{
 	"Prof. Dr. Max Mustermann",
 	"Dr. Sr. John Doe",
