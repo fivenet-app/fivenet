@@ -11,12 +11,13 @@ import (
 	"github.com/fivenet-app/fivenet/v2026/internal/tests/nats"
 	"github.com/fivenet-app/fivenet/v2026/pkg/nats/store"
 	"github.com/nats-io/nats.go/jetstream"
-	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"go.uber.org/zap"
 )
 
 func TestRemoveOrphanedProjections(t *testing.T) {
+	t.Parallel()
+
 	js := nats.NewServer(t, nats.ServerOptions{InProcess: true}).GetJS()
 	ctx := t.Context()
 
@@ -67,7 +68,7 @@ func TestRemoveOrphanedProjections(t *testing.T) {
 	require.NoError(t, mock.ExpectationsWereMet())
 
 	_, err = dispatchStore.Get("7")
-	assert.ErrorIs(t, err, jetstream.ErrKeyNotFound)
+	require.ErrorIs(t, err, jetstream.ErrKeyNotFound)
 	_, err = jobStore.Get("police.7")
-	assert.ErrorIs(t, err, jetstream.ErrKeyNotFound)
+	require.ErrorIs(t, err, jetstream.ErrKeyNotFound)
 }

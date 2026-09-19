@@ -759,16 +759,27 @@ func (s *DispatchDB) removeOrphanedProjections(ctx context.Context) error {
 
 		if err := s.store.Delete(ctx, centrumutils.IdKey(dispatch.GetId())); err != nil &&
 			!errors.Is(err, jetstream.ErrKeyNotFound) {
-			return fmt.Errorf("failed to remove orphaned dispatch projection %d: %w", dispatch.GetId(), err)
+			return fmt.Errorf(
+				"failed to remove orphaned dispatch projection %d: %w",
+				dispatch.GetId(),
+				err,
+			)
 		}
 
 		for _, job := range dispatch.GetJobs().GetJobStrings() {
 			if strings.TrimSpace(job) == "" {
 				continue
 			}
-			if err := s.jobMapping.Delete(ctx, centrumutils.JobIdKey(job, dispatch.GetId())); err != nil &&
+			if err := s.jobMapping.Delete(
+				ctx,
+				centrumutils.JobIdKey(job, dispatch.GetId()),
+			); err != nil &&
 				!errors.Is(err, jetstream.ErrKeyNotFound) {
-				return fmt.Errorf("failed to remove orphaned dispatch job mapping %d: %w", dispatch.GetId(), err)
+				return fmt.Errorf(
+					"failed to remove orphaned dispatch job mapping %d: %w",
+					dispatch.GetId(),
+					err,
+				)
 			}
 		}
 	}

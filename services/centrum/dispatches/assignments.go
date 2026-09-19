@@ -944,7 +944,7 @@ func (s *DispatchDB) TakeDispatch(
 				}
 
 				var status centrumdispatches.StatusDispatch
-				preserveOperationalStatus := false
+				var preserveOperationalStatus bool
 
 				// Dispatch accepted
 				if resp == centrumdispatches.TakeDispatchResp_TAKE_DISPATCH_RESP_ACCEPTED {
@@ -973,7 +973,9 @@ func (s *DispatchDB) TakeDispatch(
 							CreatedAt:  timestamp.Now(),
 						})
 					}
-					preserveOperationalStatus = centrumutils.IsStatusDispatchOperational(dsp.GetStatus().GetStatus())
+					preserveOperationalStatus = centrumutils.IsStatusDispatchOperational(
+						dsp.GetStatus().GetStatus(),
+					)
 
 					// Set unit to busy when unit accepts a dispatch.
 					if unit.GetStatus() == nil ||

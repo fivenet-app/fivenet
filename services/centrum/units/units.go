@@ -399,9 +399,16 @@ func (s *UnitDB) removeOrphanedProjections(
 		}
 
 		if unit.GetJob() != "" {
-			if err := s.jobMapping.Delete(ctx, centrumutils.JobIdKey(unit.GetJob(), unit.GetId())); err != nil &&
+			if err := s.jobMapping.Delete(
+				ctx,
+				centrumutils.JobIdKey(unit.GetJob(), unit.GetId()),
+			); err != nil &&
 				!errors.Is(err, jetstream.ErrKeyNotFound) {
-				return fmt.Errorf("failed to remove orphaned unit job mapping %d: %w", unit.GetId(), err)
+				return fmt.Errorf(
+					"failed to remove orphaned unit job mapping %d: %w",
+					unit.GetId(),
+					err,
+				)
 			}
 		}
 	}
@@ -700,6 +707,20 @@ func (s *UnitDB) Update(
 	// Defer a rollback in case anything fails
 	defer tx.Rollback()
 
+	var existing struct {
+		ID int64 `alias:"id"`
+	}
+	if err := tUnits.
+		SELECT(tUnits.ID.AS("id")).
+		WHERE(tUnits.ID.EQ(mysql.Int64(unit.GetId()))).
+		LIMIT(1).
+		QueryContext(ctx, tx, &existing); err != nil {
+		if errors.Is(err, qrm.ErrNoRows) {
+			return nil, sql.ErrNoRows
+		}
+		return nil, err
+	}
+
 	stmt := tUnits.
 		UPDATE(
 			tUnits.Name,
@@ -724,14 +745,8 @@ func (s *UnitDB) Update(
 		)).
 		LIMIT(1)
 
-	result, err := stmt.ExecContext(ctx, tx)
-	if err != nil {
+	if _, err := stmt.ExecContext(ctx, tx); err != nil {
 		return nil, err
-	}
-	if affected, err := result.RowsAffected(); err != nil {
-		return nil, err
-	} else if affected != 1 {
-		return nil, sql.ErrNoRows
 	}
 
 	highestGrade := userGrade

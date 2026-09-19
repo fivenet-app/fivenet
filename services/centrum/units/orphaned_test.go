@@ -3,7 +3,6 @@ package units
 import (
 	"context"
 	"database/sql"
-	"errors"
 	"testing"
 
 	"github.com/DATA-DOG/go-sqlmock"
@@ -18,6 +17,8 @@ import (
 )
 
 func TestRemoveOrphanedProjections(t *testing.T) {
+	t.Parallel()
+
 	js := nats.NewServer(t, nats.ServerOptions{InProcess: true}).GetJS()
 	ctx := t.Context()
 
@@ -64,9 +65,9 @@ func TestRemoveOrphanedProjections(t *testing.T) {
 	require.NoError(t, units.removeOrphanedProjections(ctx, []*centrumunits.Unit{valid}))
 
 	_, err = unitStore.Get("7")
-	assert.ErrorIs(t, err, jetstream.ErrKeyNotFound)
+	require.ErrorIs(t, err, jetstream.ErrKeyNotFound)
 	_, err = jobStore.Get("police.7")
-	assert.ErrorIs(t, err, jetstream.ErrKeyNotFound)
+	require.ErrorIs(t, err, jetstream.ErrKeyNotFound)
 	got, err := unitStore.Get("8")
 	require.NoError(t, err)
 	assert.Equal(t, int64(8), got.GetId())
@@ -75,17 +76,20 @@ func TestRemoveOrphanedProjections(t *testing.T) {
 }
 
 func TestUpdateReturnsNoRowsForMissingUnit(t *testing.T) {
+	t.Parallel()
+
 	db, mock, err := sqlmock.New()
 	require.NoError(t, err)
 	t.Cleanup(func() { _ = db.Close() })
 
 	mock.ExpectBegin()
-	mock.ExpectExec("UPDATE.*fivenet_centrum_units.*").
-		WillReturnResult(sqlmock.NewResult(0, 0))
+	mock.ExpectQuery("SELECT.*fivenet_centrum_units.*").
+		WithArgs(int64(42), int64(1)).
+		WillReturnRows(sqlmock.NewRows([]string{"id"}))
 	mock.ExpectRollback()
 
 	units := &UnitDB{db: db}
 	_, err = units.Update(t.Context(), 1, &centrumunits.Unit{Id: 42, Job: "police"})
-	assert.True(t, errors.Is(err, sql.ErrNoRows), "expected sql.ErrNoRows, got %v", err)
-	assert.NoError(t, mock.ExpectationsWereMet())
+	require.ErrorIs(t, err, sql.ErrNoRows, "expected sql.ErrNoRows, got %v", err)
+	require.NoError(t, mock.ExpectationsWereMet())
 }

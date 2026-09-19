@@ -65,6 +65,7 @@ func takeDispatchForTest(
 	dispatchID int64,
 	resp centrumdispatches.TakeDispatchResp,
 ) error {
+	t.Helper()
 	return takeDispatchForUserForTest(t, srv, 1, dispatchID, resp)
 }
 
@@ -127,7 +128,10 @@ func newAdditiveDispatchFixture(
 	dispatch := createDispatchForTest(t, srv, ctx, "ambulance")
 	_, err := srv.AssignDispatch(
 		ctx,
-		&pbcentrum.AssignDispatchRequest{DispatchId: dispatch.GetId(), ToAdd: []int64{firstUnit.GetId()}},
+		&pbcentrum.AssignDispatchRequest{
+			DispatchId: dispatch.GetId(),
+			ToAdd:      []int64{firstUnit.GetId()},
+		},
 	)
 	require.NoError(t, err)
 	require.NoError(t, takeDispatchForTest(
@@ -237,7 +241,11 @@ func TestTakeDispatchRejectsDeclineWithoutAssignment(t *testing.T) {
 	dsp, err := srv.dispatches.Get(t.Context(), dispatchID)
 	require.NoError(t, err)
 	require.Empty(t, dsp.GetUnits())
-	require.Equal(t, centrumdispatches.StatusDispatch_STATUS_DISPATCH_NEW, dsp.GetStatus().GetStatus())
+	require.Equal(
+		t,
+		centrumdispatches.StatusDispatch_STATUS_DISPATCH_NEW,
+		dsp.GetStatus().GetStatus(),
+	)
 }
 
 func TestTakeDispatchAddsUnitToAssignedDispatch(t *testing.T) {
@@ -261,7 +269,11 @@ func TestTakeDispatchAddsUnitToAssignedDispatch(t *testing.T) {
 	dsp, err := srv.dispatches.Get(ctx, dispatchID)
 	require.NoError(t, err)
 	require.Len(t, dsp.GetUnits(), 2)
-	require.Equal(t, centrumdispatches.StatusDispatch_STATUS_DISPATCH_EN_ROUTE, dsp.GetStatus().GetStatus())
+	require.Equal(
+		t,
+		centrumdispatches.StatusDispatch_STATUS_DISPATCH_EN_ROUTE,
+		dsp.GetStatus().GetStatus(),
+	)
 	require.Equal(t, unitID, dsp.GetUnits()[0].GetUnitId())
 	require.Equal(t, secondUnitID, dsp.GetUnits()[1].GetUnitId())
 
@@ -276,16 +288,21 @@ func TestTakeDispatchAddsUnitToAssignedDispatch(t *testing.T) {
 	require.NoError(t, err)
 	require.Len(t, dsp.GetUnits(), 1)
 	require.Equal(t, unitID, dsp.GetUnits()[0].GetUnitId())
-	require.Equal(t, centrumdispatches.StatusDispatch_STATUS_DISPATCH_EN_ROUTE, dsp.GetStatus().GetStatus())
+	require.Equal(
+		t,
+		centrumdispatches.StatusDispatch_STATUS_DISPATCH_EN_ROUTE,
+		dsp.GetStatus().GetStatus(),
+	)
 }
 
 func TestTakeDispatchPreservesOperationalStatusForAdditiveChanges(t *testing.T) {
+	t.Parallel()
+
 	for _, status := range []centrumdispatches.StatusDispatch{
 		centrumdispatches.StatusDispatch_STATUS_DISPATCH_EN_ROUTE,
 		centrumdispatches.StatusDispatch_STATUS_DISPATCH_ON_SCENE,
 		centrumdispatches.StatusDispatch_STATUS_DISPATCH_NEED_ASSISTANCE,
 	} {
-		status := status
 		t.Run(status.String(), func(t *testing.T) {
 			t.Parallel()
 
@@ -342,7 +359,11 @@ func TestTakeDispatchDecliningLastUnitUsesDeclinedStatus(t *testing.T) {
 	dsp, err := srv.dispatches.Get(ctx, dispatchID)
 	require.NoError(t, err)
 	require.Empty(t, dsp.GetUnits())
-	require.Equal(t, centrumdispatches.StatusDispatch_STATUS_DISPATCH_UNIT_DECLINED, dsp.GetStatus().GetStatus())
+	require.Equal(
+		t,
+		centrumdispatches.StatusDispatch_STATUS_DISPATCH_UNIT_DECLINED,
+		dsp.GetStatus().GetStatus(),
+	)
 }
 
 func TestTakeDispatchConcurrentDifferentUnitsPreservesBothAssignments(t *testing.T) {
