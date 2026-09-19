@@ -3,7 +3,7 @@ module github.com/fivenet-app/fivenet/v2026/internal/cmd/protoc-gen-fronthelper
 go 1.27.1
 
 require (
-	github.com/fivenet-app/fivenet/v2026 v2026.9.2
+	github.com/fivenet-app/fivenet/v2026 v2026.9.3
 	github.com/lyft/protoc-gen-star/v2 v2.0.4
 	golang.org/x/text v0.42.0
 	google.golang.org/protobuf v1.36.12
@@ -17,7 +17,7 @@ require (
 	github.com/bytedance/sonic/loader v0.5.2 // indirect
 	github.com/cespare/xxhash/v2 v2.3.0 // indirect
 	github.com/cloudwego/base64x v0.1.7 // indirect
-	github.com/creasty/defaults v1.10.0 // indirect
+	github.com/creasty/defaults v1.11.0 // indirect
 	github.com/davecgh/go-spew v1.1.2-0.20180830191138-d8f796af33cc // indirect
 	github.com/fsnotify/fsnotify v1.10.1 // indirect
 	github.com/gabriel-vasile/mimetype v1.4.15 // indirect
