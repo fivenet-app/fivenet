@@ -11,6 +11,7 @@ const props = withDefaults(
     }>(),
     {
         disabled: false,
+        yesNoAnswered: undefined,
     },
 );
 
@@ -35,7 +36,7 @@ const yesNoValue = computed(() => {
 // an explicitly selected "No". Read-only result views do not have that local
 // tracker, so the persisted response itself is the source of truth there.
 const isYesNoAnswered = computed(() =>
-    props.yesNoAnswered === undefined ? modelValue.value?.response?.response.oneofKind === 'yesno' : props.yesNoAnswered,
+    props.yesNoAnswered === undefined ? modelValue.value?.response?.response.oneofKind === 'yesno' : !!props.yesNoAnswered,
 );
 
 function setYesNoValue(value: boolean): void {
