@@ -192,7 +192,7 @@ function getRowActions(result: QualificationResult): DropdownMenuItem[][] {
             props.qualification.creatorJob,
         )
     ) {
-        actions.push({ type: 'separator' as const });
+        if (actions.length > 0) actions.push({ type: 'separator' as const });
         actions.push({
             label: t(result.deletedAt ? 'common.restore' : 'common.delete'),
             icon: result.deletedAt ? 'i-mdi-restore' : 'i-mdi-delete',

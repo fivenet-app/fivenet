@@ -224,7 +224,7 @@ function getRowActions(request: QualificationRequest): DropdownMenuItem[][] {
             props.qualification.creatorJob,
         )
     ) {
-        actions.push({ type: 'separator' as const });
+        if (actions.length > 0) actions.push({ type: 'separator' as const });
         actions.push({
             label: t('common.delete'),
             icon: 'i-mdi-delete',
@@ -255,7 +255,7 @@ const columns = computed(
                         items.length > 0
                             ? h(
                                   UDropdownMenu,
-                                  { items, content: { align: 'end' } },
+                                  { items: items, content: { align: 'end' } },
                                   {
                                       default: () =>
                                           h(
