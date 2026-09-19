@@ -1,7 +1,7 @@
 # syntax=docker/dockerfile:1.27-labs
 
 # Version helper, computed once for the whole image build.
-FROM docker.io/library/alpine:3.24.1 AS version
+FROM docker.io/library/alpine:3.24.2 AS version
 
 WORKDIR /app
 
@@ -13,7 +13,7 @@ COPY internal/scripts/get-version.sh ./internal/scripts/get-version.sh
 RUN sh ./internal/scripts/get-version.sh > /version
 
 # Livemap Tiles Layer for improved caching
-FROM docker.io/library/alpine:3.24.1 AS livemaptiles
+FROM docker.io/library/alpine:3.24.2 AS livemaptiles
 
 WORKDIR /app
 
@@ -24,7 +24,7 @@ RUN find ./public/images/livemap/ \
         -exec rm -rf {} +
 
 # Iconify icon sets for backend server
-FROM docker.io/library/alpine:3.24.1 AS iconsets
+FROM docker.io/library/alpine:3.24.2 AS iconsets
 
 WORKDIR /app
 
@@ -72,7 +72,7 @@ RUN apt-get update && \
     make build-go GIT_VERSION="$version"
 
 # Final Image
-FROM docker.io/library/alpine:3.24.1
+FROM docker.io/library/alpine:3.24.2
 
 WORKDIR /app
 
