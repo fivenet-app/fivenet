@@ -12,7 +12,6 @@ import (
 	"github.com/fivenet-app/fivenet/v2026/pkg/tracker/manager"
 	pbcalendar "github.com/fivenet-app/fivenet/v2026/services/calendar"
 	centrumbot "github.com/fivenet-app/fivenet/v2026/services/centrum/bot"
-	centrumconverter "github.com/fivenet-app/fivenet/v2026/services/centrum/converter"
 	centrumhousekeeper "github.com/fivenet-app/fivenet/v2026/services/centrum/housekeeper"
 	pbcitizens "github.com/fivenet-app/fivenet/v2026/services/citizens"
 	pbdocuments "github.com/fivenet-app/fivenet/v2026/services/documents"
@@ -76,7 +75,6 @@ func FxCentrumOpts() []fx.Option {
 	return []fx.Option{
 		fx.Invoke(func(*centrumbot.Manager) {}),
 		fx.Invoke(func(*centrumhousekeeper.Housekeeper) {}),
-		fx.Invoke(func(*centrumconverter.Converter) {}),
 	}
 }
 

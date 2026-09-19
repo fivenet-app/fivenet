@@ -64,7 +64,8 @@ func TestConverterGKSPhoneQueryScansIntoDestination(t *testing.T) {
 				convertJobs:      []string{"police"},
 			}
 
-			require.NoError(t, c.convertGKSPhoneJobMsgToDispatch(t.Context()))
+			_, err = c.convertGKSPhoneJobMsgToDispatchWithCursor(t.Context(), 0)
+			require.NoError(t, err)
 			require.Len(t, dispatchDB.dispatches, boolToInt(tc.wantDispatch))
 			if tc.wantDispatch {
 				dsp := dispatchDB.dispatches[0]
@@ -112,7 +113,8 @@ func TestConverterLBPhoneQueryScansIntoDestination(t *testing.T) {
 				convertJobs:      []string{"police"},
 			}
 
-			require.NoError(t, c.convertLBPhoneJobMsgToDispatch(t.Context()))
+			_, err = c.convertLBPhoneJobMsgToDispatchWithCursor(t.Context(), 0)
+			require.NoError(t, err)
 			require.Len(t, dispatchDB.dispatches, boolToInt(tc.wantDispatch))
 			if tc.wantDispatch {
 				dsp := dispatchDB.dispatches[0]
