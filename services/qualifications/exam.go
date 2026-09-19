@@ -61,10 +61,23 @@ func (s *Server) GetExamInfo(
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 	}
+	var request *qualifications.QualificationRequest
+	if examUser != nil && examUser.GetEndedAt() != nil && quali.GetResult() == nil {
+		request, err = s.store.GetQualificationRequest(
+			ctx,
+			req.GetQualificationId(),
+			userInfo.GetUserId(),
+			userInfo,
+		)
+		if err != nil {
+			return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
+		}
+	}
 	// An ended attempt without an active result is stale, for example after
 	// its result was soft-deleted. It must not bypass the request check and be
-	// presented as the user's next exam attempt.
-	if isStaleExamAttempt(examUser, quali.GetResult()) {
+	// presented as the user's next exam attempt. An ended attempt awaiting
+	// tutor grading is still the user's submitted exam and must remain visible.
+	if isStaleExamAttempt(examUser, quali.GetResult(), request) {
 		examUser = nil
 	}
 	if examUser != nil && examUser.GetEndedAt() != nil &&
@@ -176,6 +189,18 @@ func (s *Server) TakeExam(
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 	}
+	var request *qualifications.QualificationRequest
+	if examUser != nil && examUser.GetEndedAt() != nil && quali.GetResult() == nil {
+		request, err = s.store.GetQualificationRequest(
+			ctx,
+			req.GetQualificationId(),
+			userInfo.GetUserId(),
+			userInfo,
+		)
+		if err != nil {
+			return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
+		}
+	}
 
 	if req.GetCancel() {
 		if examUser == nil || examUser.GetEndedAt() != nil ||
@@ -267,7 +292,7 @@ func (s *Server) TakeExam(
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 	}
-	if isStaleExamAttempt(examUser, quali.GetResult()) {
+	if isStaleExamAttempt(examUser, quali.GetResult(), request) {
 		if err := s.deleteExamAttempt(ctx, tx, examUser.GetAttemptId()); err != nil {
 			return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 		}
@@ -392,8 +417,10 @@ func (s *Server) TakeExam(
 func isStaleExamAttempt(
 	examUser *qualificationsexam.ExamUser,
 	result *qualifications.QualificationResult,
+	request *qualifications.QualificationRequest,
 ) bool {
-	return examUser != nil && examUser.GetEndedAt() != nil && result == nil
+	return examUser != nil && examUser.GetEndedAt() != nil && result == nil &&
+		(request == nil || request.GetStatus() != qualifications.RequestStatus_REQUEST_STATUS_EXAM_GRADING)
 }
 
 func (s *Server) deleteExamAttempt(ctx context.Context, tx qrm.DB, attemptID string) error {

@@ -141,17 +141,25 @@ func TestGradeExamAutoGradesEmptyExamAsSuccessfulWhenMinimumIsZero(t *testing.T)
 	assert.Equal(t, qualificationspb.RequestStatus_REQUEST_STATUS_COMPLETED, store.requestStatus)
 }
 
-func TestIsStaleExamAttemptOnlyTreatsEndedAttemptsWithoutResultsAsStale(t *testing.T) {
+func TestIsStaleExamAttemptPreservesAttemptsPendingTutorGrading(t *testing.T) {
 	t.Parallel()
 
 	attempt := &qualificationsexam.ExamUser{EndedAt: timestamp.New(time.Unix(100, 0))}
+	gradingStatus := qualificationspb.RequestStatus_REQUEST_STATUS_EXAM_GRADING
+	acceptedStatus := qualificationspb.RequestStatus_REQUEST_STATUS_ACCEPTED
 
-	assert.True(t, isStaleExamAttempt(attempt, nil))
+	assert.False(t, isStaleExamAttempt(attempt, nil, &qualificationspb.QualificationRequest{
+		Status: &gradingStatus,
+	}))
+	assert.True(t, isStaleExamAttempt(attempt, nil, nil))
+	assert.True(t, isStaleExamAttempt(attempt, nil, &qualificationspb.QualificationRequest{
+		Status: &acceptedStatus,
+	}))
 	assert.False(t, isStaleExamAttempt(attempt, &qualificationspb.QualificationResult{
 		Status: qualificationspb.ResultStatus_RESULT_STATUS_FAILED,
-	}))
-	assert.False(t, isStaleExamAttempt(&qualificationsexam.ExamUser{}, nil))
-	assert.False(t, isStaleExamAttempt(nil, nil))
+	}, nil))
+	assert.False(t, isStaleExamAttempt(&qualificationsexam.ExamUser{}, nil, nil))
+	assert.False(t, isStaleExamAttempt(nil, nil, nil))
 }
 
 func (s *effectiveExamTestStore) GetExamQuestions(
