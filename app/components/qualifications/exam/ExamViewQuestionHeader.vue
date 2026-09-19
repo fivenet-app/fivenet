@@ -7,10 +7,12 @@ const props = withDefaults(
         question: ExamQuestion;
         flagged?: boolean;
         disabled?: boolean;
+        showFlag?: boolean;
     }>(),
     {
         flagged: false,
         disabled: false,
+        showFlag: true,
     },
 );
 
@@ -18,7 +20,7 @@ const emit = defineEmits<{
     (e: 'toggleFlag'): void;
 }>();
 
-const canFlag = computed(() => !['separator', 'image'].includes(props.question.data?.data.oneofKind ?? ''));
+const canFlag = computed(() => props.showFlag && !['separator', 'image'].includes(props.question.data?.data.oneofKind ?? ''));
 </script>
 
 <template>

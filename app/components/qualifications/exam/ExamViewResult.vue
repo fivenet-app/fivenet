@@ -3,11 +3,19 @@ import type { ExamResponses } from '~~/gen/ts/resources/qualifications/exam/exam
 import type { QualificationShort } from '~~/gen/ts/resources/qualifications/qualifications';
 import ExamViewQuestion from './ExamViewQuestion.vue';
 
-defineProps<{
-    qualificationId: number;
-    qualification?: QualificationShort;
-    responses?: ExamResponses;
-}>();
+withDefaults(
+    defineProps<{
+        qualificationId: number;
+        qualification?: QualificationShort;
+        responses?: ExamResponses;
+        showFlags?: boolean;
+    }>(),
+    {
+        qualification: undefined,
+        responses: undefined,
+        showFlags: true,
+    },
+);
 </script>
 
 <template>
@@ -18,6 +26,7 @@ defineProps<{
                 :key="question.questionId"
                 v-model="responses!.responses[idx]"
                 disabled
+                :show-flag="showFlags"
             >
                 <template #question-after="{ disabled }">
                     <slot name="question-after" :question="{ question }" :disabled="disabled" />

@@ -8,10 +8,12 @@ const props = withDefaults(
         disabled?: boolean;
         yesNoAnswered?: boolean;
         flagged?: boolean;
+        showFlag?: boolean;
     }>(),
     {
         disabled: false,
         yesNoAnswered: undefined,
+        showFlag: true,
     },
 );
 
@@ -81,6 +83,7 @@ function enforceMultipleChoiceLimit(choices: string[]): void {
                 :question="modelValue.question"
                 :flagged="flagged"
                 :disabled="disabled"
+                :show-flag="showFlag"
                 @toggle-flag="emit('toggleFlag')"
             />
         </template>

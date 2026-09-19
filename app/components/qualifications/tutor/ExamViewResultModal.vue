@@ -153,7 +153,7 @@ const correctCount = computed(() => data.value?.grading?.responses.filter((a) =>
                 />
 
                 <template v-else>
-                    <ExamViewResult :qualification-id="qualificationId" :responses="data.responses">
+                    <ExamViewResult :qualification-id="qualificationId" :responses="data.responses" :show-flags="false">
                         <template #question-after="{ question }">
                             <div
                                 v-if="
