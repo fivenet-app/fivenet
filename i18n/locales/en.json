@@ -2012,7 +2012,11 @@
                 "title": "Welcome to FiveNet Mail!",
                 "subtitle": "Please pick an e-mail address from below to get started receiving and sending e-mails.",
                 "email": {
-                    "description": "Your e-mail address can only be changed once every 2 weeks."
+                    "description": "Your e-mail address can only be changed once every 2 weeks.",
+                    "email_created": {
+                        "title": "Your e-mail is ready",
+                        "content": "Your private e-mail address {email} has been created. Redirecting to mail..."
+                    }
                 }
             },
             "settings": {
@@ -2786,6 +2790,10 @@
             "new_email": {
                 "title": "New E-Mail received!",
                 "content": "\"{title}\" from \"{from}\""
+            },
+            "private_email_created": {
+                "title": "E-mail created",
+                "content": "Your private e-mail address {email} has been created."
             }
         },
         "document_restored": {
@@ -3302,6 +3310,10 @@
                 "ErrFailedQuery": {
                     "title": "Mail service error",
                     "content": "Something went wrong while loading mail data. Please try again."
+                },
+                "ErrNoPerms": {
+                    "title": "Mail access denied",
+                    "content": "You don't have permission to access this e-mail address!"
                 },
                 "ErrAddresseAlreadyTaken": {
                     "title": "E-Mail address already taken!",

@@ -55,6 +55,13 @@ const route = useRoute();
 const loading = ref<boolean>(false);
 const creating = ref<boolean>(false);
 const emailFormDirty = ref<boolean>(false);
+const privateEmailCreating = ref<boolean>(false);
+
+// Creating the private address replaces the standalone create form with the
+// manage form. Clear the parent-level dirty state during that transition.
+watch(getPrivateEmail, (newEmail, oldEmail) => {
+    if (!oldEmail && newEmail) emailFormDirty.value = false;
+});
 
 // Disable create form when email is selected
 watch(selectedEmail, async (newEmail, oldEmail) => {
@@ -109,7 +116,7 @@ onBeforeMount(async () => await listEmails());
 
 <template>
     <UDashboardPanel
-        v-if="(route.query?.tab === 'new' && !getPrivateEmail) || getPrivateEmail?.deactivated === true"
+        v-if="privateEmailCreating || (route.query?.tab === 'new' && !getPrivateEmail) || getPrivateEmail?.deactivated === true"
         id="mail-emails"
         :ui="{ root: 'pb-(--page-content-bottom-offset)' }"
     >
@@ -138,17 +145,11 @@ onBeforeMount(async () => await listEmails());
 
             <div v-else class="flex flex-1 flex-col items-center">
                 <div class="flex flex-1 flex-col items-center justify-center gap-2 text-dimmed">
-                    <UIcon class="h-32 w-32" name="i-mdi-email-multiple" />
-
-                    <div class="text-center text-highlighted">
-                        <h3 class="text-lg font-bold">{{ $t('components.mailer.manage.title') }}</h3>
-                        <p class="text-bas">{{ $t('components.mailer.manage.subtitle') }}</p>
-                    </div>
-
                     <EmailCreateForm
                         v-if="can('mailer.MailerService/CreateOrUpdateEmail').value"
                         personal-email
                         hide-label
+                        @private-creation-state="privateEmailCreating = $event"
                         @dirty-change="emailFormDirty = $event"
                     />
                 </div>
@@ -251,7 +252,6 @@ onBeforeMount(async () => await listEmails());
             <template #body>
                 <div v-if="creating" class="flex flex-1 flex-col items-center">
                     <div class="flex flex-1 flex-col items-center justify-center gap-2 text-dimmed">
-                        <UIcon class="h-32 w-32" name="i-mdi-email-multiple" />
                         <EmailCreateForm
                             v-if="canCreate"
                             :personal-email="false"
@@ -274,6 +274,7 @@ onBeforeMount(async () => await listEmails());
                         @dirty-change="emailFormDirty = $event"
                     />
                 </template>
+
                 <div v-else class="hidden flex-1 flex-col items-center justify-center gap-2 text-dimmed lg:flex">
                     <UIcon class="h-32 w-32" name="i-mdi-email-multiple" />
                     <p>{{ $t('common.none_selected', [$t('common.mail')]) }}</p>

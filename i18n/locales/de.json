@@ -2012,7 +2012,11 @@
                 "title": "Willkommen bei FiveNet E-Mail!",
                 "subtitle": "Bitte wählen Sie eine E-Mail Adresse aus der unteren Liste aus, um E-Mails empfangen und senden zu können.",
                 "email": {
-                    "description": "Deine E-Mail Adresse kann nur alle zwei Wochen geändert werden."
+                    "description": "Deine E-Mail Adresse kann nur alle zwei Wochen geändert werden.",
+                    "email_created": {
+                        "title": "Ihre E-Mail ist bereit",
+                        "content": "Ihre private E-Mail-Adresse {email} wurde erstellt. Weiterleitung zu E-Mail..."
+                    }
                 }
             },
             "settings": {
@@ -2786,6 +2790,10 @@
             "new_email": {
                 "title": "Neue E-Mail erhalten!",
                 "content": "\"{title}\" von \"{from}\""
+            },
+            "private_email_created": {
+                "title": "E-Mail erstellt",
+                "content": "Ihre private E-Mail-Adresse {email} wurde erstellt."
             }
         },
         "document_restored": {
@@ -3302,6 +3310,10 @@
                 "ErrFailedQuery": {
                     "title": "E-Mail-Dienst-Fehler",
                     "content": "Beim Laden der E-Mail-Daten ist etwas schiefgelaufen. Bitte versuchen Sie es erneut."
+                },
+                "ErrNoPerms": {
+                    "title": "E-Mail-Zugriff verweigert",
+                    "content": "Sie haben keine Berechtigung, auf diese E-Mail-Adresse zuzugreifen!"
                 },
                 "ErrAddresseAlreadyTaken": {
                     "title": "E-Mail Adresse bereits vergeben!",
