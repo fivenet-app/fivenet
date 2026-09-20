@@ -142,7 +142,7 @@
         "@vueuse/nuxt": "14.4.0",
         "@vueuse/router": "14.4.0",
         "autoprefixer": "10.6.1",
-        "cssnano": "9.0.4",
+        "cssnano": "9.0.5",
         "eslint": "10.10.0",
         "eslint-config-prettier": "10.1.8",
         "eslint-plugin-prettier": "5.5.6",
@@ -183,7 +183,7 @@
             "nuxt-typed-router>lodash-es": "4.18.1",
             "nuxt-typed-router>nanoid": "6.0.1",
             "unhead": "3.4.1",
-            "vue": "3.5.42"
+            "vue": "3.5.43"
         }
     },
     "packageManager": "pnpm@10.34.5+sha512.a4ee05f2f73658255bd6a89859c065a45c28a57daefae2c893a168ee2b73168c37b91e83e57ea67654ad03f03031746430e8bce38e362e042605fb8abc80192e"
