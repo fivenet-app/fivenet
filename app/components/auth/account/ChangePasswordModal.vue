@@ -60,11 +60,9 @@ async function closeModal(): Promise<void> {
     emit('close', false);
 }
 
-const canSubmit = ref<boolean>(true);
-const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) => {
-    canSubmit.value = false;
-    await changePassword(event.data).finally(() => useTimeoutFn(() => (canSubmit.value = true), 400));
-}, 1000);
+const { submit, isSubmitting, canSubmit } = useSubmitGuard(async (event: FormSubmitEvent<Schema>) => {
+    await changePassword(event.data);
+});
 
 const formRef = useTemplateRef('formRef');
 </script>
@@ -93,7 +91,7 @@ const formRef = useTemplateRef('formRef');
         </template>
 
         <template #body>
-            <UForm ref="formRef" :schema="schema" :state="state" @submit="onSubmitThrottle">
+            <UForm ref="formRef" :schema="schema" :state="state" @submit="submit">
                 <UFormField name="currentPassword" :label="$t('components.auth.ChangePasswordModal.current_password')">
                     <UInput
                         v-model="state.currentPassword"
@@ -160,7 +158,7 @@ const formRef = useTemplateRef('formRef');
                     class="flex-1"
                     block
                     :disabled="!canSubmit"
-                    :loading="!canSubmit"
+                    :loading="isSubmitting"
                     :label="$t('components.auth.ChangePasswordModal.change_password')"
                     @click="formRef?.submit()"
                 />

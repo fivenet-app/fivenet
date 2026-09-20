@@ -10,7 +10,7 @@ const emit = defineEmits<{
     (e: 'toggleTab'): void;
 }>();
 
-const canSubmit = defineModel<boolean>({ required: true });
+const parentCanSubmit = defineModel<boolean>({ required: true });
 
 const notifications = useNotificationsStore();
 
@@ -51,7 +51,6 @@ async function forgotPassword(values: Schema): Promise<void> {
             type: NotificationType.SUCCESS,
         });
 
-        canSubmit.value = true;
         emit('toggleTab');
     } catch (e) {
         const err = e as RpcError;
@@ -63,14 +62,15 @@ async function forgotPassword(values: Schema): Promise<void> {
 
 const passwordVisibility = ref<boolean>(false);
 
-const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) => {
-    canSubmit.value = false;
-    await forgotPassword(event.data).finally(() => useTimeoutFn(() => (canSubmit.value = true), 400));
-}, 1000);
+const { submit, isSubmitting, canSubmit } = useSubmitGuard(async (event: FormSubmitEvent<Schema>) => {
+    await forgotPassword(event.data);
+});
+
+watch(isSubmitting, (value) => (parentCanSubmit.value = !value), { immediate: true });
 </script>
 
 <template>
-    <UForm class="space-y-4" :schema="schema" :state="state" @submit="onSubmitThrottle">
+    <UForm class="space-y-4" :schema="schema" :state="state" @submit="submit">
         <UAlert
             icon="i-mdi-info-circle"
             variant="subtle"

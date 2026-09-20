@@ -135,7 +135,7 @@ async function deleteMugshot(fileId: number | undefined, reason: string): Promis
     }
 }
 
-const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) => {
+const { submit, isSubmitting, canSubmit } = useSubmitGuard(async (event: FormSubmitEvent<Schema>) => {
     if (event.data.reset) {
         await deleteMugshot(user.value.props?.mugshotFileId, event.data.reason);
         return;
@@ -144,12 +144,12 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
     if (!event.data.mugshot) return;
 
     await uploadMugshot(event.data.mugshot, event.data.reason);
-}, 1000);
+});
 
 const formRef = useTemplateRef('formRef');
 
 async function closeModal(): Promise<void> {
-    if (formRef.value?.loading) return;
+    if (isSubmitting.value) return;
 
     if (hasUnsavedChanges.value && !(await confirmLeave())) return;
 
@@ -161,7 +161,7 @@ async function closeModal(): Promise<void> {
     <UModal
         :title="$t('components.citizens.CitizenInfoProfile.set_mugshot')"
         :close="false"
-        :dismissible="!hasUnsavedChanges && !formRef?.loading"
+        :dismissible="!hasUnsavedChanges && canSubmit"
     >
         <template #header>
             <div class="flex w-full items-center justify-between gap-2">
@@ -173,7 +173,7 @@ async function closeModal(): Promise<void> {
                     color="neutral"
                     variant="ghost"
                     icon="i-mdi-close"
-                    :disabled="formRef?.loading"
+                    :disabled="!canSubmit"
                     :aria-label="$t('common.close', 1)"
                     @click="closeModal"
                 />
@@ -181,7 +181,7 @@ async function closeModal(): Promise<void> {
         </template>
 
         <template #body>
-            <UForm ref="formRef" :schema="schema" :state="state" @submit="onSubmitThrottle">
+            <UForm ref="formRef" :schema="schema" :state="state" @submit="submit">
                 <UFormField name="reason" :label="$t('common.reason')" required>
                     <UInput v-model="state.reason" class="w-full" type="text" :placeholder="$t('common.reason')" />
                 </UFormField>

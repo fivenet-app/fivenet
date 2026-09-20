@@ -115,11 +115,9 @@ async function setUserJobProp(userId: number, values: Schema): Promise<SetCollea
     }
 }
 
-const canSubmit = ref(true);
-const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) => {
-    canSubmit.value = false;
-    await setUserJobProp(props.userId, event.data).finally(() => useTimeoutFn(() => (canSubmit.value = true), 400));
-}, 1000);
+const { submit, isSubmitting, canSubmit } = useSubmitGuard(async (event: FormSubmitEvent<Schema>) => {
+    await setUserJobProp(props.userId, event.data);
+});
 
 watch(labels, () => {
     setFromProps();
@@ -127,7 +125,7 @@ watch(labels, () => {
 </script>
 
 <template>
-    <UForm class="flex flex-1 flex-col gap-2" :schema="schema" :state="state" @submit="onSubmitThrottle">
+    <UForm class="flex flex-1 flex-col gap-2" :schema="schema" :state="state" @submit="submit">
         <div>
             <UTooltip v-if="!editing" :text="$t('common.edit')">
                 <UButton icon="i-mdi-pencil" @click="editing = true" />
@@ -217,7 +215,7 @@ watch(labels, () => {
                 type="submit"
                 icon="i-mdi-content-save"
                 :disabled="!changed || !canSubmit"
-                :loading="!canSubmit"
+                :loading="isSubmitting"
                 :label="$t('common.save')"
             />
         </template>

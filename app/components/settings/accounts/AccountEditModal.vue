@@ -71,11 +71,9 @@ function setFromProps(): void {
 setFromProps();
 watch(account, () => setFromProps());
 
-const canSubmit = ref<boolean>(true);
-const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) => {
-    canSubmit.value = false;
-    await updateAccount(event.data).finally(() => useTimeoutFn(() => (canSubmit.value = true), 400));
-}, 1000);
+const { submit, isSubmitting, canSubmit } = useSubmitGuard(async (event: FormSubmitEvent<Schema>) => {
+    await updateAccount(event.data);
+});
 
 const formRef = useTemplateRef('formRef');
 
@@ -113,7 +111,7 @@ async function closeModal(): Promise<void> {
         </template>
 
         <template #body>
-            <UForm ref="formRef" class="space-y-4" :schema="schema" :state="state" @submit="onSubmitThrottle">
+            <UForm ref="formRef" class="space-y-4" :schema="schema" :state="state" @submit="submit">
                 <UFormField class="flex-1" name="enabled" :label="$t('common.enabled')" required>
                     <USwitch v-model="state.enabled" name="enabled" />
                 </UFormField>
@@ -162,7 +160,7 @@ async function closeModal(): Promise<void> {
                     class="flex-1"
                     block
                     :disabled="!canSubmit"
-                    :loading="!canSubmit"
+                    :loading="isSubmitting"
                     :label="$t('common.save')"
                     @click="() => formRef?.submit()"
                 />

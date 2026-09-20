@@ -305,11 +305,9 @@ watch(
     },
 );
 
-const canSubmit = ref<boolean>(true);
-const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) => {
-    canSubmit.value = false;
-    await createOrUpdateCalendar(event.data).finally(() => useTimeoutFn(() => (canSubmit.value = true), 400));
-}, 1000);
+const { submit, isSubmitting, canSubmit } = useSubmitGuard(async (event: FormSubmitEvent<Schema>) => {
+    await createOrUpdateCalendar(event.data);
+});
 
 const formRef = useTemplateRef('formRef');
 
@@ -355,7 +353,7 @@ async function closeModal(): Promise<void> {
         </template>
 
         <template #body>
-            <UForm ref="formRef" class="flex flex-col gap-2" :schema="schema" :state="state" @submit="onSubmitThrottle">
+            <UForm ref="formRef" class="flex flex-col gap-2" :schema="schema" :state="state" @submit="submit">
                 <DataPendingBlock
                     v-if="props.calendarId && isRequestPending(status)"
                     :message="$t('common.loading', [$t('common.calendar')])"
@@ -682,7 +680,7 @@ async function closeModal(): Promise<void> {
                     class="flex-1"
                     block
                     :disabled="!canSubmit"
-                    :loading="!canSubmit"
+                    :loading="isSubmitting"
                     :label="data ? $t('common.save') : $t('common.create')"
                     @click="formRef?.submit()"
                 />

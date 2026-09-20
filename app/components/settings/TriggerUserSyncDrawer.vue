@@ -64,13 +64,10 @@ const state = reactive<Schema>({
 });
 
 const isOpen = ref(false);
-const canSubmit = ref(true);
 
 async function triggerUserSync(values: Schema): Promise<void> {
     const parsed = parseEntries(values.entries);
     if (parsed.error) return;
-
-    canSubmit.value = false;
     try {
         await settingsSystemClient.triggerUserSync({ userId: parsed.userId, identifiers: parsed.identifiers });
         notifications.add({
@@ -82,12 +79,12 @@ async function triggerUserSync(values: Schema): Promise<void> {
         isOpen.value = false;
     } catch (e) {
         handleGRPCError(e as RpcError);
-    } finally {
-        useTimeoutFn(() => (canSubmit.value = true), 400);
     }
 }
 
-const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) => triggerUserSync(event.data), 1000);
+const { submit, isSubmitting, canSubmit } = useSubmitGuard(async (event: FormSubmitEvent<Schema>) => {
+    await triggerUserSync(event.data);
+});
 </script>
 
 <template>
@@ -122,7 +119,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
         </template>
 
         <template #body>
-            <UForm :schema="schema" :state="state" class="space-y-4" @submit="onSubmitThrottle">
+            <UForm :schema="schema" :state="state" class="space-y-4" @submit="submit">
                 <UFormField name="entries" :label="$t('components.settings.system_status.trigger_user_sync.entries')" required>
                     <UTextarea
                         v-model="state.entries"
@@ -139,7 +136,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                     <UButton color="neutral" variant="ghost" :disabled="!canSubmit" @click="isOpen = false">
                         {{ $t('common.cancel') }}
                     </UButton>
-                    <UButton type="submit" icon="i-mdi-account-sync" :loading="!canSubmit">
+                    <UButton type="submit" icon="i-mdi-account-sync" :loading="isSubmitting">
                         {{ $t('components.settings.system_status.trigger_user_sync.submit') }}
                     </UButton>
                 </div>

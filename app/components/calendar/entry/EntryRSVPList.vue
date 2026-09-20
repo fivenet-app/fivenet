@@ -106,10 +106,13 @@ async function rsvpCalendarEntry(
     }
 }
 
-const submitRsvp = useThrottleFn(async (rsvpResponse: RsvpResponses, remove?: boolean, scope: RsvpScope = 'series') => {
-    canSubmit.value = false;
-    await rsvpCalendarEntry(rsvpResponse, remove, scope).finally(() => useTimeoutFn(() => (canSubmit.value = true), 400));
-}, 1000);
+const {
+    submit: submitRsvp,
+    isSubmitting,
+    canSubmit,
+} = useSubmitGuard(async (rsvpResponse: RsvpResponses, remove?: boolean, scope: RsvpScope = 'series') => {
+    await rsvpCalendarEntry(rsvpResponse, remove, scope);
+});
 
 function requestRsvp(rsvpResponse: RsvpResponses, remove = false): void {
     if (props.occurrenceKey) {
@@ -145,9 +148,6 @@ const groupedEntries = computed(() => ({
 }));
 
 const openShare = ref<boolean>(false);
-
-const canSubmit = ref<boolean>(true);
-
 const confirmModal = overlay.create(ConfirmModal);
 </script>
 
@@ -159,7 +159,7 @@ const confirmModal = overlay.create(ConfirmModal);
                     class="flex-1"
                     block
                     :disabled="!canSubmit || disabled"
-                    :loading="!canSubmit"
+                    :loading="isSubmitting"
                     color="success"
                     :variant="ownEntry?.response === RsvpResponses.YES ? 'soft' : 'solid'"
                     :label="$t('common.yes')"
@@ -170,7 +170,7 @@ const confirmModal = overlay.create(ConfirmModal);
                     class="flex-1"
                     block
                     :disabled="!canSubmit || disabled"
-                    :loading="!canSubmit"
+                    :loading="isSubmitting"
                     color="warning"
                     :variant="ownEntry?.response === RsvpResponses.MAYBE ? 'soft' : 'solid'"
                     :label="$t('common.maybe')"
@@ -181,7 +181,7 @@ const confirmModal = overlay.create(ConfirmModal);
                     class="flex-1"
                     block
                     :disabled="!canSubmit || disabled"
-                    :loading="!canSubmit"
+                    :loading="isSubmitting"
                     color="error"
                     :variant="ownEntry?.response === RsvpResponses.NO ? 'soft' : 'solid'"
                     :label="$t('common.no')"

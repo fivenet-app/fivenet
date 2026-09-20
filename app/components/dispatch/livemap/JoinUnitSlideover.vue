@@ -51,13 +51,10 @@ async function joinOrLeaveUnit(unitId?: number): Promise<void> {
     }
 }
 
-const canSubmit = ref<boolean>(true);
-const onSubmitThrottle = useThrottleFn(async (unitID?: number) => {
+const { submit, isSubmitting, canSubmit } = useSubmitGuard(async (unitID?: number) => {
     if (unitJoinRestricted.value) return;
-
-    canSubmit.value = false;
-    await joinOrLeaveUnit(unitID).finally(() => useTimeoutFn(() => (canSubmit.value = true), 400));
-}, 1000);
+    await joinOrLeaveUnit(unitID);
+});
 
 const queryUnit = ref('');
 
@@ -118,7 +115,7 @@ const filteredUnits = computed(() => ({
                         class="flex flex-col"
                         :color="ownUnitId !== undefined && ownUnitId === unit.id ? 'warning' : 'primary'"
                         :disabled="unitJoinRestricted || !canSubmit || !checkUnitAccess(unit.access, UnitAccessLevel.JOIN)"
-                        @click="onSubmitThrottle(unit.id)"
+                        @click="submit(unit.id)"
                     >
                         <span class="text-base">
                             <span class="font-semibold">{{ unit.initials }}:</span>
@@ -144,7 +141,7 @@ const filteredUnits = computed(() => ({
                             class="flex flex-col"
                             :color="ownUnitId !== undefined && ownUnitId === unit.id ? 'warning' : 'primary'"
                             :disabled="unitJoinRestricted || !canSubmit || !checkUnitAccess(unit.access, UnitAccessLevel.JOIN)"
-                            @click="onSubmitThrottle(unit.id)"
+                            @click="submit(unit.id)"
                         >
                             <span class="text-base">
                                 <span class="font-semibold">{{ unit.initials }}:</span>
@@ -171,9 +168,9 @@ const filteredUnits = computed(() => ({
                     block
                     color="error"
                     :disabled="!canSubmit"
-                    :loading="!canSubmit"
+                    :loading="isSubmitting"
                     :label="$t('common.leave')"
-                    @click="onSubmitThrottle()"
+                    @click="submit()"
                 />
 
                 <UButton class="flex-1" color="neutral" block :label="$t('common.close', 1)" @click="$emit('close', false)" />

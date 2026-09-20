@@ -349,13 +349,10 @@ const selectedChange = ref<DiscordSyncChange | undefined>();
 
 const formRef = useTemplateRef('formRef');
 
-const canSubmit = ref<boolean>(true);
-const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) => {
+const { submit, isSubmitting, canSubmit } = useSubmitGuard(async (event: FormSubmitEvent<Schema>) => {
     if (event.submitter?.getAttribute('role') === 'tab') return;
-
-    canSubmit.value = false;
-    await setJobProps(event.data).finally(() => useTimeoutFn(() => (canSubmit.value = true), 400));
-}, 1000);
+    await setJobProps(event.data);
+});
 
 const confirmModal = overlay.create(ConfirmModal);
 </script>
@@ -375,7 +372,7 @@ const confirmModal = overlay.create(ConfirmModal);
                         v-if="!!jobProps && canEdit"
                         trailing-icon="i-mdi-content-save"
                         :disabled="!canSubmit || !hasUnsavedChanges"
-                        :loading="!canSubmit"
+                        :loading="isSubmitting"
                         :label="$t('common.save', 1)"
                         @click="() => formRef?.submit()"
                     />
@@ -385,7 +382,7 @@ const confirmModal = overlay.create(ConfirmModal);
 
         <template #body>
             <StreamerModeAlert v-if="streamerMode" />
-            <UForm v-else ref="formRef" :schema="schema" :state="state" @submit="onSubmitThrottle">
+            <UForm v-else ref="formRef" :schema="schema" :state="state" @submit="submit">
                 <DataErrorBlock
                     v-if="error"
                     :title="$t('common.unable_to_load', [$t('components.settings.job_props.job_properties')])"

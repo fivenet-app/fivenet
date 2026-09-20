@@ -180,13 +180,9 @@ setFromProps();
 watch(entry, () => setFromProps());
 onBeforeMount(() => setFromProps());
 
-const canSubmit = ref<boolean>(true);
-const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) => {
-    canSubmit.value = false;
-    await conductCreateOrUpdateEntry(event.data, entry.value?.id).finally(() =>
-        useTimeoutFn(() => (canSubmit.value = true), 400),
-    );
-}, 1000);
+const { submit, canSubmit } = useSubmitGuard(async (event: FormSubmitEvent<Schema>) => {
+    await conductCreateOrUpdateEntry(event.data, entry.value?.id);
+});
 
 const formRef = useTemplateRef('formRef');
 
@@ -234,7 +230,7 @@ async function closeModal(): Promise<void> {
             />
             <DataNoDataBlock v-else-if="!entry" class="w-full" icon="i-mdi-pulse" :type="$t('common.entry', 1)" />
 
-            <UForm v-else ref="formRef" :schema="schema" :state="state" @submit="onSubmitThrottle">
+            <UForm v-else ref="formRef" :schema="schema" :state="state" @submit="submit">
                 <dl class="divide-y divide-default">
                     <div class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
                         <dt class="text-sm leading-6 font-medium">

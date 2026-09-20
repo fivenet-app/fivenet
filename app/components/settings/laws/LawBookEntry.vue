@@ -172,13 +172,10 @@ async function reorderLaws(): Promise<void> {
     }
 }
 
-const canSubmit = ref<boolean>(true);
-const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) => {
+const { submit } = useSubmitGuard(async (event: FormSubmitEvent<Schema>) => {
     if (!lawBook.value) return;
-
-    canSubmit.value = false;
-    await saveLawBook(lawBook.value.id, event.data).finally(() => useTimeoutFn(() => (canSubmit.value = true), 400));
-}, 1000);
+    await saveLawBook(lawBook.value.id, event.data);
+});
 
 function deletedLaw(id: number, deletedAt?: Timestamp): void {
     if (!isSuperuser.value) {
@@ -445,13 +442,7 @@ const confirmModal = overlay.create(ConfirmModal);
                     </UTooltip>
                 </div>
             </div>
-            <UForm
-                v-else
-                class="flex w-full flex-row items-start gap-x-2"
-                :schema="schema"
-                :state="state"
-                @submit="onSubmitThrottle"
-            >
+            <UForm v-else class="flex w-full flex-row items-start gap-x-2" :schema="schema" :state="state" @submit="submit">
                 <UTooltip :text="$t('common.save')">
                     <UButton type="submit" variant="link" icon="i-mdi-content-save" />
                 </UTooltip>

@@ -184,15 +184,10 @@ function cancelEdit(): void {
     nextTick(() => setFromProps());
 }
 
-const canSubmit = ref<boolean>(true);
-const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) => {
+const { submit, isSubmitting, canSubmit } = useSubmitGuard(async (event: FormSubmitEvent<Schema>) => {
     if (!comment.value) return;
-
-    canSubmit.value = false;
-    await editComment(comment.value.documentId, comment.value.id, event.data).finally(() =>
-        useTimeoutFn(() => (canSubmit.value = true), 400),
-    );
-}, 1000);
+    await editComment(comment.value.documentId, comment.value.id, event.data);
+});
 
 const confirmModal = overlay.create(ConfirmModal);
 </script>
@@ -239,7 +234,7 @@ const confirmModal = overlay.create(ConfirmModal);
 
         <div v-else-if="canComment" class="flex items-start space-x-4">
             <div class="min-w-0 flex-1">
-                <UForm class="relative" :schema="schema" :state="state" @submit="onSubmitThrottle">
+                <UForm class="relative" :schema="schema" :state="state" @submit="submit">
                     <UFormField name="content" :ui="{ error: 'hidden' }">
                         <ClientOnly>
                             <TiptapEditor
@@ -259,7 +254,7 @@ const confirmModal = overlay.create(ConfirmModal);
                             type="submit"
                             :disabled="!canSubmit"
                             :label="$t('common.edit')"
-                            :loading="!canSubmit"
+                            :loading="isSubmitting"
                             trailing-icon="i-mdi-comment-edit"
                         />
 
@@ -267,7 +262,7 @@ const confirmModal = overlay.create(ConfirmModal);
                             type="button"
                             color="error"
                             :disabled="!canSubmit"
-                            :loading="!canSubmit"
+                            :loading="isSubmitting"
                             :label="$t('common.cancel')"
                             @click="cancelEdit"
                         />

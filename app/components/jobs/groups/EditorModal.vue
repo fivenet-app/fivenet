@@ -146,8 +146,6 @@ watch(
 
 const formRef = useTemplateRef('formRef');
 
-const canSubmit = ref<boolean>(true);
-
 const modalTitle = computed(() =>
     props.group?.id ? t('components.jobs.groups.editor.update_title') : t('components.jobs.groups.editor.create_title'),
 );
@@ -228,26 +226,14 @@ async function uploadGroupLogo(file: File, groupId: number): Promise<UploadFileR
 
 async function handleGroupLogoUpload(file: File | null | undefined): Promise<void> {
     if (!file || !props.group?.id) return;
-
-    canSubmit.value = false;
-    try {
-        await uploadGroupLogo(file, props.group.id);
-    } finally {
-        useTimeoutFn(() => (canSubmit.value = true), 400);
-    }
+    await uploadGroupLogo(file, props.group.id);
 }
 
 async function clearGroupLogo(): Promise<void> {
     if (!props.group?.id) return;
-
-    canSubmit.value = false;
-    try {
-        const { response } = await jobsGroupsClient.deleteGroupLogo({ id: props.group.id });
-        logoFile.value = response.group?.logoFile;
-        if (response.group) emit('updated', response.group);
-    } finally {
-        useTimeoutFn(() => (canSubmit.value = true), 400);
-    }
+    const { response } = await jobsGroupsClient.deleteGroupLogo({ id: props.group.id });
+    logoFile.value = response.group?.logoFile;
+    if (response.group) emit('updated', response.group);
 }
 
 async function createOrUpdateGroup(values: Schema): Promise<void> {
@@ -315,13 +301,13 @@ async function createOrUpdateGroup(values: Schema): Promise<void> {
     }
 }
 
-const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) => {
-    canSubmit.value = false;
-    await createOrUpdateGroup(event.data).finally(() => useTimeoutFn(() => (canSubmit.value = true), 400));
-}, 1000);
+const { submit, isSubmitting, canSubmit } = useSubmitGuard(async (event: FormSubmitEvent<Schema>) => {
+    await createOrUpdateGroup(event.data);
+});
 
 async function closeModal(): Promise<void> {
     if (!canSubmit.value) return;
+
     if (hasUnsavedChanges.value && !(await confirmLeave())) return;
 
     emit('close', false);
@@ -348,7 +334,7 @@ async function closeModal(): Promise<void> {
         </template>
 
         <template #body>
-            <UForm ref="formRef" :schema="schema" :state="state" @submit="onSubmitThrottle">
+            <UForm ref="formRef" :schema="schema" :state="state" @submit="submit">
                 <div class="grid gap-4">
                     <UFormField name="name" :label="$t('common.name')" required>
                         <UInput v-model="state.name" class="w-full" name="name" type="text" :placeholder="$t('common.name')" />
@@ -538,7 +524,7 @@ async function closeModal(): Promise<void> {
                 <UButton
                     class="flex-1"
                     block
-                    :loading="!canSubmit"
+                    :loading="isSubmitting"
                     :disabled="!canSubmit"
                     :label="group?.id ? $t('common.update') : $t('common.create')"
                     @click="formRef?.submit()"

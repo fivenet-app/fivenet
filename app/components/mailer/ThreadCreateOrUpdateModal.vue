@@ -126,11 +126,9 @@ watch(
         )),
 );
 
-const canSubmit = ref<boolean>(true);
-const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) => {
-    canSubmit.value = false;
-    await createThread(event.data).finally(() => useTimeoutFn(() => (canSubmit.value = true), 400));
-}, 1000);
+const { submit, canSubmit } = useSubmitGuard(async (event: FormSubmitEvent<Schema>) => {
+    await createThread(event.data);
+});
 
 const editorRef = useTemplateRef('editorRef');
 
@@ -163,7 +161,7 @@ async function closeModal(): Promise<void> {
         </template>
 
         <template #body>
-            <UForm ref="formRef" class="flex flex-1 flex-col" :schema="schema" :state="state" @submit="onSubmitThrottle">
+            <UForm ref="formRef" class="flex flex-1 flex-col" :schema="schema" :state="state" @submit="submit">
                 <div class="mx-auto">
                     <div class="flex w-full max-w-(--breakpoint-xl) flex-1 flex-col">
                         <div class="flex w-full flex-col items-center justify-between gap-1">

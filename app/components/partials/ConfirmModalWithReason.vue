@@ -38,17 +38,16 @@ const state = reactive<Schema>({
 
 const { hasUnsavedChanges, confirmLeave, syncSnapshot } = useSnapshotChanges(state);
 
-const canSubmit = ref<boolean>(true);
-
-const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) => {
-    canSubmit.value = false;
-    await props.confirm(event.data.reason).finally(() => useTimeoutFn(() => (canSubmit.value = true), 400));
+const { submit, canSubmit } = useSubmitGuard(async (event: FormSubmitEvent<Schema>) => {
+    await props.confirm(event.data.reason);
     emit('close', true);
-}, 1000);
+});
 
 const formRef = useTemplateRef('formRef');
 
 async function closeModal(): Promise<void> {
+    if (!canSubmit.value) return;
+
     if (hasUnsavedChanges.value && !(await confirmLeave())) return;
 
     props.cancel?.();
@@ -70,7 +69,7 @@ async function closeModal(): Promise<void> {
         "
     >
         <template #body>
-            <UForm ref="formRef" :schema="schema" :state="state" @submit="onSubmitThrottle">
+            <UForm ref="formRef" :schema="schema" :state="state" @submit="submit">
                 <UFormField name="reason" :label="$t('common.reason')">
                     <UInput v-model="state.reason" class="w-full" :placeholder="$t('common.reason')" />
                 </UFormField>

@@ -76,11 +76,9 @@ watch(
     },
 );
 
-const canSubmit = ref<boolean>(true);
-const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) => {
-    canSubmit.value = false;
-    await setTrafficPoints(event.data).finally(() => useTimeoutFn(() => (canSubmit.value = true), 400));
-}, 1000);
+const { submit, isSubmitting, canSubmit } = useSubmitGuard(async (event: FormSubmitEvent<Schema>) => {
+    await setTrafficPoints(event.data);
+});
 
 const formRef = useTemplateRef('formRef');
 
@@ -117,7 +115,7 @@ async function closeModal(): Promise<void> {
         </template>
 
         <template #body>
-            <UForm ref="formRef" :schema="schema" :state="state" @submit="onSubmitThrottle">
+            <UForm ref="formRef" :schema="schema" :state="state" @submit="submit">
                 <UFormField name="reason" :label="$t('common.reason')" required>
                     <UInput v-model="state.reason" class="w-full" type="text" :placeholder="$t('common.reason')" />
                 </UFormField>
@@ -141,7 +139,7 @@ async function closeModal(): Promise<void> {
                     class="flex-1"
                     block
                     :disabled="!canSubmit"
-                    :loading="!canSubmit"
+                    :loading="isSubmitting"
                     :label="$t('common.add')"
                     @click="formRef?.submit()"
                 />
@@ -151,7 +149,7 @@ async function closeModal(): Promise<void> {
                     color="error"
                     block
                     :disabled="!canSubmit"
-                    :loading="!canSubmit"
+                    :loading="isSubmitting"
                     :label="$t('common.reset')"
                     @click="
                         state.reset = true;

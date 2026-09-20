@@ -490,11 +490,9 @@ const confirmImpersonateModal = overlay.create(ConfirmModal, {
     },
 });
 
-const canSubmit = ref<boolean>(true);
-const onSubmitThrottle = useThrottleFn(async () => {
-    canSubmit.value = false;
-    await updateRolePerms().finally(() => useTimeoutFn(() => (canSubmit.value = true), 400));
-}, 1000);
+const { submit, isSubmitting, canSubmit } = useSubmitGuard(async () => {
+    await updateRolePerms();
+});
 
 const actionItems = computed<ResponsiveActionEntry[]>(() => {
     if (!role.value) return [];
@@ -581,10 +579,10 @@ const actionItems = computed<ResponsiveActionEntry[]>(() => {
                 <UButton
                     class="flex-1"
                     :disabled="!hasUnsavedChanges || !canSubmit"
-                    :loading="!canSubmit"
+                    :loading="isSubmitting"
                     icon="i-mdi-content-save"
                     :label="$t('common.save', 1)"
-                    @click="onSubmitThrottle"
+                    @click="submit"
                 />
 
                 <UPopover>

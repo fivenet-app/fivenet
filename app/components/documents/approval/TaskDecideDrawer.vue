@@ -46,7 +46,7 @@ watch(isOpen, (newVal) => {
     if (!newVal) emits('close', false);
 });
 
-async function onSubmit(values: FormSubmitEvent<Schema>) {
+const { submit, isSubmitting, canSubmit } = useSubmitGuard(async (values: FormSubmitEvent<Schema>) => {
     try {
         const call = approvalClient.decideApproval({
             documentId: props.documentId,
@@ -75,9 +75,11 @@ async function onSubmit(values: FormSubmitEvent<Schema>) {
     } catch (e) {
         handleGRPCError(e as RpcError);
     }
-}
+});
 
 async function closeDrawer(): Promise<void> {
+    if (!canSubmit.value) return;
+
     if (hasUnsavedChanges.value && !(await confirmLeave())) return;
 
     isOpen.value = false;
@@ -89,7 +91,7 @@ async function closeDrawer(): Promise<void> {
         v-model:open="isOpen"
         :title="$t('common.approve')"
         handle-only
-        :dismissible="!hasUnsavedChanges"
+        :dismissible="!hasUnsavedChanges && canSubmit"
         close
         :ui="{ container: 'flex-1', title: 'flex flex-row gap-2', body: 'h-full' }"
     >
@@ -105,7 +107,7 @@ async function closeDrawer(): Promise<void> {
 
         <template #body>
             <div class="mx-auto w-full max-w-[80%] min-w-3/4">
-                <UForm class="flex flex-1 flex-col gap-4" :schema="schema" :state="state" @submit="onSubmit">
+                <UForm class="flex flex-1 flex-col gap-4" :schema="schema" :state="state" @submit="submit">
                     <UFormField
                         v-if="approve"
                         class="mx-auto"
@@ -129,6 +131,8 @@ async function closeDrawer(): Promise<void> {
                             size="lg"
                             :label="approve ? $t('common.approve') : $t('common.decline')"
                             :icon="approve ? 'i-mdi-check-bold' : 'i-mdi-close-bold'"
+                            :disabled="!canSubmit"
+                            :loading="isSubmitting"
                         />
                     </UFormField>
                 </UForm>

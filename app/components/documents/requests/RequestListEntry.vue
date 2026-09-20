@@ -68,13 +68,9 @@ async function deleteDocumentReq(id: number): Promise<void> {
     }
 }
 
-const canSubmit = ref<boolean>(true);
-const onSubmitThrottle = useThrottleFn(async (accepted: boolean) => {
-    canSubmit.value = false;
-    await updateDocumentReq(props.request.documentId, props.request.id, accepted).finally(() =>
-        useTimeoutFn(() => (canSubmit.value = true), 400),
-    );
-}, 1000);
+const { submit, isSubmitting, canSubmit } = useSubmitGuard(async (accepted: boolean) => {
+    await updateDocumentReq(props.request.documentId, props.request.id, accepted);
+});
 </script>
 
 <template>
@@ -121,8 +117,8 @@ const onSubmitThrottle = useThrottleFn(async (accepted: boolean) => {
                         color="success"
                         icon="i-mdi-check-bold"
                         :disabled="!canSubmit"
-                        :loading="!canSubmit"
-                        @click="onSubmitThrottle(true)"
+                        :loading="isSubmitting"
+                        @click="submit(true)"
                     />
 
                     <UButton
@@ -131,8 +127,8 @@ const onSubmitThrottle = useThrottleFn(async (accepted: boolean) => {
                         color="error"
                         icon="i-mdi-close-thick"
                         :disabled="!canSubmit"
-                        :loading="!canSubmit"
-                        @click="onSubmitThrottle(false)"
+                        :loading="isSubmitting"
+                        @click="submit(false)"
                     />
                 </UFieldGroup>
 

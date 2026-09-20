@@ -102,13 +102,9 @@ watch(props, () => {
     syncSnapshot();
 });
 
-const canSubmit = ref<boolean>(true);
-const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) => {
-    canSubmit.value = false;
-    await createOrUpdateQualificationRequest(props.request.qualificationId, props.request.userId, event.data).finally(() =>
-        useTimeoutFn(() => (canSubmit.value = true), 400),
-    );
-}, 1000);
+const { submit, isSubmitting, canSubmit } = useSubmitGuard(async (event: FormSubmitEvent<Schema>) => {
+    await createOrUpdateQualificationRequest(props.request.qualificationId, props.request.userId, event.data);
+});
 
 const formRef = useTemplateRef('formRef');
 
@@ -145,7 +141,7 @@ async function closeModal(): Promise<void> {
         </template>
 
         <template #body>
-            <UForm ref="formRef" :schema="schema" :state="state" class="space-y-2" @submit="onSubmitThrottle">
+            <UForm ref="formRef" :schema="schema" :state="state" class="space-y-2" @submit="submit">
                 <UFormField class="flex-1" name="status" :label="$t('common.status')">
                     <ClientOnly>
                         <USelectMenu
@@ -208,7 +204,7 @@ async function closeModal(): Promise<void> {
                     class="flex-1"
                     block
                     :disabled="!canSubmit"
-                    :loading="!canSubmit"
+                    :loading="isSubmitting"
                     :label="$t('common.submit')"
                     @click="() => formRef?.submit()"
                 />

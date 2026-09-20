@@ -67,11 +67,9 @@ async function updateDispatchStatus(dispatchId: number, values: Schema): Promise
     }
 }
 
-const canSubmit = ref<boolean>(true);
-const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) => {
-    canSubmit.value = false;
-    await updateDispatchStatus(props.dispatchId, event.data).finally(() => useTimeoutFn(() => (canSubmit.value = true), 400));
-}, 1000);
+const { submit, isSubmitting, canSubmit } = useSubmitGuard(async (event: FormSubmitEvent<Schema>) => {
+    await updateDispatchStatus(props.dispatchId, event.data);
+});
 
 watch(props, () => {
     state.status = props.status ?? StatusDispatch.NEW;
@@ -124,7 +122,7 @@ async function closeModal(): Promise<void> {
         </template>
 
         <template #body>
-            <UForm ref="formRef" :schema="schema" :state="state" @submit="onSubmitThrottle">
+            <UForm ref="formRef" :schema="schema" :state="state" @submit="submit">
                 <dl class="divide-y divide-default">
                     <div class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
                         <dt class="text-sm leading-6 font-medium">
@@ -230,7 +228,7 @@ async function closeModal(): Promise<void> {
                     class="flex-1"
                     block
                     :disabled="!canSubmit"
-                    :loading="!canSubmit"
+                    :loading="isSubmitting"
                     :label="$t('common.update')"
                     @click="() => formRef?.submit()"
                 />

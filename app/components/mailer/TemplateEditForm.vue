@@ -93,11 +93,9 @@ async function createOrUpdateTemplate(values: Schema): Promise<CreateOrUpdateTem
     }
 }
 
-const canSubmit = ref<boolean>(true);
-const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) => {
-    canSubmit.value = false;
-    await createOrUpdateTemplate(event.data).finally(() => useTimeoutFn(() => (canSubmit.value = true), 400));
-}, 1000);
+const { submit, canSubmit } = useSubmitGuard(async (event: FormSubmitEvent<Schema>) => {
+    await createOrUpdateTemplate(event.data);
+});
 
 async function closeForm(): Promise<void> {
     if (!canSubmit.value) return;
@@ -116,7 +114,7 @@ onBeforeMount(() => setFromProps());
         class="mx-auto flex max-w-(--breakpoint-xl) flex-1 flex-col gap-y-2"
         :state="state"
         :schema="schema"
-        @submit="onSubmitThrottle"
+        @submit="submit"
     >
         <UFieldGroup class="mb-2 flex">
             <UButton class="flex-1" type="submit" icon="i-mdi-pencil" :label="$t('common.save')" />

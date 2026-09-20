@@ -54,25 +54,21 @@ watch(selectedEmail, () => setFromSelectedEmail());
 
 const canManage = computed(() => canAccess(selectedEmail.value?.access, selectedEmail.value?.userId, AccessLevel.MANAGE));
 
-const canSubmit = ref<boolean>(true);
-const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) => {
+const { submit, isSubmitting, canSubmit } = useSubmitGuard(async (event: FormSubmitEvent<Schema>) => {
     if (!selectedEmail.value?.id) return;
-    canSubmit.value = false;
 
     const values = event.data;
     if (values)
-        await mailerStore
-            .setEmailSettings({
-                settings: {
-                    emailId: selectedEmail.value?.id,
-                    signature: tiptapToContent(values.signature),
-                    blockedEmails: values.emails.map((e) => e.trim()),
-                },
-            })
-            .finally(() => useTimeoutFn(() => (canSubmit.value = true), 400));
+        await mailerStore.setEmailSettings({
+            settings: {
+                emailId: selectedEmail.value?.id,
+                signature: tiptapToContent(values.signature),
+                blockedEmails: values.emails.map((e) => e.trim()),
+            },
+        });
 
     emit('close', false);
-}, 1000);
+});
 
 const formRef = useTemplateRef('formRef');
 
@@ -108,7 +104,7 @@ async function closeModal(): Promise<void> {
         </template>
 
         <template #body>
-            <UForm ref="formRef" :schema="schema" :state="state" @submit="onSubmitThrottle">
+            <UForm ref="formRef" :schema="schema" :state="state" @submit="submit">
                 <div class="flex flex-col gap-2">
                     <UFormField class="flex-1" name="emails" :label="$t('common.blocklist')">
                         <div class="flex flex-col gap-1">
@@ -183,7 +179,7 @@ async function closeModal(): Promise<void> {
                     :label="$t('common.save')"
                     block
                     :disabled="!canSubmit"
-                    :loading="!canSubmit"
+                    :loading="isSubmitting"
                     @click="formRef?.submit()"
                 />
             </UFieldGroup>

@@ -376,11 +376,9 @@ onBeforeMount(() => {
     if (props.pageId > 0) sendClientView(props.pageId);
 });
 
-const canSubmit = ref<boolean>(true);
-const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) => {
-    canSubmit.value = false;
-    await updatePage(event.data).finally(() => useTimeoutFn(() => (canSubmit.value = true), 400));
-}, 1000);
+const { submit, isSubmitting, canSubmit } = useSubmitGuard(async (event: FormSubmitEvent<Schema>) => {
+    await updatePage(event.data);
+});
 
 useYText(ydoc.getText('title'), toRef(state.meta, 'title'), { provider: provider });
 useYText(ydoc.getText('description'), toRef(state.meta, 'description'), { provider: provider });
@@ -447,7 +445,7 @@ const formRef = useTemplateRef('formRef');
                         color="info"
                         trailing-icon="i-mdi-publish"
                         :disabled="!canSubmit"
-                        :loading="!canSubmit"
+                        :loading="isSubmitting"
                         :label="$t('common.publish')"
                         :ui="{ label: 'hidden truncate sm:block' }"
                         @click="
@@ -474,7 +472,7 @@ const formRef = useTemplateRef('formRef');
                 class="flex min-h-full w-full max-w-full flex-1 flex-col overflow-y-auto"
                 :schema="schema"
                 :state="state"
-                @submit="onSubmitThrottle"
+                @submit="submit"
             >
                 <DataPendingBlock v-if="isRequestPending(status)" :message="$t('common.loading', [$t('common.page', 1)])" />
                 <DataErrorBlock

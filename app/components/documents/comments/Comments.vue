@@ -222,11 +222,9 @@ const isVisible = useElementVisibility(commentsEl);
 
 watchOnce(isVisible, async () => refresh());
 
-const canSubmit = ref<boolean>(true);
-const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) => {
-    canSubmit.value = false;
-    await addComment(props.documentId, event.data).finally(() => useTimeoutFn(() => (canSubmit.value = true), 400));
-}, 1000);
+const { submit, isSubmitting, canSubmit } = useSubmitGuard(async (event: FormSubmitEvent<Schema>) => {
+    await addComment(props.documentId, event.data);
+});
 </script>
 
 <template>
@@ -234,7 +232,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
         <div ref="commentsEl">
             <div v-if="canComment && !closed" class="flex items-start space-x-4">
                 <div class="min-w-0 flex-1">
-                    <UForm class="relative" :schema="schema" :state="state" @submit="onSubmitThrottle">
+                    <UForm class="relative" :schema="schema" :state="state" @submit="submit">
                         <UFormField name="content" :ui="{ error: 'hidden' }">
                             <ClientOnly>
                                 <TiptapEditor
@@ -254,7 +252,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                             <UButton
                                 type="submit"
                                 :disabled="!canSubmit"
-                                :loading="!canSubmit"
+                                :loading="isSubmitting"
                                 :label="$t('common.post')"
                                 trailing-icon="i-mdi-comment-plus"
                             />

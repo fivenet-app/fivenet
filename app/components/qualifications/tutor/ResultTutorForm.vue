@@ -139,13 +139,9 @@ watch(
     },
 );
 
-const canSubmit = ref<boolean>(true);
-const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) => {
-    canSubmit.value = false;
-    await createOrUpdateQualificationResult(props.qualificationId, event.data).finally(() =>
-        useTimeoutFn(() => (canSubmit.value = true), 400),
-    );
-}, 1000);
+const { submit, isSubmitting, canSubmit } = useSubmitGuard(async (event: FormSubmitEvent<Schema>) => {
+    await createOrUpdateQualificationResult(props.qualificationId, event.data);
+});
 
 const formRef = useTemplateRef('formRef');
 
@@ -176,7 +172,7 @@ async function closeModal(): Promise<void> {
                 :schema="schema"
                 :state="state"
                 class="mx-auto w-full max-w-(--ui-container) space-y-4"
-                @submit="onSubmitThrottle"
+                @submit="submit"
             >
                 <slot />
 
@@ -284,7 +280,7 @@ async function closeModal(): Promise<void> {
                     class="flex-1"
                     block
                     :disabled="!canSubmit"
-                    :loading="!canSubmit"
+                    :loading="isSubmitting"
                     :label="$t('common.submit')"
                     @click="formRef?.submit()"
                 />

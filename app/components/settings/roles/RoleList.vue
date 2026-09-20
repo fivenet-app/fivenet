@@ -119,11 +119,9 @@ const columns = computed(
 
 const route = useRoute('settings-roles-id');
 
-const canSubmit = ref<boolean>(true);
-const onSubmitThrottle = useThrottleFn(async () => {
-    canSubmit.value = false;
-    await createRole().finally(() => useTimeoutFn(() => (canSubmit.value = true), 400));
-}, 1000);
+const { submit, isSubmitting, canSubmit } = useSubmitGuard(async () => {
+    await createRole();
+});
 
 const formRef = useTemplateRef('formRef');
 
@@ -153,7 +151,7 @@ const confirmModal = overlay.create(ConfirmModal);
                             class="flex w-full flex-row gap-2"
                             :schema="schema"
                             :state="state"
-                            @submit="onSubmitThrottle"
+                            @submit="submit"
                         >
                             <UFormField class="flex-1" name="grade" :label="$t('common.job_grade')">
                                 <ClientOnly>
@@ -177,7 +175,7 @@ const confirmModal = overlay.create(ConfirmModal);
                                 <UButton
                                     class="flex-initial justify-end"
                                     :disabled="state.jobGrade === undefined || state.jobGrade!.grade < 0 || !canSubmit"
-                                    :loading="!canSubmit"
+                                    :loading="isSubmitting"
                                     color="neutral"
                                     variant="outline"
                                     icon="i-mdi-plus"

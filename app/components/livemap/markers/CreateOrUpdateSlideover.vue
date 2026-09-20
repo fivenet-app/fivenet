@@ -573,11 +573,9 @@ async function createOrUpdateMarker(values: Schema): Promise<void> {
     }
 }
 
-const canSubmit = ref<boolean>(true);
-const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) => {
-    canSubmit.value = false;
-    await createOrUpdateMarker(event.data).finally(() => useTimeoutFn(() => (canSubmit.value = true), 400));
-}, 1000);
+const { submit, isSubmitting, canSubmit } = useSubmitGuard(async (event: FormSubmitEvent<Schema>) => {
+    await createOrUpdateMarker(event.data);
+});
 
 const formRef = useTemplateRef('formRef');
 const initialDismissGuard = ref<boolean>(true);
@@ -590,6 +588,8 @@ const { start: startInitialDismissGuardTimeout, stop: stopInitialDismissGuardTim
 );
 
 async function closeSlideover(): Promise<void> {
+    if (!canSubmit.value) return;
+
     if (hasUnsavedChanges.value && !(await confirmLeave())) return;
 
     emit('close', false);
@@ -639,7 +639,7 @@ onBeforeUnmount(() => {
         </template>
 
         <template #body>
-            <UForm ref="formRef" :schema="schema" :state="state" @submit="onSubmitThrottle">
+            <UForm ref="formRef" :schema="schema" :state="state" @submit="submit">
                 <dl class="divide-y divide-default">
                     <div class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
                         <dt class="text-sm leading-6 font-medium">
@@ -1055,7 +1055,7 @@ onBeforeUnmount(() => {
                     class="flex-1"
                     block
                     :disabled="!canSubmit"
-                    :loading="!canSubmit"
+                    :loading="isSubmitting"
                     :label="!marker ? $t('common.create') : $t('common.save')"
                     @click="formRef?.submit()"
                 />

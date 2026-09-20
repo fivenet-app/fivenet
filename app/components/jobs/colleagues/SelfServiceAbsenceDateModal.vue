@@ -131,11 +131,9 @@ watch(props, () => {
 updateAbsenceDateField();
 syncSnapshot();
 
-const canSubmit = ref<boolean>(true);
-const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) => {
-    canSubmit.value = false;
-    await setAbsenceDate(event.data).finally(() => useTimeoutFn(() => (canSubmit.value = true), 400));
-}, 1000);
+const { submit, isSubmitting, canSubmit } = useSubmitGuard(async (event: FormSubmitEvent<Schema>) => {
+    await setAbsenceDate(event.data);
+});
 
 const formRef = useTemplateRef('formRef');
 
@@ -172,7 +170,7 @@ async function closeModal(): Promise<void> {
         </template>
 
         <template #body>
-            <UForm ref="formRef" class="flex flex-col gap-2" :schema="schema" :state="state" @submit="onSubmitThrottle">
+            <UForm ref="formRef" class="flex flex-col gap-2" :schema="schema" :state="state" @submit="submit">
                 <UFormField name="reason" :label="$t('common.reason')" required>
                     <UInput v-model="state.reason" class="w-full" type="text" :placeholder="$t('common.reason')" />
                 </UFormField>
@@ -205,7 +203,7 @@ async function closeModal(): Promise<void> {
                     color="error"
                     block
                     :disabled="!canSubmit || (!userProps?.absenceBegin && !userProps?.absenceEnd)"
-                    :loading="!canSubmit"
+                    :loading="isSubmitting"
                     :label="$t('common.annul')"
                     @click="
                         state.reset = true;
@@ -217,7 +215,7 @@ async function closeModal(): Promise<void> {
                     class="flex-1"
                     block
                     :disabled="!canSubmit"
-                    :loading="!canSubmit"
+                    :loading="isSubmitting"
                     :label="$t('common.save')"
                     @click="formRef?.submit()"
                 />

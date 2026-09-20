@@ -128,11 +128,9 @@ const columns = computed(
 
 const route = useRoute('settings-limiter-job');
 
-const canSubmit = ref<boolean>(true);
-const onSubmitThrottle = useThrottleFn(async () => {
-    canSubmit.value = false;
-    await createRole().finally(() => useTimeoutFn(() => (canSubmit.value = true), 400));
-}, 1000);
+const { submit, isSubmitting, canSubmit } = useSubmitGuard(async () => {
+    await createRole();
+});
 </script>
 
 <template>
@@ -175,12 +173,12 @@ const onSubmitThrottle = useThrottleFn(async () => {
                             <UFormField name="submit" label="&nbsp;">
                                 <UButton
                                     :disabled="state.job === undefined || !canSubmit"
-                                    :loading="!canSubmit"
+                                    :loading="isSubmitting"
                                     color="neutral"
                                     variant="outline"
                                     icon="i-mdi-plus"
                                     :label="$t('common.create')"
-                                    @click="onSubmitThrottle"
+                                    @click="submit"
                                 />
                             </UFormField>
                         </UForm>

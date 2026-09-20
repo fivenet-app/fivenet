@@ -498,14 +498,11 @@ async function updateQualification(values: Schema): Promise<UpdateQualificationR
     }
 }
 
-const canSubmit = ref<boolean>(true);
-const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) => {
+const { submit, isSubmitting, canSubmit } = useSubmitGuard(async (event: FormSubmitEvent<Schema>) => {
     if (event.submitter?.getAttribute('role') === 'tab') return;
-
-    canSubmit.value = false;
-    await updateQualification(event.data).finally(() => useTimeoutFn(() => (canSubmit.value = true), 400));
+    await updateQualification(event.data);
     syncSnapshot();
-}, 1000);
+});
 
 const accessTypes: AccessType[] = [{ label: t('common.job', 2), value: 'job' }];
 
@@ -581,7 +578,7 @@ const formRef = useTemplateRef('formRef');
                     <UButton
                         trailing-icon="i-mdi-content-save"
                         :disabled="!canDo.edit || !canSubmit"
-                        :loading="!canSubmit"
+                        :loading="isSubmitting"
                         @click="() => formRef?.submit()"
                     >
                         <span class="hidden truncate sm:block">
@@ -594,7 +591,7 @@ const formRef = useTemplateRef('formRef');
                         color="info"
                         trailing-icon="i-mdi-publish"
                         :disabled="!canSubmit"
-                        :loading="!canSubmit"
+                        :loading="isSubmitting"
                         @click="
                             confirmModal.open({
                                 title: $t('common.publish_confirm.title', { type: $t('common.qualification', 1) }),
@@ -623,7 +620,7 @@ const formRef = useTemplateRef('formRef');
                 class="flex min-h-0 w-full flex-1 flex-col overflow-y-hidden"
                 :schema="schema"
                 :state="state"
-                @submit="onSubmitThrottle"
+                @submit="submit"
             >
                 <DataPendingBlock
                     v-if="isRequestPending(status)"

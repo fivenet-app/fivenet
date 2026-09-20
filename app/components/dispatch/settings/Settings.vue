@@ -227,13 +227,10 @@ const selectedTab = computed({
     },
 });
 
-const canSubmit = ref<boolean>(true);
-const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) => {
+const { submit, isSubmitting, canSubmit } = useSubmitGuard(async (event: FormSubmitEvent<Schema>) => {
     if (event.submitter?.getAttribute('role') === 'tab') return;
-
-    canSubmit.value = false;
-    await updateSettings(event.data).finally(() => useTimeoutFn(() => (canSubmit.value = true), 400));
-}, 1000);
+    await updateSettings(event.data);
+});
 
 const formRef = useTemplateRef('formRef');
 </script>
@@ -261,7 +258,7 @@ const formRef = useTemplateRef('formRef');
                         v-if="!!settings"
                         trailing-icon="i-mdi-content-save"
                         :disabled="!canSubmit"
-                        :loading="!canSubmit"
+                        :loading="isSubmitting"
                         :label="$t('common.save', 1)"
                         @click="() => formRef?.submit()"
                     />
@@ -285,7 +282,7 @@ const formRef = useTemplateRef('formRef');
                 class="flex w-full max-w-full flex-1 flex-col overflow-y-auto"
                 :schema="schema"
                 :state="state"
-                @submit="onSubmitThrottle"
+                @submit="submit"
             >
                 <UTabs
                     v-model="selectedTab"

@@ -187,16 +187,13 @@ async function createOrUpdateEmail(values: Schema): Promise<undefined> {
     }
 }
 
-const canSubmit = ref<boolean>(true);
-const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) => {
-    canSubmit.value = false;
-
-    await createOrUpdateEmail(event.data).finally(() => useTimeoutFn(() => (canSubmit.value = true), 400));
-}, 1000);
+const { submit, isSubmitting, canSubmit } = useSubmitGuard(async (event: FormSubmitEvent<Schema>) => {
+    await createOrUpdateEmail(event.data);
+});
 </script>
 
 <template>
-    <UForm class="flex flex-col gap-y-2" :state="state" :schema="schema" @submit="onSubmitThrottle">
+    <UForm class="flex flex-col gap-y-2" :state="state" :schema="schema" @submit="submit">
         <UFormField
             class="flex flex-1 flex-col"
             :label="$t('common.mail')"
@@ -295,6 +292,8 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                 v-if="!disabled"
                 type="submit"
                 block
+                :disabled="!canSubmit"
+                :loading="isSubmitting"
                 :label="modelValue?.id !== undefined ? $t('common.update') : $t('common.create')"
             />
         </UFormField>

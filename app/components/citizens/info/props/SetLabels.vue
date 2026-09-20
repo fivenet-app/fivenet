@@ -96,11 +96,9 @@ async function setJobProp(userId: number, values: Schema): Promise<void> {
     }
 }
 
-const canSubmit = ref<boolean>(true);
-const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) => {
-    canSubmit.value = false;
-    await setJobProp(props.userId, event.data).finally(() => useTimeoutFn(() => (canSubmit.value = true), 400));
-}, 1000);
+const { submit, isSubmitting, canSubmit } = useSubmitGuard(async (event: FormSubmitEvent<Schema>) => {
+    await setJobProp(props.userId, event.data);
+});
 
 watch(labels, () => setFromProps());
 
@@ -137,7 +135,7 @@ const formRef = useTemplateRef('formRef');
 </script>
 
 <template>
-    <UForm ref="formRef" class="flex flex-col gap-2" :schema="schema" :state="state" @submit="onSubmitThrottle">
+    <UForm ref="formRef" class="flex flex-col gap-2" :schema="schema" :state="state" @submit="submit">
         <UFormField
             v-if="
                 can('citizens.CitizensService/SetUserProps').value &&
@@ -228,7 +226,7 @@ const formRef = useTemplateRef('formRef');
                 block
                 icon="i-mdi-content-save"
                 :disabled="!canSubmit"
-                :loading="!canSubmit"
+                :loading="isSubmitting"
                 :label="$t('common.save')"
                 @click="formRef?.submit()"
             />

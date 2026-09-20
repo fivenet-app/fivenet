@@ -62,16 +62,14 @@ watch(editing, async () => {
     }
 });
 
-const canSubmit = ref<boolean>(true);
-const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) => {
-    canSubmit.value = false;
-    await setMOTD(event.data).finally(() => useTimeoutFn(() => (canSubmit.value = true), 400));
+const { submit, isSubmitting } = useSubmitGuard(async (event: FormSubmitEvent<Schema>) => {
+    await setMOTD(event.data);
     editing.value = !editing.value;
-}, 1000);
+});
 </script>
 
 <template>
-    <UForm class="w-full flex-col gap-2" :schema="schema" :state="state" @submit="onSubmitThrottle">
+    <UForm class="w-full flex-col gap-2" :schema="schema" :state="state" @submit="submit">
         <div class="flex flex-row items-center gap-2">
             <h4 v-if="data && (data.motd.length > 0 || canDo)" class="flex-1 text-base leading-6 font-semibold">
                 {{ $t('common.motd') }}
@@ -79,18 +77,18 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
 
             <template v-if="canDo">
                 <UTooltip v-if="!editing" :text="$t('common.edit')">
-                    <UButton variant="link" icon="i-mdi-pencil" :loading="!canSubmit" @click="editing = !editing" />
+                    <UButton variant="link" icon="i-mdi-pencil" :loading="isSubmitting" @click="editing = !editing" />
                 </UTooltip>
                 <UFieldGroup v-else class="flex flex-row gap-1">
                     <UTooltip :text="$t('common.save')">
-                        <UButton type="submit" variant="link" icon="i-mdi-content-save" :loading="!canSubmit" />
+                        <UButton type="submit" variant="link" icon="i-mdi-content-save" :loading="isSubmitting" />
                     </UTooltip>
 
                     <UTooltip :text="$t('common.cancel')">
                         <UButton
                             color="error"
                             icon="i-mdi-cancel"
-                            :loading="!canSubmit"
+                            :loading="isSubmitting"
                             variant="link"
                             @click="editing = !editing"
                         />

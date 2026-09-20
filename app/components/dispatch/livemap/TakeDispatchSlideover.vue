@@ -77,11 +77,9 @@ const filteredDispatches = computed(() => {
     return filtered.sort((a, b) => (a.status?.status ?? 0) - (b.status?.status ?? 0)).map((d) => d.id);
 });
 
-const canSubmit = ref<boolean>(true);
-const onSubmitThrottle = useThrottleFn(async (resp: TakeDispatchResp) => {
-    canSubmit.value = false;
-    await takeDispatches(resp).finally(() => useTimeoutFn(() => (canSubmit.value = true), 400));
-}, 1000);
+const { submit, isSubmitting, canSubmit } = useSubmitGuard(async (resp: TakeDispatchResp) => {
+    await takeDispatches(resp);
+});
 </script>
 
 <template>
@@ -147,18 +145,18 @@ const onSubmitThrottle = useThrottleFn(async (resp: TakeDispatchResp) => {
                     class="flex-1"
                     color="success"
                     :disabled="!canTakeDispatch || !canSubmit"
-                    :loading="!canSubmit"
+                    :loading="isSubmitting"
                     :label="$t('common.accept')"
-                    @click="onSubmitThrottle(TakeDispatchResp.ACCEPTED)"
+                    @click="submit(TakeDispatchResp.ACCEPTED)"
                 />
 
                 <UButton
                     class="flex-1"
                     color="error"
                     :disabled="!canTakeDispatch || !canSubmit"
-                    :loading="!canSubmit"
+                    :loading="isSubmitting"
                     :label="$t('common.decline')"
-                    @click="onSubmitThrottle(TakeDispatchResp.DECLINED)"
+                    @click="submit(TakeDispatchResp.DECLINED)"
                 />
 
                 <UButton class="flex-1" :label="$t('common.close')" @click="$emit('close', false)" />

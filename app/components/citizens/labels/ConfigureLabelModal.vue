@@ -77,7 +77,7 @@ const maxExpiresAt = computed(() =>
     ),
 );
 
-const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) => {
+const { submit, canSubmit } = useSubmitGuard(async (event: FormSubmitEvent<Schema>) => {
     emits('close', {
         id: event.data.id,
         sortOrder: event.data.sortOrder,
@@ -87,13 +87,15 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
         expiresAt: event.data.expiresAt ? toTimestamp(event.data.expiresAt) : undefined,
         settings: props.label.settings,
     });
-}, 1000);
+});
 
 const formatDuration = useDurationFormatter();
 
 const formRef = useTemplateRef('formRef');
 
 async function closeModal(): Promise<void> {
+    if (!canSubmit.value) return;
+
     if (hasUnsavedChanges.value && !(await confirmLeave())) return;
 
     emits('close', undefined);
@@ -121,7 +123,7 @@ async function closeModal(): Promise<void> {
         </template>
 
         <template #body>
-            <UForm ref="formRef" :schema="schema" :state="state" @submit="onSubmitThrottle">
+            <UForm ref="formRef" :schema="schema" :state="state" @submit="submit">
                 <UFormField
                     name="expiresAt"
                     :label="$t('common.expires_at')"

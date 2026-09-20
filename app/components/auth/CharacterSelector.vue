@@ -34,18 +34,15 @@ async function getCharacters(signal: AbortSignal): Promise<Character[]> {
 watch(chars, async () => {
     // If user only has one char, auto select that char
     if (chars.value?.length === 1 && chars.value[0]?.char?.userId !== undefined) {
-        await onSubmitThrottle(chars.value[0].char.userId);
+        await submit(chars.value[0].char.userId);
     }
 });
 
 const charLockActive = computed(() => chars.value?.some((c) => c.available === false) ?? false);
 
-const canSubmit = ref<boolean>(true);
-const onSubmitThrottle = useThrottleFn(async (charId: number) => {
-    canSubmit.value = false;
-
-    await chooseCharacter(charId, true).finally(() => useTimeoutFn(() => (canSubmit.value = true), 400));
-}, 1000);
+const { submit, canSubmit } = useSubmitGuard(async (charId: number) => {
+    await chooseCharacter(charId, true);
+});
 </script>
 
 <template>
@@ -82,7 +79,7 @@ const onSubmitThrottle = useThrottleFn(async (charId: number) => {
                     :char="char.char!"
                     :unavailable="!char.available"
                     :can-submit="canSubmit"
-                    @selected="onSubmitThrottle($event)"
+                    @selected="submit($event)"
                 />
             </UCarousel>
         </div>

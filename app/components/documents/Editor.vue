@@ -263,12 +263,9 @@ watchDebounced(
     },
 );
 
-const canSubmit = ref<boolean>(true);
-const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) => {
-    canSubmit.value = false;
-
-    await updateDocument(props.documentId, event.data).finally(() => useTimeoutFn(() => (canSubmit.value = true), 400));
-}, 1000);
+const { submit, isSubmitting, canSubmit } = useSubmitGuard(async (event: FormSubmitEvent<Schema>) => {
+    await updateDocument(props.documentId, event.data);
+});
 
 async function updateDocument(id: number, values: Schema): Promise<void> {
     normalizeAccessEntryIds(values.access.users);
@@ -551,7 +548,7 @@ provide('yjsProvider', provider);
                     <UButton
                         trailing-icon="i-mdi-content-save"
                         :disabled="!canSubmit"
-                        :loading="!canSubmit"
+                        :loading="isSubmitting"
                         @click="() => formRef?.submit()"
                     >
                         <span class="hidden truncate sm:block">
@@ -564,7 +561,7 @@ provide('yjsProvider', provider);
                         color="info"
                         trailing-icon="i-mdi-publish"
                         :disabled="!canSubmit"
-                        :loading="!canSubmit"
+                        :loading="isSubmitting"
                         @click="
                             () =>
                                 confirmModal.open({
@@ -594,7 +591,7 @@ provide('yjsProvider', provider);
                 class="flex min-h-0 w-full flex-1 flex-col overflow-y-hidden"
                 :schema="schema"
                 :state="state"
-                @submit="onSubmitThrottle"
+                @submit="submit"
             >
                 <DataPendingBlock v-if="isRequestPending(status)" :message="$t('common.loading', [$t('common.document', 1)])" />
                 <DataErrorBlock

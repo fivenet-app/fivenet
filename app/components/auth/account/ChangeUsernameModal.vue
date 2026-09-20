@@ -49,11 +49,9 @@ async function changeUsername(values: Schema): Promise<void> {
     }
 }
 
-const canSubmit = ref<boolean>(true);
-const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) => {
-    canSubmit.value = false;
-    await changeUsername(event.data).finally(() => useTimeoutFn(() => (canSubmit.value = true), 400));
-}, 1000);
+const { submit, isSubmitting, canSubmit } = useSubmitGuard(async (event: FormSubmitEvent<Schema>) => {
+    await changeUsername(event.data);
+});
 
 const formRef = useTemplateRef('formRef');
 
@@ -90,7 +88,7 @@ async function closeModal(): Promise<void> {
         </template>
 
         <template #body>
-            <UForm ref="formRef" :schema="schema" :state="state" @submit="onSubmitThrottle">
+            <UForm ref="formRef" :schema="schema" :state="state" @submit="submit">
                 <UFormField name="currentUsername" :label="$t('components.auth.change_username_modal.current_username')">
                     <UInput
                         v-model="state.currentUsername"
@@ -128,7 +126,7 @@ async function closeModal(): Promise<void> {
                     class="flex-1"
                     block
                     :disabled="!canSubmit"
-                    :loading="!canSubmit"
+                    :loading="isSubmitting"
                     :label="$t('components.auth.change_username_modal.change_username')"
                     @click="formRef?.submit()"
                 />

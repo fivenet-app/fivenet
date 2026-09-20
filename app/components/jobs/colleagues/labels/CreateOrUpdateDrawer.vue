@@ -112,11 +112,9 @@ async function createOrUpdateLabel(values: Schema): Promise<CreateOrUpdateLabelR
     }
 }
 
-const canSubmit = ref<boolean>(true);
-const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) => {
-    canSubmit.value = false;
-    await createOrUpdateLabel(event.data).finally(() => useTimeoutFn(() => (canSubmit.value = true), 400));
-}, 1000);
+const { submit, isSubmitting, canSubmit } = useSubmitGuard(async (event: FormSubmitEvent<Schema>) => {
+    await createOrUpdateLabel(event.data);
+});
 
 const formRef = useTemplateRef('formRef');
 
@@ -150,7 +148,7 @@ async function closeModal(): Promise<void> {
 
         <template #body>
             <div class="mx-auto w-full max-w-(--breakpoint-xl)">
-                <UForm ref="formRef" :schema="schema" :state="state" @submit="onSubmitThrottle">
+                <UForm ref="formRef" :schema="schema" :state="state" @submit="submit">
                     <UFormField class="flex-1" name="name" :label="$t('common.name')">
                         <UInput v-model="state.name" class="w-full" name="name" type="text" :placeholder="$t('common.name')" />
                     </UFormField>
@@ -181,7 +179,7 @@ async function closeModal(): Promise<void> {
                     color="primary"
                     icon="i-mdi-content-save"
                     :disabled="!canSubmit"
-                    :loading="!canSubmit"
+                    :loading="isSubmitting"
                     :label="$t('common.save')"
                     @click="() => formRef?.submit()"
                 />

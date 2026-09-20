@@ -99,17 +99,14 @@ async function saveLaw(id: number, values: Schema): Promise<void> {
 
 const canSaveLaw = computed(() => state.lawbookId > 0 && availableLawBooks.value.some((book) => book.id === state.lawbookId));
 
-const canSubmit = ref<boolean>(true);
-const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) => {
+const { submit, canSubmit } = useSubmitGuard(async (event: FormSubmitEvent<Schema>) => {
     if (!canSaveLaw.value) return;
-
-    canSubmit.value = false;
-    await saveLaw(props.law.id, event.data).finally(() => useTimeoutFn(() => (canSubmit.value = true), 400));
-}, 1000);
+    await saveLaw(props.law.id, event.data);
+});
 </script>
 
 <template>
-    <UForm class="my-2 flex flex-1 flex-col gap-2" :schema="schema" :state="state" @submit="onSubmitThrottle">
+    <UForm class="my-2 flex flex-1 flex-col gap-2" :schema="schema" :state="state" @submit="submit">
         <div class="flex flex-1 flex-row gap-2">
             <UFormField class="text-sm font-medium">
                 <UFieldGroup class="inline-flex w-full" orientation="vertical">

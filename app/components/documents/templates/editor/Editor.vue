@@ -202,19 +202,16 @@ const state = reactive<Schema>({
     },
 });
 
-const canSubmit = ref<boolean>(true);
 const template = ref<Template>();
 const loading = ref<boolean>(!!props.templateId);
 const loadError = ref<Error>();
 
 const canEdit = computed(() => !props.templateId || (!loading.value && !loadError.value && !!template.value));
 
-const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) => {
+const { submit, canSubmit } = useSubmitGuard(async (event: FormSubmitEvent<Schema>) => {
     if (event.submitter?.getAttribute('role') === 'tab') return;
-
-    canSubmit.value = false;
-    await createOrUpdateTemplate(event.data, props.templateId).finally(() => useTimeoutFn(() => (canSubmit.value = true), 400));
-}, 1000);
+    await createOrUpdateTemplate(event.data, props.templateId);
+});
 
 const { syncSnapshot } = useSnapshotChanges(state);
 
@@ -551,7 +548,7 @@ const formRef = useTemplateRef('formRef');
                 class="mb-4 flex min-h-0 w-full flex-1 flex-col overflow-y-hidden"
                 :schema="schema"
                 :state="state"
-                @submit="onSubmitThrottle"
+                @submit="submit"
             >
                 <DataPendingBlock v-if="templateId && loading" :message="$t('common.loading', [$t('common.template', 2)])" />
                 <DataErrorBlock

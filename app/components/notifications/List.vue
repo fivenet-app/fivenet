@@ -77,7 +77,7 @@ async function getNotifications(values: Schema, signal: AbortSignal): Promise<Ge
     }
 }
 
-async function markAllRead(): Promise<void> {
+async function markAllReadAction(): Promise<void> {
     await notificationCenter.markAllRead();
 
     const now = toTimestamp(new Date());
@@ -85,6 +85,8 @@ async function markAllRead(): Promise<void> {
         if (!v.readAt) v.readAt = now;
     });
 }
+
+const { submit: markAllRead, isSubmitting, canSubmit } = useSubmitGuard(markAllReadAction);
 
 function setScope(value: Scope): void {
     scope.value = value;
@@ -109,11 +111,8 @@ defineShortcuts({
         canSubmit.value &&
         data.value?.notifications !== undefined &&
         data.value?.notifications.length > 0 &&
-        markAllRead().finally(timeoutFn),
+        markAllRead(),
 });
-
-const { start: timeoutFn } = useTimeoutFn(() => (canSubmit.value = true), 400, { immediate: false });
-const canSubmit = ref<boolean>(true);
 </script>
 
 <template>
@@ -189,8 +188,9 @@ const canSubmit = ref<boolean>(true);
                                         :disabled="
                                             !canSubmit || data?.notifications === undefined || data?.notifications.length === 0
                                         "
+                                        :loading="isSubmitting"
                                         :label="$t('components.notifications.mark_all_read')"
-                                        @click="() => markAllRead().finally(timeoutFn)"
+                                        @click="markAllRead"
                                     />
                                 </UTooltip>
                             </UFormField>

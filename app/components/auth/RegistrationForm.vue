@@ -62,11 +62,9 @@ async function createAccount(values: Schema): Promise<void> {
 
 const passwordVisibility = ref<boolean>(false);
 
-const canSubmit = ref<boolean>(true);
-const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) => {
-    canSubmit.value = false;
-    await createAccount(event.data).finally(() => useTimeoutFn(() => (canSubmit.value = true), 400));
-}, 1000);
+const { submit, isSubmitting, canSubmit } = useSubmitGuard(async (event: FormSubmitEvent<Schema>) => {
+    await createAccount(event.data);
+});
 </script>
 
 <template>
@@ -75,7 +73,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
             {{ $t('components.auth.registration_form.title') }}
         </h2>
 
-        <UForm class="space-y-2" :schema="schema" :state="state" @submit="onSubmitThrottle">
+        <UForm class="space-y-2" :schema="schema" :state="state" @submit="submit">
             <UAlert
                 icon="i-mdi-info-circle"
                 variant="subtle"
@@ -164,7 +162,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                 type="submit"
                 block
                 :disabled="!canSubmit"
-                :loading="!canSubmit"
+                :loading="isSubmitting"
                 :label="$t('components.auth.registration_form.submit_button')"
             />
 

@@ -118,11 +118,9 @@ function updateDispatchUnits(): void {
 watch(dispatch, () => updateDispatchUnits());
 updateDispatchUnits();
 
-const canSubmit = ref<boolean>(true);
-const onSubmitThrottle = useThrottleFn(async () => {
-    canSubmit.value = false;
-    await assignDispatch().finally(() => useTimeoutFn(() => (canSubmit.value = true), 400));
-}, 1000);
+const { submit, isSubmitting, canSubmit } = useSubmitGuard(async () => {
+    await assignDispatch();
+});
 
 const formRef = useTemplateRef('formRef');
 
@@ -163,7 +161,7 @@ async function closeModal(): Promise<void> {
         </template>
 
         <template #body>
-            <UForm ref="formRef" :schema="schema" :state="state" @submit="onSubmitThrottle">
+            <UForm ref="formRef" :schema="schema" :state="state" @submit="submit">
                 <div class="flex flex-1 flex-col justify-between gap-1 px-2">
                     <template v-for="group in grouped" :key="group.key">
                         <h3 class="text-sm">
@@ -221,7 +219,7 @@ async function closeModal(): Promise<void> {
                     class="flex-1"
                     block
                     :disabled="!canSubmit"
-                    :loading="!canSubmit"
+                    :loading="isSubmitting"
                     :label="$t('common.update')"
                     @click="formRef?.submit()"
                 />

@@ -237,13 +237,10 @@ function onCreate(item: string): void {
     state.value.recipients.push({ label: email });
 }
 
-const canSubmit = ref<boolean>(true);
-const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) => {
+const { submit, canSubmit } = useSubmitGuard(async (event: FormSubmitEvent<Schema>) => {
     if (!selectedEmail.value?.id) return;
-
-    canSubmit.value = false;
-    await postMessage(event.data).finally(() => useTimeoutFn(() => (canSubmit.value = true), 400));
-}, 1000);
+    await postMessage(event.data);
+});
 
 const editorRef = useTemplateRef('editorRef');
 
@@ -251,6 +248,8 @@ const confirmModal = overlay.create(ConfirmModal);
 const threadAttachmentsModal = overlay.create(ThreadAttachmentsModal);
 
 async function closeThread(): Promise<void> {
+    if (!canSubmit.value) return;
+
     if (hasUnsavedChanges.value && !(await confirmLeave())) return;
 
     emit('close', false);
@@ -565,7 +564,7 @@ async function closeThread(): Promise<void> {
                                 class="flex flex-1 grow-0 flex-col gap-2 px-1"
                                 :schema="schema"
                                 :state="state"
-                                @submit="onSubmitThrottle"
+                                @submit="submit"
                             >
                                 <UFormField class="flex-1" name="recipients" :label="$t('common.additional_recipients')">
                                     <ClientOnly>

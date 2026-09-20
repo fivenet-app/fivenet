@@ -539,11 +539,9 @@ function setAttrChanged(attrId: number, value: boolean): void {
 
 onBeforeMount(async () => listJobs());
 
-const canSubmit = ref<boolean>(true);
-const onSubmitThrottle = useThrottleFn(async () => {
-    canSubmit.value = false;
-    await updateJobLimits().finally(() => useTimeoutFn(() => (canSubmit.value = true), 400));
-}, 1000);
+const { submit, isSubmitting, canSubmit } = useSubmitGuard(async () => {
+    await updateJobLimits();
+});
 
 const confirmModal = overlay.create(ConfirmModal);
 
@@ -587,10 +585,10 @@ const actionItems = computed<ResponsiveActionEntry[]>(() => {
             <UButton
                 class="flex-1"
                 :disabled="!hasUnsavedChanges || !canSubmit"
-                :loading="!canSubmit"
+                :loading="isSubmitting"
                 icon="i-mdi-content-save"
                 :label="$t('common.save', 1)"
-                @click="onSubmitThrottle"
+                @click="submit"
             />
 
             <UPopover>

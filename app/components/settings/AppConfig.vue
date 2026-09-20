@@ -476,13 +476,10 @@ const selectedTab = computed({
     },
 });
 
-const canSubmit = ref<boolean>(true);
-const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) => {
+const { submit, isSubmitting, canSubmit } = useSubmitGuard(async (event: FormSubmitEvent<Schema>) => {
     if (event.submitter?.getAttribute('role') === 'tab') return;
-
-    canSubmit.value = false;
-    await updateAppConfig(event.data).finally(() => useTimeoutFn(() => (canSubmit.value = true), 400));
-}, 1000);
+    await updateAppConfig(event.data);
+});
 
 const formRef = useTemplateRef('formRef');
 </script>
@@ -502,7 +499,7 @@ const formRef = useTemplateRef('formRef');
                         v-if="!streamerMode && config"
                         trailing-icon="i-mdi-content-save"
                         :disabled="!canSubmit || !hasUnsavedChanges"
-                        :loading="!canSubmit"
+                        :loading="isSubmitting"
                         :label="$t('common.save', 1)"
                         @click="() => formRef?.submit()"
                     />
@@ -513,7 +510,7 @@ const formRef = useTemplateRef('formRef');
         <template #body>
             <StreamerModeAlert v-if="streamerMode" />
 
-            <UForm v-else ref="formRef" :schema="schema" :state="state" @submit="onSubmitThrottle">
+            <UForm v-else ref="formRef" :schema="schema" :state="state" @submit="submit">
                 <div v-if="isRequestPending(status)" class="space-y-1 px-4">
                     <USkeleton class="mb-6 h-11 w-full" />
                     <USkeleton v-for="idx in 5" :key="idx" class="h-20 w-full" />

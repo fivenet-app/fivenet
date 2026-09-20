@@ -66,11 +66,9 @@ watch(props, () => {
     syncSnapshot();
 });
 
-const canSubmit = ref<boolean>(true);
-const onSubmitThrottle = useThrottleFn(async () => {
-    canSubmit.value = false;
-    await assignUnit(props.unit.id).finally(() => useTimeoutFn(() => (canSubmit.value = true), 400));
-}, 1000);
+const { submit, isSubmitting, canSubmit } = useSubmitGuard(async () => {
+    await assignUnit(props.unit.id);
+});
 
 const formRef = useTemplateRef('formRef');
 
@@ -107,7 +105,7 @@ async function closeModal(): Promise<void> {
         </template>
 
         <template #body>
-            <UForm ref="formRef" :schema="schema" :state="state" @submit="onSubmitThrottle">
+            <UForm ref="formRef" :schema="schema" :state="state" @submit="submit">
                 <div class="flex flex-1 flex-col justify-between gap-2">
                     <div class="divide-y divide-default px-2 sm:px-6">
                         <UFormField class="flex-1" name="users" :label="$t('common.colleague', 2)">
@@ -165,7 +163,7 @@ async function closeModal(): Promise<void> {
                     class="flex-1"
                     block
                     :disabled="!canSubmit"
-                    :loading="!canSubmit"
+                    :loading="isSubmitting"
                     :label="$t('common.update')"
                     @click="formRef?.submit()"
                 />

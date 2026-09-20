@@ -107,7 +107,7 @@ async function deleteAvatar(): Promise<void> {
     }
 }
 
-const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) => {
+const { submit, isSubmitting, canSubmit } = useSubmitGuard(async (event: FormSubmitEvent<Schema>) => {
     if (event.data.reset) {
         await deleteAvatar();
         return;
@@ -116,12 +116,12 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
     if (!event.data.profilePicture) return;
 
     await uploadAvatar(event.data.profilePicture);
-}, 1000);
+});
 
 const formRef = useTemplateRef('formRef');
 
 async function closeModal(): Promise<void> {
-    if (formRef.value?.loading) return;
+    if (isSubmitting.value) return;
 
     if (hasUnsavedChanges.value && !(await confirmLeave())) return;
 
@@ -153,7 +153,7 @@ async function closeModal(): Promise<void> {
         </template>
 
         <template #body>
-            <UForm ref="formRef" :schema="schema" :state="state" @submit="onSubmitThrottle">
+            <UForm ref="formRef" :schema="schema" :state="state" @submit="submit">
                 <UFormField name="profilePicture" :label="$t('common.profile_picture')">
                     <div class="flex flex-col gap-2">
                         <NotSupportedTabletBlock v-if="nuiEnabled" />
@@ -164,7 +164,7 @@ async function closeModal(): Promise<void> {
                                     class="flex-1"
                                     name="mugshot"
                                     block
-                                    :disabled="formRef?.loading"
+                                    :disabled="!canSubmit"
                                     :accept="appConfig.fileUpload.types.images.join(',')"
                                     :placeholder="$t('common.image')"
                                     :label="$t('common.file_upload_label')"

@@ -147,11 +147,9 @@ const canDo = computed(() => ({
         ),
 }));
 
-const canSubmit = ref<boolean>(true);
-const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) => {
-    canSubmit.value = false;
-    await createDocumentRequest(event.data).finally(() => useTimeoutFn(() => (canSubmit.value = true), 400));
-}, 1000);
+const { submit, isSubmitting, canSubmit } = useSubmitGuard(async (event: FormSubmitEvent<Schema>) => {
+    await createDocumentRequest(event.data);
+});
 
 const formRef = useTemplateRef('formRef');
 
@@ -186,7 +184,7 @@ async function closeDrawer(): Promise<void> {
                 class="mx-auto w-full max-w-(--breakpoint-xl)"
                 :schema="schema"
                 :state="state"
-                @submit="onSubmitThrottle"
+                @submit="submit"
             >
                 <template v-if="canDo.create">
                     <div class="flex flex-row gap-2 md:flex-col">
@@ -297,7 +295,7 @@ async function closeDrawer(): Promise<void> {
                     class="flex-1"
                     block
                     :disabled="!canSubmit"
-                    :loading="!canSubmit"
+                    :loading="isSubmitting"
                     :label="$t('common.add')"
                     @click="() => formRef?.submit()"
                 />

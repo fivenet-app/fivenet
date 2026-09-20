@@ -73,11 +73,9 @@ async function setDocumentReminder(values: Schema): Promise<SetDocumentReminderR
     }
 }
 
-const canSubmit = ref<boolean>(true);
-const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) => {
-    canSubmit.value = false;
-    await setDocumentReminder(event.data).finally(() => useTimeoutFn(() => (canSubmit.value = true), 400));
-}, 1000);
+const { submit, isSubmitting, canSubmit } = useSubmitGuard(async (event: FormSubmitEvent<Schema>) => {
+    await setDocumentReminder(event.data);
+});
 
 const today = new Date();
 const yesterday = subDays(today, 1);
@@ -110,7 +108,7 @@ async function closeDrawer(): Promise<void> {
 
         <template #body>
             <div class="mx-auto w-full max-w-[80%] min-w-3/4">
-                <UForm ref="formRef" :schema="schema" :state="state" @submit="onSubmitThrottle">
+                <UForm ref="formRef" :schema="schema" :state="state" @submit="submit">
                     <UFormField name="reminderTime" :label="$t('common.time')" required>
                         <InputDatePicker
                             v-model="state.reminderTime"
@@ -155,7 +153,7 @@ async function closeDrawer(): Promise<void> {
                     class="flex-1"
                     block
                     :disabled="!canSubmit"
-                    :loading="!canSubmit"
+                    :loading="isSubmitting"
                     :label="$t('common.save')"
                     @click="() => formRef?.submit()"
                 />

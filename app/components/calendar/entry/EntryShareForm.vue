@@ -55,11 +55,9 @@ async function shareCalendarEntry(values: Schema): Promise<undefined | ShareCale
     return response;
 }
 
-const canSubmit = ref<boolean>(true);
-const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) => {
-    canSubmit.value = false;
-    await shareCalendarEntry(event.data).finally(() => useTimeoutFn(() => (canSubmit.value = true), 400));
-}, 1000);
+const { submit, isSubmitting, canSubmit } = useSubmitGuard(async (event: FormSubmitEvent<Schema>) => {
+    await shareCalendarEntry(event.data);
+});
 
 const formRef = useTemplateRef('formRef');
 </script>
@@ -74,7 +72,7 @@ const formRef = useTemplateRef('formRef');
             </div>
         </template>
 
-        <UForm ref="formRef" :schema="schema" :state="state" @submit="onSubmitThrottle">
+        <UForm ref="formRef" :schema="schema" :state="state" @submit="submit">
             <UFormField class="flex-1" name="participants" :label="$t('common.guest', 2)">
                 <SelectMenu
                     v-model="state.users"
@@ -128,7 +126,7 @@ const formRef = useTemplateRef('formRef');
                     class="flex-1"
                     block
                     :disabled="!canSubmit"
-                    :loading="!canSubmit"
+                    :loading="isSubmitting"
                     :label="$t('common.save')"
                     @click="formRef?.submit()"
                 />

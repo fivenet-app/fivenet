@@ -114,11 +114,9 @@ async function createOrUpdateUnit(values: Schema): Promise<void> {
     }
 }
 
-const canSubmit = ref<boolean>(true);
-const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) => {
-    canSubmit.value = false;
-    await createOrUpdateUnit(event.data).finally(() => useTimeoutFn(() => (canSubmit.value = true), 400));
-}, 1000);
+const { submit, isSubmitting, canSubmit } = useSubmitGuard(async (event: FormSubmitEvent<Schema>) => {
+    await createOrUpdateUnit(event.data);
+});
 
 async function updateUnitInForm(): Promise<void> {
     if (props.unit === undefined) return;
@@ -177,7 +175,7 @@ const formRef = useTemplateRef('formRef');
         </template>
 
         <template #body>
-            <UForm ref="formRef" :schema="schema" :state="state" @submit="onSubmitThrottle">
+            <UForm ref="formRef" :schema="schema" :state="state" @submit="submit">
                 <UFormField class="flex-1" name="name" :label="$t('common.name')">
                     <UInput v-model="state.name" class="w-full" name="name" type="text" :placeholder="$t('common.name')" />
                 </UFormField>
@@ -270,7 +268,7 @@ const formRef = useTemplateRef('formRef');
                 <UButton
                     class="flex-1"
                     block
-                    :loading="!canSubmit"
+                    :loading="isSubmitting"
                     :disabled="!canSubmit"
                     :label="
                         unit && unit?.id

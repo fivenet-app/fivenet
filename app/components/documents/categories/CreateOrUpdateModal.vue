@@ -108,11 +108,9 @@ async function deleteCategory(): Promise<void> {
     }
 }
 
-const canSubmit = ref<boolean>(true);
-const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) => {
-    canSubmit.value = false;
-    await createOrUpdateCategory(event.data).finally(() => useTimeoutFn(() => (canSubmit.value = true), 400));
-}, 1000);
+const { submit, isSubmitting, canSubmit } = useSubmitGuard(async (event: FormSubmitEvent<Schema>) => {
+    await createOrUpdateCategory(event.data);
+});
 
 function setFromProps(): void {
     if (!props.category) {
@@ -182,7 +180,7 @@ async function closeModal(): Promise<void> {
         </template>
 
         <template #body>
-            <UForm ref="formRef" :schema="schema" :state="state" @submit="onSubmitThrottle">
+            <UForm ref="formRef" :schema="schema" :state="state" @submit="submit">
                 <UFormField class="flex-1" name="name" :label="$t('common.name')">
                     <UInput
                         v-model="state.name"
@@ -246,7 +244,7 @@ async function closeModal(): Promise<void> {
                     :icon="!category.deletedAt ? 'i-mdi-delete' : 'i-mdi-restore'"
                     :label="!category.deletedAt ? $t('common.delete') : $t('common.restore')"
                     :disabled="!canSubmit"
-                    :loading="!canSubmit"
+                    :loading="isSubmitting"
                     @click="() => deleteCategory()"
                 />
 
@@ -255,7 +253,7 @@ async function closeModal(): Promise<void> {
                     class="flex-1"
                     block
                     :disabled="!canSubmit"
-                    :loading="!canSubmit"
+                    :loading="isSubmitting"
                     :label="category === undefined ? $t('common.create') : $t('common.update')"
                     @click="() => formRef?.submit()"
                 />

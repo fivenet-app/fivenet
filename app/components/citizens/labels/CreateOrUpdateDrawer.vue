@@ -232,11 +232,9 @@ async function createOrUpdateLabel(values: Schema): Promise<CreateOrUpdateLabelR
     }
 }
 
-const canSubmit = ref<boolean>(true);
-const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) => {
-    canSubmit.value = false;
-    await createOrUpdateLabel(event.data).finally(() => useTimeoutFn(() => (canSubmit.value = true), 400));
-}, 1000);
+const { submit, isSubmitting, canSubmit } = useSubmitGuard(async (event: FormSubmitEvent<Schema>) => {
+    await createOrUpdateLabel(event.data);
+});
 
 const formRef = useTemplateRef('formRef');
 
@@ -280,7 +278,7 @@ async function closeModal(): Promise<void> {
                 />
                 <DataErrorBlock v-else-if="labelId && error" :error="error" :retry="refresh" />
 
-                <UForm v-else ref="formRef" :schema="schema" :state="state" @submit="onSubmitThrottle">
+                <UForm v-else ref="formRef" :schema="schema" :state="state" @submit="submit">
                     <UFormField class="flex-1" name="name" :label="$t('common.name')">
                         <UInput v-model="state.name" class="w-full" name="name" type="text" :placeholder="$t('common.name')" />
                     </UFormField>
@@ -363,7 +361,7 @@ async function closeModal(): Promise<void> {
                     class="flex-1"
                     block
                     :disabled="!canSubmit"
-                    :loading="!canSubmit"
+                    :loading="isSubmitting"
                     :label="$t('common.save')"
                     @click="() => formRef?.submit()"
                 />

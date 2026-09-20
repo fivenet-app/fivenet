@@ -83,11 +83,9 @@ async function upsertApprovalTasks(values: Schema): Promise<void> {
     }
 }
 
-const canSubmit = ref<boolean>(true);
-const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) => {
-    canSubmit.value = false;
-    await upsertApprovalTasks(event.data).finally(() => useTimeoutFn(() => (canSubmit.value = true), 400));
-}, 1000);
+const { submit, canSubmit } = useSubmitGuard(async (event: FormSubmitEvent<Schema>) => {
+    await upsertApprovalTasks(event.data);
+});
 
 function addNewTask(): void {
     state.tasks.push({
@@ -141,7 +139,7 @@ onBeforeMount(async () => listJobs());
         <template #body>
             <div class="mx-auto w-full max-w-[80%] min-w-3/4">
                 <UCard :ui="{ body: 'p-4 sm:p-4', footer: 'p-4 sm:px-4' }">
-                    <UForm ref="formRef" class="flex flex-col gap-2" :schema="schema" :state="state" @submit="onSubmitThrottle">
+                    <UForm ref="formRef" class="flex flex-col gap-2" :schema="schema" :state="state" @submit="submit">
                         <div class="flex flex-col gap-1 divide-y divide-default md:divide-y-0">
                             <div
                                 v-for="(_, idx) in state.tasks"

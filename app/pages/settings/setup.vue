@@ -204,7 +204,6 @@ const { data: jobs, refresh: refreshJobs } = useAuthedLazyAsyncData('capabilitie
 );
 
 const notifications = useNotificationsStore();
-const isSubmitting = ref(false);
 
 const redirectTarget = computed<RoutePathSchema>(() => {
     const redirect = typeof route.query.redirect === 'string' ? route.query.redirect : '/overview';
@@ -348,18 +347,9 @@ async function saveAppConfig(values: Schema): Promise<void> {
     }
 }
 
-const canSubmit = ref(true);
-const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) => {
-    canSubmit.value = false;
-    isSubmitting.value = true;
-
-    await saveAppConfig(event.data).finally(() =>
-        useTimeoutFn(() => {
-            canSubmit.value = true;
-            isSubmitting.value = false;
-        }, 400),
-    );
-}, 1000);
+const { submit, isSubmitting, canSubmit } = useSubmitGuard(async (event: FormSubmitEvent<Schema>) => {
+    await saveAppConfig(event.data);
+});
 
 function goPrev(): void {
     if (isFirstStep.value) return;
@@ -468,7 +458,7 @@ const open = ref<boolean>(false);
                                         class="flex flex-col"
                                         :schema="schema"
                                         :state="state"
-                                        @submit="onSubmitThrottle"
+                                        @submit="submit"
                                     >
                                         <div
                                             v-if="isRequestPending(status)"

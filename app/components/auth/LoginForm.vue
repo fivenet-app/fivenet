@@ -6,7 +6,7 @@ import { useAuthStore } from '~/stores/auth';
 import { useCookiesStore } from '~/stores/cookies';
 import { useSettingsStore } from '~/stores/settings';
 
-const canSubmit = defineModel<boolean>({ required: true });
+const parentCanSubmit = defineModel<boolean>({ required: true });
 
 const { auth } = useAppConfig();
 
@@ -32,10 +32,11 @@ const state = reactive<Schema>({
     password: '',
 });
 
-const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) => {
-    canSubmit.value = false;
-    await doLogin(event.data.username, event.data.password).finally(() => useTimeoutFn(() => (canSubmit.value = true), 400));
-}, 1000);
+const { submit, isSubmitting, canSubmit } = useSubmitGuard(async (event: FormSubmitEvent<Schema>) => {
+    await doLogin(event.data.username, event.data.password);
+});
+
+watch(isSubmitting, (value) => (parentCanSubmit.value = !value), { immediate: true });
 
 const socialLoginEnabled = ref(hasCookiesAccepted.value && !nuiEnabled.value);
 
@@ -45,7 +46,7 @@ const passwordVisibility = ref<boolean>(false);
 </script>
 
 <template>
-    <UForm class="space-y-4" :schema="schema" :state="state" @submit="onSubmitThrottle">
+    <UForm class="space-y-4" :schema="schema" :state="state" @submit="submit">
         <UFormField name="username" :label="$t('common.username')">
             <UInput
                 v-model="state.username"
@@ -78,7 +79,7 @@ const passwordVisibility = ref<boolean>(false);
             </UInput>
         </UFormField>
 
-        <UButton type="submit" block :disabled="!canSubmit" :loading="!canSubmit" :label="$t('common.login')" />
+        <UButton type="submit" block :disabled="!canSubmit" :loading="isSubmitting" :label="$t('common.login')" />
 
         <template v-if="!nuiEnabled && auth.providers.length > 0">
             <UAlert

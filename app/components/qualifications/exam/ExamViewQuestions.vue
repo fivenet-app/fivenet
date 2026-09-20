@@ -565,19 +565,15 @@ function openSubmitConfirmation(): void {
     });
 }
 
-const canSubmit = ref<boolean>(true);
-const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) => {
-    canSubmit.value = false;
-    await submitExam(event.data, false)
-        .then(() => {
-            notifications.add({
-                title: { key: 'notifications.action_successful.title', parameters: {} },
-                description: { key: 'notifications.action_successful.content', parameters: {} },
-                type: NotificationType.SUCCESS,
-            });
-        })
-        .finally(() => useTimeoutFn(() => (canSubmit.value = true), 400));
-}, 1000);
+const { submit, isSubmitting, canSubmit } = useSubmitGuard(async (event: FormSubmitEvent<Schema>) => {
+    await submitExam(event.data, false).then(() => {
+        notifications.add({
+            title: { key: 'notifications.action_successful.title', parameters: {} },
+            description: { key: 'notifications.action_successful.content', parameters: {} },
+            type: NotificationType.SUCCESS,
+        });
+    });
+});
 </script>
 
 <template>
@@ -602,7 +598,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                             type="submit"
                             icon="i-mdi-content-save"
                             :disabled="!canSubmit"
-                            :loading="!canSubmit"
+                            :loading="isSubmitting"
                             :label="$t('common.submit')"
                             @click="openSubmitConfirmation"
                         />
@@ -710,7 +706,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                 />
 
                 <div ref="containerRef" class="h-full overflow-y-auto p-4 sm:gap-6 sm:p-6 lg:pr-72">
-                    <UForm ref="formRef" :schema="schema" :state="state" @submit="onSubmitThrottle">
+                    <UForm ref="formRef" :schema="schema" :state="state" @submit="submit">
                         <UContainer>
                             <UCard class="sticky top-0 z-10 mb-4 rounded-lg bg-elevated shadow-sm" :ui="{ body: 'p-4 sm:p-4' }">
                                 <UAlert
@@ -793,7 +789,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                     icon="i-mdi-content-save"
                                     block
                                     :disabled="!canSubmit"
-                                    :loading="!canSubmit"
+                                    :loading="isSubmitting"
                                     :label="$t('common.submit')"
                                     @click="openSubmitConfirmation"
                                 />

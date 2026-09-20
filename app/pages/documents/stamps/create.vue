@@ -67,15 +67,13 @@ async function createOrUpsertStamp(values: Schema) {
     }
 }
 
-const canSubmit = ref<boolean>(true);
-const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) => {
-    canSubmit.value = false;
-    await createOrUpsertStamp(event.data).finally(() => useTimeoutFn(() => (canSubmit.value = true), 400));
-}, 1000);
+const { submit } = useSubmitGuard(async (event: FormSubmitEvent<Schema>) => {
+    await createOrUpsertStamp(event.data);
+});
 </script>
 
 <template>
-    <UForm ref="formRef" class="flex w-full flex-1" :state="state" :schema="schema" @submit="onSubmitThrottle">
+    <UForm ref="formRef" class="flex w-full flex-1" :state="state" :schema="schema" @submit="submit">
         <UDashboardPanel :ui="{ root: 'pb-(--page-content-bottom-offset)', body: 'p-0 sm:p-0 gap-0 sm:gap-0' }">
             <template #header>
                 <UDashboardNavbar :title="$t('pages.documents.stamps.create')">

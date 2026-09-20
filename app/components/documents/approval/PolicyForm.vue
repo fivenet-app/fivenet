@@ -96,11 +96,9 @@ async function upsertPolicy(values: Schema): Promise<void> {
     });
 }
 
-const canSubmit = ref<boolean>(true);
-const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) => {
-    canSubmit.value = false;
-    await upsertPolicy(event.data).finally(() => useTimeoutFn(() => (canSubmit.value = true), 400));
-}, 1000);
+const { submit, canSubmit } = useSubmitGuard(async (event: FormSubmitEvent<Schema>) => {
+    await upsertPolicy(event.data);
+});
 
 const formRef = useTemplateRef('formRef');
 
@@ -144,7 +142,7 @@ async function closeDrawer(): Promise<void> {
                         </div>
                     </template>
 
-                    <UForm ref="formRef" class="flex flex-col gap-2" :schema="schema" :state="state" @submit="onSubmitThrottle">
+                    <UForm ref="formRef" class="flex flex-col gap-2" :schema="schema" :state="state" @submit="submit">
                         <PolicyEditor v-model="state" />
                     </UForm>
 

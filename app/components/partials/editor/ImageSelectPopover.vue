@@ -81,8 +81,6 @@ function getUploadErrorNotification(error: unknown): {
 
 // Try to download image from remote url
 async function setViaURL(urlOrBlob: string | File): Promise<void> {
-    canSubmit.value = false;
-
     // Check if file limit is reached
     if (props.files.length >= props.fileLimit) {
         logger.warn('File limit reached, cannot upload more files');
@@ -159,31 +157,25 @@ function setImage(url: string | undefined): void {
     emit('close', false);
 }
 
-async function onFileHandler(file: File | null | undefined): Promise<void> {
-    if (!file) {
-        canSubmit.value = true;
-        return;
-    }
-
-    await setViaURL(file);
-
-    canSubmit.value = true;
-    emit('close', false);
-}
-
 const fileLimitReached = computed(() => props.files.length >= props.fileLimit);
 
 const open = ref<boolean>(false);
 
-const canSubmit = ref<boolean>(true);
-const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) => {
-    canSubmit.value = false;
+const { submit: submitImage, canSubmit } = useSubmitGuard(async (source: string | File) => {
+    await setViaURL(source);
+});
 
-    await setViaURL(event.data.url).finally(() => useTimeoutFn(() => (canSubmit.value = true), 400));
+const onFileHandler = async (file: File | null | undefined): Promise<void> => {
+    if (!file) return;
+    await submitImage(file);
+    emit('close', false);
+};
 
+async function submit(event: FormSubmitEvent<Schema>): Promise<void> {
+    await submitImage(event.data.url);
     open.value = false;
     imageState.url = '';
-}, 1000);
+}
 
 const formRef = useTemplateRef('formRef');
 </script>
@@ -220,7 +212,7 @@ const formRef = useTemplateRef('formRef');
 
                 <USeparator class="my-2" :label="$t('common.or')" orientation="horizontal" />
 
-                <UForm ref="formRef" :schema="schema" :state="imageState" @submit="onSubmitThrottle">
+                <UForm ref="formRef" :schema="schema" :state="imageState" @submit="submit">
                     <UFormField name="url" :label="$t('components.partials.tiptap_editor.url')">
                         <UInput
                             v-model="imageState.url"

@@ -38,15 +38,13 @@ async function takeControl(signon: boolean): Promise<void> {
 
 const dispatchers = computed(() => getJobDispatchers.value ?? { dispatchers: [] });
 
-const canSubmit = ref<boolean>(true);
-const onSubmitThrottle = useThrottleFn(async (e: boolean) => {
-    canSubmit.value = false;
-    await takeControl(e).finally(() => useTimeoutFn(() => (canSubmit.value = true), 850));
-}, 1000);
+const { submit, isSubmitting, canSubmit } = useSubmitGuard(async (e: boolean) => {
+    await takeControl(e);
+});
 
 if (!props.hideJoin) {
     defineShortcuts({
-        'c-q': () => onSubmitThrottle(!isDispatcher.value),
+        'c-q': () => submit(!isDispatcher.value),
     });
 }
 
@@ -63,12 +61,12 @@ const dispatchersLabel = computed(() =>
             <UTooltip :text="`${$t('common.join', 1)}/ ${$t('common.leave', 1)}`" :kbds="['C', 'Q']">
                 <UButton
                     :disabled="!canSubmit"
-                    :loading="!canSubmit"
+                    :loading="isSubmitting"
                     :icon="!isDispatcher ? 'i-mdi-location-enter' : 'i-mdi-location-exit'"
                     :color="!isDispatcher ? 'primary' : 'warning'"
                     :label="!isDispatcher ? $t('common.join', 1) : $t('common.leave', 1)"
                     :ui="{ label: 'hidden truncate md:block' }"
-                    @click="onSubmitThrottle(!isDispatcher)"
+                    @click="submit(!isDispatcher)"
                 />
             </UTooltip>
         </template>
