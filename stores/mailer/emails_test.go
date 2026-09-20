@@ -1,6 +1,7 @@
 package mailerstore
 
 import (
+	"database/sql"
 	"regexp"
 	"testing"
 	"time"
@@ -285,6 +286,100 @@ func TestStoreCreateEmail(t *testing.T) {
 	lastID, err := store.CreateEmail(t.Context(), db, email, 3)
 	require.NoError(t, err)
 	assert.Equal(t, int64(17), lastID)
+	require.NoError(t, mock.ExpectationsWereMet())
+}
+
+func TestStoreUpdateUserEmailProperty(t *testing.T) {
+	t.Parallel()
+
+	db, mock, err := sqlmock.New()
+	require.NoError(t, err)
+	t.Cleanup(func() { _ = db.Close() })
+
+	store := New(testParams(db))
+	expectedQuery := regexp.QuoteMeta(`INSERT INTO fivenet_user_props`) + `(?s).*` + regexp.QuoteMeta(`ON DUPLICATE KEY UPDATE`)
+	mock.ExpectExec(expectedQuery).
+		WithArgs(int32(7), "user@example.com", "user@example.com").
+		WillReturnResult(sqlmock.NewResult(0, 1))
+
+	require.NoError(t, store.UpdateUserEmailProperty(t.Context(), db, 7, "user@example.com"))
+	require.NoError(t, mock.ExpectationsWereMet())
+}
+
+func TestStoreUpdateEmailRequiresOwner(t *testing.T) {
+	t.Parallel()
+
+	db, _, err := sqlmock.New()
+	require.NoError(t, err)
+	t.Cleanup(func() { _ = db.Close() })
+
+	store := New(testParams(db))
+	err = store.UpdateEmail(t.Context(), db, EmailUpdate{ID: 42})
+	require.Error(t, err)
+}
+
+func TestStoreUpdateEmail(t *testing.T) {
+	t.Parallel()
+
+	db, mock, err := sqlmock.New()
+	require.NoError(t, err)
+	t.Cleanup(func() { _ = db.Close() })
+
+	store := New(testParams(db))
+	label := "Primary"
+	userID := int32(7)
+	expectedQuery := regexp.QuoteMeta(`UPDATE fivenet_mailer_emails`) +
+		`(?s).*` + regexp.QuoteMeta(`fivenet_mailer_emails.user_id = ?`) +
+		`(?s).*` + regexp.QuoteMeta(`LIMIT ?;`)
+	mock.ExpectExec(expectedQuery).
+		WillReturnResult(sqlmock.NewResult(0, 1))
+
+	require.NoError(t, store.UpdateEmail(t.Context(), db, EmailUpdate{
+		ID:           42,
+		Email:        "user@example.com",
+		EmailChanged: true,
+		Label:        &label,
+		UserID:       &userID,
+		CreatorID:    3,
+	}))
+	require.NoError(t, mock.ExpectationsWereMet())
+}
+
+func TestStoreUpdateEmailReturnsNoRows(t *testing.T) {
+	t.Parallel()
+
+	db, mock, err := sqlmock.New()
+	require.NoError(t, err)
+	t.Cleanup(func() { _ = db.Close() })
+
+	store := New(testParams(db))
+	job := "police"
+	expectedQuery := regexp.QuoteMeta(`UPDATE fivenet_mailer_emails`) + `(?s).*` + regexp.QuoteMeta(`fivenet_mailer_emails.job = ?`)
+	mock.ExpectExec(expectedQuery).
+		WillReturnResult(sqlmock.NewResult(0, 0))
+
+	err = store.UpdateEmail(t.Context(), db, EmailUpdate{ID: 42, Job: &job, CreatorID: 3})
+	require.ErrorIs(t, err, sql.ErrNoRows)
+	require.NoError(t, mock.ExpectationsWereMet())
+}
+
+func TestStoreRestoreEmail(t *testing.T) {
+	t.Parallel()
+
+	db, mock, err := sqlmock.New()
+	require.NoError(t, err)
+	t.Cleanup(func() { _ = db.Close() })
+
+	store := New(testParams(db))
+	label := "Primary"
+	expectedQuery := regexp.QuoteMeta(`UPDATE fivenet_mailer_emails`) +
+		`(?s).*` + regexp.QuoteMeta(`deleted_at = NULL`) +
+		`(?s).*` + regexp.QuoteMeta(`email = ?`) +
+		`(?s).*` + regexp.QuoteMeta(`LIMIT ?;`)
+	mock.ExpectExec(expectedQuery).
+		WillReturnResult(sqlmock.NewResult(0, 1))
+
+	require.NoError(t, store.RestoreEmail(t.Context(), db, 42, "user@example.com", &label, 3))
 	require.NoError(t, mock.ExpectationsWereMet())
 }
 

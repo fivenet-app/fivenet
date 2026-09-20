@@ -96,7 +96,7 @@ func (s *Server) PostMessage(
 		return nil, err
 	}
 
-	senderEmail, err := s.getEmail(ctx, userInfo, req.GetMessage().GetSenderId(), false, false)
+	senderEmail, err := s.getEmail(ctx, s.db, userInfo, req.GetMessage().GetSenderId(), false, false)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsmailer.ErrFailedQuery)
 	}

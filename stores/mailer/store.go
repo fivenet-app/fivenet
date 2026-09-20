@@ -120,12 +120,22 @@ type IStore interface {
 		emailID int64,
 		includeDeleted bool,
 	) (*maileremails.Email, error)
+	UpdateEmail(ctx context.Context, q qrm.DB, update EmailUpdate) error
+	UpdateUserEmailProperty(ctx context.Context, q qrm.DB, userID int32, email string) error
 	CreateEmail(
 		ctx context.Context,
 		q qrm.DB,
 		email *maileremails.Email,
 		creatorID int32,
 	) (int64, error)
+	RestoreEmail(
+		ctx context.Context,
+		q qrm.DB,
+		emailID int64,
+		email string,
+		label *string,
+		creatorID int32,
+	) error
 	DeleteEmail(
 		ctx context.Context,
 		q qrm.DB,

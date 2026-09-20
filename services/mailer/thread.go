@@ -168,7 +168,7 @@ func (s *Server) CreateThread(
 		return nil, errorsmailer.ErrNoPerms
 	}
 
-	senderEmail, err := s.getEmail(ctx, userInfo, req.GetThread().GetCreatorEmailId(), false, false)
+	senderEmail, err := s.getEmail(ctx, s.db, userInfo, req.GetThread().GetCreatorEmailId(), false, false)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsmailer.ErrFailedQuery)
 	}

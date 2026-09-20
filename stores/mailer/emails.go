@@ -2,6 +2,7 @@ package mailerstore
 
 import (
 	"context"
+	"database/sql"
 	"errors"
 
 	database "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/common/database"
@@ -18,6 +19,17 @@ import (
 )
 
 var tEmails = table.FivenetMailerEmails.AS("email")
+
+type EmailUpdate struct {
+	ID           int64
+	Email        string
+	EmailChanged bool
+	Label        *string
+	Deactivated  *bool
+	Job          *string
+	UserID       *int32
+	CreatorID    int32
+}
 
 func (s *Store) dbOr(q qrm.DB) qrm.DB {
 	if q != nil {
@@ -314,6 +326,96 @@ func (s *Store) CreateEmail(
 	}
 
 	return lastID, nil
+}
+
+func (s *Store) UpdateEmail(ctx context.Context, q qrm.DB, update EmailUpdate) error {
+	if (update.Job == nil) == (update.UserID == nil) {
+		return errors.New("mailer email update requires exactly one owner")
+	}
+
+	tEmails := table.FivenetMailerEmails
+	sets := []any{
+		tEmails.UpdatedAt.SET(mysql.CURRENT_TIMESTAMP()),
+		tEmails.Label.SET(dbutils.StringPP(update.Label)),
+		tEmails.CreatorID.SET(mysql.Int32(update.CreatorID)),
+	}
+
+	if update.EmailChanged {
+		sets = append(sets,
+			tEmails.Email.SET(mysql.String(update.Email)),
+			tEmails.EmailChanged.SET(mysql.CURRENT_TIMESTAMP()),
+		)
+	}
+	if update.Deactivated != nil {
+		sets = append(sets, tEmails.Deactivated.SET(mysql.Bool(*update.Deactivated)))
+	}
+
+	condition := tEmails.ID.EQ(mysql.Int64(update.ID))
+	if update.Job != nil {
+		condition = condition.AND(tEmails.Job.EQ(mysql.String(*update.Job)))
+	} else if update.UserID != nil {
+		condition = condition.AND(tEmails.UserID.EQ(mysql.Int32(*update.UserID)))
+	}
+
+	result, err := tEmails.
+		UPDATE().
+		SET(sets[0], sets[1:]...).
+		WHERE(condition).
+		LIMIT(1).
+		ExecContext(ctx, s.dbOr(q))
+	if err != nil {
+		return err
+	}
+
+	affected, err := result.RowsAffected()
+	if err != nil {
+		return err
+	}
+	if affected == 0 {
+		return sql.ErrNoRows
+	}
+	return nil
+}
+
+func (s *Store) UpdateUserEmailProperty(
+	ctx context.Context,
+	q qrm.DB,
+	userID int32,
+	email string,
+) error {
+	tUserProps := table.FivenetUserProps
+	upStmt := tUserProps.
+		INSERT(tUserProps.UserID, tUserProps.Email).
+		VALUES(userID, email).
+		ON_DUPLICATE_KEY_UPDATE(
+			tUserProps.Email.SET(mysql.String(email)),
+		)
+
+	_, err := upStmt.ExecContext(ctx, s.dbOr(q))
+	return err
+}
+
+func (s *Store) RestoreEmail(
+	ctx context.Context,
+	q qrm.DB,
+	emailID int64,
+	email string,
+	label *string,
+	creatorID int32,
+) error {
+	tEmails := table.FivenetMailerEmails
+	_, err := tEmails.
+		UPDATE().
+		SET(
+			tEmails.DeletedAt.SET(mysql.TimestampExp(mysql.NULL)),
+			tEmails.Email.SET(mysql.String(email)),
+			tEmails.Label.SET(dbutils.StringPP(label)),
+			tEmails.CreatorID.SET(mysql.Int32(creatorID)),
+		).
+		WHERE(tEmails.ID.EQ(mysql.Int64(emailID))).
+		LIMIT(1).
+		ExecContext(ctx, s.dbOr(q))
+	return err
 }
 
 func (s *Store) DeleteEmail(
