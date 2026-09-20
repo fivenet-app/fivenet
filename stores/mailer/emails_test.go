@@ -55,7 +55,7 @@ func TestStoreListEmails(t *testing.T) {
 
 	listQuery := regexp.QuoteMeta(`FROM fivenet_mailer_emails AS email`) +
 		`(?s).*` + regexp.QuoteMeta(
-		`ORDER BY email.job ASC, email.label ASC LIMIT ? OFFSET ?;`,
+		`ORDER BY (CASE WHEN email.user_id = ? THEN ? ELSE ? END) ASC, email.job ASC, email.label ASC LIMIT ? OFFSET ?;`,
 	)
 	mock.ExpectQuery(listQuery).
 		WillReturnRows(sqlmock.NewRows([]string{
@@ -122,7 +122,7 @@ func TestStoreListEmailsVisible(t *testing.T) {
 	listQuery := regexp.QuoteMeta(`SELECT email.id AS "email.id"`) +
 		`(?s).*` + regexp.QuoteMeta(`FROM ( SELECT DISTINCT fivenet_mailer_emails.id AS "id"`) +
 		`(?s).*` + regexp.QuoteMeta(`INNER JOIN fivenet_mailer_emails AS email ON (email.id = doc_ids.id)`) +
-		`(?s).*` + regexp.QuoteMeta(`ORDER BY email.job ASC, email.label ASC LIMIT ? OFFSET ?;`)
+		`(?s).*` + regexp.QuoteMeta(`ORDER BY (CASE WHEN email.user_id = ? THEN ? ELSE ? END) ASC, email.job ASC, email.label ASC LIMIT ? OFFSET ?;`)
 	mock.ExpectQuery(listQuery).
 		WillReturnRows(sqlmock.NewRows([]string{
 			"email.id",

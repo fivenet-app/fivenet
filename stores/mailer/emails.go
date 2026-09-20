@@ -20,6 +20,23 @@ import (
 
 var tEmails = table.FivenetMailerEmails.AS("email")
 
+func emailOrderBy(userInfo *userinfo.UserInfo) []mysql.OrderByClause {
+	userID := int32(0)
+	if userInfo != nil {
+		userID = userInfo.GetUserId()
+	}
+
+	return []mysql.OrderByClause{
+		mysql.CASE().
+			WHEN(tEmails.UserID.EQ(mysql.Int32(userID))).
+			THEN(mysql.Int32(0)).
+			ELSE(mysql.Int32(1)).
+			ASC(),
+		tEmails.Job.ASC(),
+		tEmails.Label.ASC(),
+	}
+}
+
 type EmailUpdate struct {
 	ID           int64
 	Email        string
@@ -72,7 +89,7 @@ func (s *Store) ListEmails(
 	}
 
 	if userInfo != nil && userInfo.GetJobAdmin() && all {
-		return s.listAllEmails(ctx, db, pag)
+		return s.listAllEmails(ctx, db, userInfo, pag)
 	}
 
 	includeDeleted := userInfo != nil && userInfo.GetJobAdmin()
@@ -125,10 +142,7 @@ func (s *Store) ListEmails(
 					tEmails.ID.EQ(visibleEmailID),
 				),
 		).
-		ORDER_BY(
-			tEmails.Job.ASC(),
-			tEmails.Label.ASC(),
-		).
+		ORDER_BY(emailOrderBy(userInfo)...).
 		OFFSET(pagination.GetOffset()).
 		LIMIT(limit)
 
@@ -149,6 +163,7 @@ func (s *Store) ListEmails(
 func (s *Store) listAllEmails(
 	ctx context.Context,
 	db qrm.DB,
+	userInfo *userinfo.UserInfo,
 	pag *database.PaginationRequest,
 ) (*database.PaginationResponse, []*maileremails.Email, error) {
 	var countStmt mysql.Statement = tEmails.
@@ -181,10 +196,7 @@ func (s *Store) listAllEmails(
 			tEmails.Label,
 		).
 		FROM(tEmails).
-		ORDER_BY(
-			tEmails.Job.ASC(),
-			tEmails.Label.ASC(),
-		).
+		ORDER_BY(emailOrderBy(userInfo)...).
 		OFFSET(pagination.GetOffset()).
 		LIMIT(limit)
 

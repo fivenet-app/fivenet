@@ -216,6 +216,15 @@ func (s *Server) CreateOrUpdateEmail(
 		return nil, err
 	}
 
+	// Keep the calculated visibility map in sync for private emails as well.
+	// Job emails refresh their visibility through applyJobEmailAccess, while
+	// private emails have no ACL entries to trigger that refresh.
+	if req.GetEmail().GetUserId() > 0 {
+		if err := s.access.RefreshTargetVisibility(ctx, tx, req.GetEmail().GetId()); err != nil {
+			return nil, errswrap.NewError(err, errorsmailer.ErrFailedQuery)
+		}
+	}
+
 	// Commit the transaction
 	if err := tx.Commit(); err != nil {
 		return nil, errswrap.NewError(err, errorsmailer.ErrFailedQuery)

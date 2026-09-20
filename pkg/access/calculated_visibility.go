@@ -463,7 +463,8 @@ func (b *calculatedVisibilityBackend) creatorVisibleSourceRowsSelect(
 			b.access.calculatedVisibilityCreatorCreatorID.EQ(mysql.Int32(userInfo.GetUserId())),
 		)
 	}
-	if b.access.calculatedVisibilityCreatorCreatorJob != nil && userInfo.GetJob() != "" {
+	if b.access.targetTableColumns.CreatorJob != nil &&
+		b.access.calculatedVisibilityCreatorCreatorJob != nil && userInfo.GetJob() != "" {
 		creatorMatches = append(
 			creatorMatches,
 			b.access.calculatedVisibilityCreatorCreatorJob.EQ(mysql.String(userInfo.GetJob())),
@@ -604,7 +605,8 @@ func (b *calculatedVisibilityBackend) creatorVisibleRowsSelect(
 			b.access.calculatedVisibilityCreatorCreatorID.EQ(mysql.Int32(userInfo.GetUserId())),
 		)
 	}
-	if b.access.targetTableColumns.CreatorJob != nil && userInfo.GetJob() != "" {
+	if b.access.targetTableColumns.CreatorJob != nil &&
+		b.access.calculatedVisibilityCreatorCreatorJob != nil && userInfo.GetJob() != "" {
 		creatorMatches = append(
 			creatorMatches,
 			b.access.calculatedVisibilityCreatorCreatorJob.EQ(mysql.String(userInfo.GetJob())),
@@ -786,10 +788,25 @@ func (b *calculatedVisibilityBackend) loadTargetCreatorRow(
 	tx qrm.DB,
 	targetID int64,
 ) (*calculatedVisibilityCreatorRow, error) {
+	columns := []mysql.Projection{}
+	if b.access.targetTableColumns.CreatorID != nil {
+		columns = append(columns,
+			b.access.targetTableColumns.CreatorID.AS("calculatedvisibilitycreatorrow.creator_id"),
+		)
+	}
+	if b.access.targetTableColumns.CreatorJob != nil {
+		columns = append(columns,
+			b.access.targetTableColumns.CreatorJob.AS("calculatedvisibilitycreatorrow.creator_job"),
+		)
+	}
+	if len(columns) == 0 {
+		return nil, nil
+	}
+
 	stmt := mysql.
 		SELECT(
-			b.access.targetTableColumns.CreatorID.AS("calculatedvisibilitycreatorrow.creator_id"),
-			b.access.targetTableColumns.CreatorJob.AS("calculatedvisibilitycreatorrow.creator_job"),
+			columns[0],
+			columns[1:]...,
 		).
 		FROM(b.access.targetTable).
 		WHERE(b.access.targetTableColumns.ID.EQ(mysql.Int64(targetID))).

@@ -329,11 +329,13 @@ func NewMailerEmailsSubjectObjectAccess(db *sql.DB) *MailerEmailsObjectAccess {
 		CalculatedVisibilitySubjectTable:     table.FivenetMailerEmailsVisibilitySubject,
 		CalculatedVisibilityCreatorTargetID:  table.FivenetMailerEmailsVisibilityCreator.TargetID,
 		CalculatedVisibilityCreatorCreatorID: table.FivenetMailerEmailsVisibilityCreator.CreatorID,
-		// No CreatorJob check for emails
-		CalculatedVisibilitySubjectTargetID:  table.FivenetMailerEmailsVisibilitySubject.TargetID,
-		CalculatedVisibilitySubjectSubjectID: table.FivenetMailerEmailsVisibilitySubject.SubjectID,
-		CalculatedVisibilitySubjectAccess:    table.FivenetMailerEmailsVisibilitySubject.Access,
-		CalculatedVisibilitySubjectEffect:    table.FivenetMailerEmailsVisibilitySubject.Effect,
+		// Mailer targets have no creator-job column, but the calculated
+		// visibility table still requires its creator_job value.
+		CalculatedVisibilityCreatorCreatorJob: table.FivenetMailerEmailsVisibilityCreator.CreatorJob,
+		CalculatedVisibilitySubjectTargetID:   table.FivenetMailerEmailsVisibilitySubject.TargetID,
+		CalculatedVisibilitySubjectSubjectID:  table.FivenetMailerEmailsVisibilitySubject.SubjectID,
+		CalculatedVisibilitySubjectAccess:     table.FivenetMailerEmailsVisibilitySubject.Access,
+		CalculatedVisibilitySubjectEffect:     table.FivenetMailerEmailsVisibilitySubject.Effect,
 		Visibility: VisibilityPolicy{
 			Rules: []VisibilityRule{
 				{Kind: VisibilityRuleCreator},
