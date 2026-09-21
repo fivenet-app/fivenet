@@ -13,6 +13,7 @@ import { initProseMirrorDoc, prosemirrorJSONToYDoc } from '@tiptap/y-tiptap';
 import * as Y from 'yjs';
 import { toPenaltyCalculatorData, type SelectedPenalty } from '~/components/quickbuttons/penaltycalculator/helpers';
 import { DeleteImageTracker } from '~/composables/tiptap/extensions/DeleteImageTracker';
+import AutoLinkIds from '~/composables/tiptap/extensions/AutoLinkIds';
 import { imageUploadPlugin } from '~/composables/tiptap/extensions/ImageUploadPlugin';
 import type { UploadNamespaces } from '~/composables/useFileUploader';
 import type GrpcProvider from '~/composables/yjs/yjs';
@@ -38,6 +39,7 @@ const props = withDefaults(
         enablePenaltyCalculatorBlockRemoval?: boolean;
         historyType?: string;
         enableCollab?: boolean;
+        disableAutoLinkIds?: boolean;
 
         extensions?: Extensions;
 
@@ -62,6 +64,7 @@ const props = withDefaults(
         enablePenaltyCalculatorBlockRemoval: false,
         historyType: undefined,
         enableCollab: false,
+        disableAutoLinkIds: false,
 
         extensions: () => [],
 
@@ -106,6 +109,10 @@ const { editor: editorSettings } = storeToRefs(settingsStore);
 const { uploadImages } = useImageUpload();
 
 const extensions = useTiptapEditor(toRef(props, 'limit'), toRef(props, 'placeholder'));
+
+if (!props.disableAutoLinkIds) {
+    extensions.push(AutoLinkIds);
+}
 
 if (!props.disableImages) {
     extensions.push(
