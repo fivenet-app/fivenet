@@ -6,35 +6,38 @@ const align = defineModel<ImageAlign>({ required: true });
 
 <template>
     <UFieldGroup>
-        <UButton
-            :disabled="modelValue === 'left'"
-            :title="$t('components.partials.tiptap_editor.align_left')"
-            color="neutral"
-            variant="subtle"
-            icon="i-mdi-align-horizontal-left"
-            square
-            @click="align = 'left'"
-        />
+        <UTooltip :text="$t('components.partials.tiptap_editor.align_left')">
+            <UButton
+                :disabled="modelValue === 'left'"
+                color="neutral"
+                icon="i-mdi-align-horizontal-left"
+                square
+                variant="subtle"
+                @click="align = 'left'"
+            />
+        </UTooltip>
 
-        <UButton
-            :disabled="modelValue === 'center'"
-            :title="$t('components.partials.tiptap_editor.align_center')"
-            color="neutral"
-            variant="subtle"
-            icon="i-mdi-align-horizontal-center"
-            square
-            @click="align = 'center'"
-        >
-        </UButton>
+        <UTooltip :text="$t('components.partials.tiptap_editor.align_center')">
+            <UButton
+                :disabled="modelValue === 'center'"
+                color="neutral"
+                icon="i-mdi-align-horizontal-center"
+                square
+                variant="subtle"
+                @click="align = 'center'"
+            >
+            </UButton>
+        </UTooltip>
 
-        <UButton
-            :disabled="modelValue === 'right'"
-            :title="$t('components.partials.tiptap_editor.align_right')"
-            color="neutral"
-            variant="subtle"
-            icon="i-mdi-align-horizontal-right"
-            square
-            @click="align = 'right'"
-        />
+        <UTooltip :text="$t('components.partials.tiptap_editor.align_right')">
+            <UButton
+                :disabled="modelValue === 'right'"
+                color="neutral"
+                icon="i-mdi-align-horizontal-right"
+                square
+                variant="subtle"
+                @click="align = 'right'"
+            />
+        </UTooltip>
     </UFieldGroup>
 </template>

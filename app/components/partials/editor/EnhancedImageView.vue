@@ -32,6 +32,52 @@ function onBlur() {
     showAlignmentBar.value = false;
 }
 
+function getDownloadFilename(): string {
+    const source = String(props.node.attrs.alt || props.node.attrs.title || props.node.attrs.src || 'image');
+    const filename = source.split(/[\\/]/).pop()?.split('?')[0]?.split('#')[0]?.trim();
+
+    return filename || 'image';
+}
+
+async function downloadImage() {
+    const imageURL = cleanupImageURL(props.node.attrs.src);
+    if (!imageURL) return;
+
+    try {
+        const response = await fetch(imageURL);
+        if (!response.ok) throw new Error(`Image download failed with status ${response.status}`);
+
+        const blob = await response.blob();
+        const objectURL = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = objectURL;
+        link.download = getDownloadFilename();
+        link.click();
+        URL.revokeObjectURL(objectURL);
+    } catch {
+        // Cross-origin images may not be fetchable. Let the browser handle those directly.
+        const link = document.createElement('a');
+        link.href = imageURL;
+        link.download = getDownloadFilename();
+        link.target = '_blank';
+        link.rel = 'noopener';
+        link.click();
+    }
+}
+
+function removeImage() {
+    const position = props.getPos();
+    if (typeof position !== 'number') return;
+
+    // Delete through Tiptap so the transaction is visible to the regular plugins,
+    // including DeleteImageTracker.
+    props.editor
+        .chain()
+        .focus()
+        .deleteRange({ from: position, to: position + props.node.nodeSize })
+        .run();
+}
+
 let activeMouseMoveHandler: ((e: MouseEvent) => void) | null = null;
 
 function onResizeMouseDown(e: MouseEvent, corner: number) {
@@ -164,8 +210,22 @@ watch(
                         v-if="(showAlignmentBar || isResizing) && (selected || isResizing)"
                         class="pointer-events-none absolute -top-4 left-1/2 z-20 w-full -translate-x-1/2 transform"
                     >
-                        <div class="pointer-events-auto flex justify-center">
-                            <AlignmentBar :model-value="currentAlignment" @update:model-value="setAlignment" />
+                        <div class="pointer-events-auto flex justify-center gap-1">
+                            <AlignmentBar
+                                v-if="props.editor.isEditable"
+                                :model-value="currentAlignment"
+                                @update:model-value="setAlignment"
+                            />
+
+                            <UFieldGroup>
+                                <UTooltip :text="$t('common.download')">
+                                    <UButton color="neutral" icon="i-mdi-download" @click.stop="downloadImage" />
+                                </UTooltip>
+
+                                <UTooltip v-if="props.editor.isEditable" :text="$t('common.remove')">
+                                    <UButton color="error" icon="i-mdi-delete" @click.stop="removeImage" />
+                                </UTooltip>
+                            </UFieldGroup>
                         </div>
                     </div>
 
