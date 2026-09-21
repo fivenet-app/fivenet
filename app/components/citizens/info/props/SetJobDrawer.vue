@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 import type { FormSubmitEvent } from '@nuxt/ui';
 import { z } from 'zod';
+import ConfirmModal from '~/components/partials/ConfirmModal.vue';
 import { useCompletorStore } from '~/stores/completor';
 import { getCitizensCitizensClient } from '~~/gen/ts/clients';
 import type { Job, JobGrade } from '~~/gen/ts/resources/jobs/jobs';
@@ -19,6 +20,8 @@ const emits = defineEmits<{
 
 const { game } = useAppConfig();
 
+const { t } = useI18n();
+
 const notifications = useNotificationsStore();
 
 const completorStore = useCompletorStore();
@@ -26,6 +29,9 @@ const { jobs } = storeToRefs(completorStore);
 const { listJobs } = completorStore;
 
 const citizensCitizensClient = await getCitizensCitizensClient();
+
+const overlay = useOverlay();
+const resetConfirmModal = overlay.create(ConfirmModal);
 
 const schema = z.object({
     reason: z.coerce.string().min(3).max(255),
@@ -38,8 +44,8 @@ type Schema = z.output<typeof schema>;
 
 const state = reactive<Schema>({
     reason: '',
-    job: jobs.value.find((j) => j.name === props.user.job) ?? { name: '', label: '', grades: [] },
-    grade: jobs.value.find((j) => j.name === props.user.job)?.grades.find((g) => g.grade === props.user.jobGrade),
+    job: undefined,
+    grade: undefined,
     reset: false,
 });
 
@@ -90,6 +96,39 @@ const { submit, isSubmitting, canSubmit } = useSubmitGuard(async (event: FormSub
 
 const formRef = useTemplateRef('formRef');
 
+function syncJobState(): void {
+    const job = jobs.value.find((j) => j.name === props.user.job);
+
+    state.job = job;
+    state.grade = job?.grades.find((g) => g.grade === props.user.jobGrade) ?? job?.grades[0];
+}
+
+watch(
+    () => state.job?.name,
+    (jobName, previousJobName) => {
+        if (!jobName || jobName === previousJobName) return;
+
+        const job = jobs.value.find((j) => j.name === jobName);
+        state.grade = jobName === props.user.job ? job?.grades.find((g) => g.grade === props.user.jobGrade) : job?.grades[0];
+    },
+);
+
+function submitChanges(): void {
+    state.reset = false;
+    formRef.value?.submit();
+}
+
+function confirmReset(): void {
+    resetConfirmModal.open({
+        title: t('components.citizens.CitizenInfoProfile.reset_job'),
+        description: t('components.citizens.CitizenInfoProfile.reset_job_description'),
+        confirm: () => {
+            state.reset = true;
+            formRef.value?.submit();
+        },
+    });
+}
+
 async function closeModal(): Promise<void> {
     if (!canSubmit.value) return;
 
@@ -98,14 +137,18 @@ async function closeModal(): Promise<void> {
     emits('close', false);
 }
 
-onBeforeMount(async () => listJobs());
+onBeforeMount(async () => {
+    await listJobs();
+    syncJobState();
+});
 </script>
 
 <template>
-    <UModal
+    <UDrawer
         :title="$t('components.citizens.CitizenInfoProfile.set_job')"
         :close="false"
         :dismissible="!hasUnsavedChanges && canSubmit"
+        :ui="{ body: 'mx-auto w-full max-w-xl' }"
     >
         <template #header>
             <div class="flex w-full items-center justify-between gap-2">
@@ -125,7 +168,7 @@ onBeforeMount(async () => listJobs());
         </template>
 
         <template #body>
-            <UForm ref="formRef" :schema="schema" :state="state" @submit="submit">
+            <UForm ref="formRef" class="grid gap-4" :schema="schema" :state="state" @submit="submit">
                 <UFormField class="flex-1" name="reason" :label="$t('common.reason')" required>
                     <UInput v-model="state.reason" class="w-full" type="text" :placeholder="$t('common.reason')" />
                 </UFormField>
@@ -155,6 +198,7 @@ onBeforeMount(async () => listJobs());
                         <USelectMenu
                             v-model="state.grade"
                             class="w-full"
+                            :disabled="!state.job"
                             :items="state.job?.grades"
                             :search-input="{ placeholder: $t('common.search_field') }"
                         >
@@ -174,14 +218,14 @@ onBeforeMount(async () => listJobs());
         </template>
 
         <template #footer>
-            <UFieldGroup class="inline-flex w-full">
+            <div class="flex w-full flex-col-reverse gap-2 sm:flex-row">
                 <UButton
                     class="flex-1"
                     block
                     :disabled="!canSubmit"
                     :loading="isSubmitting"
                     :label="$t('common.save')"
-                    @click="() => formRef?.submit()"
+                    @click="submitChanges"
                 />
 
                 <UButton
@@ -190,11 +234,8 @@ onBeforeMount(async () => listJobs());
                     block
                     :disabled="!canSubmit"
                     :loading="isSubmitting"
-                    :label="$t('common.reset')"
-                    @click="
-                        state.reset = true;
-                        formRef?.submit();
-                    "
+                    :label="$t('components.citizens.CitizenInfoProfile.reset_job')"
+                    @click="confirmReset"
                 />
 
                 <UButton
@@ -205,7 +246,7 @@ onBeforeMount(async () => listJobs());
                     :label="$t('common.close', 1)"
                     @click="closeModal"
                 />
-            </UFieldGroup>
+            </div>
         </template>
-    </UModal>
+    </UDrawer>
 </template>

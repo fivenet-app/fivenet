@@ -153,12 +153,12 @@ const columns = computed(
         <template #default>
             <UForm
                 ref="formRef"
-                class="my-2 flex w-full flex-row gap-2"
+                class="my-2 flex w-full flex-col gap-2 sm:flex-row sm:flex-wrap"
                 :state="query"
                 :schema="schema"
                 @submit="commitValidatedQuery"
             >
-                <UFormField class="flex-1" name="closed" :label="$t('common.close', 2)">
+                <UFormField class="min-w-0 flex-1" name="closed" :label="$t('common.close', 2)">
                     <ClientOnly>
                         <USelectMenu
                             v-model="query.closed"
@@ -206,7 +206,7 @@ const columns = computed(
                     </ClientOnly>
                 </UFormField>
 
-                <UFormField class="flex-1" name="relation" :label="$t('common.relation')">
+                <UFormField class="min-w-0 flex-1" name="relation" :label="$t('common.relation')">
                     <ClientOnly>
                         <USelectMenu
                             v-model="query.relations"

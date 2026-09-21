@@ -1,5 +1,6 @@
 <script lang="ts" setup>
 import type { FormSubmitEvent } from '@nuxt/ui';
+import ConfirmModal from '~/components/partials/ConfirmModal.vue';
 import { z } from 'zod';
 import GenericImg from '~/components/partials/elements/GenericImg.vue';
 import NotSupportedTabletBlock from '~/components/partials/NotSupportedTabletBlock.vue';
@@ -17,12 +18,17 @@ const user = defineModel<User>('user', { required: true });
 
 const notifications = useNotificationsStore();
 
+const { t } = useI18n();
+
 const appConfig = useAppConfig();
 
 const settingsStore = useSettingsStore();
 const { nuiEnabled } = storeToRefs(settingsStore);
 
 const citizensCitizensClient = await getCitizensCitizensClient();
+
+const overlay = useOverlay();
+const removeConfirmModal = overlay.create(ConfirmModal);
 
 const schema = z
     .object({
@@ -148,6 +154,17 @@ const { submit, isSubmitting, canSubmit } = useSubmitGuard(async (event: FormSub
 
 const formRef = useTemplateRef('formRef');
 
+function confirmRemove(): void {
+    removeConfirmModal.open({
+        title: t('components.citizens.CitizenInfoProfile.remove_mugshot'),
+        description: t('components.citizens.CitizenInfoProfile.remove_mugshot_description'),
+        confirm: () => {
+            state.reset = true;
+            formRef.value?.submit();
+        },
+    });
+}
+
 async function closeModal(): Promise<void> {
     if (isSubmitting.value) return;
 
@@ -158,10 +175,11 @@ async function closeModal(): Promise<void> {
 </script>
 
 <template>
-    <UModal
+    <UDrawer
         :title="$t('components.citizens.CitizenInfoProfile.set_mugshot')"
         :close="false"
         :dismissible="!hasUnsavedChanges && canSubmit"
+        :ui="{ body: 'mx-auto w-full max-w-xl' }"
     >
         <template #header>
             <div class="flex w-full items-center justify-between gap-2">
@@ -210,7 +228,11 @@ async function closeModal(): Promise<void> {
                                 no-blur
                             />
 
-                            <UAlert icon="i-mdi-information-outline" :description="$t('common.image_caching')" />
+                            <UAlert
+                                v-if="user.props?.mugshot"
+                                icon="i-mdi-information-outline"
+                                :description="$t('common.image_caching')"
+                            />
                         </div>
                     </div>
                 </UFormField>
@@ -218,12 +240,12 @@ async function closeModal(): Promise<void> {
         </template>
 
         <template #footer>
-            <UFieldGroup class="inline-flex w-full">
+            <div class="flex w-full flex-col-reverse gap-2 sm:flex-row">
                 <UButton
                     class="flex-1"
                     block
-                    :disabled="formRef?.loading"
-                    :loading="formRef?.loading"
+                    :disabled="isSubmitting"
+                    :loading="isSubmitting"
                     :label="$t('common.save')"
                     @click="formRef?.submit()"
                 />
@@ -232,24 +254,21 @@ async function closeModal(): Promise<void> {
                     class="flex-1"
                     block
                     color="error"
-                    :disabled="formRef?.loading || !user.props?.mugshotFileId"
-                    :loading="formRef?.loading"
-                    :label="$t('common.reset')"
-                    @click="
-                        state.reset = true;
-                        formRef?.submit();
-                    "
+                    :disabled="isSubmitting || !user.props?.mugshotFileId"
+                    :loading="isSubmitting"
+                    :label="$t('components.citizens.CitizenInfoProfile.remove_mugshot')"
+                    @click="confirmRemove"
                 />
 
                 <UButton
                     class="flex-1"
                     block
                     color="neutral"
-                    :disabled="formRef?.loading"
+                    :disabled="isSubmitting"
                     :label="$t('common.close', 1)"
                     @click="closeModal"
                 />
-            </UFieldGroup>
+            </div>
         </template>
-    </UModal>
+    </UDrawer>
 </template>

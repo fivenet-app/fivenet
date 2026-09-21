@@ -13,8 +13,9 @@ const { game } = useAppConfig();
 </script>
 
 <template>
-    <div class="flex items-center gap-2 p-4">
+    <div class="flex min-w-0 flex-1 items-center gap-2">
         <ProfilePictureImg
+            class="shrink-0"
             :src="user?.props?.mugshot?.filePath"
             :name="`${user.firstname} ${user.lastname}`"
             :alt="$t('common.mugshot')"
@@ -22,14 +23,14 @@ const { game } = useAppConfig();
             size="3xl"
         />
 
-        <div class="flex-1">
-            <div class="flex snap-x flex-row flex-wrap justify-between gap-2 overflow-x-auto">
-                <h2 class="flex-1 px-0.5 py-1 text-4xl font-bold break-words sm:pl-1">
+        <div class="min-w-0 flex-1">
+            <div class="flex min-w-0 flex-row flex-wrap gap-2">
+                <h1 class="min-w-0 flex-1 px-0.5 py-1 text-2xl font-bold break-words sm:text-3xl">
                     {{ user?.firstname }} {{ user?.lastname }}
-                </h2>
+                </h1>
             </div>
 
-            <div class="inline-flex flex-col gap-2 lg:flex-row">
+            <div class="flex flex-row flex-wrap gap-2">
                 <UBadge>
                     {{ user.jobLabel }}
                     <template v-if="user.job !== game.unemployedJobName">
@@ -42,7 +43,7 @@ const { game } = useAppConfig();
             </div>
         </div>
 
-        <div class="flex flex-col gap-1 sm:flex-row">
+        <div class="flex shrink-0 flex-col gap-1 sm:flex-row">
             <UButton class="lg:hidden" :label="$t('common.action', 2)" icon="i-mdi-menu" @click="$emit('toggle-actions')" />
         </div>
     </div>

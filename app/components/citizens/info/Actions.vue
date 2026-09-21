@@ -1,8 +1,8 @@
 <script lang="ts" setup>
-import SetJobModal from '~/components/citizens/info/props/SetJobModal.vue';
-import SetMugshotModal from '~/components/citizens/info/props/SetMugshotModal.vue';
-import SetTrafficPointsModal from '~/components/citizens/info/props/SetTrafficPointsModal.vue';
-import SetWantedModal from '~/components/citizens/info/props/SetWantedModal.vue';
+import SetJobDrawer from '~/components/citizens/info/props/SetJobDrawer.vue';
+import SetMugshotDrawer from '~/components/citizens/info/props/SetMugshotDrawer.vue';
+import SetTrafficPointsDrawer from '~/components/citizens/info/props/SetTrafficPointsDrawer.vue';
+import SetWantedDrawer from '~/components/citizens/info/props/SetWantedDrawer.vue';
 import TemplateDrawer from '~/components/documents/templates/TemplateDrawer.vue';
 import { checkIfCanAccessColleague } from '~/components/jobs/colleagues/helpers';
 import { useClipboardStore } from '~/stores/clipboard';
@@ -38,10 +38,10 @@ const notifications = useNotificationsStore();
 const overlay = useOverlay();
 
 const templateDrawer = overlay.create(TemplateDrawer);
-const setWantedModal = overlay.create(SetWantedModal);
-const setJobModal = overlay.create(SetJobModal);
-const setTrafficPointsModal = overlay.create(SetTrafficPointsModal);
-const setMugshotModal = overlay.create(SetMugshotModal);
+const setWantedDrawer = overlay.create(SetWantedDrawer);
+const setJobDrawer = overlay.create(SetJobDrawer);
+const setTrafficPointsDrawer = overlay.create(SetTrafficPointsDrawer);
+const setMugshotDrawer = overlay.create(SetMugshotDrawer);
 
 const actionVisibility = computed(() => ({
     wanted: attr('citizens.CitizensService/SetUserProps', 'Fields', 'Wanted').value,
@@ -96,7 +96,7 @@ defineShortcuts({
     'c-w': () => {
         if (!attr('citizens.CitizensService/SetUserProps', 'Fields', 'Wanted').value) return;
 
-        setWantedModal.open({
+        setWantedDrawer.open({
             user: props.user,
             'onUpdate:wantedStatus': ($event) => emits('update:wantedStatus', $event),
         });
@@ -104,7 +104,7 @@ defineShortcuts({
     'c-j': () => {
         if (!attr('citizens.CitizensService/SetUserProps', 'Fields', 'Job').value) return;
 
-        setJobModal.open({
+        setJobDrawer.open({
             user: props.user,
             'onUpdate:job': ($event) => emits('update:job', $event),
         });
@@ -112,7 +112,7 @@ defineShortcuts({
     'c-p': () => {
         if (!attr('citizens.CitizensService/SetUserProps', 'Fields', 'TrafficInfractionPoints').value) return;
 
-        setTrafficPointsModal.open({
+        setTrafficPointsDrawer.open({
             user: props.user,
             'onUpdate:trafficInfractionPoints': ($event) => emits('update:trafficInfractionPoints', $event),
         });
@@ -120,7 +120,7 @@ defineShortcuts({
     'c-m': () => {
         if (!attr('citizens.CitizensService/SetUserProps', 'Fields', 'Mugshot').value) return;
 
-        setMugshotModal.open({
+        setMugshotDrawer.open({
             user: props.user,
             'onUpdate:mugshot': ($event) => emits('update:mugshot', $event),
         });
@@ -155,7 +155,7 @@ defineShortcuts({
                         : $t('components.citizens.CitizenInfoProfile.set_wanted')
                 "
                 @click="
-                    setWantedModal.open({
+                    setWantedDrawer.open({
                         user: user,
                         'onUpdate:wantedStatus': ($event) => $emit('update:wantedStatus', $event),
                     })
@@ -163,13 +163,21 @@ defineShortcuts({
             />
         </UTooltip>
 
+        <USeparator
+            v-if="
+                actionVisibility.wanted && (actionVisibility.job || actionVisibility.trafficPoints || actionVisibility.mugshot)
+            "
+        />
+
         <UTooltip v-if="actionVisibility.job" :text="$t('components.citizens.CitizenInfoProfile.set_job')" :kbds="['C', 'J']">
             <UButton
+                color="neutral"
+                variant="outline"
                 block
                 icon="i-mdi-briefcase"
                 :label="$t('components.citizens.CitizenInfoProfile.set_job')"
                 @click="
-                    setJobModal.open({
+                    setJobDrawer.open({
                         user: user,
                         'onUpdate:job': ($event) => $emit('update:job', $event),
                     })
@@ -183,11 +191,13 @@ defineShortcuts({
             :kbds="['C', 'P']"
         >
             <UButton
+                color="neutral"
+                variant="outline"
                 block
                 icon="i-mdi-counter"
                 :label="$t('components.citizens.CitizenInfoProfile.set_traffic_points')"
                 @click="
-                    setTrafficPointsModal.open({
+                    setTrafficPointsDrawer.open({
                         user: user,
                         'onUpdate:trafficInfractionPoints': ($event) => $emit('update:trafficInfractionPoints', $event),
                     })
@@ -201,11 +211,13 @@ defineShortcuts({
             :kbds="['C', 'M']"
         >
             <UButton
+                color="neutral"
+                variant="outline"
                 block
                 icon="i-mdi-camera"
                 :label="$t('components.citizens.CitizenInfoProfile.set_mugshot')"
                 @click="
-                    setMugshotModal.open({
+                    setMugshotDrawer.open({
                         user: user,
                         'onUpdate:mugshot': ($event) => $emit('update:mugshot', $event),
                     })
@@ -238,9 +250,30 @@ defineShortcuts({
 
         <UButton
             block
+            color="neutral"
+            variant="subtle"
             icon="i-mdi-link-variant"
             :label="$t('components.citizens.CitizenInfoProfile.copy_profile_link')"
             @click="copyLinkToClipboard()"
         />
+
+        <div v-if="registerKBDs" class="flex flex-wrap items-center gap-x-2 gap-y-1 text-xs text-muted">
+            <span>{{ $t('common.shortcuts') }}:</span>
+            <span v-if="actionVisibility.wanted" class="inline-flex items-center gap-0.5">
+                <UKbd value="C" /><UKbd value="W" />
+            </span>
+            <span v-if="actionVisibility.job" class="inline-flex items-center gap-0.5">
+                <UKbd value="C" /><UKbd value="J" />
+            </span>
+            <span v-if="actionVisibility.trafficPoints" class="inline-flex items-center gap-0.5">
+                <UKbd value="C" /><UKbd value="P" />
+            </span>
+            <span v-if="actionVisibility.mugshot" class="inline-flex items-center gap-0.5">
+                <UKbd value="C" /><UKbd value="M" />
+            </span>
+            <span v-if="actionVisibility.document" class="inline-flex items-center gap-0.5">
+                <UKbd value="C" /><UKbd value="D" />
+            </span>
+        </div>
     </div>
 </template>

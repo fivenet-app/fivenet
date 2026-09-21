@@ -314,7 +314,7 @@ function clearGroupId(): void {
                                 </ClientOnly>
                             </UFormField>
 
-                            <UFormField class="w-full" name="sorting" :label="$t('components.jobs.groups.sort')">
+                            <UFormField class="w-full" name="sorting" :label="$t('common.sort')">
                                 <SortButton v-model="query.sorting" class="w-full" :fields="sortFields" />
                             </UFormField>
                         </div>

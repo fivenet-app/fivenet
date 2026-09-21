@@ -2,10 +2,9 @@
 import type { NavigationMenuItem } from '@nuxt/ui';
 import type { TypedRouteFromName } from '@typed-router';
 import { breakpointsTailwind } from '@vueuse/core';
-import Actions from '~/components/citizens/info/Actions.vue';
-import SetLabels from '~/components/citizens/info/props/SetLabels.vue';
+import CitizenActionsPanel from '~/components/citizens/info/CitizenActionsPanel.vue';
+import Header from '~/components/citizens/info/Header.vue';
 import AddToButton from '~/components/clipboard/AddToButton.vue';
-import ProfilePictureImg from '~/components/partials/citizens/ProfilePictureImg.vue';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
@@ -31,11 +30,9 @@ definePageMeta({
     },
 });
 
-const { game } = useAppConfig();
-
 const { t } = useI18n();
 
-const { attr, can } = useAuth();
+const { can } = useAuth();
 
 const clipboardStore = useClipboardStore();
 const { open: openClipboardModal } = useClipboardModal();
@@ -179,49 +176,11 @@ const isOpen = ref<boolean>(false);
                 </template>
             </UDashboardNavbar>
 
-            <UDashboardToolbar v-if="user">
-                <div class="my-2 flex flex-1 flex-row items-center gap-1">
-                    <div class="flex flex-1 items-center gap-2">
-                        <ProfilePictureImg
-                            class="shrink-0"
-                            :src="user?.props?.mugshot?.filePath"
-                            :name="`${user.firstname} ${user.lastname}`"
-                            :alt="$t('common.mugshot')"
-                            enable-popup
-                            size="3xl"
-                        />
+            <UDashboardToolbar v-if="user" class="min-w-0">
+                <div class="my-2 flex min-w-0 flex-1 flex-col gap-2 lg:flex-row lg:items-center lg:gap-3">
+                    <Header :user="user" @toggle-actions="isOpen = true" />
 
-                        <div class="flex-1">
-                            <div class="flex snap-x flex-row flex-wrap justify-between gap-2 overflow-x-auto">
-                                <h2 class="flex-1 px-0.5 py-1 text-4xl font-bold break-words sm:pl-1">
-                                    {{ user?.firstname }} {{ user?.lastname }}
-                                </h2>
-                            </div>
-
-                            <div class="inline-flex flex-col gap-2 lg:flex-row">
-                                <UBadge>
-                                    {{ user.jobLabel }}
-                                    <template v-if="user.job !== game.unemployedJobName">
-                                        ({{ $t('common.rank') }}: {{ user.jobGradeLabel }})
-                                    </template>
-                                    {{ user.props?.jobName || user.props?.jobGradeNumber ? '*' : '' }}
-                                </UBadge>
-
-                                <UBadge v-if="user?.props?.wanted" color="error" :label="$t('common.wanted').toUpperCase()" />
-                            </div>
-                        </div>
-
-                        <div class="flex flex-col gap-1 sm:flex-row">
-                            <UButton
-                                class="lg:hidden"
-                                :label="$t('common.action', 2)"
-                                icon="i-mdi-menu"
-                                @click="isOpen = true"
-                            />
-                        </div>
-                    </div>
-
-                    <div>
+                    <div class="shrink-0 self-end lg:self-auto">
                         <UFieldGroup v-if="user">
                             <IDCopyBadge
                                 :id="user.userId"
@@ -236,8 +195,8 @@ const isOpen = ref<boolean>(false);
                 </div>
             </UDashboardToolbar>
 
-            <UDashboardToolbar v-if="user">
-                <UNavigationMenu class="-mx-1 flex-1" orientation="horizontal" :items="items" />
+            <UDashboardToolbar v-if="user" class="overflow-x-auto">
+                <UNavigationMenu class="-mx-1 min-w-max flex-1" orientation="horizontal" :items="items" />
             </UDashboardToolbar>
         </template>
 
@@ -275,7 +234,7 @@ const isOpen = ref<boolean>(false);
 
         <template #body>
             <!-- Register kbds for the citizens actions here as it will always be available not like the profile tab content -->
-            <Actions
+            <CitizenActionsPanel
                 v-if="user"
                 :user="user"
                 register-kbds
@@ -289,18 +248,6 @@ const isOpen = ref<boolean>(false);
                 @update:traffic-infraction-points="user.props!.trafficInfractionPoints = $event"
                 @update:mug-shot="user.props!.mugshot = $event"
             />
-
-            <template v-if="user && attr('citizens.CitizensService/ListCitizens', 'Fields', 'UserProps.Labels').value">
-                <USeparator />
-
-                <div class="flex flex-col gap-2">
-                    <h2 class="flex min-w-0 items-center truncate font-semibold text-highlighted">
-                        {{ $t('common.label', 2) }}
-                    </h2>
-
-                    <SetLabels v-model="user.props!.labels" class="flex-1" :user-id="user.userId" />
-                </div>
-            </template>
         </template>
     </UDashboardPanel>
 
@@ -327,7 +274,7 @@ const isOpen = ref<boolean>(false);
 
                     <template #body>
                         <!-- Register kbds for the citizens actions here as it will always be available not like the profile tab content -->
-                        <Actions
+                        <CitizenActionsPanel
                             v-if="user"
                             :user="user"
                             register-kbds
@@ -341,20 +288,6 @@ const isOpen = ref<boolean>(false);
                             @update:traffic-infraction-points="user.props!.trafficInfractionPoints = $event"
                             @update:mug-shot="user.props!.mugshot = $event"
                         />
-
-                        <template
-                            v-if="user && attr('citizens.CitizensService/ListCitizens', 'Fields', 'UserProps.Labels').value"
-                        >
-                            <USeparator />
-
-                            <div class="flex flex-col gap-2">
-                                <h1 class="flex min-w-0 items-center truncate font-semibold text-highlighted">
-                                    {{ $t('common.label', 2) }}
-                                </h1>
-
-                                <SetLabels v-model="user.props!.labels" class="flex-1" :user-id="user.userId" />
-                            </div>
-                        </template>
                     </template>
                 </UDashboardPanel>
             </template>

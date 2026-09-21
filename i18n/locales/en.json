@@ -923,7 +923,8 @@
             "sunday": "Sunday"
         },
         "more": "more",
-        "now": "Now"
+        "now": "Now",
+        "sort": "Sort"
     },
     "components": {
         "partials": {
@@ -1415,7 +1416,6 @@
                 "exclusions": "Exclusions",
                 "membership_mode": "Membership mode",
                 "short_name": "Short name",
-                "sort": "Sort",
                 "sort_rank": "Sort rank",
                 "no_description": "No description",
                 "types": {
@@ -1827,11 +1827,22 @@
                 "create_new_document": "Create New Document",
                 "copy_profile_link": "Copy Profile Link",
                 "revoke_wanted": "Revoke Wanted Status",
+                "revoke_wanted_description": "This removes the active wanted status from this citizen.",
                 "set_wanted": "Set Person Wanted",
+                "set_wanted_description": "This marks the citizen as wanted and makes the status visible in their profile.",
                 "set_job": "Set Person's Job",
+                "reset_job": "Remove Custom Job",
+                "reset_job_description": "This removes the custom job and grade assignment from this citizen.",
                 "set_traffic_points": "Set Traffic Infraction Points",
+                "reset_traffic_points": "Reset to Zero",
+                "reset_traffic_points_description": "This sets the citizen's traffic infraction points back to zero.",
+                "current_traffic_points": "Current total: {points}",
                 "go_to_colleague_info": "Go to Colleague Info",
-                "set_mugshot": "Set Mugshot Photo"
+                "set_mugshot": "Set Mugshot Photo",
+                "remove_mugshot": "Remove Mugshot",
+                "remove_mugshot_description": "This permanently removes the citizen's current mugshot photo.",
+                "remove_label_description": "Remove the label {name} from this citizen?",
+                "label_changes_pending": "Pending changes: {added} added, {removed} removed."
             },
             "CitizenInfoActivityFeedEntry": {
                 "traffic_infraction_points": {

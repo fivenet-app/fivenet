@@ -2,6 +2,9 @@
 import type { Form } from '@nuxt/ui';
 import { z } from 'zod';
 import CitizenInfoPopover from '~/components/partials/citizens/CitizenInfoPopover.vue';
+import ActivityFeedItem from '~/components/partials/data/ActivityFeedItem.vue';
+import ActivityFeedFilterLayout from '~/components/partials/data/ActivityFeedFilterLayout.vue';
+import ActivityFeedSkeleton from '~/components/partials/data/ActivityFeedSkeleton.vue';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import GenericTime from '~/components/partials/elements/GenericTime.vue';
@@ -103,7 +106,7 @@ async function listActivity(values: Schema, signal: AbortSignal): Promise<ListQu
         <template #header>
             <UDashboardToolbar>
                 <UForm ref="formRef" class="my-2 w-full" :schema="schema" :state="query" @submit="commitValidatedQuery">
-                    <div class="grid w-full gap-3 md:grid-cols-[repeat(3,minmax(0,1fr))_auto]">
+                    <ActivityFeedFilterLayout :field-count="4">
                         <UFormField class="w-full" name="user" :label="$t('common.citizen', 1)">
                             <SelectMenu
                                 v-model="query.user"
@@ -137,6 +140,7 @@ async function listActivity(values: Schema, signal: AbortSignal): Promise<ListQu
                                 v-model="query.types"
                                 class="w-full"
                                 multiple
+                                nullable
                                 :items="activityTypeItems"
                                 value-key="value"
                                 :search-input="{ placeholder: $t('common.search_field') }"
@@ -149,81 +153,76 @@ async function listActivity(values: Schema, signal: AbortSignal): Promise<ListQu
                             <InputDateRangePopover v-model="query.dateRange" class="w-full" clearable time />
                         </UFormField>
 
-                        <UFormField label="&nbsp;">
+                        <UFormField :label="$t('common.sort')">
                             <SortButton
                                 v-model="query.sorting"
                                 :fields="[{ label: $t('common.created_at'), value: 'createdAt' }]"
                             />
                         </UFormField>
-                    </div>
+                    </ActivityFeedFilterLayout>
                 </UForm>
             </UDashboardToolbar>
         </template>
 
         <template #body>
-            <div class="relative flex-1 overflow-x-auto">
+            <div class="relative flex-1">
+                <ActivityFeedSkeleton v-if="isRequestPending(status)" />
+
                 <DataErrorBlock
-                    v-if="error"
+                    v-else-if="error"
                     class="w-full"
                     :title="$t('common.not_found', [`${$t('common.qualification', 1)} ${$t('common.activity')}`])"
                     :error="error"
                     :retry="refresh"
                 />
                 <DataNoDataBlock
-                    v-else-if="!isRequestPending(status) && activityItems.length === 0"
+                    v-else-if="activityItems.length === 0"
                     class="w-full"
                     icon="i-mdi-pulse"
                     :type="`${$t('common.qualification', 1)} ${$t('common.activity')}`"
                 />
 
-                <ul v-else class="divide-y divide-default">
-                    <li v-for="entry in activityItems" :key="entry.id" class="flex gap-3 p-3">
-                        <UIcon
-                            :name="qualificationActivityTypeIcon(entry.type)"
-                            :class="[qualificationActivityTypeColor(entry.type), 'mt-1 size-7 shrink-0']"
-                        />
+                <ul v-else class="divide-y divide-default" role="list">
+                    <ActivityFeedItem
+                        v-for="entry in activityItems"
+                        :key="entry.id"
+                        :icon="qualificationActivityTypeIcon(entry.type)"
+                        :icon-class="qualificationActivityTypeColor(entry.type)"
+                    >
+                        <template #title>
+                            <span class="inline-flex flex-wrap items-center gap-x-2 gap-y-1">
+                                <span>{{ activityTypeLabel(entry.type) }}</span>
+                                <UBadge
+                                    v-if="entry.data?.requestStatus !== undefined"
+                                    :color="requestStatusToBadgeColor(entry.data.requestStatus)"
+                                    :label="$t(`enums.qualifications.RequestStatus.${RequestStatus[entry.data.requestStatus]}`)"
+                                />
+                                <UBadge
+                                    v-if="entry.data?.resultStatus !== undefined"
+                                    :color="resultStatusToBadgeColor(entry.data.resultStatus)"
+                                    :label="$t(`enums.qualifications.ResultStatus.${ResultStatus[entry.data.resultStatus]}`)"
+                                />
+                                <UBadge v-if="entry.data?.score !== undefined" color="neutral" :label="`${entry.data.score}`" />
+                            </span>
+                        </template>
 
-                        <div class="min-w-0 flex-1 space-y-1">
-                            <div class="flex items-center justify-between gap-2">
-                                <div class="flex flex-wrap items-center gap-x-2 gap-y-1">
-                                    <span class="text-sm font-medium">{{ activityTypeLabel(entry.type) }}</span>
-                                    <UBadge
-                                        v-if="entry.data?.requestStatus !== undefined"
-                                        :color="requestStatusToBadgeColor(entry.data.requestStatus)"
-                                        :label="
-                                            $t(`enums.qualifications.RequestStatus.${RequestStatus[entry.data.requestStatus]}`)
-                                        "
-                                    />
-                                    <UBadge
-                                        v-if="entry.data?.resultStatus !== undefined"
-                                        :color="resultStatusToBadgeColor(entry.data.resultStatus)"
-                                        :label="
-                                            $t(`enums.qualifications.ResultStatus.${ResultStatus[entry.data.resultStatus]}`)
-                                        "
-                                    />
-                                    <UBadge
-                                        v-if="entry.data?.score !== undefined"
-                                        color="neutral"
-                                        :label="`${entry.data.score}`"
-                                    />
-                                </div>
-                                <GenericTime class="shrink-0 text-sm text-dimmed" :value="entry.createdAt" type="long" />
+                        <template #timestamp>
+                            <GenericTime :value="entry.createdAt" type="long" />
+                        </template>
+
+                        <div class="flex flex-col gap-2 text-sm sm:flex-row sm:items-center sm:justify-between">
+                            <div v-if="entry.targetUser" class="inline-flex min-w-0 items-center gap-1">
+                                <span class="font-semibold">{{ $t('common.citizen', 1) }}:</span>
+                                <CitizenInfoPopover :user="entry.targetUser" show-avatar />
                             </div>
-
-                            <div class="flex items-center justify-between gap-2 text-sm">
-                                <div v-if="entry.targetUser" class="inline-flex items-center gap-1">
-                                    <span class="font-semibold">{{ $t('common.citizen', 1) }}:</span>
-                                    <CitizenInfoPopover :user="entry.targetUser" show-avatar />
-                                </div>
-                                <div v-else />
-                                <div class="inline-flex shrink-0 items-center gap-1">
-                                    <span>{{ $t('common.created_by') }}</span>
-                                    <CitizenInfoPopover v-if="entry.actorUser" :user="entry.actorUser" show-avatar />
-                                    <span v-else>{{ $t('common.system') }}</span>
-                                </div>
+                            <div v-else />
+                            <div class="inline-flex shrink-0 items-center gap-1">
+                                <span>{{ $t('common.created_by') }}</span>
+                                <CitizenInfoPopover v-if="entry.actorUser" :user="entry.actorUser" show-avatar />
+                                <span v-else>{{ $t('common.system') }}</span>
                             </div>
                         </div>
-                    </li>
+                    </ActivityFeedItem>
                 </ul>
             </div>
         </template>

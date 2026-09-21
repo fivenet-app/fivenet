@@ -3,6 +3,8 @@ import { listEnumValues } from '@protobuf-ts/runtime';
 import { z } from 'zod';
 import ActivityFeedEntry from '~/components/jobs/colleagues/info/ActivityFeedEntry.vue';
 import UserGroupSelector from '~/components/jobs/UserGroupSelector.vue';
+import ActivityFeedFilterLayout from '~/components/partials/data/ActivityFeedFilterLayout.vue';
+import ActivityFeedSkeleton from '~/components/partials/data/ActivityFeedSkeleton.vue';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import InputDateRangePopover, { type DateRange } from '~/components/partials/InputDateRangePopover.vue';
@@ -131,120 +133,96 @@ watch(
             >
                 <UForm
                     ref="formRef"
-                    class="my-2 flex w-full gap-2"
+                    class="my-2 flex w-full flex-col gap-2 sm:flex-row sm:flex-wrap"
                     :schema="schema"
                     :state="query"
                     @submit="commitValidatedQuery"
                 >
-                    <UFormField v-if="userId === undefined" class="flex-1" name="users" :label="$t('common.search')">
-                        <UserGroupSelector v-model="query.users" class="w-full" />
-                    </UFormField>
-                    <div v-else class="flex-1" />
+                    <ActivityFeedFilterLayout :field-count="4">
+                        <UFormField
+                            v-if="userId === undefined"
+                            class="w-full min-w-0"
+                            name="users"
+                            :label="$t('common.search')"
+                        >
+                            <UserGroupSelector v-model="query.users" class="w-full" nullable />
+                        </UFormField>
+                        <div v-else class="hidden w-full sm:block" />
 
-                    <UFormField
-                        v-if="isSuperuser || accessAttrs.some((a) => colleagueSearchAttrs.includes(a))"
-                        name="types"
-                        :label="$t('common.type', 2)"
-                    >
-                        <ClientOnly>
-                            <USelectMenu
-                                v-model="query.types"
-                                class="w-48 min-w-40 flex-initial"
-                                multiple
-                                :items="
-                                    activityTypes.map((aType) => ({
-                                        aType: aType,
-                                        icon: jobsUserActivityTypeIcon(aType),
-                                        ui: {
-                                            itemLeadingIcon: jobsUserActivityTypeBGColor(aType),
-                                        },
-                                    }))
-                                "
-                                value-key="aType"
-                                :search-input="{ placeholder: $t('common.type', 2) }"
-                            >
-                                <template #item-label="{ item }">
-                                    {{ $t(`enums.jobs.ColleagueActivityType.${ColleagueActivityType[item.aType]}`) }}
-                                </template>
+                        <UFormField
+                            v-if="isSuperuser || accessAttrs.some((a) => colleagueSearchAttrs.includes(a))"
+                            class="w-full min-w-0"
+                            name="types"
+                            :label="$t('common.type', 2)"
+                        >
+                            <ClientOnly>
+                                <USelectMenu
+                                    v-model="query.types"
+                                    class="w-full min-w-40 flex-1 sm:w-48 sm:flex-initial"
+                                    multiple
+                                    nullable
+                                    :items="
+                                        activityTypes.map((aType) => ({
+                                            aType: aType,
+                                            icon: jobsUserActivityTypeIcon(aType),
+                                            ui: {
+                                                itemLeadingIcon: jobsUserActivityTypeBGColor(aType),
+                                            },
+                                        }))
+                                    "
+                                    value-key="aType"
+                                    :search-input="{ placeholder: $t('common.type', 2) }"
+                                >
+                                    <template #item-label="{ item }">
+                                        {{ $t(`enums.jobs.ColleagueActivityType.${ColleagueActivityType[item.aType]}`) }}
+                                    </template>
 
-                                <template #empty> {{ $t('common.not_found', [$t('common.type', 2)]) }} </template>
-                            </USelectMenu>
-                        </ClientOnly>
-                    </UFormField>
+                                    <template #empty> {{ $t('common.not_found', [$t('common.type', 2)]) }} </template>
+                                </USelectMenu>
+                            </ClientOnly>
+                        </UFormField>
 
-                    <UFormField class="flex-1" name="dateRange" :label="$t('common.date')">
-                        <InputDateRangePopover v-model="query.dateRange" class="w-full" clearable time />
-                    </UFormField>
+                        <UFormField class="w-full min-w-0" name="dateRange" :label="$t('common.date')">
+                            <InputDateRangePopover v-model="query.dateRange" class="w-full" clearable time />
+                        </UFormField>
 
-                    <UFormField label="&nbsp;">
-                        <SortButton
-                            v-model="query.sorting"
-                            :fields="[{ label: $t('common.created_at'), value: 'createdAt' }]"
-                        />
-                    </UFormField>
+                        <UFormField :label="$t('common.sort')">
+                            <SortButton
+                                v-model="query.sorting"
+                                :fields="[{ label: $t('common.created_at'), value: 'createdAt' }]"
+                            />
+                        </UFormField>
+                    </ActivityFeedFilterLayout>
                 </UForm>
             </UDashboardToolbar>
         </template>
 
         <template #body>
-            <div class="relative flex-1 overflow-x-auto">
+            <div class="relative flex-1">
+                <ActivityFeedSkeleton v-if="isRequestPending(status)" />
+
                 <DataErrorBlock
-                    v-if="error"
+                    v-else-if="error"
                     class="w-full"
                     :title="$t('common.not_found', [`${$t('common.colleague', 1)} ${$t('common.activity')}`])"
                     :error="error"
                     :retry="refresh"
                 />
                 <DataNoDataBlock
-                    v-else-if="data?.activity.length === 0"
+                    v-else-if="!data || data.activity.length === 0"
                     class="w-full"
                     icon="i-mdi-pulse"
                     :type="`${$t('common.colleague', 1)} ${$t('common.activity')}`"
                 />
 
-                <div v-else-if="isRequestPending(status) || data?.activity">
-                    <ul class="divide-y divide-default" role="list">
-                        <template v-if="isRequestPending(status)">
-                            <li v-for="idx in 10" :key="idx" class="px-2 py-4">
-                                <div class="flex space-x-3">
-                                    <div class="my-auto flex size-10 items-center justify-center rounded-full">
-                                        <USkeleton class="size-full" />
-                                    </div>
-
-                                    <div class="flex-1 space-y-1">
-                                        <div class="flex items-center justify-between">
-                                            <h3 class="text-sm font-medium">
-                                                <USkeleton class="h-5 w-[350px]" />
-                                            </h3>
-
-                                            <p>
-                                                <USkeleton class="h-5 w-[175px]" />
-                                            </p>
-                                        </div>
-
-                                        <div class="flex items-center justify-between">
-                                            <p class="flex flex-col gap-1 text-sm">
-                                                <USkeleton class="h-8 w-[200px]" />
-                                            </p>
-                                            <p class="inline-flex items-center gap-1 text-sm">
-                                                <USkeleton class="h-5 w-[175px]" />
-                                            </p>
-                                        </div>
-                                    </div>
-                                </div>
-                            </li>
-                        </template>
-
-                        <template v-else>
-                            <ActivityFeedEntry
-                                v-for="activity in data?.activity"
-                                :key="activity.id"
-                                :activity="activity"
-                                :show-target-user="showTargetUser"
-                            />
-                        </template>
-                    </ul>
-                </div>
+                <ul v-else class="divide-y divide-default" role="list">
+                    <ActivityFeedEntry
+                        v-for="activity in data.activity"
+                        :key="activity.id"
+                        :activity="activity"
+                        :show-target-user="showTargetUser"
+                    />
+                </ul>
             </div>
         </template>
 

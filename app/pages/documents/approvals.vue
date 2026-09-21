@@ -262,25 +262,12 @@ async function listApprovalTasksInbox(values: Schema, signal: AbortSignal): Prom
                                 <CitizenInfoPopover :user="task.creator" :user-id="task.creatorId" size="lg" />
                             </div>
 
-                            <div class="flex max-w-full shrink flex-col gap-2">
-                                <div class="flex flex-col gap-1 md:flex-row">
-                                    <div>
-                                        <CategoryBadge :category="task.document?.category" />
-                                    </div>
-
-                                    <h2
-                                        class="line-clamp-2 flex-1 text-base font-medium break-words break-all text-highlighted hover:line-clamp-3 md:line-clamp-1"
-                                    >
-                                        <span v-if="!task.document?.title" class="italic">
-                                            {{ $t('common.untitled') }}
-                                        </span>
-                                        <span v-else>
-                                            {{ task.document?.title }}
-                                        </span>
-                                    </h2>
-
-                                    <DraftBadge v-if="task.document?.meta?.draft" class="self-start" />
+                            <div class="flex max-w-full min-w-0 shrink flex-col gap-1">
+                                <div class="flex flex-wrap items-center gap-2">
+                                    <CategoryBadge :category="task.document?.category" />
+                                    <DraftBadge v-if="task.document?.meta?.draft" />
                                 </div>
+                                <DocumentListTitle :title="task.document?.title" size="sm" />
                             </div>
 
                             <div class="flex justify-between gap-2">

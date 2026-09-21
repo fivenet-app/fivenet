@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 import type { FormSubmitEvent } from '@nuxt/ui';
 import { z } from 'zod';
+import ConfirmModal from '~/components/partials/ConfirmModal.vue';
 import { getCitizensCitizensClient } from '~~/gen/ts/clients';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 import type { UserProps } from '~~/gen/ts/resources/users/props/props';
@@ -17,7 +18,12 @@ const emit = defineEmits<{
 
 const notifications = useNotificationsStore();
 
+const { t } = useI18n();
+
 const citizensCitizensClient = await getCitizensCitizensClient();
+
+const overlay = useOverlay();
+const resetConfirmModal = overlay.create(ConfirmModal);
 
 const schema = z.object({
     reason: z.coerce.string().min(3).max(255),
@@ -29,7 +35,7 @@ type Schema = z.output<typeof schema>;
 
 const state = reactive<Schema>({
     reason: '',
-    trafficInfractionPoints: 0,
+    trafficInfractionPoints: props.user.props?.trafficInfractionPoints ?? 0,
     reset: false,
 });
 
@@ -70,10 +76,11 @@ async function setTrafficPoints(values: Schema): Promise<void> {
 }
 
 watch(
-    () => props.user,
+    () => props.user.props?.trafficInfractionPoints,
     () => {
         state.trafficInfractionPoints = props.user.props?.trafficInfractionPoints ?? 0;
     },
+    { immediate: true },
 );
 
 const { submit, isSubmitting, canSubmit } = useSubmitGuard(async (event: FormSubmitEvent<Schema>) => {
@@ -81,6 +88,22 @@ const { submit, isSubmitting, canSubmit } = useSubmitGuard(async (event: FormSub
 });
 
 const formRef = useTemplateRef('formRef');
+
+function submitChanges(): void {
+    state.reset = false;
+    formRef.value?.submit();
+}
+
+function confirmReset(): void {
+    resetConfirmModal.open({
+        title: t('components.citizens.CitizenInfoProfile.reset_traffic_points'),
+        description: t('components.citizens.CitizenInfoProfile.reset_traffic_points_description'),
+        confirm: () => {
+            state.reset = true;
+            formRef.value?.submit();
+        },
+    });
+}
 
 async function closeModal(): Promise<void> {
     if (!canSubmit.value) return;
@@ -92,10 +115,11 @@ async function closeModal(): Promise<void> {
 </script>
 
 <template>
-    <UModal
+    <UDrawer
         :title="$t('components.citizens.CitizenInfoProfile.set_traffic_points')"
         :close="false"
         :dismissible="!hasUnsavedChanges && canSubmit"
+        :ui="{ body: 'mx-auto w-full max-w-xl' }"
     >
         <template #header>
             <div class="flex w-full items-center justify-between gap-2">
@@ -115,17 +139,25 @@ async function closeModal(): Promise<void> {
         </template>
 
         <template #body>
-            <UForm ref="formRef" :schema="schema" :state="state" @submit="submit">
+            <UForm ref="formRef" class="grid gap-4" :schema="schema" :state="state" @submit="submit">
                 <UFormField name="reason" :label="$t('common.reason')" required>
                     <UInput v-model="state.reason" class="w-full" type="text" :placeholder="$t('common.reason')" />
                 </UFormField>
 
-                <UFormField name="trafficInfractionPoints" :label="$t('common.traffic_infraction_points')">
+                <UFormField
+                    name="trafficInfractionPoints"
+                    :label="$t('common.traffic_infraction_points')"
+                    :description="
+                        $t('components.citizens.CitizenInfoProfile.current_traffic_points', {
+                            points: props.user.props?.trafficInfractionPoints ?? 0,
+                        })
+                    "
+                >
                     <UInputNumber
                         v-model="state.trafficInfractionPoints"
                         class="w-full"
                         :min="0"
-                        :max="9999999"
+                        :max="99998"
                         :step="1"
                         :placeholder="$t('common.traffic_infraction_points')"
                     />
@@ -134,14 +166,14 @@ async function closeModal(): Promise<void> {
         </template>
 
         <template #footer>
-            <UFieldGroup class="inline-flex w-full">
+            <div class="flex w-full flex-col-reverse gap-2 sm:flex-row">
                 <UButton
                     class="flex-1"
                     block
                     :disabled="!canSubmit"
                     :loading="isSubmitting"
-                    :label="$t('common.add')"
-                    @click="formRef?.submit()"
+                    :label="$t('common.save')"
+                    @click="submitChanges"
                 />
 
                 <UButton
@@ -150,11 +182,8 @@ async function closeModal(): Promise<void> {
                     block
                     :disabled="!canSubmit"
                     :loading="isSubmitting"
-                    :label="$t('common.reset')"
-                    @click="
-                        state.reset = true;
-                        formRef?.submit();
-                    "
+                    :label="$t('components.citizens.CitizenInfoProfile.reset_traffic_points')"
+                    @click="confirmReset"
                 />
 
                 <UButton
@@ -165,7 +194,7 @@ async function closeModal(): Promise<void> {
                     :label="$t('common.close', 1)"
                     @click="closeModal"
                 />
-            </UFieldGroup>
+            </div>
         </template>
-    </UModal>
+    </UDrawer>
 </template>

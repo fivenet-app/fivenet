@@ -1,9 +1,10 @@
 <script lang="ts" setup>
 import type { Form } from '@nuxt/ui';
 import { z } from 'zod';
+import ActivityFeedFilterLayout from '~/components/partials/data/ActivityFeedFilterLayout.vue';
+import ActivityFeedSkeleton from '~/components/partials/data/ActivityFeedSkeleton.vue';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
-import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
 import InputDateRangePopover, { type DateRange } from '~/components/partials/InputDateRangePopover.vue';
 import Pagination from '~/components/partials/Pagination.vue';
 import SortButton from '~/components/partials/SortButton.vue';
@@ -121,42 +122,45 @@ async function listVehicleActivity(values: Schema, signal: AbortSignal): Promise
 </script>
 
 <template>
-    <UDashboardPanel :ui="{ root: 'min-h-0 h-full pb-(--page-content-bottom-offset)', body: 'p-0 sm:p-0 gap-0 sm:gap-0' }">
+    <UDashboardPanel :ui="{ root: 'min-h-0 h-full', body: 'p-0 sm:p-0 gap-0 sm:gap-0' }">
         <template v-if="!denyView" #header>
             <UDashboardToolbar>
                 <template #default>
                     <UForm
                         ref="formRef"
-                        class="my-2 flex w-full flex-row gap-2"
+                        class="my-2 flex w-full flex-col gap-2 sm:flex-row sm:flex-wrap"
                         :schema="schema"
                         :state="query"
                         @submit="commitValidatedQuery"
                     >
-                        <UFormField class="flex-1 grow" name="types" :label="$t('common.type', 2)">
-                            <ClientOnly>
-                                <USelectMenu
-                                    v-model="query.types"
-                                    class="w-full min-w-40 flex-1"
-                                    multiple
-                                    :items="options"
-                                    value-key="value"
-                                    :search-input="{ placeholder: $t('common.type', 2) }"
-                                >
-                                    <template #empty> {{ $t('common.not_found', [$t('common.type', 2)]) }} </template>
-                                </USelectMenu>
-                            </ClientOnly>
-                        </UFormField>
+                        <ActivityFeedFilterLayout :field-count="3">
+                            <UFormField class="w-full min-w-0" name="types" :label="$t('common.type', 2)">
+                                <ClientOnly>
+                                    <USelectMenu
+                                        v-model="query.types"
+                                        class="w-full min-w-40 flex-1"
+                                        multiple
+                                        nullable
+                                        :items="options"
+                                        value-key="value"
+                                        :search-input="{ placeholder: $t('common.type', 2) }"
+                                    >
+                                        <template #empty> {{ $t('common.not_found', [$t('common.type', 2)]) }} </template>
+                                    </USelectMenu>
+                                </ClientOnly>
+                            </UFormField>
 
-                        <UFormField class="flex-1 grow" name="dateRange" :label="$t('common.date')">
-                            <InputDateRangePopover v-model="query.dateRange" class="w-full" clearable time />
-                        </UFormField>
+                            <UFormField class="w-full min-w-0" name="dateRange" :label="$t('common.date')">
+                                <InputDateRangePopover v-model="query.dateRange" class="w-full" clearable time />
+                            </UFormField>
 
-                        <UFormField label="&nbsp;">
-                            <SortButton
-                                v-model="query.sorting"
-                                :fields="[{ label: $t('common.created_at'), value: 'createdAt' }]"
-                            />
-                        </UFormField>
+                            <UFormField :label="$t('common.sort')">
+                                <SortButton
+                                    v-model="query.sorting"
+                                    :fields="[{ label: $t('common.created_at'), value: 'createdAt' }]"
+                                />
+                            </UFormField>
+                        </ActivityFeedFilterLayout>
                     </UForm>
                 </template>
             </UDashboardToolbar>
@@ -173,10 +177,7 @@ async function listVehicleActivity(values: Schema, signal: AbortSignal): Promise
                 />
             </UContainer>
 
-            <DataPendingBlock
-                v-else-if="isRequestPending(status)"
-                :message="$t('common.loading', [`${$t('common.vehicle', 1)} ${$t('common.activity')}`])"
-            />
+            <ActivityFeedSkeleton v-else-if="isRequestPending(status)" />
             <DataErrorBlock
                 v-else-if="error"
                 :title="$t('common.not_found', [`${$t('common.vehicle', 1)} ${$t('common.activity')}`])"

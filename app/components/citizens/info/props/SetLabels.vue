@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 import type { FormSubmitEvent } from '@nuxt/ui';
 import { z } from 'zod';
+import ConfirmModal from '~/components/partials/ConfirmModal.vue';
 import SelectMenu from '~/components/partials/SelectMenu.vue';
 import { useCompletorStore } from '~/stores/completor';
 import { getCitizensCitizensClient } from '~~/gen/ts/clients';
@@ -16,6 +17,7 @@ const props = defineProps<{
     userId: number;
 }>();
 
+const { t } = useI18n();
 const { attr, can } = useAuth();
 
 const labels = defineModel<Labels | undefined>({ default: undefined });
@@ -25,6 +27,7 @@ const notifications = useNotificationsStore();
 const completorStore = useCompletorStore();
 
 const overlay = useOverlay();
+const removeConfirmModal = overlay.create(ConfirmModal);
 
 const citizensCitizensClient = await getCitizensCitizensClient();
 
@@ -59,11 +62,14 @@ const state = reactive<Schema>({
     reason: '',
 });
 
+const originalLabelIds = ref<number[]>(state.labels.map((label) => label.id));
+
 const { hasUnsavedChanges, syncSnapshot } = useSnapshotChanges(state);
 
 function setFromProps(): void {
     state.labels = labels.value?.list !== undefined ? labels.value.list.slice() : [];
     state.reason = '';
+    originalLabelIds.value = state.labels.map((label) => label.id);
     syncSnapshot();
 }
 
@@ -131,7 +137,25 @@ function handleLabelUpdate(label: Label | null): void {
     });
 }
 
+function confirmRemoveLabel(label: Label, index: number): void {
+    removeConfirmModal.open({
+        title: t('common.remove'),
+        description: t('components.citizens.CitizenInfoProfile.remove_label_description', { name: label.name }),
+        confirm: () => state.labels.splice(index, 1),
+    });
+}
+
 const formRef = useTemplateRef('formRef');
+
+const labelChanges = computed(() => {
+    const original = new Set(originalLabelIds.value);
+    const current = new Set(state.labels.map((label) => label.id));
+
+    return {
+        added: state.labels.filter((label) => !original.has(label.id)),
+        removed: originalLabelIds.value.filter((id) => !current.has(id)),
+    };
+});
 </script>
 
 <template>
@@ -178,7 +202,7 @@ const formRef = useTemplateRef('formRef');
             {{ $t('common.none', [$t('common.label', 2)]) }}
         </p>
         <div v-else class="flex flex-1 flex-col gap-1">
-            <UFieldGroup v-for="(label, idx) in state.labels" :key="label.name">
+            <UFieldGroup v-for="label in state.labels" :key="label.id">
                 <UBadge
                     class="w-full"
                     :class="isColorBright(hexToRgb(label.color, rgbBlack)!) ? 'text-black!' : 'text-white!'"
@@ -211,13 +235,29 @@ const formRef = useTemplateRef('formRef');
                         color="neutral"
                         size="sm"
                         icon="i-mdi-remove"
-                        @click="state.labels.splice(idx, 1)"
+                        @click="
+                            confirmRemoveLabel(
+                                label,
+                                state.labels.findIndex((item) => item.id === label.id),
+                            )
+                        "
                     />
                 </UTooltip>
             </UFieldGroup>
         </div>
 
         <template v-if="hasUnsavedChanges">
+            <UAlert
+                color="warning"
+                icon="i-mdi-pencil-outline"
+                :description="
+                    $t('components.citizens.CitizenInfoProfile.label_changes_pending', {
+                        added: labelChanges.added.length,
+                        removed: labelChanges.removed.length,
+                    })
+                "
+            />
+
             <UFormField name="reason" :label="$t('common.reason')" required>
                 <UInput v-model="state.reason" class="w-full" type="text" />
             </UFormField>

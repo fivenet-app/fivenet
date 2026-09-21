@@ -923,7 +923,8 @@
             "sunday": "Sonntag"
         },
         "more": "mehr",
-        "now": "Jetzt"
+        "now": "Jetzt",
+        "sort": "Sortierung"
     },
     "components": {
         "partials": {
@@ -1415,7 +1416,6 @@
                 "exclusions": "Ausschlüsse",
                 "membership_mode": "Mitgliedschaftsmodus",
                 "short_name": "Kurzname",
-                "sort": "Sortierung",
                 "sort_rank": "Sortierrang",
                 "no_description": "Keine Beschreibung",
                 "types": {
@@ -1827,11 +1827,22 @@
                 "create_new_document": "Neues Dokument erstellen",
                 "copy_profile_link": "Profil-Link kopieren",
                 "revoke_wanted": "Fahndungsstatus aufheben",
+                "revoke_wanted_description": "Der aktive Fahndungsstatus dieser Person wird aufgehoben.",
                 "set_wanted": "Person zur Fahndung ausschreiben",
+                "set_wanted_description": "Diese Person wird zur Fahndung ausgeschrieben und der Status im Profil angezeigt.",
                 "set_job": "Job der Person setzen",
+                "reset_job": "Sonderjob entfernen",
+                "reset_job_description": "Der Sonderjob und der Rang dieser Person werden entfernt.",
                 "set_traffic_points": "Setze StVo Punkte",
+                "reset_traffic_points": "Auf null zurücksetzen",
+                "reset_traffic_points_description": "Die Verkehrspunkte dieser Person werden auf null zurückgesetzt.",
+                "current_traffic_points": "Aktueller Gesamtstand: {points}",
                 "go_to_colleague_info": "Gehe zu Kollegen-Info",
-                "set_mugshot": "Setze Fahndungsfoto"
+                "set_mugshot": "Setze Fahndungsfoto",
+                "remove_mugshot": "Fahndungsfoto entfernen",
+                "remove_mugshot_description": "Das aktuelle Fahndungsfoto dieser Person wird dauerhaft entfernt.",
+                "remove_label_description": "Das Label {name} von dieser Person entfernen?",
+                "label_changes_pending": "Ausstehende Änderungen: {added} hinzugefügt, {removed} entfernt."
             },
             "CitizenInfoActivityFeedEntry": {
                 "traffic_infraction_points": {

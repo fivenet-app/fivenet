@@ -75,55 +75,32 @@ const links = computed(() =>
                 }"
             >
                 <div class="m-2 flex flex-col gap-1">
-                    <div class="flex flex-row justify-between gap-2">
-                        <div class="flex items-center">
-                            <IDCopyBadge
-                                :id="document.id"
-                                prefix="DOC"
-                                :title="{ key: 'notifications.document_view.copy_document_id.title', parameters: {} }"
-                                :content="{ key: 'notifications.document_view.copy_document_id.content', parameters: {} }"
-                                size="xs"
-                                variant="subtle"
-                            />
-                        </div>
+                    <div class="flex flex-wrap items-center gap-2">
+                        <IDCopyBadge
+                            :id="document.id"
+                            prefix="DOC"
+                            :title="{ key: 'notifications.document_view.copy_document_id.title', parameters: {} }"
+                            :content="{ key: 'notifications.document_view.copy_document_id.content', parameters: {} }"
+                            size="xs"
+                            variant="subtle"
+                        />
 
-                        <div class="inline-flex gap-2">
-                            <UBadge
-                                v-if="document.meta?.state"
-                                class="inline-flex gap-1"
-                                size="md"
-                                icon="i-mdi-note-check"
-                                :label="document.meta.state"
-                            />
+                        <CategoryBadge :category="document.category" />
 
-                            <ApprovalBadge :meta="document?.meta" />
-                        </div>
+                        <UBadge
+                            v-if="document.meta?.state"
+                            class="inline-flex gap-1"
+                            size="md"
+                            icon="i-mdi-note-check"
+                            :label="document.meta.state"
+                        />
 
-                        <div class="flex flex-row items-center gap-1">
-                            <OpenClosedBadge :closed="document.meta?.closed" />
-                        </div>
+                        <ApprovalBadge :meta="document?.meta" />
+                        <DraftBadge v-if="document.meta?.draft" />
+                        <OpenClosedBadge :closed="document.meta?.closed" />
                     </div>
 
-                    <div class="flex max-w-full shrink flex-col gap-2">
-                        <div class="flex flex-col gap-1 md:flex-row">
-                            <div>
-                                <CategoryBadge :category="document.category" />
-                            </div>
-
-                            <h2
-                                class="line-clamp-2 flex-1 text-lg font-medium break-words break-all text-highlighted hover:line-clamp-3 sm:text-xl md:line-clamp-1"
-                            >
-                                <span v-if="!document.title" class="italic">
-                                    {{ $t('common.untitled') }}
-                                </span>
-                                <span v-else>
-                                    {{ document.title }}
-                                </span>
-                            </h2>
-
-                            <DraftBadge v-if="document.meta?.draft" class="self-start" />
-                        </div>
-                    </div>
+                    <DocumentListTitle :title="document.title" />
 
                     <div class="flex gap-2">
                         <div class="flex flex-1 items-center gap-1.5">

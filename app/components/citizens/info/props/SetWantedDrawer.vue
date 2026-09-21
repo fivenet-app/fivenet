@@ -75,7 +75,7 @@ async function closeModal(): Promise<void> {
 </script>
 
 <template>
-    <UModal
+    <UDrawer
         :title="
             user.props?.wanted
                 ? $t('components.citizens.CitizenInfoProfile.revoke_wanted')
@@ -83,6 +83,7 @@ async function closeModal(): Promise<void> {
         "
         :close="false"
         :dismissible="!hasUnsavedChanges && canSubmit"
+        :ui="{ body: 'mx-auto w-full max-w-xl' }"
     >
         <template #header>
             <div class="flex w-full items-center justify-between gap-2">
@@ -107,6 +108,22 @@ async function closeModal(): Promise<void> {
 
         <template #body>
             <UForm ref="formRef" :schema="schema" :state="state" @submit="submit">
+                <UAlert
+                    class="mb-4"
+                    :color="user.props?.wanted ? 'success' : 'error'"
+                    :icon="user.props?.wanted ? 'i-mdi-account-check' : 'i-mdi-account-alert'"
+                    :title="
+                        user.props?.wanted
+                            ? $t('components.citizens.CitizenInfoProfile.revoke_wanted')
+                            : $t('components.citizens.CitizenInfoProfile.set_wanted')
+                    "
+                    :description="
+                        user.props?.wanted
+                            ? $t('components.citizens.CitizenInfoProfile.revoke_wanted_description')
+                            : $t('components.citizens.CitizenInfoProfile.set_wanted_description')
+                    "
+                />
+
                 <UFormField class="flex-1" name="reason" :label="$t('common.reason')" required>
                     <UInput v-model="state.reason" class="w-full" type="text" :placeholder="$t('common.reason')" />
                 </UFormField>
@@ -114,7 +131,7 @@ async function closeModal(): Promise<void> {
         </template>
 
         <template #footer>
-            <UFieldGroup class="inline-flex w-full">
+            <div class="flex w-full flex-col-reverse gap-2 sm:flex-row">
                 <UButton
                     class="flex-1"
                     color="neutral"
@@ -132,7 +149,7 @@ async function closeModal(): Promise<void> {
                     :label="$t('common.save')"
                     @click="formRef?.submit()"
                 />
-            </UFieldGroup>
+            </div>
         </template>
-    </UModal>
+    </UDrawer>
 </template>
