@@ -9,6 +9,7 @@ import GenericTime from '~/components/partials/elements/GenericTime.vue';
 import type { DocumentShort } from '~~/gen/ts/resources/documents/documents';
 import DraftBadge from '../partials/DraftBadge.vue';
 import ApprovalBadge from './approval/ApprovalBadge.vue';
+import DocumentListTitle from './DocumentListTitle.vue';
 
 const props = defineProps<{
     document: DocumentShort;
@@ -75,35 +76,50 @@ const links = computed(() =>
                 }"
             >
                 <div class="m-2 flex flex-col gap-1">
-                    <div class="flex flex-wrap items-center gap-2">
-                        <IDCopyBadge
-                            :id="document.id"
-                            prefix="DOC"
-                            :title="{ key: 'notifications.document_view.copy_document_id.title', parameters: {} }"
-                            :content="{ key: 'notifications.document_view.copy_document_id.content', parameters: {} }"
-                            size="xs"
-                            variant="subtle"
-                        />
+                    <div class="grid min-w-0 grid-cols-3 items-center gap-2">
+                        <div class="min-w-0 justify-self-start">
+                            <IDCopyBadge
+                                :id="document.id"
+                                prefix="DOC"
+                                :title="{ key: 'notifications.document_view.copy_document_id.title', parameters: {} }"
+                                :content="{ key: 'notifications.document_view.copy_document_id.content', parameters: {} }"
+                                size="xs"
+                                variant="subtle"
+                            />
+                        </div>
 
-                        <CategoryBadge :category="document.category" />
+                        <div class="flex min-w-0 flex-wrap items-center justify-center gap-2">
+                            <UBadge
+                                v-if="document.meta?.state"
+                                class="inline-flex gap-1"
+                                size="md"
+                                icon="i-mdi-note-check"
+                                :label="document.meta.state"
+                            />
+                            <ApprovalBadge :meta="document?.meta" />
+                        </div>
 
-                        <UBadge
-                            v-if="document.meta?.state"
-                            class="inline-flex gap-1"
-                            size="md"
-                            icon="i-mdi-note-check"
-                            :label="document.meta.state"
-                        />
-
-                        <ApprovalBadge :meta="document?.meta" />
-                        <DraftBadge v-if="document.meta?.draft" />
-                        <OpenClosedBadge :closed="document.meta?.closed" />
+                        <div class="justify-self-end">
+                            <OpenClosedBadge :closed="document.meta?.closed" />
+                        </div>
                     </div>
 
-                    <DocumentListTitle :title="document.title" />
+                    <div class="grid min-w-0 grid-cols-[max-content_minmax(0,1fr)_max-content] items-center gap-2">
+                        <div class="min-w-0 justify-self-start">
+                            <CategoryBadge :category="document.category" />
+                        </div>
 
-                    <div class="flex gap-2">
-                        <div class="flex flex-1 items-center gap-1.5">
+                        <div class="min-w-0 text-left">
+                            <DocumentListTitle :title="document.title" />
+                        </div>
+
+                        <div class="justify-self-end">
+                            <DraftBadge v-if="document.meta?.draft" />
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-3 items-center gap-2">
+                        <div class="flex min-w-0 items-center gap-1.5 justify-self-start">
                             <UIcon class="size-4 shrink-0" name="i-mdi-calendar" />
                             <p class="inline-flex gap-1 text-nowrap">
                                 <span class="hidden truncate md:block">
@@ -113,7 +129,7 @@ const links = computed(() =>
                             </p>
                         </div>
 
-                        <div class="flex flex-1 items-center justify-center gap-1.5">
+                        <div class="flex min-w-0 items-center justify-center gap-1.5">
                             <template v-if="!document.meta?.closed && document.workflowState?.autoCloseTime">
                                 <UIcon class="size-4 shrink-0" name="i-mdi-lock-clock" />
                                 <p class="inline-flex gap-1 text-nowrap">
@@ -135,7 +151,7 @@ const links = computed(() =>
                             <div v-else class="flex-1" />
                         </div>
 
-                        <div class="flex flex-1 items-center justify-end gap-1.5">
+                        <div class="flex min-w-0 items-center justify-end gap-1.5 justify-self-end">
                             <template v-if="document.updatedAt">
                                 <p class="inline-flex gap-1 truncate">
                                     <span class="hidden md:block">
@@ -148,18 +164,17 @@ const links = computed(() =>
                         </div>
                     </div>
 
-                    <div class="flex justify-between gap-2">
-                        <div class="flex-1">
+                    <div class="grid grid-cols-3 items-center gap-2">
+                        <div class="min-w-0 justify-self-start">
                             <CitizenInfoPopover :user="document.creator" />
                         </div>
 
-                        <div v-if="$slots.default" class="flex flex-1 items-center justify-center gap-1.5">
-                            <slot name="default" />
+                        <div class="flex min-w-0 items-center justify-center gap-1.5">
+                            <slot v-if="$slots.default" name="default" />
+                            <DeletedAtBadge v-if="document.deletedAt" hide-date :deleted-at="document.deletedAt" />
                         </div>
 
-                        <DeletedAtBadge v-if="document.deletedAt" hide-date :deleted-at="document.deletedAt" />
-
-                        <div class="flex flex-1 flex-row items-center justify-end gap-1.5">
+                        <div class="flex min-w-0 flex-row items-center justify-end gap-1.5">
                             <span>{{ document.creatorJobLabel }}</span>
                             <UIcon class="size-4 shrink-0" name="i-mdi-briefcase" />
                         </div>

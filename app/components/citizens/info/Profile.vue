@@ -9,14 +9,29 @@ const props = defineProps<{ user: User }>();
 const { attr } = useAuth();
 const numberFormatter = useDisplayNumberFormat();
 const user = computed(() => props.user);
+const showTrafficInfractionPoints = computed(
+    () => attr('citizens.CitizensService/ListCitizens', 'Fields', 'UserProps.TrafficInfractionPoints').value,
+);
+const showOpenFines = computed(() => attr('citizens.CitizensService/ListCitizens', 'Fields', 'UserProps.OpenFines').value);
+const visibleStatCards = computed(() => 2 + Number(showTrafficInfractionPoints.value) + Number(showOpenFines.value));
+const statCardGridClass = computed(() => (visibleStatCards.value === 3 ? 'xl:grid-cols-3' : 'xl:grid-cols-4'));
+const statCardClass = computed(() => {
+    if (visibleStatCards.value === 1) return 'xl:col-span-4';
+    if (visibleStatCards.value === 2) return 'xl:col-span-2';
+
+    return 'xl:col-span-1';
+});
 </script>
 
 <template>
     <div class="h-full min-h-0 overflow-y-auto">
         <UContainer class="w-full py-4 sm:py-6">
             <div class="mx-auto flex w-full max-w-(--breakpoint-xl) flex-col gap-4">
-                <div class="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-4">
-                    <UCard :class="user.props?.wanted ? 'border-error-500/50' : ''" :ui="{ body: 'p-3 sm:p-4' }">
+                <div class="grid grid-cols-1 gap-3 sm:grid-cols-2" :class="statCardGridClass">
+                    <UCard
+                        :class="[user.props?.wanted ? 'border-error-500/50' : '', statCardClass]"
+                        :ui="{ body: 'p-3 sm:p-4' }"
+                    >
                         <div class="flex items-center gap-3">
                             <UIcon
                                 class="size-5 shrink-0"
@@ -31,12 +46,8 @@ const user = computed(() => props.user);
                             </div>
                         </div>
                     </UCard>
-                    <UCard
-                        v-if="
-                            attr('citizens.CitizensService/ListCitizens', 'Fields', 'UserProps.TrafficInfractionPoints').value
-                        "
-                        :ui="{ body: 'p-3 sm:p-4' }"
-                    >
+
+                    <UCard v-if="showTrafficInfractionPoints" :class="statCardClass" :ui="{ body: 'p-3 sm:p-4' }">
                         <div class="flex items-center gap-3">
                             <UIcon class="size-5 shrink-0 text-muted" name="i-mdi-counter" />
                             <div class="min-w-0">
@@ -50,10 +61,8 @@ const user = computed(() => props.user);
                             </div>
                         </div>
                     </UCard>
-                    <UCard
-                        v-if="attr('citizens.CitizensService/ListCitizens', 'Fields', 'UserProps.OpenFines').value"
-                        :ui="{ body: 'p-3 sm:p-4' }"
-                    >
+
+                    <UCard v-if="showOpenFines" :class="statCardClass" :ui="{ body: 'p-3 sm:p-4' }">
                         <div class="flex items-center gap-3">
                             <UIcon class="size-5 shrink-0 text-muted" name="i-mdi-cash-remove" />
                             <div class="min-w-0">
@@ -67,7 +76,8 @@ const user = computed(() => props.user);
                             </div>
                         </div>
                     </UCard>
-                    <UCard :ui="{ body: 'p-3 sm:p-4' }">
+
+                    <UCard :class="statCardClass" :ui="{ body: 'p-3 sm:p-4' }">
                         <div class="flex items-center gap-3">
                             <UIcon class="size-5 shrink-0 text-muted" name="i-mdi-briefcase" />
                             <div class="min-w-0">

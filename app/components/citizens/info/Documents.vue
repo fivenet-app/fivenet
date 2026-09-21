@@ -169,37 +169,15 @@ const columns = computed(
                         >
                             <template #default>
                                 <div class="inline-flex items-center gap-1 truncate">
-                                    <template v-if="typeof query.closed === 'boolean'">
-                                        <UIcon
-                                            v-if="!query.closed"
-                                            class="size-4"
-                                            name="i-mdi-lock-open-variant"
-                                            color="success"
-                                        />
-                                        <UIcon v-else class="size-4" name="i-mdi-lock" color="error" />
-                                    </template>
-
-                                    {{
-                                        query.closed === undefined
-                                            ? openclose[0]!.label
-                                            : (openclose.findLast((o) => o.value === query.closed)?.label ?? $t('common.na'))
-                                    }}
+                                    <OpenClosedBadge v-if="typeof query.closed === 'boolean'" :closed="query.closed" />
+                                    {{ query.closed === undefined ? openclose[0]!.label : undefined }}
                                 </div>
                             </template>
 
                             <template #item-label="{ item }">
                                 <div class="inline-flex items-center gap-1 truncate">
-                                    <template v-if="typeof item.value === 'boolean'">
-                                        <UIcon
-                                            v-if="!item.value"
-                                            class="size-4"
-                                            name="i-mdi-lock-open-variant"
-                                            color="success"
-                                        />
-                                        <UIcon v-else class="size-4" name="i-mdi-lock" color="error" />
-                                    </template>
-
-                                    {{ item.label }}
+                                    <OpenClosedBadge v-if="typeof item.value === 'boolean'" :closed="item.value" />
+                                    {{ typeof item.value === 'boolean' ? undefined : item.label }}
                                 </div>
                             </template>
                         </USelectMenu>
