@@ -35,27 +35,28 @@ const { selfAssign, canDo } = useCentrumStore();
             <div class="grid grid-cols-1 gap-2 !text-primary md:grid-cols-2">
                 <UButton
                     v-if="props.dispatch?.x !== undefined && props.dispatch?.y !== undefined"
-                    variant="link"
-                    icon="i-mdi-map-marker"
                     block
+                    icon="i-mdi-map-marker"
                     :label="$t('common.mark')"
+                    variant="link"
                     @click="gotoCoords({ x: props.dispatch?.x, y: props.dispatch?.y })"
                 />
 
                 <UButton
-                    variant="link"
-                    icon="i-mdi-car-emergency"
                     block
+                    class="truncate"
+                    icon="i-mdi-car-emergency"
                     :label="$t('common.detail', 2)"
+                    variant="link"
                     @click="emit('selected')"
                 />
 
                 <UButton
                     v-if="canDo('TakeControl') && checkDispatchAccess(props.dispatch.jobs, CentrumAccessLevel.DISPATCH)"
+                    block
                     class="truncate"
                     icon="i-mdi-account-multiple-plus"
                     variant="link"
-                    block
                     :label="$t('common.assign')"
                     @click="
                         dispatchAssignModal.open({
@@ -66,10 +67,10 @@ const { selfAssign, canDo } = useCentrumStore();
 
                 <UButton
                     v-if="canDo('TakeDispatch') && checkDispatchAccess(props.dispatch.jobs, CentrumAccessLevel.PARTICIPATE)"
-                    class="text-left"
+                    block
                     icon="i-mdi-plus"
-                    variant="link"
                     :label="$t('common.self_assign')"
+                    variant="link"
                     @click="selfAssign(props.dispatch.id)"
                 />
             </div>

@@ -102,10 +102,10 @@ const submissionDuration = computed(() => {
     const endedAt = data.value?.examUser?.endedAt;
     if (!startedAt || !endedAt) return undefined;
 
-    return formatDuration({
-        seconds: Math.max(0, Math.floor((toDate(endedAt).getTime() - toDate(startedAt).getTime()) / 1_000)),
-        nanos: 0,
-    });
+    const elapsedSeconds = Math.max(0, Math.floor((toDate(endedAt).getTime() - toDate(startedAt).getTime()) / 1_000));
+    const elapsedMinutes = Math.round(elapsedSeconds / 60);
+
+    return formatDuration({ seconds: elapsedMinutes * 60, nanos: 0 }, 'minute');
 });
 const qualificationTitle = computed(() => {
     const qualification = data.value?.qualification;

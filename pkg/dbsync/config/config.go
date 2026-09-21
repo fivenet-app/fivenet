@@ -243,7 +243,7 @@ type DBSyncDestination struct {
 	API DBSyncDestinationAPI `yaml:"api"`
 
 	SyncInterval      time.Duration `default:"5s"    yaml:"syncInterval"      validate:"gte=1"`
-	SyncStateInterval time.Duration `default:"45s"   yaml:"syncStateInterval" validate:"gte=1"`
+	SyncStateInterval time.Duration `default:"20s"   yaml:"syncStateInterval" validate:"gte=1"`
 	DryRun            bool          `default:"false" yaml:"dryRun"`
 }
 
@@ -714,7 +714,7 @@ func (c *DBSyncConfig) GetSyncInterval(table DBSyncTableSyncInterval) time.Durat
 
 func (c *DBSyncConfig) GetSyncStateInterval() time.Duration {
 	if c == nil {
-		return 45 * time.Second
+		return 20 * time.Second
 	}
 
 	return c.Destination.SyncStateInterval

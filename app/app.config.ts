@@ -157,6 +157,7 @@ export default defineAppConfig({
             chevronRight: 'i-mdi-chevron-right',
             chevronUp: 'i-mdi-chevron-up',
             close: 'i-mdi-close',
+            clear: 'i-mdi-clear',
             copy: 'i-mdi-content-copy',
             copyCheck: 'i-mdi-check-circle-outline',
             dark: 'i-mdi-moon-waning-crescent',

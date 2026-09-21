@@ -98,6 +98,11 @@ watch(
     },
     { immediate: true },
 );
+
+function clearJobs() {
+    query.jobs = activeChar.value ? [activeChar.value.job] : [];
+}
+
 watchDebounced(
     () => [query.category, query.range.start.getTime(), query.range.end.getTime(), query.jobs],
     async () => await refresh(),
@@ -216,6 +221,8 @@ onBeforeMount(async () => listJobs());
                             multiple
                             :search-input="{ placeholder: $t('common.search_field') }"
                             :filter-fields="['name', 'label']"
+                            clear
+                            @clear="clearJobs"
                         >
                             <template v-if="query.jobs.length === 0" #default>
                                 {{ $t('common.none_selected', [$t('common.job', 2)]) }}
