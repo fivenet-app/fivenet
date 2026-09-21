@@ -43,6 +43,20 @@ const setJobModal = overlay.create(SetJobModal);
 const setTrafficPointsModal = overlay.create(SetTrafficPointsModal);
 const setMugshotModal = overlay.create(SetMugshotModal);
 
+const actionVisibility = computed(() => ({
+    wanted: attr('citizens.CitizensService/SetUserProps', 'Fields', 'Wanted').value,
+    job: attr('citizens.CitizensService/SetUserProps', 'Fields', 'Job').value,
+    trafficPoints: attr('citizens.CitizensService/SetUserProps', 'Fields', 'TrafficInfractionPoints').value,
+    mugshot: attr('citizens.CitizensService/SetUserProps', 'Fields', 'Mugshot').value,
+    document: can('documents.DocumentsService/UpdateDocument').value,
+    colleague:
+        activeChar.value?.job === props.user.job &&
+        can('jobs.ColleaguesService/GetColleague').value &&
+        checkIfCanAccessColleague(props.user, 'jobs.ColleaguesService/GetColleague'),
+}));
+
+const hasVisibleAction = computed(() => Object.values(actionVisibility.value).some(Boolean));
+
 function openTemplates(): void {
     if (!props.user) return;
 
@@ -122,7 +136,7 @@ defineShortcuts({
 <template>
     <div class="flex w-full flex-col gap-2">
         <UTooltip
-            v-if="attr('citizens.CitizensService/SetUserProps', 'Fields', 'Wanted').value"
+            v-if="actionVisibility.wanted"
             :text="
                 user?.props?.wanted
                     ? $t('components.citizens.CitizenInfoProfile.revoke_wanted')
@@ -149,11 +163,7 @@ defineShortcuts({
             />
         </UTooltip>
 
-        <UTooltip
-            v-if="attr('citizens.CitizensService/SetUserProps', 'Fields', 'Job').value"
-            :text="$t('components.citizens.CitizenInfoProfile.set_job')"
-            :kbds="['C', 'J']"
-        >
+        <UTooltip v-if="actionVisibility.job" :text="$t('components.citizens.CitizenInfoProfile.set_job')" :kbds="['C', 'J']">
             <UButton
                 block
                 icon="i-mdi-briefcase"
@@ -168,7 +178,7 @@ defineShortcuts({
         </UTooltip>
 
         <UTooltip
-            v-if="attr('citizens.CitizensService/SetUserProps', 'Fields', 'TrafficInfractionPoints').value"
+            v-if="actionVisibility.trafficPoints"
             :text="$t('components.citizens.CitizenInfoProfile.set_traffic_points')"
             :kbds="['C', 'P']"
         >
@@ -186,7 +196,7 @@ defineShortcuts({
         </UTooltip>
 
         <UTooltip
-            v-if="attr('citizens.CitizensService/SetUserProps', 'Fields', 'Mugshot').value"
+            v-if="actionVisibility.mugshot"
             :text="$t('components.citizens.CitizenInfoProfile.set_mugshot')"
             :kbds="['C', 'M']"
         >
@@ -204,7 +214,7 @@ defineShortcuts({
         </UTooltip>
 
         <UTooltip
-            v-if="can('documents.DocumentsService/UpdateDocument').value"
+            v-if="actionVisibility.document"
             :text="$t('components.citizens.CitizenInfoProfile.create_new_document')"
             :kbds="['C', 'D']"
         >
@@ -217,18 +227,14 @@ defineShortcuts({
         </UTooltip>
 
         <UButton
-            v-if="
-                activeChar?.job === user.job &&
-                can('jobs.ColleaguesService/GetColleague').value &&
-                checkIfCanAccessColleague(user, 'jobs.ColleaguesService/GetColleague')
-            "
+            v-if="actionVisibility.colleague"
             block
             icon="i-mdi-account-circle"
             :to="`/jobs/colleagues/${user.userId}/info`"
             :label="$t('components.citizens.CitizenInfoProfile.go_to_colleague_info')"
         />
 
-        <USeparator />
+        <USeparator v-if="hasVisibleAction" />
 
         <UButton
             block
