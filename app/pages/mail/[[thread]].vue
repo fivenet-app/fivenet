@@ -370,7 +370,7 @@ const isMobile = breakpoints.smaller('lg');
         </template>
     </UDashboardPanel>
 
-    <MailerThread v-if="selectedThread" :thread-id="selectedThread.id" @close="selectedThread = undefined" />
+    <MailerThread v-if="selectedThread && !isMobile" :thread-id="selectedThread.id" @close="selectedThread = undefined" />
     <div v-else class="hidden flex-1 flex-col items-center justify-center gap-2 text-dimmed lg:flex">
         <UIcon class="h-32 w-32" name="i-mdi-email-multiple" />
         <p>{{ $t('common.none_selected', [$t('common.mail')]) }}</p>

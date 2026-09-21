@@ -77,7 +77,7 @@ const formSnapshot = computed(() => ({
 
 const { hasUnsavedChanges, confirmLeave, syncSnapshot } = useSnapshotChanges(formSnapshot);
 
-function resetForm(): void {
+async function resetForm(): Promise<void> {
     if (selectedThread.value) {
         if (state.value.title === '') {
             state.value.title = generateResponseTitle(selectedThread.value);
@@ -93,6 +93,10 @@ function resetForm(): void {
         }
     }
 
+    // Tiptap updates the v-model from its transaction asynchronously. Wait
+    // until that update has been applied before recording the clean baseline;
+    // otherwise opening a thread can be mistaken for an edit.
+    await nextTick();
     syncSnapshot();
 }
 
@@ -122,7 +126,7 @@ const { status: messagesStatus, refresh: refreshMessages } = useAuthedLazyAsyncD
             { abort: signal },
         );
 
-        resetForm();
+        await resetForm();
 
         return response;
     },
