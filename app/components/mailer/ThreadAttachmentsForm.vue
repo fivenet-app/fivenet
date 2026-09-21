@@ -89,13 +89,19 @@ function updateAttachmentDocument(idx: number, document: DocumentShort | null) {
                     </UFormField>
                 </template>
 
-                <UButton icon="i-mdi-close" :disabled="!canSubmit" @click="attachments.splice(idx, 1)" />
+                <UButton
+                    icon="i-mdi-close"
+                    :aria-label="$t('common.remove')"
+                    :disabled="!canSubmit"
+                    @click="attachments.splice(idx, 1)"
+                />
             </div>
         </div>
 
         <UButton
             :class="attachments.length ? 'mt-2' : ''"
             icon="i-mdi-plus"
+            :aria-label="$t('common.add')"
             :disabled="!canSubmit || attachments.length >= 3"
             @click="
                 attachments.push({

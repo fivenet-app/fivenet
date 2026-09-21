@@ -1025,7 +1025,10 @@ export const useMailerStore = defineStore(
          * @param {SetEmailSettingsRequest} req - The request data for updating email settings.
          * @returns {Promise<SetEmailSettingsResponse>} - The response confirming the update.
          */
-        const setEmailSettings = async (req: SetEmailSettingsRequest): Promise<SetEmailSettingsResponse> => {
+        const setEmailSettings = async (
+            req: SetEmailSettingsRequest,
+            notify: boolean = true,
+        ): Promise<SetEmailSettingsResponse> => {
             const { generation, options } = getAccountScopeRequest();
             const mailerSettingsClient = await getMailerSettingsClient();
 
@@ -1038,11 +1041,13 @@ export const useMailerStore = defineStore(
                     selectedEmail.value.settings = response.settings;
                 }
 
-                notifications.add({
-                    title: { key: 'notifications.action_successful.title', parameters: {} },
-                    description: { key: 'notifications.action_successful.content', parameters: {} },
-                    type: NotificationType.SUCCESS,
-                });
+                if (notify) {
+                    notifications.add({
+                        title: { key: 'notifications.action_successful.title', parameters: {} },
+                        description: { key: 'notifications.action_successful.content', parameters: {} },
+                        type: NotificationType.SUCCESS,
+                    });
+                }
 
                 return response;
             } catch (e) {

@@ -76,7 +76,7 @@ const groups = computed<CommandPaletteGroup<CommandPaletteItem>[]>(() => [
         color="neutral"
         variant="outline"
         truncate
-        aria-label="Search"
+        :aria-label="$t('common.search')"
         v-bind="$attrs"
         @click="isOpen = !isOpen"
     />

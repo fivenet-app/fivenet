@@ -1,10 +1,14 @@
 <script lang="ts" setup>
 import type { FormSubmitEvent } from '@nuxt/ui';
+import type { JSONContent } from '@tiptap/core';
 import { z } from 'zod';
 import AccessManager from '~/components/partials/access/AccessManager.vue';
 import { enumToAccessLevelEnums, normalizeAccessEntryIds } from '~/components/partials/access/helpers';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
+import TiptapEditor from '~/components/partials/editor/TiptapEditor.vue';
+import ConfirmModal from '~/components/partials/ConfirmModal.vue';
 import { useMailerStore } from '~/stores/mailer';
+import { contentToTiptapValue, tiptapToContent } from '~/utils/content';
 import { getMailerMailerClient } from '~~/gen/ts/clients';
 import { AccessLevel } from '~~/gen/ts/resources/mailer/access/access';
 import type { Email } from '~~/gen/ts/resources/mailer/emails/email';
@@ -41,9 +45,11 @@ const { activeChar, isSuperuser } = useAuth();
 const { maxAccessEntries } = useAppConfig();
 
 const notifications = useNotificationsStore();
+const overlay = useOverlay();
+const confirmModal = overlay.create(ConfirmModal);
 
 const mailerStore = useMailerStore();
-const { selectedEmail, emails } = storeToRefs(mailerStore);
+const { addressBook, selectedEmail, emails } = storeToRefs(mailerStore);
 
 const mailerMailerClient = await getMailerMailerClient();
 
@@ -106,6 +112,8 @@ const schema = z.object({
         users: userAccessEntries(t).max(maxAccessEntries).default([]),
         qualifications: qualificationAccessEntries(t).max(maxAccessEntries).default([]),
     }),
+    signature: z.custom<JSONContent | string>().optional(),
+    blockedEmails: z.coerce.string().array().max(25).default([]),
 });
 
 type Schema = z.output<typeof schema>;
@@ -119,12 +127,28 @@ const state = reactive<Schema>({
         users: [],
         qualifications: [],
     },
+    signature: '',
+    blockedEmails: [],
 });
 
 const { hasUnsavedChanges, syncSnapshot } = useSnapshotChanges(state);
 
+function clearAddressBook(): void {
+    if (addressBook.value.length === 0) return;
+
+    confirmModal.open({
+        title: t('components.mailer.settings.clear_address_book'),
+        description: t('components.mailer.settings.clear_address_book_confirm'),
+        confirm: () => {
+            addressBook.value.length = 0;
+        },
+    });
+}
+
 function setFromProps(): void {
     if (!email.value || !email.value?.email) {
+        state.signature = '';
+        state.blockedEmails = [];
         syncSnapshot();
         return;
     }
@@ -137,6 +161,8 @@ function setFromProps(): void {
     state.label = email.value.label;
     state.deactivated = email.value.deactivated;
     if (email.value.access) state.access = email.value.access;
+    state.signature = contentToTiptapValue(email.value.settings?.signature);
+    state.blockedEmails = email.value.settings?.blockedEmails ?? [];
 
     syncSnapshot();
 }
@@ -201,6 +227,18 @@ async function createOrUpdateEmail(values: Schema): Promise<undefined> {
 
     if (response.email) {
         email.value = response.email;
+
+        await mailerStore.setEmailSettings(
+            {
+                settings: {
+                    emailId: response.email.id,
+                    signature: tiptapToContent(values.signature),
+                    blockedEmails: values.blockedEmails.map((entry) => entry.trim()),
+                },
+            },
+            false,
+        );
+
         setFromProps();
 
         // The parent page may be navigating away immediately after a private
@@ -259,77 +297,84 @@ const { submit, isSubmitting, canSubmit } = useSubmitGuard(async (event: FormSub
             </div>
         </template>
 
-        <UForm class="flex flex-col gap-y-2" :state="state" :schema="schema" @submit="submit">
-            <UFormField
-                class="flex flex-1 flex-col"
-                :label="$t('common.mail')"
+        <UForm class="flex flex-col gap-4" :state="state" :schema="schema" @submit="submit">
+            <UPageCard
+                :title="personalEmail && !modelValue?.id ? undefined : $t('common.mail')"
                 :description="
-                    $t('components.mailer.manage.email.description') +
-                    (modelValue?.emailChanged ? ` (${$t('common.last_updated')}: ${$d(toDate(modelValue?.emailChanged))})` : '')
+                    personalEmail && !modelValue?.id
+                        ? undefined
+                        : $t('components.mailer.manage.email.description') +
+                          (modelValue?.emailChanged
+                              ? ` (${$t('common.last_updated')}: ${$d(toDate(modelValue?.emailChanged))})`
+                              : '')
                 "
             >
-                <div class="flex w-full flex-1 flex-col gap-1 sm:flex-row">
-                    <UFormField class="flex-1" name="email">
-                        <USelectMenu
-                            v-if="proposals?.emails && proposals.emails.length > 0"
-                            v-model="state.email"
-                            class="w-full"
-                            :items="proposals?.emails"
-                            :disabled="disabled"
-                        >
-                            <template #empty>
-                                {{ $t('common.not_found', [$t('common.mail')]) }}
-                            </template>
-                        </USelectMenu>
-                        <UInput
-                            v-else
-                            v-model="state.email"
-                            class="w-full"
-                            type="text"
-                            :placeholder="$t('common.mail')"
-                            :disabled="disabled"
-                        />
+                <div class="flex w-full flex-1 flex-col gap-2">
+                    <UFormField class="flex flex-1 flex-col" :label="$t('common.mail')">
+                        <div class="flex w-full flex-1 flex-col gap-1 sm:flex-row">
+                            <UFormField class="flex-1" name="email">
+                                <USelectMenu
+                                    v-if="proposals?.emails && proposals.emails.length > 0"
+                                    v-model="state.email"
+                                    class="w-full"
+                                    :items="proposals?.emails"
+                                    :disabled="disabled"
+                                >
+                                    <template #empty>
+                                        {{ $t('common.not_found', [$t('common.mail')]) }}
+                                    </template>
+                                </USelectMenu>
+                                <UInput
+                                    v-else
+                                    v-model="state.email"
+                                    class="w-full"
+                                    type="text"
+                                    :placeholder="$t('common.mail')"
+                                    :disabled="disabled"
+                                />
+                            </UFormField>
+
+                            <span class="flex-initial font-semibold">@</span>
+
+                            <UFormField class="flex-1" name="domain">
+                                <USelectMenu
+                                    v-if="proposals?.domains && proposals.domains.length > 1"
+                                    v-model="state.domain"
+                                    class="w-full"
+                                    :items="proposals?.domains"
+                                    :disabled="disabled"
+                                >
+                                    <template #empty>
+                                        {{ $t('common.not_found', [$t('common.mail')]) }}
+                                    </template>
+                                </USelectMenu>
+                                <UInput
+                                    v-else
+                                    v-model="state.domain"
+                                    class="w-full"
+                                    type="text"
+                                    :placeholder="$t('common.mail')"
+                                    disabled
+                                />
+                            </UFormField>
+                        </div>
                     </UFormField>
 
-                    <span class="flex-initial font-semibold">@</span>
+                    <UFormField v-if="!hideLabel" name="label" :label="$t('common.label')">
+                        <UInput v-model="state.label" class="w-full" type="text" :disabled="disabled" />
+                    </UFormField>
 
-                    <UFormField class="flex-1" name="domain">
-                        <USelectMenu
-                            v-if="proposals?.domains && proposals.domains.length > 1"
-                            v-model="state.domain"
-                            class="w-full"
-                            :items="proposals?.domains"
-                            :disabled="disabled"
-                        >
-                            <template #empty>
-                                {{ $t('common.not_found', [$t('common.mail')]) }}
-                            </template>
-                        </USelectMenu>
-                        <UInput
-                            v-else
-                            v-model="state.domain"
-                            class="w-full"
-                            type="text"
-                            :placeholder="$t('common.mail')"
-                            disabled
-                        />
+                    <UFormField
+                        v-if="modelValue?.id !== undefined && (isSuperuser || state.deactivated)"
+                        name="disabled"
+                        :label="$t('common.disabled')"
+                    >
+                        <USwitch v-model="state.deactivated" :disabled="disabled" />
                     </UFormField>
                 </div>
-            </UFormField>
+            </UPageCard>
 
-            <UFormField v-if="!hideLabel" name="label" :label="$t('common.label')">
-                <UInput v-model="state.label" class="w-full" type="text" :disabled="disabled" />
-            </UFormField>
-
-            <UFormField
-                v-if="modelValue?.id !== undefined && (isSuperuser || state.deactivated)"
-                name="disabled"
-                :label="$t('common.disabled')"
-            >
-                <USwitch v-model="state.deactivated" :disabled="disabled" />
-            </UFormField>
-
-            <UFormField v-if="!personalEmail" name="access" :label="$t('common.access')">
+            <UPageCard v-if="!personalEmail" :title="$t('common.access')">
                 <AccessManager
                     v-model:jobs="state.access!.jobs"
                     v-model:users="state.access!.users"
@@ -345,7 +390,78 @@ const { submit, isSubmitting, canSubmit } = useSubmitGuard(async (event: FormSub
                     default-access-type="job"
                     name="access"
                 />
-            </UFormField>
+            </UPageCard>
+
+            <div v-if="modelValue?.id !== undefined" class="flex flex-col gap-4">
+                <UPageCard
+                    :title="$t('common.blocklist')"
+                    :description="$t('components.mailer.settings.blocklist_description')"
+                >
+                    <UFormField class="flex-1" name="blockedEmails">
+                        <div class="flex flex-col gap-1">
+                            <div v-for="(_, idx) in state.blockedEmails" :key="idx" class="flex items-center gap-1">
+                                <UInput
+                                    v-model="state.blockedEmails[idx]"
+                                    class="w-full"
+                                    type="text"
+                                    :placeholder="$t('common.mail')"
+                                    :disabled="disabled"
+                                />
+
+                                <UButton
+                                    icon="i-mdi-close"
+                                    :disabled="disabled || !canSubmit"
+                                    :aria-label="$t('common.remove')"
+                                    @click="state.blockedEmails.splice(idx, 1)"
+                                />
+                            </div>
+                        </div>
+
+                        <UButton
+                            v-if="!disabled"
+                            :class="state.blockedEmails.length ? 'mt-2' : ''"
+                            icon="i-mdi-plus"
+                            :disabled="!canSubmit || state.blockedEmails.length >= 25"
+                            :aria-label="$t('common.add')"
+                            @click="state.blockedEmails.push('')"
+                        />
+                    </UFormField>
+                </UPageCard>
+
+                <UPageCard
+                    :title="$t('common.address_book')"
+                    :description="$t('components.mailer.settings.address_book_description')"
+                >
+                    <UFormField>
+                        <UButton
+                            :label="$t('components.mailer.settings.clear_address_book')"
+                            color="error"
+                            icon="i-mdi-bookmark-remove"
+                            :disabled="disabled || !canSubmit"
+                            @click="clearAddressBook"
+                        />
+                    </UFormField>
+                </UPageCard>
+
+                <UPageCard
+                    :title="$t('common.signature')"
+                    :description="$t('components.mailer.settings.signature_description')"
+                >
+                    <UFormField class="flex-1" name="signature" :ui="{ error: 'hidden' }">
+                        <ClientOnly>
+                            <TiptapEditor
+                                v-model="state.signature"
+                                name="signature"
+                                :disabled="disabled"
+                                :limit="1024"
+                                wrapper-class="min-h-44"
+                                content-type="json"
+                                disable-images
+                            />
+                        </ClientOnly>
+                    </UFormField>
+                </UPageCard>
+            </div>
 
             <UFormField>
                 <DataErrorBlock

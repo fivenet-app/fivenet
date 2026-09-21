@@ -1,6 +1,5 @@
 <script lang="ts" setup>
 import { breakpointsTailwind } from '@vueuse/core';
-import EmailSettingsModal from '~/components/mailer/EmailSettingsModal.vue';
 import { canAccess } from '~/components/mailer/helpers';
 import MailerThread from '~/components/mailer/MailerThread.vue';
 import MessageSearch from '~/components/mailer/MessageSearch.vue';
@@ -8,6 +7,7 @@ import TemplateModal from '~/components/mailer/TemplateModal.vue';
 import ThreadCreateOrUpdateModal from '~/components/mailer/ThreadCreateOrUpdateModal.vue';
 import ThreadList from '~/components/mailer/ThreadList.vue';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
+import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
 import Pagination from '~/components/partials/Pagination.vue';
 import { useMailerStore } from '~/stores/mailer';
 import { AccessLevel } from '~~/gen/ts/resources/mailer/access/access';
@@ -53,6 +53,12 @@ const items = computed(() => [
     },
 ]);
 
+const emptyThreadMessage = computed(() => {
+    if (selectedTab.value === 'unread') return t('components.mailer.empty.unread');
+    if (selectedTab.value === 'archive') return t('components.mailer.empty.archive');
+    return t('components.mailer.empty.all');
+});
+
 const route = useRoute();
 const router = useRouter();
 
@@ -62,13 +68,13 @@ const selectedTab = computed({
     },
     set(tab) {
         // Hash is specified here to prevent the page from scrolling to the top
-        router.push({ query: { tab: tab }, hash: '#control-active-item' });
+        router.push({ query: { ...route.query, tab }, hash: '#control-active-item' });
     },
 });
 
 const threadPage = useRouteQuery('threadPage', '1', { transform: Number });
 
-const { status, refresh } = useAuthedLazyAsyncData(
+const { status, error, refresh } = useAuthedLazyAsyncData(
     'userState',
     () => `mailer-threads:${selectedEmail.value?.id ?? 0}:${selectedTab.value}:${threadPage.value}`,
     ({ signal }) => loadThreads(signal),
@@ -112,6 +118,16 @@ async function refreshFirstThreadPage(): Promise<void> {
 
 watch(threadPage, async () => await refresh());
 watch(selectedEmail, refreshFirstThreadPage);
+
+async function selectEmailFromRoute(): Promise<void> {
+    const emailId = Number(route.query.email);
+    if (!Number.isInteger(emailId) || emailId <= 0) return;
+
+    const email = emails.value.find((item) => item.id === emailId);
+    if (!email) return;
+
+    selectedEmail.value = email.settings === undefined ? await mailerStore.getEmail(email.id) : email;
+}
 
 // Reset selected thread if it's not in the filtered mails
 watch(threads, () => {
@@ -159,13 +175,13 @@ function updateQuery(): void {
 }
 
 const threadCreateOrUpdateModal = overlay.create(ThreadCreateOrUpdateModal);
-const emailSettingsModal = overlay.create(EmailSettingsModal);
 const templateModal = overlay.create(TemplateModal);
 
 watch(selectedThread, () => updateQuery());
 
 onBeforeMount(async () => {
     await mailerStore.listEmails();
+    await selectEmailFromRoute();
 
     if (route.query.thread) {
         selectedThread.value = await mailerStore.getThread(parseInt(route.query.thread as string));
@@ -183,6 +199,11 @@ onBeforeMount(async () => {
         threadCreateOrUpdateModal.open({});
     }
 });
+
+watch(
+    () => route.query.email,
+    async () => await selectEmailFromRoute(),
+);
 
 const isMailPanelOpen = computed({
     get() {
@@ -308,46 +329,54 @@ const isMobile = breakpoints.smaller('lg');
         </template>
 
         <template v-if="selectedEmail" #body>
-            <DataErrorBlock
-                v-if="selectedEmail.deactivated"
-                :title="$t('errors.mailer.MailerService.ErrEmailDisabled.title')"
-                :message="$t('errors.mailer.MailerService.ErrEmailDisabled.content')"
-            />
-
-            <template v-else>
-                <ThreadList v-model="selectedThread" :threads="threads?.threads ?? []" loaded />
-
-                <Pagination
-                    v-model="threadPage"
-                    :pagination="threads?.pagination"
-                    :status="status"
-                    :refresh="refresh"
-                    hide-text
+            <div class="flex min-h-0 flex-1 flex-col">
+                <DataErrorBlock
+                    v-if="selectedEmail.deactivated"
+                    :title="$t('errors.mailer.MailerService.ErrEmailDisabled.title')"
+                    :message="$t('errors.mailer.MailerService.ErrEmailDisabled.content')"
                 />
-            </template>
+
+                <DataPendingBlock
+                    v-else-if="isRequestPending(status)"
+                    :message="$t('common.loading', [$t('common.mail', 2)])"
+                />
+
+                <DataErrorBlock
+                    v-else-if="error"
+                    :title="$t('common.unable_to_load', [$t('common.mail', 2)])"
+                    :error="error"
+                    :retry="refresh"
+                />
+
+                <ThreadList
+                    v-else
+                    v-model="selectedThread"
+                    :threads="threads?.threads ?? []"
+                    :loaded="!isRequestPending(status)"
+                    :empty-message="emptyThreadMessage"
+                />
+            </div>
+
+            <Pagination
+                v-if="threads?.pagination"
+                v-model="threadPage"
+                :pagination="threads.pagination"
+                :status="status"
+                :refresh="refresh"
+                hide-text
+            />
         </template>
 
         <template #footer>
             <UDashboardToolbar>
                 <template #left>
-                    <UTooltip :text="$t('common.settings')">
-                        <UButton
-                            color="neutral"
-                            variant="outline"
-                            trailing-icon="i-mdi-cog"
-                            @click="
-                                () => {
-                                    emailSettingsModal.open({});
-                                }
-                            "
-                        >
-                            <span class="hidden truncate md:block"> {{ $t('common.settings') }} </span>
-                        </UButton>
-                    </UTooltip>
-
-                    <UTooltip :text="$t('pages.mailer.manage.title')">
-                        <UButton icon="i-mdi-email-plus" color="neutral" variant="outline" to="/mail/manage" />
-                    </UTooltip>
+                    <UButton
+                        icon="i-mdi-email-plus"
+                        color="neutral"
+                        variant="outline"
+                        to="/mail/manage"
+                        :label="$t('pages.mailer.manage.title')"
+                    />
                 </template>
 
                 <template #right>
@@ -377,7 +406,7 @@ const isMobile = breakpoints.smaller('lg');
     </div>
 
     <ClientOnly>
-        <USlideover v-if="isMobile" v-model:open="isMailPanelOpen">
+        <UModal v-if="isMobile" v-model:open="isMailPanelOpen" fullscreen :ui="{ content: 'h-full' }">
             <template #content>
                 <MailerThread
                     v-if="selectedThread"
@@ -386,6 +415,6 @@ const isMobile = breakpoints.smaller('lg');
                     @refresh="refresh"
                 />
             </template>
-        </USlideover>
+        </UModal>
     </ClientOnly>
 </template>

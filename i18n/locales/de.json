@@ -2000,6 +2000,11 @@
             "create_thread": "E-Mail verfassen",
             "prev_thread": "Vorherige E-Mail",
             "next_thread": "Nächste E-Mail",
+            "empty": {
+                "all": "Keine Nachrichten gefunden.",
+                "unread": "Keine ungelesenen Nachrichten.",
+                "archive": "Keine archivierten Nachrichten."
+            },
             "ThreadCreateOrUpdateModal": {
                 "create": {
                     "title": "Neue E-Mail verfassen"
@@ -2020,12 +2025,17 @@
                 }
             },
             "settings": {
-                "clear_address_book": "Adressbuch leeren"
+                "clear_address_book": "Adressbuch leeren",
+                "clear_address_book_confirm": "Dadurch werden alle gespeicherten Empfänger aus dem Adressbuch entfernt. Fortfahren?",
+                "blocklist_description": "Nachrichten von Adressen auf dieser Liste werden automatisch gefiltert und archiviert.",
+                "address_book_description": "Gespeicherte Empfänger verwalten, um sie beim Verfassen schneller auszuwählen.",
+                "signature_description": "Diese Signatur wird neuen Nachrichten und Antworten von dieser Adresse hinzugefügt."
             },
             "ThreadAttachmentsForm": {
                 "document_title_warning": "Durch das Anhängen von Dokumenten an eine E-Mail können die Titel der Dokumente für den Empfänger sichtbar sein, auch wenn dieser keinen Zugriff auf das Dokument hat."
             },
-            "mark_read": "Als gelesen markieren"
+            "mark_read": "Als gelesen markieren",
+            "more_recipients": "{count} weitere Empfänger"
         },
         "access": {
             "add_entry": "Zugriff hinzufügen",

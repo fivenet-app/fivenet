@@ -144,7 +144,7 @@ onBeforeMount(async () => await listEmails());
             />
 
             <div v-else class="flex flex-1 flex-col items-center">
-                <div class="flex flex-1 flex-col items-center justify-center gap-2 text-dimmed">
+                <div class="flex w-full max-w-3xl flex-1 flex-col items-center justify-center gap-2 text-dimmed">
                     <EmailCreateForm
                         v-if="can('mailer.MailerService/CreateOrUpdateEmail').value"
                         personal-email
@@ -189,7 +189,7 @@ onBeforeMount(async () => await listEmails());
                 <div class="relative flex-1 overflow-x-auto">
                     <EmailList v-model="selectedEmail" :emails="emails" :loaded="loaded">
                         <Pagination
-                            v-if="emails.length > (pagination?.pageSize ?? 20)"
+                            v-if="pagination && pagination.totalCount > (pagination.pageSize ?? 20)"
                             v-model="page"
                             :pagination="pagination"
                             :refresh="async () => await listEmails()"
@@ -251,7 +251,7 @@ onBeforeMount(async () => await listEmails());
 
             <template #body>
                 <div v-if="creating" class="flex flex-1 flex-col items-center">
-                    <div class="flex flex-1 flex-col items-center justify-center gap-2 text-dimmed">
+                    <div class="flex w-full max-w-3xl flex-1 flex-col items-center justify-center gap-2 text-dimmed">
                         <EmailCreateForm
                             v-if="canCreate"
                             :personal-email="false"
@@ -263,16 +263,17 @@ onBeforeMount(async () => await listEmails());
 
                 <template v-else-if="selectedEmail">
                     <DataPendingBlock v-if="loading" :message="$t('common.loading', [$t('common.mail')])" />
-                    <EmailCreateForm
-                        v-else
-                        v-model="selectedEmail"
-                        :personal-email="selectedEmail.userId !== undefined"
-                        :disabled="
-                            !canAccess(selectedEmail.access, selectedEmail.userId, AccessLevel.MANAGE) ||
-                            (!isSuperuser && selectedEmail.deactivated)
-                        "
-                        @dirty-change="emailFormDirty = $event"
-                    />
+                    <div v-else class="mx-auto w-full max-w-3xl">
+                        <EmailCreateForm
+                            v-model="selectedEmail"
+                            :personal-email="selectedEmail.userId !== undefined"
+                            :disabled="
+                                !canAccess(selectedEmail.access, selectedEmail.userId, AccessLevel.MANAGE) ||
+                                (!isSuperuser && selectedEmail.deactivated)
+                            "
+                            @dirty-change="emailFormDirty = $event"
+                        />
+                    </div>
                 </template>
 
                 <div v-else class="hidden flex-1 flex-col items-center justify-center gap-2 text-dimmed lg:flex">

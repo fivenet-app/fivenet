@@ -2000,6 +2000,11 @@
             "create_thread": "Compose E-Mail",
             "prev_thread": "Previous thread",
             "next_thread": "Next thread",
+            "empty": {
+                "all": "No messages found.",
+                "unread": "No unread messages.",
+                "archive": "No archived messages."
+            },
             "ThreadCreateOrUpdateModal": {
                 "create": {
                     "title": "Compose E-Mail"
@@ -2020,12 +2025,17 @@
                 }
             },
             "settings": {
-                "clear_address_book": "Clear Address Book"
+                "clear_address_book": "Clear Address Book",
+                "clear_address_book_confirm": "This removes all saved recipients from the address book. Continue?",
+                "blocklist_description": "Messages from addresses on this list are automatically filtered and archived.",
+                "address_book_description": "Manage saved recipients for quicker selection when composing messages.",
+                "signature_description": "This signature is added to new messages and replies sent from this address."
             },
             "ThreadAttachmentsForm": {
                 "document_title_warning": "By attaching documents to an email, the document titles might be visible to the receiving party even if they don't have access to the document."
             },
-            "mark_read": "Mark as read"
+            "mark_read": "Mark as read",
+            "more_recipients": "{count} more recipients"
         },
         "access": {
             "add_entry": "Add Access",

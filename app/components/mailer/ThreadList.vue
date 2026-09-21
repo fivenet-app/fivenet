@@ -2,6 +2,7 @@
 import { isSameDay } from 'date-fns';
 import { computed, ref, watch } from 'vue';
 import DeletedAtBadge from '~/components/partials/DeletedAtBadge.vue';
+import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import type { Thread } from '~~/gen/ts/resources/mailer/threads/thread';
 
 const props = withDefaults(
@@ -9,9 +10,11 @@ const props = withDefaults(
         modelValue?: Thread;
         threads: Thread[];
         loaded: boolean;
+        emptyMessage?: string;
     }>(),
     {
         modelValue: undefined,
+        emptyMessage: undefined,
     },
 );
 
@@ -88,10 +91,22 @@ function setThreadRef(threadId: number, el: Element | null): void {
         </div>
 
         <template v-else>
-            <div class="divide-y divide-default overflow-y-auto">
+            <DataNoDataBlock
+                v-if="threads.length === 0"
+                class="m-4 flex flex-1 items-center justify-center rounded-lg border border-default p-4"
+                :message="emptyMessage"
+                :type="$t('common.mail', 2)"
+                icon="i-mdi-email-outline"
+                :padded="false"
+            />
+
+            <div v-else class="min-h-0 flex-1 divide-y divide-default overflow-y-auto">
                 <div v-for="thread in threads" :key="thread.id" :ref="(el) => setThreadRef(thread.id, el as Element | null)">
                     <div
-                        class="cursor-pointer border-l-2 p-4 text-sm transition-colors sm:px-6"
+                        class="cursor-pointer border-l-2 p-4 text-sm transition-colors focus-visible:ring-2 focus-visible:ring-primary focus-visible:outline-none focus-visible:ring-inset sm:px-6"
+                        role="button"
+                        tabindex="0"
+                        :aria-current="selectedThread?.id === thread.id ? 'true' : undefined"
                         :class="[
                             !!thread.state?.unread ? 'text-highlighted' : 'text-toned',
                             selectedThread && selectedThread.id === thread.id
@@ -99,10 +114,15 @@ function setThreadRef(threadId: number, el: Element | null): void {
                                 : 'border-(--ui-bg) hover:border-primary hover:bg-primary/5',
                         ]"
                         @click="selectedThread = thread"
+                        @keydown.enter="selectedThread = thread"
+                        @keydown.space.prevent="selectedThread = thread"
                     >
-                        <div class="flex items-center justify-between gap-1" :class="[thread.state?.unread && 'font-semibold']">
-                            <div class="flex items-center gap-3 truncate font-semibold">
-                                <span class="truncate">
+                        <div
+                            class="flex min-w-0 items-center justify-between gap-1"
+                            :class="[thread.state?.unread && 'font-semibold']"
+                        >
+                            <div class="flex min-w-0 flex-1 items-center gap-3 truncate font-semibold">
+                                <span class="block truncate">
                                     {{ thread.title }}
                                 </span>
 
@@ -124,10 +144,10 @@ function setThreadRef(threadId: number, el: Element | null): void {
                                 }}
                             </UTooltip>
                         </div>
-                        <div class="flex items-center justify-between">
-                            <p>{{ thread.creatorEmail?.email }}</p>
+                        <div class="flex min-w-0 items-center justify-between gap-2 text-xs text-muted">
+                            <p class="truncate">{{ thread.creatorEmail?.email }}</p>
 
-                            <div class="inline-flex gap-1">
+                            <div class="inline-flex h-5 min-w-10 items-center justify-end gap-1">
                                 <UIcon
                                     v-if="thread.state?.important"
                                     class="size-5 text-red-500"

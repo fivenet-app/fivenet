@@ -156,14 +156,21 @@ async function closeModal(): Promise<void> {
                     {{ $t('components.mailer.create_thread') }}
                 </h3>
 
-                <UButton color="neutral" variant="ghost" icon="i-mdi-close" :disabled="!canSubmit" @click="closeModal" />
+                <UButton
+                    color="neutral"
+                    variant="ghost"
+                    icon="i-mdi-close"
+                    :aria-label="$t('common.close', 1)"
+                    :disabled="!canSubmit"
+                    @click="closeModal"
+                />
             </div>
         </template>
 
         <template #body>
             <UForm ref="formRef" class="flex flex-1 flex-col" :schema="schema" :state="state" @submit="submit">
-                <div class="mx-auto">
-                    <div class="flex w-full max-w-(--breakpoint-xl) flex-1 flex-col">
+                <div class="mx-auto w-full min-w-0">
+                    <div class="mx-auto flex w-full max-w-(--breakpoint-xl) flex-1 flex-col">
                         <div class="flex w-full flex-col items-center justify-between gap-1">
                             <UFormField class="w-full flex-1" name="sender" :label="$t('common.sender')">
                                 <ClientOnly>
@@ -188,6 +195,7 @@ async function closeModal(): Promise<void> {
                                         :placeholder="$t('common.mail')"
                                         :search-input="{ placeholder: $t('common.search_field') }"
                                         :filter-fields="['label', 'email']"
+                                        item-disabled="deactivated"
                                         trailing
                                     >
                                         <template #default>
@@ -225,7 +233,7 @@ async function closeModal(): Promise<void> {
                                             </span>
 
                                             <UBadge
-                                                v-if="selectedEmail?.deactivated"
+                                                v-if="item?.deactivated"
                                                 color="error"
                                                 size="xs"
                                                 :label="$t('common.disabled')"
@@ -253,6 +261,7 @@ async function closeModal(): Promise<void> {
                                             color="neutral"
                                             variant="link"
                                             icon="i-mdi-close"
+                                            :aria-label="$t('common.clear')"
                                             aria-controls="search"
                                             @click="state.title = ''"
                                         />
@@ -284,19 +293,26 @@ async function closeModal(): Promise<void> {
                                     </USelectMenu>
                                 </ClientOnly>
 
-                                <div class="mt-2 flex snap-x flex-row flex-wrap gap-2 overflow-x-auto">
+                                <div class="mt-2 flex flex-row flex-wrap gap-2">
                                     <UFieldGroup
                                         v-for="(recipient, idx) in state.recipients"
-                                        :key="idx"
+                                        :key="recipient.label"
+                                        class="max-w-full"
                                         size="sm"
                                         orientation="horizontal"
                                     >
-                                        <UButton variant="solid" color="neutral" :label="recipient.label" />
+                                        <UButton
+                                            class="max-w-[calc(100%-2rem)] truncate"
+                                            variant="solid"
+                                            color="neutral"
+                                            :label="recipient.label"
+                                        />
 
                                         <UButton
                                             variant="outline"
                                             icon="i-mdi-close"
                                             color="error"
+                                            :aria-label="$t('common.remove')"
                                             @click="state.recipients.splice(idx, 1)"
                                         />
                                     </UFieldGroup>
@@ -343,7 +359,7 @@ async function closeModal(): Promise<void> {
         </template>
 
         <template #footer>
-            <UFieldGroup class="inline-flex w-full">
+            <UFieldGroup class="flex w-full flex-col gap-2 sm:flex-row">
                 <UButton
                     class="flex-1"
                     block
