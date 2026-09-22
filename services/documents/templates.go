@@ -64,6 +64,8 @@ var ErrTemplateActiveChar = errors.New("failed to resolve active character/user"
 const (
 	templateDoubleQuoteMarker = "\ue000"
 	templateSingleQuoteMarker = "\ue001"
+
+	templateBaseVariables = `{{- $citizen := first .Citizens -}}`
 )
 
 var sproutTemplateFuncs = sync.OnceValue(func() sprout.FunctionMap {
@@ -337,6 +339,10 @@ type resolvedTemplateData struct {
 	Vehicles   []*resourcesvehicles.Vehicle
 }
 
+func (d *resolvedTemplateData) Citizens() []*users.User {
+	return d.Users
+}
+
 func (s *Server) resolveTemplateData(
 	ctx context.Context,
 	tmpl *documentstemplates.Template,
@@ -565,7 +571,7 @@ func (s *Server) renderTemplate(
 	titleTpl, err := template.
 		New("title").
 		Funcs(templateFuncs).
-		Parse(docTmpl.GetContentTitle())
+		Parse(templateBaseVariables + docTmpl.GetContentTitle())
 	if err != nil {
 		return "", "", "", err
 	}
@@ -580,7 +586,7 @@ func (s *Server) renderTemplate(
 	stateTpl, err := template.
 		New("state").
 		Funcs(templateFuncs).
-		Parse(docTmpl.GetState())
+		Parse(templateBaseVariables + docTmpl.GetState())
 	if err != nil {
 		return "", "", "", err
 	}
@@ -601,7 +607,7 @@ func (s *Server) renderTemplate(
 	contentTpl, err := template.
 		New("content").
 		Funcs(templateFuncs).
-		Parse(content)
+		Parse(templateBaseVariables + content)
 	if err != nil {
 		return "", "", "", err
 	}
