@@ -5,6 +5,7 @@ VALIDATE_VERSION ?= v1.0.2
 
 GO ?= go
 PROTOC ?= protoc
+GO_TEST_PARALLEL ?= 4
 
 .DEFAULT: run-server
 
@@ -53,7 +54,7 @@ tests: tests-go tests-js
 
 .PHONY: tests-go
 tests-go:
-	$(GO) test -v -timeout 15m -cover -coverprofile=coverage.txt ./...
+	$(GO) test -v -parallel $(GO_TEST_PARALLEL) -timeout 15m -cover -coverprofile=coverage.txt ./...
 
 .PHONY: tests-js
 tests-js:
