@@ -31,6 +31,7 @@ type Server struct {
 // NewServer starts a JetStream-enabled NATS server and registers cleanup with t.
 func NewServer(t *testing.T, opts ServerOptions) *Server {
 	t.Helper()
+	started := time.Now()
 	if opts.Config.Replicas == 0 {
 		opts.Config.Replicas = 1
 	}
@@ -77,6 +78,7 @@ func NewServer(t *testing.T, opts ServerOptions) *Server {
 			t.Errorf("clean up NATS server: %v", err)
 		}
 	})
+	t.Logf("test NATS server ready: in_process=%t duration=%s", opts.InProcess, time.Since(started).Round(time.Millisecond))
 
 	return s
 }

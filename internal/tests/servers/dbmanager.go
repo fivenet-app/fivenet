@@ -37,6 +37,7 @@ const (
 	mysqlTimezone             = "Europe/Berlin"
 	sharedMySQLLookupAttempts = 40
 	sharedMySQLLookupDelay    = 250 * time.Millisecond
+	parallelCloneLimit        = 2
 
 	cleanupTimeout = 45 * time.Second
 )
@@ -68,6 +69,7 @@ type mysqlTestDBManager struct {
 	pool       dockertest.ClosablePool
 	sharedPort string
 	hasSeed    bool
+	cloneSlots chan struct{}
 }
 
 var sharedMySQLTestDBManager = &mysqlTestDBManager{}
@@ -94,6 +96,7 @@ func NewDBServer(ctx context.Context, t *testing.T, setup bool) *dbServer {
 // test seed data, and Stop() releases only that clone.
 func (m *dbServer) Setup(ctx context.Context) {
 	m.t.Helper()
+	started := time.Now()
 
 	if m.db != nil || m.release != nil {
 		m.Stop()
@@ -114,6 +117,7 @@ func (m *dbServer) Setup(ctx context.Context) {
 	m.dbName = dbName
 	m.release = release
 	m.stopped = false
+	m.t.Logf("test DB clone ready: name=%s duration=%s", dbName, time.Since(started).Round(time.Millisecond))
 }
 
 func (m *dbServer) DB() (*sql.DB, error) {
@@ -167,21 +171,38 @@ func (m *mysqlTestDBManager) acquire(
 	t *testing.T,
 ) (*sql.DB, string, func() error, error) {
 	t.Helper()
+	started := time.Now()
 	m.mu.Lock()
-	defer m.mu.Unlock()
 
 	if err := m.ensureSharedContainerLocked(ctx, t); err != nil {
+		m.mu.Unlock()
 		return nil, "", nil, err
 	}
 
 	if err := m.ensureSeedLocked(ctx, t); err != nil {
+		m.mu.Unlock()
 		return nil, "", nil, err
 	}
 
 	cloneName, err := m.reserveCloneNameLocked(ctx)
 	if err != nil {
+		m.mu.Unlock()
 		return nil, "", nil, err
 	}
+	if m.cloneSlots == nil {
+		m.cloneSlots = make(chan struct{}, parallelCloneLimit)
+	}
+	m.mu.Unlock()
+
+	mutexWait := time.Since(started)
+	t.Logf("test DB clone reserved: name=%s mutex_wait=%s", cloneName, mutexWait.Round(time.Millisecond))
+	releaseSlot, err := m.acquireCloneSlot(ctx)
+	if err != nil {
+		return nil, "", nil, err
+	}
+	defer releaseSlot()
+
+	cloneStarted := time.Now()
 
 	if err := m.cloneSeedLocked(ctx, t, cloneName); err != nil {
 		return nil, "", nil, err
@@ -205,12 +226,28 @@ func (m *mysqlTestDBManager) acquire(
 		_ = m.dropDatabaseLocked(ctx, cloneName)
 		return nil, "", nil, fmt.Errorf("failed to record active test database. %w", err)
 	}
+	t.Logf("test DB clone copied: name=%s clone_time=%s total=%s", cloneName, time.Since(cloneStarted).Round(time.Millisecond), time.Since(started).Round(time.Millisecond))
 
 	release := func() error {
 		return m.releaseClone(t, cloneName)
 	}
 
 	return db, cloneName, release, nil
+}
+
+func (m *mysqlTestDBManager) acquireCloneSlot(ctx context.Context) (func(), error) {
+	m.mu.Lock()
+	cloneSlots := m.cloneSlots
+	m.mu.Unlock()
+
+	select {
+	case cloneSlots <- struct{}{}:
+		return func() {
+			<-cloneSlots
+		}, nil
+	case <-ctx.Done():
+		return nil, ctx.Err()
+	}
 }
 
 func (m *mysqlTestDBManager) ensureSeedLocked(ctx context.Context, t *testing.T) error {
@@ -1011,15 +1048,19 @@ func (m *mysqlTestDBManager) dropDatabaseUsingCleanupLocked(db *sql.DB, dbName s
 
 func (m *mysqlTestDBManager) releaseClone(t *testing.T, cloneName string) error {
 	t.Helper()
-	m.mu.Lock()
-	defer m.mu.Unlock()
-
-	if err := m.dropDatabaseLockedCleanup(cloneName); err != nil {
-		return err
-	}
 
 	ctx, cancel := cleanupContext()
 	defer cancel()
+
+	releaseSlot, err := m.acquireCloneSlot(ctx)
+	if err != nil {
+		return fmt.Errorf("failed to acquire clone cleanup slot: %w", err)
+	}
+	defer releaseSlot()
+
+	if err := m.dropDatabaseLocked(ctx, cloneName); err != nil {
+		return err
+	}
 
 	if err := m.bumpActiveCloneLocked(ctx, -1); err != nil {
 		return err

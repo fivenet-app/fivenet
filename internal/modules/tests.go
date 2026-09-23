@@ -39,6 +39,7 @@ import (
 func GetFxTestOpts(opts ...fx.Option) []fx.Option {
 	to := []fx.Option{
 		fx.StartTimeout(240 * time.Second),
+		fx.NopLogger,
 
 		LoggerModule,
 		config.TestModule,
