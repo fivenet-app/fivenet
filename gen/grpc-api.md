@@ -2948,6 +2948,7 @@ INTERNAL ONLY** SimpleObject is used as a test object where proto-based messages
 | `timeout` | [google.protobuf.Duration](https://protobuf.dev/reference/protobuf/google.protobuf/#duration) | optional | Optional timeout for cronjob execution |
 | `data` | [CronjobData](#resourcescronCronjobData) |  | Cronjob data |
 | `last_completed_event` | [CronjobCompletedEvent](#resourcescronCronjobCompletedEvent) | optional | Last event info to ease debugging and tracking |
+| `run_id` | [string](#string) |  | ID of the currently claimed run |
 
 
 
@@ -2959,6 +2960,8 @@ INTERNAL ONLY** SimpleObject is used as a test object where proto-based messages
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | `name` | [string](#string) |  | Cronjob name |
+| `run_id` | [string](#string) |  | Unique ID of the execution this event belongs to |
+| `started_time` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional | Start time of the execution this event belongs to |
 | `success` | [bool](#bool) |  | Cronjob execution success status |
 | `cancelled` | [bool](#bool) |  | Cronjob execution was cancelled |
 | `end_date` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) |  | Cronjob end time |

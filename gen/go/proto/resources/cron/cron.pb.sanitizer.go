@@ -53,6 +53,9 @@ func (m *Cronjob) Sanitize() error {
 		}
 	}
 
+	// Field: RunId
+	m.RunId = htmlsanitizer.SanitizeAndUnescape(m.RunId)
+
 	// Field: Schedule
 	m.Schedule = htmlsanitizer.SanitizeAndUnescape(m.Schedule)
 
@@ -121,6 +124,18 @@ func (m *CronjobCompletedEvent) Sanitize() error {
 
 	// Field: NodeName
 	m.NodeName = htmlsanitizer.SanitizeAndUnescape(m.NodeName)
+
+	// Field: RunId
+	m.RunId = htmlsanitizer.SanitizeAndUnescape(m.RunId)
+
+	// Field: StartedTime
+	if m.StartedTime != nil {
+		if v, ok := any(m.GetStartedTime()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+	}
 
 	return nil
 }

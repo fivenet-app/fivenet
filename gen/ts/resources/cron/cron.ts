@@ -76,6 +76,12 @@ export interface Cronjob {
      * @generated from protobuf field: optional resources.cron.CronjobCompletedEvent last_completed_event = 9
      */
     lastCompletedEvent?: CronjobCompletedEvent;
+    /**
+     * ID of the currently claimed run
+     *
+     * @generated from protobuf field: string run_id = 10
+     */
+    runId: string;
 }
 /**
  * @generated from protobuf message resources.cron.CronjobData
@@ -126,6 +132,18 @@ export interface CronjobCompletedEvent {
      * @generated from protobuf field: string name = 1
      */
     name: string;
+    /**
+     * Unique ID of the execution this event belongs to
+     *
+     * @generated from protobuf field: string run_id = 9
+     */
+    runId: string;
+    /**
+     * Start time of the execution this event belongs to
+     *
+     * @generated from protobuf field: optional resources.timestamp.Timestamp started_time = 10
+     */
+    startedTime?: Timestamp;
     /**
      * Cronjob execution success status
      *
@@ -213,9 +231,10 @@ class Cronjob$Type extends MessageType<Cronjob> {
             { no: 4, name: "next_schedule_time", kind: "message", T: () => Timestamp },
             { no: 5, name: "last_attempt_time", kind: "message", T: () => Timestamp },
             { no: 6, name: "started_time", kind: "message", T: () => Timestamp },
-            { no: 7, name: "timeout", kind: "message", T: () => Duration, options: { "buf.validate.field": { duration: { lte: { seconds: "1800" }, gte: {} } } } },
+            { no: 7, name: "timeout", kind: "message", T: () => Duration, options: { "buf.validate.field": { duration: { lte: { seconds: "1800" }, gt: {} } } } },
             { no: 8, name: "data", kind: "message", T: () => CronjobData },
-            { no: 9, name: "last_completed_event", kind: "message", T: () => CronjobCompletedEvent }
+            { no: 9, name: "last_completed_event", kind: "message", T: () => CronjobCompletedEvent },
+            { no: 10, name: "run_id", kind: "scalar", T: 9 /*ScalarType.STRING*/ }
         ]);
     }
     create(value?: PartialMessage<Cronjob>): Cronjob {
@@ -223,6 +242,7 @@ class Cronjob$Type extends MessageType<Cronjob> {
         message.name = "";
         message.schedule = "";
         message.state = 0;
+        message.runId = "";
         if (value !== undefined)
             reflectionMergePartial<Cronjob>(this, message, value);
         return message;
@@ -258,6 +278,9 @@ class Cronjob$Type extends MessageType<Cronjob> {
                     break;
                 case /* optional resources.cron.CronjobCompletedEvent last_completed_event */ 9:
                     message.lastCompletedEvent = CronjobCompletedEvent.internalBinaryRead(reader, reader.uint32(), options, message.lastCompletedEvent);
+                    break;
+                case /* string run_id */ 10:
+                    message.runId = reader.string();
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -298,6 +321,9 @@ class Cronjob$Type extends MessageType<Cronjob> {
         /* optional resources.cron.CronjobCompletedEvent last_completed_event = 9; */
         if (message.lastCompletedEvent)
             CronjobCompletedEvent.internalBinaryWrite(message.lastCompletedEvent, writer.tag(9, WireType.LengthDelimited).fork(), options).join();
+        /* string run_id = 10; */
+        if (message.runId !== "")
+            writer.tag(10, WireType.LengthDelimited).string(message.runId);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -466,6 +492,8 @@ class CronjobCompletedEvent$Type extends MessageType<CronjobCompletedEvent> {
     constructor() {
         super("resources.cron.CronjobCompletedEvent", [
             { no: 1, name: "name", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
+            { no: 9, name: "run_id", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
+            { no: 10, name: "started_time", kind: "message", T: () => Timestamp },
             { no: 2, name: "success", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
             { no: 7, name: "cancelled", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
             { no: 3, name: "end_date", kind: "message", T: () => Timestamp },
@@ -478,6 +506,7 @@ class CronjobCompletedEvent$Type extends MessageType<CronjobCompletedEvent> {
     create(value?: PartialMessage<CronjobCompletedEvent>): CronjobCompletedEvent {
         const message = globalThis.Object.create((this.messagePrototype!));
         message.name = "";
+        message.runId = "";
         message.success = false;
         message.cancelled = false;
         message.nodeName = "";
@@ -492,6 +521,12 @@ class CronjobCompletedEvent$Type extends MessageType<CronjobCompletedEvent> {
             switch (fieldNo) {
                 case /* string name */ 1:
                     message.name = reader.string();
+                    break;
+                case /* string run_id */ 9:
+                    message.runId = reader.string();
+                    break;
+                case /* optional resources.timestamp.Timestamp started_time */ 10:
+                    message.startedTime = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.startedTime);
                     break;
                 case /* bool success */ 2:
                     message.success = reader.bool();
@@ -550,6 +585,12 @@ class CronjobCompletedEvent$Type extends MessageType<CronjobCompletedEvent> {
         /* optional string error_message = 8; */
         if (message.errorMessage !== undefined)
             writer.tag(8, WireType.LengthDelimited).string(message.errorMessage);
+        /* string run_id = 9; */
+        if (message.runId !== "")
+            writer.tag(9, WireType.LengthDelimited).string(message.runId);
+        /* optional resources.timestamp.Timestamp started_time = 10; */
+        if (message.startedTime)
+            Timestamp.internalBinaryWrite(message.startedTime, writer.tag(10, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);

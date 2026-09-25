@@ -31,7 +31,7 @@ message Cronjob {
 
   // Optional timeout for cronjob execution
   optional google.protobuf.Duration timeout = 7 [(buf.validate.field).duration = {
-    gte: {seconds: 0}
+    gt: {seconds: 0}
     lte: {seconds: 1800} /* 30 minutes */
   }];
 
@@ -40,6 +40,8 @@ message Cronjob {
 
   // Last event info to ease debugging and tracking
   optional CronjobCompletedEvent last_completed_event = 9;
+  // ID of the currently claimed run
+  string run_id = 10;
 }
 
 // States of Cronjob
@@ -69,6 +71,10 @@ message CronjobSchedulerEvent {
 message CronjobCompletedEvent {
   // Cronjob name
   string name = 1;
+  // Unique ID of the execution this event belongs to
+  string run_id = 9;
+  // Start time of the execution this event belongs to
+  optional resources.timestamp.Timestamp started_time = 10;
   // Cronjob execution success status
   bool success = 2;
   // Cronjob execution was cancelled

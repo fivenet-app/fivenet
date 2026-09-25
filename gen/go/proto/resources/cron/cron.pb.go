@@ -97,8 +97,10 @@ type Cronjob struct {
 	Data *CronjobData `protobuf:"bytes,8,opt,name=data,proto3" json:"data,omitempty"`
 	// Last event info to ease debugging and tracking
 	LastCompletedEvent *CronjobCompletedEvent `protobuf:"bytes,9,opt,name=last_completed_event,json=lastCompletedEvent,proto3,oneof" json:"last_completed_event,omitempty"`
-	unknownFields      protoimpl.UnknownFields
-	sizeCache          protoimpl.SizeCache
+	// ID of the currently claimed run
+	RunId         string `protobuf:"bytes,10,opt,name=run_id,json=runId,proto3" json:"run_id,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
 }
 
 func (x *Cronjob) Reset() {
@@ -189,6 +191,13 @@ func (x *Cronjob) GetLastCompletedEvent() *CronjobCompletedEvent {
 	return nil
 }
 
+func (x *Cronjob) GetRunId() string {
+	if x != nil {
+		return x.RunId
+	}
+	return ""
+}
+
 func (x *Cronjob) SetName(v string) {
 	x.Name = v
 }
@@ -223,6 +232,10 @@ func (x *Cronjob) SetData(v *CronjobData) {
 
 func (x *Cronjob) SetLastCompletedEvent(v *CronjobCompletedEvent) {
 	x.LastCompletedEvent = v
+}
+
+func (x *Cronjob) SetRunId(v string) {
+	x.RunId = v
 }
 
 func (x *Cronjob) HasNextScheduleTime() bool {
@@ -315,6 +328,8 @@ type Cronjob_builder struct {
 	Data *CronjobData
 	// Last event info to ease debugging and tracking
 	LastCompletedEvent *CronjobCompletedEvent
+	// ID of the currently claimed run
+	RunId string
 }
 
 func (b0 Cronjob_builder) Build() *Cronjob {
@@ -330,6 +345,7 @@ func (b0 Cronjob_builder) Build() *Cronjob {
 	x.Timeout = b.Timeout
 	x.Data = b.Data
 	x.LastCompletedEvent = b.LastCompletedEvent
+	x.RunId = b.RunId
 	return m0
 }
 
@@ -584,6 +600,10 @@ type CronjobCompletedEvent struct {
 	state protoimpl.MessageState `protogen:"hybrid.v1"`
 	// Cronjob name
 	Name string `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
+	// Unique ID of the execution this event belongs to
+	RunId string `protobuf:"bytes,9,opt,name=run_id,json=runId,proto3" json:"run_id,omitempty"`
+	// Start time of the execution this event belongs to
+	StartedTime *timestamp.Timestamp `protobuf:"bytes,10,opt,name=started_time,json=startedTime,proto3,oneof" json:"started_time,omitempty"`
 	// Cronjob execution success status
 	Success bool `protobuf:"varint,2,opt,name=success,proto3" json:"success,omitempty"`
 	// Cronjob execution was cancelled
@@ -632,6 +652,20 @@ func (x *CronjobCompletedEvent) GetName() string {
 		return x.Name
 	}
 	return ""
+}
+
+func (x *CronjobCompletedEvent) GetRunId() string {
+	if x != nil {
+		return x.RunId
+	}
+	return ""
+}
+
+func (x *CronjobCompletedEvent) GetStartedTime() *timestamp.Timestamp {
+	if x != nil {
+		return x.StartedTime
+	}
+	return nil
 }
 
 func (x *CronjobCompletedEvent) GetSuccess() bool {
@@ -687,6 +721,14 @@ func (x *CronjobCompletedEvent) SetName(v string) {
 	x.Name = v
 }
 
+func (x *CronjobCompletedEvent) SetRunId(v string) {
+	x.RunId = v
+}
+
+func (x *CronjobCompletedEvent) SetStartedTime(v *timestamp.Timestamp) {
+	x.StartedTime = v
+}
+
 func (x *CronjobCompletedEvent) SetSuccess(v bool) {
 	x.Success = v
 }
@@ -713,6 +755,13 @@ func (x *CronjobCompletedEvent) SetNodeName(v string) {
 
 func (x *CronjobCompletedEvent) SetErrorMessage(v string) {
 	x.ErrorMessage = &v
+}
+
+func (x *CronjobCompletedEvent) HasStartedTime() bool {
+	if x == nil {
+		return false
+	}
+	return x.StartedTime != nil
 }
 
 func (x *CronjobCompletedEvent) HasEndDate() bool {
@@ -743,6 +792,10 @@ func (x *CronjobCompletedEvent) HasErrorMessage() bool {
 	return x.ErrorMessage != nil
 }
 
+func (x *CronjobCompletedEvent) ClearStartedTime() {
+	x.StartedTime = nil
+}
+
 func (x *CronjobCompletedEvent) ClearEndDate() {
 	x.EndDate = nil
 }
@@ -764,6 +817,10 @@ type CronjobCompletedEvent_builder struct {
 
 	// Cronjob name
 	Name string
+	// Unique ID of the execution this event belongs to
+	RunId string
+	// Start time of the execution this event belongs to
+	StartedTime *timestamp.Timestamp
 	// Cronjob execution success status
 	Success bool
 	// Cronjob execution was cancelled
@@ -785,6 +842,8 @@ func (b0 CronjobCompletedEvent_builder) Build() *CronjobCompletedEvent {
 	b, x := &b0, m0
 	_, _ = b, x
 	x.Name = b.Name
+	x.RunId = b.RunId
+	x.StartedTime = b.StartedTime
 	x.Success = b.Success
 	x.Cancelled = b.Cancelled
 	x.EndDate = b.EndDate
@@ -856,7 +915,7 @@ var File_resources_cron_cron_proto protoreflect.FileDescriptor
 
 const file_resources_cron_cron_proto_rawDesc = "" +
 	"\n" +
-	"\x19resources/cron/cron.proto\x12\x0eresources.cron\x1a!codegen/sanitizer/sanitizer.proto\x1a\x19google/protobuf/any.proto\x1a\x1egoogle/protobuf/duration.proto\x1a#resources/timestamp/timestamp.proto\"\xe9\x04\n" +
+	"\x19resources/cron/cron.proto\x12\x0eresources.cron\x1a!codegen/sanitizer/sanitizer.proto\x1a\x19google/protobuf/any.proto\x1a\x1egoogle/protobuf/duration.proto\x1a#resources/timestamp/timestamp.proto\"\x80\x05\n" +
 	"\aCronjob\x12\x12\n" +
 	"\x04name\x18\x01 \x01(\tR\x04name\x12\x1a\n" +
 	"\bschedule\x18\x02 \x01(\tR\bschedule\x122\n" +
@@ -866,7 +925,9 @@ const file_resources_cron_cron_proto_rawDesc = "" +
 	"\fstarted_time\x18\x06 \x01(\v2\x1e.resources.timestamp.TimestampH\x01R\vstartedTime\x88\x01\x01\x128\n" +
 	"\atimeout\x18\a \x01(\v2\x19.google.protobuf.DurationH\x02R\atimeout\x88\x01\x01\x12/\n" +
 	"\x04data\x18\b \x01(\v2\x1b.resources.cron.CronjobDataR\x04data\x12\\\n" +
-	"\x14last_completed_event\x18\t \x01(\v2%.resources.cron.CronjobCompletedEventH\x03R\x12lastCompletedEvent\x88\x01\x01B\x14\n" +
+	"\x14last_completed_event\x18\t \x01(\v2%.resources.cron.CronjobCompletedEventH\x03R\x12lastCompletedEvent\x88\x01\x01\x12\x15\n" +
+	"\x06run_id\x18\n" +
+	" \x01(\tR\x05runIdB\x14\n" +
 	"\x12_last_attempt_timeB\x0f\n" +
 	"\r_started_timeB\n" +
 	"\n" +
@@ -882,16 +943,20 @@ const file_resources_cron_cron_proto_rawDesc = "" +
 	"\n" +
 	"updated_at\x18\x02 \x01(\v2\x1e.resources.timestamp.TimestampR\tupdatedAt\"J\n" +
 	"\x15CronjobSchedulerEvent\x121\n" +
-	"\acronjob\x18\x01 \x01(\v2\x17.resources.cron.CronjobR\acronjob\"\xeb\x02\n" +
+	"\acronjob\x18\x01 \x01(\v2\x17.resources.cron.CronjobR\acronjob\"\xdb\x03\n" +
 	"\x15CronjobCompletedEvent\x12\x12\n" +
-	"\x04name\x18\x01 \x01(\tR\x04name\x12\x18\n" +
+	"\x04name\x18\x01 \x01(\tR\x04name\x12\x15\n" +
+	"\x06run_id\x18\t \x01(\tR\x05runId\x12F\n" +
+	"\fstarted_time\x18\n" +
+	" \x01(\v2\x1e.resources.timestamp.TimestampH\x00R\vstartedTime\x88\x01\x01\x12\x18\n" +
 	"\asuccess\x18\x02 \x01(\bR\asuccess\x12\x1c\n" +
 	"\tcancelled\x18\a \x01(\bR\tcancelled\x129\n" +
 	"\bend_date\x18\x03 \x01(\v2\x1e.resources.timestamp.TimestampR\aendDate\x123\n" +
 	"\aelapsed\x18\x04 \x01(\v2\x19.google.protobuf.DurationR\aelapsed\x124\n" +
-	"\x04data\x18\x05 \x01(\v2\x1b.resources.cron.CronjobDataH\x00R\x04data\x88\x01\x01\x12\x1b\n" +
+	"\x04data\x18\x05 \x01(\v2\x1b.resources.cron.CronjobDataH\x01R\x04data\x88\x01\x01\x12\x1b\n" +
 	"\tnode_name\x18\x06 \x01(\tR\bnodeName\x12(\n" +
-	"\rerror_message\x18\b \x01(\tH\x01R\ferrorMessage\x88\x01\x01B\a\n" +
+	"\rerror_message\x18\b \x01(\tH\x02R\ferrorMessage\x88\x01\x01B\x0f\n" +
+	"\r_started_timeB\a\n" +
 	"\x05_dataB\x10\n" +
 	"\x0e_error_message\"\xab\x01\n" +
 	"\x0fGenericCronData\x12Y\n" +
@@ -934,15 +999,16 @@ var file_resources_cron_cron_proto_depIdxs = []int32{
 	10, // 8: resources.cron.CronjobData.data:type_name -> google.protobuf.Any
 	8,  // 9: resources.cron.CronjobLockOwnerState.updated_at:type_name -> resources.timestamp.Timestamp
 	1,  // 10: resources.cron.CronjobSchedulerEvent.cronjob:type_name -> resources.cron.Cronjob
-	8,  // 11: resources.cron.CronjobCompletedEvent.end_date:type_name -> resources.timestamp.Timestamp
-	9,  // 12: resources.cron.CronjobCompletedEvent.elapsed:type_name -> google.protobuf.Duration
-	2,  // 13: resources.cron.CronjobCompletedEvent.data:type_name -> resources.cron.CronjobData
-	7,  // 14: resources.cron.GenericCronData.attributes:type_name -> resources.cron.GenericCronData.AttributesEntry
-	15, // [15:15] is the sub-list for method output_type
-	15, // [15:15] is the sub-list for method input_type
-	15, // [15:15] is the sub-list for extension type_name
-	15, // [15:15] is the sub-list for extension extendee
-	0,  // [0:15] is the sub-list for field type_name
+	8,  // 11: resources.cron.CronjobCompletedEvent.started_time:type_name -> resources.timestamp.Timestamp
+	8,  // 12: resources.cron.CronjobCompletedEvent.end_date:type_name -> resources.timestamp.Timestamp
+	9,  // 13: resources.cron.CronjobCompletedEvent.elapsed:type_name -> google.protobuf.Duration
+	2,  // 14: resources.cron.CronjobCompletedEvent.data:type_name -> resources.cron.CronjobData
+	7,  // 15: resources.cron.GenericCronData.attributes:type_name -> resources.cron.GenericCronData.AttributesEntry
+	16, // [16:16] is the sub-list for method output_type
+	16, // [16:16] is the sub-list for method input_type
+	16, // [16:16] is the sub-list for extension type_name
+	16, // [16:16] is the sub-list for extension extendee
+	0,  // [0:16] is the sub-list for field type_name
 }
 
 func init() { file_resources_cron_cron_proto_init() }

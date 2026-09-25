@@ -9,7 +9,7 @@ import (
 	anypb "google.golang.org/protobuf/types/known/anypb"
 )
 
-const DefaultCronTimeout = 10 * time.Second
+const DefaultCronTimeout = 15 * time.Second
 
 func (x *Cronjob) Merge(in *Cronjob) *Cronjob {
 	x.Schedule = in.GetSchedule()
@@ -33,7 +33,7 @@ func (x *Cronjob) Merge(in *Cronjob) *Cronjob {
 	x.Timeout = in.GetTimeout()
 
 	if in.GetData() != nil {
-		x.GetData().Merge(in.GetData())
+		x.Data = x.GetData().Merge(in.GetData())
 	}
 
 	if in.GetLastCompletedEvent() != nil {
