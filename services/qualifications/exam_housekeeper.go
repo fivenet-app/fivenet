@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"strconv"
 	"time"
 
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/cron"
@@ -18,14 +19,18 @@ import (
 )
 
 const (
-	expireExamsCronjob = "qualifications.exams.expire"
-	retainExamsCronjob = "qualifications.exams.retain"
+	expireExamsCronjob              = "qualifications.exams.expire"
+	retainExamsCronjob              = "qualifications.exams.retain"
+	cleanupExamQuestionFilesCronjob = "qualifications.exams.cleanup_files"
 
 	// examMaxRetentionDays bounds stored attempt snapshots, answers, and grading.
 	// Qualification results themselves are intentionally retained.
-	examMaxRetentionDays   = 60
-	examExpiryBatchSize    = 100
-	examRetentionBatchSize = 1000
+	examMaxRetentionDays                            = 60
+	examExpiryBatchSize                             = 100
+	examRetentionBatchSize                          = 1000
+	examQuestionFileCleanupBatchSize                = 100
+	examQuestionFileCleanupAge                      = 24 * time.Hour
+	cleanupExamQuestionFilesLastQualificationIDAttr = "last_qualification_id"
 )
 
 type ExamHousekeeper struct {
@@ -65,10 +70,19 @@ func (h *ExamHousekeeper) RegisterCronjobs(ctx context.Context, registry croner.
 	}); err != nil {
 		return err
 	}
-	return registry.RegisterCronjob(ctx, &cron.Cronjob{
+	if err := registry.RegisterCronjob(ctx, &cron.Cronjob{
 		Name:     retainExamsCronjob,
 		Schedule: "15 3 * * *", // Daily at 03:15.
-	})
+	}); err != nil {
+		return err
+	}
+	if err := registry.RegisterCronjob(ctx, &cron.Cronjob{
+		Name:     cleanupExamQuestionFilesCronjob,
+		Schedule: "45 * * * *", // Hourly.
+	}); err != nil {
+		return err
+	}
+	return nil
 }
 
 func (h *ExamHousekeeper) RegisterCronjobHandlers(handlers *croner.Handlers) error {
@@ -128,7 +142,115 @@ func (h *ExamHousekeeper) RegisterCronjobHandlers(handlers *croner.Handlers) err
 		}
 		return nil
 	})
+	handlers.Add(
+		cleanupExamQuestionFilesCronjob,
+		func(ctx context.Context, data *cron.CronjobData) error {
+			dest := &cron.GenericCronData{Attributes: map[string]string{}}
+			if err := data.Unmarshal(dest); err != nil {
+				h.logger.Warn(
+					"failed to unmarshal exam question file cleanup cron data",
+					zap.Error(err),
+				)
+			}
+
+			lastQualificationID := int64(0)
+			if raw := dest.GetAttribute(
+				cleanupExamQuestionFilesLastQualificationIDAttr,
+			); raw != "" {
+				if parsed, err := strconv.ParseInt(raw, 10, 64); err == nil && parsed > 0 {
+					lastQualificationID = parsed
+				}
+			}
+
+			ids, err := h.store.ListActiveQualificationIDs(
+				ctx,
+				lastQualificationID,
+				examQuestionFileCleanupBatchSize,
+			)
+			if err != nil {
+				return fmt.Errorf(
+					"list active qualifications for exam question file cleanup: %w",
+					err,
+				)
+			}
+			if len(ids) == 0 && lastQualificationID > 0 {
+				lastQualificationID = 0
+				ids, err = h.store.ListActiveQualificationIDs(
+					ctx,
+					0,
+					examQuestionFileCleanupBatchSize,
+				)
+				if err != nil {
+					return fmt.Errorf(
+						"wrap active qualifications for exam question file cleanup: %w",
+						err,
+					)
+				}
+			}
+
+			cutoff := time.Now().Add(-examQuestionFileCleanupAge)
+			for _, qualificationID := range ids {
+				if err := h.cleanupExamQuestionFiles(ctx, qualificationID, cutoff); err != nil {
+					return fmt.Errorf(
+						"clean up exam question files for qualification %d: %w",
+						qualificationID,
+						err,
+					)
+				}
+				lastQualificationID = qualificationID
+			}
+
+			if len(ids) > 0 {
+				dest.SetAttribute(
+					cleanupExamQuestionFilesLastQualificationIDAttr,
+					strconv.FormatInt(lastQualificationID, 10),
+				)
+			} else {
+				dest.SetAttribute(cleanupExamQuestionFilesLastQualificationIDAttr, "0")
+			}
+			if err := data.MarshalFrom(dest); err != nil {
+				return fmt.Errorf("marshal exam question file cleanup cron data: %w", err)
+			}
+			return nil
+		},
+	)
 	return nil
+}
+
+func (h *ExamHousekeeper) cleanupExamQuestionFiles(
+	ctx context.Context,
+	qualificationID int64,
+	cutoff time.Time,
+) error {
+	tx, err := h.server.db.BeginTx(ctx, nil)
+	if err != nil {
+		return err
+	}
+	defer tx.Rollback()
+
+	exam, err := h.store.GetExamQuestions(ctx, tx, qualificationID, false)
+	if err != nil {
+		return err
+	}
+
+	referencedFileIDs := make([]int64, 0, len(exam.GetQuestions()))
+	for _, question := range exam.GetQuestions() {
+		if image := question.GetData().GetImage(); image != nil && image.GetImage() != nil {
+			referencedFileIDs = append(referencedFileIDs, image.GetImage().GetId())
+		}
+	}
+
+	_, err = h.store.UnlinkStaleExamQuestionFiles(
+		ctx,
+		tx,
+		qualificationID,
+		referencedFileIDs,
+		cutoff,
+	)
+	if err != nil {
+		return err
+	}
+	return tx.Commit()
 }
 
 func (h *ExamHousekeeper) deleteRetainedExamData(

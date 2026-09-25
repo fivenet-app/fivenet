@@ -126,7 +126,10 @@ const state = reactive<Schema>({
     },
 });
 
-const { hasUnsavedChanges, syncSnapshot } = useSnapshotChanges(state);
+const pendingJobLogo = ref<File | undefined>();
+const { hasUnsavedChanges, syncSnapshot } = useSnapshotChanges(state, {
+    dirty: computed(() => pendingJobLogo.value !== undefined),
+});
 
 async function getJobProps(signal: AbortSignal): Promise<JobProps> {
     try {
@@ -149,6 +152,57 @@ const {
 
 async function setJobProps(values: Schema): Promise<void> {
     if (!jobProps.value) return;
+
+    if (pendingJobLogo.value) {
+        const file = pendingJobLogo.value;
+        const result = await uploadImages({
+            files: [file],
+            uploadOne: (f) => resizeAndUpload(f),
+            invalidTypeNotification: {
+                title: {
+                    key: 'components.partials.tiptap_editor.notifications.invalid_file_type_images.title',
+                    parameters: {},
+                },
+                description: {
+                    key: 'components.partials.tiptap_editor.notifications.invalid_file_type_images.content',
+                    parameters: {},
+                },
+            },
+            uploadFailedNotification: () => ({
+                title: {
+                    key: 'components.partials.tiptap_editor.notifications.image_upload_failed.title',
+                    parameters: {},
+                },
+                description: {
+                    key: 'components.partials.tiptap_editor.notifications.image_upload_failed.content',
+                    parameters: {},
+                },
+            }),
+        });
+
+        if (!result.ok) {
+            throw new Error('Job logo upload did not return a file');
+        }
+
+        const uploadedFile = result.uploaded[0]?.file;
+        if (!uploadedFile) {
+            notifications.add({
+                title: {
+                    key: 'components.partials.tiptap_editor.notifications.image_upload_failed.title',
+                    parameters: {},
+                },
+                description: {
+                    key: 'components.partials.tiptap_editor.notifications.image_upload_failed.content',
+                    parameters: {},
+                },
+                type: NotificationType.ERROR,
+            });
+            throw new Error('Job logo upload did not return a file');
+        }
+
+        jobProps.value.logoFile = uploadedFile;
+        jobProps.value.logoFileId = uploadedFile.id;
+    }
 
     jobProps.value.livemapMarkerColor = values.livemapMarkerColor;
     jobProps.value.quickButtons = values.quickButtons;
@@ -179,6 +233,7 @@ async function setJobProps(values: Schema): Promise<void> {
             jobProps.value = response.jobProps;
             authStore.setJobProps(jobProps.value);
             setSettingsValues();
+            pendingJobLogo.value = undefined;
         }
     } catch (e) {
         handleGRPCError(e as RpcError);
@@ -320,29 +375,8 @@ const selectedTab = computed({
 const { resizeAndUpload } = useFileUploader((opts) => settingsSettingsClient.uploadJobLogo(opts), 'jobprops', 0);
 const { uploadImages } = useImageUpload();
 
-async function handleJobLogoUpload(file: File | null | undefined): Promise<void> {
-    if (!file) return;
-
-    await uploadImages({
-        files: [file],
-        uploadOne: (f) => resizeAndUpload(f),
-        invalidTypeNotification: {
-            title: {
-                key: 'components.partials.tiptap_editor.notifications.invalid_file_type_images.title',
-                parameters: {},
-            },
-            description: {
-                key: 'components.partials.tiptap_editor.notifications.invalid_file_type_images.content',
-                parameters: {},
-            },
-        },
-        onUploaded: (resp) => {
-            if (!resp.file || !jobProps.value) return;
-
-            jobProps.value.logoFile = resp.file;
-            jobProps.value.logoFileId = resp.file.id;
-        },
-    });
+function handleJobLogoUpload(file: File | null | undefined): void {
+    pendingJobLogo.value = file ?? undefined;
 }
 
 const selectedChange = ref<DiscordSyncChange | undefined>();

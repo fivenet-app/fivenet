@@ -3,25 +3,23 @@ import type { WatchStopHandle } from 'vue';
 import GenericImg from '~/components/partials/elements/GenericImg.vue';
 import NotSupportedTabletBlock from '~/components/partials/NotSupportedTabletBlock.vue';
 import { useSettingsStore } from '~/stores/settings';
-import { getQualificationsQualificationsClient } from '~~/gen/ts/clients';
-import type { File } from '~~/gen/ts/resources/file/file';
 import type { ExamQuestion } from '~~/gen/ts/resources/qualifications/exam/exam';
 import QuestionMutipleChoice from './QuestionMutipleChoice.vue';
 import QuestionSingleChoice from './QuestionSingleChoice.vue';
 import ReorderButtons from '~/components/partials/ReorderButtons.vue';
 import DraggableHandle from '~/components/partials/DraggableHandle.vue';
 
-const qualificationsQualificationsClient = await getQualificationsQualificationsClient();
-
 const props = defineProps<{
     qualificationId: number;
     index: number;
+    pendingImage?: globalThis.File;
     disabled?: boolean;
 }>();
 
 const emit = defineEmits<{
     (e: 'delete'): void;
-    (e: 'fileUploaded', file: File): void;
+    (e: 'imageSelected', file: globalThis.File, questionId: number): void;
+    (e: 'imageCleared', questionId: number): void;
     (e: 'move-down'): void;
     (e: 'move-up'): void;
 }>();
@@ -129,44 +127,25 @@ watch(
     },
 );
 
-const { resizeAndUpload } = useFileUploader(
-    (opts) => qualificationsQualificationsClient.uploadFile(opts),
-    'qualifications-exam-questions',
-    props.qualificationId,
-);
-const { uploadImages } = useImageUpload();
+function handleImage(file: globalThis.File | null | undefined): void {
+    if (question.value?.data?.data.oneofKind !== 'image') return;
 
-async function handleImage(file: globalThis.File | null | undefined): Promise<void> {
-    if (!file || question.value!.data!.data.oneofKind !== 'image') return;
+    if (!file) {
+        emit('imageCleared', question.value.id);
+        return;
+    }
 
-    const result = await uploadImages({
-        files: [file],
-        uploadOne: (f) => resizeAndUpload(f),
-        invalidTypeNotification: {
-            title: {
-                key: 'components.partials.tiptap_editor.notifications.invalid_file_type_images.title',
-                parameters: {},
-            },
-            description: {
-                key: 'components.partials.tiptap_editor.notifications.invalid_file_type_images.content',
-                parameters: {},
-            },
-        },
-        onUploaded: (resp) => {
-            if (!resp.file || question.value?.data?.data.oneofKind !== 'image') return;
-
-            question.value.data.data.image.image = resp.file;
-            emit('fileUploaded', resp.file);
-        },
-    });
-
-    if (!result.ok) return;
+    emit('imageSelected', file, question.value.id);
 }
 
 const questionTypes = ['separator', 'image', 'yesno', 'freeText', 'singleChoice', 'multipleChoice'];
 
 function changeQuestionType(qt: string): void {
     if (question.value === undefined) return;
+
+    if (qt !== 'image') {
+        emit('imageCleared', question.value.id);
+    }
 
     switch (qt) {
         case 'image':
@@ -441,6 +420,7 @@ watch(
                         <NotSupportedTabletBlock v-if="nuiEnabled" />
                         <template v-else>
                             <UFileUpload
+                                :model-value="props.pendingImage"
                                 class="w-full"
                                 :disabled="disabled"
                                 :accept="appConfig.fileUpload.types.images.join(',')"

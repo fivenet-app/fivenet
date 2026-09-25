@@ -5,13 +5,76 @@ import (
 	"database/sql"
 	"errors"
 	"fmt"
+	"time"
 
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/file"
 	qualificationsexam "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/qualifications/exam"
 	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
 	"github.com/go-jet/jet/v2/mysql"
+	"github.com/go-jet/jet/v2/qrm"
 	"google.golang.org/protobuf/proto"
 )
+
+// UnlinkStaleExamQuestionFiles removes qualification/file associations for old
+// files that are no longer referenced by an exam image question. The filestore
+// housekeeper can remove the now-unreferenced files afterwards.
+func (s *Store) UnlinkStaleExamQuestionFiles(
+	ctx context.Context,
+	tx *sql.Tx,
+	qualificationID int64,
+	referencedFileIDs []int64,
+	olderThan time.Time,
+) (int64, error) {
+	tQualiFiles := table.FivenetQualificationsFiles
+	tFiles := table.FivenetFiles
+	stmt := tQualiFiles.
+		SELECT(tQualiFiles.FileID).
+		FROM(tQualiFiles.INNER_JOIN(tFiles, tQualiFiles.FileID.EQ(tFiles.ID))).
+		WHERE(mysql.AND(
+			tQualiFiles.QualificationID.EQ(mysql.Int64(qualificationID)),
+			tFiles.CreatedAt.LT(mysql.TimestampT(olderThan)),
+		))
+
+	var linkedFileIDs []int64
+	if err := stmt.QueryContext(
+		ctx,
+		tx,
+		&linkedFileIDs,
+	); err != nil &&
+		!errors.Is(err, qrm.ErrNoRows) {
+		return 0, err
+	}
+
+	referenced := make(map[int64]struct{}, len(referencedFileIDs))
+	for _, fileID := range referencedFileIDs {
+		referenced[fileID] = struct{}{}
+	}
+
+	staleFileIDs := make([]mysql.Expression, 0, len(linkedFileIDs))
+	for _, fileID := range linkedFileIDs {
+		if _, ok := referenced[fileID]; ok {
+			continue
+		}
+		staleFileIDs = append(staleFileIDs, mysql.Int64(fileID))
+	}
+	if len(staleFileIDs) == 0 {
+		return 0, nil
+	}
+
+	deleteStmt := tQualiFiles.
+		DELETE().
+		WHERE(mysql.AND(
+			tQualiFiles.QualificationID.EQ(mysql.Int64(qualificationID)),
+			tQualiFiles.FileID.IN(staleFileIDs...),
+		)).
+		LIMIT(int64(len(staleFileIDs)))
+
+	result, err := deleteStmt.ExecContext(ctx, tx)
+	if err != nil {
+		return 0, err
+	}
+	return result.RowsAffected()
+}
 
 func (s *Store) HandleExamQuestionsChanges(
 	ctx context.Context,

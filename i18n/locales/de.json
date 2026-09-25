@@ -1004,6 +1004,10 @@
                     "invalid_file_type_images": {
                         "title": "Invalid file(s) selected!",
                         "content": "Only images are allowed to be uploaded."
+                    },
+                    "image_upload_failed": {
+                        "title": "Bild-Upload fehlgeschlagen",
+                        "content": "Das Bild konnte nicht hochgeladen werden. Bitte versuche es erneut."
                     }
                 },
                 "file_list": "Liste der Anhänge",

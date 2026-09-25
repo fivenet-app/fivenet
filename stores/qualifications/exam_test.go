@@ -111,6 +111,38 @@ func TestStoreGetExamUser(t *testing.T) {
 	require.NoError(t, mock.ExpectationsWereMet())
 }
 
+func TestStoreUnlinkStaleExamQuestionFiles(t *testing.T) {
+	t.Parallel()
+
+	db, mock, err := sqlmock.New()
+	require.NoError(t, err)
+	t.Cleanup(func() { _ = db.Close() })
+
+	store := New(testParams(db))
+	mock.ExpectBegin()
+	tx, err := db.BeginTx(t.Context(), nil)
+	require.NoError(t, err)
+
+	cutoff := time.Unix(100, 0).UTC()
+	mock.ExpectQuery(`SELECT .*FROM fivenet_qualifications_files.*INNER JOIN fivenet_files.*`).
+		WithArgs(int64(42), cutoff).
+		WillReturnRows(sqlmock.NewRows([]string{"file_id"}).
+			AddRow(int64(100)).
+			AddRow(int64(101)).
+			AddRow(int64(102)))
+	mock.ExpectExec(`DELETE FROM fivenet_qualifications_files`).
+		WithArgs(int64(42), int64(100), int64(102), int64(2)).
+		WillReturnResult(sqlmock.NewResult(0, 2))
+
+	unlinked, err := store.UnlinkStaleExamQuestionFiles(t.Context(), tx, 42, []int64{101}, cutoff)
+	require.NoError(t, err)
+	assert.Equal(t, int64(2), unlinked)
+
+	mock.ExpectCommit()
+	require.NoError(t, tx.Commit())
+	require.NoError(t, mock.ExpectationsWereMet())
+}
+
 func TestStoreCountExamQuestions(t *testing.T) {
 	t.Parallel()
 

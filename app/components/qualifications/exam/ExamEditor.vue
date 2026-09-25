@@ -3,17 +3,18 @@ import { VueDraggable } from 'vue-draggable-plus';
 import { z } from 'zod';
 import InputDurationPicker from '~/components/partials/InputDurationPicker.vue';
 import { zodProtoDurationSchema } from '~/utils/validation';
-import type { File } from '~~/gen/ts/resources/file/file';
 import { AutoGradeMode, type ExamQuestions, QualificationExamMode } from '~~/gen/ts/resources/qualifications/exam/exam';
 import ExamEditorQuestion from './ExamEditorQuestion.vue';
 
 const props = defineProps<{
     qualificationId: number;
+    pendingImages: ReadonlyMap<number, globalThis.File>;
     disabled?: boolean;
 }>();
 
 defineEmits<{
-    (e: 'fileUploaded', file: File): void;
+    (e: 'imageSelected', file: globalThis.File, questionId: number): void;
+    (e: 'imageCleared', questionId: number): void;
 }>();
 
 const examModes = ref<{ mode: QualificationExamMode; selected?: boolean }[]>([
@@ -186,9 +187,16 @@ export type ExamSettingsSchema = z.output<typeof examSettingsSchema>;
                             :qualification-id="props.qualificationId"
                             :question="question"
                             :index="idx"
+                            :pending-image="props.pendingImages.get(question.id)"
                             :disabled="disabled"
-                            @delete="exam.questions.splice(idx, 1)"
-                            @file-uploaded="(file) => $emit('fileUploaded', file)"
+                            @delete="
+                                () => {
+                                    $emit('imageCleared', question.id);
+                                    exam.questions.splice(idx, 1);
+                                }
+                            "
+                            @image-selected="(file, questionId) => $emit('imageSelected', file, questionId)"
+                            @image-cleared="(questionId) => $emit('imageCleared', questionId)"
                             @move-up="moveUp(idx)"
                             @move-down="moveDown(idx)"
                         />

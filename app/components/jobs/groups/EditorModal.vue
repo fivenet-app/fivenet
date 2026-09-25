@@ -88,7 +88,11 @@ const formSnapshot = computed(() => ({
     access: state.access,
 }));
 
-const { hasUnsavedChanges, confirmLeave, syncSnapshot } = useSnapshotChanges(formSnapshot);
+const pendingGroupLogo = ref<File | undefined>();
+const createdGroupId = ref<number>();
+const { hasUnsavedChanges, confirmLeave, syncSnapshot } = useSnapshotChanges(formSnapshot, {
+    dirty: computed(() => pendingGroupLogo.value !== undefined),
+});
 
 const isLegacyPolicyState = computed(() => isLegacyGroupPolicyState(props.group));
 
@@ -101,6 +105,7 @@ function cloneAccess(access?: Access): Schema['access'] {
 }
 
 function setFormFromProps(): void {
+    createdGroupId.value = undefined;
     state.name = props.group?.name ?? '';
     state.description = props.group?.description ?? '';
     state.shortName = props.group?.shortName ?? '';
@@ -109,6 +114,7 @@ function setFormFromProps(): void {
     state.membershipMode = props.group?.membershipMode ?? GroupMembershipMode.FLEXIBLE;
     state.state = props.group?.state ?? GroupState.ACTIVE;
     state.access = cloneAccess(props.access);
+    pendingGroupLogo.value = undefined;
     logoFile.value = props.group?.logoFile;
     selectedLeaderUsers.value = [];
     normalizeGroupPolicyState();
@@ -146,8 +152,9 @@ watch(
 
 const formRef = useTemplateRef('formRef');
 
+const activeGroupId = computed(() => props.group?.id ?? createdGroupId.value);
 const modalTitle = computed(() =>
-    props.group?.id ? t('components.jobs.groups.editor.update_title') : t('components.jobs.groups.editor.create_title'),
+    activeGroupId.value ? t('components.jobs.groups.editor.update_title') : t('components.jobs.groups.editor.create_title'),
 );
 const groupTypeItems = computed(() => groupTypeItemKeys.map((item) => ({ ...item, label: t(item.labelKey) })));
 const groupMembershipModeItems = computed(() =>
@@ -197,10 +204,9 @@ const { resizeAndUpload } = useFileUploader(
 const { uploadImages } = useImageUpload();
 
 async function uploadGroupLogo(file: File, groupId: number): Promise<UploadFileResponse | undefined> {
-    let uploaded: UploadFileResponse | undefined;
     logoUploadGroupId.value = groupId;
 
-    await uploadImages({
+    const result = await uploadImages({
         files: [file],
         uploadOne: (f) => resizeAndUpload(f),
         invalidTypeNotification: {
@@ -213,31 +219,58 @@ async function uploadGroupLogo(file: File, groupId: number): Promise<UploadFileR
                 parameters: {},
             },
         },
-        onUploaded: (resp) => {
-            uploaded = resp;
-            if (!resp.file) return;
-
-            logoFile.value = resp.file;
-        },
+        uploadFailedNotification: () => ({
+            title: {
+                key: 'components.partials.tiptap_editor.notifications.image_upload_failed.title',
+                parameters: {},
+            },
+            description: {
+                key: 'components.partials.tiptap_editor.notifications.image_upload_failed.content',
+                parameters: {},
+            },
+        }),
     });
 
+    if (!result.ok) return undefined;
+
+    const uploaded = result.uploaded[0];
+    if (!uploaded?.file) {
+        notifications.add({
+            title: {
+                key: 'components.partials.tiptap_editor.notifications.image_upload_failed.title',
+                parameters: {},
+            },
+            description: {
+                key: 'components.partials.tiptap_editor.notifications.image_upload_failed.content',
+                parameters: {},
+            },
+            type: NotificationType.ERROR,
+        });
+        return undefined;
+    }
+
+    logoFile.value = uploaded.file;
     return uploaded;
 }
 
-async function handleGroupLogoUpload(file: File | null | undefined): Promise<void> {
-    if (!file || !props.group?.id) return;
-    await uploadGroupLogo(file, props.group.id);
+function handleGroupLogoUpload(file: File | null | undefined): void {
+    pendingGroupLogo.value = file ?? undefined;
 }
 
 async function clearGroupLogo(): Promise<void> {
-    if (!props.group?.id) return;
-    const { response } = await jobsGroupsClient.deleteGroupLogo({ id: props.group.id });
+    if (!activeGroupId.value) return;
+
+    const { response } = await jobsGroupsClient.deleteGroupLogo({ id: activeGroupId.value });
+    pendingGroupLogo.value = undefined;
     logoFile.value = response.group?.logoFile;
     if (response.group) emit('updated', response.group);
 }
 
 async function createOrUpdateGroup(values: Schema): Promise<void> {
     try {
+        const wasCreating = !activeGroupId.value;
+        const wasCreatedLocally = createdGroupId.value !== undefined;
+
         values.membershipMode = normalizeGroupMembershipMode(values.type, values.membershipMode);
         normalizeGroupPolicyState();
         normalizeAccessEntryIds(values.access.jobs);
@@ -263,9 +296,16 @@ async function createOrUpdateGroup(values: Schema): Promise<void> {
             throw new Error('Invalid group policy state');
         }
 
-        const call = props.group?.id
+        if (pendingGroupLogo.value && activeGroupId.value) {
+            const uploaded = await uploadGroupLogo(pendingGroupLogo.value, activeGroupId.value);
+            if (!uploaded?.file) {
+                throw new Error('Group logo upload did not return a file');
+            }
+        }
+
+        const call = activeGroupId.value
             ? jobsGroupsClient.updateGroup({
-                  id: props.group.id,
+                  id: activeGroupId.value,
                   ...payload,
                   access: values.access,
                   state: values.state,
@@ -279,7 +319,21 @@ async function createOrUpdateGroup(values: Schema): Promise<void> {
                   rules: [],
               });
         const { response } = await call;
-        const group = response.group!;
+        let group = response.group!;
+
+        if (wasCreating && pendingGroupLogo.value) {
+            createdGroupId.value = group.id;
+
+            const uploaded = await uploadGroupLogo(pendingGroupLogo.value, group.id);
+            if (!uploaded?.file) {
+                throw new Error('Group logo upload did not return a file');
+            }
+
+            group = {
+                ...group,
+                logoFile: uploaded.file,
+            };
+        }
 
         notifications.add({
             title: { key: 'notifications.action_successful.title', parameters: {} },
@@ -287,12 +341,13 @@ async function createOrUpdateGroup(values: Schema): Promise<void> {
             type: NotificationType.SUCCESS,
         });
 
-        if (props.group?.id) {
+        if (!wasCreating && !wasCreatedLocally) {
             emit('updated', group);
         } else {
             emit('created', group);
         }
 
+        pendingGroupLogo.value = undefined;
         emit('close', false);
         syncSnapshot();
     } catch (e) {
@@ -360,7 +415,7 @@ async function closeModal(): Promise<void> {
                         />
                     </UFormField>
 
-                    <UFormField v-if="props.group?.id" name="logoFile" :label="$t('common.logo')">
+                    <UFormField name="logoFile" :label="$t('common.logo')">
                         <div v-if="logoFile?.filePath" class="mb-2 flex w-full items-center justify-center">
                             <GenericImg
                                 class="size-full max-h-32 min-h-32 max-w-32"

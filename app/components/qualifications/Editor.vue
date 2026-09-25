@@ -50,6 +50,12 @@ const notifications = useNotificationsStore();
 const historyStore = useHistoryStore();
 
 const qualificationsQualificationsClient = await getQualificationsQualificationsClient();
+const { resizeAndUpload } = useFileUploader(
+    (opts) => qualificationsQualificationsClient.uploadFile(opts),
+    'qualifications-exam-questions',
+    props.qualificationId,
+);
+const { uploadImages } = useImageUpload();
 
 const { maxAccessEntries, maxContentLength } = useAppConfig();
 
@@ -290,7 +296,10 @@ const state = reactive<Schema>({
     requirements: [],
 });
 
-const { hasUnsavedChanges, syncSnapshot } = useSnapshotChanges(state);
+const pendingExamImages = ref(new Map<number, globalThis.File>());
+const { hasUnsavedChanges, syncSnapshot } = useSnapshotChanges(state, {
+    dirty: computed(() => pendingExamImages.value.size > 0),
+});
 
 const saving = ref<boolean>(false);
 
@@ -428,10 +437,81 @@ function setFromProps(): void {
     state.labelSyncFormat = qualification.value.labelSyncFormat || '%abbr%: %name%';
     state.files = qualification.value.files;
     state.requirements = qualification.value.requirements;
+    pendingExamImages.value = new Map();
     syncSnapshot();
 }
 
 watch(qualification, () => setFromProps());
+
+function handleExamImageSelected(file: globalThis.File, questionId: number): void {
+    const pending = new Map(pendingExamImages.value);
+    pending.set(questionId, file);
+    pendingExamImages.value = pending;
+}
+
+function handleExamImageCleared(questionId: number): void {
+    const pending = new Map(pendingExamImages.value);
+    pending.delete(questionId);
+    pendingExamImages.value = pending;
+}
+
+async function uploadPendingExamImages(values: Schema): Promise<void> {
+    if (pendingExamImages.value.size === 0) return;
+
+    for (const [questionId, file] of pendingExamImages.value) {
+        const question = values.exam.questions.find((entry) => entry.id === questionId);
+        if (!question?.data || question.data.data.oneofKind !== 'image') {
+            continue;
+        }
+
+        const result = await uploadImages({
+            files: [file],
+            uploadOne: (selectedFile) => resizeAndUpload(selectedFile),
+            invalidTypeNotification: {
+                title: {
+                    key: 'components.partials.tiptap_editor.notifications.invalid_file_type_images.title',
+                    parameters: {},
+                },
+                description: {
+                    key: 'components.partials.tiptap_editor.notifications.invalid_file_type_images.content',
+                    parameters: {},
+                },
+            },
+            uploadFailedNotification: () => ({
+                title: {
+                    key: 'components.partials.tiptap_editor.notifications.image_upload_failed.title',
+                    parameters: {},
+                },
+                description: {
+                    key: 'components.partials.tiptap_editor.notifications.image_upload_failed.content',
+                    parameters: {},
+                },
+            }),
+        });
+
+        if (!result.ok) {
+            throw new Error('Qualification image upload did not return a file');
+        }
+
+        const uploadedFile = result.uploaded[0]?.file;
+        if (!uploadedFile) {
+            notifications.add({
+                title: {
+                    key: 'components.partials.tiptap_editor.notifications.image_upload_failed.title',
+                    parameters: {},
+                },
+                description: {
+                    key: 'components.partials.tiptap_editor.notifications.image_upload_failed.content',
+                    parameters: {},
+                },
+                type: NotificationType.ERROR,
+            });
+            throw new Error('Qualification image upload did not return a file');
+        }
+
+        question.data.data.image.image = uploadedFile;
+    }
+}
 
 async function updateQualification(values: Schema): Promise<UpdateQualificationResponse> {
     normalizeAccessEntryIds(values.access.jobs);
@@ -500,7 +580,9 @@ async function updateQualification(values: Schema): Promise<UpdateQualificationR
 
 const { submit, isSubmitting, canSubmit } = useSubmitGuard(async (event: FormSubmitEvent<Schema>) => {
     if (event.submitter?.getAttribute('role') === 'tab') return;
+    await uploadPendingExamImages(event.data);
     await updateQualification(event.data);
+    pendingExamImages.value = new Map();
     syncSnapshot();
 });
 
@@ -895,6 +977,9 @@ const formRef = useTemplateRef('formRef');
                                     class="mx-auto max-w-(--breakpoint-xl)"
                                     :disabled="!canDo.edit"
                                     :qualification-id="props.qualificationId"
+                                    :pending-images="pendingExamImages"
+                                    @image-selected="handleExamImageSelected"
+                                    @image-cleared="handleExamImageCleared"
                                 />
                             </UContainer>
                         </div>

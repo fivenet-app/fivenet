@@ -231,6 +231,18 @@ type IStore interface {
 		olderThan time.Time,
 		limit int64,
 	) ([]*qualificationsexam.ExamUser, error)
+	ListActiveQualificationIDs(
+		ctx context.Context,
+		lastQualificationID int64,
+		limit int64,
+	) ([]int64, error)
+	UnlinkStaleExamQuestionFiles(
+		ctx context.Context,
+		tx *sql.Tx,
+		qualificationID int64,
+		referencedFileIDs []int64,
+		olderThan time.Time,
+	) (int64, error)
 	ExpireExamUser(
 		ctx context.Context,
 		tx qrm.DB,

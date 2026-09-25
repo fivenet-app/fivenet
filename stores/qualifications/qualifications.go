@@ -2,6 +2,7 @@ package qualificationsstore
 
 import (
 	"context"
+	"errors"
 	"strings"
 
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/common/content"
@@ -13,6 +14,31 @@ import (
 	"github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
 )
+
+func (s *Store) ListActiveQualificationIDs(
+	ctx context.Context,
+	lastQualificationID int64,
+	limit int64,
+) ([]int64, error) {
+	tQuali := table.FivenetQualifications
+	condition := tQuali.DeletedAt.IS_NULL()
+	if lastQualificationID > 0 {
+		condition = condition.AND(tQuali.ID.GT(mysql.Int64(lastQualificationID)))
+	}
+
+	stmt := tQuali.
+		SELECT(tQuali.ID).
+		FROM(tQuali).
+		WHERE(condition).
+		ORDER_BY(tQuali.ID.ASC()).
+		LIMIT(limit)
+
+	var ids []int64
+	if err := stmt.QueryContext(ctx, s.db, &ids); err != nil && !errors.Is(err, qrm.ErrNoRows) {
+		return nil, err
+	}
+	return ids, nil
+}
 
 func (s *Store) CreateQualification(
 	ctx context.Context,

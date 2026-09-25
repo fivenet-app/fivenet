@@ -2,9 +2,12 @@ package qualifications
 
 import (
 	"context"
+	"database/sql"
 	"testing"
+	"time"
 
 	"github.com/DATA-DOG/go-sqlmock"
+	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/file"
 	resqualifications "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/qualifications"
 	qualificationsactivity "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/qualifications/activity"
 	qualificationsexam "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/qualifications/exam"
@@ -22,6 +25,9 @@ type examHousekeeperTestStore struct {
 	events    []string
 	responses *qualificationsexam.ExamResponses
 	attemptID string
+	questions *qualificationsexam.ExamQuestions
+	imageIDs  []int64
+	cutoff    time.Time
 }
 
 func (s *examHousekeeperTestStore) GetQualification(
@@ -80,6 +86,27 @@ func (s *examHousekeeperTestStore) UpdateRequestStatus(
 	return nil
 }
 
+func (s *examHousekeeperTestStore) GetExamQuestions(
+	_ context.Context,
+	_ qrm.DB,
+	_ int64,
+	_ bool,
+) (*qualificationsexam.ExamQuestions, error) {
+	return s.questions, nil
+}
+
+func (s *examHousekeeperTestStore) UnlinkStaleExamQuestionFiles(
+	_ context.Context,
+	_ *sql.Tx,
+	_ int64,
+	referencedFileIDs []int64,
+	olderThan time.Time,
+) (int64, error) {
+	s.imageIDs = referencedFileIDs
+	s.cutoff = olderThan
+	return int64(len(referencedFileIDs)), nil
+}
+
 func TestExamHousekeeperGradesResponsesAfterExpiryClaim(t *testing.T) {
 	t.Parallel()
 
@@ -117,4 +144,42 @@ func TestExamHousekeeperGradesResponsesAfterExpiryClaim(t *testing.T) {
 		"grade:REQUEST_STATUS_EXAM_GRADING",
 	}, store.events)
 	assert.Equal(t, "expired-attempt", store.attemptID)
+}
+
+func TestExamHousekeeperCleanupExamQuestionFilesUsesPersistedImageReferences(t *testing.T) {
+	t.Parallel()
+
+	db, mock, err := sqlmock.New()
+	require.NoError(t, err)
+	t.Cleanup(func() { _ = db.Close() })
+
+	store := &examHousekeeperTestStore{
+		questions: &qualificationsexam.ExamQuestions{
+			Questions: []*qualificationsexam.ExamQuestion{
+				{
+					Data: &qualificationsexam.ExamQuestionData{
+						Data: &qualificationsexam.ExamQuestionData_Image{
+							Image: &qualificationsexam.ExamQuestionImage{
+								Image: &file.File{Id: 101},
+							},
+						},
+					},
+				},
+				{Data: &qualificationsexam.ExamQuestionData{}},
+			},
+		},
+	}
+	housekeeper := &ExamHousekeeper{
+		store:  store,
+		server: &Server{db: db, store: store, logger: zap.NewNop()},
+	}
+
+	mock.ExpectBegin()
+	mock.ExpectCommit()
+	cutoff := time.Now().Add(-24 * time.Hour)
+	require.NoError(t, housekeeper.cleanupExamQuestionFiles(t.Context(), 42, cutoff))
+	require.NoError(t, mock.ExpectationsWereMet())
+
+	assert.Equal(t, []int64{101}, store.imageIDs)
+	assert.Equal(t, cutoff, store.cutoff)
 }

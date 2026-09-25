@@ -1004,6 +1004,10 @@
                     "invalid_file_type_images": {
                         "title": "Ungültige Datei(en) ausgewählt!",
                         "content": "Es können nur Bilder hochgeladen werden."
+                    },
+                    "image_upload_failed": {
+                        "title": "Image upload failed",
+                        "content": "The image could not be uploaded. Please try again."
                     }
                 },
                 "file_list": "File List",
