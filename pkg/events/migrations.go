@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"sort"
+	"strings"
 	"sync"
 
 	"github.com/fivenet-app/fivenet/v2026/pkg/reqs"
@@ -101,6 +102,7 @@ func runMigrations(
 func init() {
 	registerMigration(Migration{ID: "001_remove_user_locations", Fn: migrate001})
 	registerMigration(Migration{ID: "002_remove_userinfo_poller", Fn: migrate002})
+	registerMigration(Migration{ID: "003_remove_legacy_cron_consumers", Fn: migrate003})
 }
 
 func migrate001(ctx context.Context, js *JSWrapper) error {
@@ -164,6 +166,53 @@ func migrate002(ctx context.Context, js *JSWrapper) error {
 	if err := js.DeleteStream(ctx, "POLL_REQUESTS"); err != nil &&
 		!errors.Is(err, jetstream.ErrStreamNotFound) {
 		return fmt.Errorf("failed to delete user info poll request stream. %w", err)
+	}
+
+	return nil
+}
+
+func migrate003(ctx context.Context, js *JSWrapper) error {
+	const (
+		streamName            = "CRON_SCHEDULE"
+		scheduleSubject       = "cron_schedule.schedule"
+		completionSubject     = "cron_schedule.complete"
+		sharedExecutorName    = "cron_executor"
+		sharedSchedulerName   = "cron_scheduler"
+		legacyExecutorSuffix  = "_cron_executor"
+		legacySchedulerSuffix = "_cron_scheduler"
+	)
+
+	stream, err := js.Stream(ctx, streamName)
+	if errors.Is(err, jetstream.ErrStreamNotFound) {
+		return nil
+	}
+	if err != nil {
+		return fmt.Errorf("failed to get cron schedule stream. %w", err)
+	}
+
+	consumers := stream.ListConsumers(ctx)
+	for info := range consumers.Info() {
+		if info == nil {
+			continue
+		}
+
+		legacy := (info.Name != sharedExecutorName &&
+			strings.HasSuffix(info.Name, legacyExecutorSuffix) &&
+			info.Config.FilterSubject == scheduleSubject) ||
+			(info.Name != sharedSchedulerName &&
+				strings.HasSuffix(info.Name, legacySchedulerSuffix) &&
+				info.Config.FilterSubject == completionSubject)
+		if !legacy {
+			continue
+		}
+
+		if err := js.DeleteConsumer(ctx, streamName, info.Name); err != nil &&
+			!errors.Is(err, jetstream.ErrConsumerNotFound) {
+			return fmt.Errorf("failed to delete legacy cron consumer %s. %w", info.Name, err)
+		}
+	}
+	if err := consumers.Err(); err != nil {
+		return fmt.Errorf("failed to list cron consumers. %w", err)
 	}
 
 	return nil
