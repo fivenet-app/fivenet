@@ -17,7 +17,7 @@ type natsServer struct {
 
 func NewNATSServer(t *testing.T) *natsServer {
 	t.Helper()
-	return &natsServer{server: testnats.NewServer(t, testnats.ServerOptions{})}
+	return &natsServer{server: testnats.NewServer(t, testnats.ServerOptions{InProcess: true})}
 }
 
 func (m *natsServer) GetURL() string {

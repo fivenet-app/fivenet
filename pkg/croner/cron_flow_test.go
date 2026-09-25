@@ -24,7 +24,8 @@ import (
 type fakeCronJS struct {
 	mu sync.Mutex
 
-	published []publishedMsg
+	published  []publishedMsg
+	publishErr error
 }
 
 type publishedMsg struct {
@@ -56,6 +57,9 @@ func (f *fakeCronJS) PublishProto(
 ) (*jetstream.PubAck, error) {
 	f.mu.Lock()
 	defer f.mu.Unlock()
+	if f.publishErr != nil {
+		return nil, f.publishErr
+	}
 
 	f.published = append(f.published, publishedMsg{
 		subject: subject,
@@ -66,9 +70,11 @@ func (f *fakeCronJS) PublishProto(
 }
 
 type fakeMsg struct {
-	data    []byte
-	subject string
-	acked   bool
+	data       []byte
+	subject    string
+	acked      bool
+	terminated bool
+	nacked     bool
 }
 
 func (m *fakeMsg) Metadata() (*jetstream.MsgMetadata, error) { return nil, nil }
@@ -79,9 +85,9 @@ func (m *fakeMsg) Reply() string                             { return "" }
 func (m *fakeMsg) Ack() error                                { m.acked = true; return nil }
 func (m *fakeMsg) DoubleAck(context.Context) error           { return nil }
 func (m *fakeMsg) Nak() error                                { return nil }
-func (m *fakeMsg) NakWithDelay(time.Duration) error          { return nil }
+func (m *fakeMsg) NakWithDelay(time.Duration) error          { m.nacked = true; return nil }
 func (m *fakeMsg) InProgress() error                         { return nil }
-func (m *fakeMsg) Term() error                               { return nil }
+func (m *fakeMsg) Term() error                               { m.terminated = true; return nil }
 func (m *fakeMsg) TermWithReason(string) error               { return nil }
 
 func metricFamilyHistogramCount(t *testing.T, familyName string, labels map[string]string) uint64 {
@@ -209,6 +215,7 @@ func TestExecutorWatchForEventsRecordsSuccessAndDurations(t *testing.T) {
 	payload, err := protojson.Marshal(&cron.CronjobSchedulerEvent{
 		Cronjob: &cron.Cronjob{
 			Name:        jobName,
+			RunId:       "run-success",
 			StartedTime: timestamp.New(startedAt),
 			Data:        &cron.CronjobData{Data: nil},
 		},
@@ -232,6 +239,7 @@ func TestExecutorWatchForEventsRecordsSuccessAndDurations(t *testing.T) {
 		js.published[0].msg,
 	)
 	require.True(t, completed.GetSuccess(), "expected successful completion event")
+	require.Equal(t, "run-success", completed.GetRunId())
 
 	startFamily := cronFamilyName(t, executorMetricSubsystem, executorMetricStartLatency)
 	histoCount := metricFamilyHistogramCount(
@@ -281,6 +289,7 @@ func TestExecutorWatchForEventsRecordsFailureOnPanic(t *testing.T) {
 	payload, err := protojson.Marshal(&cron.CronjobSchedulerEvent{
 		Cronjob: &cron.Cronjob{
 			Name:        jobName,
+			RunId:       "run-failure",
 			StartedTime: timestamp.New(time.Now().Add(-10 * time.Millisecond)),
 		},
 	})
@@ -303,6 +312,7 @@ func TestExecutorWatchForEventsRecordsFailureOnPanic(t *testing.T) {
 		js.published[0].msg,
 	)
 	require.False(t, completed.GetSuccess(), "expected failed completion event")
+	require.Equal(t, "run-failure", completed.GetRunId())
 	require.NotEmpty(
 		t,
 		completed.GetErrorMessage(),
@@ -316,4 +326,95 @@ func TestExecutorWatchForEventsRecordsFailureOnPanic(t *testing.T) {
 		map[string]string{admin.MetricsJobNameLabel: jobName},
 	)
 	require.InDelta(t, float64(0), failure, 0.000001)
+}
+
+func TestExecutorWatchForEventsTerminatesInvalidSchedule(t *testing.T) {
+	t.Parallel()
+
+	exec := &Executor{
+		logger:    zap.NewNop(),
+		ctx:       t.Context(),
+		publisher: &fakeCronJS{},
+		handlers:  &Handlers{handlers: map[string]CronjobHandlerFn{}},
+		metrics:   getExecutorMetrics(),
+	}
+	payload, err := protojson.Marshal(&cron.CronjobSchedulerEvent{
+		Cronjob: &cron.Cronjob{Name: "croner.executor.invalid"},
+	})
+	require.NoError(t, err)
+
+	msg := &fakeMsg{data: payload}
+	exec.watchForEvents(msg)
+
+	require.True(t, msg.terminated)
+	require.False(t, msg.acked)
+}
+
+func TestExecutorWatchForEventsNacksCompletionPublishFailure(t *testing.T) {
+	t.Parallel()
+
+	jobName := "croner.executor.publish_failure"
+	exec := &Executor{
+		logger: zap.NewNop(),
+		ctx:    t.Context(),
+		publisher: &fakeCronJS{
+			publishErr: errors.New("publish failed"),
+		},
+		handlers: &Handlers{
+			handlers: map[string]CronjobHandlerFn{
+				jobName: func(context.Context, *cron.CronjobData) error { return nil },
+			},
+		},
+		metrics: getExecutorMetrics(),
+	}
+	payload, err := protojson.Marshal(&cron.CronjobSchedulerEvent{
+		Cronjob: &cron.Cronjob{Name: jobName, RunId: "run-publish-failure"},
+	})
+	require.NoError(t, err)
+
+	msg := &fakeMsg{data: payload}
+	exec.watchForEvents(msg)
+
+	require.True(t, msg.nacked)
+	require.False(t, msg.acked)
+}
+
+func TestExecutorWatchForEventsPublishesMissingHandlerFailure(t *testing.T) {
+	t.Parallel()
+
+	jobName := "croner.executor.missing_handler"
+	js := &fakeCronJS{}
+	exec := &Executor{
+		logger:    zap.NewNop(),
+		ctx:       t.Context(),
+		publisher: js,
+		handlers:  &Handlers{handlers: map[string]CronjobHandlerFn{}},
+	}
+	payload, err := protojson.Marshal(&cron.CronjobSchedulerEvent{
+		Cronjob: &cron.Cronjob{Name: jobName, RunId: "run-missing-handler"},
+	})
+	require.NoError(t, err)
+
+	msg := &fakeMsg{data: payload}
+	exec.watchForEvents(msg)
+
+	require.True(t, msg.acked)
+	require.Len(t, js.published, 1)
+	completed, ok := js.published[0].msg.(*cron.CronjobCompletedEvent)
+	require.True(t, ok)
+	require.False(t, completed.GetSuccess())
+	require.Equal(t, "run-missing-handler", completed.GetRunId())
+	require.Contains(t, completed.GetErrorMessage(), "handler is not registered")
+}
+
+func TestSchedulerWatchForCompletionsTerminatesIncompleteEvent(t *testing.T) {
+	t.Parallel()
+
+	s := &Scheduler{logger: zap.NewNop()}
+	msg := &fakeMsg{data: []byte(`{"name":""}`)}
+
+	s.watchForCompletions(msg)
+
+	require.True(t, msg.terminated)
+	require.False(t, msg.nacked)
 }

@@ -5,7 +5,6 @@ import (
 	"sync"
 
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/cron"
-	"github.com/fivenet-app/fivenet/v2026/pkg/events"
 	"go.uber.org/fx"
 	"go.uber.org/zap"
 )
@@ -59,7 +58,7 @@ func (h *Handlers) Add(name string, fn CronjobHandlerFn) {
 	h.mu.Lock()
 	defer h.mu.Unlock()
 
-	name = events.SanitizeKey(name)
+	name = normalizeCronjobName(name)
 
 	if _, ok := h.handlers[name]; ok {
 		// Getting the stacktrace is expensive but should help tracking down any duplicate cron handlers in no time
@@ -77,7 +76,7 @@ func (h *Handlers) Remove(name string) {
 	h.mu.Lock()
 	defer h.mu.Unlock()
 
-	name = events.SanitizeKey(name)
+	name = normalizeCronjobName(name)
 
 	delete(h.handlers, name)
 }
@@ -86,7 +85,7 @@ func (h *Handlers) getCronjobHandler(name string) CronjobHandlerFn {
 	h.mu.Lock()
 	defer h.mu.Unlock()
 
-	name = events.SanitizeKey(name)
+	name = normalizeCronjobName(name)
 
 	return h.handlers[name]
 }

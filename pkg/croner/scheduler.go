@@ -2,9 +2,11 @@ package croner
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"sync"
 	"time"
+	"uuid"
 
 	"github.com/adhocore/gronx"
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/cron"
@@ -28,7 +30,18 @@ var SchedulerModule = fx.Module("cron_scheduler",
 const (
 	OwnerKey = "_owner"
 
-	jobNameLabel = "job_name"
+	jobNameLabel                    = "job_name"
+	maxCronSchedulerClaimConcurrent = 32
+)
+
+var ErrCronjobAlreadyRunning = errors.New("cron job is already running")
+var ErrCronjobRunNotReady = errors.New("cron job run state has not replicated yet")
+
+const (
+	cronCompletionAckWait    = 2 * time.Minute
+	cronCompletionMaxDeliver = 10
+	cronCompletionMinRetry   = 250 * time.Millisecond
+	cronCompletionMaxRetry   = 30 * time.Second
 )
 
 type IScheduler interface {
@@ -67,6 +80,7 @@ type Scheduler struct {
 
 	nodeName string
 	jsCons   jetstream.ConsumeContext
+	claimSem chan struct{}
 }
 
 func NewScheduler(p SchedulerParams) (SchedulerResult, error) {
@@ -87,6 +101,7 @@ func NewScheduler(p SchedulerParams) (SchedulerResult, error) {
 		registry:  p.State,
 		gron:      gronx.New(),
 		metrics:   getSchedulerMetrics(),
+		claimSem:  make(chan struct{}, maxCronSchedulerClaimConcurrent),
 	}
 
 	p.LC.Append(fx.StartHook(func(ctxStartup context.Context) error {
@@ -118,7 +133,13 @@ func NewScheduler(p SchedulerParams) (SchedulerResult, error) {
 	}))
 
 	p.LC.Append(fx.StopHook(func(ctx context.Context) error {
-		s.le.Stop()
+		if s.jsCons != nil {
+			s.jsCons.Stop()
+			s.jsCons = nil
+		}
+		if s.le != nil {
+			s.le.Stop()
+		}
 		cancel()
 
 		return nil
@@ -132,6 +153,7 @@ func NewScheduler(p SchedulerParams) (SchedulerResult, error) {
 
 func (s *Scheduler) start(ctx context.Context) {
 	ticker := time.NewTicker(1 * time.Second)
+	defer ticker.Stop()
 
 	for {
 		select {
@@ -164,49 +186,59 @@ func (s *Scheduler) start(ctx context.Context) {
 						}
 					}
 
-					ok, err := s.gron.IsDue(job.GetSchedule(), t)
-					if err != nil {
-						s.logger.Error(
-							"failed to chek cron job due time",
-							zap.String(jobNameLabel, key),
-							zap.String("schedule", job.GetSchedule()),
-						)
-						return true
+					ok := false
+					if nextSchedule := job.GetNextScheduleTime(); nextSchedule != nil {
+						ok = !nextSchedule.AsTime().After(t)
+					} else {
+						var err error
+						ok, err = s.gron.IsDue(job.GetSchedule(), t)
+						if err != nil {
+							s.logger.Error(
+								"failed to check cron job due time",
+								zap.String(jobNameLabel, key),
+								zap.String("schedule", job.GetSchedule()),
+							)
+							return true
+						}
 					}
 					if !ok {
 						return true
 					}
 
+					select {
+					case s.claimSem <- struct{}{}:
+					case <-ctx.Done():
+						return false
+					}
+
 					s.logger.Debug("scheduling cron job", zap.String("name", job.GetName()))
 					wg.Go(func() {
-						if err := s.registry.store.ComputeUpdate(
-							ctx,
-							key,
-							func(key string, existing *cron.Cronjob) (*cron.Cronjob, bool, error) {
-								if existing == nil {
-									return existing, false, nil
-								}
-
-								existing.StartedTime = timestamp.Now()
-								existing.State = cron.CronjobState_CRONJOB_STATE_RUNNING
-
-								job.StartedTime = existing.GetStartedTime()
-								job.State = existing.GetState()
-
-								return existing, true, nil
-							},
-						); err != nil {
+						defer func() { <-s.claimSem }()
+						claimed, err := s.claimJob(ctx, key)
+						if err != nil {
 							s.logger.Error(
-								"failed to update status of cron job",
+								"failed to claim cron job",
 								zap.String(jobNameLabel, job.GetName()),
+								zap.Error(err),
 							)
+							return
+						}
+						if claimed == nil {
+							return
 						}
 
-						if _, err := s.runCronjob(ctx, job); err != nil {
+						if _, err := s.runCronjob(ctx, claimed); err != nil {
 							s.logger.Error(
 								"failed to trigger cron job run",
-								zap.String(jobNameLabel, job.GetName()),
+								zap.String(jobNameLabel, claimed.GetName()),
 							)
+							if err := s.releaseJob(ctx, claimed.GetName(), claimed.GetRunId(), true); err != nil {
+								s.logger.Error(
+									"failed to release cron job after publish failure",
+									zap.String(jobNameLabel, claimed.GetName()),
+									zap.Error(err),
+								)
+							}
 						}
 					})
 
@@ -237,12 +269,86 @@ func (s *Scheduler) runCronjob(ctx context.Context, job *cron.Cronjob) (*jetstre
 }
 
 func (s *Scheduler) RunJob(ctx context.Context, name string) (*jetstream.PubAck, error) {
-	job, err := s.registry.GetCronjob(ctx, name)
-	if err != nil {
+	name = normalizeCronjobName(name)
+	if _, err := s.registry.GetCronjob(ctx, name); err != nil {
 		return nil, fmt.Errorf("failed to get cron job. %w", err)
 	}
 
-	return s.runCronjob(ctx, job)
+	job, err := s.claimJob(ctx, name)
+	if err != nil {
+		return nil, fmt.Errorf("failed to claim cron job. %w", err)
+	}
+	if job == nil {
+		return nil, ErrCronjobAlreadyRunning
+	}
+
+	pa, err := s.runCronjob(ctx, job)
+	if err != nil {
+		releaseCtx, releaseCancel := context.WithTimeout(context.Background(), 10*time.Second)
+		defer releaseCancel()
+		if releaseErr := s.releaseJob(releaseCtx, job.GetName(), job.GetRunId(), false); releaseErr != nil {
+			return nil, fmt.Errorf("failed to publish cron job and release claim. publish: %w; release: %v", err, releaseErr)
+		}
+		return nil, err
+	}
+
+	return pa, nil
+}
+
+func (s *Scheduler) claimJob(ctx context.Context, name string) (*cron.Cronjob, error) {
+	name = normalizeCronjobName(name)
+	runID := uuid.New().String()
+	var claimed *cron.Cronjob
+
+	if err := s.registry.store.ComputeUpdate(
+		ctx,
+		name,
+		func(_ string, existing *cron.Cronjob) (*cron.Cronjob, bool, error) {
+			if existing == nil {
+				return existing, false, nil
+			}
+
+			if existing.GetState() == cron.CronjobState_CRONJOB_STATE_RUNNING &&
+				existing.GetStartedTime() != nil &&
+				time.Since(existing.GetStartedTime().AsTime()) <= existing.GetRunTimeout() {
+				return existing, false, nil
+			}
+
+			existing.SetStartedTime(timestamp.Now())
+			existing.SetLastAttemptTime(timestamp.Now())
+			existing.SetState(cron.CronjobState_CRONJOB_STATE_RUNNING)
+			existing.SetRunId(runID)
+			claimed = existing
+
+			return existing, true, nil
+		},
+	); err != nil {
+		return nil, err
+	}
+
+	return claimed, nil
+}
+
+func (s *Scheduler) releaseJob(ctx context.Context, name, runID string, retry bool) error {
+	name = normalizeCronjobName(name)
+	return s.registry.store.ComputeUpdate(
+		ctx,
+		name,
+		func(_ string, existing *cron.Cronjob) (*cron.Cronjob, bool, error) {
+			if existing == nil || existing.GetRunId() != runID {
+				return existing, false, nil
+			}
+
+			existing.SetState(cron.CronjobState_CRONJOB_STATE_WAITING)
+			existing.ClearStartedTime()
+			existing.SetRunId("")
+			if retry {
+				existing.SetNextScheduleTime(timestamp.Now())
+			}
+
+			return existing, true, nil
+		},
+	)
 }
 
 func (s *Scheduler) registerSubscriptions(
@@ -253,11 +359,12 @@ func (s *Scheduler) registerSubscriptions(
 		ctxStartup,
 		CronScheduleStreamName,
 		jetstream.ConsumerConfig{
-			Durable:           instance.ID() + "_cron_scheduler",
-			DeliverPolicy:     jetstream.DeliverNewPolicy,
-			FilterSubject:     fmt.Sprintf("%s.%s", CronScheduleSubject, CronCompleteTopic),
-			MaxDeliver:        3,
-			InactiveThreshold: 1 * time.Minute, // Close consumer if inactive for 1 minute
+			Durable:       CronSchedulerConsumerName,
+			DeliverPolicy: jetstream.DeliverAllPolicy,
+			FilterSubject: fmt.Sprintf("%s.%s", CronScheduleSubject, CronCompleteTopic),
+			AckPolicy:     jetstream.AckExplicitPolicy,
+			AckWait:       cronCompletionAckWait,
+			MaxDeliver:    cronCompletionMaxDeliver,
 		},
 	)
 	if err != nil {
@@ -281,6 +388,10 @@ func (s *Scheduler) registerSubscriptions(
 }
 
 func (s *Scheduler) watchForCompletions(msg jetstream.Msg) {
+	heartbeatDone := make(chan struct{})
+	go s.heartbeat(msg, heartbeatDone)
+	defer close(heartbeatDone)
+
 	event := &cron.CronjobCompletedEvent{}
 	if err := protoutils.UnmarshalPartialJSON(msg.Data(), event); err != nil {
 		s.logger.Error(
@@ -289,15 +400,26 @@ func (s *Scheduler) watchForCompletions(msg jetstream.Msg) {
 			zap.Error(err),
 		)
 
-		if err := msg.NakWithDelay(150 * time.Millisecond); err != nil {
+		if err := msg.Term(); err != nil {
 			s.logger.Error(
-				"failed to nack unmarshal cron completion msg",
+				"failed to terminate invalid cron completion msg",
 				zap.String("subject", msg.Subject()),
 				zap.Error(err),
 			)
 		}
 		return
 	}
+	if event.GetName() == "" || event.GetRunId() == "" {
+		if err := msg.Term(); err != nil {
+			s.logger.Error(
+				"failed to terminate incomplete cron completion msg",
+				zap.String("subject", msg.Subject()),
+				zap.Error(err),
+			)
+		}
+		return
+	}
+	event.Name = normalizeCronjobName(event.GetName())
 
 	if err := msg.InProgress(); err != nil {
 		s.logger.Error(
@@ -316,6 +438,16 @@ func (s *Scheduler) watchForCompletions(msg jetstream.Msg) {
 			if existing == nil {
 				return existing, false, nil
 			}
+			if existing.GetRunId() == "" || existing.GetRunId() != event.GetRunId() {
+				if existing.GetRunId() != "" {
+					if event.GetStartedTime() != nil && existing.GetStartedTime() != nil &&
+						event.GetStartedTime().AsTime().Before(existing.GetStartedTime().AsTime()) {
+						return existing, false, nil
+					}
+					return existing, false, ErrCronjobRunNotReady
+				}
+				return existing, false, nil
+			}
 
 			existing.State = cron.CronjobState_CRONJOB_STATE_WAITING
 
@@ -324,11 +456,12 @@ func (s *Scheduler) watchForCompletions(msg jetstream.Msg) {
 				return existing, false, err
 			}
 			existing.NextScheduleTime = timestamp.New(nextTime)
-			existing.LastAttemptTime = timestamp.New(time.Now())
+			existing.ClearStartedTime()
 
 			existing.Data = event.GetData()
 
 			existing.LastCompletedEvent = event
+			existing.SetRunId("")
 
 			return existing, true, nil
 		},
@@ -339,6 +472,13 @@ func (s *Scheduler) watchForCompletions(msg jetstream.Msg) {
 			zap.String(jobNameLabel, event.GetName()),
 			zap.Error(err),
 		)
+		delay := cronCompletionMinRetry
+		if errors.Is(err, ErrCronjobRunNotReady) {
+			delay = cronCompletionRetryDelay(msg)
+		}
+		if nakErr := msg.NakWithDelay(delay); nakErr != nil {
+			s.logger.Error("failed to nack cron completion msg", zap.Error(nakErr))
+		}
 		return
 	}
 
@@ -350,5 +490,38 @@ func (s *Scheduler) watchForCompletions(msg jetstream.Msg) {
 			zap.Error(err),
 		)
 		return
+	}
+}
+
+func cronCompletionRetryDelay(msg jetstream.Msg) time.Duration {
+	delay := cronCompletionMinRetry
+	metadata, err := msg.Metadata()
+	if err != nil || metadata == nil {
+		return delay
+	}
+
+	for attempt := uint64(1); attempt < metadata.NumDelivered && delay < cronCompletionMaxRetry; attempt++ {
+		delay *= 2
+	}
+	if delay > cronCompletionMaxRetry {
+		return cronCompletionMaxRetry
+	}
+
+	return delay
+}
+
+func (s *Scheduler) heartbeat(msg jetstream.Msg, done <-chan struct{}) {
+	ticker := time.NewTicker(5 * time.Second)
+	defer ticker.Stop()
+
+	for {
+		select {
+		case <-done:
+			return
+		case <-ticker.C:
+			if err := msg.InProgress(); err != nil {
+				s.logger.Warn("failed to extend cron completion message", zap.Error(err))
+			}
+		}
 	}
 }

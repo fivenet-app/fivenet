@@ -4,7 +4,6 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"strings"
 	"time"
 
 	"github.com/adhocore/gronx"
@@ -74,7 +73,7 @@ func NewRegistry(p RegistryParams) (RegistryResult, error) {
 	logger := p.Logger.WithOptions(zap.IncreaseLevel(p.Cfg.Log.LevelOverrides.Get(config.LoggingComponentCron, p.Cfg.LogLevel))).
 		Named("cron.registry")
 	r := &Registry{
-		logger: p.Logger,
+		logger: logger,
 		js:     p.JS,
 	}
 
@@ -140,10 +139,11 @@ func (r *Registry) ListCronjobs(_ context.Context) []*cron.Cronjob {
 }
 
 func (r *Registry) GetCronjob(ctx context.Context, name string) (*cron.Cronjob, error) {
-	return r.store.Get(name)
+	return r.store.Get(normalizeCronjobName(name))
 }
 
 func (r *Registry) RegisterCronjob(ctx context.Context, cronjob *cron.Cronjob) error {
+	cronjob.Name = normalizeCronjobName(cronjob.GetName())
 	if cronjob.GetName() == "" {
 		return fmt.Errorf("cron job name is required or uses reserved name: %s", cronjob.GetName())
 	}
@@ -157,9 +157,9 @@ func (r *Registry) RegisterCronjob(ctx context.Context, cronjob *cron.Cronjob) e
 
 	if cronjob.GetTimeout() == nil {
 		cronjob.Timeout = durationpb.New(DefaultCronjobTimeout)
-	} else if cronjob.GetTimeout().AsDuration() < 0 || cronjob.GetTimeout().AsDuration() > 30*time.Minute {
-		// Ensure the timeout is not negative and not bigger than 30 minutes
-		return fmt.Errorf("cron job %s has negative timeout", cronjob.GetName())
+	} else if cronjob.GetTimeout().AsDuration() <= 0 || cronjob.GetTimeout().AsDuration() > 30*time.Minute {
+		// Ensure the timeout is positive and not bigger than 30 minutes.
+		return fmt.Errorf("cron job %s has invalid timeout", cronjob.GetName())
 	}
 
 	if cronjob.GetState() == cron.CronjobState_CRONJOB_STATE_UNSPECIFIED {
@@ -177,13 +177,27 @@ func (r *Registry) RegisterCronjob(ctx context.Context, cronjob *cron.Cronjob) e
 
 	if err := r.store.ComputeUpdate(
 		ctx,
-		strings.ToLower(cronjob.GetName()),
+		cronjob.GetName(),
 		func(key string, existing *cron.Cronjob) (*cron.Cronjob, bool, error) {
 			if existing == nil {
 				return cronjob, true, nil
 			}
 
+			wasRunning := existing.GetState() == cron.CronjobState_CRONJOB_STATE_RUNNING
+			runtimeState := existing.GetState()
+			runtimeRunID := existing.GetRunId()
+			runtimeStartedTime := existing.GetStartedTime()
+			runtimeLastAttemptTime := existing.GetLastAttemptTime()
+			runtimeLastCompletedEvent := existing.GetLastCompletedEvent()
+
 			existing.Merge(cronjob)
+			if wasRunning {
+				existing.State = runtimeState
+				existing.SetRunId(runtimeRunID)
+				existing.StartedTime = runtimeStartedTime
+				existing.LastAttemptTime = runtimeLastAttemptTime
+				existing.LastCompletedEvent = runtimeLastCompletedEvent
+			}
 
 			return existing, true, nil
 		},
@@ -196,7 +210,7 @@ func (r *Registry) RegisterCronjob(ctx context.Context, cronjob *cron.Cronjob) e
 
 func (r *Registry) UnregisterCronjob(ctx context.Context, name string) error {
 	r.logger.Debug("unregistering cronjob", zap.String("name", name))
-	if err := r.store.Delete(ctx, name); err != nil {
+	if err := r.store.Delete(ctx, normalizeCronjobName(name)); err != nil {
 		return fmt.Errorf("failed to unregister cron job %s from store. %w", name, err)
 	}
 

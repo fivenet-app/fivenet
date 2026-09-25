@@ -10,7 +10,6 @@ import (
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/timestamp"
 	"github.com/fivenet-app/fivenet/v2026/pkg/config"
 	"github.com/fivenet-app/fivenet/v2026/pkg/events"
-	"github.com/fivenet-app/fivenet/v2026/pkg/utils/instance"
 	"github.com/nats-io/nats.go/jetstream"
 	"go.uber.org/fx"
 	"go.uber.org/zap"
@@ -54,6 +53,8 @@ type Executor struct {
 	metrics  *executorMetrics
 }
 
+const cronExecutorAckWait = 40 * time.Minute
+
 func NewExecutor(p ExecutorParams) (*Executor, error) {
 	nodeName, err := getNodeName(p.Cfg.HTTP.AdminListen)
 	if err != nil {
@@ -86,12 +87,11 @@ func NewExecutor(p ExecutorParams) (*Executor, error) {
 	}))
 
 	p.LC.Append(fx.StopHook(func(_ context.Context) error {
-		cancel()
-
 		if ag.jsCons != nil {
 			ag.jsCons.Stop()
 			ag.jsCons = nil
 		}
+		cancel()
 
 		return nil
 	}))
@@ -107,11 +107,12 @@ func (ag *Executor) registerSubscriptions(
 		ctxStartup,
 		CronScheduleStreamName,
 		jetstream.ConsumerConfig{
-			Durable:           instance.ID() + "_cron_executor",
-			DeliverPolicy:     jetstream.DeliverNewPolicy,
-			FilterSubject:     fmt.Sprintf("%s.%s", CronScheduleSubject, CronScheduleTopic),
-			MaxDeliver:        3,
-			InactiveThreshold: 5 * time.Second,
+			Durable:       CronExecutorConsumerName,
+			DeliverPolicy: jetstream.DeliverAllPolicy,
+			FilterSubject: fmt.Sprintf("%s.%s", CronScheduleSubject, CronScheduleTopic),
+			AckPolicy:     jetstream.AckExplicitPolicy,
+			AckWait:       cronExecutorAckWait,
+			MaxDeliver:    3,
 		},
 	)
 	if err != nil {
@@ -142,34 +143,43 @@ func (ag *Executor) watchForEvents(msg jetstream.Msg) {
 			zap.Error(err),
 		)
 
-		if err := msg.NakWithDelay(100 * time.Millisecond); err != nil {
+		if err := msg.Term(); err != nil {
 			ag.logger.Error(
-				"failed to nack unmarshal cron schedule msg",
+				"failed to terminate invalid cron schedule msg",
 				zap.String("subject", msg.Subject()),
 				zap.Error(err),
 			)
+		}
+		return
+	}
+	if job.GetCronjob() == nil || job.GetCronjob().GetName() == "" || job.GetCronjob().GetRunId() == "" {
+		if err := msg.Term(); err != nil {
+			ag.logger.Error("failed to terminate invalid cron schedule msg", zap.Error(err))
 		}
 		return
 	}
 
 	fn := ag.handlers.getCronjobHandler(job.GetCronjob().GetName())
 	if fn == nil {
-		if err := msg.NakWithDelay(100 * time.Millisecond); err != nil {
+		if job.GetCronjob().GetData() == nil {
+			job.Cronjob.Data = &cron.CronjobData{Data: &anypb.Any{}}
+		}
+		job.Cronjob.Data.UpdatedAt = timestamp.Now()
+		if err := ag.publishCompletion(job, errors.New("cronjob handler is not registered"), 0); err != nil {
 			ag.logger.Error(
-				"failed to nack unmarshal cron schedule msg",
+				"failed to publish missing cron handler completion msg",
 				zap.String("subject", msg.Subject()),
 				zap.Error(err),
 			)
+			if nakErr := msg.NakWithDelay(250 * time.Millisecond); nakErr != nil {
+				ag.logger.Error("failed to nack cron schedule msg", zap.Error(nakErr))
+			}
+			return
+		}
+		if err := msg.Ack(); err != nil {
+			ag.logger.Error("failed to acknowledge missing cron handler message", zap.Error(err))
 		}
 		return
-	}
-
-	if err := msg.Ack(); err != nil {
-		ag.logger.Error(
-			"failed to send in progress for cron schedule msg",
-			zap.String("subject", msg.Subject()),
-			zap.Error(err),
-		)
 	}
 
 	if job.GetCronjob().GetData() == nil {
@@ -200,9 +210,12 @@ func (ag *Executor) watchForEvents(msg jetstream.Msg) {
 
 	var elapsed time.Duration
 
-	var err error
+	var handlerErr error
+	heartbeatDone := make(chan struct{})
+	go ag.heartbeat(msg, heartbeatDone)
 	start := time.Now()
 	func() {
+		defer close(heartbeatDone)
 		ctx, cancel := context.WithTimeout(ag.ctx, timeout)
 		defer cancel()
 		defer func() {
@@ -211,24 +224,25 @@ func (ag *Executor) watchForEvents(msg jetstream.Msg) {
 			// Recover from a panic and set err accordingly
 			if e := recover(); e != nil {
 				if er, ok := e.(error); ok {
-					err = fmt.Errorf("recovered from panic. %w", er)
+					handlerErr = fmt.Errorf("recovered from panic. %w", er)
 				} else {
 					//nolint:errorlint // `er` is not guaranteed to be an error type, so we want it to be treated as a "string" here.
-					err = fmt.Errorf("recovered from panic. %v", er)
+					handlerErr = fmt.Errorf("recovered from panic. %v", er)
 				}
 
 				ag.logger.Error(
 					"cron job panic",
 					zap.String("name", job.GetCronjob().GetName()),
-					zap.Error(err),
+					zap.Error(handlerErr),
 				)
 			}
 		}()
-		err = fn(ctx, job.GetCronjob().GetData())
+		handlerErr = fn(ctx, job.GetCronjob().GetData())
 	}()
+	<-heartbeatDone
 
 	status := "success"
-	if err != nil {
+	if handlerErr != nil {
 		status = "failure"
 	}
 	ag.metrics.handlerDuration.WithLabelValues(jobName).Observe(elapsed.Seconds())
@@ -241,33 +255,67 @@ func (ag *Executor) watchForEvents(msg jetstream.Msg) {
 	// Update timestamp in cronjob data
 	now := timestamp.Now()
 	job.Cronjob.Data.UpdatedAt = now
-	var errMsg *string
-	if err != nil {
-		msg := err.Error()
-		errMsg = &msg
-	}
-
-	if _, err := ag.publisher.PublishProto(
-		ag.ctx,
-		fmt.Sprintf("%s.%s", CronScheduleSubject, CronCompleteTopic),
-		&cron.CronjobCompletedEvent{
-			Name:      job.GetCronjob().GetName(),
-			Success:   err == nil,
-			Cancelled: err != nil && errors.Is(err, context.Canceled),
-			Elapsed:   durationpb.New(elapsed),
-			EndDate:   now,
-
-			NodeName: ag.nodeName,
-			Data:     job.GetCronjob().GetData(),
-
-			ErrorMessage: errMsg,
-		},
-	); err != nil {
+	if err := ag.publishCompletion(job, handlerErr, elapsed); err != nil {
 		ag.logger.Error(
 			"failed to publish cron schedule completion msg",
 			zap.String("subject", msg.Subject()),
 			zap.Error(err),
 		)
+		if nakErr := msg.NakWithDelay(250 * time.Millisecond); nakErr != nil {
+			ag.logger.Error("failed to nack cron schedule msg", zap.Error(nakErr))
+		}
 		return
+	}
+
+	if err := msg.Ack(); err != nil {
+		ag.logger.Error(
+			"failed to acknowledge completed cron schedule msg",
+			zap.String("subject", msg.Subject()),
+			zap.Error(err),
+		)
+	}
+}
+
+func (ag *Executor) publishCompletion(job *cron.CronjobSchedulerEvent, handlerErr error, elapsed time.Duration) error {
+	var errMsg *string
+	if handlerErr != nil {
+		msg := handlerErr.Error()
+		errMsg = &msg
+	}
+
+	publishCtx, publishCancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer publishCancel()
+	_, err := ag.publisher.PublishProto(
+		publishCtx,
+		fmt.Sprintf("%s.%s", CronScheduleSubject, CronCompleteTopic),
+		&cron.CronjobCompletedEvent{
+			Name:         job.GetCronjob().GetName(),
+			RunId:        job.GetCronjob().GetRunId(),
+			StartedTime:  job.GetCronjob().GetStartedTime(),
+			Success:      handlerErr == nil,
+			Cancelled:    handlerErr != nil && errors.Is(handlerErr, context.Canceled),
+			Elapsed:      durationpb.New(elapsed),
+			EndDate:      timestamp.Now(),
+			NodeName:     ag.nodeName,
+			Data:         job.GetCronjob().GetData(),
+			ErrorMessage: errMsg,
+		},
+	)
+	return err
+}
+
+func (ag *Executor) heartbeat(msg jetstream.Msg, done <-chan struct{}) {
+	ticker := time.NewTicker(5 * time.Second)
+	defer ticker.Stop()
+
+	for {
+		select {
+		case <-done:
+			return
+		case <-ticker.C:
+			if err := msg.InProgress(); err != nil {
+				ag.logger.Warn("failed to extend cron schedule message", zap.Error(err))
+			}
+		}
 	}
 }
