@@ -9,8 +9,8 @@ import (
 	"strconv"
 	"strings"
 	"sync"
+	"uuid"
 
-	"github.com/google/uuid"
 	"go.uber.org/fx"
 	"google.golang.org/protobuf/types/known/structpb"
 )

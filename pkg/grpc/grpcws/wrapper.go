@@ -10,9 +10,9 @@ import (
 	"slices"
 	"strings"
 	"time"
+	"uuid"
 
 	"github.com/coder/websocket"
-	"github.com/google/uuid"
 	"github.com/rs/cors"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/grpclog"
@@ -180,8 +180,8 @@ func (w *WrappedGrpcServer) HandleGrpcWebsocketChannelRequest(
 			headers[name] = values
 		}
 	}
-	connUUID, _ := uuid.NewV7()
-	headers[ConnectionIdHeader] = []string{connUUID.String()}
+	connUUID := uuid.NewV7().String()
+	headers[ConnectionIdHeader] = []string{connUUID}
 	req.Header = headers
 
 	// Use the request context

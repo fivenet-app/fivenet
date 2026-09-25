@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"time"
+	"uuid"
 
 	database "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/common/database"
 	resqualifications "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/qualifications"
@@ -11,7 +12,6 @@ import (
 	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
 	"github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
-	"github.com/google/uuid"
 )
 
 const ExamSubmissionGracePeriod = 30 * time.Second
@@ -209,7 +209,7 @@ func (s *Store) CreateExamUser(
 	snapshot *qualificationsexam.ExamSnapshot,
 ) (string, error) {
 	tExamUser := table.FivenetQualificationsExamUsers
-	attemptId := uuid.NewString()
+	attemptId := uuid.New().String()
 	stmt := tExamUser.
 		INSERT(
 			tExamUser.QualificationID,

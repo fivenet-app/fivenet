@@ -9,8 +9,7 @@ import (
 	"path/filepath"
 	"regexp"
 	"time"
-
-	"github.com/google/uuid"
+	"uuid"
 )
 
 // FilestoreURLPrefix is the URL prefix for accessing files in the filestore API.
@@ -65,6 +64,6 @@ func sniff(userCType, name string) string {
 func buildKey(ns, name string) string {
 	return path.Join(
 		ns, time.Now().UTC().Format("20060102"),
-		fmt.Sprintf("%s-%s", uuid.NewString(), name),
+		fmt.Sprintf("%s-%s", uuid.New().String(), name),
 	)
 }
