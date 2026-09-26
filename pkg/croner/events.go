@@ -30,7 +30,7 @@ func registerCronStreams(ctx context.Context, js *events.JSWrapper) error {
 	if _, err := js.CreateOrUpdateStream(ctx, jetstream.StreamConfig{
 		Name:        CronScheduleStreamName,
 		Description: "Cron schedule events stream",
-		Storage:     jetstream.FileStorage,
+		Storage:     jetstream.MemoryStorage,
 		Retention:   jetstream.InterestPolicy,
 		Subjects:    []string{fmt.Sprintf("%s.>", CronScheduleSubject)},
 		Discard:     jetstream.DiscardOld,

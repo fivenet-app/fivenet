@@ -86,7 +86,7 @@ func NewRegistry(p RegistryParams) (RegistryResult, error) {
 			Bucket:      BucketName,
 			Description: BucketName + " Store",
 			History:     1,
-			Storage:     jetstream.MemoryStorage,
+			Storage:     jetstream.FileStorage,
 		})
 		if err != nil {
 			return fmt.Errorf("failed to create kv (bucket %s) for cron store. %w", BucketName, err)
