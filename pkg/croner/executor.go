@@ -152,7 +152,8 @@ func (ag *Executor) watchForEvents(msg jetstream.Msg) {
 		}
 		return
 	}
-	if job.GetCronjob() == nil || job.GetCronjob().GetName() == "" || job.GetCronjob().GetRunId() == "" {
+	if job.GetCronjob() == nil || job.GetCronjob().GetName() == "" ||
+		job.GetCronjob().GetRunId() == "" {
 		if err := msg.Term(); err != nil {
 			ag.logger.Error("failed to terminate invalid cron schedule msg", zap.Error(err))
 		}
@@ -165,7 +166,11 @@ func (ag *Executor) watchForEvents(msg jetstream.Msg) {
 			job.Cronjob.Data = &cron.CronjobData{Data: &anypb.Any{}}
 		}
 		job.Cronjob.Data.UpdatedAt = timestamp.Now()
-		if err := ag.publishCompletion(job, errors.New("cronjob handler is not registered"), 0); err != nil {
+		if err := ag.publishCompletion(
+			job,
+			errors.New("cronjob handler is not registered"),
+			0,
+		); err != nil {
 			ag.logger.Error(
 				"failed to publish missing cron handler completion msg",
 				zap.String("subject", msg.Subject()),
@@ -276,7 +281,11 @@ func (ag *Executor) watchForEvents(msg jetstream.Msg) {
 	}
 }
 
-func (ag *Executor) publishCompletion(job *cron.CronjobSchedulerEvent, handlerErr error, elapsed time.Duration) error {
+func (ag *Executor) publishCompletion(
+	job *cron.CronjobSchedulerEvent,
+	handlerErr error,
+	elapsed time.Duration,
+) error {
 	var errMsg *string
 	if handlerErr != nil {
 		msg := handlerErr.Error()

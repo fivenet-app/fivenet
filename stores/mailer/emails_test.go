@@ -297,7 +297,11 @@ func TestStoreUpdateUserEmailProperty(t *testing.T) {
 	t.Cleanup(func() { _ = db.Close() })
 
 	store := New(testParams(db))
-	expectedQuery := regexp.QuoteMeta(`INSERT INTO fivenet_user_props`) + `(?s).*` + regexp.QuoteMeta(`ON DUPLICATE KEY UPDATE`)
+	expectedQuery := regexp.QuoteMeta(
+		`INSERT INTO fivenet_user_props`,
+	) + `(?s).*` + regexp.QuoteMeta(
+		`ON DUPLICATE KEY UPDATE`,
+	)
 	mock.ExpectExec(expectedQuery).
 		WithArgs(int32(7), "user@example.com", "user@example.com").
 		WillReturnResult(sqlmock.NewResult(0, 1))
@@ -354,7 +358,11 @@ func TestStoreUpdateEmailReturnsNoRows(t *testing.T) {
 
 	store := New(testParams(db))
 	job := "police"
-	expectedQuery := regexp.QuoteMeta(`UPDATE fivenet_mailer_emails`) + `(?s).*` + regexp.QuoteMeta(`fivenet_mailer_emails.job = ?`)
+	expectedQuery := regexp.QuoteMeta(
+		`UPDATE fivenet_mailer_emails`,
+	) + `(?s).*` + regexp.QuoteMeta(
+		`fivenet_mailer_emails.job = ?`,
+	)
 	mock.ExpectExec(expectedQuery).
 		WillReturnResult(sqlmock.NewResult(0, 0))
 

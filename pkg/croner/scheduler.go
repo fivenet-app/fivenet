@@ -34,8 +34,10 @@ const (
 	maxCronSchedulerClaimConcurrent = 32
 )
 
-var ErrCronjobAlreadyRunning = errors.New("cron job is already running")
-var ErrCronjobRunNotReady = errors.New("cron job run state has not replicated yet")
+var (
+	ErrCronjobAlreadyRunning = errors.New("cron job is already running")
+	ErrCronjobRunNotReady    = errors.New("cron job run state has not replicated yet")
+)
 
 const (
 	cronCompletionAckWait    = 2 * time.Minute
@@ -186,7 +188,7 @@ func (s *Scheduler) start(ctx context.Context) {
 						}
 					}
 
-					ok := false
+					var ok bool
 					if nextSchedule := job.GetNextScheduleTime(); nextSchedule != nil {
 						ok = !nextSchedule.AsTime().After(t)
 					} else {
@@ -232,7 +234,12 @@ func (s *Scheduler) start(ctx context.Context) {
 								"failed to trigger cron job run",
 								zap.String(jobNameLabel, claimed.GetName()),
 							)
-							if err := s.releaseJob(ctx, claimed.GetName(), claimed.GetRunId(), true); err != nil {
+							if err := s.releaseJob(
+								ctx,
+								claimed.GetName(),
+								claimed.GetRunId(),
+								true,
+							); err != nil {
 								s.logger.Error(
 									"failed to release cron job after publish failure",
 									zap.String(jobNameLabel, claimed.GetName()),
@@ -286,8 +293,18 @@ func (s *Scheduler) RunJob(ctx context.Context, name string) (*jetstream.PubAck,
 	if err != nil {
 		releaseCtx, releaseCancel := context.WithTimeout(context.Background(), 10*time.Second)
 		defer releaseCancel()
-		if releaseErr := s.releaseJob(releaseCtx, job.GetName(), job.GetRunId(), false); releaseErr != nil {
-			return nil, fmt.Errorf("failed to publish cron job and release claim. publish: %w; release: %v", err, releaseErr)
+		//nolint:contextcheck // Release must outlive the request context.
+		if releaseErr := s.releaseJob(
+			releaseCtx,
+			job.GetName(),
+			job.GetRunId(),
+			false,
+		); releaseErr != nil {
+			return nil, fmt.Errorf(
+				"failed to publish cron job and release claim. publish: %w; release: %w",
+				err,
+				releaseErr,
+			)
 		}
 		return nil, err
 	}

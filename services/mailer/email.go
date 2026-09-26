@@ -141,7 +141,11 @@ func (s *Server) GetEmail(
 	}, nil
 }
 
-func (s *Server) getEmailAccess(ctx context.Context, db qrm.DB, emailId int64) (*maileraccess.Access, error) {
+func (s *Server) getEmailAccess(
+	ctx context.Context,
+	db qrm.DB,
+	emailId int64,
+) (*maileraccess.Access, error) {
 	return s.access.ListTargetAccess(ctx, db, emailId, mailerSubjectAccessOptions)
 }
 
@@ -192,7 +196,12 @@ func (s *Server) CreateOrUpdateEmail(
 
 	if req.GetEmail().GetId() <= 0 {
 		if req.Email.UserId != nil {
-			emailID, action, err := s.createOrRestorePersonalEmail(ctx, tx, req.GetEmail(), userInfo)
+			emailID, action, err := s.createOrRestorePersonalEmail(
+				ctx,
+				tx,
+				req.GetEmail(),
+				userInfo,
+			)
 			if err != nil {
 				return nil, err
 			}
@@ -257,7 +266,10 @@ func (s *Server) createOrRestorePersonalEmail(
 ) (int64, audit.EventAction, error) {
 	existing, err := s.store.GetEmailByUserID(ctx, tx, email.GetUserId())
 	if err != nil {
-		return 0, audit.EventAction_EVENT_ACTION_UNSPECIFIED, errswrap.NewError(err, errorsmailer.ErrFailedQuery)
+		return 0, audit.EventAction_EVENT_ACTION_UNSPECIFIED, errswrap.NewError(
+			err,
+			errorsmailer.ErrFailedQuery,
+		)
 	}
 
 	if existing == nil {
@@ -279,10 +291,21 @@ func (s *Server) createOrRestorePersonalEmail(
 				UserID:    &userInfo.UserId,
 				CreatorID: userInfo.GetUserId(),
 			}); err != nil {
-				return 0, audit.EventAction_EVENT_ACTION_UNSPECIFIED, errswrap.NewError(err, errorsmailer.ErrFailedQuery)
+				return 0, audit.EventAction_EVENT_ACTION_UNSPECIFIED, errswrap.NewError(
+					err,
+					errorsmailer.ErrFailedQuery,
+				)
 			}
-			if err := s.store.UpdateUserEmailProperty(ctx, tx, userInfo.GetUserId(), email.GetEmail()); err != nil {
-				return 0, audit.EventAction_EVENT_ACTION_UNSPECIFIED, errswrap.NewError(err, errorsmailer.ErrFailedQuery)
+			if err := s.store.UpdateUserEmailProperty(
+				ctx,
+				tx,
+				userInfo.GetUserId(),
+				email.GetEmail(),
+			); err != nil {
+				return 0, audit.EventAction_EVENT_ACTION_UNSPECIFIED, errswrap.NewError(
+					err,
+					errorsmailer.ErrFailedQuery,
+				)
 			}
 			return existing.GetId(), audit.EventAction_EVENT_ACTION_UPDATED, nil
 		}
@@ -302,11 +325,22 @@ func (s *Server) createOrRestorePersonalEmail(
 		if dbutils.IsDuplicateError(err) {
 			return 0, audit.EventAction_EVENT_ACTION_UNSPECIFIED, errorsmailer.ErrAddresseAlreadyTaken
 		}
-		return 0, audit.EventAction_EVENT_ACTION_UNSPECIFIED, errswrap.NewError(err, errorsmailer.ErrFailedQuery)
+		return 0, audit.EventAction_EVENT_ACTION_UNSPECIFIED, errswrap.NewError(
+			err,
+			errorsmailer.ErrFailedQuery,
+		)
 	}
 
-	if err := s.store.UpdateUserEmailProperty(ctx, tx, userInfo.GetUserId(), email.GetEmail()); err != nil {
-		return 0, audit.EventAction_EVENT_ACTION_UNSPECIFIED, errswrap.NewError(err, errorsmailer.ErrFailedQuery)
+	if err := s.store.UpdateUserEmailProperty(
+		ctx,
+		tx,
+		userInfo.GetUserId(),
+		email.GetEmail(),
+	); err != nil {
+		return 0, audit.EventAction_EVENT_ACTION_UNSPECIFIED, errswrap.NewError(
+			err,
+			errorsmailer.ErrFailedQuery,
+		)
 	}
 
 	return existing.GetId(), audit.EventAction_EVENT_ACTION_RESTORED, nil
@@ -378,7 +412,12 @@ func (s *Server) updateExistingEmail(
 	}
 
 	if email.UserId != nil {
-		if err := s.store.UpdateUserEmailProperty(ctx, tx, userInfo.GetUserId(), email.GetEmail()); err != nil {
+		if err := s.store.UpdateUserEmailProperty(
+			ctx,
+			tx,
+			userInfo.GetUserId(),
+			email.GetEmail(),
+		); err != nil {
 			return errswrap.NewError(err, errorsmailer.ErrFailedQuery)
 		}
 	}
@@ -446,7 +485,12 @@ func (s *Server) createEmail(
 
 	// Update user email in the user props if it is a "private" email
 	if email.UserId != nil {
-		if err := s.store.UpdateUserEmailProperty(ctx, tx, userInfo.GetUserId(), email.GetEmail()); err != nil {
+		if err := s.store.UpdateUserEmailProperty(
+			ctx,
+			tx,
+			userInfo.GetUserId(),
+			email.GetEmail(),
+		); err != nil {
 			return 0, errswrap.NewError(err, errorsmailer.ErrFailedQuery)
 		}
 	}

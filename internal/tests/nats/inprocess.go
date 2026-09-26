@@ -78,7 +78,11 @@ func NewServer(t *testing.T, opts ServerOptions) *Server {
 			t.Errorf("clean up NATS server: %v", err)
 		}
 	})
-	t.Logf("test NATS server ready: in_process=%t duration=%s", opts.InProcess, time.Since(started).Round(time.Millisecond))
+	t.Logf(
+		"test NATS server ready: in_process=%t duration=%s",
+		opts.InProcess,
+		time.Since(started).Round(time.Millisecond),
+	)
 
 	return s
 }

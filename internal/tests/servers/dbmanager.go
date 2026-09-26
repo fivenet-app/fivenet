@@ -117,7 +117,11 @@ func (m *dbServer) Setup(ctx context.Context) {
 	m.dbName = dbName
 	m.release = release
 	m.stopped = false
-	m.t.Logf("test DB clone ready: name=%s duration=%s", dbName, time.Since(started).Round(time.Millisecond))
+	m.t.Logf(
+		"test DB clone ready: name=%s duration=%s",
+		dbName,
+		time.Since(started).Round(time.Millisecond),
+	)
 }
 
 func (m *dbServer) DB() (*sql.DB, error) {
@@ -195,7 +199,11 @@ func (m *mysqlTestDBManager) acquire(
 	m.mu.Unlock()
 
 	mutexWait := time.Since(started)
-	t.Logf("test DB clone reserved: name=%s mutex_wait=%s", cloneName, mutexWait.Round(time.Millisecond))
+	t.Logf(
+		"test DB clone reserved: name=%s mutex_wait=%s",
+		cloneName,
+		mutexWait.Round(time.Millisecond),
+	)
 	releaseSlot, err := m.acquireCloneSlot(ctx)
 	if err != nil {
 		return nil, "", nil, err
@@ -226,7 +234,12 @@ func (m *mysqlTestDBManager) acquire(
 		_ = m.dropDatabaseLocked(ctx, cloneName)
 		return nil, "", nil, fmt.Errorf("failed to record active test database. %w", err)
 	}
-	t.Logf("test DB clone copied: name=%s clone_time=%s total=%s", cloneName, time.Since(cloneStarted).Round(time.Millisecond), time.Since(started).Round(time.Millisecond))
+	t.Logf(
+		"test DB clone copied: name=%s clone_time=%s total=%s",
+		cloneName,
+		time.Since(cloneStarted).Round(time.Millisecond),
+		time.Since(started).Round(time.Millisecond),
+	)
 
 	release := func() error {
 		return m.releaseClone(t, cloneName)
@@ -1085,13 +1098,6 @@ func (m *mysqlTestDBManager) dropDatabaseLocked(ctx context.Context, dbName stri
 	}
 
 	return nil
-}
-
-func (m *mysqlTestDBManager) dropDatabaseLockedCleanup(dbName string) error {
-	ctx, cancel := cleanupContext()
-	defer cancel()
-
-	return m.dropDatabaseLocked(ctx, dbName)
 }
 
 func (m *mysqlTestDBManager) openDB(dbName string, multiStatements bool) (*sql.DB, error) {
