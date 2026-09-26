@@ -12,13 +12,13 @@ ignore (
 require (
 	buf.build/go/protovalidate v1.4.0
 	github.com/DATA-DOG/go-sqlmock v1.5.2
-	github.com/DeRuina/timberjack v1.4.7
+	github.com/DeRuina/timberjack v1.4.8
 	github.com/HugoSmits86/nativewebp v1.3.0
 	github.com/XSAM/otelsql v0.44.0
 	github.com/adhocore/gronx v1.20.4
 	github.com/alecthomas/kong v1.16.1
 	github.com/blevesearch/bleve/v2 v2.6.1
-	github.com/brianvoe/gofakeit/v7 v7.17.0
+	github.com/brianvoe/gofakeit/v7 v7.17.1
 	github.com/cespare/xxhash/v2 v2.3.0
 	github.com/coder/websocket v1.8.15
 	github.com/creasty/defaults v1.11.0
@@ -27,14 +27,14 @@ require (
 	github.com/diamondburned/arikawa/v3 v3.6.0
 	github.com/fsnotify/fsnotify v1.10.1
 	github.com/galexrt/iconify-go v0.2.0
-	github.com/gin-contrib/cors v1.7.8
-	github.com/gin-contrib/pprof v1.5.5
-	github.com/gin-contrib/sessions v1.1.1
-	github.com/gin-contrib/static v1.1.7
-	github.com/gin-contrib/zap v1.1.8
+	github.com/gin-contrib/cors v1.7.9
+	github.com/gin-contrib/pprof v1.5.6
+	github.com/gin-contrib/sessions v1.1.2
+	github.com/gin-contrib/static v1.1.8
+	github.com/gin-contrib/zap v1.1.9
 	github.com/gin-gonic/gin v1.12.0
 	github.com/go-jet/jet/v2 v2.16.0
-	github.com/go-playground/validator/v10 v10.30.4
+	github.com/go-playground/validator/v10 v10.30.5
 	github.com/go-sprout/sprout v1.1.2
 	github.com/go-sql-driver/mysql v1.10.1
 	github.com/goccy/go-yaml v1.19.2
@@ -91,7 +91,7 @@ require (
 	golang.org/x/net v0.59.0
 	golang.org/x/oauth2 v0.37.0
 	golang.org/x/sync v0.23.0
-	google.golang.org/grpc v1.83.2
+	google.golang.org/grpc v1.84.0
 	google.golang.org/protobuf v1.36.12
 	gopkg.in/yaml.v3 v3.0.1
 )
