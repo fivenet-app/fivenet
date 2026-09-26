@@ -38,6 +38,19 @@ const state = reactive<Schema>({
     reset: false,
 });
 
+const profilePicturePreviewUrl = ref<string>();
+watch(
+    () => state.profilePicture,
+    (file, _, onCleanup) => {
+        const url = file ? URL.createObjectURL(file) : undefined;
+        profilePicturePreviewUrl.value = url;
+
+        if (url) {
+            onCleanup(() => URL.revokeObjectURL(url));
+        }
+    },
+);
+
 const { hasUnsavedChanges, confirmLeave } = useSnapshotChanges(state, {
     serializer: (value) =>
         JSON.stringify({
@@ -75,6 +88,7 @@ async function uploadAvatar(f: File): Promise<void> {
                 description: { key: 'notifications.action_successful.content', parameters: {} },
             },
             onUploaded: (resp) => {
+                state.profilePicture = undefined;
                 activeChar.value!.profilePicture = resp.file?.filePath;
             },
         });
@@ -169,17 +183,49 @@ async function closeModal(): Promise<void> {
                                     :placeholder="$t('common.image')"
                                     :label="$t('common.file_upload_label')"
                                     :description="$t('common.allowed_file_types')"
+                                    :preview="false"
+                                    :ui="{ base: 'min-h-32' }"
                                 />
+
+                                <UTooltip v-if="state.profilePicture" :text="$t('common.clear')">
+                                    <UButton
+                                        color="error"
+                                        variant="ghost"
+                                        icon="i-mdi-clear"
+                                        :aria-label="$t('common.clear')"
+                                        @click="state.profilePicture = undefined"
+                                    />
+                                </UTooltip>
                             </div>
                         </div>
 
-                        <div class="flex w-full flex-col items-center justify-center gap-2">
-                            <GenericImg
-                                v-if="activeChar?.profilePicture"
-                                size="3xl"
-                                :src="`${activeChar.profilePicture}?date=${new Date().getTime()}`"
-                                no-blur
-                            />
+                        <div
+                            v-if="activeChar?.profilePicture || profilePicturePreviewUrl"
+                            class="flex w-full flex-col items-center justify-center gap-2"
+                        >
+                            <div class="flex w-full flex-col items-center justify-center gap-2 sm:flex-row">
+                                <GenericImg
+                                    v-if="activeChar?.profilePicture"
+                                    class="size-32"
+                                    size="3xl"
+                                    :src="`${activeChar.profilePicture}?date=${new Date().getTime()}`"
+                                    no-blur
+                                />
+
+                                <template v-if="activeChar?.profilePicture && profilePicturePreviewUrl">
+                                    <UIcon class="size-6 shrink-0 sm:hidden" name="i-mdi-arrow-down" />
+
+                                    <UIcon class="hidden size-6 shrink-0 sm:block" name="i-mdi-arrow-right" />
+                                </template>
+
+                                <GenericImg
+                                    v-if="profilePicturePreviewUrl"
+                                    class="size-32"
+                                    size="3xl"
+                                    :src="profilePicturePreviewUrl"
+                                    no-blur
+                                />
+                            </div>
 
                             <UAlert icon="i-mdi-information-outline" :description="$t('common.image_caching')" />
                         </div>

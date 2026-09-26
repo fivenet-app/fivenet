@@ -427,6 +427,12 @@ watch(
                                 :placeholder="$t('common.image')"
                                 :label="$t('common.file_upload_label')"
                                 :description="$t('common.allowed_file_types')"
+                                :ui="{
+                                    base: 'min-h-12',
+                                    files: 'min-h-12 w-full',
+                                    file: 'flex min-h-12 items-center justify-center',
+                                    fileLeadingAvatar: 'size-12 rounded-lg',
+                                }"
                                 @update:model-value="($event) => handleImage($event)"
                             />
                         </template>

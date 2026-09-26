@@ -432,6 +432,12 @@ async function closeModal(): Promise<void> {
                                 :placeholder="$t('common.image')"
                                 :label="$t('common.file_upload_label')"
                                 :description="$t('common.allowed_file_types')"
+                                :ui="{
+                                    base: 'min-h-32',
+                                    files: 'min-h-32 w-full',
+                                    file: 'flex min-h-32 items-center justify-center',
+                                    fileLeadingAvatar: 'size-32 rounded-lg',
+                                }"
                                 @update:model-value="($event) => handleGroupLogoUpload($event)"
                             />
 

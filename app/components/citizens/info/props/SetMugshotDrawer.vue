@@ -59,6 +59,19 @@ const state = reactive<Schema>({
     reset: false,
 });
 
+const mugshotPreviewUrl = ref<string>();
+watch(
+    () => state.mugshot,
+    (file, _, onCleanup) => {
+        const url = file ? URL.createObjectURL(file) : undefined;
+        mugshotPreviewUrl.value = url;
+
+        if (url) {
+            onCleanup(() => URL.revokeObjectURL(url));
+        }
+    },
+);
+
 const { hasUnsavedChanges, confirmLeave } = useSnapshotChanges(state, {
     serializer: (value) =>
         JSON.stringify({
@@ -97,6 +110,7 @@ async function uploadMugshot(f: File, reason: string): Promise<void> {
                 description: { key: 'notifications.action_successful.content', parameters: {} },
             },
             onUploaded: (resp) => {
+                state.mugshot = undefined;
                 if (user.value.props) {
                     user.value.props.mugshot = resp.file;
                 } else {
@@ -218,15 +232,47 @@ async function closeModal(): Promise<void> {
                             :placeholder="$t('common.image')"
                             :label="$t('common.file_upload_label')"
                             :description="$t('common.allowed_file_types')"
+                            :preview="false"
+                            :ui="{ base: 'min-h-32' }"
                         />
 
-                        <div class="flex w-full flex-col items-center justify-center gap-2">
-                            <GenericImg
-                                v-if="user.props?.mugshot"
-                                size="3xl"
-                                :src="`${user.props?.mugshot.filePath}?date=${new Date().getTime()}`"
-                                no-blur
-                            />
+                        <div
+                            v-if="user.props?.mugshot || mugshotPreviewUrl"
+                            class="flex w-full flex-col items-center justify-center gap-2"
+                        >
+                            <div class="flex w-full flex-col items-center justify-center gap-2 sm:flex-row">
+                                <GenericImg
+                                    v-if="user.props?.mugshot"
+                                    class="size-32"
+                                    size="3xl"
+                                    :src="`${user.props?.mugshot.filePath}?date=${new Date().getTime()}`"
+                                    no-blur
+                                />
+
+                                <template v-if="user.props?.mugshot && mugshotPreviewUrl">
+                                    <UIcon class="size-6 shrink-0 sm:hidden" name="i-mdi-arrow-down" />
+
+                                    <UIcon class="hidden size-6 shrink-0 sm:block" name="i-mdi-arrow-right" />
+                                </template>
+
+                                <GenericImg
+                                    v-if="mugshotPreviewUrl"
+                                    class="size-32"
+                                    size="3xl"
+                                    :src="mugshotPreviewUrl"
+                                    no-blur
+                                />
+
+                                <UTooltip v-if="state.mugshot" :text="$t('common.clear')">
+                                    <UButton
+                                        color="error"
+                                        variant="ghost"
+                                        icon="i-mdi-clear"
+                                        :aria-label="$t('common.clear')"
+                                        @click="state.mugshot = undefined"
+                                    />
+                                </UTooltip>
+                            </div>
 
                             <UAlert
                                 v-if="user.props?.mugshot"

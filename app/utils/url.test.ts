@@ -135,4 +135,11 @@ describe('useImageURL', () => {
             'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAgAAAAIAQMAAAD+wSzIAAAABlBMVEX///+/v7+jQ3Y5AAAADklEQVQI12P4AIX8EAgALgAD/aNpbtEAAAAASUVORK5CYII=',
         );
     });
+
+    it('should return the original blob URL', () => {
+        const filePath = ref('blob:http://localhost/preview-image');
+        const imageURL = useImageURL(filePath);
+
+        expect(imageURL.value).toBe('blob:http://localhost/preview-image');
+    });
 });

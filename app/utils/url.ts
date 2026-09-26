@@ -33,7 +33,7 @@ export function cleanupImageURL(path: string | File | undefined, fallback?: stri
 
     const resolvedPath = typeof path === 'object' ? path.filePath : path;
 
-    if (resolvedPath.startsWith('data:image') || resolvedPath.startsWith('/images')) {
+    if (resolvedPath.startsWith('data:image') || resolvedPath.startsWith('blob:') || resolvedPath.startsWith('/images')) {
         return resolvedPath;
     } else if (safeImagePaths.some((safePath) => resolvedPath.startsWith(safePath))) {
         const correctedPath = safeImagePaths.find((safePath) => resolvedPath.startsWith(safePath));

@@ -458,7 +458,7 @@ const confirmModal = overlay.create(ConfirmModal);
                                         class="flex w-full flex-1 items-center justify-center"
                                     >
                                         <GenericImg
-                                            class="mb-2 size-full max-h-40 min-h-40 max-w-40"
+                                            class="mb-2 size-full max-h-50 min-h-50 max-w-50 min-w-50"
                                             :src="`/api/filestore/${jobProps.logoFile.filePath}`"
                                             :alt="`${jobProps.jobLabel ?? jobProps.job} ${$t('common.logo')}`"
                                         />
@@ -473,6 +473,12 @@ const confirmModal = overlay.create(ConfirmModal);
                                             :placeholder="$t('common.image')"
                                             :label="$t('common.file_upload_label')"
                                             :description="$t('common.allowed_file_types')"
+                                            :ui="{
+                                                base: 'min-h-50',
+                                                files: 'min-h-50 w-full',
+                                                file: 'flex min-h-50 items-center justify-center',
+                                                fileLeadingAvatar: 'size-50 rounded-lg',
+                                            }"
                                             @update:model-value="($event) => handleJobLogoUpload($event)"
                                         />
 
