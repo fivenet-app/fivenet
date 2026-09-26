@@ -59,6 +59,9 @@ func runMigrations(
 	rec, err := kv.Get(ctx, "latest")
 	if errors.Is(err, jetstream.ErrKeyNotFound) {
 		// Fresh install: record highest and exit
+		sort.Slice(registeredMigrations, func(i, j int) bool {
+			return registeredMigrations[i].ID < registeredMigrations[j].ID
+		})
 		latest := registeredMigrations[len(registeredMigrations)-1].ID
 		if _, err := kv.Put(ctx, "latest", []byte(latest)); err != nil {
 			return fmt.Errorf("failed to record initial migration %s. %w", latest, err)
