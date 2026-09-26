@@ -388,6 +388,10 @@ func (s *UnitDB) UpdateStatus(
 	if err := s.updateStatusInKV(ctx, in.GetUnitId(), in); err != nil {
 		return nil, false, err
 	}
+	unit.Status = in
+	if err := s.SyncUnitPing(ctx, unit); err != nil {
+		return nil, false, err
+	}
 
 	if err := s.publishStatus(ctx, in, unit.GetJob()); err != nil {
 		return nil, false, err
