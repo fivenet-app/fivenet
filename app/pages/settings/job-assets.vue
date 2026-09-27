@@ -1,6 +1,6 @@
 <script lang="ts" setup>
-import JobAssets from '~/components/jobs/JobAssets.vue';
-import JobAssetsUpload from '~/components/jobs/JobAssetsUpload.vue';
+import JobAssets from '~/components/jobs/assets/Assets.vue';
+import JobAssetsUpload from '~/components/jobs/assets/AssetsUpload.vue';
 
 const { jobAssets } = useAppConfig();
 const { can } = useAuth();

@@ -1,7 +1,8 @@
 <script lang="ts" setup>
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
-import JobAssetsFileList from '~/components/jobs/JobAssetsFileList.vue';
+import JobAssetsFileList from '~/components/jobs/assets/AssetsFileList.vue';
+import JobAssetsUpdate from '~/components/jobs/assets/AssetsUpdate.vue';
 import type { JobAsset } from '~~/gen/ts/resources/jobs/job_asset';
 import type { ListJobAssetsResponse } from '~~/gen/ts/services/settings/job_assets';
 import { getSettingsJobsassetsClient } from '~~/gen/ts/clients';

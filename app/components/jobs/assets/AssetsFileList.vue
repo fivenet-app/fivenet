@@ -52,6 +52,7 @@ function confirmDelete(asset: JobAsset): void {
                     :rounded="false"
                     enable-popup
                 />
+
                 <div class="flex items-center gap-1 p-2 text-xs">
                     <span class="min-w-0 flex-1 truncate">{{ getJobAssetDisplayName(asset) }}</span>
                     <UButton v-if="canUpdate" size="xs" variant="ghost" icon="i-mdi-pencil" @click="emit('edit', asset)" />
