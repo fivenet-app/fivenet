@@ -31,16 +31,27 @@ const { resizeAndUpload: replaceAsset } = useFileUploader(
     replacementAssetId,
 );
 
+const formSnapshot = computed(() => ({
+    displayName: state.displayName,
+}));
+
+const { hasUnsavedChanges, confirmLeave, syncSnapshot } = useSnapshotChanges(formSnapshot, {
+    dirty: computed(() => replacementFile.value !== undefined),
+});
+
 watch(
     () => props.asset,
     (asset) => {
         state.displayName = asset ? getJobAssetDisplayName(asset) : '';
         replacementFile.value = undefined;
+        syncSnapshot();
     },
     { immediate: true },
 );
 
-function closeEditor(): void {
+async function closeEditor(): Promise<void> {
+    if (hasUnsavedChanges.value && !(await confirmLeave())) return;
+
     emit('close');
 }
 
@@ -57,18 +68,28 @@ async function saveAsset(event: FormSubmitEvent<Schema>): Promise<void> {
             replacementAssetId.value = props.asset.id;
             await replaceAsset(replacementFile.value);
         }
+        replacementFile.value = undefined;
+        syncSnapshot();
         emit('updated');
         closeEditor();
     } catch (e) {
         handleGRPCError(e as RpcError);
     }
 }
+
+const { submit: submitAsset, isSubmitting } = useSubmitGuard(saveAsset);
 </script>
 
 <template>
-    <UModal :open="asset !== undefined" :title="$t('common.edit')" @update:open="(open) => !open && closeEditor()">
+    <UModal
+        :open="asset !== undefined"
+        :title="$t('common.edit')"
+        :close="false"
+        :dismissible="!hasUnsavedChanges"
+        @update:open="(open) => !open && closeEditor()"
+    >
         <template #body>
-            <UForm ref="formRef" :schema="schema" :state="state" class="grid gap-4" @submit="saveAsset">
+            <UForm ref="formRef" :schema="schema" :state="state" class="grid gap-4" @submit="submitAsset">
                 <UFormField name="displayName" :label="$t('common.display_name')" required>
                     <UInput v-model="state.displayName" class="w-full" />
                 </UFormField>
@@ -89,11 +110,13 @@ async function saveAsset(event: FormSubmitEvent<Schema>): Promise<void> {
         </template>
 
         <template #footer>
-            <UFieldGroup class="flex w-full gap-2">
+            <UFieldGroup class="inline-flex w-full">
                 <UButton class="flex-1" color="neutral" :label="$t('common.cancel')" @click="closeEditor" />
+
                 <UButton
                     class="flex-1"
-                    :disabled="!state.displayName.trim()"
+                    :disabled="!state.displayName.trim() || isSubmitting"
+                    :loading="isSubmitting"
                     :label="$t('common.save')"
                     @click="formRef?.submit()"
                 />

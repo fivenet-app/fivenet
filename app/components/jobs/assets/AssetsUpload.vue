@@ -1,6 +1,5 @@
 <script lang="ts" setup>
 import { getSettingsJobsassetsClient } from '~~/gen/ts/clients';
-import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 
 const props = defineProps<{
     assetCount: number;
@@ -13,13 +12,12 @@ const emit = defineEmits<{
 const open = defineModel<boolean>('open', { default: false });
 const { fileUpload, jobAssets } = useAppConfig();
 const jobsClient = await getSettingsJobsassetsClient();
-const notifications = useNotificationsStore();
 const { uploadImages } = useImageUpload();
 const selectedFiles = ref<File[]>([]);
 
 const { resizeAndUpload } = useFileUploader(() => jobsClient.uploadJobAsset({}), 'jobassets', 0);
 
-async function uploadSelected(): Promise<void> {
+async function doUploadSelected(): Promise<void> {
     if (selectedFiles.value.length === 0) return;
 
     try {
@@ -36,25 +34,30 @@ async function uploadSelected(): Promise<void> {
                 title: { key: 'common.error', parameters: {} },
                 description: { key: 'common.file', parameters: {} },
             },
+            successNotification: {
+                title: { key: 'notifications.action_successful.title', parameters: {} },
+                description: { key: 'notifications.action_successful.content', parameters: {} },
+            },
         });
         if (!result.ok) return;
 
         selectedFiles.value = [];
         open.value = false;
-        notifications.add({
-            title: { key: 'notifications.action_successful.title', parameters: {} },
-            description: { key: 'notifications.action_successful.content', parameters: {} },
-            type: NotificationType.SUCCESS,
-        });
         emit('uploaded');
     } catch (e) {
         handleGRPCError(e as RpcError);
     }
 }
+
+const { submit: uploadSelected, isSubmitting } = useSubmitGuard(doUploadSelected);
+
+watch(open, (isOpen) => {
+    if (!isOpen) selectedFiles.value = [];
+});
 </script>
 
 <template>
-    <UModal v-model:open="open" :title="$t('common.upload')">
+    <UModal v-model:open="open" :title="$t('common.upload')" :close="!isSubmitting" :dismissible="!isSubmitting">
         <template #body>
             <UFileUpload
                 v-model="selectedFiles"
@@ -68,12 +71,19 @@ async function uploadSelected(): Promise<void> {
 
         <template #footer>
             <UFieldGroup class="inline-flex w-full">
-                <UButton class="flex-1" color="neutral" :label="$t('common.cancel')" @click="open = false" />
+                <UButton
+                    class="flex-1"
+                    color="neutral"
+                    :disabled="isSubmitting"
+                    :label="$t('common.cancel')"
+                    @click="open = false"
+                />
 
                 <UButton
                     class="flex-1"
                     icon="i-mdi-upload"
-                    :disabled="selectedFiles.length === 0"
+                    :disabled="selectedFiles.length === 0 || isSubmitting"
+                    :loading="isSubmitting"
                     :label="$t('common.upload')"
                     @click="uploadSelected"
                 />
