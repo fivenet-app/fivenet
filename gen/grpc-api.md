@@ -1370,6 +1370,36 @@ Dummy - DO NOT USE!
 
 
 
+## resources/jobs/groups/short/group_member_short.proto
+
+
+### resources.jobs.groups.short.GroupMemberShort
+Lightweight group information attached to a colleague.
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `id` | [int64](#int64) |  |  |
+| `job` | [string](#string) |  |  |
+| `name` | [string](#string) |  |  |
+| `short_name` | [string](#string) | optional |  |
+| `color` | [string](#string) | optional |  |
+| `is_leader` | [bool](#bool) |  |  |
+
+
+
+
+ <!-- end messages -->
+
+ <!-- end enums -->
+
+ <!-- end HasExtensions -->
+
+ <!-- end services -->
+
+
+
 ## resources/jobs/labels/labels.proto
 
 
@@ -1408,36 +1438,6 @@ Dummy - DO NOT USE!
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | `list` | [Label](#resourcesjobslabelsLabel) | repeated |  |
-
-
-
-
- <!-- end messages -->
-
- <!-- end enums -->
-
- <!-- end HasExtensions -->
-
- <!-- end services -->
-
-
-
-## resources/jobs/groups/short/group_member_short.proto
-
-
-### resources.jobs.groups.short.GroupMemberShort
-Lightweight group information attached to a colleague.
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `id` | [int64](#int64) |  |  |
-| `job` | [string](#string) |  |  |
-| `name` | [string](#string) |  |  |
-| `short_name` | [string](#string) | optional |  |
-| `color` | [string](#string) | optional |  |
-| `is_leader` | [bool](#bool) |  |  |
 
 
 
@@ -5429,6 +5429,33 @@ ExamSnapshot is immutable once an attempt has started. It ensures later edits to
 | `GROUP_ACTIVITY_TYPE_RULE_REMOVED` | 32 |  |
 | `GROUP_ACTIVITY_TYPE_LOGO_UPDATED` | 40 |  |
 
+
+ <!-- end enums -->
+
+ <!-- end HasExtensions -->
+
+ <!-- end services -->
+
+
+
+## resources/jobs/job_asset.proto
+
+
+### resources.jobs.JobAsset
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `id` | [int64](#int64) |  |  |
+| `file` | [resources.file.File](#resourcesfileFile) |  |  |
+| `created_by_user_id` | [int32](#int32) | optional |  |
+| `created_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) |  |  |
+| `display_name` | [string](#string) |  |  |
+
+
+
+
+ <!-- end messages -->
 
  <!-- end enums -->
 
@@ -14116,6 +14143,92 @@ Updates one preference scope. Fields omitted from preference inherit from a less
 | ----------- | ------------ | ------------- | ------------|
 | `ListCronjobs` | [ListCronjobsRequest](#servicessettingsListCronjobsRequest) | [ListCronjobsResponse](#servicessettingsListCronjobsResponse) | |
 | `RunCronjob` | [RunCronjobRequest](#servicessettingsRunCronjobRequest) | [RunCronjobResponse](#servicessettingsRunCronjobResponse) | |
+
+ <!-- end services -->
+
+
+
+## services/settings/job_assets.proto
+
+
+### services.settings.DeleteJobAssetRequest
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `id` | [int64](#int64) |  |  |
+
+
+
+
+
+### services.settings.DeleteJobAssetResponse
+
+
+
+
+
+### services.settings.ListJobAssetsRequest
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `pagination` | [resources.common.database.PaginationRequest](#resourcescommondatabasePaginationRequest) |  |  |
+
+
+
+
+
+### services.settings.ListJobAssetsResponse
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `pagination` | [resources.common.database.PaginationResponse](#resourcescommondatabasePaginationResponse) |  |  |
+| `assets` | [resources.jobs.JobAsset](#resourcesjobsJobAsset) | repeated |  |
+
+
+
+
+
+### services.settings.UpdateJobAssetRequest
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `id` | [int64](#int64) |  |  |
+| `display_name` | [string](#string) |  |  |
+
+
+
+
+
+### services.settings.UpdateJobAssetResponse
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `asset` | [resources.jobs.JobAsset](#resourcesjobsJobAsset) |  |  |
+
+
+
+
+ <!-- end messages -->
+
+ <!-- end enums -->
+
+ <!-- end HasExtensions -->
+
+
+### services.settings.JobsAssetsService
+
+| Method Name | Request Type | Response Type | Description |
+| ----------- | ------------ | ------------- | ------------|
+| `ListJobAssets` | [ListJobAssetsRequest](#servicessettingsListJobAssetsRequest) | [ListJobAssetsResponse](#servicessettingsListJobAssetsResponse) | |
+| `UploadJobAsset` | [.resources.file.UploadFileRequest](#resourcesfileUploadFileRequest) stream | [.resources.file.UploadFileResponse](#resourcesfileUploadFileResponse) |buf:lint:ignore RPC_REQUEST_RESPONSE_UNIQUE buf:lint:ignore RPC_REQUEST_STANDARD_NAME buf:lint:ignore RPC_RESPONSE_STANDARD_NAME |
+| `ReplaceJobAsset` | [.resources.file.UploadFileRequest](#resourcesfileUploadFileRequest) stream | [.resources.file.UploadFileResponse](#resourcesfileUploadFileResponse) |buf:lint:ignore RPC_REQUEST_RESPONSE_UNIQUE buf:lint:ignore RPC_REQUEST_STANDARD_NAME buf:lint:ignore RPC_RESPONSE_STANDARD_NAME |
+| `UpdateJobAsset` | [UpdateJobAssetRequest](#servicessettingsUpdateJobAssetRequest) | [UpdateJobAssetResponse](#servicessettingsUpdateJobAssetResponse) | |
+| `DeleteJobAsset` | [DeleteJobAssetRequest](#servicessettingsDeleteJobAssetRequest) | [DeleteJobAssetResponse](#servicessettingsDeleteJobAssetResponse) | |
 
  <!-- end services -->
 

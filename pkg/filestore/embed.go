@@ -1,7 +1,7 @@
 package filestore
 
 import (
-	"bytes"
+	bytespkg "bytes"
 	"context"
 	"database/sql"
 	"errors"
@@ -9,6 +9,7 @@ import (
 	"net/http"
 	"net/url"
 	"strings"
+	"sync"
 
 	database "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/common/database"
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/file"
@@ -57,6 +58,9 @@ type Handler[P ParentID] struct {
 	fileLimit int64
 	// uploadFilter optionally restricts allowed upload file types.
 	uploadFilter *UploadFilter
+	// fileLimitMu serializes additive uploads so the count check and insert are
+	// atomic from the handler's perspective.
+	fileLimitMu sync.Mutex
 
 	// parentColBoolExp is a function that converts the parent ID to a Jet boolean expression.
 	parentColBoolExp ParentColBoolExpFn[P]
@@ -179,6 +183,10 @@ func (h *Handler[P]) UploadFile(
 		return nil, err
 	}
 
+	if h.joinTable != nil && h.fileLimit > 0 && !h.nullOnlyParentRow {
+		h.fileLimitMu.Lock()
+		defer h.fileLimitMu.Unlock()
+	}
 	if err := h.CheckFileLimit(ctx, parentID); err != nil {
 		return nil, err
 	}
@@ -218,6 +226,13 @@ func (h *Handler[P]) UploadFile(
 		szHint = size
 	}
 
+	cleanupStorage := true
+	defer func() {
+		if cleanupStorage {
+			_ = h.store.Delete(ctx, key)
+		}
+	}()
+
 	urlKey, bytes, err := putToStorage(ctx, h.store, key, pr, ctype, szHint)
 	if err != nil {
 		return nil, err
@@ -254,12 +269,152 @@ func (h *Handler[P]) UploadFile(
 	if err := tx.Commit(); err != nil {
 		return nil, err
 	}
+	cleanupStorage = false
 
 	full, err := url.JoinPath(FilestoreURLPrefix, urlKey)
 	if err != nil {
 		return nil, err
 	}
 
+	resp := &file.UploadFileResponse{
+		Id:  fileID,
+		Url: full,
+		File: &file.File{
+			Id:          fileID,
+			FilePath:    key,
+			ContentType: ctype,
+			ByteSize:    bytes,
+			CreatedAt:   timestamp.Now(),
+		},
+	}
+	return resp, srv.SendAndClose(resp)
+}
+
+// ReplaceFile replaces the bytes and metadata of an existing file while keeping
+// its storage key and database ID stable. This is useful for files referenced by
+// documents through their URL.
+func (h *Handler[P]) ReplaceFile(
+	ctx context.Context,
+	fileID int64,
+	key string,
+	size int64,
+	ctype string,
+	srv pbfilestore.FilestoreService_UploadServer,
+) (*file.UploadFileResponse, error) {
+	if h.sizeLimit > 0 && size > h.sizeLimit {
+		return nil, ErrUploadFileTooLarge(map[string]any{"maxSize": h.sizeLimit / 8})
+	}
+
+	ctype = sniff(ctype, key)
+	leadingData, err := readLeadingData(srv, 512)
+	if err != nil {
+		return nil, err
+	}
+	if detected := detectContentType(leadingData); detected != "" {
+		ctype = detected
+	}
+	if err := h.validateUploadType(key, ctype); err != nil {
+		return nil, err
+	}
+
+	// Keep a rollback copy because storage replacement and the metadata update
+	// cannot share a transaction. This preserves the old URL contents if the
+	// metadata update fails.
+	oldObject, oldInfo, err := h.store.Get(ctx, key)
+	if err != nil {
+		return nil, err
+	}
+	oldReader := io.Reader(oldObject)
+	if h.sizeLimit > 0 {
+		oldReader = io.LimitReader(oldObject, h.sizeLimit+1)
+	}
+	oldBytes, err := io.ReadAll(oldReader)
+	_ = oldObject.Close()
+	if err != nil {
+		return nil, err
+	}
+	if h.sizeLimit > 0 && int64(len(oldBytes)) > h.sizeLimit {
+		return nil, ErrUploadFileTooLarge(map[string]any{"maxSize": h.sizeLimit / 8})
+	}
+
+	restoreOldFile := func(cause error) (*file.UploadFileResponse, error) {
+		_, restoreErr := h.store.Put(
+			ctx,
+			key,
+			bytespkg.NewReader(oldBytes),
+			int64(len(oldBytes)),
+			oldInfo.GetContentType(),
+		)
+		if restoreErr != nil {
+			return nil, errors.Join(cause, restoreErr)
+		}
+		return nil, cause
+	}
+
+	pr, pw := io.Pipe()
+	go func() {
+		if len(leadingData) > 0 {
+			if _, err := pw.Write(leadingData); err != nil {
+				pw.CloseWithError(err)
+				return
+			}
+		}
+		for {
+			pkt, err := srv.Recv()
+			if errors.Is(err, io.EOF) {
+				_ = pw.Close()
+				return
+			}
+			if err != nil {
+				pw.CloseWithError(err)
+				return
+			}
+			if data := pkt.GetData(); data != nil {
+				if _, err := pw.Write(data); err != nil {
+					pw.CloseWithError(err)
+					return
+				}
+			}
+		}
+	}()
+
+	_, bytes, err := putToStorage(ctx, h.store, key, pr, ctype, size)
+	if err != nil {
+		return nil, err
+	}
+	result, err := tFiles.UPDATE().SET(
+		tFiles.ByteSize.SET(mysql.Int64(bytes)),
+		tFiles.ContentType.SET(mysql.String(ctype)),
+		tFiles.DeletedAt.SET(mysql.TimestampExp(mysql.NULL)),
+	).WHERE(tFiles.ID.EQ(mysql.Int64(fileID))).LIMIT(1).ExecContext(ctx, h.db)
+	if err != nil {
+		return restoreOldFile(err)
+	}
+	rows, err := result.RowsAffected()
+	if err != nil {
+		return restoreOldFile(err)
+	}
+	if rows == 0 {
+		var existing struct {
+			ID int64 `alias:"id"`
+		}
+		err := tFiles.
+			SELECT(tFiles.ID.AS("id")).
+			WHERE(tFiles.ID.EQ(mysql.Int64(fileID))).
+			LIMIT(1).
+			QueryContext(ctx, h.db, &existing)
+		if errors.Is(err, qrm.ErrNoRows) {
+			return restoreOldFile(sql.ErrNoRows)
+		}
+		if err != nil {
+			return restoreOldFile(err)
+		}
+	}
+
+	full, err := url.JoinPath(FilestoreURLPrefix, key)
+	if err != nil {
+		return nil, err
+	}
 	resp := &file.UploadFileResponse{
 		Id:  fileID,
 		Url: full,
@@ -289,7 +444,7 @@ func readLeadingData(
 		return nil, nil
 	}
 
-	var buf bytes.Buffer
+	var buf bytespkg.Buffer
 	for buf.Len() < minBytes {
 		pkt, err := srv.Recv()
 		if errors.Is(err, io.EOF) {
@@ -351,6 +506,7 @@ func (h *Handler[P]) GetFileByPath(ctx context.Context, path string) (int64, str
 	stmt := tFiles.
 		SELECT(
 			tFiles.ID,
+			tFiles.FilePath,
 		).
 		FROM(tFiles).
 		WHERE(

@@ -257,6 +257,11 @@
             "jobs": {
                 "title": "Berufe"
             },
+            "job_assets": {
+                "title": "Job-Dateien",
+                "description": "Gemeinsame Bilder und Dateien des Jobs verwalten.",
+                "delete_description": "Diese Job-Datei löschen? Dokumente, Nachrichten und andere Inhalte, die dieses Bild verwenden, können es danach nicht mehr anzeigen."
+            },
             "setup": {
                 "eyebrow": "Ersteinrichtung",
                 "title": "FiveNet für die erste Nutzung vorbereiten",
@@ -370,6 +375,7 @@
         "phone": "Telefon",
         "number": "Nummer",
         "name": "Name",
+        "display_name": "Anzeigename",
         "sex": "Geschlecht",
         "height": "Größe",
         "action": "Aktion | Aktionen",
@@ -924,7 +930,8 @@
         },
         "more": "mehr",
         "now": "Jetzt",
-        "sort": "Sortierung"
+        "sort": "Sortierung",
+        "replace": "Ersetzen"
     },
     "components": {
         "partials": {
@@ -1373,6 +1380,9 @@
             }
         },
         "jobs": {
+            "job_assets": {
+                "replace_file_description": "Wählen Sie nur dann eine Datei aus, wenn Sie die aktuelle Datei an Ort und Stelle ersetzen möchten. Erlaubte Dateitypen: {allowedFileTypes}"
+            },
             "conduct": {
                 "List": {
                     "show_deleted": "Zeige Gelöschte",
@@ -5077,6 +5087,25 @@
                 "DeleteLawBook": {
                     "key": "Gesetze und Gesetzbücher löschen",
                     "description": "Löschen von Gesetzen und Gesetzbüchern."
+                }
+            },
+            "JobsAssetsService": {
+                "service": "Job-Dateien",
+                "ListJobAssets": {
+                    "key": "Job-Dateien anzeigen",
+                    "description": "Gemeinsame Bilder und Dateien des Jobs anzeigen."
+                },
+                "CreateJobAsset": {
+                    "key": "Job-Dateien hochladen",
+                    "description": "Gemeinsame Bilder und Dateien für den Job hochladen."
+                },
+                "UpdateJobAsset": {
+                    "key": "Job-Dateien aktualisieren",
+                    "description": "Gemeinsame Bilder und Dateien des Jobs umbenennen oder ersetzen."
+                },
+                "DeleteJobAsset": {
+                    "key": "Job-Dateien löschen",
+                    "description": "Gemeinsame Bilder und Dateien des Jobs löschen."
                 }
             },
             "SettingsService": {

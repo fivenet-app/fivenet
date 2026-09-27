@@ -2,6 +2,7 @@
 import type { FormSubmitEvent } from '@nuxt/ui';
 import type { Editor } from '@tiptap/core';
 import { z } from 'zod';
+import JobAssetsImageSelectModal from '~/components/partials/editor/JobAssetsImageSelectModal.vue';
 import type { Error as CommonError } from '~~/gen/ts/resources/common/error';
 import type { File as FileGrpc } from '~~/gen/ts/resources/file/file';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
@@ -12,6 +13,8 @@ const props = withDefaults(
         files?: FileGrpc[];
         fileLimit?: number;
         disabled?: boolean;
+        disableImages?: boolean;
+        enableImagesJobAssets?: boolean;
         uploadHandler?: (file: File[]) => Promise<boolean>;
         openFileList?: () => Promise<void>;
     }>(),
@@ -19,6 +22,8 @@ const props = withDefaults(
         files: () => [],
         fileLimit: 5,
         disabled: false,
+        disableImages: false,
+        enableImagesJobAssets: false,
         uploadHandler: undefined,
         openFileList: undefined,
     },
@@ -32,9 +37,12 @@ const emit = defineEmits<{
 const { fileUpload } = useAppConfig();
 
 const notifications = useNotificationsStore();
+const { can } = useAuth();
+const canListJobAssets = can('settings.JobsAssetsService/ListJobAssets');
 
 const logger = useLogger('📄 Editor');
-
+const overlay = useOverlay();
+const jobAssetsImageSelectModal = overlay.create(JobAssetsImageSelectModal);
 const schema = z.object({
     url: z.url().max(512),
 });
@@ -44,6 +52,23 @@ type Schema = z.output<typeof schema>;
 const imageState = reactive<Schema>({
     url: '',
 });
+
+const imageCount = ref(0);
+
+function updateImageCount(): void {
+    let count = 0;
+    props.editor.state.doc.descendants((node) => {
+        if (node.type.name === 'image') count++;
+    });
+    imageCount.value = count;
+}
+
+onMounted(() => {
+    updateImageCount();
+    props.editor.on('transaction', updateImageCount);
+});
+
+onBeforeUnmount(() => props.editor.off('transaction', updateImageCount));
 
 function getUploadErrorText(error: unknown): string {
     const raw = (error as Error | undefined)?.message?.toString()?.trimStart();
@@ -82,7 +107,7 @@ function getUploadErrorNotification(error: unknown): {
 // Try to download image from remote url
 async function setViaURL(urlOrBlob: string | File): Promise<void> {
     // Check if file limit is reached
-    if (props.files.length >= props.fileLimit) {
+    if (imageCount.value >= props.fileLimit) {
         logger.warn('File limit reached, cannot upload more files');
         notifications.add({
             title: { key: 'components.partials.tiptap_editor.notifications.file_limit_reached.title', parameters: {} },
@@ -157,10 +182,9 @@ function setImage(url: string | undefined): void {
     emit('close', false);
 }
 
-const fileLimitReached = computed(() => props.files.length >= props.fileLimit);
+const fileLimitReached = computed(() => imageCount.value >= props.fileLimit);
 
 const open = ref<boolean>(false);
-
 const { submit: submitImage, canSubmit } = useSubmitGuard(async (source: string | File) => {
     await setViaURL(source);
 });
@@ -178,6 +202,15 @@ async function submit(event: FormSubmitEvent<Schema>): Promise<void> {
 }
 
 const formRef = useTemplateRef('formRef');
+
+function openJobAssets(): void {
+    if (props.disabled) return;
+
+    jobAssetsImageSelectModal.open({
+        fileLimitReached: fileLimitReached.value,
+        onSelect: setImage,
+    });
+}
 </script>
 
 <template>
@@ -199,6 +232,7 @@ const formRef = useTemplateRef('formRef');
 
                 <UFieldGroup class="w-full">
                     <UButton
+                        v-if="!disableImages"
                         class="flex-1"
                         color="neutral"
                         block
@@ -208,11 +242,22 @@ const formRef = useTemplateRef('formRef');
                         :loading="disabled || !canSubmit"
                         @click="$emit('openFileList')"
                     />
+                    <UButton
+                        v-if="enableImagesJobAssets && canListJobAssets"
+                        class="flex-1"
+                        color="neutral"
+                        block
+                        icon="i-mdi-image-multiple-outline"
+                        :label="$t('common.job') + ' ' + $t('common.file', 2)"
+                        :disabled="disabled || !canSubmit || fileLimitReached"
+                        :loading="disabled || !canSubmit || fileLimitReached"
+                        @click="openJobAssets"
+                    />
                 </UFieldGroup>
 
-                <USeparator class="my-2" :label="$t('common.or')" orientation="horizontal" />
+                <USeparator v-if="!disableImages" class="my-2" :label="$t('common.or')" orientation="horizontal" />
 
-                <UForm ref="formRef" :schema="schema" :state="imageState" @submit="submit">
+                <UForm v-if="!disableImages" ref="formRef" :schema="schema" :state="imageState" @submit="submit">
                     <UFormField name="url" :label="$t('components.partials.tiptap_editor.url')">
                         <UInput
                             v-model="imageState.url"

@@ -5,6 +5,7 @@ import (
 	"database/sql"
 
 	database "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/common/database"
+	jobresources "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/jobs"
 	jobscolleagues "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/jobs/colleagues"
 	colleaguesactivity "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/jobs/colleagues/activity"
 	jobsconduct "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/jobs/conduct"
@@ -153,6 +154,34 @@ type IGroupsQuery interface {
 
 type IStore interface {
 	IGroupsQuery
+	CountJobAssets(ctx context.Context, db qrm.DB, job string) (int64, error)
+	ListJobAssets(
+		ctx context.Context,
+		db qrm.DB,
+		job string,
+		offset, limit int64,
+	) ([]*jobresources.JobAsset, error)
+	GetJobAsset(
+		ctx context.Context,
+		db qrm.DB,
+		job string,
+		id int64,
+	) (*jobresources.JobAsset, error)
+	UpdateJobAssetMetadata(
+		ctx context.Context,
+		db qrm.DB,
+		job string,
+		fileID int64,
+		createdByUserID int32,
+		displayName string,
+	) error
+	UpdateJobAsset(
+		ctx context.Context,
+		db qrm.DB,
+		job string,
+		fileID int64,
+		displayName string,
+	) error
 	CountGroupMembers(ctx context.Context, db qrm.DB, q GroupItemsQuery) (int64, error)
 	ListGroupMembers(
 		ctx context.Context,

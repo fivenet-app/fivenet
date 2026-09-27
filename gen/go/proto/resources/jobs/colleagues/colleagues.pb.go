@@ -593,7 +593,7 @@ var File_resources_jobs_colleagues_colleagues_proto protoreflect.FileDescriptor
 
 const file_resources_jobs_colleagues_colleagues_proto_rawDesc = "" +
 	"\n" +
-	"*resources/jobs/colleagues/colleagues.proto\x12\x19resources.jobs.colleagues\x1a!codegen/sanitizer/sanitizer.proto\x1a\"resources/jobs/labels/labels.proto\x1a4resources/jobs/groups/short/group_member_short.proto\x1a#resources/timestamp/timestamp.proto\x1a\x13tagger/tagger.proto\"\xb6\x05\n" +
+	"*resources/jobs/colleagues/colleagues.proto\x12\x19resources.jobs.colleagues\x1a!codegen/sanitizer/sanitizer.proto\x1a4resources/jobs/groups/short/group_member_short.proto\x1a\"resources/jobs/labels/labels.proto\x1a#resources/timestamp/timestamp.proto\x1a\x13tagger/tagger.proto\"\xb6\x05\n" +
 	"\tColleague\x12(\n" +
 	"\auser_id\x18\x01 \x01(\x05B\x0f\x9a\x84\x9e\x03\n" +
 	"alias:\"id\"R\x06userId\x12\x10\n" +

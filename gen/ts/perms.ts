@@ -34,6 +34,7 @@
 // source: services/settings/accounts.proto
 // source: services/settings/config.proto
 // source: services/settings/cron.proto
+// source: services/settings/job_assets.proto
 // source: services/settings/laws.proto
 // source: services/settings/settings.proto
 // source: services/settings/system.proto
@@ -122,6 +123,10 @@ export type GRPCServicePerms =
 	| 'qualifications.QualificationsService/DeleteQualification'
 	| 'qualifications.QualificationsService/ListQualifications'
 	| 'qualifications.QualificationsService/UpdateQualification'
+	| 'settings.JobsAssetsService/CreateJobAsset'
+	| 'settings.JobsAssetsService/DeleteJobAsset'
+	| 'settings.JobsAssetsService/ListJobAssets'
+	| 'settings.JobsAssetsService/UpdateJobAsset'
 	| 'settings.LawsService/CreateOrUpdateLawBook'
 	| 'settings.LawsService/DeleteLawBook'
 	| 'settings.SettingsService/CreateRole'
@@ -165,6 +170,7 @@ export const GRPCServices = [
 	'livemap.LivemapService',
 	'mailer.MailerService',
 	'qualifications.QualificationsService',
+	'settings.JobsAssetsService',
 	'settings.LawsService',
 	'settings.SettingsService',
 	'vehicles.VehiclesService',
@@ -246,6 +252,10 @@ export const GRPCServiceMethods = [
 	'qualifications.QualificationsService/DeleteQualification',
 	'qualifications.QualificationsService/ListQualifications',
 	'qualifications.QualificationsService/UpdateQualification',
+	'settings.JobsAssetsService/CreateJobAsset',
+	'settings.JobsAssetsService/DeleteJobAsset',
+	'settings.JobsAssetsService/ListJobAssets',
+	'settings.JobsAssetsService/UpdateJobAsset',
 	'settings.LawsService/CreateOrUpdateLawBook',
 	'settings.LawsService/DeleteLawBook',
 	'settings.SettingsService/CreateRole',
@@ -533,6 +543,14 @@ export const PermAttributes = {
 			type: 'stringList',
 			values: ['Public',] as const,
 		},
+	},
+	'settings.JobsAssetsService/CreateJobAsset': {
+	},
+	'settings.JobsAssetsService/DeleteJobAsset': {
+	},
+	'settings.JobsAssetsService/ListJobAssets': {
+	},
+	'settings.JobsAssetsService/UpdateJobAsset': {
 	},
 	'settings.LawsService/CreateOrUpdateLawBook': {
 	},

@@ -257,6 +257,11 @@
             "jobs": {
                 "title": "Jobs"
             },
+            "job_assets": {
+                "title": "Job Assets",
+                "description": "Manage the shared images and assets for your job.",
+                "delete_description": "Delete this job asset? Documents, messages, and other content using this image will no longer be able to display it."
+            },
             "setup": {
                 "eyebrow": "First-time setup",
                 "title": "Prepare FiveNet for first-time use",
@@ -370,6 +375,7 @@
         "phone": "Phone",
         "number": "Number",
         "name": "Name",
+        "display_name": "Display name",
         "sex": "Sex",
         "height": "Height",
         "action": "Action | Actions",
@@ -924,7 +930,8 @@
         },
         "more": "more",
         "now": "Now",
-        "sort": "Sort"
+        "sort": "Sort",
+        "replace": "Replace"
     },
     "components": {
         "partials": {
@@ -1373,6 +1380,9 @@
             }
         },
         "jobs": {
+            "job_assets": {
+                "replace_file_description": "Select a file only if you want to replace the current file in place. Allowed file types: {allowedFileTypes}"
+            },
             "conduct": {
                 "List": {
                     "show_deleted": "Show Deleted",
@@ -5077,6 +5087,25 @@
                 "DeleteLawBook": {
                     "key": "Delete Laws and Law Books",
                     "description": "Delete laws and law books."
+                }
+            },
+            "JobsAssetsService": {
+                "service": "Job Assets",
+                "ListJobAssets": {
+                    "key": "View Job Assets",
+                    "description": "View the shared images and assets for your job."
+                },
+                "CreateJobAsset": {
+                    "key": "Upload Job Assets",
+                    "description": "Upload shared images and assets for your job."
+                },
+                "UpdateJobAsset": {
+                    "key": "Update Job Assets",
+                    "description": "Rename or replace shared images and assets for your job."
+                },
+                "DeleteJobAsset": {
+                    "key": "Delete Job Assets",
+                    "description": "Delete shared images and assets for your job."
                 }
             },
             "SettingsService": {

@@ -1,0 +1,84 @@
+syntax = "proto3";
+
+package services.settings;
+
+import "buf/validate/validate.proto";
+import "codegen/itemslen/itemslen.proto";
+import "codegen/perms/perms.proto";
+import "codegen/sanitizer/sanitizer.proto";
+import "resources/common/database/database.proto";
+import "resources/file/filestore.proto";
+import "resources/jobs/job_asset.proto";
+
+option go_package = "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/settings;settings";
+
+message ListJobAssetsRequest {
+  resources.common.database.PaginationRequest pagination = 1 [(buf.validate.field).required = true];
+}
+
+message ListJobAssetsResponse {
+  resources.common.database.PaginationResponse pagination = 1 [(buf.validate.field).required = true];
+  repeated resources.jobs.JobAsset assets = 2 [(codegen.itemslen.enabled) = true];
+}
+
+message DeleteJobAssetRequest {
+  int64 id = 1 [(buf.validate.field).int64.gt = 0];
+}
+
+message DeleteJobAssetResponse {}
+
+message UpdateJobAssetRequest {
+  int64 id = 1 [(buf.validate.field).int64.gt = 0];
+  string display_name = 2 [
+    (buf.validate.field).string = {
+      min_len: 1
+      max_len: 255
+    },
+    (codegen.sanitizer.sanitizer) = {
+      enabled: true
+      strip_html_tags: true
+    }
+  ];
+}
+
+message UpdateJobAssetResponse {
+  resources.jobs.JobAsset asset = 1;
+}
+
+service JobsAssetsService {
+  option (codegen.perms.perms_svc) = {
+    order: 61
+    icon: "i-mdi-image-multiple-outline"
+  };
+
+  rpc ListJobAssets(ListJobAssetsRequest) returns (ListJobAssetsResponse) {
+    option (codegen.perms.perms) = {enabled: true};
+  }
+  // buf:lint:ignore RPC_REQUEST_RESPONSE_UNIQUE
+  // buf:lint:ignore RPC_REQUEST_STANDARD_NAME
+  // buf:lint:ignore RPC_RESPONSE_STANDARD_NAME
+  rpc UploadJobAsset(stream resources.file.UploadFileRequest) returns (resources.file.UploadFileResponse) {
+    option (codegen.perms.perms) = {
+      enabled: true
+      name: "CreateJobAsset"
+    };
+  }
+  // buf:lint:ignore RPC_REQUEST_RESPONSE_UNIQUE
+  // buf:lint:ignore RPC_REQUEST_STANDARD_NAME
+  // buf:lint:ignore RPC_RESPONSE_STANDARD_NAME
+  rpc ReplaceJobAsset(stream resources.file.UploadFileRequest) returns (resources.file.UploadFileResponse) {
+    option (codegen.perms.perms) = {
+      enabled: true
+      name: "UpdateJobAsset"
+    };
+  }
+  rpc UpdateJobAsset(UpdateJobAssetRequest) returns (UpdateJobAssetResponse) {
+    option (codegen.perms.perms) = {
+      enabled: true
+      name: "UpdateJobAsset"
+    };
+  }
+  rpc DeleteJobAsset(DeleteJobAssetRequest) returns (DeleteJobAssetResponse) {
+    option (codegen.perms.perms) = {enabled: true};
+  }
+}

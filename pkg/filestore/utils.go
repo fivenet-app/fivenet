@@ -37,6 +37,9 @@ var sanitizeRegex = regexp.MustCompile(`[^0-9A-Za-z._-]`)
 // SanitizeFileName returns a sanitized version of the file name, replacing disallowed characters
 // and truncating the base name to a maximum of 240 characters.
 func SanitizeFileName(name string) string {
+	if name == "" {
+		return ""
+	}
 	name = filepath.Base(name)
 	ext := filepath.Ext(name)
 	base := name[:len(name)-len(ext)]

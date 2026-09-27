@@ -163,6 +163,7 @@ func (h *Housekeeper) Run(ctx context.Context) (int64, error) {
 	cutoff := time.Now().Add(-h.gracePeriod)
 	maxDeletes := 200
 	deletes := 0
+	attempts := 0
 
 	joinTables := h.getTablesListFn()
 
@@ -210,8 +211,8 @@ func (h *Housekeeper) Run(ctx context.Context) (int64, error) {
 		var files []*file.File
 		err := tFiles.
 			SELECT(
-				tFiles.ID,
-				tFiles.FilePath,
+				tFiles.ID.AS("file.id"),
+				tFiles.FilePath.AS("file.file_path"),
 			).
 			FROM(tFiles).
 			WHERE(candidateWhere).
@@ -233,9 +234,8 @@ func (h *Housekeeper) Run(ctx context.Context) (int64, error) {
 			return 0, fmt.Errorf("failed to begin tx. %w", err)
 		}
 
-		deletes += len(files)
-
 		for _, c := range files {
+			attempts++
 			// A) Delete from storage
 			if err := h.storage.Delete(ctx, c.GetFilePath()); err != nil {
 				h.logger.Error(
@@ -260,6 +260,7 @@ func (h *Housekeeper) Run(ctx context.Context) (int64, error) {
 				}
 				return 0, fmt.Errorf("delete fivenet_files id=%d. %w", c.GetId(), err)
 			}
+			deletes++
 			h.logger.Debug(
 				"deleted file",
 				zap.Int64("file_id", c.GetId()),
@@ -272,7 +273,7 @@ func (h *Housekeeper) Run(ctx context.Context) (int64, error) {
 		}
 
 		// If we haven't reached the maximum yet loop again to pick up the next batch. The cutoff and conditions remain the same.
-		if deletes >= maxDeletes {
+		if attempts >= maxDeletes {
 			break
 		}
 	}

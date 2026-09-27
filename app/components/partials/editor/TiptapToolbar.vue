@@ -17,6 +17,7 @@ const props = defineProps<{
     editor: Editor;
     disabled?: boolean;
     disableImages?: boolean;
+    enableImagesJobAssets?: boolean;
     showPenaltyCalculatorButton?: boolean;
     historyType?: string;
 
@@ -31,6 +32,9 @@ const emits = defineEmits<{
 const files = defineModel<FileGrpc[]>('files', {
     required: true,
 });
+
+const { can } = useAuth();
+const canListJobAssets = can('settings.JobsAssetsService/ListJobAssets');
 
 const overlay = useOverlay();
 
@@ -534,10 +538,12 @@ const isLinkOpen = ref<boolean>(false);
         <USeparator orientation="vertical" :ui="{ border: 'border-neutral-200 dark:border-neutral-700' }" />
 
         <ImageSelectPopover
-            v-if="!disableImages"
+            v-if="!disableImages || (enableImagesJobAssets && canListJobAssets)"
             :editor="editor"
             :files="files"
             :file-limit="fileLimit"
+            :disable-images="disableImages"
+            :enable-images-job-assets="enableImagesJobAssets"
             :disabled="disabled"
             :upload-handler="fileUploadHandler"
             @open-file-list="

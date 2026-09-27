@@ -719,6 +719,7 @@ provide('yjsProvider', provider);
                                 history-type="document"
                                 :limit="maxContentLength"
                                 :saving="saving"
+                                enable-images-job-assets
                                 enable-collab
                                 :target-id="document.document?.id"
                                 filestore-namespace="documents"

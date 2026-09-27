@@ -344,6 +344,7 @@ async function closeModal(): Promise<void> {
                                     :disabled="!canSubmit"
                                     :limit="maxContentLength"
                                     wrapper-class="min-h-96"
+                                    enable-images-job-assets
                                 />
                             </ClientOnly>
                         </UFormField>

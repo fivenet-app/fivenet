@@ -34,6 +34,7 @@
 // source: services/settings/accounts.proto
 // source: services/settings/config.proto
 // source: services/settings/cron.proto
+// source: services/settings/job_assets.proto
 // source: services/settings/laws.proto
 // source: services/settings/settings.proto
 // source: services/settings/system.proto
@@ -563,6 +564,14 @@ var PermsRemap = map[string][]perms.PermissionRef{
 	},
 	"settings.CronService/RunCronjob": {
 		perms.PermConfigAdminRef,
+	},
+
+	// Service: settings.JobsAssetsService
+	"settings.JobsAssetsService/ReplaceJobAsset": {
+		permssettings.JobsAssetsService.UpdateJobAsset.Perm,
+	},
+	"settings.JobsAssetsService/UploadJobAsset": {
+		permssettings.JobsAssetsService.CreateJobAsset.Perm,
 	},
 
 	// Service: settings.LawsService

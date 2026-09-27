@@ -74,6 +74,13 @@ const items = computed<CardElement[]>(() => [
         permission: 'internal.Superuser/JobAdmin',
         icon: 'i-mdi-briefcase',
     },
+    {
+        label: t('pages.settings.job_assets.title'),
+        description: t('pages.settings.job_assets.description'),
+        to: '/settings/job-assets',
+        permission: 'settings.JobsAssetsService/ListJobAssets',
+        icon: 'i-mdi-image-multiple-outline',
+    },
 ]);
 
 const superuserItems = computed<CardElement[]>(() => [

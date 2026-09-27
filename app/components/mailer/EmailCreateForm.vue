@@ -457,6 +457,7 @@ const { submit, isSubmitting, canSubmit } = useSubmitGuard(async (event: FormSub
                                 wrapper-class="min-h-44"
                                 content-type="json"
                                 disable-images
+                                enable-images-job-assets
                             />
                         </ClientOnly>
                     </UFormField>

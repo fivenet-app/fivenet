@@ -5,6 +5,7 @@ import (
 	sync "sync"
 
 	pbjobs "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/jobs"
+	pbsettings "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/settings"
 	"github.com/fivenet-app/fivenet/v2026/pkg/access"
 	"github.com/fivenet-app/fivenet/v2026/pkg/config"
 	"github.com/fivenet-app/fivenet/v2026/pkg/filestore"
@@ -86,6 +87,7 @@ type Server struct {
 	pbjobs.JobsServiceServer
 	pbjobs.TimeclockServiceServer
 	pbjobs.StatsServiceServer
+	pbsettings.JobsAssetsServiceServer
 	pbjobs.UnimplementedGroupsServiceServer
 
 	logger *zap.Logger
@@ -108,6 +110,7 @@ type Server struct {
 
 	fHandler             *filestore.Handler[int64]
 	groupLogoFileHandler *filestore.Handler[int64]
+	jobAssetsFileHandler *filestore.Handler[string]
 
 	userSel usersel.IResolver
 	ui      userinfo.UserInfoRetriever
@@ -166,6 +169,20 @@ func NewServer(p Params) *Server {
 		true,
 	).WithUploadFilter(filestore.NewImageUploadFilter())
 
+	tJobAssets := table.FivenetJobAssets
+	jobAssetsFileHandler := filestore.NewHandler(
+		p.Storage,
+		p.DB,
+		tJobAssets,
+		tJobAssets.Job,
+		tJobAssets.FileID,
+		5<<20,
+		jobAssetsPageSize,
+		func(job string) mysql.BoolExpression { return tJobAssets.Job.EQ(mysql.String(job)) },
+		filestore.InsertJoinRow,
+		false,
+	).WithUploadFilter(filestore.NewImageUploadFilter())
+
 	s := &Server{
 		logger: p.Logger.Named("jobs"),
 		wg:     sync.WaitGroup{},
@@ -183,6 +200,7 @@ func NewServer(p Params) *Server {
 
 		fHandler:             conductFileHandler,
 		groupLogoFileHandler: groupLogoFileHandler,
+		jobAssetsFileHandler: jobAssetsFileHandler,
 		groupAccess:          p.GroupAccess,
 		groupAccessResolver:  access.NewSubjectResolver(p.DB),
 		qualificationAccess:  p.QualificationAccess,
@@ -205,4 +223,5 @@ func (s *Server) RegisterServer(srv *grpc.Server) {
 	pbjobs.RegisterStatsServiceServer(srv, s)
 	pbjobs.RegisterTimeclockServiceServer(srv, s)
 	pbjobs.RegisterGroupsServiceServer(srv, s)
+	pbsettings.RegisterJobsAssetsServiceServer(srv, s)
 }

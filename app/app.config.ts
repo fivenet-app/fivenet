@@ -3,7 +3,7 @@ import type { Display, QuickButtons, Website } from '../gen/ts/resources/setting
 import { DataMode, type Data } from '../gen/ts/resources/settings/data';
 
 export default defineAppConfig({
-    // Server provided App Config
+    // Server provided config
     version: '',
 
     defaultLocale: 'en',
@@ -53,6 +53,14 @@ export default defineAppConfig({
         mode: DataMode.UNAVAILABLE,
     } as Data,
 
+    // Timeouts for requests and notifications (in milliseconds)
+    timeouts: {
+        grpc: {
+            unary: 9000,
+        },
+        notification: 3500,
+    },
+
     maxContentLength: 40_000, // Characters
 
     // File upload related config
@@ -65,13 +73,10 @@ export default defineAppConfig({
             images: ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'],
         },
     },
-    // Request timeouts
-    timeouts: {
-        grpc: {
-            unary: 9000,
-        },
-        notification: 3500,
+    jobAssets: {
+        maxFiles: 20,
     },
+
     maxAccessEntries: 15,
 
     fallbackColor: 'blue',

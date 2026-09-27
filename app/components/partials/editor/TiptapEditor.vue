@@ -34,6 +34,7 @@ const props = withDefaults(
         placeholder?: string;
         hideToolbar?: boolean;
         disableImages?: boolean;
+        enableImagesJobAssets?: boolean;
         showPenaltyCalculatorButton?: boolean;
         disablePenaltyCalculatorBlockEditing?: boolean;
         enablePenaltyCalculatorBlockRemoval?: boolean;
@@ -59,6 +60,7 @@ const props = withDefaults(
         placeholder: '',
         hideToolbar: false,
         disableImages: false,
+        enableImagesJobAssets: false,
         showPenaltyCalculatorButton: false,
         disablePenaltyCalculatorBlockEditing: false,
         enablePenaltyCalculatorBlockRemoval: false,
@@ -254,6 +256,14 @@ function hasFileById(files: FileGrpc[] | undefined | null, id: number): boolean 
     return files.some((f) => f.id === id);
 }
 
+function countImages(editor: Editor): number {
+    let count = 0;
+    editor.state.doc.descendants((node) => {
+        if (node.type.name === 'image') count++;
+    });
+    return count;
+}
+
 const disabled = computed(() => props.disabled || loading.value);
 
 function normalizeToJSONContent(value: JSONContent | string | undefined): JSONContent {
@@ -336,7 +346,7 @@ if (props.filestoreService && props.filestoreNamespace && props.targetId) {
         const result = await uploadImages({
             files: fs,
             uploadOne: resizeAndUpload,
-            currentFileCount: files.value?.length ?? 0,
+            currentFileCount: countImages(unref(editor)!),
             fileLimit: props.fileLimit,
             fileLimitNotification: {
                 title: { key: 'components.partials.tiptap_editor.notifications.file_limit_reached.title', parameters: {} },
@@ -610,6 +620,7 @@ defineExpose<{
                 :editor="markRaw(editor)"
                 :disabled="disabled"
                 :disable-images="disableImages"
+                :enable-images-job-assets="enableImagesJobAssets"
                 :show-penalty-calculator-button="showPenaltyCalculatorButton"
                 :history-type="historyType"
                 :file-limit="fileLimit"

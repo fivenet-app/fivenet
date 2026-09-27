@@ -2,6 +2,7 @@
 // source: services/settings/accounts.proto
 // source: services/settings/config.proto
 // source: services/settings/cron.proto
+// source: services/settings/job_assets.proto
 // source: services/settings/laws.proto
 // source: services/settings/settings.proto
 // source: services/settings/system.proto
@@ -16,6 +17,40 @@ import (
 func init() {
 	perms.AddPermsToList([]*perms.Perm{
 		// Namespace: settings
+
+		// Service: settings.JobsAssetsService
+		{
+			Namespace: permkeys.Namespace,
+			Service:   permkeys.JobsAssetsServicePerm,
+			Name:      permkeys.JobsAssetsServiceCreateJobAssetPerm,
+			Attrs:     []perms.Attr{},
+			Order:     6100,
+			Icon:      "i-mdi-image-multiple-outline",
+		},
+		{
+			Namespace: permkeys.Namespace,
+			Service:   permkeys.JobsAssetsServicePerm,
+			Name:      permkeys.JobsAssetsServiceDeleteJobAssetPerm,
+			Attrs:     []perms.Attr{},
+			Order:     6100,
+			Icon:      "i-mdi-image-multiple-outline",
+		},
+		{
+			Namespace: permkeys.Namespace,
+			Service:   permkeys.JobsAssetsServicePerm,
+			Name:      permkeys.JobsAssetsServiceListJobAssetsPerm,
+			Attrs:     []perms.Attr{},
+			Order:     6100,
+			Icon:      "i-mdi-image-multiple-outline",
+		},
+		{
+			Namespace: permkeys.Namespace,
+			Service:   permkeys.JobsAssetsServicePerm,
+			Name:      permkeys.JobsAssetsServiceUpdateJobAssetPerm,
+			Attrs:     []perms.Attr{},
+			Order:     6100,
+			Icon:      "i-mdi-image-multiple-outline",
+		},
 
 		// Service: settings.LawsService
 		{

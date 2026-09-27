@@ -2,6 +2,7 @@
 // source: services/settings/accounts.proto
 // source: services/settings/config.proto
 // source: services/settings/cron.proto
+// source: services/settings/job_assets.proto
 // source: services/settings/laws.proto
 // source: services/settings/settings.proto
 // source: services/settings/system.proto
@@ -15,12 +16,19 @@ import (
 const (
 	Namespace perms.Namespace = "settings"
 
-	AccountsServicePerm perms.Service = "AccountsService"
-	ConfigServicePerm   perms.Service = "ConfigService"
-	CronServicePerm     perms.Service = "CronService"
-	LawsServicePerm     perms.Service = "LawsService"
-	SettingsServicePerm perms.Service = "SettingsService"
-	SystemServicePerm   perms.Service = "SystemService"
+	AccountsServicePerm   perms.Service = "AccountsService"
+	ConfigServicePerm     perms.Service = "ConfigService"
+	CronServicePerm       perms.Service = "CronService"
+	JobsAssetsServicePerm perms.Service = "JobsAssetsService"
+	LawsServicePerm       perms.Service = "LawsService"
+	SettingsServicePerm   perms.Service = "SettingsService"
+	SystemServicePerm     perms.Service = "SystemService"
+
+	// Service: settings.JobsAssetsService
+	JobsAssetsServiceCreateJobAssetPerm perms.Name = "CreateJobAsset"
+	JobsAssetsServiceDeleteJobAssetPerm perms.Name = "DeleteJobAsset"
+	JobsAssetsServiceListJobAssetsPerm  perms.Name = "ListJobAssets"
+	JobsAssetsServiceUpdateJobAssetPerm perms.Name = "UpdateJobAsset"
 
 	// Service: settings.LawsService
 	LawsServiceCreateOrUpdateLawBookPerm perms.Name = "CreateOrUpdateLawBook"
@@ -35,6 +43,40 @@ const (
 	SettingsServiceUpdateRolePermsPerm perms.Name = "UpdateRolePerms"
 	SettingsServiceViewAuditLogPerm    perms.Name = "ViewAuditLog"
 )
+
+type JobsAssetsServicePerms struct {
+	CreateJobAsset JobsAssetsServiceCreateJobAssetPermRef
+	DeleteJobAsset JobsAssetsServiceDeleteJobAssetPermRef
+	ListJobAssets  JobsAssetsServiceListJobAssetsPermRef
+	UpdateJobAsset JobsAssetsServiceUpdateJobAssetPermRef
+}
+type JobsAssetsServiceCreateJobAssetPermRef struct {
+	Perm perms.PermissionRef
+}
+type JobsAssetsServiceDeleteJobAssetPermRef struct {
+	Perm perms.PermissionRef
+}
+type JobsAssetsServiceListJobAssetsPermRef struct {
+	Perm perms.PermissionRef
+}
+type JobsAssetsServiceUpdateJobAssetPermRef struct {
+	Perm perms.PermissionRef
+}
+
+var JobsAssetsService = JobsAssetsServicePerms{
+	CreateJobAsset: JobsAssetsServiceCreateJobAssetPermRef{
+		Perm: perms.NewPermissionRef(Namespace, JobsAssetsServicePerm, JobsAssetsServiceCreateJobAssetPerm),
+	},
+	DeleteJobAsset: JobsAssetsServiceDeleteJobAssetPermRef{
+		Perm: perms.NewPermissionRef(Namespace, JobsAssetsServicePerm, JobsAssetsServiceDeleteJobAssetPerm),
+	},
+	ListJobAssets: JobsAssetsServiceListJobAssetsPermRef{
+		Perm: perms.NewPermissionRef(Namespace, JobsAssetsServicePerm, JobsAssetsServiceListJobAssetsPerm),
+	},
+	UpdateJobAsset: JobsAssetsServiceUpdateJobAssetPermRef{
+		Perm: perms.NewPermissionRef(Namespace, JobsAssetsServicePerm, JobsAssetsServiceUpdateJobAssetPerm),
+	},
+}
 
 type LawsServicePerms struct {
 	CreateOrUpdateLawBook LawsServiceCreateOrUpdateLawBookPermRef

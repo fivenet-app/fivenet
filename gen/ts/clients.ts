@@ -212,6 +212,12 @@ export async function getSettingsCronClient() {
     return new CronServiceClient(useGRPCTransport());
 }
 
+// Factory for settings.jobsAssets client.
+export async function getSettingsJobsassetsClient() {
+    const { JobsAssetsServiceClient } = await import('~~/gen/ts/services/settings/job_assets.client');
+    return new JobsAssetsServiceClient(useGRPCTransport());
+}
+
 // Factory for settings.laws client.
 export async function getSettingsLawsClient() {
     const { LawsServiceClient } = await import('~~/gen/ts/services/settings/laws.client');

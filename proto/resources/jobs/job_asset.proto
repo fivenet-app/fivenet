@@ -1,0 +1,27 @@
+syntax = "proto3";
+
+package resources.jobs;
+
+import "buf/validate/validate.proto";
+import "codegen/sanitizer/sanitizer.proto";
+import "resources/file/file.proto";
+import "resources/timestamp/timestamp.proto";
+
+option go_package = "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/jobs;jobs";
+
+message JobAsset {
+  int64 id = 1;
+  resources.file.File file = 2;
+  optional int32 created_by_user_id = 3;
+  resources.timestamp.Timestamp created_at = 4;
+  string display_name = 5 [
+    (buf.validate.field).string = {
+      min_len: 1
+      max_len: 255
+    },
+    (codegen.sanitizer.sanitizer) = {
+      enabled: true
+      strip_html_tags: true
+    }
+  ];
+}
