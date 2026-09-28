@@ -1,4 +1,6 @@
 <script lang="ts" setup>
+import NotSupportedTabletBlock from '~/components/partials/NotSupportedTabletBlock.vue';
+import { useSettingsStore } from '~/stores/settings';
 import { getSettingsJobsassetsClient } from '~~/gen/ts/clients';
 
 const props = defineProps<{
@@ -11,6 +13,8 @@ const emit = defineEmits<{
 
 const open = defineModel<boolean>('open', { default: false });
 const { fileUpload, jobAssets } = useAppConfig();
+const settingsStore = useSettingsStore();
+const { nuiEnabled } = storeToRefs(settingsStore);
 const jobsClient = await getSettingsJobsassetsClient();
 const { uploadImages } = useImageUpload();
 const selectedFiles = ref<File[]>([]);
@@ -59,14 +63,20 @@ watch(open, (isOpen) => {
 <template>
     <UModal v-model:open="open" :title="$t('common.upload')" :close="!isSubmitting" :dismissible="!isSubmitting">
         <template #body>
-            <UFileUpload
-                v-model="selectedFiles"
-                multiple
-                class="w-full"
-                :accept="fileUpload.types.images.join(',')"
-                :max-files="jobAssets.maxFiles - assetCount"
-                :label="$t('common.file_upload_label')"
-            />
+            <NotSupportedTabletBlock v-if="nuiEnabled" />
+            <div v-else class="grid gap-4">
+                <UFileUpload
+                    v-model="selectedFiles"
+                    multiple
+                    class="w-full"
+                    :accept="fileUpload.types.images.join(',')"
+                    :max-files="jobAssets.maxFiles - assetCount"
+                    :placeholder="$t('common.image')"
+                    :label="$t('common.file_upload_label')"
+                    :description="$t('common.allowed_file_types')"
+                />
+                <PartialsContentGuidelinesAlert />
+            </div>
         </template>
 
         <template #footer>

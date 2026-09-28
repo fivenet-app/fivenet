@@ -465,38 +465,42 @@ const confirmModal = overlay.create(ConfirmModal);
                                     </div>
 
                                     <NotSupportedTabletBlock v-if="nuiEnabled" />
-                                    <div v-else class="flex flex-col gap-2 md:flex-row">
-                                        <UFileUpload
-                                            class="w-full flex-1 grow"
-                                            :disabled="!canSubmit || !canEdit"
-                                            :accept="appConfig.fileUpload.types.images.join(',')"
-                                            :placeholder="$t('common.image')"
-                                            :label="$t('common.file_upload_label')"
-                                            :description="$t('common.allowed_file_types')"
-                                            :ui="{
-                                                base: 'min-h-50',
-                                                files: 'min-h-50 w-full',
-                                                file: 'flex min-h-50 items-center justify-center',
-                                                fileLeadingAvatar: 'size-50 rounded-lg',
-                                            }"
-                                            @update:model-value="($event) => handleJobLogoUpload($event)"
-                                        />
+                                    <div v-else class="grid gap-2">
+                                        <div class="flex flex-col gap-2 md:flex-row">
+                                            <UFileUpload
+                                                class="w-full flex-1 grow"
+                                                position="inside"
+                                                :disabled="!canSubmit || !canEdit"
+                                                :accept="appConfig.fileUpload.types.images.join(',')"
+                                                :placeholder="$t('common.image')"
+                                                :label="$t('common.file_upload_label')"
+                                                :description="$t('common.allowed_file_types')"
+                                                :ui="{
+                                                    base: 'min-h-50',
+                                                    files: 'min-h-50 w-full',
+                                                    file: 'flex min-h-50 items-center justify-center',
+                                                    fileLeadingAvatar: 'size-50 max-h-50 rounded-lg',
+                                                }"
+                                                @update:model-value="($event) => handleJobLogoUpload($event)"
+                                            />
 
-                                        <UButton
-                                            v-if="jobProps.logoFileId"
-                                            class="grow-0"
-                                            variant="outline"
-                                            color="error"
-                                            trailing-icon="i-mdi-clear"
-                                            :label="$t('common.clear')"
-                                            @click="
-                                                () => {
-                                                    confirmModal.open({
-                                                        confirm: () => settingsSettingsClient.deleteJobLogo({}),
-                                                    });
-                                                }
-                                            "
-                                        />
+                                            <UButton
+                                                v-if="jobProps.logoFileId"
+                                                class="grow-0"
+                                                variant="outline"
+                                                color="error"
+                                                trailing-icon="i-mdi-clear"
+                                                :label="$t('common.remove')"
+                                                @click="
+                                                    () => {
+                                                        confirmModal.open({
+                                                            confirm: () => settingsSettingsClient.deleteJobLogo({}),
+                                                        });
+                                                    }
+                                                "
+                                            />
+                                        </div>
+                                        <PartialsContentGuidelinesAlert />
                                     </div>
                                 </UFormField>
 

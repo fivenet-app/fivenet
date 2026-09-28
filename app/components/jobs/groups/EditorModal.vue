@@ -5,8 +5,10 @@ import AccessManager from '~/components/partials/access/AccessManager.vue';
 import { enumToAccessLevelEnums, normalizeAccessEntryIds, type AccessType } from '~/components/partials/access/helpers';
 import ColorPicker from '~/components/partials/ColorPicker.vue';
 import GenericImg from '~/components/partials/elements/GenericImg.vue';
+import NotSupportedTabletBlock from '~/components/partials/NotSupportedTabletBlock.vue';
 import SelectMenu from '~/components/partials/SelectMenu.vue';
 import { useCompletorStore } from '~/stores/completor';
+import { useSettingsStore } from '~/stores/settings';
 import { getJobsGroupsClient } from '~~/gen/ts/clients';
 import type { Access, JobAccess, QualificationAccess, UserAccess } from '~~/gen/ts/resources/access/access';
 import type { UploadFileResponse } from '~~/gen/ts/resources/file/filestore';
@@ -41,6 +43,8 @@ const emit = defineEmits<{
 const notifications = useNotificationsStore();
 const { t } = useI18n();
 const { fileUpload } = useAppConfig();
+const settingsStore = useSettingsStore();
+const { nuiEnabled } = storeToRefs(settingsStore);
 const completorStore = useCompletorStore();
 
 const jobsGroupsClient = await getJobsGroupsClient();
@@ -391,9 +395,27 @@ async function closeModal(): Promise<void> {
         <template #body>
             <UForm ref="formRef" :schema="schema" :state="state" @submit="submit">
                 <div class="grid gap-4">
-                    <UFormField name="name" :label="$t('common.name')" required>
-                        <UInput v-model="state.name" class="w-full" name="name" type="text" :placeholder="$t('common.name')" />
-                    </UFormField>
+                    <div class="flex flex-1 gap-2">
+                        <UFormField name="shortName" :label="$t('common.initials')">
+                            <UInput
+                                v-model="state.shortName"
+                                class="w-full"
+                                name="shortName"
+                                type="text"
+                                :placeholder="$t('common.initials')"
+                            />
+                        </UFormField>
+
+                        <UFormField class="flex-1" name="name" :label="$t('common.name')" required>
+                            <UInput
+                                v-model="state.name"
+                                class="w-full"
+                                name="name"
+                                type="text"
+                                :placeholder="$t('common.name')"
+                            />
+                        </UFormField>
+                    </div>
 
                     <UFormField name="description" :label="$t('common.description')">
                         <UTextarea
@@ -405,52 +427,47 @@ async function closeModal(): Promise<void> {
                         />
                     </UFormField>
 
-                    <UFormField name="shortName" :label="$t('components.jobs.groups.short_name')">
-                        <UInput
-                            v-model="state.shortName"
-                            class="w-full"
-                            name="shortName"
-                            type="text"
-                            :placeholder="$t('components.jobs.groups.short_name')"
-                        />
-                    </UFormField>
-
                     <UFormField name="logoFile" :label="$t('common.logo')">
                         <div v-if="logoFile?.filePath" class="mb-2 flex w-full items-center justify-center">
                             <GenericImg
-                                class="size-full max-h-32 min-h-32 max-w-32"
+                                class="size-full max-h-50 min-h-50 max-w-50"
                                 :src="`/api/filestore/${logoFile.filePath}`"
                                 :alt="`${state.name || $t('common.group', 1)} ${$t('common.logo')}`"
                             />
                         </div>
 
-                        <div class="flex flex-col gap-2 md:flex-row">
-                            <UFileUpload
-                                class="w-full flex-1 grow"
-                                :disabled="!canSubmit"
-                                :accept="fileUpload.types.images.join(',')"
-                                :placeholder="$t('common.image')"
-                                :label="$t('common.file_upload_label')"
-                                :description="$t('common.allowed_file_types')"
-                                :ui="{
-                                    base: 'min-h-32',
-                                    files: 'min-h-32 w-full',
-                                    file: 'flex min-h-32 items-center justify-center',
-                                    fileLeadingAvatar: 'size-32 rounded-lg',
-                                }"
-                                @update:model-value="($event) => handleGroupLogoUpload($event)"
-                            />
+                        <NotSupportedTabletBlock v-if="nuiEnabled" />
+                        <div v-else class="grid gap-2">
+                            <div class="flex flex-col gap-2 md:flex-row">
+                                <UFileUpload
+                                    class="w-full flex-1"
+                                    position="inside"
+                                    :disabled="!canSubmit"
+                                    :accept="fileUpload.types.images.join(',')"
+                                    :placeholder="$t('common.image')"
+                                    :label="$t('common.file_upload_label')"
+                                    :description="$t('common.allowed_file_types')"
+                                    :ui="{
+                                        base: 'min-h-50',
+                                        files: 'min-h-50 w-full',
+                                        file: 'flex min-h-50 items-center justify-center',
+                                        fileLeadingAvatar: 'size-50 max-h-50 rounded-lg',
+                                    }"
+                                    @update:model-value="($event) => handleGroupLogoUpload($event)"
+                                />
 
-                            <UButton
-                                v-if="logoFile?.id"
-                                class="grow-0"
-                                variant="outline"
-                                color="error"
-                                trailing-icon="i-mdi-clear"
-                                :disabled="!canSubmit"
-                                :label="$t('common.clear')"
-                                @click="clearGroupLogo"
-                            />
+                                <UButton
+                                    v-if="logoFile?.id"
+                                    class="grow-0"
+                                    variant="outline"
+                                    color="error"
+                                    trailing-icon="i-mdi-clear"
+                                    :disabled="!canSubmit"
+                                    :label="$t('common.clear')"
+                                    @click="clearGroupLogo"
+                                />
+                            </div>
+                            <PartialsContentGuidelinesAlert />
                         </div>
                     </UFormField>
 

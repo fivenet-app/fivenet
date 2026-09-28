@@ -1,0 +1,9 @@
+<template>
+    <UAlert
+        :title="$t('components.partials.content_guidelines.title')"
+        :description="$t('components.partials.content_guidelines.description')"
+        color="warning"
+        variant="subtle"
+        icon="i-mdi-alert-outline"
+    />
+</template>

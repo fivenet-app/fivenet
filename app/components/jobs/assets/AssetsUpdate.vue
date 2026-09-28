@@ -1,6 +1,8 @@
 <script lang="ts" setup>
 import type { Form, FormSubmitEvent } from '@nuxt/ui';
 import { z } from 'zod';
+import NotSupportedTabletBlock from '~/components/partials/NotSupportedTabletBlock.vue';
+import { useSettingsStore } from '~/stores/settings';
 import type { JobAsset } from '~~/gen/ts/resources/jobs/job_asset';
 import { getSettingsJobsassetsClient } from '~~/gen/ts/clients';
 
@@ -20,6 +22,8 @@ const schema = z.object({
 type Schema = z.output<typeof schema>;
 
 const { fileUpload } = useAppConfig();
+const settingsStore = useSettingsStore();
+const { nuiEnabled } = storeToRefs(settingsStore);
 const jobsClient = await getSettingsJobsassetsClient();
 const state = reactive<Schema>({ displayName: '' });
 const replacementFile = ref<File>();
@@ -95,16 +99,22 @@ const { submit: submitAsset, isSubmitting } = useSubmitGuard(saveAsset);
                 </UFormField>
 
                 <UFormField :label="$t('common.file')">
-                    <UFileUpload
-                        v-model="replacementFile"
-                        :accept="fileUpload.types.images.join(',')"
-                        :label="$t('common.replace')"
-                        :description="
-                            $t('components.jobs.job_assets.replace_file_description', {
-                                allowedFileTypes: $t('common.allowed_file_types'),
-                            })
-                        "
-                    />
+                    <NotSupportedTabletBlock v-if="nuiEnabled" />
+                    <div v-else class="grid gap-2">
+                        <UFileUpload
+                            v-model="replacementFile"
+                            position="inside"
+                            :accept="fileUpload.types.images.join(',')"
+                            :placeholder="$t('common.image')"
+                            :label="$t('common.replace')"
+                            :description="
+                                $t('components.jobs.job_assets.replace_file_description', {
+                                    allowedFileTypes: $t('common.allowed_file_types'),
+                                })
+                            "
+                        />
+                        <PartialsContentGuidelinesAlert />
+                    </div>
                 </UFormField>
             </UForm>
         </template>

@@ -419,27 +419,32 @@ watch(
                     <div class="flex flex-col gap-2">
                         <NotSupportedTabletBlock v-if="nuiEnabled" />
                         <template v-else>
-                            <UFileUpload
-                                :model-value="props.pendingImage"
-                                class="w-full"
-                                :disabled="disabled"
-                                :accept="appConfig.fileUpload.types.images.join(',')"
-                                :placeholder="$t('common.image')"
-                                :label="$t('common.file_upload_label')"
-                                :description="$t('common.allowed_file_types')"
-                                :ui="{
-                                    base: 'min-h-12',
-                                    files: 'min-h-12 w-full',
-                                    file: 'flex min-h-12 items-center justify-center',
-                                    fileLeadingAvatar: 'size-12 rounded-lg',
-                                }"
-                                @update:model-value="($event) => handleImage($event)"
-                            />
+                            <div class="grid gap-2">
+                                <UFileUpload
+                                    :model-value="props.pendingImage"
+                                    class="w-full"
+                                    position="inside"
+                                    :disabled="disabled"
+                                    :accept="appConfig.fileUpload.types.images.join(',')"
+                                    :placeholder="$t('common.image')"
+                                    :label="$t('common.file_upload_label')"
+                                    :description="$t('common.allowed_file_types')"
+                                    :ui="{
+                                        base: 'min-h-12',
+                                        files: 'min-h-12 w-full',
+                                        file: 'flex min-h-12 items-center justify-center',
+                                        fileLeadingAvatar: 'h-auto max-h-120 w-auto max-w-full rounded-lg',
+                                    }"
+                                    @update:model-value="($event) => handleImage($event)"
+                                />
+
+                                <PartialsContentGuidelinesAlert />
+                            </div>
                         </template>
 
                         <div v-if="question.data?.data.image.image" class="flex flex-1 items-center justify-center">
                             <GenericImg
-                                class="min-h-12 min-w-12"
+                                class="max-h-120 min-h-12 max-w-full min-w-12 object-contain"
                                 enable-popup
                                 :rounded="false"
                                 :src="question.data?.data.image.image.filePath"

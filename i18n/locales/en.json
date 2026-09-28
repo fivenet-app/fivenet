@@ -454,6 +454,7 @@
         "time": "Time",
         "service": "Service",
         "copy": "Copy",
+        "copy_image_link": "Copy image link",
         "download": "Download",
         "prop": "Prop",
         "theme": "Theme",
@@ -943,6 +944,10 @@
                 "default_message": "Please try again in a moment."
             },
             "sidebar_notifications": "Go to Notifications",
+            "content_guidelines": {
+                "title": "Content policy",
+                "description": "Copyrighted material and any other prohibited content are strictly forbidden. Uploading such content may result in disciplinary action."
+            },
             "confirm_dialog": {
                 "title": "Dangerous Action",
                 "description": "Are you sure want to do this potentially dangerous actions? All data associated will be permanently deleted from our servers forever. This action cannot be undone."
@@ -1429,7 +1434,6 @@
                 "manual_members": "Manual members",
                 "exclusions": "Exclusions",
                 "membership_mode": "Membership mode",
-                "short_name": "Short name",
                 "sort_rank": "Sort rank",
                 "no_description": "No description",
                 "types": {

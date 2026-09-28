@@ -135,16 +135,20 @@ async function closeModal(): Promise<void> {
 
                 <UFormField class="flex-1" name="file" :label="$t('common.file')">
                     <NotSupportedTabletBlock v-if="nuiEnabled" />
-                    <UFileUpload
-                        v-else
-                        v-model="state.file"
-                        class="mx-auto max-w-md flex-1"
-                        name="file"
-                        :accept="fileUpload.types.images.join(',')"
-                        :placeholder="$t('common.image')"
-                        :label="$t('common.file_upload_label')"
-                        :description="$t('common.allowed_file_types')"
-                    />
+                    <div v-else class="grid gap-2">
+                        <UFileUpload
+                            v-model="state.file"
+                            class="mx-auto max-w-md flex-1"
+                            position="inside"
+                            name="file"
+                            :accept="fileUpload.types.images.join(',')"
+                            :placeholder="$t('common.image')"
+                            :label="$t('common.file_upload_label')"
+                            :description="$t('common.allowed_file_types')"
+                        />
+
+                        <PartialsContentGuidelinesAlert />
+                    </div>
                 </UFormField>
             </UForm>
         </template>

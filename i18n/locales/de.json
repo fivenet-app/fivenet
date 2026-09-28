@@ -454,6 +454,7 @@
         "time": "Zeit",
         "service": "Service",
         "copy": "Kopieren",
+        "copy_image_link": "Bildlink kopieren",
         "download": "Herunterladen",
         "prop": "Eigenschaft",
         "theme": "Design",
@@ -943,6 +944,10 @@
                 "default_message": "Bitte versuche es gleich noch einmal."
             },
             "sidebar_notifications": "Zu Benachrichtigungen gehen",
+            "content_guidelines": {
+                "title": "Inhaltsrichtlinien",
+                "description": "Urheberrechtlich geschütztes Material und alle anderen verbotenen Inhalte sind strengstens untersagt. Das Hochladen solcher Inhalte kann zu Konsequenzen führen."
+            },
             "confirm_dialog": {
                 "title": "Gefährliche Aktion",
                 "description": "Sind Sie sicher, dass Sie diese potenziell gefährlichen Aktionen durchführen wollen? Alle damit verbundenen Daten werden für immer von unseren Servern gelöscht. Diese Aktion kann nicht rückgängig gemacht werden."
@@ -1429,7 +1434,6 @@
                 "manual_members": "Manuelle Mitglieder",
                 "exclusions": "Ausschlüsse",
                 "membership_mode": "Mitgliedschaftsmodus",
-                "short_name": "Kurzname",
                 "sort_rank": "Sortierrang",
                 "no_description": "Keine Beschreibung",
                 "types": {
