@@ -117,4 +117,13 @@ func TestFilesystem_Get(t *testing.T) {
 		require.Equal(t, key, info.GetName())
 		require.Equal(t, int64(len(contentToPut)), info.GetSize())
 	})
+
+	t.Run("list root", func(t *testing.T) {
+		t.Parallel()
+		for _, key := range []string{"", "/"} {
+			files, err := fs.List(t.Context(), key, 0, 50)
+			require.NoError(t, err)
+			require.NotEmpty(t, files)
+		}
+	})
 }

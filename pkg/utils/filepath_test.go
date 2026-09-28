@@ -217,6 +217,14 @@ func TestFSRootPath(t *testing.T) {
 			expected:  "",
 			expectErr: false,
 		},
+		{
+			name:      "Empty key uses prefix",
+			prefix:    "images",
+			key:       "",
+			emptyOk:   true,
+			expected:  "images",
+			expectErr: false,
+		},
 	}
 
 	for _, tt := range tests {

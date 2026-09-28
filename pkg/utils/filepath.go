@@ -91,10 +91,10 @@ func FSRootFile(prefix string, key string) (string, error) {
 }
 
 func FSRootPath(prefix string, key string, emptyOk bool) (string, error) {
-	if key == "" || key == "." || key == ".." {
-		if emptyOk {
-			return "", nil
-		}
+	if key == "." || key == ".." {
+		return "", errors.New("empty key")
+	}
+	if key == "" && !emptyOk {
 		return "", errors.New("empty key")
 	}
 	// Forbid NUL byte (defensive check)
@@ -119,6 +119,9 @@ func FSRootPath(prefix string, key string, emptyOk bool) (string, error) {
 
 	// key is canonical slash-based; convert to OS separators and join with prefix
 	rel := filepath.Join(prefix, filepath.FromSlash(key))
+	if key == "" && prefix == "" {
+		return "", nil
+	}
 
 	// Ensure rel is still relative (no absolute, no volume).
 	if filepath.IsAbs(rel) || filepath.VolumeName(rel) != "" {

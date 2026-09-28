@@ -172,7 +172,7 @@ func (s *Filesystem) List(
 	offset int,
 	pageSize int,
 ) ([]*FileInfo, error) {
-	key, err := utils.FSRootFile(s.prefix, key)
+	key, err := utils.FSRootPath(s.prefix, key, true)
 	if err != nil {
 		return nil, ErrInvalidPath
 	}
