@@ -232,7 +232,7 @@ defineShortcuts({
 <template>
     <UDashboardPanel :ui="{ root: 'pb-(--page-content-bottom-offset)', body: 'p-0 sm:p-0 gap-0 sm:gap-0' }">
         <template #header>
-            <UDashboardNavbar :title="$t('pages.settings.settings.title')">
+            <UDashboardNavbar :title="$t('pages.settings.filestore.title')">
                 <template #leading>
                     <UDashboardSidebarCollapse />
                 </template>
