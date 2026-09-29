@@ -90,6 +90,12 @@ export class WebsocketChannelImpl implements WebsocketChannel {
 
         watch(ws.data, async (val) => this.onMessage(val));
         watch(ws.status, (val) => {
+            this.logger.info('Websocket status changed', {
+                status: val,
+                activeStreamIds: [...this.activeStreams.keys()],
+                authState: this.authState.kind,
+            });
+
             if (val === 'OPEN') return;
 
             this.rejectPendingAuth(new Error('WebSocket closed'));
@@ -261,7 +267,10 @@ export class WebsocketChannelImpl implements WebsocketChannel {
                 if (!h) return;
 
                 if (h.operation === CONTROL_OP_AUTH_OK) {
-                    this.logger.debug('WS auth operation: ok');
+                    this.logger.debug('Websocket authentication accepted', {
+                        operation: h.operation,
+                        status: this.ws.status.value,
+                    });
                     const pendingToken =
                         this.authState.kind === 'pending'
                             ? this.authState.token
@@ -275,6 +284,10 @@ export class WebsocketChannelImpl implements WebsocketChannel {
 
                 // If server responds with something else on control stream, treat as failure.
                 const err = new Error(`WS control header unexpected operation: ${h.operation}`);
+                this.logger.error('Unexpected websocket control response', {
+                    operation: h.operation,
+                    authState: this.authState.kind,
+                });
                 const failedToken =
                     this.authState.kind === 'pending'
                         ? this.authState.token
@@ -295,7 +308,11 @@ export class WebsocketChannelImpl implements WebsocketChannel {
                 const f = frame.payload.failure;
                 const msg = f?.errorMessage || 'Unauthenticated';
                 const err = new Error(`WS auth failed: ${msg}`);
-                this.logger.warn(err.message);
+                this.logger.warn('Websocket authentication rejected', {
+                    message: msg,
+                    authState: this.authState.kind,
+                    status: this.ws.status.value,
+                });
 
                 const failedToken =
                     this.authState.kind === 'pending'

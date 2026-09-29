@@ -87,7 +87,15 @@ export default class GrpcProvider extends ObservableV2<Events> {
         }
         this.sendHello();
 
-        this.stream.responses.onError(() => {
+        this.stream.responses.onError((error) => {
+            logger.warn('Collab gRPC stream ended', {
+                error,
+                connected: this.connected,
+                synced: this.synced,
+                authoritative: this.authoritative,
+                clientId: this.clientId,
+            });
+
             this.connected = false;
             this.clientId = undefined;
 
@@ -203,8 +211,11 @@ export default class GrpcProvider extends ObservableV2<Events> {
 
     private scheduleReconnect() {
         if (this.destroyed) return;
-        logger.info('Scheduling reconnect', {
+        const delay = Math.min(this.reconnectAttempt * 750, 10_000);
+
+        logger.info('Scheduling collab reconnect', {
             reconnectAttempt: this.reconnectAttempt,
+            delay,
             destroyed: this.destroyed,
             connected: this.connected,
             synced: this.synced,
@@ -215,7 +226,6 @@ export default class GrpcProvider extends ObservableV2<Events> {
         this.emit('sync', [false, this.ydoc]);
         this.emit('loading', [true]);
 
-        const delay = Math.min(this.reconnectAttempt * 750, 10_000);
         if (delay >= 10_000) {
             logger.info('Max reconnect delay reached, resetting attempt counter');
             this.reconnectAttempt = 1;

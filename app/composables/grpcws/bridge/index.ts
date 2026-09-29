@@ -60,15 +60,25 @@ export const webSocket = useWebSocket(
 
         onConnected(ws) {
             ws.binaryType = 'arraybuffer';
-            logger.info('Websocket connected');
+            logger.info('Websocket connected', {
+                status: webSocket.status.value,
+                url: ws.url,
+            });
         },
         onDisconnected(_, event) {
+            const details = {
+                code: event.code,
+                reason: event.reason || '<empty>',
+                wasClean: event.wasClean,
+                status: webSocket.status.value,
+            };
+
             if (event.wasClean) {
-                logger.info('Websocket disconnected cleanly, code:', event.code, 'reason:', event.reason);
+                logger.info('Websocket disconnected cleanly', details);
                 return;
             }
 
-            logger.error('Websocket disconnected, code:', event.code, 'reason:', event.reason);
+            logger.error('Websocket disconnected unexpectedly', details);
         },
     },
 );

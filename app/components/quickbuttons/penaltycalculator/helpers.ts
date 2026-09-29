@@ -77,7 +77,7 @@ export function resolvePenaltyCalculatorSelection(
 ): SelectedPenalty[] {
     if (!data?.selected || !lawBooks || lawBooks.length === 0) return [];
 
-    const laws = lawBooks.flatMap((book) => book.laws);
+    const laws = lawBooks.flatMap((book) => book.laws ?? []);
 
     return data.selected
         .map((item) => {
