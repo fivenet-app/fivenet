@@ -3,7 +3,7 @@ import { deepToRaw } from '~/utils/deepToRaw';
 import { stringToDate } from '~/utils/time';
 import { ContentType } from '~~/gen/ts/resources/common/content/content';
 import type { Category } from '~~/gen/ts/resources/documents/category/category';
-import type { Document, DocumentShort } from '~~/gen/ts/resources/documents/documents';
+import type { DocumentShort } from '~~/gen/ts/resources/documents/documents';
 import type { ObjectSpecs, TemplateSelection } from '~~/gen/ts/resources/documents/templates/templates';
 import type { UserShort } from '~~/gen/ts/resources/users/short/user';
 import type { User } from '~~/gen/ts/resources/users/user';
@@ -331,9 +331,9 @@ export const useClipboardStore = defineStore(
 
         /**
          * Adds a document to the clipboard.
-         * @param {Document} document - The document to add.
+         * @param {DocumentShort} document - The document to add.
          */
-        const addDocument = (document: Document): boolean => {
+        const addDocument = (document: DocumentShort): boolean => {
             if (documents.value.find((o) => o.id === document.id)) return true;
             if (documents.value.length >= CLIPBOARD_MAX_ITEMS) return false;
 

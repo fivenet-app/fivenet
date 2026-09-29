@@ -24,7 +24,7 @@ func init() {
 			Service:   permkeys.JobsAssetsServicePerm,
 			Name:      permkeys.JobsAssetsServiceCreateJobAssetPerm,
 			Attrs:     []perms.Attr{},
-			Order:     6100,
+			Order:     12100,
 			Icon:      "i-mdi-image-multiple-outline",
 		},
 		{
@@ -32,7 +32,7 @@ func init() {
 			Service:   permkeys.JobsAssetsServicePerm,
 			Name:      permkeys.JobsAssetsServiceDeleteJobAssetPerm,
 			Attrs:     []perms.Attr{},
-			Order:     6100,
+			Order:     12100,
 			Icon:      "i-mdi-image-multiple-outline",
 		},
 		{
@@ -40,7 +40,7 @@ func init() {
 			Service:   permkeys.JobsAssetsServicePerm,
 			Name:      permkeys.JobsAssetsServiceListJobAssetsPerm,
 			Attrs:     []perms.Attr{},
-			Order:     6100,
+			Order:     12100,
 			Icon:      "i-mdi-image-multiple-outline",
 		},
 		{
@@ -48,7 +48,7 @@ func init() {
 			Service:   permkeys.JobsAssetsServicePerm,
 			Name:      permkeys.JobsAssetsServiceUpdateJobAssetPerm,
 			Attrs:     []perms.Attr{},
-			Order:     6100,
+			Order:     12100,
 			Icon:      "i-mdi-image-multiple-outline",
 		},
 

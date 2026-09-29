@@ -47,7 +47,7 @@ message UpdateJobAssetResponse {
 
 service JobsAssetsService {
   option (codegen.perms.perms_svc) = {
-    order: 61
+    order: 121
     icon: "i-mdi-image-multiple-outline"
   };
 

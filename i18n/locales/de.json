@@ -3511,11 +3511,11 @@
                 },
                 "ErrTemplateRenderFailed": {
                     "title": "Vorlage konnte nicht gerendert werden",
-                    "content": "Die Dokumentvorlage konnte nicht gerendert werden. Bitte versuche es erneut oder wende dich an den Ersteller der Vorlage."
+                    "content": "Die Dokumentenvorlage konnte nicht gerendert werden. Bitte versuche es erneut oder wende dich an den Ersteller der Vorlage."
                 },
                 "ErrTemplateInvalid": {
-                    "title": "Ungültige Dokumentvorlage",
-                    "content": "Diese Dokumentvorlage enthält ein ungültiges Feld oder einen ungültigen Formatierungsausdruck. Bitte wende dich an den Ersteller der Vorlage."
+                    "title": "Ungültige Dokumentenvorlage",
+                    "content": "Diese Dokumentenvorlage enthält ein ungültiges Feld oder einen ungültigen Formatierungsausdruck. Bitte wende dich an den Ersteller der Vorlage."
                 },
                 "ErrTemplateOutputInvalid": {
                     "title": "Ungültige Vorlagenausgabe",

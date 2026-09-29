@@ -314,7 +314,7 @@ func (s *Server) GetTemplate(
 			data,
 		)
 		if err != nil {
-			if s.perms.Can(userInfo, perms.PermConfigAdminRef) || s.perms.Can(
+			if userInfo.GetCanBeSuperuser() || s.perms.Can(
 				userInfo,
 				permsdocuments.TemplatesService.CreateTemplate.Perm,
 			) {

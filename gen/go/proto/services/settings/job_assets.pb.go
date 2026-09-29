@@ -444,7 +444,7 @@ const file_services_settings_job_assets_proto_rawDesc = "" +
 	"\x0eUploadJobAsset\x12!.resources.file.UploadFileRequest\x1a\".resources.file.UploadFileResponse\"\x16\xd2\xf3\x18\x12\b\x01\"\x0eCreateJobAsset(\x01\x12r\n" +
 	"\x0fReplaceJobAsset\x12!.resources.file.UploadFileRequest\x1a\".resources.file.UploadFileResponse\"\x16\xd2\xf3\x18\x12\b\x01\"\x0eUpdateJobAsset(\x01\x12}\n" +
 	"\x0eUpdateJobAsset\x12(.services.settings.UpdateJobAssetRequest\x1a).services.settings.UpdateJobAssetResponse\"\x16\xd2\xf3\x18\x12\b\x01\"\x0eUpdateJobAsset\x12m\n" +
-	"\x0eDeleteJobAsset\x12(.services.settings.DeleteJobAssetRequest\x1a).services.settings.DeleteJobAssetResponse\"\x06\xd2\xf3\x18\x02\b\x01\x1a$\xea\xf3\x18 \b=\x12\x1ci-mdi-image-multiple-outlineBNZLgithub.com/fivenet-app/fivenet/v2026/gen/go/proto/services/settings;settingsb\x06proto3"
+	"\x0eDeleteJobAsset\x12(.services.settings.DeleteJobAssetRequest\x1a).services.settings.DeleteJobAssetResponse\"\x06\xd2\xf3\x18\x02\b\x01\x1a$\xea\xf3\x18 \by\x12\x1ci-mdi-image-multiple-outlineBNZLgithub.com/fivenet-app/fivenet/v2026/gen/go/proto/services/settings;settingsb\x06proto3"
 
 var file_services_settings_job_assets_proto_msgTypes = make([]protoimpl.MessageInfo, 6)
 var file_services_settings_job_assets_proto_goTypes = []any{

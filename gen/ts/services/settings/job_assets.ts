@@ -370,4 +370,4 @@ export const JobsAssetsService = new ServiceType("services.settings.JobsAssetsSe
     { name: "ReplaceJobAsset", clientStreaming: true, options: { "codegen.perms.perms": { enabled: true, name: "UpdateJobAsset" } }, I: UploadFileRequest, O: UploadFileResponse },
     { name: "UpdateJobAsset", options: { "codegen.perms.perms": { enabled: true, name: "UpdateJobAsset" } }, I: UpdateJobAssetRequest, O: UpdateJobAssetResponse },
     { name: "DeleteJobAsset", options: { "codegen.perms.perms": { enabled: true } }, I: DeleteJobAssetRequest, O: DeleteJobAssetResponse }
-], { "codegen.perms.perms_svc": { order: 61, icon: "i-mdi-image-multiple-outline" } });
+], { "codegen.perms.perms_svc": { order: 121, icon: "i-mdi-image-multiple-outline" } });

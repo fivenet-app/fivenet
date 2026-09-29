@@ -6,7 +6,9 @@ import OpenClosedBadge from '~/components/partials/OpenClosedBadge.vue';
 import CitizenInfoPopover from '~/components/partials/citizens/CitizenInfoPopover.vue';
 import CategoryBadge from '~/components/partials/documents/CategoryBadge.vue';
 import GenericTime from '~/components/partials/elements/GenericTime.vue';
+import { useClipboardStore } from '~/stores/clipboard';
 import type { DocumentShort } from '~~/gen/ts/resources/documents/documents';
+import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 import DraftBadge from '../partials/DraftBadge.vue';
 import ApprovalBadge from './approval/ApprovalBadge.vue';
 import DocumentListTitle from './DocumentListTitle.vue';
@@ -22,6 +24,35 @@ const { can, attr, isSuperuser } = useAuth();
 const { custom } = useAppConfig();
 
 const documentsDocuments = await useDocumentsDocuments();
+const clipboardStore = useClipboardStore();
+const { open: openClipboardModal } = useClipboardModal();
+const notifications = useNotificationsStore();
+
+function addToClipboard(): void {
+    const added = clipboardStore.addDocument(props.document);
+
+    notifications.add({
+        title: {
+            key: added ? 'notifications.clipboard.document_added.title' : 'notifications.clipboard.limit_reached.title',
+            parameters: {},
+        },
+        description: {
+            key: added ? 'notifications.clipboard.document_added.content' : 'notifications.clipboard.limit_reached.content',
+            parameters: {},
+        },
+        duration: 3250,
+        type: added ? NotificationType.INFO : NotificationType.WARNING,
+        actions: added
+            ? []
+            : [
+                  {
+                      label: { key: 'common.open', parameters: {} },
+                      icon: 'i-mdi-clipboard-list-outline',
+                      onClick: () => void openClipboardModal(),
+                  },
+              ],
+    });
+}
 
 const links = computed(() =>
     (
@@ -40,6 +71,13 @@ const links = computed(() =>
                       }
                     : undefined,
             ].filter((l) => l != undefined),
+            [
+                {
+                    label: t('components.clipboard.clipboard_button.add'),
+                    icon: 'i-mdi-clipboard-plus',
+                    onSelect: addToClipboard,
+                },
+            ],
             [
                 ...(can('documents.DocumentsService/ToggleDocumentPin').value
                     ? [
