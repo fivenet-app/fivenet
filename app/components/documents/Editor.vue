@@ -467,7 +467,7 @@ useYStructure<Category>(
 useYArrayFiltered<JobAccess>(
     ydoc.getArray('access_jobs'),
     toRef(state.access, 'jobs'),
-    { omit: ['createdAt', 'user'] },
+    { omit: ['createdAt', 'user'], nested: false },
     { provider: provider },
 );
 useYArrayFiltered<UserAccess>(
@@ -475,6 +475,7 @@ useYArrayFiltered<UserAccess>(
     toRef(state.access, 'users'),
     {
         omit: ['createdAt', 'user'],
+        nested: false,
     },
     { provider: provider },
 );

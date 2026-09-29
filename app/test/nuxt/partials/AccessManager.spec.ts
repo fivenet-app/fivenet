@@ -4,7 +4,7 @@ import { describe, expect, it, vi } from 'vitest';
 import { defineComponent, nextTick } from 'vue';
 import AccessEntry from '~/components/partials/access/AccessEntry.vue';
 import AccessManager from '~/components/partials/access/AccessManager.vue';
-import type { AccessLevelEnum, JobAccessEntry, MixedAccessEntry } from '~/components/partials/access/helpers';
+import type { AccessLevelEnum, JobAccessEntry, MixedAccessEntry, UserAccessEntry } from '~/components/partials/access/helpers';
 
 const mocks = vi.hoisted(() => ({
     completorStore: {
@@ -248,6 +248,36 @@ describe('AccessManager', () => {
         await nextTick();
 
         expect(jobs[0]?.targetId).toBe(8);
+    });
+
+    it('keeps job and user entries separate when one list changes', async () => {
+        const jobs: JobAccessEntry[] = [{ id: 10, targetId: 7, job: 'police', minimumGrade: 0, access: 2 }];
+        const users: UserAccessEntry[] = [{ id: 20, targetId: 7, userId: 42, access: 2 }];
+        const wrapper = await mountSuspended(AccessManager, {
+            props: {
+                jobs,
+                users,
+                targetId: 7,
+                accessRoles,
+                accessTypes: [
+                    { label: 'Users', value: 'user' },
+                    { label: 'Jobs', value: 'job' },
+                ],
+            },
+            global: { stubs: managerStubs(), mocks: { $t: (key: string) => key } },
+        });
+
+        await wrapper.setProps({ users: [{ id: 20, targetId: 7, userId: 42, access: 3 }] });
+        await flushPromises();
+
+        expect(jobs).toEqual([{ id: 10, targetId: 7, job: 'police', minimumGrade: 0, access: 2 }]);
+        expect(wrapper.findAllComponents(AccessEntryStub)[0]?.props('modelValue')).toEqual(
+            expect.objectContaining({ type: 'job', access: 2 }),
+        );
+        expect(wrapper.findAllComponents(AccessEntryStub)[1]?.props('modelValue')).toEqual(
+            expect.objectContaining({ type: 'user', access: 3 }),
+        );
+        expect(wrapper.findAllComponents(AccessEntryStub)).toHaveLength(2);
     });
 });
 

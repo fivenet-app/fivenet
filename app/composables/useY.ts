@@ -139,7 +139,7 @@ export function useYArray<T extends object | Primitive>(
 //  useYArrayFiltered  ⇄  object array with key filtering
 // ---------------------------------------------------------------------------
 
-export type OptsKeyFilter = { omit?: string[]; only?: string[] };
+export type OptsKeyFilter = { omit?: string[]; only?: string[]; nested?: boolean };
 
 export function useYArrayFiltered<T extends object>(
     yArr: Y.Array<unknown>,
@@ -149,6 +149,8 @@ export function useYArrayFiltered<T extends object>(
 ) {
     const { provider } = opts;
     let remoteApplying = false;
+    const syncNested = filter.nested !== false;
+    const mapObservers = new Map<Y.Map<unknown>, (event: Y.YMapEvent<unknown>, transaction: Y.Transaction) => void>();
 
     const serialize = (o: T): Record<string, unknown> => {
         if (filter.only) return Object.fromEntries(Object.entries(o).filter(([k]) => filter.only!.includes(k)));
@@ -161,8 +163,30 @@ export function useYArrayFiltered<T extends object>(
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
             (target as any)[k] = v;
         });
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        useYStructure(map, target as any);
+        if (syncNested) {
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            useYStructure(map, target as any);
+        }
+    };
+
+    const observeMap = (map: Y.Map<unknown>) => {
+        if (syncNested || mapObservers.has(map)) return;
+
+        const handleMap = (_event: Y.YMapEvent<unknown>, transaction: Y.Transaction) => {
+            if (transaction.origin === LOCAL_ORIGIN) return;
+
+            const index = (yArr.toArray() as Y.Map<unknown>[]).indexOf(map);
+            if (index < 0 || !items.value[index]) return;
+
+            remoteApplying = true;
+            hydrate(items.value[index]!, map);
+            nextTick(() => {
+                remoteApplying = false;
+            });
+        };
+
+        map.observe(handleMap);
+        mapObservers.set(map, handleMap);
     };
 
     const syncFromY = () => {
@@ -170,7 +194,10 @@ export function useYArrayFiltered<T extends object>(
         while (items.value.length > yArr.length) items.value.pop();
         while (items.value.length < yArr.length) items.value.push({} as T);
         (yArr as Y.Array<Y.Map<unknown>>).forEach((raw, i) => {
-            if (raw instanceof Y.Map) hydrate(items.value[i]!, raw);
+            if (raw instanceof Y.Map) {
+                observeMap(raw);
+                hydrate(items.value[i]!, raw);
+            }
         });
         nextTick(() => {
             remoteApplying = false;
@@ -179,9 +206,12 @@ export function useYArrayFiltered<T extends object>(
 
     const writeLocalToY = () => {
         const localItems = Array.isArray(items.value) ? items.value : [];
+        const serialized = localItems.map(serialize);
+        if (JSON.stringify(serialized) === JSON.stringify(yArr.toJSON())) return;
+
         yArr.doc?.transact(() => {
             yArr.delete(0, yArr.length);
-            const maps = localItems.map((o) => new Y.Map(Object.entries(serialize(o))));
+            const maps = serialized.map((o) => new Y.Map(Object.entries(o)));
             yArr.insert(0, maps);
         }, LOCAL_ORIGIN);
     };
@@ -196,10 +226,10 @@ export function useYArrayFiltered<T extends object>(
     const init = () => {
         remoteApplying = true;
 
-        if (provider && provider.isAuthoritative) {
-            writeLocalToY();
-        } else {
+        if (yArr.length > 0) {
             syncFromY();
+        } else if (provider && provider.isAuthoritative) {
+            writeLocalToY();
         }
 
         nextTick(() => {
@@ -211,6 +241,8 @@ export function useYArrayFiltered<T extends object>(
             onUnmounted(() => {
                 provider?.off('sync', onSync);
                 (yArr as Y.Array<Y.Map<unknown>>).unobserve(handleYArr);
+                mapObservers.forEach((handle, map) => map.unobserve(handle));
+                mapObservers.clear();
             });
 
         watch(
