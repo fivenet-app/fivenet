@@ -4,14 +4,12 @@ import (
 	"context"
 
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/audit"
-	usershort "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/users/short"
 	pbvehicles "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/vehicles"
 	permsvehicles "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/vehicles/perms"
 	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/auth"
 	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/errswrap"
 	grpc_audit "github.com/fivenet-app/fivenet/v2026/pkg/grpc/interceptors/audit"
 	errorsvehicles "github.com/fivenet-app/fivenet/v2026/services/vehicles/errors"
-	citizenshydrator "github.com/fivenet-app/fivenet/v2026/stores/citizens/hydrator"
 	vehiclesstore "github.com/fivenet-app/fivenet/v2026/stores/vehicles"
 	"github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/logging"
 )
@@ -58,6 +56,7 @@ func (s *Server) ListVehicles(
 	}
 
 	query := vehiclesstore.ListQuery{
+		UserInfo:            userInfo,
 		LicensePlate:        req.GetLicensePlate(),
 		Model:               req.GetModel(),
 		UserIDs:             req.GetUserIds(),
@@ -89,24 +88,10 @@ func (s *Server) ListVehicles(
 		return nil, errswrap.NewError(err, errorsvehicles.ErrFailedQuery)
 	}
 
-	targets := make([]citizenshydrator.BasicTarget, 0, len(resp.GetVehicles()))
-	for i, vehicle := range resp.GetVehicles() {
-		if vehicle.GetOwnerId() > 0 {
-			targets = append(targets, citizenshydrator.BasicTarget{
-				UserID: vehicle.GetOwnerId(),
-				Set: func(user *usershort.UserShort) {
-					resp.Vehicles[i].Owner = user
-				},
-			})
-		}
+	for _, vehicle := range resp.GetVehicles() {
 		if vehicle.Job != nil && vehicle.GetJob() != "" {
 			s.enricher.EnrichJobName(vehicle)
 		}
-	}
-
-	hydrateShort := s.hydrator.HydrateBasicTargetsSafeFunc(userInfo)
-	if err := hydrateShort(ctx, nil, targets); err != nil {
-		return nil, errswrap.NewError(err, errorsvehicles.ErrFailedQuery)
 	}
 
 	return resp, nil

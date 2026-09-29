@@ -25,7 +25,7 @@ func TestStoreCountAppliesListFilters(t *testing.T) {
 		Columns: dbutils.CustomColumns{
 			Vehicle: dbutils.VehicleColumns{Model: "model"},
 		},
-	})
+	}, nil)
 
 	wanted := true
 	query := ListQuery{
@@ -65,7 +65,7 @@ func TestStoreListAppliesSortFallbackAndTieBreaker(t *testing.T) {
 		Columns: dbutils.CustomColumns{
 			Vehicle: dbutils.VehicleColumns{Model: dbutils.DisableColumnName},
 		},
-	})
+	}, nil)
 
 	query := ListQuery{
 		Sort: &database.Sort{

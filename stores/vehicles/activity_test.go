@@ -21,7 +21,7 @@ func TestStoreCountVehicleActivityAppliesPlateAndTypeFilter(t *testing.T) {
 	require.NoError(t, err)
 	t.Cleanup(func() { _ = db.Close() })
 
-	store := New(db, &config.CustomDB{})
+	store := New(db, &config.CustomDB{}, nil)
 
 	expectedQuery := regexp.QuoteMeta(`FROM fivenet_vehicles_activity AS vehicle_activity`) +
 		`(?s).*` + regexp.QuoteMeta(`vehicle_activity.plate = ?`) +
@@ -48,7 +48,7 @@ func TestStoreListVehicleActivityAppliesSortWithoutCreatorJoin(t *testing.T) {
 	require.NoError(t, err)
 	t.Cleanup(func() { _ = db.Close() })
 
-	store := New(db, &config.CustomDB{})
+	store := New(db, &config.CustomDB{}, nil)
 
 	expectedQuery := regexp.QuoteMeta(`FROM fivenet_vehicles_activity AS vehicle_activity`) +
 		`(?s).*` + regexp.QuoteMeta(`vehicle_activity.plate = ?`) +
@@ -95,7 +95,7 @@ func TestStoreIsVehicleOwner(t *testing.T) {
 	require.NoError(t, err)
 	t.Cleanup(func() { _ = db.Close() })
 
-	store := New(db, &config.CustomDB{})
+	store := New(db, &config.CustomDB{}, nil)
 
 	expectedQuery := regexp.QuoteMeta(`FROM fivenet_owned_vehicles`) +
 		`(?s).*` + regexp.QuoteMeta(`fivenet_owned_vehicles.plate = ?`) +
@@ -117,7 +117,7 @@ func TestStoreIsVehicleOwnerReturnsFalseWhenNoPersonalOwner(t *testing.T) {
 	require.NoError(t, err)
 	t.Cleanup(func() { _ = db.Close() })
 
-	store := New(db, &config.CustomDB{})
+	store := New(db, &config.CustomDB{}, nil)
 
 	expectedQuery := regexp.QuoteMeta(`FROM fivenet_owned_vehicles`) +
 		`(?s).*` + regexp.QuoteMeta(`fivenet_owned_vehicles.plate = ?`) +
@@ -139,7 +139,7 @@ func TestStoreUpdatePropsWritesWantedActivity(t *testing.T) {
 	require.NoError(t, err)
 	t.Cleanup(func() { _ = db.Close() })
 
-	store := New(db, &config.CustomDB{})
+	store := New(db, &config.CustomDB{}, nil)
 
 	mock.ExpectQuery(`(?s)FROM .*fivenet_vehicles_props.*WHERE .*plate.*LIMIT \?`).
 		WithArgs("ABC DEF1", sqlmock.AnyArg()).
@@ -177,7 +177,7 @@ func TestStoreUpdatePropsNoOpDoesNotWriteWantedActivity(t *testing.T) {
 	require.NoError(t, err)
 	t.Cleanup(func() { _ = db.Close() })
 
-	store := New(db, &config.CustomDB{})
+	store := New(db, &config.CustomDB{}, nil)
 
 	wantedAt := time.Now().UTC()
 	wantedTill := time.Now().UTC().Add(time.Hour)

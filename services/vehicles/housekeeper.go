@@ -10,6 +10,7 @@ import (
 	"github.com/fivenet-app/fivenet/v2026/pkg/config"
 	"github.com/fivenet-app/fivenet/v2026/pkg/config/appconfig"
 	"github.com/fivenet-app/fivenet/v2026/pkg/croner"
+	citizenshydrator "github.com/fivenet-app/fivenet/v2026/stores/citizens/hydrator"
 	vehiclesstore "github.com/fivenet-app/fivenet/v2026/stores/vehicles"
 	tracesdk "go.opentelemetry.io/otel/sdk/trace"
 	"go.opentelemetry.io/otel/trace"
@@ -41,6 +42,7 @@ type HousekeeperParams struct {
 	DB        *sql.DB
 	TP        *tracesdk.TracerProvider
 	AppConfig appconfig.IConfig
+	Hydrator  citizenshydrator.IHydrator
 }
 
 type HousekeeperResult struct {
@@ -55,7 +57,7 @@ func NewHousekeeper(p HousekeeperParams) HousekeeperResult {
 		logger: p.Logger.Named("vehicles.housekeeper"),
 		tracer: p.TP.Tracer("vehicles.housekeeper"),
 
-		store:  vehiclesstore.New(p.DB, &config.CustomDB{}),
+		store:  vehiclesstore.New(p.DB, &config.CustomDB{}, p.Hydrator),
 		appCfg: p.AppConfig,
 	}
 

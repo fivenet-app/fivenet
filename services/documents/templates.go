@@ -452,6 +452,7 @@ func (s *Server) resolveTemplateData(
 	}
 	if len(selection.GetPlates()) > 0 {
 		vehicles, err := s.vehiclesStore.List(ctx, vehiclesstore.ListQuery{
+			UserInfo:            userInfo,
 			Plates:              selection.GetPlates(),
 			Limit:               int64(len(selection.GetPlates())),
 			IncludePropsUpdated: vehicleFields.Len() > 0,

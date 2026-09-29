@@ -61,7 +61,7 @@ func TestHousekeeperMaxWantedDurationHandling_Disabled(t *testing.T) {
 
 	s := &Housekeeper{
 		logger: zap.NewNop(),
-		store:  vehiclesstore.New(db, &config.CustomDB{}),
+		store:  vehiclesstore.New(db, &config.CustomDB{}, nil),
 		appCfg: &mockAppConfig{cfg: cfg},
 	}
 
@@ -88,7 +88,7 @@ func TestHousekeeperMaxWantedDurationHandling_NoDuration(t *testing.T) {
 
 	s := &Housekeeper{
 		logger: zap.NewNop(),
-		store:  vehiclesstore.New(db, &config.CustomDB{}),
+		store:  vehiclesstore.New(db, &config.CustomDB{}, nil),
 		appCfg: &mockAppConfig{cfg: cfg},
 	}
 
@@ -115,7 +115,7 @@ func TestHousekeeperMaxWantedDurationHandling_QueryCondition(t *testing.T) {
 
 	s := &Housekeeper{
 		logger: zap.NewNop(),
-		store:  vehiclesstore.New(db, &config.CustomDB{}),
+		store:  vehiclesstore.New(db, &config.CustomDB{}, nil),
 		appCfg: &mockAppConfig{cfg: cfg},
 	}
 
@@ -170,7 +170,7 @@ func TestHousekeeperMaxWantedDurationHandling_ResetMultipleVehicles(t *testing.T
 
 	s := &Housekeeper{
 		logger: zap.NewNop(),
-		store:  vehiclesstore.New(db, &config.CustomDB{}),
+		store:  vehiclesstore.New(db, &config.CustomDB{}, nil),
 		appCfg: &mockAppConfig{cfg: cfg},
 	}
 

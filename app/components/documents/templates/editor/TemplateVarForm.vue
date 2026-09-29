@@ -32,11 +32,15 @@ const categories: Category[] = [
 ];
 
 const baseUserProperties: { label: string; value: string }[] = [
-    { label: t('common.firstname'), value: '.Firstname' },
-    { label: t('common.lastname'), value: '.Lastname' },
-    { label: t('common.date_of_birth'), value: '.Dateofbirth' },
-    { label: t('common.sex'), value: '.Sex' },
-    { label: t('common.height'), value: '.Height' },
+    { label: t('common.firstname'), value: '.GetFirstname' },
+    { label: t('common.lastname'), value: '.GetLastname' },
+    { label: t('common.date_of_birth'), value: '.GetDateofbirth' },
+];
+
+const citizenProperties: { label: string; value: string }[] = [
+    ...baseUserProperties,
+    { label: t('common.sex'), value: '.GetSex' },
+    { label: t('common.height'), value: '.GetHeight' },
 ];
 
 const templateVars = computed<Record<string, { label: string; value: string }[]>>(() => ({
@@ -47,15 +51,15 @@ const templateVars = computed<Record<string, { label: string; value: string }[]>
     ],
     activeChar: [
         ...baseUserProperties,
-        { label: t('common.phone'), value: '.PhoneNumber' },
-        { label: t('common.prefix'), value: '.Props.NamePrefix' },
-        { label: t('common.suffix'), value: '.Props.NameSuffix' },
-        { label: t('common.mail'), value: '.Email' },
+        { label: t('common.phone'), value: '.GetPhoneNumber' },
+        { label: t('common.prefix'), value: '.GetProps.GetNamePrefix' },
+        { label: t('common.suffix'), value: '.GetProps.GetNameSuffix' },
+        { label: t('common.mail'), value: '.GetEmail' },
     ],
     user: [
-        ...baseUserProperties,
-        { label: t('common.wanted'), value: '.Props.Wanted' },
-        { label: t('common.phone'), value: '.PhoneNumber' },
+        ...citizenProperties,
+        { label: t('common.wanted'), value: '.GetProps.GetWanted' },
+        { label: t('common.phone'), value: '.GetPhoneNumber' },
     ],
 }));
 

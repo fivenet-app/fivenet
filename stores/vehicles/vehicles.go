@@ -5,17 +5,22 @@ import (
 	"errors"
 
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/common/database"
+	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/userinfo"
+	usershort "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/users/short"
 	resourcesvehicles "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/vehicles"
 	vehiclesactivity "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/vehicles/activity"
 	vehiclesprops "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/vehicles/props"
 	"github.com/fivenet-app/fivenet/v2026/pkg/dbutils"
 	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
+	citizenshydrator "github.com/fivenet-app/fivenet/v2026/stores/citizens/hydrator"
 	"github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
 	"google.golang.org/protobuf/proto"
 )
 
 type ListQuery struct {
+	UserInfo *userinfo.UserInfo
+
 	LicensePlate string
 	Plates       []string
 	Model        string
@@ -104,6 +109,26 @@ func (s *Store) List(ctx context.Context, q ListQuery) ([]*resourcesvehicles.Veh
 
 	var vehicles []*resourcesvehicles.Vehicle
 	if err := stmt.QueryContext(ctx, s.db, &vehicles); err != nil {
+		return nil, err
+	}
+
+	if s.hydrator == nil {
+		return vehicles, nil
+	}
+
+	targets := make([]citizenshydrator.BasicTarget, 0, len(vehicles))
+	for i, vehicle := range vehicles {
+		if vehicle.GetOwnerId() <= 0 {
+			continue
+		}
+		targets = append(targets, citizenshydrator.BasicTarget{
+			UserID: vehicle.GetOwnerId(),
+			Set: func(user *usershort.UserShort) {
+				vehicles[i].Owner = user
+			},
+		})
+	}
+	if err := s.hydrator.HydrateBasicTargets(ctx, nil, q.UserInfo, targets); err != nil {
 		return nil, err
 	}
 

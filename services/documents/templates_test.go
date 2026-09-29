@@ -7,6 +7,7 @@ import (
 	jobscolleagues "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/jobs/colleagues"
 	users "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/users"
 	usersprops "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/users/props"
+	resourcesvehicles "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/vehicles"
 	"github.com/stretchr/testify/require"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
@@ -68,6 +69,23 @@ func TestRenderTemplateUsesColleagueActiveChar(t *testing.T) {
 	require.Equal(t, "Dr. Active Colleague Jr.", title)
 	require.Equal(t, "555-0100", state)
 	require.Equal(t, "/avatars/42.png (42)", content)
+}
+
+func TestRenderTemplateUsesNilSafeProtoGetters(t *testing.T) {
+	t.Parallel()
+
+	server := &Server{}
+	tmpl := &documentstemplates.Template{
+		Content: "{{ (index .Vehicles 0).GetPlate }} {{ (index .Vehicles 0).GetOwner.GetLastname }}",
+	}
+	data := &resolvedTemplateData{
+		Vehicles: []*resourcesvehicles.Vehicle{{Plate: "ABC 123"}},
+	}
+
+	_, _, content, err := server.renderTemplate(tmpl, data)
+
+	require.NoError(t, err)
+	require.Equal(t, "ABC 123 ", content)
 }
 
 func TestRenderTemplateStripsTemplateVarSpan(t *testing.T) {

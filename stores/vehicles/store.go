@@ -10,6 +10,7 @@ import (
 	vehiclesprops "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/vehicles/props"
 	"github.com/fivenet-app/fivenet/v2026/pkg/config"
 	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
+	citizenshydrator "github.com/fivenet-app/fivenet/v2026/stores/citizens/hydrator"
 	"github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
 )
@@ -38,14 +39,20 @@ type IStore interface {
 type Store struct {
 	db                    *sql.DB
 	customDB              *config.CustomDB
+	hydrator              citizenshydrator.IHydrator
 	sorter                *database.SorterBuilder
 	vehicleActivitySorter *database.SorterBuilder
 }
 
-func New(db *sql.DB, customDB *config.CustomDB) IStore {
+func New(
+	db *sql.DB,
+	customDB *config.CustomDB,
+	hydrator citizenshydrator.IHydrator,
+) IStore {
 	return &Store{
 		db:       db,
 		customDB: customDB,
+		hydrator: hydrator,
 		sorter: database.New(
 			database.SpecMap{
 				"model": database.Column{Col: table.FivenetOwnedVehicles.AS("vehicle").Model},
