@@ -66,4 +66,14 @@ describe('handleGRPCError', () => {
         expect(mocks.authStore.clearCharacterSession).toHaveBeenCalledWith('character-expired');
         expect(mocks.notificationsStore.add).toHaveBeenCalledTimes(1);
     });
+
+    it('adds a copy action for non-RPC errors', () => {
+        handleGRPCError(new Error('unknown value undefined'));
+
+        expect(mocks.notificationsStore.add).toHaveBeenCalledWith(
+            expect.objectContaining({
+                actions: [expect.objectContaining({ label: { key: 'pages.error.copy_error' } })],
+            }),
+        );
+    });
 });

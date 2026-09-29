@@ -60,18 +60,18 @@ function shouldSkipThrottledError(code: string): boolean {
     return false;
 }
 
-function addCopyActionToNotification(notification: Notification, err: RpcError): void {
+function addCopyActionToNotification(
+    notification: Notification,
+    err: unknown,
+    options: { source: string; statusCode?: string },
+): void {
     notification.actions?.push({
         label: { key: 'pages.error.copy_error' },
         onClick: async () => {
             const debugContext = getDebugContext();
 
             copyToClipboardWrapper(
-                formatErrorReport(err, {
-                    source: `gRPC ${err.serviceName ?? 'N/A'}/${err.methodName ?? 'N/A'} (${err.code})`,
-                    statusCode: err.code,
-                    context: formatDebugContext(debugContext),
-                }),
+                formatErrorReport(err, { ...options, context: formatDebugContext(debugContext) }),
             );
 
             const notifications = useNotificationsStore();
@@ -130,6 +130,10 @@ export function handleGRPCError(err: unknown, options: { authScope?: GRPCAuthSco
     if (rpcErr === undefined) {
         logger.error(`Error: ${error.name} - ${error.message}`);
         applyTranslatedError(notification, error.message);
+        addCopyActionToNotification(notification, error, {
+            source: 'Frontend',
+            statusCode: 'N/A',
+        });
     } else {
         const code = rpcErr.code.toUpperCase();
 
@@ -147,13 +151,19 @@ export function handleGRPCError(err: unknown, options: { authScope?: GRPCAuthSco
 
         switch (code) {
             case 'INTERNAL':
-                addCopyActionToNotification(notification, rpcErr);
+                addCopyActionToNotification(notification, rpcErr, {
+                    source: `gRPC ${rpcErr.serviceName ?? 'N/A'}/${rpcErr.methodName ?? 'N/A'} (${rpcErr.code})`,
+                    statusCode: rpcErr.code,
+                });
                 break;
 
             case 'DEADLINE_EXCEEDED':
                 notification.title = { key: 'notifications.grpc_errors.deadline_exceeded.title', parameters: {} };
                 notification.description = { key: 'notifications.grpc_errors.deadline_exceeded.content', parameters: {} };
-                addCopyActionToNotification(notification, rpcErr);
+                addCopyActionToNotification(notification, rpcErr, {
+                    source: `gRPC ${rpcErr.serviceName ?? 'N/A'}/${rpcErr.methodName ?? 'N/A'} (${rpcErr.code})`,
+                    statusCode: rpcErr.code,
+                });
                 break;
 
             case 'CANCELLED':
@@ -163,7 +173,10 @@ export function handleGRPCError(err: unknown, options: { authScope?: GRPCAuthSco
             case 'UNAVAILABLE':
                 notification.title = { key: 'notifications.grpc_errors.unavailable.title', parameters: {} };
                 notification.description = { key: 'notifications.grpc_errors.unavailable.content', parameters: {} };
-                addCopyActionToNotification(notification, rpcErr);
+                addCopyActionToNotification(notification, rpcErr, {
+                    source: `gRPC ${rpcErr.serviceName ?? 'N/A'}/${rpcErr.methodName ?? 'N/A'} (${rpcErr.code})`,
+                    statusCode: rpcErr.code,
+                });
                 break;
 
             case 'UNAUTHENTICATED':
@@ -188,7 +201,10 @@ export function handleGRPCError(err: unknown, options: { authScope?: GRPCAuthSco
                     // the selector if their current route needs a character.
                     useAuthStore().clearCharacterSession('character-expired');
                 }
-                addCopyActionToNotification(notification, rpcErr);
+                addCopyActionToNotification(notification, rpcErr, {
+                    source: `gRPC ${rpcErr.serviceName ?? 'N/A'}/${rpcErr.methodName ?? 'N/A'} (${rpcErr.code})`,
+                    statusCode: rpcErr.code,
+                });
                 break;
 
             case 'NOT_FOUND':
@@ -201,7 +217,10 @@ export function handleGRPCError(err: unknown, options: { authScope?: GRPCAuthSco
                     key: 'notifications.grpc_errors.default.content',
                     parameters: { msg: error.message, code: rpcErr?.code.valueOf() ?? 'N/A' },
                 };
-                addCopyActionToNotification(notification, rpcErr);
+                addCopyActionToNotification(notification, rpcErr, {
+                    source: `gRPC ${rpcErr.serviceName ?? 'N/A'}/${rpcErr.methodName ?? 'N/A'} (${rpcErr.code})`,
+                    statusCode: rpcErr.code,
+                });
                 break;
         }
         applyTranslatedError(notification, error.message);
