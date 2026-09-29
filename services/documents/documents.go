@@ -347,7 +347,14 @@ func (s *Server) CreateDocument(
 		var tplContent string
 		docTitle, docState, tplContent, err = s.renderTemplate(tmpl, resolvedData)
 		if err != nil {
-			return nil, errswrap.NewError(err, errorsdocuments.ErrTemplateInvalid)
+			if userInfo.GetCanBeSuperuser() || s.perms.Can(
+				userInfo,
+				permsdocuments.TemplatesService.CreateTemplate.Perm,
+			) {
+				return nil, err
+			} else {
+				return nil, errswrap.NewError(err, errorsdocuments.ErrTemplateInvalid)
+			}
 		}
 
 		// Build Content object
