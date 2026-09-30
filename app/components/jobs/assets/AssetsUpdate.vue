@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 import type { Form, FormSubmitEvent } from '@nuxt/ui';
 import { z } from 'zod';
+import GenericImg from '~/components/partials/elements/GenericImg.vue';
 import NotSupportedTabletBlock from '~/components/partials/NotSupportedTabletBlock.vue';
 import { useSettingsStore } from '~/stores/settings';
 import type { JobAsset } from '~~/gen/ts/resources/jobs/job_asset';
@@ -28,6 +29,10 @@ const jobsClient = await getSettingsJobsassetsClient();
 const state = reactive<Schema>({ displayName: '' });
 const replacementFile = ref<File>();
 const replacementAssetId = ref(0);
+const currentImageURL = computed(() => {
+    const filePath = props.asset.file?.filePath;
+    return filePath ? `/api/filestore/${filePath}?date=${new Date().getTime()}` : undefined;
+});
 
 const { resizeAndUpload: replaceAsset } = useFileUploader(
     () => jobsClient.replaceJobAsset({}),
@@ -86,6 +91,17 @@ const { submit: submitAsset, isSubmitting } = useSubmitGuard(saveAsset);
 <template>
     <UModal :title="$t('common.edit')" :close="false" :dismissible="!hasUnsavedChanges">
         <template #body>
+            <div v-if="currentImageURL" class="mb-4 flex justify-center rounded-lg bg-elevated p-2">
+                <GenericImg
+                    :src="currentImageURL"
+                    class="max-h-90 w-full"
+                    img-class="h-90 w-full object-contain"
+                    :rounded="false"
+                    enable-popup
+                    no-blur
+                />
+            </div>
+
             <UForm ref="formRef" :schema="schema" :state="state" class="grid gap-4" @submit="submitAsset">
                 <UFormField name="displayName" :label="$t('common.display_name')" required>
                     <UInput v-model="state.displayName" class="w-full" />
