@@ -9,7 +9,6 @@ import { copyToClipboardWrapper } from '~/utils/clipboard';
 
 const props = defineProps<{
     assets: JobAsset[];
-    cacheBuster: number;
     canUpdate: boolean;
     canDelete: boolean;
 }>();
@@ -62,6 +61,8 @@ function confirmDelete(asset: JobAsset): void {
         confirm: () => deleteAsset(asset),
     });
 }
+
+const cacheBuster = new Date().getTime();
 </script>
 
 <template>

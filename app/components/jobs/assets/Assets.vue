@@ -17,15 +17,12 @@ const overlay = useOverlay();
 const canUpdate = can('settings.JobsAssetsService/UpdateJobAsset');
 const canDelete = can('settings.JobsAssetsService/DeleteJobAsset');
 
-const imageCacheBuster = ref(new Date().getTime());
-
 const { data, status, error, refresh } = useAuthedLazyAsyncData('userState', 'jobs-job-assets', ({ signal }) =>
     listAssets(signal),
 );
 
 async function refreshAssets(): Promise<void> {
     await refresh();
-    imageCacheBuster.value = new Date().getTime();
 }
 
 defineExpose({ refresh: refreshAssets, status });
@@ -66,7 +63,6 @@ function openEditor(asset: JobAsset): void {
     <AssetsFileList
         v-else
         :assets="assets"
-        :cache-buster="imageCacheBuster"
         :can-update="canUpdate"
         :can-delete="canDelete"
         @edit="openEditor"
