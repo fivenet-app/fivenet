@@ -20,7 +20,7 @@ import type { UseWebSocketReturn } from '@vueuse/core';
 import { Metadata } from '~/composables/grpcws/metadata';
 import { GrpcFrame } from '~~/gen/ts/resources/grpcws/grpcws';
 import type { GrpcWSOptions } from '../../grpcws/bridge/options';
-import { errInternal, errTimeout, errUnavailable } from '../errors';
+import { errInternal, errTimeout } from '../errors';
 import type { Transport } from '../transports/transport';
 import { WebsocketChannelTransport, type WebsocketChannelTransportFactory } from '../transports/websocket/websocketChannel';
 import { constructWebSocketAddress, createGrpcStatus, createGrpcTrailers } from './utils';
@@ -111,11 +111,6 @@ export class GrpcWSTransport implements RpcTransport {
         input: I,
         options: RpcOptions,
     ): ServerStreamingCall<I, O> {
-        if (this.webSocket.status.value !== 'OPEN') {
-            logger.error("Websocket isn't connected, cannot create server streaming call", this.webSocket.status.value);
-            throw errUnavailable;
-        }
-
         const opt = options as GrpcWSOptions,
             transport = this.wsTs({
                 methodDefinition: method,
@@ -187,11 +182,6 @@ export class GrpcWSTransport implements RpcTransport {
         method: MethodInfo<I, O>,
         options: RpcOptions,
     ): ClientStreamingCall<I, O> {
-        if (this.webSocket.status.value !== 'OPEN') {
-            logger.error("Websocket isn't connected, cannot create client streaming call", this.webSocket.status.value);
-            throw errUnavailable;
-        }
-
         const opt = options as GrpcWSOptions,
             transport = this.wsTs({
                 methodDefinition: method,
@@ -252,11 +242,6 @@ export class GrpcWSTransport implements RpcTransport {
     }
 
     duplex<I extends object, O extends object>(method: MethodInfo<I, O>, options: RpcOptions): DuplexStreamingCall<I, O> {
-        if (this.webSocket.status.value !== 'OPEN') {
-            logger.error("Websocket isn't connected, cannot create duplex streaming call", this.webSocket.status.value);
-            throw errUnavailable;
-        }
-
         const opt = options as GrpcWSOptions,
             transport = this.wsTs({
                 methodDefinition: method,

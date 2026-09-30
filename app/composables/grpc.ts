@@ -70,9 +70,7 @@ function addCopyActionToNotification(
         onClick: async () => {
             const debugContext = getDebugContext();
 
-            copyToClipboardWrapper(
-                formatErrorReport(err, { ...options, context: formatDebugContext(debugContext) }),
-            );
+            copyToClipboardWrapper(formatErrorReport(err, { ...options, context: formatDebugContext(debugContext) }));
 
             const notifications = useNotificationsStore();
             notifications.add({

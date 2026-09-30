@@ -14,6 +14,7 @@ import { setWaypoint } from '~/composables/nui';
 import { useCentrumStore } from '~/stores/centrum';
 import { useLivemapStore } from '~/stores/livemap';
 import { useSettingsStore } from '~/stores/settings';
+import type { ReconnectingStreamState } from '~/composables/grpcws/reconnectingServerStream';
 import type { LivemapContextMenuItem } from '~/types/livemap';
 import type { Perms } from '~~/gen/ts/perms';
 
@@ -33,10 +34,10 @@ const { nuiEnabled } = storeToRefs(settingsStore);
 
 const livemapStore = useLivemapStore();
 const { startStream } = livemapStore;
-const { error, stopping: stoppingLivemap, initiated, location, showLocationMarker, selectedMarker } = storeToRefs(livemapStore);
+const { error, streamState: livemapStreamState, location, showLocationMarker, selectedMarker } = storeToRefs(livemapStore);
 
 const centrumStore = useCentrumStore();
-const { stopping: stoppingCentrum } = storeToRefs(centrumStore);
+const { streamState: centrumStreamState } = storeToRefs(centrumStore);
 
 const mapOptions = {
     zoomControl: false,
@@ -138,9 +139,18 @@ const contextMenuItems = computed<LivemapContextMenuItem[]>(() =>
     ).filter((item) => item.permission === undefined || can(item.permission).value),
 );
 
-const inititedDebounced = useDebounce(initiated, 750);
-const stoppingLivemapDebounced = useDebounce(stoppingLivemap, 500);
-const stoppingCentrumDebounced = useDebounce(stoppingCentrum, 500);
+/** Returns whether a stream should keep the reconnecting indicator visible. */
+const isReconnectingState = (state: ReconnectingStreamState): boolean => state === 'connecting' || state === 'reconnecting';
+
+const showReconnectingPopup = computed(
+    () => isReconnectingState(livemapStreamState.value) || isReconnectingState(centrumStreamState.value),
+);
+
+const isStarting = computed(
+    () =>
+        ![livemapStreamState.value, centrumStreamState.value].includes('reconnecting') &&
+        [livemapStreamState.value, centrumStreamState.value].includes('connecting'),
+);
 
 onBeforeUnmount(() => stopMarkerCreateOrUpdateOpenTimeout());
 </script>
@@ -176,9 +186,9 @@ onBeforeUnmount(() => stopMarkerCreateOrUpdateOpenTimeout());
 
             <template #afterMap>
                 <ReconnectingPopup
-                    v-if="!inititedDebounced || stoppingLivemapDebounced || stoppingCentrumDebounced"
+                    v-if="showReconnectingPopup"
                     :label="
-                        !inititedDebounced
+                        isStarting
                             ? $t('components.livemap.starting_datastream')
                             : $t('components.livemap.restarting_datastream')
                     "

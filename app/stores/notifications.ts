@@ -373,9 +373,16 @@ export const useNotificationsStore = defineStore(
                 if (abort.value !== streamAbort || streamAbort.signal.aborted) return;
 
                 currentStream = notificationsNotificationsClient.stream({ abort: streamAbort.signal });
-                setStreamReadyState(true);
+                let receivedFirstResponse = false;
 
                 for await (const resp of currentStream.responses) {
+                    if (!receivedFirstResponse) {
+                        receivedFirstResponse = true;
+                        reconnectBackoffTime.value = 0;
+                        setStreamReadyState(true);
+                        logger.debug('Notification stream is ready');
+                    }
+
                     notificationCount.value = resp.notificationCount;
                     useNotificationCenterStore().setUnreadCount(resp.notificationCount);
 

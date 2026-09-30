@@ -1,6 +1,7 @@
-import type { RpcError, ServerStreamingCall } from '@protobuf-ts/runtime-rpc';
+import type { RpcError } from '@protobuf-ts/runtime-rpc';
 import { defineStore } from 'pinia';
 import { compareUnitsBySortOrder } from '~/components/dispatch/helpers';
+import { type ReconnectingStreamState, reconnectingServerStream } from '~/composables/grpcws/reconnectingServerStream';
 import type { NotificationActionI18n } from '~/types/notifications';
 import { restartForAuthContext as restartAuthContextStream } from '~/utils/authContextStream';
 import { getCentrumCentrumClient, getCentrumDispatchesClient } from '~~/gen/ts/clients';
@@ -15,7 +16,7 @@ import { type EffectiveAccess, type Settings, CentrumMode, CentrumType } from '~
 import { type Unit, type UnitStatus, StatusUnit } from '~~/gen/ts/resources/centrum/units/units';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 import type { Timestamp } from '~~/gen/ts/resources/timestamp/timestamp';
-import type { StreamRequest, StreamResponse } from '~~/gen/ts/services/centrum/centrum';
+import type { StreamResponse } from '~~/gen/ts/services/centrum/centrum';
 
 const logger = useLogger('⛑️ Centrum');
 
@@ -45,6 +46,7 @@ export const useCentrumStore = defineStore(
         const abort = ref<AbortController | undefined>(undefined);
         const cleanupIntervalId = ref<ReturnType<typeof setInterval> | undefined>(undefined);
         const stopping = ref<boolean>(false);
+        const streamState = ref<ReconnectingStreamState>('idle');
         const reconnectBackoffTime = ref<number>(initialReconnectBackoffTime);
 
         const timeCorrection = ref<number>(0);
@@ -645,10 +647,9 @@ export const useCentrumStore = defineStore(
         };
 
         // Stream
-        let currentStream: ServerStreamingCall<StreamRequest, StreamResponse> | undefined = undefined;
-
         /**
-         * Starts the centrum stream.
+         * Starts the centrum subscription and rebuilds its live projection.
+         *
          * @returns {Promise<void>} A promise that resolves when the stream starts.
          */
         const startStream = async (): Promise<void> => {
@@ -664,6 +665,7 @@ export const useCentrumStore = defineStore(
             const streamAbort = new AbortController();
             abort.value = streamAbort;
             error.value = undefined;
+            streamState.value = 'connecting';
 
             if (!cleanupIntervalId.value) {
                 cleanupIntervalId.value = setInterval(() => cleanup(), cleanupInterval);
@@ -673,9 +675,29 @@ export const useCentrumStore = defineStore(
                 const centrumCentrumClient = await getCentrumCentrumClient();
                 if (abort.value !== streamAbort || streamAbort.signal.aborted) return;
 
-                currentStream = centrumCentrumClient.stream({}, { abort: streamAbort.signal });
-
-                for await (const respRaw of currentStream.responses) {
+                for await (const respRaw of reconnectingServerStream({
+                    signal: streamAbort.signal,
+                    initialDelayMs: initialReconnectBackoffTime * 1000,
+                    maxDelayMs: maxBackOffTime * 1000,
+                    create: (signal) => centrumCentrumClient.stream({}, { abort: signal }),
+                    onState: (state) => {
+                        streamState.value = state;
+                    },
+                    shouldRetry: (streamError) => {
+                        const rpcError = streamError as RpcError;
+                        return !(
+                            rpcError.code === 'INVALID_ARGUMENT' && rpcError.message.includes('CentrumService.ErrDisabled')
+                        );
+                    },
+                    onReady: () => {
+                        reconnectBackoffTime.value = initialReconnectBackoffTime;
+                        logger.debug('Centrum stream is ready');
+                    },
+                    onRetry: (streamError, delayMs) => {
+                        reconnectBackoffTime.value = delayMs / 1000;
+                        logger.debug('Centrum stream reconnect scheduled', streamError, delayMs);
+                    },
+                })) {
                     // The gRPC stream may yield unknown, so cast to the expected type
                     const resp = respRaw as StreamResponse;
                     error.value = undefined;
@@ -890,10 +912,6 @@ export const useCentrumStore = defineStore(
                         logger.warn('Unknown change received - oneofKind:' + resp.change.oneofKind);
                     }
                 }
-
-                if (abort.value === streamAbort && !streamAbort.signal.aborted && !stopping.value) {
-                    await restartStream();
-                }
             } catch (e) {
                 const rpcError = e as RpcError;
 
@@ -930,6 +948,7 @@ export const useCentrumStore = defineStore(
 
                 // Log and handle other errors
                 logger.error('Stream failed', rpcError.code, rpcError.message, rpcError.cause);
+                streamState.value = 'error';
 
                 if (abort.value === streamAbort && !streamAbort.signal.aborted) {
                     await restartStream();
@@ -942,14 +961,18 @@ export const useCentrumStore = defineStore(
         };
 
         /**
-         * Stops the centrum stream.
+         * Stops the centrum subscription; `end` marks a permanent lifecycle stop.
+         *
          * @param {boolean} [end] - Whether to end the stream completely.
          * @returns {Promise<void>} A promise that resolves when the stream stops.
          */
         const stopStream = async (end?: boolean): Promise<void> => {
             if (end === true) {
                 stopping.value = true;
+                streamState.value = 'stopped';
                 clearPendingDispatchExpiries();
+            } else {
+                streamState.value = 'reconnecting';
             }
 
             if (abort.value) {
@@ -966,11 +989,11 @@ export const useCentrumStore = defineStore(
             acls.value?.dispatches?.jobs.forEach((job) => settingsStore.removeLivemapLayer(`dispatches_job_${job.job}`));
 
             abort.value = undefined;
-            currentStream = undefined;
         };
 
         /**
-         * Restarts the centrum stream.
+         * Restarts after a projection/settings change or a non-wrapper failure.
+         *
          * @returns {Promise<void>} A promise that resolves when the stream restarts.
          */
         const restartStream = async (): Promise<void> => {
@@ -1243,6 +1266,7 @@ export const useCentrumStore = defineStore(
             abort,
             cleanupIntervalId,
             stopping,
+            streamState,
             reconnectBackoffTime,
             timeCorrection,
             settings,

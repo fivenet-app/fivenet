@@ -32,6 +32,8 @@ export default class GrpcProvider extends ObservableV2<Events> {
     private authoritative = false;
     private synced = false;
     private destroyed = false;
+    private connecting = false;
+    private reconnectTimer: ReturnType<typeof setTimeout> | undefined;
 
     constructor(doc: Y.Doc, streamProvider: StreamConnectFn, opts: GrpcProviderOpts) {
         super();
@@ -64,6 +66,10 @@ export default class GrpcProvider extends ObservableV2<Events> {
         this.clientId && removeAwarenessStates(this.awareness, [this.clientId], 'app closed');
 
         setTimeout(() => {
+            if (this.reconnectTimer !== undefined) {
+                clearTimeout(this.reconnectTimer);
+                this.reconnectTimer = undefined;
+            }
             this.stream?.requests.complete();
             this.ydoc.off('update', this.handleDocUpdate);
             this.awareness.off('update', this.handleAwarenessUpdate);
@@ -75,19 +81,23 @@ export default class GrpcProvider extends ObservableV2<Events> {
 
     // Internal
     public connect() {
-        if (this.destroyed || this.connected) return;
+        if (this.destroyed || this.connected || this.connecting) return;
+
+        this.connecting = true;
         logger.info('Connecting to collab gRPC stream');
 
+        let stream: DuplexStreamingCall<ClientPacket, ServerPacket>;
         try {
-            this.stream = this.streamConnect({});
+            stream = this.streamConnect({});
+            this.stream = stream;
         } catch (err) {
+            this.connecting = false;
             logger.error('Failed to connect to collab gRPC stream', err);
             this.scheduleReconnect();
             return;
         }
-        this.sendHello();
 
-        this.stream.responses.onError((error) => {
+        stream.responses.onError((error) => {
             logger.warn('Collab gRPC stream ended', {
                 error,
                 connected: this.connected,
@@ -96,18 +106,25 @@ export default class GrpcProvider extends ObservableV2<Events> {
                 clientId: this.clientId,
             });
 
+            // A delayed callback from an older stream must not tear down a newer one.
+            if (this.stream !== stream) return;
+
+            this.connecting = false;
             this.connected = false;
             this.clientId = undefined;
+            this.synced = false;
+            this.authoritative = false;
 
             this.stream = undefined;
             this.scheduleReconnect();
         });
 
-        this.stream.responses.onMessage((msg: ServerPacket) => {
+        stream.responses.onMessage((msg: ServerPacket) => {
             if (msg.msg.oneofKind === 'handshake' && !this.clientId) {
                 logger.info('Received handshake message from server', msg.msg.handshake);
                 this.clientId = msg.msg.handshake.clientId;
                 this.connected = true;
+                this.connecting = false;
 
                 const sv = Y.encodeStateVector(this.ydoc);
                 this.send(
@@ -206,11 +223,15 @@ export default class GrpcProvider extends ObservableV2<Events> {
             }
         });
 
+        this.sendHello();
+
         logger.debug('Connect call completed, waiting for handshake');
     }
 
     private scheduleReconnect() {
         if (this.destroyed) return;
+        if (this.reconnectTimer !== undefined) return;
+
         const delay = Math.min(this.reconnectAttempt * 750, 10_000);
 
         logger.info('Scheduling collab reconnect', {
@@ -232,13 +253,17 @@ export default class GrpcProvider extends ObservableV2<Events> {
         }
 
         this.reconnectAttempt++;
-        useTimeoutFn(() => this.connect(), delay);
+        this.reconnectTimer = setTimeout(() => {
+            this.reconnectTimer = undefined;
+            this.connect();
+        }, delay);
     }
 
     private triggerSync() {
         // If we were still waiting for sync, flip the flag and emit events
         if (!this.synced) {
             this.synced = true;
+            this.reconnectAttempt = 1;
 
             logger.info('Provider sync emit');
             this.ydoc.emit('sync', [true, this.ydoc]);

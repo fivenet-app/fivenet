@@ -1,5 +1,6 @@
-import type { RpcError, ServerStreamingCall } from '@protobuf-ts/runtime-rpc';
+import type { RpcError } from '@protobuf-ts/runtime-rpc';
 import { defineStore } from 'pinia';
+import { reconnectingServerStream, type ReconnectingStreamState } from '~/composables/grpcws/reconnectingServerStream';
 import { restartForAuthContext as restartAuthContextStream } from '~/utils/authContextStream';
 import { getLivemapLivemapClient } from '~~/gen/ts/clients';
 import type { Job } from '~~/gen/ts/resources/jobs/jobs';
@@ -7,7 +8,6 @@ import type { Coords } from '~~/gen/ts/resources/livemap/coords';
 import type { MarkerMarker } from '~~/gen/ts/resources/livemap/markers/marker_marker';
 import type { UserMarker } from '~~/gen/ts/resources/livemap/markers/user_marker';
 import type { UserShort } from '~~/gen/ts/resources/users/short/user';
-import type { StreamRequest } from '~~/gen/ts/services/centrum/centrum';
 import type {
     JobsList,
     MarkerMarkersUpdates,
@@ -30,6 +30,7 @@ export const useLivemapStore = defineStore(
         const error = ref<RpcError | undefined>(undefined);
         const abort = ref<AbortController | undefined>(undefined);
         const stopping = ref<boolean>(false);
+        const streamState = ref<ReconnectingStreamState>('idle');
         const reconnectBackoffTime = ref<number>(0);
 
         const location = ref<Coords | undefined>();
@@ -191,8 +192,6 @@ export const useLivemapStore = defineStore(
         };
 
         // Stream Management
-        let currentStream: ServerStreamingCall<StreamRequest, StreamResponse> | undefined = undefined;
-
         /**
          * Handle a single stream response.
          *
@@ -338,7 +337,7 @@ export const useLivemapStore = defineStore(
         };
 
         /**
-         * Start the gRPC stream and handle responses.
+         * Starts the livemap subscription and processes its updates.
          */
         const startStream = async (): Promise<void> => {
             if (abort.value !== undefined) return;
@@ -355,6 +354,7 @@ export const useLivemapStore = defineStore(
             const streamAbort = new AbortController();
             abort.value = streamAbort;
             error.value = undefined;
+            streamState.value = 'connecting';
 
             const foundMarkers: number[] = [];
             cleanupMarkerMarkers();
@@ -363,14 +363,25 @@ export const useLivemapStore = defineStore(
                 const livemapLivemapClient = await getLivemapLivemapClient();
                 if (abort.value !== streamAbort || streamAbort.signal.aborted) return;
 
-                currentStream = livemapLivemapClient.stream({}, { abort: streamAbort.signal });
-                for await (const respRaw of currentStream.responses) {
+                for await (const respRaw of reconnectingServerStream({
+                    signal: streamAbort.signal,
+                    initialDelayMs: initialReconnectBackoffTime * 1000,
+                    maxDelayMs: maxBackOffTime * 1000,
+                    create: (signal) => livemapLivemapClient.stream({}, { abort: signal }),
+                    onState: (state) => {
+                        streamState.value = state;
+                    },
+                    onReady: () => {
+                        reconnectBackoffTime.value = 0;
+                        logger.debug('Livemap stream is ready');
+                    },
+                    onRetry: (streamError, delayMs) => {
+                        reconnectBackoffTime.value = delayMs / 1000;
+                        logger.debug('Livemap stream reconnect scheduled', streamError, delayMs);
+                    },
+                })) {
                     const resp = respRaw as StreamResponse;
                     await handleStreamResponse(resp, foundMarkers, activeChar.value, livemap.value);
-                }
-
-                if (abort.value === streamAbort && !streamAbort.signal.aborted && !stopping.value) {
-                    await restartStream();
                 }
             } catch (e) {
                 const err = e as RpcError;
@@ -382,6 +393,7 @@ export const useLivemapStore = defineStore(
                     return;
                 }
                 logger.error('Stream failed', err.code, err.message, err.cause);
+                streamState.value = 'error';
                 if (abort.value === streamAbort && !streamAbort.signal.aborted) {
                     await restartStream();
                 } else {
@@ -392,22 +404,22 @@ export const useLivemapStore = defineStore(
         };
 
         /**
-         * Stop the gRPC stream.
+         * Stops the livemap subscription; `end` marks a permanent lifecycle stop.
          *
          * @param {boolean} [end] - Whether to mark the stream as stopping.
          */
         const stopStream = async (end?: boolean): Promise<void> => {
             if (end === true) stopping.value = true;
+            streamState.value = end === true ? 'stopped' : 'reconnecting';
             if (abort.value) {
                 abort.value.abort();
                 logger.debug('Stopping Stream');
             }
             abort.value = undefined;
-            currentStream = undefined;
         };
 
         /**
-         * Restart the gRPC stream with backoff logic.
+         * Restarts after a non-wrapper failure or an explicit caller request.
          */
         const restartStream = async (): Promise<void> => {
             if (!abort.value || abort.value.signal.aborted) return;
@@ -455,6 +467,7 @@ export const useLivemapStore = defineStore(
             error,
             abort,
             stopping,
+            streamState,
             reconnectBackoffTime,
             location,
             showLocationMarker,

@@ -81,6 +81,7 @@ export class WebsocketChannelImpl implements WebsocketChannel {
 
     private authState: AuthState = { kind: 'none' };
     private ignoredControlResponses = 0;
+    private readonly openTimeoutMs = 10_000;
 
     constructor(logger: ILogger, ws: WebSocketLike, tokenProvider: TokenProvider) {
         this.logger = logger;
@@ -371,9 +372,9 @@ export class WebsocketChannelImpl implements WebsocketChannel {
     }
 
     async ensureAuthenticated(): Promise<void> {
-        if (this.ws.status.value !== 'OPEN')
-            // Let caller open first; once open, auth will be attempted.
-            throw new Error('WebSocket not open');
+        // Preserve the synchronous send path for an already-open socket.
+        // Only wait when a stream is starting during socket recovery.
+        if (this.ws.status.value !== 'OPEN') await this.waitForOpen();
 
         const token = this.tokenProvider();
         if (this.authState.kind === 'ok' && this.authState.token === token) return;
@@ -409,6 +410,35 @@ export class WebsocketChannelImpl implements WebsocketChannel {
         }
 
         return promise;
+    }
+
+    private async waitForOpen(): Promise<void> {
+        if (this.ws.status.value === 'OPEN') return;
+
+        await new Promise<void>((resolve, reject) => {
+            let settled = false;
+            const stop = watch(this.ws.status, (status) => {
+                if (status === 'OPEN') {
+                    settled = true;
+                    stop();
+                    clearTimeout(timeout);
+                    resolve();
+                }
+            });
+            const timeout = setTimeout(() => {
+                if (settled) return;
+
+                settled = true;
+                stop();
+                reject(new Error(`WebSocket did not open within ${this.openTimeoutMs}ms`));
+            }, this.openTimeoutMs);
+
+            // Register the watcher before opening so a synchronous transition is not missed.
+            if (this.ws.status.value === 'CLOSED') {
+                this.logger.debug('Opening websocket for RPC stream');
+                this.ws.open();
+            }
+        });
     }
 
     async reauth(): Promise<void> {
