@@ -8,10 +8,10 @@ const props = defineProps<{
 }>();
 
 const emit = defineEmits<{
-    uploaded: [];
+    (e: 'close', value: boolean): void;
+    (e: 'uploaded'): void;
 }>();
 
-const open = defineModel<boolean>('open', { default: false });
 const { fileUpload, jobAssets } = useAppConfig();
 const settingsStore = useSettingsStore();
 const { nuiEnabled } = storeToRefs(settingsStore);
@@ -46,22 +46,18 @@ async function doUploadSelected(): Promise<void> {
         if (!result.ok) return;
 
         selectedFiles.value = [];
-        open.value = false;
         emit('uploaded');
+        emit('close', false);
     } catch (e) {
         handleGRPCError(e as RpcError);
     }
 }
 
 const { submit: uploadSelected, isSubmitting } = useSubmitGuard(doUploadSelected);
-
-watch(open, (isOpen) => {
-    if (!isOpen) selectedFiles.value = [];
-});
 </script>
 
 <template>
-    <UModal v-model:open="open" :title="$t('common.upload')" :close="!isSubmitting" :dismissible="!isSubmitting">
+    <UModal :title="$t('common.upload')" :close="!isSubmitting" :dismissible="!isSubmitting">
         <template #body>
             <NotSupportedTabletBlock v-if="nuiEnabled" />
             <div v-else class="grid gap-4">
@@ -74,7 +70,14 @@ watch(open, (isOpen) => {
                     :placeholder="$t('common.image')"
                     :label="$t('common.file_upload_label')"
                     :description="$t('common.allowed_file_types')"
+                    :ui="{
+                        base: 'min-h-50',
+                        files: 'min-h-50 w-full',
+                        file: 'flex min-h-50 items-center justify-center',
+                        fileLeadingAvatar: 'size-50 max-h-50 rounded-lg',
+                    }"
                 />
+
                 <PartialsContentGuidelinesAlert />
             </div>
         </template>
@@ -86,7 +89,7 @@ watch(open, (isOpen) => {
                     color="neutral"
                     :disabled="isSubmitting"
                     :label="$t('common.cancel')"
-                    @click="open = false"
+                    @click="$emit('close', false)"
                 />
 
                 <UButton

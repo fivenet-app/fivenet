@@ -1,16 +1,26 @@
 <script lang="ts" setup>
-import JobAssets from '~/components/jobs/assets/Assets.vue';
-import JobAssetsUpload from '~/components/jobs/assets/AssetsUpload.vue';
+import Assets from '~/components/jobs/assets/Assets.vue';
+import AssetsUpload from '~/components/jobs/assets/AssetsUpload.vue';
+import Pagination from '~/components/partials/Pagination.vue';
 
 const { jobAssets } = useAppConfig();
 const { can } = useAuth();
 const canCreate = can('settings.JobsAssetsService/CreateJobAsset');
 const assetCount = ref(0);
-const uploadOpen = ref(false);
-const jobAssetsList = ref<InstanceType<typeof JobAssets>>();
+const jobAssetsList = ref<InstanceType<typeof Assets>>();
 
-function handleUploaded(): void {
-    jobAssetsList.value?.refreshAssets();
+async function refreshAssets(): Promise<void> {
+    await jobAssetsList.value?.refresh();
+}
+
+const overlay = useOverlay();
+const assetsUploadModal = overlay.create(AssetsUpload, {});
+
+function openUpload(): void {
+    assetsUploadModal.open({
+        assetCount: assetCount.value,
+        onUploaded: refreshAssets,
+    });
 }
 
 useHead({
@@ -51,14 +61,16 @@ definePageMeta({
                         v-if="canCreate && assetCount < jobAssets.maxFiles"
                         icon="i-mdi-upload"
                         :label="$t('common.upload')"
-                        @click="uploadOpen = true"
+                        @click="openUpload"
                     />
                 </template>
             </UDashboardToolbar>
 
-            <JobAssets ref="jobAssetsList" @count-changed="assetCount = $event" />
+            <Assets ref="jobAssetsList" @count-changed="assetCount = $event" />
+        </template>
 
-            <JobAssetsUpload v-model:open="uploadOpen" :asset-count="assetCount" @uploaded="handleUploaded" />
+        <template #footer>
+            <Pagination :status="jobAssetsList?.status" :refresh="refreshAssets" hide-buttons hide-text />
         </template>
     </UDashboardPanel>
 </template>

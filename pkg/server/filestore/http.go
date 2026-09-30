@@ -39,6 +39,10 @@ func New(st storage.IStorage, tm *auth.TokenMgr) *FilestoreHTTP {
 // It sets up GET and HEAD routes with cache control middleware.
 func (s *FilestoreHTTP) RegisterHTTP(e *gin.Engine) {
 	g := e.Group(Path, cachecontrol.New(cachecontrol.Config{
+		// Filestore paths are mutable: files can be replaced in place while
+		// keeping the same URL. Keep the cache window short and require
+		// revalidation after it expires so replacements become visible without
+		// adding a cache-busting query parameter for normal users.
 		MustRevalidate:       true,
 		NoCache:              false,
 		NoStore:              false,
@@ -46,11 +50,11 @@ func (s *FilestoreHTTP) RegisterHTTP(e *gin.Engine) {
 		Public:               true,
 		Private:              false,
 		ProxyRevalidate:      true,
-		MaxAge:               cachecontrol.Duration(4 * 24 * time.Hour),
+		MaxAge:               cachecontrol.Duration(15 * time.Minute),
 		SMaxAge:              nil,
 		Immutable:            false,
-		StaleWhileRevalidate: cachecontrol.Duration(1 * 24 * time.Hour),
-		StaleIfError:         cachecontrol.Duration(1 * 24 * time.Hour),
+		StaleWhileRevalidate: nil,
+		StaleIfError:         nil,
 	}))
 
 	{

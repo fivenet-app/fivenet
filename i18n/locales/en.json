@@ -739,7 +739,7 @@
         "allowed_file_types": "PNG, JPG, WEBP (Max. 2000x1500px)",
         "default_lang": "Default Language",
         "selected": "None selected | {n} selected | {n} selected",
-        "image_caching": "Please note that due to browser caching it can take up to 4 hours for the image to have updated for everyone.",
+        "image_caching": "Due to browser caching, the updated image may take up to 15 minutes to appear for everyone.",
         "day_view": "Daily View",
         "week_view": "Weekly View",
         "domains": "No Domain | {n} Domain | {n} Domains",

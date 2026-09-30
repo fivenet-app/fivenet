@@ -9,13 +9,14 @@ import { copyToClipboardWrapper } from '~/utils/clipboard';
 
 const props = defineProps<{
     assets: JobAsset[];
+    cacheBuster: number;
     canUpdate: boolean;
     canDelete: boolean;
 }>();
 
 const emit = defineEmits<{
-    edit: [asset: JobAsset];
-    refresh: [];
+    (e: 'edit', asset: JobAsset): void;
+    (e: 'refresh'): void;
 }>();
 
 const jobsClient = await getSettingsJobsassetsClient();
@@ -69,7 +70,7 @@ function confirmDelete(asset: JobAsset): void {
             <div v-for="asset in assets" :key="asset.id" class="group relative overflow-hidden rounded-lg bg-elevated">
                 <div class="relative">
                     <GenericImg
-                        :src="`/api/filestore/${asset.file?.filePath}`"
+                        :src="`/api/filestore/${asset.file?.filePath}?date=${cacheBuster}`"
                         :alt="getJobAssetDisplayName(asset)"
                         class="aspect-square w-full"
                         img-class="h-full w-full object-cover"

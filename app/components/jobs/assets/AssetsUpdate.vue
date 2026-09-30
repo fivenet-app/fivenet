@@ -7,12 +7,12 @@ import type { JobAsset } from '~~/gen/ts/resources/jobs/job_asset';
 import { getSettingsJobsassetsClient } from '~~/gen/ts/clients';
 
 const props = defineProps<{
-    asset?: JobAsset;
+    asset: JobAsset;
 }>();
 
 const emit = defineEmits<{
-    close: [];
-    updated: [];
+    (e: 'close'): void;
+    (e: 'updated'): void;
 }>();
 
 const schema = z.object({
@@ -46,7 +46,7 @@ const { hasUnsavedChanges, confirmLeave, syncSnapshot } = useSnapshotChanges(for
 watch(
     () => props.asset,
     (asset) => {
-        state.displayName = asset ? getJobAssetDisplayName(asset) : '';
+        state.displayName = getJobAssetDisplayName(asset);
         replacementFile.value = undefined;
         syncSnapshot();
     },
@@ -62,7 +62,6 @@ async function closeEditor(): Promise<void> {
 const formRef = useTemplateRef<Form<typeof schema>>('formRef');
 
 async function saveAsset(event: FormSubmitEvent<Schema>): Promise<void> {
-    if (!props.asset) return;
     try {
         await jobsClient.updateJobAsset({
             id: props.asset.id,
@@ -85,13 +84,7 @@ const { submit: submitAsset, isSubmitting } = useSubmitGuard(saveAsset);
 </script>
 
 <template>
-    <UModal
-        :open="asset !== undefined"
-        :title="$t('common.edit')"
-        :close="false"
-        :dismissible="!hasUnsavedChanges"
-        @update:open="(open) => !open && closeEditor()"
-    >
+    <UModal :title="$t('common.edit')" :close="false" :dismissible="!hasUnsavedChanges">
         <template #body>
             <UForm ref="formRef" :schema="schema" :state="state" class="grid gap-4" @submit="submitAsset">
                 <UFormField name="displayName" :label="$t('common.display_name')" required>
@@ -100,7 +93,7 @@ const { submit: submitAsset, isSubmitting } = useSubmitGuard(saveAsset);
 
                 <UFormField :label="$t('common.file')">
                     <NotSupportedTabletBlock v-if="nuiEnabled" />
-                    <div v-else class="grid gap-2">
+                    <div v-else class="grid gap-4">
                         <UFileUpload
                             v-model="replacementFile"
                             position="inside"
@@ -112,8 +105,16 @@ const { submit: submitAsset, isSubmitting } = useSubmitGuard(saveAsset);
                                     allowedFileTypes: $t('common.allowed_file_types'),
                                 })
                             "
+                            :ui="{
+                                base: 'min-h-50',
+                                files: 'min-h-50 w-full',
+                                file: 'flex min-h-50 items-center justify-center',
+                                fileLeadingAvatar: 'size-50 max-h-50 rounded-lg',
+                            }"
                         />
+
                         <PartialsContentGuidelinesAlert />
+                        <UAlert icon="i-mdi-information-outline" :description="$t('common.image_caching')" />
                     </div>
                 </UFormField>
             </UForm>
