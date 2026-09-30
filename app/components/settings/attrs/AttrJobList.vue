@@ -149,42 +149,46 @@ const { submit, isSubmitting, canSubmit } = useSubmitGuard(async () => {
 
         <template #body>
             <div class="grid h-full grid-cols-1 pb-(--page-content-bottom-offset) lg:grid-cols-3">
-                <div class="h-full w-full p-4 sm:p-6 lg:not-last:border-e lg:not-last:border-default">
-                    <UPageCard v-if="can('settings.SettingsService/CreateRole').value">
-                        <UForm class="flex flex-row gap-2" :schema="schema" :state="state" @submit="refresh()">
-                            <UFormField class="flex-1" name="grade" :label="$t('common.job')">
-                                <ClientOnly>
-                                    <USelectMenu
-                                        v-model="state.job"
-                                        class="w-full"
-                                        :items="availableJobs"
-                                        :search-input="{ placeholder: $t('common.search_field') }"
-                                        :filter-fields="['label', 'name']"
-                                    >
-                                        <template v-if="state.job" #default>
-                                            {{ state.job?.label }} ({{ state.job.name }})
-                                        </template>
+                <div class="h-full w-full lg:not-last:border-e lg:not-last:border-default">
+                    <UForm
+                        v-if="can('settings.SettingsService/CreateRole').value"
+                        class="flex w-full flex-row gap-2 border-b border-default p-4"
+                        :schema="schema"
+                        :state="state"
+                        @submit="refresh()"
+                    >
+                        <UFormField class="flex-1" name="grade" :label="$t('common.job')">
+                            <ClientOnly>
+                                <USelectMenu
+                                    v-model="state.job"
+                                    class="w-full"
+                                    :items="availableJobs"
+                                    :search-input="{ placeholder: $t('common.search_field') }"
+                                    :filter-fields="['label', 'name']"
+                                >
+                                    <template v-if="state.job" #default>
+                                        {{ state.job?.label }} ({{ state.job.name }})
+                                    </template>
 
-                                        <template #item-label="{ item }"> {{ item.label }} ({{ item.name }}) </template>
-                                    </USelectMenu>
-                                </ClientOnly>
-                            </UFormField>
+                                    <template #item-label="{ item }"> {{ item.label }} ({{ item.name }}) </template>
+                                </USelectMenu>
+                            </ClientOnly>
+                        </UFormField>
 
-                            <UFormField name="submit" label="&nbsp;">
-                                <UButton
-                                    :disabled="state.job === undefined || !canSubmit"
-                                    :loading="isSubmitting"
-                                    color="neutral"
-                                    variant="outline"
-                                    icon="i-mdi-plus"
-                                    :label="$t('common.create')"
-                                    @click="submit"
-                                />
-                            </UFormField>
-                        </UForm>
-                    </UPageCard>
+                        <UFormField name="submit" label="&nbsp;">
+                            <UButton
+                                :disabled="state.job === undefined || !canSubmit"
+                                :loading="isSubmitting"
+                                color="neutral"
+                                variant="outline"
+                                icon="i-mdi-plus"
+                                :label="$t('common.create')"
+                                @click="submit"
+                            />
+                        </UFormField>
+                    </UForm>
 
-                    <div class="mt-4 flex flex-col gap-4">
+                    <div class="flex flex-col gap-2">
                         <div>
                             <DataErrorBlock
                                 v-if="error"

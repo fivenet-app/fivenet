@@ -144,59 +144,58 @@ const confirmModal = overlay.create(ConfirmModal);
 
         <template #body>
             <div class="grid h-full grid-cols-1 pb-(--page-content-bottom-offset) lg:grid-cols-3">
-                <div class="h-full w-full p-4 sm:p-6 lg:not-last:border-e lg:not-last:border-default">
-                    <UPageCard v-if="can('settings.SettingsService/CreateRole').value">
-                        <UForm
-                            ref="formRef"
-                            class="flex w-full flex-row gap-2"
-                            :schema="schema"
-                            :state="state"
-                            @submit="submit"
-                        >
-                            <UFormField class="flex-1" name="grade" :label="$t('common.job_grade')">
-                                <ClientOnly>
-                                    <USelectMenu
-                                        v-model="state.jobGrade"
-                                        class="w-full"
-                                        :items="availableJobGrades"
-                                        :search-input="{ placeholder: $t('common.search_field') }"
-                                        :disabled="availableJobGrades.length === 0"
-                                    >
-                                        <template v-if="state.jobGrade" #default>
-                                            {{ state.jobGrade?.label }} ({{ state.jobGrade?.grade }})
-                                        </template>
+                <div class="h-full w-full lg:not-last:border-e lg:not-last:border-default">
+                    <UForm
+                        v-if="can('settings.SettingsService/CreateRole').value"
+                        ref="formRef"
+                        class="flex w-full flex-row gap-2 border-b border-default p-4"
+                        :schema="schema"
+                        :state="state"
+                        @submit="submit"
+                    >
+                        <UFormField class="flex-1" name="grade" :label="$t('common.job_grade')">
+                            <ClientOnly>
+                                <USelectMenu
+                                    v-model="state.jobGrade"
+                                    class="w-full"
+                                    :items="availableJobGrades"
+                                    :search-input="{ placeholder: $t('common.search_field') }"
+                                    :disabled="availableJobGrades.length === 0"
+                                >
+                                    <template v-if="state.jobGrade" #default>
+                                        {{ state.jobGrade?.label }} ({{ state.jobGrade?.grade }})
+                                    </template>
 
-                                        <template #item-label="{ item }"> {{ item.label }} ({{ item.grade }}) </template>
-                                    </USelectMenu>
-                                </ClientOnly>
-                            </UFormField>
+                                    <template #item-label="{ item }"> {{ item.label }} ({{ item.grade }}) </template>
+                                </USelectMenu>
+                            </ClientOnly>
+                        </UFormField>
 
-                            <UFormField name="submit" label="&nbsp;">
-                                <UButton
-                                    class="flex-initial justify-end"
-                                    :disabled="state.jobGrade === undefined || state.jobGrade!.grade < 0 || !canSubmit"
-                                    :loading="isSubmitting"
-                                    color="neutral"
-                                    variant="outline"
-                                    icon="i-mdi-plus"
-                                    :label="$t('common.create')"
-                                    @click="
-                                        confirmModal.open({
-                                            title: $t('components.hints.settings_roles_list.title'),
-                                            description: $t('components.hints.settings_roles_list.content'),
-                                            icon: 'i-mdi-information-outline',
-                                            color: 'warning',
-                                            iconClass: 'text-amber-500 dark:text-amber-400',
-                                            confirm: async () => await formRef?.submit(),
-                                        })
-                                    "
-                                />
-                            </UFormField>
-                        </UForm>
-                    </UPageCard>
+                        <UFormField name="submit" label="&nbsp;">
+                            <UButton
+                                class="flex-initial justify-end"
+                                :disabled="state.jobGrade === undefined || state.jobGrade!.grade < 0 || !canSubmit"
+                                :loading="isSubmitting"
+                                color="neutral"
+                                variant="outline"
+                                icon="i-mdi-plus"
+                                :label="$t('common.create')"
+                                @click="
+                                    confirmModal.open({
+                                        title: $t('components.hints.settings_roles_list.title'),
+                                        description: $t('components.hints.settings_roles_list.content'),
+                                        icon: 'i-mdi-information-outline',
+                                        color: 'warning',
+                                        iconClass: 'text-amber-500 dark:text-amber-400',
+                                        confirm: async () => await formRef?.submit(),
+                                    })
+                                "
+                            />
+                        </UFormField>
+                    </UForm>
 
-                    <div class="mt-4 flex flex-col gap-4">
-                        <SingleHint hint-id="settings_roles_list" variant="subtle" />
+                    <div class="flex flex-col gap-2">
+                        <SingleHint hint-id="settings_roles_list" variant="subtle" class="m-4" />
 
                         <div>
                             <DataErrorBlock
@@ -219,7 +218,7 @@ const confirmModal = overlay.create(ConfirmModal);
                             <Pagination :status="status" :refresh="refresh" hide-buttons hide-text />
                         </div>
 
-                        <SingleHint hint-id="settings_roles_superuser" variant="subtle" />
+                        <SingleHint hint-id="settings_roles_superuser" variant="subtle" class="m-4" />
                     </div>
                 </div>
 
