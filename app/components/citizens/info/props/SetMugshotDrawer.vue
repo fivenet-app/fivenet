@@ -276,8 +276,9 @@ async function closeModal(): Promise<void> {
 
                             <UAlert
                                 v-if="user.props?.mugshot"
-                                icon="i-mdi-information-outline"
                                 :description="$t('common.image_caching')"
+                                icon="i-mdi-information-outline"
+                                variant="subtle"
                             />
                         </div>
                     </div>

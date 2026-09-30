@@ -130,7 +130,8 @@ const { submit: submitAsset, isSubmitting } = useSubmitGuard(saveAsset);
                         />
 
                         <PartialsContentGuidelinesAlert />
-                        <UAlert icon="i-mdi-information-outline" :description="$t('common.image_caching')" />
+
+                        <UAlert icon="i-mdi-information-outline" :description="$t('common.image_caching')" variant="subtle" />
                     </div>
                 </UFormField>
             </UForm>

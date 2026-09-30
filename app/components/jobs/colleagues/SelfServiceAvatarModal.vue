@@ -227,7 +227,12 @@ async function closeModal(): Promise<void> {
                                 />
                             </div>
 
-                            <UAlert icon="i-mdi-information-outline" :description="$t('common.image_caching')" />
+                            <UAlert
+                                v-if="activeChar?.profilePicture"
+                                icon="i-mdi-information-outline"
+                                :description="$t('common.image_caching')"
+                                variant="subtle"
+                            />
                         </div>
                     </div>
                 </UFormField>
