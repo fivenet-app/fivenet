@@ -81,15 +81,6 @@ function isDuplicateQualification(qualificationId: number | undefined): boolean 
     );
 }
 
-function isDuplicateJob(job: string | undefined): boolean {
-    return (
-        job !== undefined &&
-        otherEntries.value.some(
-            (existing) => existing.type === 'job' && existing.job === job && existing.minimumGrade === entry.value.minimumGrade,
-        )
-    );
-}
-
 const jobItems = computed(() => {
     const filteredJobs = props.jobs?.filter((j) => props.hideJobs.length === 0 || !props.hideJobs.includes(j.name)) ?? [];
 
@@ -100,7 +91,9 @@ const jobItems = computed(() => {
               ? filteredJobs.filter((job) => job.name === currentJob.value)
               : [];
 
-    return visibleJobs.map((job) => ({ ...job, disabled: isDuplicateJob(job.name) }));
+    // Jobs may be used more than once; uniqueness is enforced by the job/grade
+    // combination in the grade selector below.
+    return visibleJobs;
 });
 
 const gradeItems = computed(() => {

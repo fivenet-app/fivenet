@@ -377,10 +377,11 @@ describe('AccessEntry', () => {
         );
     });
 
-    it('disables already-used job and grade combinations', async () => {
+    it('keeps a job selectable and disables an already-used grade', async () => {
         const entry: MixedAccessEntry = {
             id: 2,
             type: 'job',
+            job: 'police',
             minimumGrade: 0,
             access: 2,
         };
@@ -412,7 +413,15 @@ describe('AccessEntry', () => {
             return items?.some((item) => item.name === 'police') ?? false;
         });
         expect(jobsMenu?.props('items')).toEqual(
-            expect.arrayContaining([expect.objectContaining({ name: 'police', disabled: true })]),
+            expect.arrayContaining([expect.objectContaining({ name: 'police', disabled: undefined })]),
+        );
+
+        const gradesMenu = menus.find((menu) => {
+            const items = menu.props('items') as Array<{ grade?: number }> | undefined;
+            return items?.some((item) => item.grade === 0) ?? false;
+        });
+        expect(gradesMenu?.props('items')).toEqual(
+            expect.arrayContaining([expect.objectContaining({ grade: 0, disabled: true })]),
         );
     });
 
