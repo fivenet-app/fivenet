@@ -28,7 +28,7 @@ export default defineConfig({
                     exclude: ['app/**/*.{e2e,unit}.{test,spec}.ts', ...configDefaults.exclude, '.direnv/*'],
                     environment: 'nuxt',
                     hookTimeout: 30_000,
-                    fsModuleCache: true,
+                    fsModuleCache: false,
                 },
             }),
         ],

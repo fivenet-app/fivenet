@@ -412,9 +412,11 @@ describe('AccessEntry', () => {
             const items = menu.props('items') as Array<{ name?: string }> | undefined;
             return items?.some((item) => item.name === 'police') ?? false;
         });
-        expect(jobsMenu?.props('items')).toEqual(
-            expect.arrayContaining([expect.objectContaining({ name: 'police', disabled: undefined })]),
+        const policeJob = (jobsMenu?.props('items') as Array<{ name?: string; disabled?: boolean }> | undefined)?.find(
+            (item) => item.name === 'police',
         );
+        expect(policeJob).toBeDefined();
+        expect(policeJob).not.toHaveProperty('disabled');
 
         const gradesMenu = menus.find((menu) => {
             const items = menu.props('items') as Array<{ grade?: number }> | undefined;
