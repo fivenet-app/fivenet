@@ -28,13 +28,13 @@
         "@galexrt/nuxt-update": "2.2.0",
         "@iconify-json/flagpack": "1.2.8",
         "@iconify-json/mdi": "1.2.3",
-        "@iconify-json/simple-icons": "1.2.97",
+        "@iconify-json/simple-icons": "1.2.98",
         "@internationalized/date": "3.12.4",
         "@nuxt/content": "3.16.1",
         "@nuxt/fonts": "0.14.0",
         "@nuxt/image": "2.1.0",
         "@nuxt/ui": "4.11.2",
-        "@nuxtjs/robots": "6.2.3",
+        "@nuxtjs/robots": "6.2.4",
         "@pinia/nuxt": "1.0.2",
         "@protobuf-ts/grpcweb-transport": "2.11.1",
         "@samemichaeltadele/tiptap-compare": "0.0.3",
@@ -85,8 +85,8 @@
         "@tiptap/html": "3.31.3",
         "@tiptap/static-renderer": "3.31.3",
         "@tiptap/y-tiptap": "3.0.9",
-        "@unovis/ts": "1.7.0",
-        "@unovis/vue": "1.7.0",
+        "@unovis/ts": "1.7.1",
+        "@unovis/vue": "1.7.1",
         "@zxcvbn-ts/core": "4.2.0",
         "better-sqlite3": "13.0.3",
         "big.js": "7.0.1",
@@ -101,7 +101,7 @@
         "howler": "2.2.4",
         "leaflet": "1.9.4",
         "leaflet.heat": "0.2.0",
-        "maska": "3.2.1",
+        "maska": "3.2.2",
         "mdi-vue3": "7.4.47",
         "mitt": "3.0.1",
         "pica": "10.0.3",
@@ -142,7 +142,7 @@
         "@vueuse/nuxt": "14.4.0",
         "@vueuse/router": "14.4.0",
         "autoprefixer": "10.6.1",
-        "cssnano": "9.0.5",
+        "cssnano": "9.1.1",
         "eslint": "10.11.0",
         "eslint-config-prettier": "10.1.8",
         "eslint-plugin-prettier": "5.5.6",
@@ -177,14 +177,14 @@
     },
     "pnpm": {
         "overrides": {
-            "@unhead/vue": "3.4.1",
+            "@unhead/vue": "3.4.2",
             "fontless>esbuild": "0.28.2",
             "nuxt-typed-router>defu": "6.1.7",
             "nuxt-typed-router>lodash-es": "4.18.1",
             "nuxt-typed-router>nanoid": "6.0.1",
-            "unhead": "3.4.1",
+            "unhead": "3.4.2",
             "vue": "3.5.43"
         }
     },
-    "packageManager": "pnpm@10.34.5+sha512.a4ee05f2f73658255bd6a89859c065a45c28a57daefae2c893a168ee2b73168c37b91e83e57ea67654ad03f03031746430e8bce38e362e042605fb8abc80192e"
+    "packageManager": "pnpm@10.34.6+sha512.7e1ae66a83a9143c118cc1944f37cc4f2b8acddeda4b001cfa78908f6e46e45e15292739ca6c9d026426cc757e9318cc98c5551d6a16c165097b0028ba87b4e6"
 }
