@@ -22,6 +22,8 @@ const rightTrim = ref<boolean>(false);
 
 const canInsert = computed(() => selected.value && expression.value);
 
+const open = ref(false);
+
 const insertBlock = () => {
     if (!canInsert.value) return;
     const val = `${selected.value} ${expression.value}`.trim();
@@ -32,11 +34,13 @@ const insertBlock = () => {
     });
     selected.value = '';
     expression.value = '';
+
+    open.value = false;
 };
 </script>
 
 <template>
-    <UPopover>
+    <UPopover v-model:open="open">
         <UTooltip :text="$t('components.partials.tiptap_editor.extensions.template_block.title')">
             <UButton color="neutral" variant="ghost" icon="i-mdi-application-variable" :disabled="disabled" />
         </UTooltip>

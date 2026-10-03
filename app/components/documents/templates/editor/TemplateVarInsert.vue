@@ -7,17 +7,21 @@ const props = defineProps<{
     disabled?: boolean;
 }>();
 
+const open = ref(false);
+
 function insert(value: { value: string; leftTrim: boolean; rightTrim: boolean }): void {
     props.editor?.commands.insertTemplateVar({
         value: value.value,
         leftTrim: value.leftTrim,
         rightTrim: value.rightTrim,
     });
+
+    open.value = false;
 }
 </script>
 
 <template>
-    <UPopover>
+    <UPopover v-model:open="open">
         <UTooltip :text="$t('components.partials.tiptap_editor.extensions.template_var.title')">
             <UButton color="neutral" variant="ghost" icon="i-mdi-variable" :disabled="disabled" />
         </UTooltip>
