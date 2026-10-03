@@ -15,6 +15,7 @@ interface GrpcProviderOpts {
 
 type Events = {
     sync(synced: boolean, doc: Y.Doc): void;
+    promoted(): void;
     saved(): void;
     loading(loading: boolean): void;
 };
@@ -212,6 +213,7 @@ export default class GrpcProvider extends ObservableV2<Events> {
                     // Only act if we were *not* authoritative so far.
                     if (!this.authoritative) {
                         this.authoritative = true;
+                        this.emit('promoted', []);
                     }
 
                     logger.info('Received promote: we are the new first client. Authoritative:', this.authoritative);

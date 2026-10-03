@@ -239,11 +239,17 @@ if (props.enableCollab && ydoc && yjsProvider) {
     };
     yjsProvider.on('sync', onSync);
 
+    const onPromoted = () => {
+        if (unref(editor)) syncPenaltyCalculatorData(unref(editor)!);
+    };
+    yjsProvider.on('promoted', onPromoted);
+
     const onLoading = (state: boolean) => (loading.value = state);
     yjsProvider.on('loading', onLoading);
 
     onBeforeUnmount(() => {
         yjsProvider.off('sync', onSync);
+        yjsProvider.off('promoted', onPromoted);
         yjsProvider.off('loading', onLoading);
     });
     onMounted(() => yjsProvider.connect());
