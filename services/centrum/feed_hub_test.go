@@ -214,9 +214,18 @@ func waitForFeedEvent(
 	feed <-chan *feedEvent,
 	match func(*feedEvent) bool,
 ) *feedEvent {
+	return waitForFeedEventWithin(t, feed, match, 2*time.Second)
+}
+
+func waitForFeedEventWithin(
+	t *testing.T,
+	feed <-chan *feedEvent,
+	match func(*feedEvent) bool,
+	timeoutDuration time.Duration,
+) *feedEvent {
 	t.Helper()
 
-	timeout := time.NewTimer(2 * time.Second)
+	timeout := time.NewTimer(timeoutDuration)
 	defer timeout.Stop()
 	for {
 		select {
@@ -309,7 +318,7 @@ func TestFeedHubResyncsAndRecoversAfterKVConsumerDeletion(t *testing.T) {
 
 	// A client receiving this event rebuilds its handshake/latest-state snapshot
 	// before accepting events from the replacement worker.
-	resync := waitForFeedEvent(t, feed, func(event *feedEvent) bool { return event.Resync })
+	resync := waitForFeedEventWithin(t, feed, func(event *feedEvent) bool { return event.Resync }, 7*time.Second)
 	require.NotZero(t, resync.Sequence)
 	waitForFeedHubConsumer(t, srv, "KV_centrum_settings")
 

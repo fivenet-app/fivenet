@@ -211,14 +211,8 @@ func New(p Params) *UnitDB {
 						}
 					}
 
-					// Reset unit ping timer
-					if err := d.UpsertWithTTL(
-						ctx,
-						d.KVPing,
-						fmt.Sprintf("ping.%d", unit.GetId()),
-						PingTTL,
-					); err != nil {
-						return nil, fmt.Errorf("failed to upsert ping unit timer. %w", err)
+					if err := d.SyncUnitPing(ctx, unit); err != nil {
+						return nil, fmt.Errorf("failed to sync ping unit timer. %w", err)
 					}
 
 					return unit, nil
@@ -257,6 +251,10 @@ func New(p Params) *UnitDB {
 								err,
 							)
 						}
+					}
+
+					if err := d.SyncUnitPing(ctx, unit); err != nil {
+						return nil, fmt.Errorf("failed to sync ping unit timer. %w", err)
 					}
 
 					return unit, nil
