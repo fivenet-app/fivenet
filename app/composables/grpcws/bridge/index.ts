@@ -49,13 +49,13 @@ export const webSocket = useWebSocket(
     {
         immediate: false,
         autoReconnect: {
-            delay: 350,
+            delay: 250,
         },
         protocols: ['grpc-websocket-channel'],
         heartbeat: {
             message: heartbeatMsg,
-            interval: 35_000,
-            pongTimeout: 1_500,
+            scheduler: (callback) => useIntervalFn(callback, 35_000),
+            pongTimeout: 2_500,
         },
 
         onConnected(ws) {

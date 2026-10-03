@@ -128,7 +128,7 @@ const disabled = ref<boolean>(false);
 const endsAtTime = toDate(props.examUser.endsAt).getTime();
 const startsAtTime = toDate(props.examUser.startedAt).getTime();
 const timeLowAtTime = endsAtTime - (endsAtTime - startsAtTime) * 0.15;
-const now = useNow({ interval: 1_000 });
+const now = useSecondClock();
 
 const remainingSeconds = computed(() => Math.max(0, Math.ceil((endsAtTime - now.value.getTime()) / 1_000)));
 const remainingTimeLabel = computed(
