@@ -7,6 +7,7 @@ import (
 	"time"
 
 	centrumunits "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/centrum/units"
+	"github.com/fivenet-app/fivenet/v2026/pkg/nats/store"
 	"github.com/nats-io/nats.go/jetstream"
 )
 
@@ -51,16 +52,6 @@ func (s *UnitDB) UpsertWithTTL(
 	key string,
 	ttl time.Duration,
 ) error {
-	if _, err := kv.Create(ctx, key, nil, jetstream.KeyTTL(ttl)); err != nil {
-		if !errors.Is(err, jetstream.ErrKeyExists) {
-			return err
-		}
-		ent, err := kv.Get(ctx, key)
-		if err != nil {
-			return err
-		}
-		_, err = kv.Update(ctx, key, nil, ent.Revision()) // Resets TTL
-		return err
-	}
-	return nil
+	_, _, err := store.PutWithRetry(ctx, kv, key, nil, jetstream.KeyTTL(ttl))
+	return err
 }
