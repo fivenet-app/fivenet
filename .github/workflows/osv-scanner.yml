@@ -1,6 +1,14 @@
 name: OSV-Scanner Scan
 
 on:
+  pull_request:
+    branches:
+      - main
+      - develop
+  merge_group:
+    branches:
+      - main
+      - develop
   workflow_dispatch:
   push:
     branches:
@@ -16,6 +24,12 @@ permissions:
   security-events: write
 
 jobs:
-  osv-scan:
+  scan-scheduled:
+    if: ${{ github.event_name == 'push' || github.event_name == 'schedule' || github.event_name == 'workflow_dispatch' }}
     name: Scan dependencies
     uses: google/osv-scanner-action/.github/workflows/osv-scanner-reusable.yml@a345acffa64b0eaede81a3d9aae6141214d9c8fc # v2.6.0
+
+  osv-scan:
+    if: ${{ github.event_name == 'pull_request' || github.event_name == 'merge_group' }}
+    name: Scan dependencies
+    uses: google/osv-scanner-action/.github/workflows/osv-scanner-reusable-pr.yml@a345acffa64b0eaede81a3d9aae6141214d9c8fc # v2.6.0
