@@ -12,7 +12,7 @@ jobs:
     name: Generate Source SBOM
     runs-on: ubuntu-latest
     env:
-      WAYBILL_VERSION: v0.6.1
+      WAYBILL_VERSION: v0.9.0
       WAYBILL_TARGET: x86_64-unknown-linux-gnu
     steps:
       - name: Checkout code
@@ -103,7 +103,7 @@ jobs:
     needs: [build-images]
     runs-on: ubuntu-latest
     env:
-      WAYBILL_VERSION: v0.6.1
+      WAYBILL_VERSION: v0.9.0
       WAYBILL_TARGET: x86_64-unknown-linux-gnu
       IMAGE_DIGEST: ${{ needs.build-images.outputs.image_digest }}
     steps:
