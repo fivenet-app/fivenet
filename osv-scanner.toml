@@ -2,3 +2,18 @@
 id = "GO-2026-5932"
 reason = "Repository does not import golang.org/x/crypto/openpgp; this advisory only affects the unmaintained OpenPGP packages."
 ignoreUntil = 2027-01-01
+
+[[IgnoredVulns]]
+id = "GO-2026-6443"
+reason = "The repository already uses google.golang.org/grpc v1.84.0, which contains the fix; the vulnerability database entry is outdated."
+ignoreUntil = 2027-01-01
+
+[[IgnoredVulns]]
+id = "GHSA-vfj7-8cjw-p6xm"
+reason = "braces is transitive and no compatible fixed version is currently selected in the lockfile."
+ignoreUntil = 2027-01-01
+
+[[IgnoredVulns]]
+id = "GHSA-86w9-cpqp-85rv"
+reason = "node-forge is transitive and no compatible fixed version is currently selected in the lockfile."
+ignoreUntil = 2027-01-01
