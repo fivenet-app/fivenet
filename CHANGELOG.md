@@ -2,6 +2,96 @@
 
 All notable changes to this project will be documented in this file.
 
+## [2026.10.0] - 2026-10-04
+
+### 🏗️ Breaking changes
+
+- *(ui)* Implement vueuse v15 breaking changes
+
+### 🚀 Features
+
+- *(ui)* Add favicon with blip for notifications
+- *(documents)* Allow missing reqs with GetTemplate allow_missing field
+- *(qualifications)* Improve tutor components and views
+- *(ui)* Introduce useSubmitGuard composable as replacement for form
+- *(mailer)* Improve mail UI and responsive layouts
+- *(editor)* Add automatic linking for document and citizen IDs
+- *(citizens)* Rework profile styling and activity feeds
+- *(documents)* Set special vars by default
+- *(jobs)* Add job assets image upload
+- Update pnpm to 12.9.1
+
+### 🐛 Bug Fixes
+
+- *(dispatch)* Details slideover having a minus in front of expiration
+- *(ui)* Add defaults to optional vue models
+- *(centrum)* Dispatch not found handling and converter tests
+- *(utils)* Add StringFirstNWithEllipsis string func
+- *(centrum)* Migrate phone dispatch converter to cronjob
+- *(centrum)* Unit home_postal treat as null on empty string
+- *(lint)* Frontend lint/type issues
+- *(centrum)* Reduce converter debug log to once on start
+- *(query)* Conditional removal old users table fks
+- *(centrum)* Converter tests
+- *(qualifications)* Address ui design/backend logic issues
+- *(qualifications)* Exam question yes/no handling
+- *(qualifications)* Yes/no answer handling issue
+- *(qualifications)* Don't show flag question for tutor grading
+- *(qualifications)* Don't show divier when delete is the only action
+- *(qualifications)* Exam submitted/ended handling escpecially for
+- *(nui)* Stabilize input focus handling
+- *(centrum)* Behavior change for TakeDispatch calls
+- *(centrum)* Improve dispatch UNIT_* status handling
+- *(nats)* Explicitly set bucket history to 1
+- *(centrum)* Improve lbphone converter query
+- *(centrum)* Reconcile stale KV projections during startup
+- *(appconfig)* Nats nc vs js usage
+- *(centrum)* Ensure unit exists in db via select before updating
+- *(mailer)* Email creation issues and code structure
+- *(mailer)* Refresh private email visibility and ordering
+- *(mailer)* Improve private email creation flow
+- *(mailer)* Unsaved changes issue for thread viewing
+- *(citizens)* Hide actions separator when no other buttons are shown
+- *(ui)* Cleanup remaining citizens and documents title issues
+- *(documents)* Approvals import issue for title component
+- *(ui)* Remove old router debug context info
+- *(ui)* Layout/text issues
+- *(editor)* Add download and remove buttons to image bar
+- *(tests)* Improve dbmanager cloning perf
+- *(ci)* Add configurable go test parallel var
+- *(image)* Move image upload into create/update flow and add
+- *(cron)* Add execution run identity
+- *(croner)* Harden distributed execution
+- *(events)* Migrate legacy cron consumers
+- *(lint)* Run golangci-lint fix
+- *(nats)* Delete cron kv via migration
+- *(nats)* Switch croner kv/stream storage again
+- *(ui)* Improve UFileUpload integration and styling
+- *(filestore)* Increase test case and coverage
+- *(jobs)* Rename job assets components
+- *(jobs)* Cleanup job assets forms
+- Filestore list page title
+- *(ui)* File upload usage and add upload disclaimer
+- *(storage)* Filesystem based path sanitization for empty and "root"
+- *(ui)* Prevent false WebSocket outage notifications
+- *(documents)* Templates render error hidden for superuser
+- *(documents)* Show template render error for super and CreateTemplate
+- *(documents)* Template data vehicles not having owner info
+- *(grpc)* Add copy error action for non-RPC errors
+- *(documents)* Yjs access sync issues
+- *(ui)* Improve websocket connect/disconnect logging
+- *(assets)* Refresh replaced job asset images
+- *(streams)* Reconnect live subscriptions after transport failures
+- *(jobs)* Assets update modal show the image
+- *(ui)* Adjust content guidelines alert variant
+- Cache buster for job assets in list
+- *(ui)* Access mmanager disabling job when a single grade of the job is
+- *(ui)* AccessManager component test case
+- Close template block/var popovers on insert/update
+- *(ci)* Unify OSV-Scanner workflows
+- *(documents)* Sync penalty calculator data after collab promotion
+- *(documents)* Move template content access above editor
+
 ## [2026.9.3] - 2026-09-18
 
 ### 🚀 Features
