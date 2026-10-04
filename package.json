@@ -175,16 +175,5 @@
         "@tiptap/pm": "3.31.4",
         "@tiptap/vue-3": "3.31.4"
     },
-    "pnpm": {
-        "overrides": {
-            "@unhead/vue": "3.4.2",
-            "fontless>esbuild": "0.28.2",
-            "nuxt-typed-router>defu": "6.1.7",
-            "nuxt-typed-router>lodash-es": "4.18.1",
-            "nuxt-typed-router>nanoid": "6.0.1",
-            "unhead": "3.4.2",
-            "vue": "3.5.43"
-        }
-    },
-    "packageManager": "pnpm@10.34.6+sha512.7e1ae66a83a9143c118cc1944f37cc4f2b8acddeda4b001cfa78908f6e46e45e15292739ca6c9d026426cc757e9318cc98c5551d6a16c165097b0028ba87b4e6"
+    "packageManager": "pnpm@12.9.1"
 }

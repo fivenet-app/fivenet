@@ -52,7 +52,7 @@ COPY --exclude=public/images/livemap/ . ./
 
 RUN apk add --no-cache git python3 make gcc g++ pkgconfig && \
     corepack enable && \
-    corepack prepare pnpm@10.34.5 --activate && \
+    corepack prepare pnpm@12.9.1 --activate && \
     version="$(cat /version)" && \
     COMMIT_REF="$version" pnpm install && \
     NODE_OPTIONS="--max-old-space-size=8192" \

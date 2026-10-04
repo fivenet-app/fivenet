@@ -51,8 +51,8 @@
               golangci-lint
 
               # NodeJS stuff
-              nodejs_22
-              pnpm_10
+              nodejs_24
+              pnpm_12
 
               # Protobuf
               buf

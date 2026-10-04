@@ -4,7 +4,19 @@ catalog:
   typescript: npm:typescript-native-bridge@6.0.3-bridge.18.tsgo.7.0.2
 
 overrides:
+  "@internationalized/date": "3.12.4"
+  "@nuxt/kit": "4.5.2"
+  "@tiptap/core": "3.31.4"
+  "@tiptap/pm": "3.31.4"
+  "@tiptap/vue-3": "3.31.4"
   typescript: npm:typescript-native-bridge@6.0.3-bridge.18.tsgo.7.0.2
+  "@unhead/vue": "3.4.2"
+  "fontless>esbuild": "0.28.2"
+  "nuxt-typed-router>defu": "6.1.7"
+  "nuxt-typed-router>lodash-es": "4.18.1"
+  "nuxt-typed-router>nanoid": "6.0.1"
+  "unhead": "3.4.2"
+  "vue": "3.5.43"
 
 onlyBuiltDependencies:
   - '@parcel/watcher'
@@ -28,19 +40,40 @@ packageExtensions:
 
 saveExact: true
 
+# Keep pnpm-only settings in pnpm-workspace.yaml so npm does not try to parse
+# them as project configuration.
+shamefullyHoist: true
+strictPeerDependencies: false
+shellEmulator: true
+
 allowBuilds:
-  '@parcel/watcher': true
+  '@parcel/watcher': false
   better-sqlite3: true
   canvas: true
-  esbuild: true
+  esbuild: false
   maplibre-gl: true
   sharp: true
-  unrs-resolver: true
+  unrs-resolver: false
   v-code-diff: true
-  vue-demi: true
+  vue-demi: false
 
 minimumReleaseAge: 960 # 16 hours in minutes
 minimumReleaseAgeExclude:
   - nuxt
   - '@nuxt/*'
   - '@nuxtjs/*'
+  - '@pnpm/exe.android-arm64@12.9.1'
+  - '@pnpm/exe.android-x64@12.9.1'
+  - '@pnpm/exe.darwin-arm64@12.9.1'
+  - '@pnpm/exe.darwin-x64@12.9.1'
+  - '@pnpm/exe.freebsd-x64@12.9.1'
+  - '@pnpm/exe.linux-arm64-musl@12.9.1'
+  - '@pnpm/exe.linux-arm64@12.9.1'
+  - '@pnpm/exe.linux-ppc64@12.9.1'
+  - '@pnpm/exe.linux-riscv64@12.9.1'
+  - '@pnpm/exe.linux-s390x@12.9.1'
+  - '@pnpm/exe.linux-x64-musl@12.9.1'
+  - '@pnpm/exe.linux-x64@12.9.1'
+  - '@pnpm/exe.win32-arm64@12.9.1'
+  - '@pnpm/exe.win32-x64@12.9.1'
+  - pnpm@12.9.1
