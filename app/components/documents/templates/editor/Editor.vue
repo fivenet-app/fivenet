@@ -720,7 +720,21 @@ const formRef = useTemplateRef('formRef');
                                 <UFormField name="contentState" :label="`${$t('common.content')} ${$t('common.state')}`">
                                     <UTextarea v-model="state.contentState" class="w-full" name="contentState" :rows="2" />
                                 </UFormField>
+                            </UPageCard>
 
+                            <UPageCard :title="`${$t('common.content')} ${$t('common.access')}`">
+                                <AccessManager
+                                    v-model:jobs="state.contentAccess.jobs"
+                                    v-model:users="state.contentAccess.users"
+                                    :target-id="templateId ?? 0"
+                                    :access-types="contentAccessTypes"
+                                    :access-roles="enumToAccessLevelEnums(AccessLevel, 'enums.documents.AccessLevel')"
+                                    required-mode="checkbox"
+                                    name="contentAccess"
+                                />
+                            </UPageCard>
+
+                            <UPageCard :title="$t('common.content')">
                                 <SingleHint
                                     hint-id="template_editor_templating"
                                     to="https://fivenet.app/user-guides/documents/templates"
@@ -753,18 +767,6 @@ const formRef = useTemplateRef('formRef');
                                         </TiptapEditor>
                                     </ClientOnly>
                                 </UFormField>
-                            </UPageCard>
-
-                            <UPageCard :title="$t('common.access')">
-                                <AccessManager
-                                    v-model:jobs="state.contentAccess.jobs"
-                                    v-model:users="state.contentAccess.users"
-                                    :target-id="templateId ?? 0"
-                                    :access-types="contentAccessTypes"
-                                    :access-roles="enumToAccessLevelEnums(AccessLevel, 'enums.documents.AccessLevel')"
-                                    required-mode="checkbox"
-                                    name="contentAccess"
-                                />
                             </UPageCard>
                         </UContainer>
                     </template>
