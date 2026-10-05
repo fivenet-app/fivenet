@@ -455,8 +455,9 @@ describe('WebsocketChannelImpl', () => {
 
         status.value = 'CLOSED';
 
-        await expect(stream.sendMessage(new Uint8Array([1, 2, 3]), true)).rejects.toThrow('WebSocket not open');
+        await stream.sendMessage(new Uint8Array([1, 2, 3]), true);
         expect(bufferedFrames).toHaveLength(0);
+        expect(channel.activeStreams.has(stream.streamId)).toBe(false);
 
         status.value = 'OPEN';
         expect(sentFrames).toHaveLength(2);

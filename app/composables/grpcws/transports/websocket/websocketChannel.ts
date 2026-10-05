@@ -103,26 +103,28 @@ export class WebsocketChannelImpl implements WebsocketChannel {
             this.authState = { kind: 'none' };
             this.ignoredControlResponses = 0;
         });
-        watchThrottled(
+        watch(
             ws.status,
             (val) => {
                 if (val === 'OPEN') return;
 
                 this.rejectPendingAuth(new Error('WebSocket closed'));
 
-                // Close all streams when the websocket connection is lost/closed
+                // Tear down streams immediately. The socket can transition from
+                // CLOSED to OPEN within the reconnect delay; throttling this
+                // cleanup can otherwise leave the old RPC stream registered and
+                // prevent higher-level reconnect logic from creating a new one.
                 this.activeStreams.forEach((as) => {
-                    as[1].cancel();
+                    void as[1].cancel().catch((err: unknown) => {
+                        this.logger.debug('Ignoring stream cancellation failure after websocket close', err);
+                    });
                     as[1].closed = true;
                     this.activeStreams.delete(as[1].streamId);
                 });
 
                 this.resetAvailableStreamIds();
             },
-            {
-                immediate: true,
-                throttle: 250, // 250ms throttle to avoid rapid status changes
-            },
+            { immediate: true },
         );
     }
 
