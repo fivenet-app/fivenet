@@ -94,9 +94,9 @@ function selectPermanent(): void {
                     />
                 </div>
 
-                <div>
-                    <UCalendar v-model="calendarValue" class="p-2" />
-                    <InputTimePicker v-model="timeValue" class="w-full border-t border-default p-2" :hour-cycle="24" />
+                <div class="space-y-2 p-2">
+                    <UCalendar v-model="calendarValue" />
+                    <InputTimePicker v-model="timeValue" class="w-full" :hour-cycle="24" />
                 </div>
             </div>
         </template>
