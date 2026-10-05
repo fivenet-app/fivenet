@@ -4,10 +4,12 @@ import (
 	context "context"
 	"slices"
 	"strings"
+	"time"
 
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/audit"
 	citizenslabels "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/citizens/labels"
 	notificationsclientview "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/notifications/clientview"
+	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/timestamp"
 	usersactivity "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/users/activity"
 	usersprops "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/users/props"
 	pbcitizens "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/citizens"
@@ -100,6 +102,26 @@ func (s *Server) SetUserProps(
 	if req.Props.Wanted != nil {
 		if !fields.Contains(permscitizens.CitizensServiceSetUserPropsFieldsPermValueWanted) {
 			return nil, errorscitizens.ErrPropsWantedDenied
+		}
+	}
+
+	// A protobuf epoch timestamp is the client-side marker for “permanent”.
+	// Resolve it against the configured safety maximum before persisting it.
+	if req.GetProps().GetWanted() && req.GetProps().GetWantedTill() != nil {
+		wantedTill := req.GetProps().GetWantedTill()
+		if wantedTill.GetTimestamp() != nil && wantedTill.GetTimestamp().GetSeconds() == 0 && wantedTill.GetTimestamp().GetNanos() == 0 {
+			game := s.appCfg.Get().GetGame()
+			if max := game.GetMaxWantedDurationUser(); max != nil && game.GetMaxWantedDurationUserEnabled() {
+				req.Props.SetWantedTill(timestamp.New(time.Now().UTC().Add(max.AsDuration())))
+			}
+		} else if wantedTill.GetTimestamp() != nil {
+			game := s.appCfg.Get().GetGame()
+			if max := game.GetMaxWantedDurationUser(); max != nil && game.GetMaxWantedDurationUserEnabled() {
+				maxTill := time.Now().UTC().Add(max.AsDuration())
+				if wantedTill.AsTime().After(maxTill) {
+					req.Props.SetWantedTill(timestamp.New(maxTill))
+				}
+			}
 		}
 	}
 

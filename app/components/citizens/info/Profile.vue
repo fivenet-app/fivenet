@@ -2,6 +2,7 @@
 import EmailInfoPopover from '~/components/mailer/EmailInfoPopover.vue';
 import CharSexBadge from '~/components/partials/citizens/CharSexBadge.vue';
 import PhoneNumberBlock from '~/components/partials/citizens/PhoneNumberBlock.vue';
+import GenericTime from '~/components/partials/elements/GenericTime.vue';
 import type { User } from '~~/gen/ts/resources/users/user';
 import LabelBadge from '../labels/LabelBadge.vue';
 
@@ -42,6 +43,10 @@ const statCardClass = computed(() => {
                                 <p class="text-xs font-medium text-muted">{{ $t('common.wanted') }}</p>
                                 <p class="truncate font-semibold text-highlighted">
                                     {{ user.props?.wanted ? $t('common.yes') : $t('common.no') }}
+                                </p>
+                                <p v-if="user.props?.wanted && user.props.wantedTill" class="text-xs text-muted">
+                                    {{ $t('common.until') }}
+                                    <GenericTime :value="user.props.wantedTill" />
                                 </p>
                             </div>
                         </div>

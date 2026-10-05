@@ -619,6 +619,14 @@
         "upload": "Upload",
         "postal_code": "Postal Code | Postal Codes",
         "duration": "Duration",
+        "until": "Until",
+        "permanent": "Permanent",
+        "wanted_duration": {
+            "30_minutes": "30 minutes",
+            "1_hour": "1 hour",
+            "2_hours": "2 hours",
+            "1_day": "1 day"
+        },
         "inactive_colleagues": "Inactive Colleagues",
         "qualifications": "Qualification | Qualifications",
         "score": "Score",

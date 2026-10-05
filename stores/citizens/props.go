@@ -32,6 +32,8 @@ func (s *Store) GetUserProps(
 			tUserProps.UserID,
 			tUserProps.UpdatedAt,
 			tUserProps.Wanted,
+			tUserProps.WantedAt,
+			tUserProps.WantedTill,
 			tUserProps.Job,
 			tUserProps.JobGrade,
 			tUserProps.TrafficInfractionPoints,
@@ -117,9 +119,16 @@ func (s *Store) HandleUserPropsChanges(
 	updateSets := []mysql.ColumnAssigment{}
 
 	if in.Wanted != nil {
+		normalizeWantedChange(x, in)
 		updateSets = append(updateSets, tUserProps.Wanted.SET(mysql.Bool(in.GetWanted())))
+		updateSets = append(updateSets,
+			tUserProps.WantedAt.SET(dbutils.TimestampToMySQL(in.GetWantedAt())),
+			tUserProps.WantedTill.SET(dbutils.TimestampToMySQL(in.GetWantedTill())),
+		)
 	} else {
 		in.Wanted = x.Wanted
+		in.SetWantedAt(x.GetWantedAt())
+		in.SetWantedTill(x.GetWantedTill())
 	}
 
 	if in.JobName != nil {
@@ -198,6 +207,8 @@ func (s *Store) HandleUserPropsChanges(
 			INSERT(
 				tUserProps.UserID,
 				tUserProps.Wanted,
+				tUserProps.WantedAt,
+				tUserProps.WantedTill,
 				tUserProps.Job,
 				tUserProps.JobGrade,
 				tUserProps.TrafficInfractionPoints,
@@ -208,6 +219,8 @@ func (s *Store) HandleUserPropsChanges(
 			VALUES(
 				in.GetUserId(),
 				in.Wanted,
+				in.GetWantedAt(),
+				in.GetWantedTill(),
 				in.JobName,
 				in.JobGradeNumber,
 				in.TrafficInfractionPoints,
@@ -350,6 +363,48 @@ func (s *Store) HandleUserPropsChanges(
 	}
 
 	return activities, nil
+}
+
+// normalizeWantedChange keeps the wanted timestamps consistent with the wanted
+// state. A wanted start is generated when the state changes from false to true;
+// an existing start and expiry are preserved when a wanted record is updated.
+func normalizeWantedChange(current *usersprops.UserProps, in *usersprops.UserProps) {
+	if in == nil {
+		return
+	}
+
+	if in.Wanted == nil {
+		in.SetWanted(current.GetWanted())
+		in.SetWantedAt(current.GetWantedAt())
+		in.SetWantedTill(current.GetWantedTill())
+		return
+	}
+
+	if !in.GetWanted() {
+		in.ClearWantedAt()
+		in.ClearWantedTill()
+		return
+	}
+
+	if !current.GetWanted() {
+		in.SetWantedAt(timestamp.Now())
+	} else {
+		in.SetWantedAt(current.GetWantedAt())
+	}
+
+	if isZeroTimestamp(in.GetWantedTill()) {
+		in.ClearWantedTill()
+		return
+	}
+
+	if in.GetWantedTill() == nil {
+		in.SetWantedTill(current.GetWantedTill())
+	}
+}
+
+func isZeroTimestamp(ts *timestamp.Timestamp) bool {
+	return ts != nil && ts.GetTimestamp() != nil &&
+		ts.GetTimestamp().GetSeconds() == 0 && ts.GetTimestamp().GetNanos() == 0
 }
 
 func mergeUserPropsLabels(

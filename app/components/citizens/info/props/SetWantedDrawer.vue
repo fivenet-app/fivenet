@@ -5,6 +5,8 @@ import { getCitizensCitizensClient } from '~~/gen/ts/clients';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 import type { UserProps } from '~~/gen/ts/resources/users/props/props';
 import type { User } from '~~/gen/ts/resources/users/user';
+import WantedTillPicker from '~/components/partials/WantedTillPicker.vue';
+import { toTimestamp } from '~/utils/time';
 
 const props = defineProps<{
     user: User;
@@ -21,12 +23,16 @@ const citizensCitizensClient = await getCitizensCitizensClient();
 
 const schema = z.object({
     reason: z.coerce.string().min(3).max(255),
+    wantedTill: z.date().optional(),
+    permanent: z.boolean(),
 });
 
 type Schema = z.output<typeof schema>;
 
 const state = reactive<Schema>({
     reason: '',
+    wantedTill: undefined,
+    permanent: true,
 });
 
 const { hasUnsavedChanges, confirmLeave } = useSnapshotChanges(state);
@@ -35,6 +41,7 @@ async function setWantedState(values: Schema): Promise<void> {
     const userProps: UserProps = {
         userId: props.user.userId,
         wanted: props.user.props ? !props.user.props.wanted : true,
+        wantedTill: values.permanent ? toTimestamp(new Date(0)) : toTimestamp(values.wantedTill),
     };
 
     try {
@@ -127,6 +134,12 @@ async function closeModal(): Promise<void> {
                 <UFormField class="flex-1" name="reason" :label="$t('common.reason')" required>
                     <UInput v-model="state.reason" class="w-full" type="text" :placeholder="$t('common.reason')" />
                 </UFormField>
+
+                <template v-if="!user.props?.wanted">
+                    <UFormField name="wantedTill" :label="$t('common.duration')">
+                        <WantedTillPicker v-model="state.wantedTill" v-model:permanent="state.permanent" />
+                    </UFormField>
+                </template>
             </UForm>
         </template>
 

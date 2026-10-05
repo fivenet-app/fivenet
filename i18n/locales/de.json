@@ -619,6 +619,14 @@
         "upload": "Hochladen",
         "postal_code": "Postleitzahl | Postleitzahlen",
         "duration": "Dauer",
+        "until": "Bis",
+        "permanent": "Dauerhaft",
+        "wanted_duration": {
+            "30_minutes": "30 Minuten",
+            "1_hour": "1 Stunde",
+            "2_hours": "2 Stunden",
+            "1_day": "1 Tag"
+        },
         "inactive_colleagues": "Inaktive Kollegen",
         "qualifications": "Qualifizierung | Qualifizierungen",
         "score": "Ergebnis",

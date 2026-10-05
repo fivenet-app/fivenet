@@ -3,9 +3,11 @@ package citizensstore
 import (
 	"regexp"
 	"testing"
+	"time"
 
 	"github.com/DATA-DOG/go-sqlmock"
 	citizenslabels "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/citizens/labels"
+	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/timestamp"
 	usersprops "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/users/props"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -27,6 +29,8 @@ func TestStoreGetUserPropsLoadsScalarPropsOnly(t *testing.T) {
 			"user_props.user_id",
 			"user_props.updated_at",
 			"user_props.wanted",
+			"user_props.wanted_at",
+			"user_props.wanted_till",
 			"user_props.job",
 			"user_props.job_grade",
 			"user_props.traffic_infraction_points",
@@ -40,6 +44,8 @@ func TestStoreGetUserPropsLoadsScalarPropsOnly(t *testing.T) {
 			int32(42),
 			nil,
 			true,
+			time.Date(2026, 7, 22, 10, 0, 0, 0, time.UTC),
+			time.Date(2026, 7, 23, 10, 0, 0, 0, time.UTC),
 			"police",
 			int32(2),
 			uint32(7),
@@ -54,7 +60,42 @@ func TestStoreGetUserPropsLoadsScalarPropsOnly(t *testing.T) {
 	props, err := store.GetUserProps(t.Context(), db, 42)
 	require.NoError(t, err)
 	assert.Equal(t, int32(42), props.GetUserId())
+	assert.Equal(t, timestamp.New(time.Date(2026, 7, 22, 10, 0, 0, 0, time.UTC)), props.GetWantedAt())
+	assert.Equal(t, timestamp.New(time.Date(2026, 7, 23, 10, 0, 0, 0, time.UTC)), props.GetWantedTill())
 	require.NoError(t, mock.ExpectationsWereMet())
+}
+
+func TestNormalizeWantedChangeSetsStartAndClearsTimestamps(t *testing.T) {
+	t.Parallel()
+
+	wanted := true
+	current := &usersprops.UserProps{Wanted: new(bool)}
+	in := &usersprops.UserProps{Wanted: &wanted}
+
+	before := time.Now().UTC()
+	normalizeWantedChange(current, in)
+	after := time.Now().UTC()
+
+	require.NotNil(t, in.GetWantedAt())
+	assert.False(t, in.GetWantedAt().AsTime().Before(before))
+	assert.False(t, in.GetWantedAt().AsTime().After(after))
+
+	wantedTill := timestamp.New(after.Add(time.Hour))
+	current = &usersprops.UserProps{
+		Wanted:     &wanted,
+		WantedAt:   in.WantedAt,
+		WantedTill: wantedTill,
+	}
+	in = &usersprops.UserProps{Wanted: &wanted}
+	normalizeWantedChange(current, in)
+	assert.Equal(t, current.GetWantedAt(), in.GetWantedAt())
+	assert.Equal(t, wantedTill, in.GetWantedTill())
+
+	wantedFalse := false
+	in.Wanted = &wantedFalse
+	normalizeWantedChange(current, in)
+	assert.Nil(t, in.WantedAt)
+	assert.Nil(t, in.WantedTill)
 }
 
 func TestMergeUserPropsLabelsPreservesHiddenLabels(t *testing.T) {
