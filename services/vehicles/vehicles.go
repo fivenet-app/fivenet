@@ -2,8 +2,10 @@ package vehicles
 
 import (
 	"context"
+	"time"
 
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/audit"
+	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/timestamp"
 	pbvehicles "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/vehicles"
 	permsvehicles "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/vehicles/perms"
 	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/auth"
@@ -116,6 +118,26 @@ func (s *Server) SetVehicleProps(
 		if !fields.Contains(permsvehicles.VehiclesServiceSetVehiclePropsFieldsPermValueWanted) &&
 			!userInfo.GetJobAdmin() {
 			return nil, errorsvehicles.ErrPropsWantedDenied
+		}
+	}
+
+	// A protobuf epoch timestamp is the client-side marker for “permanent”.
+	// Resolve it against the configured safety maximum before persisting it.
+	if req.GetProps().GetWanted() && req.GetProps().GetWantedTill() != nil {
+		wantedTill := req.GetProps().GetWantedTill()
+		if wantedTill.GetTimestamp() != nil && wantedTill.GetTimestamp().GetSeconds() == 0 && wantedTill.GetTimestamp().GetNanos() == 0 {
+			game := s.appCfg.Get().GetGame()
+			if max := game.GetMaxWantedDurationVehicle(); max != nil && game.GetMaxWantedDurationVehicleEnabled() {
+				req.Props.SetWantedTill(timestamp.New(time.Now().UTC().Add(max.AsDuration())))
+			}
+		} else if wantedTill.GetTimestamp() != nil {
+			game := s.appCfg.Get().GetGame()
+			if max := game.GetMaxWantedDurationVehicle(); max != nil && game.GetMaxWantedDurationVehicleEnabled() {
+				maxTill := time.Now().UTC().Add(max.AsDuration())
+				if wantedTill.AsTime().After(maxTill) {
+					req.Props.SetWantedTill(timestamp.New(maxTill))
+				}
+			}
 		}
 	}
 

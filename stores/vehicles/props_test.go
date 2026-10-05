@@ -64,3 +64,21 @@ func TestNormalizeWantedChangeClearsRevokedWantedState(t *testing.T) {
 	assert.Nil(t, in.WantedAt)
 	assert.Nil(t, in.WantedTill)
 }
+
+func TestNormalizeWantedChangeTreatsEpochAsPermanent(t *testing.T) {
+	t.Parallel()
+
+	wanted := true
+	current := &vehiclesprops.VehicleProps{
+		Wanted:     &wanted,
+		WantedTill: timestamp.New(time.Now().Add(time.Hour)),
+	}
+	in := &vehiclesprops.VehicleProps{
+		Wanted:     &wanted,
+		WantedTill: timestamp.New(time.Unix(0, 0)),
+	}
+
+	normalizeWantedChange(current, in, "")
+
+	assert.Nil(t, in.GetWantedTill())
+}

@@ -98,7 +98,17 @@ func normalizeWantedChange(
 		in.SetWantedAt(current.GetWantedAt())
 	}
 
+	if isZeroTimestamp(in.GetWantedTill()) {
+		in.ClearWantedTill()
+		return
+	}
+
 	if in.GetWantedTill() == nil {
 		in.SetWantedTill(current.GetWantedTill())
 	}
+}
+
+func isZeroTimestamp(ts *timestamp.Timestamp) bool {
+	return ts != nil && ts.GetTimestamp() != nil &&
+		ts.GetTimestamp().GetSeconds() == 0 && ts.GetTimestamp().GetNanos() == 0
 }

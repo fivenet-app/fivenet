@@ -2,6 +2,7 @@ package vehicles
 
 import (
 	pbvehicles "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/vehicles"
+	"github.com/fivenet-app/fivenet/v2026/pkg/config/appconfig"
 	"github.com/fivenet-app/fivenet/v2026/pkg/mstlystcdata"
 	"github.com/fivenet-app/fivenet/v2026/pkg/perms"
 	citizenshydrator "github.com/fivenet-app/fivenet/v2026/stores/citizens/hydrator"
@@ -17,15 +18,17 @@ type Server struct {
 	enricher mstlystcdata.IUserAwareEnricher
 	hydrator citizenshydrator.IHydrator
 	store    vehiclesstore.IStore
+	appCfg   appconfig.IConfig
 }
 
 type Params struct {
 	fx.In
 
-	Perms    perms.Permissions
-	Enricher mstlystcdata.IUserAwareEnricher
-	Hydrator citizenshydrator.IHydrator
-	Store    vehiclesstore.IStore
+	Perms     perms.Permissions
+	Enricher  mstlystcdata.IUserAwareEnricher
+	Hydrator  citizenshydrator.IHydrator
+	Store     vehiclesstore.IStore
+	AppConfig appconfig.IConfig
 }
 
 func NewServer(p Params) *Server {
@@ -34,6 +37,7 @@ func NewServer(p Params) *Server {
 		enricher: p.Enricher,
 		hydrator: p.Hydrator,
 		store:    p.Store,
+		appCfg:   p.AppConfig,
 	}
 }
 

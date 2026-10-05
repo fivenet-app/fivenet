@@ -4,6 +4,8 @@ import { z } from 'zod';
 import { getVehiclesVehiclesClient } from '~~/gen/ts/clients';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 import type { VehicleProps } from '~~/gen/ts/resources/vehicles/props/props';
+import { toTimestamp } from '~/utils/time';
+import WantedTillPicker from '~/components/partials/WantedTillPicker.vue';
 
 const props = defineProps<{
     plate: string;
@@ -23,12 +25,16 @@ const vehiclesVehiclesClient = await getVehiclesVehiclesClient();
 
 const schema = z.object({
     reason: z.coerce.string().min(3).max(255),
+    wantedTill: z.date().optional(),
+    permanent: z.boolean(),
 });
 
 type Schema = z.output<typeof schema>;
 
 const state = reactive<Schema>({
     reason: '',
+    wantedTill: undefined,
+    permanent: true,
 });
 
 const { hasUnsavedChanges, confirmLeave } = useSnapshotChanges(state);
@@ -37,6 +43,7 @@ async function setWantedState(values: Schema): Promise<void> {
     const vProps: VehicleProps = {
         plate: props.plate,
         wanted: vehicleProps.value ? !vehicleProps.value.wanted : true,
+        wantedTill: values.permanent ? toTimestamp(new Date(0)) : toTimestamp(values.wantedTill),
     };
     if (vProps.wanted) {
         vProps.wantedReason = values.reason;
@@ -109,6 +116,12 @@ async function closeModal(): Promise<void> {
                 <UFormField class="flex-1" name="reason" :label="$t('common.reason')" required>
                     <UInput v-model="state.reason" class="w-full" type="text" :placeholder="$t('common.reason')" />
                 </UFormField>
+
+                <template v-if="!vehicleProps?.wanted">
+                    <UFormField name="wantedTill" :label="$t('common.duration')">
+                        <WantedTillPicker v-model="state.wantedTill" v-model:permanent="state.permanent" />
+                    </UFormField>
+                </template>
             </UForm>
         </template>
 
