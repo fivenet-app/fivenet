@@ -257,7 +257,11 @@ func (s *Store) GetUser(
 		selectors = append(selectors, tUser.PhoneNumber)
 	}
 	if opts.IncludeWanted {
-		selectors = append(selectors, tUserProps.Wanted)
+		selectors = append(selectors,
+			tUserProps.Wanted,
+			tUserProps.WantedAt,
+			tUserProps.WantedTill,
+		)
 	}
 	if opts.IncludeJob {
 		selectors = append(selectors, tUserProps.Job, tUserProps.JobGrade)
