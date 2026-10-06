@@ -386,7 +386,16 @@ const denyView = computed(
                         </div>
 
                         <div class="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
-                            <p class="inline-flex min-w-0 gap-1 text-sm break-words">
+                            <p
+                                v-if="
+                                    !(
+                                        activity.type === UserActivityType.WANTED &&
+                                        activity.data?.data.oneofKind === 'wantedChange' &&
+                                        activity.data.data.wantedChange.auto
+                                    )
+                                "
+                                class="inline-flex min-w-0 gap-1 text-sm break-words"
+                            >
                                 <template
                                     v-if="
                                         activity.type === UserActivityType.DOCUMENT &&
@@ -420,6 +429,17 @@ const denyView = computed(
                                     <!-- eslint-disable-next-line vue/no-v-html -->
                                     <span v-else v-html="activity.reason" />
                                 </template>
+                            </p>
+
+                            <p
+                                v-if="
+                                    activity.type === UserActivityType.WANTED &&
+                                    activity.data?.data.oneofKind === 'wantedChange' &&
+                                    activity.data.data.wantedChange.auto
+                                "
+                                class="inline-flex shrink-0 text-sm"
+                            >
+                                {{ $t('components.citizens.CitizenInfoActivityFeedEntry.automatic') }}
                             </p>
 
                             <p v-if="activity.sourceUser" class="inline-flex shrink-0 text-sm">

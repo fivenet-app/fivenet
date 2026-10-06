@@ -1875,6 +1875,7 @@
                     "action_text": "Setzte Verkehrspunkte von {old} zu {new}"
                 },
                 "bool_set_citizen": "Setzte den Bürger als",
+                "automatic": "Automatische Aktualisierung",
                 "document_relation": {
                     "added": "Bürger zugehörig zu",
                     "removed": "Bürger nicht mehr zugehörig zu"

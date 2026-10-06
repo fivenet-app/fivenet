@@ -1875,6 +1875,7 @@
                     "action_text": "Set traffic points from {old} to {new}"
                 },
                 "bool_set_citizen": "Set the citizen as",
+                "automatic": "Automatic update",
                 "document_relation": {
                     "added": "Related the citizen in a",
                     "removed": "Removed citizen document relation in"

@@ -42,7 +42,7 @@ const reasonHtml = computed(() => {
             </template>
 
             <div class="grid gap-2 text-sm md:grid-cols-2">
-                <p class="inline-flex min-w-0 gap-1">
+                <p v-if="!activity.data.data.wantedChange.auto" class="inline-flex min-w-0 gap-1">
                     <span class="font-semibold">{{ $t('common.reason', 1) }}:</span>
                     <!-- Reason text is sanitized by the backend and may contain HTML entities. -->
                     <!-- eslint-disable-next-line vue/no-v-html -->
