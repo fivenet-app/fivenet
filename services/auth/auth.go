@@ -811,7 +811,16 @@ func (s *Server) listUserPerms(
 		userPs = append(userPs, perms.PermConfigAdmin)
 	}
 
-	attrs, err := s.perms.GetEffectiveRoleAttributes(ctx, char.GetJob(), char.GetJobGrade())
+	var attrs []*permissionsattributes.RoleAttribute
+	if canBeSuperuser && isSuperuserActive {
+		// Superusers are not restricted by the selected job's role attributes.
+		// Send every registered attribute with all of its valid values as the
+		// effective value so frontend attribute consumers do not need a separate
+		// superuser code path.
+		attrs, err = s.perms.GetSuperuserAttributes(ctx)
+	} else {
+		attrs, err = s.perms.GetEffectiveRoleAttributes(ctx, char.GetJob(), char.GetJobGrade())
+	}
 	if err != nil {
 		return nil, nil, errswrap.NewError(err, errorsauth.ErrGenericLogin)
 	}

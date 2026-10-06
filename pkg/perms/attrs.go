@@ -548,6 +548,38 @@ func (ps *Perms) GetAllAttributes(
 	return dest, nil
 }
 
+// GetSuperuserAttributes returns all registered attributes with their complete
+// set of valid values as the effective values.
+func (ps *Perms) GetSuperuserAttributes(
+	ctx context.Context,
+) ([]*permissionsattributes.RoleAttribute, error) {
+	attrs, err := ps.GetAllAttributes(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	return superuserAttributes(attrs), nil
+}
+
+func superuserAttributes(
+	attrs []*permissionsattributes.RoleAttribute,
+) []*permissionsattributes.RoleAttribute {
+	result := make([]*permissionsattributes.RoleAttribute, 0, len(attrs))
+	for _, attr := range attrs {
+		if attr == nil {
+			continue
+		}
+
+		cloned := proto.Clone(attr).(*permissionsattributes.RoleAttribute)
+		if cloned.GetValidValues() != nil {
+			cloned.Value = proto.Clone(cloned.GetValidValues()).(*permissionsattributes.AttributeValues)
+		}
+		result = append(result, cloned)
+	}
+
+	return result
+}
+
 func (ps *Perms) GetRoleAttributes(
 	ctx context.Context,
 	job string,

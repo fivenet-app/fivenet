@@ -52,6 +52,12 @@ func (p *Permissions) GetAllAttributes(
 	return nil, nil
 }
 
+func (p *Permissions) GetSuperuserAttributes(
+	context.Context,
+) ([]*permissionsattributes.RoleAttribute, error) {
+	return nil, nil
+}
+
 func (p *Permissions) GetRoles(context.Context, bool) ([]*permissionspermissions.Role, error) {
 	return nil, nil
 }

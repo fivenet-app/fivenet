@@ -45,6 +45,7 @@ type Permissions interface {
 
 	// Attributes
 	GetAllAttributes(ctx context.Context) ([]*permissionsattributes.RoleAttribute, error)
+	GetSuperuserAttributes(ctx context.Context) ([]*permissionsattributes.RoleAttribute, error)
 
 	// Roles management
 	GetRoles(ctx context.Context, excludeSystem bool) ([]*permissionspermissions.Role, error)
