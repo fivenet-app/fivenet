@@ -451,7 +451,8 @@ html {
     }
 
     p {
-        word-break: break-all;
+        word-break: normal;
+        overflow-wrap: anywhere;
     }
 
     input[type='checkbox']:checked {
