@@ -16,7 +16,7 @@ overrides:
   "nuxt-typed-router>lodash-es": "4.18.1"
   "nuxt-typed-router>nanoid": "6.0.1"
   "release-it>undici": "^8.11.2"
-  "get-uri>basic-ftp": "^6.2.1"
+  "get-uri>basic-ftp": "^6.2.2"
   "unhead": "3.4.2"
   "vue": "3.5.43"
 
