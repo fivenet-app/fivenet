@@ -33,7 +33,7 @@ require (
 	github.com/gin-contrib/static v1.1.8
 	github.com/gin-contrib/zap v1.1.9
 	github.com/gin-gonic/gin v1.12.0
-	github.com/go-jet/jet/v2 v2.16.0
+	github.com/go-jet/jet/v2 v2.16.1
 	github.com/go-playground/validator/v10 v10.30.5
 	github.com/go-sprout/sprout v1.1.2
 	github.com/go-sql-driver/mysql v1.10.1
@@ -41,7 +41,7 @@ require (
 	github.com/golang-jwt/jwt/v5 v5.3.1
 	github.com/golang-migrate/migrate/v4 v4.20.1
 	github.com/gosimple/slug v1.15.0
-	github.com/grpc-ecosystem/go-grpc-middleware/providers/prometheus v1.1.0
+	github.com/grpc-ecosystem/go-grpc-middleware/providers/prometheus v1.1.1
 	github.com/grpc-ecosystem/go-grpc-middleware/v2 v2.3.4
 	github.com/h2non/filetype v1.1.3
 	github.com/improbable-eng/grpc-web v0.15.0
