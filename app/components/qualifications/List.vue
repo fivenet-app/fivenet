@@ -78,6 +78,7 @@ async function listQualifications(values: Schema, signal: AbortSignal): Promise<
 
                 <UForm
                     ref="formRef"
+                    data-tour="qualifications-all-search"
                     class="flex items-center gap-2"
                     :schema="schema"
                     :state="query"

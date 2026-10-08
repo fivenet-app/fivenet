@@ -25,7 +25,7 @@ const statCardClass = computed(() => {
 </script>
 
 <template>
-    <div class="h-full min-h-0 overflow-y-auto">
+    <div data-tour="citizen-profile" class="h-full min-h-0 overflow-y-auto">
         <UContainer class="w-full py-4 sm:py-6">
             <div class="mx-auto flex w-full max-w-(--breakpoint-xl) flex-col gap-4">
                 <div class="grid grid-cols-1 gap-3 sm:grid-cols-2" :class="statCardGridClass">

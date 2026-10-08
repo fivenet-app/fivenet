@@ -10,6 +10,7 @@ import ProfilePictureImg from '~/components/partials/citizens/ProfilePictureImg.
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import Pagination from '~/components/partials/Pagination.vue';
 import TableSortButton from '~/components/partials/TableSortButton.vue';
+import { HELP_GUIDE_ACTION_EVENT, type HelpGuideActionDetail } from '~/composables/useHelpGuides';
 import { useClipboardStore } from '~/stores/clipboard';
 import { getCitizensCitizensClient, getSettingsSystemClient } from '~~/gen/ts/clients';
 import type { SortByColumn } from '~~/gen/ts/resources/common/database/database';
@@ -111,6 +112,19 @@ async function listCitizens(values: Schema, signal: AbortSignal): Promise<ListCi
 }
 
 const numberFormatter = useDisplayNumberFormat();
+
+async function onHelpGuideAction(event: Event): Promise<void> {
+    const action = event instanceof CustomEvent ? (event.detail as HelpGuideActionDetail | undefined) : undefined;
+    if (action?.actionId !== 'citizens-open-first-profile' || action.phase !== 'enter') return;
+
+    const firstCitizen = data.value?.users?.[0];
+    if (firstCitizen?.userId === undefined) return;
+
+    await navigateTo({ name: 'citizens-id', params: { id: String(firstCitizen.userId) } });
+}
+
+onMounted(() => window.addEventListener(HELP_GUIDE_ACTION_EVENT, onHelpGuideAction));
+onBeforeUnmount(() => window.removeEventListener(HELP_GUIDE_ACTION_EVENT, onHelpGuideAction));
 
 function addToClipboard(user: User): void {
     const added = clipboardStore.addUser(user);
@@ -322,6 +336,7 @@ defineShortcuts({
             <UDashboardToolbar>
                 <UForm
                     ref="formRef"
+                    data-tour="citizens-search"
                     class="my-2 flex w-full flex-1 flex-col gap-2"
                     :schema="schema"
                     :state="query"
@@ -372,6 +387,7 @@ defineShortcuts({
                     <UCollapsible :unmount-on-hide="false">
                         <UButton
                             class="group"
+                            data-tour="citizens-advanced-search"
                             color="neutral"
                             variant="ghost"
                             trailing-icon="i-mdi-chevron-down"
@@ -483,6 +499,7 @@ defineShortcuts({
             <UTable
                 v-else
                 v-model:sorting="query.sorting.columns"
+                data-tour="citizens-list"
                 class="flex-1"
                 :loading="isRequestPending(status)"
                 :columns="columns"

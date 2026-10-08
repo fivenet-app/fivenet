@@ -1,4 +1,579 @@
 {
+    "help_guides": {
+        "title": "Guides",
+        "description": "Step-by-step help for FiveNet features.",
+        "step_count": "Step {current} of {total}",
+        "skip": "Skip guide",
+        "finish": "Finish guide",
+        "overview_quick_access": {
+            "title": "Pin items to Quick Access",
+            "description": "Learn how to pin frequently used features to the Quick Access section on your overview page.",
+            "steps": {
+                "intro": {
+                    "title": "Make your overview work for you",
+                    "body": "Quick Access gives you shortcuts to the features you use most often. You can customize it from the overview page."
+                },
+                "feature_card": {
+                    "title": "Open a feature's menu",
+                    "body": "Right-click an overview card to open its context menu. Choose Pin to add that feature to Quick Access."
+                },
+                "quick_access": {
+                    "title": "Find your pinned items",
+                    "body": "Pinned features appear in the Quick Access section at the top of the overview page. You can open them directly from there and use Change Order to rearrange them."
+                },
+                "finish": {
+                    "title": "Customize Quick Access",
+                    "body": "Pin the features you use regularly. You can unpin them from the same context menu whenever you want."
+                }
+            }
+        },
+        "clipboard_basics": {
+            "title": "Use the clipboard",
+            "description": "Learn how to collect and manage clipboard items for document templates. Available categories and actions depend on your permissions.",
+            "steps": {
+                "intro": {
+                    "title": "Your personal clipboard",
+                    "body": "The clipboard keeps citizens, documents, and vehicles close at hand while you work. It is personal to your account and can be reused across the app. The categories and actions you can use depend on your permissions."
+                },
+                "open": {
+                    "title": "Open the clipboard",
+                    "body": "Use the clipboard button in the navigation or the Q, C shortcut to open it. Items can be added from citizen, document, and vehicle pages when you have access to those features."
+                },
+                "modal": {
+                    "title": "Review clipboard contents",
+                    "body": "The clipboard modal shows the citizens, vehicles, and documents you have collected. The counters show how many items of each type are stored, while the available categories depend on your permissions."
+                },
+                "categories": {
+                    "title": "Switch between categories",
+                    "body": "Use the tabs to review each type of item. You can select items here when a document template asks for clipboard data."
+                },
+                "remove": {
+                    "title": "Remove clipboard items",
+                    "body": "Remove individual items from their category or clear the category with the button below the modal. Removing an item also removes it from the active template selection."
+                },
+                "templates": {
+                    "title": "Use clipboard data in templates",
+                    "body": "Templates can define required or optional citizens, documents, and vehicles. When creating a document from a template, select the clipboard items that should satisfy its requirements and provide optional data where supported."
+                },
+                "finish": {
+                    "title": "Keep useful data ready",
+                    "body": "Add records as you find them, remove outdated entries, and use the clipboard to prepare document templates more quickly."
+                }
+            }
+        },
+        "dispatch_workflow": {
+            "title": "Explore the dispatch center",
+            "description": "Discover the dispatch center layout, panels, and dispatcher controls.",
+            "steps": {
+                "intro": {
+                    "title": "What the dispatch center shows",
+                    "body": "The dispatch center brings the live map, current dispatches, units, and activity feed together so dispatchers can coordinate ongoing work."
+                },
+                "layout": {
+                    "title": "Arrange the dispatch center",
+                    "body": "Use this button to change the order of the map and panels. Arrange the dispatch list, unit list, and activity feed to match how you work."
+                },
+                "units": {
+                    "title": "The unit list",
+                    "body": "This panel shows the units available to your job and their current status. Use it to see who is active and coordinate resources."
+                },
+                "dispatches": {
+                    "title": "The dispatch list",
+                    "body": "This panel shows current dispatches and their progress. Select a dispatch to review it, assign it, or follow its status."
+                },
+                "dispatcher": {
+                    "title": "Work as a dispatcher",
+                    "body": "If you are authorized to work as a dispatcher, use this button to sign in or out. While signed in, you can help coordinate dispatches from the dispatch center."
+                },
+                "finish": {
+                    "title": "Coordinate from one place",
+                    "body": "Use the map, dispatch list, unit list, and activity feed together to keep an overview of operations and respond to changing situations."
+                }
+            }
+        },
+        "livemap_dispatch": {
+            "title": "Dispatch on the live map",
+            "description": "Find dispatches, units, and useful locations on the map.",
+            "steps": {
+                "intro": {
+                    "title": "Live map dispatch tools",
+                    "body": "The live map gives you a geographic view of units and dispatch information."
+                },
+                "markers": {
+                    "title": "Map markers",
+                    "body": "Select dispatch and unit markers to inspect their location and details."
+                },
+                "panel": {
+                    "title": "Side panel",
+                    "body": "Use the side panel to review selected units or dispatches and take available actions."
+                },
+                "finish": {
+                    "title": "Navigate the map",
+                    "body": "Combine markers, searches, and the home-postal waypoint to work efficiently."
+                }
+            }
+        },
+        "citizen_lookup": {
+            "title": "Citizen lookup and profiles",
+            "description": "Search citizens and review the information available to you.",
+            "steps": {
+                "intro": {
+                    "title": "Find a citizen",
+                    "body": "Use citizen lookup when you need a profile, related records, or recent activity."
+                },
+                "search": {
+                    "title": "Quick search",
+                    "body": "Search by the most useful identifying information to find matching citizens."
+                },
+                "advanced": {
+                    "title": "Advanced search",
+                    "body": "Use advanced filters when a quick search returns too many results."
+                },
+                "open_profile": {
+                    "title": "Open a citizen profile",
+                    "body": "The guide opens the first citizen in the list so you can explore the profile and continue the tour."
+                },
+                "profile": {
+                    "title": "Review the profile",
+                    "body": "The profile brings together the information available to you. Visible cards, tabs, and actions depend on your permissions and job rank."
+                },
+                "profile_tabs": {
+                    "title": "Profile sections",
+                    "body": "Use the available tabs to view the citizen’s profile and other related information. The activity feed can show recent changes, while vehicles, documents, and other sections are shown only when you have access to them."
+                },
+                "profile_actions": {
+                    "title": "Available actions",
+                    "body": "The actions sidebar on larger screens, or the Actions button on smaller screens, contains the actions available to you. These depend on your permissions and job rank."
+                },
+                "finish": {
+                    "title": "Review safely",
+                    "body": "Available profile actions and sections depend on your permissions."
+                }
+            }
+        },
+        "documents_workflow": {
+            "title": "Find and manage documents",
+            "description": "Search, filter, review, and act on documents.",
+            "steps": {
+                "intro": {
+                    "title": "Document workflow",
+                    "body": "The document list is the starting point for finding and managing records."
+                },
+                "search": {
+                    "title": "Search documents",
+                    "body": "Use the document search to find records by their available identifying information."
+                },
+                "filters": {
+                    "title": "Filter the list",
+                    "body": "Combine filters to narrow the list and find the documents relevant to your task."
+                },
+                "pinned": {
+                    "title": "Open pinned documents",
+                    "body": "Pinned documents are available here when your permissions allow them. On smaller screens, the Pinned button opens this drawer; on larger screens, the pinned list appears as a sidebar."
+                },
+                "actions": {
+                    "title": "Open document actions",
+                    "body": "Select a document to review it, pin it, edit it, request approval, or use other available actions."
+                },
+                "finish": {
+                    "title": "Continue in the document",
+                    "body": "Document actions and approval options are shown only when your permissions allow them."
+                }
+            }
+        },
+        "documents_approval": {
+            "title": "Approve or reject a document",
+            "description": "Learn how to review a visible document and make an approval decision.",
+            "steps": {
+                "intro": {
+                    "title": "Review a document approval",
+                    "body": "A published document you can view has been opened for this guide. Approval options depend on the document and your access."
+                },
+                "actions": {
+                    "title": "Open document actions",
+                    "body": "The document action bar contains the approval entry. You can also use the guide action to open the approval panel for this document.",
+                    "action": "Open approval panel"
+                },
+                "approval_panel": {
+                    "title": "Review the approval panel",
+                    "body": "Review the approval policy, existing approvals, and assigned tasks before making a decision."
+                },
+                "decision_buttons": {
+                    "title": "Approve or reject",
+                    "body": "Approve confirms the document, while Decline rejects it. Depending on the policy, approval may require a signature, while declining may require a reason. This guide does not submit either decision."
+                },
+                "finish": {
+                    "title": "Make informed decisions",
+                    "body": "Check the policy and assigned tasks, review the document, and add any required signature or reason before approving or rejecting it."
+                }
+            }
+        },
+        "job_management": {
+            "title": "Manage your job profile",
+            "description": "Use the jobs overview to update your own availability and profile picture, and explore the job areas available to you.",
+            "steps": {
+                "intro": {
+                    "title": "Your job self-service tools",
+                    "body": "The jobs overview gives you access to personal actions and the job areas available to your permissions."
+                },
+                "navigation": {
+                    "title": "Explore the job areas",
+                    "body": "Use these tabs to explore the overview, colleagues, activity, time clock, conduct, and groups. Only areas available to your permissions are shown."
+                },
+                "absence": {
+                    "title": "Set your absence dates",
+                    "body": "If you have permission, use this button to set or clear your own absence dates, such as vacation."
+                },
+                "profile_picture": {
+                    "title": "Set your profile picture",
+                    "body": "Use this button to upload, replace, or remove your own profile picture."
+                },
+                "finish": {
+                    "title": "Explore at your own pace",
+                    "body": "You can return to the jobs overview at any time and explore the other tabs available to you."
+                }
+            }
+        },
+        "calendar_workflow": {
+            "title": "Create and manage calendar events",
+            "description": "Create events, invite people, and update or cancel them.",
+            "steps": {
+                "intro": {
+                    "title": "Calendar events",
+                    "body": "The calendar helps you plan work and share events with the right people."
+                },
+                "create": {
+                    "title": "Create an event",
+                    "body": "Select Open event form to open the event modal, then add its title, time, and location.",
+                    "action": "Open event form"
+                },
+                "invitees": {
+                    "title": "Add invitees",
+                    "body": "Choose invitees and review their RSVP state while editing an event."
+                },
+                "finish": {
+                    "title": "Manage the event",
+                    "body": "Open an event later to edit it, review responses, or cancel it when plans change."
+                }
+            }
+        },
+        "qualifications_workflow": {
+            "title": "Work with qualifications",
+            "description": "Find requirements, exams, reviews, and approvals.",
+            "steps": {
+                "intro": {
+                    "title": "Qualifications",
+                    "body": "Qualifications show what training and approvals are available or required."
+                },
+                "your_qualifications": {
+                    "title": "Your qualifications",
+                    "body": "This tab shows qualifications you have already completed, as well as qualifications you have requested or are currently working toward."
+                },
+                "all_qualifications": {
+                    "title": "All qualifications",
+                    "body": "Switch to this tab to actively search through available qualifications. Open one to review its requirements and see whether you can take or request it."
+                },
+                "find": {
+                    "title": "Find a qualification",
+                    "body": "Use the search field and list to find a qualification you want to take or request."
+                },
+                "review": {
+                    "title": "Review requirements and exams",
+                    "body": "Open a qualification to inspect requirements, exams, results, and review information."
+                },
+                "finish": {
+                    "title": "Track approval",
+                    "body": "Submit or review qualification progress according to the workflow available to you."
+                }
+            }
+        },
+        "wiki_workflow": {
+            "title": "Use the wiki",
+            "description": "Browse, search, and maintain your job knowledge base.",
+            "steps": {
+                "intro": {
+                    "title": "Wiki",
+                    "body": "The wiki organizes job knowledge into pages and a navigable hierarchy."
+                },
+                "search": {
+                    "title": "Search the wiki",
+                    "body": "Use the search field to find pages without browsing the whole hierarchy."
+                },
+                "select_wiki": {
+                    "title": "Choose a wiki",
+                    "body": "The guide selects your job's wiki when available, or the first available wiki otherwise, and opens its first page."
+                },
+                "sidebar": {
+                    "title": "Wiki navigation",
+                    "body": "Use the sidebar to move through the page hierarchy and open related wiki pages."
+                },
+                "content": {
+                    "title": "Wiki page content",
+                    "body": "The main content area shows the selected page, its details, and any available links or attachments."
+                },
+                "finish": {
+                    "title": "Create and edit",
+                    "body": "When permitted, use the page actions to create, edit, attach files, or manage permissions."
+                }
+            }
+        },
+        "vehicle_lookup": {
+            "title": "Vehicle lookup",
+            "description": "Search vehicles and follow their owner and citizen links.",
+            "steps": {
+                "intro": {
+                    "title": "Find a vehicle",
+                    "body": "Use vehicle lookup to find registrations and review related records."
+                },
+                "search": {
+                    "title": "Search and filter",
+                    "body": "Search by the available vehicle identifiers and apply filters to narrow results."
+                },
+                "profile": {
+                    "title": "Open a vehicle profile",
+                    "body": "Select a result to review its profile, owners, linked citizens, and available actions."
+                },
+                "finish": {
+                    "title": "Review vehicle records",
+                    "body": "The actions and linked records shown depend on your permissions."
+                }
+            }
+        },
+        "documents_create": {
+            "title": "Create a document",
+            "description": "Start a blank document or use a template.",
+            "steps": {
+                "intro": {
+                    "title": "Create a document",
+                    "body": "Documents can begin as a blank page or from a reusable template. This guide shows where to choose either option."
+                },
+                "open_chooser": {
+                    "title": "Choose how to create a document",
+                    "body": "Use the Create document button to open the template selector. It lets you choose between a blank document and the templates available to your job."
+                },
+                "blank": {
+                    "title": "Start from a blank document",
+                    "body": "Choose \"No template\" to open a new blank document directly in the editor. Use this for one-off documents."
+                },
+                "template": {
+                    "title": "Start from a template",
+                    "body": "The available templates reuse structure and content for common documents. The templates shown here depend on your access and job."
+                },
+                "template_requirements": {
+                    "title": "Check template requirements",
+                    "body": "Some templates require additional information before the document can be created. Depending on the template, select the required citizens, documents, or vehicles from the clipboard."
+                },
+                "finish": {
+                    "title": "Save and publish",
+                    "body": "New documents start as drafts. Add and review the content in the editor, save your work, and publish the document when it is ready."
+                }
+            }
+        },
+        "livemap_basics": {
+            "title": "Use the live map",
+            "description": "Learn the map controls, searches, layers, and display settings.",
+            "steps": {
+                "intro": {
+                    "title": "Explore the live map",
+                    "body": "The live map helps you find locations and keep track of the information available to you. This guide covers its main controls."
+                },
+                "zoom": {
+                    "title": "Zoom controls",
+                    "body": "Use the plus and minus buttons to change the map zoom. The number between them shows the current zoom level."
+                },
+                "layers": {
+                    "title": "Map layers",
+                    "body": "Open the layer menu to switch between the postal and satellite map, and to show or hide available map layers."
+                },
+                "postal_search": {
+                    "title": "Search by postal code",
+                    "body": "Use the postal search to find a postal code and center the map on it. This search is available on the live map."
+                },
+                "employee_search": {
+                    "title": "Search for employees",
+                    "body": "When employee locations are available to you, search here to filter the employees shown on the map."
+                },
+                "dispatch_search": {
+                    "title": "Search dispatches",
+                    "body": "When dispatch access is available to you, search here by dispatch number, message, or creator."
+                },
+                "settings": {
+                    "title": "Map settings",
+                    "body": "Open the settings menu for extra options, such as marker size, centering selected markers, unit labels and status, the grid, and marker colors."
+                },
+                "finish": {
+                    "title": "Move around the map",
+                    "body": "The map is fully available now. Use your cursor or mouse to drag it around, and use the zoom controls to explore the area. Available searches and layers depend on your permissions and job access."
+                }
+            }
+        },
+        "centrum_basics": {
+            "title": "Use the Centrum sidebar",
+            "description": "Learn how to join a unit, handle dispatches, and update unit and dispatch status.",
+            "steps": {
+                "intro": {
+                    "title": "Welcome to the Centrum sidebar",
+                    "body": "The Centrum sidebar is your workspace for joining a unit, receiving dispatches, and keeping everyone informed about your unit and dispatch status."
+                },
+                "membership_button": {
+                    "title": "Open the unit selector",
+                    "body": "Use this button to open the unit selector. It shows which unit you are currently in and lets you join or leave a unit."
+                },
+                "membership_dialog": {
+                    "title": "Choose a unit",
+                    "body": "The selector lists units you can join. Select a unit to join it, or choose Leave when you are finished."
+                },
+                "unit_status": {
+                    "title": "Your unit status",
+                    "body": "These controls belong to your unit. Use them to show whether your unit is available, busy, on break, or unavailable."
+                },
+                "take_dispatch": {
+                    "title": "Accept incoming dispatches",
+                    "body": "The dispatch button opens incoming dispatches. Select the dispatches you want to handle, then choose Accept or Decline."
+                },
+                "own_dispatches": {
+                    "title": "Your assigned dispatches",
+                    "body": "Dispatches accepted by your unit appear here. Select one to make it the active dispatch; use the map button to center on its location."
+                },
+                "dispatch_status": {
+                    "title": "Selected dispatch status",
+                    "body": "These controls belong to the selected dispatch, not your unit. Select an assigned dispatch first, then update it as your unit travels, arrives, needs assistance, or completes the work."
+                },
+                "finish": {
+                    "title": "Keep the Centrum updated",
+                    "body": "Join the right unit, keep your unit status current, accept the dispatches you handle, and update the selected dispatch as work progresses."
+                }
+            }
+        },
+        "calendar_basics": {
+            "title": "Explore the calendar",
+            "description": "Learn how to move through the calendar, choose calendars, and manage reminders.",
+            "steps": {
+                "intro": {
+                    "title": "Welcome to the calendar",
+                    "body": "The calendar brings together the personal, job, and public calendars available to you. This guide covers browsing and choosing calendars."
+                },
+                "navigation": {
+                    "title": "Move through dates",
+                    "body": "Use the previous and next buttons to move through the current view. Select Today to return to the current date."
+                },
+                "view": {
+                    "title": "Choose a calendar view",
+                    "body": "Switch between day, week, month, and agenda views depending on how much detail you want to see."
+                },
+                "calendar_list": {
+                    "title": "Choose your calendars",
+                    "body": "Use the calendar list to show or hide the personal and job calendars available to you. Select a calendar name to view its details."
+                },
+                "public_calendars": {
+                    "title": "Find public calendars",
+                    "body": "Use Find calendars to open publicly available calendars. From there, you can subscribe to calendars you want to add to your list."
+                },
+                "date_picker": {
+                    "title": "Jump to a date",
+                    "body": "Use the date picker to jump directly to a specific day. The main calendar updates to show that date."
+                },
+                "reminders": {
+                    "title": "Calendar reminders",
+                    "body": "You can choose appointment reminder times in User Settings → Notifications → Calendar Notifications. This controls reminders for events you answered Yes or Maybe to."
+                },
+                "finish": {
+                    "title": "Explore your calendar",
+                    "body": "The calendar is ready to use. Browse dates, choose the calendars you want to see, and select an event to view its details."
+                }
+            }
+        },
+        "mailer_basics": {
+            "title": "Use your mail",
+            "description": "Learn how to browse, search, and compose mail.",
+            "steps": {
+                "intro": {
+                    "title": "Welcome to mail",
+                    "body": "Mail is organized into mailboxes and threads. This guide covers the everyday tools for finding and sending messages."
+                },
+                "email_name": {
+                    "title": "Choose your email name",
+                    "body": "Choose the name part before the {'@'}. The available suggestions are based on your account and job."
+                },
+                "create_email": {
+                    "title": "Create your email address",
+                    "body": "Confirm the address and select Create. Your personal email address will be created, and you will return to mail to continue the guide."
+                },
+                "mailbox": {
+                    "title": "Choose a mailbox",
+                    "body": "Your available email address is selected automatically. If you have access to more than one address, use this selector to switch between mailboxes."
+                },
+                "filters": {
+                    "title": "Filter your threads",
+                    "body": "Use All, Unread, and Archive to focus the thread list on the messages you need."
+                },
+                "search": {
+                    "title": "Search mail",
+                    "body": "Search across your messages to find a thread by its content or title."
+                },
+                "compose": {
+                    "title": "Compose a thread",
+                    "body": "Start a new thread here. Add recipients, write your message, add supported attachments, and send it when ready."
+                },
+                "templates": {
+                    "title": "Use templates",
+                    "body": "Open your available templates from the mail footer to reuse common messages when composing mail."
+                },
+                "threads": {
+                    "title": "Browse your threads",
+                    "body": "Your threads appear in this list. Select a thread to open it, then use the ↑ and ↓ arrow keys to move between threads.",
+                    "action": "Open first thread"
+                },
+                "thread_actions": {
+                    "title": "Manage the open thread",
+                    "body": "Use these actions to mark the thread as read, mark it important, star it, mute it, or archive it."
+                },
+                "finish": {
+                    "title": "Quickly move between threads",
+                    "body": "Use the ↑ and ↓ arrow keys to move to the previous or next thread."
+                }
+            }
+        },
+        "mailer_advanced": {
+            "title": "Manage mail settings",
+            "description": "Learn about email addresses, access, blocking, address books, and signatures.",
+            "steps": {
+                "intro": {
+                    "title": "Advanced mail settings",
+                    "body": "Mail management lets authorized users configure email addresses and the settings that control how they are used."
+                },
+                "select_email": {
+                    "title": "Select an email address",
+                    "body": "Select an address first so its access, blocking, address book, and signature settings can be edited.",
+                    "action": "Select first address"
+                },
+                "addresses": {
+                    "title": "Manage email addresses",
+                    "body": "Select an existing address to edit it, or create a new address when your permissions allow it."
+                },
+                "access": {
+                    "title": "Job email access",
+                    "body": "Personal email addresses belong to you and do not have access controls. Job email addresses have separate access settings here, where you can define which citizens, jobs, and qualifications can use them."
+                },
+                "blocked": {
+                    "title": "Manage blocked addresses",
+                    "body": "Add email addresses to the blocklist to prevent unwanted mail from reaching this address."
+                },
+                "address_book": {
+                    "title": "Address book",
+                    "body": "The address book stores recipients for quicker composing. Authorized users can clear it from this section."
+                },
+                "signature": {
+                    "title": "Set a signature",
+                    "body": "Write a signature that is added to new messages from this address. Save the form when your settings are ready."
+                },
+                "finish": {
+                    "title": "Your mail is configured",
+                    "body": "Use mail management when you need to update an address or its settings. Return to Mail to read and send messages."
+                }
+            }
+        }
+    },
     "pages": {
         "index": {
             "welcome": "Welcome to FiveNet!",
@@ -399,6 +974,7 @@
         "playtime": "Playtime",
         "choose": "Choose",
         "clipboard": "Clipboard",
+        "personal_productivity": "Personal Productivity",
         "select": "Select | Selected",
         "title": "Title",
         "creator": "Creator",
@@ -1142,12 +1718,7 @@
                 }
             },
             "templates": {
-                "modal": {
-                    "no_template": "Without Template"
-                },
-                "templates_modal": {
-                    "no_template": "Without Template"
-                }
+                "no_template": "Without Template"
             },
             "activity_list": {
                 "legend": {

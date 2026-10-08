@@ -128,7 +128,7 @@ const superuserItems = computed<CardElement[]>(() => [
         <template #body>
             <div class="flex flex-col gap-4">
                 <div>
-                    <CardsList :items="items" />
+                    <div data-tour="control-panel-properties"><CardsList :items="items" /></div>
                 </div>
 
                 <SystemStatus v-if="canConfigAdmin" />
@@ -143,7 +143,7 @@ const superuserItems = computed<CardElement[]>(() => [
                         </template>
                     </UCard>
 
-                    <CardsList :items="superuserItems" />
+                    <div data-tour="control-panel-roles"><CardsList :items="superuserItems" /></div>
                 </template>
             </div>
         </template>

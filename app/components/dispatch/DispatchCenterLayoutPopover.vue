@@ -1,4 +1,5 @@
 <script lang="ts" setup>
+import { HELP_GUIDE_ACTION_EVENT, type HelpGuideActionDetail } from '~/composables/useHelpGuides';
 import { useSettingsStore, type DispatchCenterInnerPane, type DispatchCenterOuterPane } from '~/stores/settings';
 
 const { t } = useI18n();
@@ -21,6 +22,22 @@ const defaultDispatchCenterPaneLayout = {
 };
 
 const open = ref(false);
+
+function onHelpGuideAction(event: Event): void {
+    const action = event instanceof CustomEvent ? (event.detail as HelpGuideActionDetail | undefined) : undefined;
+    if (!action) return;
+
+    if (action.actionId === 'dispatch-center-open-layout' && action.phase === 'enter') {
+        open.value = true;
+    }
+
+    if (action.actionId === 'dispatch-center-close-layout' && action.phase === 'leave') {
+        open.value = false;
+    }
+}
+
+onMounted(() => window.addEventListener(HELP_GUIDE_ACTION_EVENT, onHelpGuideAction));
+onBeforeUnmount(() => window.removeEventListener(HELP_GUIDE_ACTION_EVENT, onHelpGuideAction));
 
 const layoutDraft = reactive<{
     outer: DispatchCenterOuterPane[];
@@ -100,6 +117,7 @@ const contentClass = computed(() => (!props.hideInnerPanes ? 'w-[28rem]' : 'w-[2
     <UPopover v-model:open="open" :content="{ align: 'end', sideOffset: 8 }">
         <UTooltip :text="$t('components.dispatch.layout_popover.trigger')">
             <UButton
+                data-tour="dispatch-center-layout"
                 color="neutral"
                 variant="ghost"
                 icon="i-mdi-view-split-vertical"
@@ -108,7 +126,7 @@ const contentClass = computed(() => (!props.hideInnerPanes ? 'w-[28rem]' : 'w-[2
         </UTooltip>
 
         <template #content>
-            <div class="max-w-[calc(100vw-2rem)] p-4" :class="contentClass">
+            <div data-tour="dispatch-center-layout-popover" class="max-w-[calc(100vw-2rem)] p-4" :class="contentClass">
                 <div class="space-y-6">
                     <div class="space-y-3">
                         <div>

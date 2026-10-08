@@ -9,6 +9,9 @@ import IDCopyBadge from '../partials/IDCopyBadge.vue';
 import Pagination from '../partials/Pagination.vue';
 
 const open = defineModel<boolean>('open');
+const props = defineProps<{
+    guideInteractive?: boolean;
+}>();
 
 const { attr, can } = useAuth();
 
@@ -72,7 +75,11 @@ const editing = ref<boolean>(false);
         :ui="{ root: 'pb-(--page-content-bottom-offset)', body: 'p-1 sm:p-1 gap-0 sm:gap-0' }"
     >
         <template #header>
-            <UDashboardNavbar :title="$t('common.pinned_document', 2)" :ui="{ toggle: '!hidden ' }">
+            <UDashboardNavbar
+                data-tour="documents-pinned"
+                :title="$t('common.pinned_document', 2)"
+                :ui="{ toggle: '!hidden ' }"
+            >
                 <template #toggle>
                     <UButton
                         class="lg:block"
@@ -194,7 +201,16 @@ const editing = ref<boolean>(false);
     </UDashboardPanel>
 
     <ClientOnly v-else>
-        <USlideover v-model:open="open" :title="$t('common.pinned_document', 2)">
+        <USlideover
+            v-model:open="open"
+            :modal="!props.guideInteractive"
+            :overlay="!props.guideInteractive"
+            :title="$t('common.pinned_document', 2)"
+        >
+            <template #title>
+                <span data-tour="documents-pinned">{{ $t('common.pinned_document', 2) }}</span>
+            </template>
+
             <template #actions>
                 <UTooltip
                     v-if="can('documents.DocumentsService/ToggleDocumentPin').value"

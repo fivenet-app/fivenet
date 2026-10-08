@@ -6,6 +6,8 @@ import GenericImg from '~/components/partials/elements/GenericImg.vue';
 import { pageToURL } from '~/components/wiki/helpers';
 import RefreshButton from '~/components/partials/RefreshButton.vue';
 import PageSearch from '~/components/wiki/PageSearch.vue';
+import { HELP_GUIDE_ACTION_EVENT, type HelpGuideActionDetail } from '~/composables/useHelpGuides';
+import { unsafeRoute } from '~/utils/route';
 
 useHead({
     title: 'common.wiki',
@@ -18,6 +20,7 @@ definePageMeta({
 });
 
 const { activeChar, can } = useAuth();
+const router = useRouter();
 
 const { listPages: listWikiPages } = await useWikiWiki();
 
@@ -40,7 +43,7 @@ const {
     const pages = response.pages.sort((a, b) => (a.jobLabel ?? a.job).localeCompare(b.jobLabel ?? b.job));
     if (pages.length > 0) {
         const ownPageIdx = pages.findIndex((p) => p.job === activeChar.value?.job);
-        pages.unshift(pages.splice(ownPageIdx, 1)[0]!);
+        if (ownPageIdx > -1) pages.unshift(pages.splice(ownPageIdx, 1)[0]!);
     }
 
     return pages;
@@ -62,6 +65,19 @@ watch(pages, async () => {
 });
 
 const wikiService = await useWikiWiki();
+
+async function onHelpGuideAction(event: Event): Promise<void> {
+    const action = event instanceof CustomEvent ? (event.detail as HelpGuideActionDetail | undefined) : undefined;
+    if (action?.actionId !== 'wiki-select-first-wiki' || action.phase !== 'enter') return;
+
+    const wiki = pages.value?.find((page) => page.job === activeChar.value?.job) ?? pages.value?.[0];
+    if (!wiki) return;
+
+    await router.push(unsafeRoute(pageToURL(wiki)));
+}
+
+onMounted(() => window.addEventListener(HELP_GUIDE_ACTION_EVENT, onHelpGuideAction));
+onBeforeUnmount(() => window.removeEventListener(HELP_GUIDE_ACTION_EVENT, onHelpGuideAction));
 </script>
 
 <template>
@@ -73,7 +89,7 @@ const wikiService = await useWikiWiki();
                 </template>
 
                 <template #default>
-                    <PageSearch />
+                    <PageSearch data-tour="wiki-search" />
                 </template>
 
                 <template #right>
@@ -117,6 +133,7 @@ const wikiService = await useWikiWiki();
 
             <UPageGrid
                 v-else
+                data-tour="wiki-pages"
                 class="mx-auto w-full max-w-(--breakpoint-xl)"
                 :class="pages.length === 1 ? 'sm:grid-cols-1 lg:grid-cols-1' : pages.length === 2 ? 'lg:grid-cols-2' : ''"
             >

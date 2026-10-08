@@ -38,6 +38,7 @@ import RefreshButton from '~/components/partials/RefreshButton.vue';
 import { copyToClipboardWrapper } from '~/utils/clipboard';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 import { AccessLevel } from '~~/gen/ts/resources/calendar/access/access';
+import { HELP_GUIDE_ACTION_EVENT, type HelpGuideActionDetail } from '~/composables/useHelpGuides';
 
 useHead({
     title: 'common.calendar',
@@ -400,6 +401,26 @@ function handleMiniCalendarSelect(value: DateValue | DateRange | DateValue[] | n
 }
 
 const showLoading = computed(() => entriesStatus.value === 'pending' && visibleEntries.value.length === 0);
+
+function onHelpGuideAction(event: Event): void {
+    const action = event instanceof CustomEvent ? (event.detail as HelpGuideActionDetail | undefined) : undefined;
+    if (!action) return;
+
+    if (action.actionId === 'calendar-open-public-calendars' && action.phase === 'enter') {
+        findCalendarsDrawer.open({});
+    }
+
+    if (action.actionId === 'calendar-close-public-calendars' && action.phase === 'leave') {
+        findCalendarsDrawer.close();
+    }
+
+    if (action.actionId === 'calendar-open-create-entry' && action.phase === 'trigger') {
+        void openCreateEntry();
+    }
+}
+
+onMounted(() => window.addEventListener(HELP_GUIDE_ACTION_EVENT, onHelpGuideAction));
+onBeforeUnmount(() => window.removeEventListener(HELP_GUIDE_ACTION_EVENT, onHelpGuideAction));
 </script>
 
 <template>
@@ -422,6 +443,7 @@ const showLoading = computed(() => entriesStatus.value === 'pending' && visibleE
                         <div v-if="canCreate" class="flex justify-end">
                             <UDropdownMenu :items="createActionItems" arrow :content="{ align: 'end' }">
                                 <UButton
+                                    data-tour="calendar-create"
                                     color="neutral"
                                     variant="outline"
                                     icon="i-mdi-plus"
@@ -434,7 +456,7 @@ const showLoading = computed(() => entriesStatus.value === 'pending' && visibleE
                 </template>
 
                 <template #right>
-                    <div class="inline-flex items-center gap-2">
+                    <div data-tour="calendar-navigation" class="inline-flex items-center gap-2">
                         <UButton icon="i-mdi-chevron-left" color="neutral" variant="ghost" @click="shiftRange(-1)" />
                         <UButton
                             icon="i-mdi-calendar-today"
@@ -460,6 +482,7 @@ const showLoading = computed(() => entriesStatus.value === 'pending' && visibleE
 
                             <div class="inline-flex items-center">
                                 <UButton
+                                    data-tour="calendar-selector"
                                     color="neutral"
                                     :label="$t('components.calendar.calendar.FindCalendarDrawer.title')"
                                     size="xs"
@@ -478,7 +501,7 @@ const showLoading = computed(() => entriesStatus.value === 'pending' && visibleE
                             </div>
                         </div>
 
-                        <div class="relative hidden lg:block">
+                        <div data-tour="calendar-list" class="relative hidden lg:block">
                             <div class="space-y-1.5">
                                 <div v-for="calendar in calendars" :key="calendar.id" class="flex items-center gap-1">
                                     <UCheckbox
@@ -526,6 +549,7 @@ const showLoading = computed(() => entriesStatus.value === 'pending' && visibleE
                         <UFieldGroup class="flex lg:hidden">
                             <UPopover :content="{ side: 'bottom', align: 'start' }" arrow class="w-full">
                                 <UButton
+                                    data-tour="calendar-list"
                                     block
                                     class="w-full"
                                     color="neutral"
@@ -597,6 +621,7 @@ const showLoading = computed(() => entriesStatus.value === 'pending' && visibleE
                             </UPopover>
 
                             <UButton
+                                data-tour="calendar-selector"
                                 color="neutral"
                                 :label="$t('components.calendar.calendar.FindCalendarDrawer.title')"
                                 size="xs"
@@ -628,6 +653,7 @@ const showLoading = computed(() => entriesStatus.value === 'pending' && visibleE
                     <UFormField name="view" :ui="{ container: '' }">
                         <ClientOnly>
                             <USelectMenu
+                                data-tour="calendar-view"
                                 class="w-full"
                                 :model-value="view"
                                 :items="viewOptions"
@@ -643,6 +669,7 @@ const showLoading = computed(() => entriesStatus.value === 'pending' && visibleE
                     <ClientOnly>
                         <div class="hidden lg:block">
                             <UCalendar
+                                data-tour="calendar-date-picker"
                                 class="w-full"
                                 :model-value="miniDate"
                                 :week-starts-on="1"

@@ -312,7 +312,7 @@ const { submit, isSubmitting, canSubmit } = useSubmitGuard(async (event: FormSub
                 <div class="flex w-full flex-1 flex-col gap-2">
                     <UFormField class="flex flex-1 flex-col" :label="$t('common.mail')">
                         <div class="flex w-full flex-1 flex-col gap-1 sm:flex-row">
-                            <UFormField class="flex-1" name="email">
+                            <UFormField data-tour="mailer-email-name" class="flex-1" name="email">
                                 <USelectMenu
                                     v-if="proposals?.emails && proposals.emails.length > 0"
                                     v-model="state.email"
@@ -374,7 +374,7 @@ const { submit, isSubmitting, canSubmit } = useSubmitGuard(async (event: FormSub
                 </div>
             </UPageCard>
 
-            <UPageCard v-if="!personalEmail" :title="$t('common.access')">
+            <UPageCard v-if="!personalEmail" data-tour="mailer-access" :title="$t('common.access')">
                 <AccessManager
                     v-model:jobs="state.access!.jobs"
                     v-model:users="state.access!.users"
@@ -394,6 +394,7 @@ const { submit, isSubmitting, canSubmit } = useSubmitGuard(async (event: FormSub
 
             <div v-if="modelValue?.id !== undefined" class="flex flex-col gap-4">
                 <UPageCard
+                    data-tour="mailer-blocked"
                     :title="$t('common.blocklist')"
                     :description="$t('components.mailer.settings.blocklist_description')"
                 >
@@ -429,6 +430,7 @@ const { submit, isSubmitting, canSubmit } = useSubmitGuard(async (event: FormSub
                 </UPageCard>
 
                 <UPageCard
+                    data-tour="mailer-address-book"
                     :title="$t('common.address_book')"
                     :description="$t('components.mailer.settings.address_book_description')"
                 >
@@ -444,6 +446,7 @@ const { submit, isSubmitting, canSubmit } = useSubmitGuard(async (event: FormSub
                 </UPageCard>
 
                 <UPageCard
+                    data-tour="mailer-signature"
                     :title="$t('common.signature')"
                     :description="$t('components.mailer.settings.signature_description')"
                 >
@@ -473,6 +476,7 @@ const { submit, isSubmitting, canSubmit } = useSubmitGuard(async (event: FormSub
 
                 <UButton
                     v-if="!disabled"
+                    :data-tour="personalEmail && !modelValue?.id ? 'mailer-create-email' : undefined"
                     type="submit"
                     block
                     :disabled="!canSubmit"

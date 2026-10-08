@@ -207,11 +207,11 @@ onBeforeRouteLeave(async (to) => {
                             @layout="onInnerLayout"
                         >
                             <template #dispatchList>
-                                <DispatchList show-button />
+                                <DispatchList show-button data-tour="dispatch-list" />
                             </template>
 
                             <template #unitList>
-                                <UnitList />
+                                <UnitList data-tour="dispatch-units" />
                             </template>
 
                             <template #feed>

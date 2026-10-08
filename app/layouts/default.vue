@@ -8,6 +8,7 @@ import NotepadDrawer from '~/components/quickbuttons/notepad/NotepadDrawer.vue';
 import PenaltyCalculatorDrawer from '~/components/quickbuttons/penaltycalculator/PenaltyCalculatorDrawer.vue';
 import TopLogoDropdown from '~/components/TopLogoDropdown.vue';
 import UserMenu from '~/components/UserMenu.vue';
+import { HELP_GUIDE_ACTION_EVENT, type HelpGuideActionDetail } from '~/composables/useHelpGuides';
 import { useMailerStore } from '~/stores/mailer';
 
 const { t } = useI18n();
@@ -61,6 +62,19 @@ const footerLinks = computed(() =>
 );
 
 const clipboardModal = overlay.create(ClipboardModal);
+
+function onHelpGuideAction(event: Event): void {
+    const action = event instanceof CustomEvent ? (event.detail as HelpGuideActionDetail | undefined) : undefined;
+    if (!action) return;
+
+    if (action.actionId === 'clipboard-open-modal' && action.phase === 'enter') {
+        clipboardModal.open({ guideInteractive: true });
+    }
+    if (action.actionId === 'clipboard-close-modal' && action.phase === 'leave') clipboardModal.close();
+}
+
+onMounted(() => window.addEventListener(HELP_GUIDE_ACTION_EVENT, onHelpGuideAction));
+onBeforeUnmount(() => window.removeEventListener(HELP_GUIDE_ACTION_EVENT, onHelpGuideAction));
 
 const clipboardLink = computed(() =>
     [
@@ -171,7 +185,9 @@ defineShortcuts(extractShortcuts(quickAccessButtons.value, '-'));
                 <template v-if="clipboardLink.length > 0">
                     <USeparator />
 
-                    <UNavigationMenu orientation="vertical" tooltip popover :items="clipboardLink" :collapsed="collapsed" />
+                    <div data-tour="clipboard-open">
+                        <UNavigationMenu orientation="vertical" tooltip popover :items="clipboardLink" :collapsed="collapsed" />
+                    </div>
                 </template>
 
                 <template v-if="quickAccessButtons">
@@ -207,6 +223,8 @@ defineShortcuts(extractShortcuts(quickAccessButtons.value, '-'));
         <Banners />
 
         <ClientOnly>
+            <HelpGuideTour />
+
             <LazyPartialsCommandSearch v-if="activeChar" :children="items" />
 
             <LazyPartialsWebSocketStatusOverlay />

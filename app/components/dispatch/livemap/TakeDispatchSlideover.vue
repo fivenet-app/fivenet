@@ -12,7 +12,8 @@ const emit = defineEmits<{
 }>();
 
 const centrumStore = useCentrumStore();
-const { dispatches, pendingDispatches, getCurrentMode } = storeToRefs(centrumStore);
+const { dispatches, pendingDispatches, getCurrentMode, isDemo } = storeToRefs(centrumStore);
+const { takeDemoDispatches } = centrumStore;
 
 const centrumDispatchesClient = await getCentrumDispatchesClient();
 
@@ -35,6 +36,13 @@ async function takeDispatches(resp: TakeDispatchResp): Promise<void> {
         });
 
         if (dispatchIds.length === 0) return;
+
+        if (isDemo.value) {
+            takeDemoDispatches(dispatchIds, resp);
+            selectedDispatches.value.length = 0;
+            emit('close', false);
+            return;
+        }
 
         // Make sure all selected dispatches are still existing and not in a "completed"
         const call = centrumDispatchesClient.takeDispatch({
@@ -83,7 +91,7 @@ const { submit, isSubmitting, canSubmit } = useSubmitGuard(async (resp: TakeDisp
 </script>
 
 <template>
-    <USlideover :title="$t('components.dispatch.take_dispatch.title')">
+    <USlideover :title="$t('components.dispatch.take_dispatch.title')" :overlay="false">
         <template #body>
             <dl class="divide-y divide-default">
                 <template v-if="getCurrentMode === CentrumMode.SIMPLIFIED">
@@ -140,7 +148,7 @@ const { submit, isSubmitting, canSubmit } = useSubmitGuard(async (resp: TakeDisp
         </template>
 
         <template #footer>
-            <UFieldGroup class="inline-flex w-full">
+            <UFieldGroup data-tour="centrum-take-dispatch-footer" class="inline-flex w-full">
                 <UButton
                     class="flex-1"
                     color="success"

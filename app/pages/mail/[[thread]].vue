@@ -6,6 +6,7 @@ import MessageSearch from '~/components/mailer/MessageSearch.vue';
 import TemplateModal from '~/components/mailer/TemplateModal.vue';
 import ThreadCreateOrUpdateModal from '~/components/mailer/ThreadCreateOrUpdateModal.vue';
 import ThreadList from '~/components/mailer/ThreadList.vue';
+import { HELP_GUIDE_ACTION_EVENT, type HelpGuideActionDetail } from '~/composables/useHelpGuides';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
 import Pagination from '~/components/partials/Pagination.vue';
@@ -216,6 +217,27 @@ const isMailPanelOpen = computed({
     },
 });
 
+async function onHelpGuideAction(event: Event): Promise<void> {
+    const action = event instanceof CustomEvent ? (event.detail as HelpGuideActionDetail | undefined) : undefined;
+    if (action?.phase !== 'trigger') return;
+
+    if (action.actionId === 'mailer-select-first-thread') {
+        const thread = threads.value?.threads[0];
+        if (thread) selectedThread.value = thread;
+        return;
+    }
+
+    if (action.actionId !== 'mailer-select-first-email') return;
+
+    const email = emails.value[0];
+    if (!email) return;
+
+    selectedEmail.value = email.settings === undefined ? await mailerStore.getEmail(email.id) : email;
+}
+
+onMounted(() => window.addEventListener(HELP_GUIDE_ACTION_EVENT, onHelpGuideAction));
+onBeforeUnmount(() => window.removeEventListener(HELP_GUIDE_ACTION_EVENT, onHelpGuideAction));
+
 const breakpoints = useBreakpoints(breakpointsTailwind);
 const isMobile = breakpoints.smaller('lg');
 </script>
@@ -236,7 +258,7 @@ const isMobile = breakpoints.smaller('lg');
                 </template>
 
                 <template #default>
-                    <MessageSearch />
+                    <MessageSearch data-tour="mailer-search" />
                 </template>
 
                 <template #right>
@@ -249,6 +271,7 @@ const isMobile = breakpoints.smaller('lg');
                         :text="$t('components.mailer.create_thread')"
                     >
                         <UButton
+                            data-tour="mailer-compose"
                             color="neutral"
                             variant="outline"
                             trailing-icon="i-mdi-plus"
@@ -259,7 +282,7 @@ const isMobile = breakpoints.smaller('lg');
                 </template>
             </UDashboardNavbar>
 
-            <UDashboardToolbar v-if="selectedEmail">
+            <UDashboardToolbar v-if="selectedEmail" data-tour="mailer-mailbox">
                 <UInput
                     v-if="emails.length === 1"
                     class="w-full pt-1"
@@ -320,6 +343,7 @@ const isMobile = breakpoints.smaller('lg');
                 <UTabs
                     v-if="!selectedEmail?.deactivated"
                     v-model="selectedTab"
+                    data-tour="mailer-filters"
                     class="w-full flex-1"
                     :items="items"
                     variant="link"
@@ -351,6 +375,7 @@ const isMobile = breakpoints.smaller('lg');
                 <ThreadList
                     v-else
                     v-model="selectedThread"
+                    data-tour="mailer-thread-list"
                     :threads="threads?.threads ?? []"
                     :loaded="!isRequestPending(status)"
                     :empty-message="emptyThreadMessage"
@@ -382,6 +407,7 @@ const isMobile = breakpoints.smaller('lg');
                 <template #right>
                     <UTooltip :text="$t('common.template', 2)">
                         <UButton
+                            data-tour="mailer-templates"
                             color="neutral"
                             variant="outline"
                             trailing-icon="i-mdi-file-outline"

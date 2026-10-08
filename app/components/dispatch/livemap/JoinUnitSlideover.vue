@@ -15,7 +15,8 @@ const emit = defineEmits<{
 }>();
 
 const centrumStore = useCentrumStore();
-const { ownUnitId, getSortedUnits } = storeToRefs(centrumStore);
+const { ownUnitId, getSortedUnits, isDemo } = storeToRefs(centrumStore);
+const { joinDemoUnit, leaveDemoUnit } = centrumStore;
 
 const livemapStore = useLivemapStore();
 const { ownMarker } = storeToRefs(livemapStore);
@@ -32,6 +33,19 @@ const unitJoinRestricted = computed(
 const centrumUnitsClient = await getCentrumUnitsClient();
 
 async function joinOrLeaveUnit(unitId?: number): Promise<void> {
+    if (isDemo.value) {
+        if (unitId === undefined) {
+            leaveDemoUnit();
+            emit('left');
+        } else {
+            joinDemoUnit(unitId);
+            const joined = getSortedUnits.value.find((u) => u.id === unitId);
+            if (joined) emit('joined', joined);
+        }
+        emit('close', false);
+        return;
+    }
+
     try {
         const call = centrumUnitsClient.joinUnit({
             unitId: unitId,
@@ -112,6 +126,7 @@ const filteredUnits = computed(() => ({
                     <UButton
                         v-for="unit in filteredUnits.available"
                         :key="unit.name"
+                        :data-tour="unit.id < 0 ? 'centrum-demo-unit' : undefined"
                         class="flex flex-col"
                         :color="ownUnitId !== undefined && ownUnitId === unit.id ? 'warning' : 'primary'"
                         :disabled="unitJoinRestricted || !canSubmit || !checkUnitAccess(unit.access, UnitAccessLevel.JOIN)"
@@ -161,7 +176,7 @@ const filteredUnits = computed(() => ({
         </template>
 
         <template #footer>
-            <UFieldGroup class="inline-flex w-full">
+            <UFieldGroup data-tour="centrum-unit-selector" class="inline-flex w-full">
                 <UButton
                     v-if="ownUnitId !== undefined"
                     class="flex-1"

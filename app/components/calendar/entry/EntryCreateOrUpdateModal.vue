@@ -350,7 +350,14 @@ async function closeModal(): Promise<void> {
         </template>
 
         <template #body>
-            <UForm ref="formRef" class="flex flex-col gap-2" :schema="schema" :state="state" @submit="submit">
+            <UForm
+                ref="formRef"
+                data-tour="calendar-entry-form"
+                class="flex flex-col gap-2"
+                :schema="schema"
+                :state="state"
+                @submit="submit"
+            >
                 <DataPendingBlock
                     v-if="props.entryId && isRequestPending(status)"
                     :message="$t('common.loading', [$t('common.entry', 1)])"

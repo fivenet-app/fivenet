@@ -10,11 +10,13 @@ const items = computed<NavigationMenuItem[]>(() => [
         label: t('components.qualifications.user_qualifications'),
         icon: 'i-mdi-account-circle',
         to: '/qualifications',
+        'data-tour': 'qualifications-your-tab',
     },
     {
         label: t('components.qualifications.all_qualifications'),
         icon: 'i-mdi-view-list',
         to: '/qualifications/all',
+        'data-tour': 'qualifications-all-tab',
     },
 ]);
 
@@ -54,7 +56,7 @@ const qualifications = await useQualifications();
         </template>
 
         <template #body>
-            <UContainer class="p-4 sm:p-4">
+            <UContainer data-tour="qualifications-list" class="p-4 sm:p-4">
                 <slot />
             </UContainer>
         </template>

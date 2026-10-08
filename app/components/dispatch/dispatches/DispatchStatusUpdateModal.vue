@@ -18,7 +18,8 @@ const emit = defineEmits<{
 }>();
 
 const centrumStore = useCentrumStore();
-const { settings } = storeToRefs(centrumStore);
+const { settings, isDemo } = storeToRefs(centrumStore);
+const { updateDemoDispatchStatus } = centrumStore;
 
 const notifications = useNotificationsStore();
 
@@ -36,9 +37,21 @@ const state = reactive<Schema>({
     status: props.status ?? StatusDispatch.NEW,
 });
 
+function dispatchStatusLabel(status?: StatusDispatch): string {
+    return `enums.centrum.StatusDispatch.${StatusDispatch[status ?? StatusDispatch.NEW]}`;
+}
+
+const defaultDispatchStatus = StatusDispatch.NEW;
+
 const { hasUnsavedChanges, confirmLeave, syncSnapshot } = useSnapshotChanges(state);
 
 async function updateDispatchStatus(dispatchId: number, values: Schema): Promise<void> {
+    if (isDemo.value) {
+        updateDemoDispatchStatus(dispatchId, values.status);
+        emit('close', false);
+        return;
+    }
+
     try {
         const call = centrumDispatchesClient.updateDispatchStatus({
             dispatchId: dispatchId,
@@ -141,8 +154,8 @@ async function closeModal(): Promise<void> {
                                         :color="dispatchStatusToBadgeColor(item.status)"
                                         :disabled="state.status == item.status"
                                         :icon="item.icon"
-                                        :label="$t(`enums.centrum.StatusDispatch.${StatusDispatch[item.status ?? 0]}`)"
-                                        @click="() => (state.status = item.status ?? StatusDispatch.NEW)"
+                                        :label="$t(dispatchStatusLabel(item.status))"
+                                        @click="() => (state.status = item.status ?? defaultDispatchStatus)"
                                     />
                                 </div>
                             </UFormField>

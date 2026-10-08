@@ -180,7 +180,7 @@ onBeforeUnmount(() => stopMarkerCreateOrUpdateOpenTimeout());
                 <slot />
 
                 <LControl position="bottomleft">
-                    <PostalSearch />
+                    <PostalSearch data-tour="livemap-postal-search" />
                 </LControl>
             </template>
 

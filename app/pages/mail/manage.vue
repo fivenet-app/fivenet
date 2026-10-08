@@ -6,6 +6,7 @@ import ConfirmModal from '~/components/partials/ConfirmModal.vue';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
 import Pagination from '~/components/partials/Pagination.vue';
+import { HELP_GUIDE_ACTION_EVENT, type HelpGuideActionDetail } from '~/composables/useHelpGuides';
 import { useMailerStore } from '~/stores/mailer';
 import type { PaginationResponse } from '~~/gen/ts/resources/common/database/database';
 import { AccessLevel } from '~~/gen/ts/resources/mailer/access/access';
@@ -111,7 +112,19 @@ async function clearSelectedEmail(): Promise<void> {
     selectedEmail.value = undefined;
 }
 
+async function onHelpGuideAction(event: Event): Promise<void> {
+    const action = event instanceof CustomEvent ? (event.detail as HelpGuideActionDetail | undefined) : undefined;
+    if (action?.actionId !== 'mailer-select-first-email' || action.phase !== 'trigger') return;
+
+    const email = emails.value.find((item) => item.userId === undefined) ?? emails.value[0];
+    if (!email) return;
+
+    selectedEmail.value = email.settings === undefined ? await mailerStore.getEmail(email.id) : email;
+}
+
 onBeforeMount(async () => await listEmails());
+onMounted(() => window.addEventListener(HELP_GUIDE_ACTION_EVENT, onHelpGuideAction));
+onBeforeUnmount(() => window.removeEventListener(HELP_GUIDE_ACTION_EVENT, onHelpGuideAction));
 </script>
 
 <template>
@@ -145,13 +158,15 @@ onBeforeMount(async () => await listEmails());
 
             <div v-else class="flex flex-1 flex-col items-center">
                 <div class="flex w-full max-w-3xl flex-1 flex-col items-center justify-center gap-2 text-dimmed">
-                    <EmailCreateForm
-                        v-if="can('mailer.MailerService/CreateOrUpdateEmail').value"
-                        personal-email
-                        hide-label
-                        @private-creation-state="privateEmailCreating = $event"
-                        @dirty-change="emailFormDirty = $event"
-                    />
+                    <div class="w-full">
+                        <EmailCreateForm
+                            v-if="can('mailer.MailerService/CreateOrUpdateEmail').value"
+                            personal-email
+                            hide-label
+                            @private-creation-state="privateEmailCreating = $event"
+                            @dirty-change="emailFormDirty = $event"
+                        />
+                    </div>
                 </div>
             </div>
         </template>
@@ -187,7 +202,7 @@ onBeforeMount(async () => await listEmails());
 
             <template #body>
                 <div class="relative flex-1 overflow-x-auto">
-                    <EmailList v-model="selectedEmail" :emails="emails" :loaded="loaded">
+                    <EmailList v-model="selectedEmail" data-tour="mailer-addresses" :emails="emails" :loaded="loaded">
                         <Pagination
                             v-if="pagination && pagination.totalCount > (pagination.pageSize ?? 20)"
                             v-model="page"
@@ -254,6 +269,7 @@ onBeforeMount(async () => await listEmails());
                     <div class="flex w-full max-w-3xl flex-1 flex-col items-center justify-center gap-2 text-dimmed">
                         <EmailCreateForm
                             v-if="canCreate"
+                            data-tour="mailer-email-form"
                             :personal-email="false"
                             @refresh="creating = false"
                             @dirty-change="emailFormDirty = $event"

@@ -19,7 +19,8 @@ const emit = defineEmits<{
 }>();
 
 const centrumStore = useCentrumStore();
-const { settings } = storeToRefs(centrumStore);
+const { settings, isDemo } = storeToRefs(centrumStore);
+const { updateDemoUnitStatus } = centrumStore;
 
 const notifications = useNotificationsStore();
 
@@ -40,6 +41,12 @@ const state = reactive<Schema>({
 const { hasUnsavedChanges, confirmLeave, syncSnapshot } = useSnapshotChanges(state);
 
 async function updateUnitStatus(id: number, values: Schema): Promise<void> {
+    if (isDemo.value) {
+        updateDemoUnitStatus(id, values.status);
+        emit('close', false);
+        return;
+    }
+
     try {
         const call = centrumUnitsClient.updateUnitStatus({
             unitId: id,

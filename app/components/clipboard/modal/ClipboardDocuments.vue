@@ -131,12 +131,13 @@ const columns = computed(() =>
             {
                 accesssorKey: 'title',
                 header: t('common.title'),
-                cell: ({ row }) => h('span', { class: 'text-highlighted' }, row.original.title),
+                cell: ({ row }) =>
+                    h('span', { class: 'text-highlighted' }, row.original.title ? row.original.title : t('common.untitled')),
             },
             {
                 accesssorKey: 'creator',
                 header: t('common.creator'),
-                cell: ({ row }) => h('span', {}, `${row.original.creator?.firstname} ${row.original.creator?.lastname}`),
+                cell: ({ row }) => h('span', {}, userToLabel(row.original.creator)),
             },
             !props.specs
                 ? {

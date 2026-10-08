@@ -36,7 +36,7 @@ function updateZoom(nextZoom: number): void {
 
 <template>
     <LControl :position="position">
-        <UFieldGroup class="inline-flex w-full flex-col" orientation="vertical">
+        <UFieldGroup data-tour="livemap-zoom" class="inline-flex w-full flex-col" orientation="vertical">
             <UTooltip :text="$t('common.zoom_in')">
                 <UButton
                     class="inset-0 border border-black/20 bg-clip-padding p-1.5"

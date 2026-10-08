@@ -16,6 +16,7 @@ export type AppFeature = {
     shortcut?: string[];
     activePaths?: string[];
     overview?: boolean;
+    guidesOnly?: boolean;
     startpage?: boolean;
     children?: AppFeature[];
 };
@@ -31,6 +32,13 @@ const appFeatures: AppFeature[] = [
         shortcut: ['G', 'H'],
         startpage: true,
         startpagePath: '/overview',
+    },
+    {
+        id: 'personal-productivity',
+        label: 'common.personal_productivity',
+        to: '/overview',
+        icon: 'i-mdi-lightning-bolt-outline',
+        guidesOnly: true,
     },
     {
         id: 'mail',
@@ -220,7 +228,7 @@ const appFeatures: AppFeature[] = [
         label: 'common.dispatch_center',
         to: '/dispatch',
         icon: 'i-mdi-car-emergency',
-        shortcut: ['G', 'W'],
+        shortcut: ['G', 'O'],
         permission: 'centrum.CentrumService/TakeControl' as Perms,
         activePaths: ['/dispatch', '/centrum'],
         overview: true,
@@ -232,7 +240,7 @@ const appFeatures: AppFeature[] = [
         label: 'common.wiki',
         to: '/wiki',
         icon: 'i-mdi-brain',
-        shortcut: ['G', 'L'],
+        shortcut: ['G', 'W'],
         permission: 'wiki.WikiService/ListPages' as Perms,
         activePaths: ['/wiki'],
         overview: true,
@@ -244,7 +252,7 @@ const appFeatures: AppFeature[] = [
         label: 'common.control_panel',
         to: '/settings',
         icon: 'i-mdi-cog-outline',
-        shortcut: ['G', 'P'],
+        shortcut: ['G', 'S'],
         permission: 'settings.SettingsService/GetJobProps' as Perms,
         activePaths: ['/settings'],
         children: [
@@ -300,12 +308,14 @@ export const useAppFeatures = () => {
         children: feature.children?.map((child) => toNavigationItem(child)),
     });
 
+    const features = computed<AppFeature[]>(() => visibleFeatures(appFeatures));
+
     const navigationItems = computed<NavigationMenuItem[]>(() =>
-        visibleFeatures(appFeatures).map((feature) => toNavigationItem(feature, true)),
+        features.value.filter((feature) => !feature.guidesOnly).map((feature) => toNavigationItem(feature, true)),
     );
 
     const overviewItems = computed<AppOverviewFeature[]>(() =>
-        visibleFeatures(appFeatures)
+        features.value
             .filter((feature) => feature.overview)
             .map((feature) => ({
                 label: translate(feature),
@@ -317,7 +327,7 @@ export const useAppFeatures = () => {
     );
 
     const startpageItems = computed(() =>
-        visibleFeatures(appFeatures)
+        features.value
             .filter((feature) => feature.startpage)
             .map((feature) => ({
                 label: translate(feature),
@@ -325,5 +335,5 @@ export const useAppFeatures = () => {
             })),
     );
 
-    return { navigationItems, overviewItems, startpageItems };
+    return { features, navigationItems, overviewItems, startpageItems };
 };

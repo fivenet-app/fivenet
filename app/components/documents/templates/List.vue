@@ -16,6 +16,8 @@ import { useDraggable } from 'vue-draggable-plus';
 const props = withDefaults(
     defineProps<{
         link?: boolean;
+        disabled?: boolean;
+        autoSelectFirst?: boolean;
         reorderable?: boolean;
         sortMode?: boolean;
         searchTitle?: string;
@@ -28,7 +30,7 @@ const props = withDefaults(
     },
 );
 
-defineEmits<{
+const emit = defineEmits<{
     (e: 'selected', t: TemplateShort | undefined): void;
 }>();
 
@@ -66,6 +68,27 @@ async function listTemplates(signal: AbortSignal): Promise<TemplateShort[]> {
 
 const visibleTemplates = computed<TemplateShort[]>(
     () => templates.value?.filter((v) => v.title.toLowerCase().includes(props.searchTitle?.toLowerCase() ?? '')) ?? [],
+);
+
+const autoSelectedFirst = ref(false);
+
+watch(
+    () => props.autoSelectFirst,
+    (value) => {
+        if (!value) autoSelectedFirst.value = false;
+    },
+);
+
+watch(
+    visibleTemplates,
+    (entries) => {
+        const first = entries[0];
+        if (!props.autoSelectFirst || autoSelectedFirst.value || !first) return;
+
+        autoSelectedFirst.value = true;
+        emit('selected', first);
+    },
+    { flush: 'post' },
 );
 
 const items = computed<CardElement[]>(() =>
@@ -280,6 +303,6 @@ watch(movingTemplateId, (movingId) => {
     </div>
 
     <div v-else class="flex justify-center">
-        <CardsList :class="$attrs.class" :items="items" @selected="$emit('selected', selected($event))" />
+        <CardsList :class="$attrs.class" :items="items" :disabled="disabled" @selected="$emit('selected', selected($event))" />
     </div>
 </template>

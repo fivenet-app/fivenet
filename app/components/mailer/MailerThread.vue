@@ -382,7 +382,7 @@ async function closeThread(): Promise<void> {
                 </template>
             </UDashboardNavbar>
 
-            <UDashboardToolbar>
+            <UDashboardToolbar data-tour="mailer-thread-actions">
                 <template #left>
                     <template v-if="!isMobile">
                         <UTooltip

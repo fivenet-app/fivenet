@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { ButtonProps } from '@nuxt/ui';
 import { useSettingsStore } from '~/stores/settings';
+import { isRoute } from '~/utils/route';
 
 const { isHelpSlideoverOpen } = useDashboard();
 
@@ -8,6 +9,10 @@ const { t } = useI18n();
 
 const settingsStore = useSettingsStore();
 const { nuiEnabled } = storeToRefs(settingsStore);
+
+const { guides, startGuide } = useHelpGuides();
+const { features } = useAppFeatures();
+const route = useRoute();
 
 const shortcuts = ref<boolean>(false);
 const query = ref('');
@@ -61,7 +66,7 @@ const categories = computed(() => [
             { kbds: ['G', 'M'], name: t('common.goto_item', [t('common.livemap')]) },
             { kbds: ['G', 'W'], name: t('common.goto_item', [t('common.dispatch_center')]) },
             { kbds: ['G', 'L'], name: t('common.goto_item', [t('common.wiki')]) },
-            { kbds: ['G', 'P'], name: t('common.goto_item', [t('common.control_panel')]) },
+            { kbds: ['G', 'S'], name: t('common.goto_item', [t('common.control_panel')]) },
         ],
     },
     {
@@ -92,6 +97,7 @@ const categories = computed(() => [
             { kbds: ['D', 'T'], name: `${t('common.open', 1)}/ ${t('common.close')}` },
             { kbds: ['D', 'E'], name: t('common.edit') },
             { kbds: ['D', 'R'], name: t('common.request', 2) },
+            { kbds: ['D', 'A'], name: t('common.approvals', 2) },
         ],
     },
     {
@@ -120,25 +126,39 @@ const filteredCategories = computed(() => {
     return categories.value
         .map((category) => ({
             title: category.title,
-            items: category.items.filter((item) => {
-                return item.name.search(new RegExp(query.value, 'i')) !== -1;
-            }),
+            items: category.items.filter((item) => item.name.search(new RegExp(query.value, 'i')) !== -1),
         }))
         .filter((category) => !!category.items.length);
 });
+
+const guideFeatureGroups = computed(() =>
+    features.value
+        .map((feature) => ({
+            id: feature.id,
+            value: feature.id,
+            label: feature.labelCount === undefined ? t(feature.label) : t(feature.label, feature.labelCount),
+            icon: feature.icon,
+            guides: guides.value.filter((guide) => guide.featureId === feature.id),
+            ui: {
+                trigger: (feature.activePaths ?? [feature.to]).some((path) => isRoute(route.path, path))
+                    ? 'text-primary'
+                    : undefined,
+            },
+        }))
+        .filter((feature) => feature.guides.length > 0),
+);
 </script>
 
 <template>
     <USlideover v-model:open="isHelpSlideoverOpen" :title="shortcuts ? $t('common.shortcuts') : $t('common.help')">
         <template #actions>
-            <UButton
-                v-if="shortcuts"
-                color="neutral"
-                variant="ghost"
-                size="sm"
-                icon="i-mdi-arrow-left"
-                @click="shortcuts = false"
-            />
+            <UTooltip v-if="shortcuts" :text="$t('common.back')">
+                <UButton color="gray" icon="i-mdi-arrow-back" size="sm" variant="ghost" @click="shortcuts = false">
+                    <span class="hidden truncate sm:block">
+                        {{ $t('common.back') }}
+                    </span>
+                </UButton>
+            </UTooltip>
         </template>
 
         <template #body>
@@ -171,7 +191,42 @@ const filteredCategories = computed(() => {
                 </div>
             </div>
 
-            <div v-else class="flex flex-col gap-y-3">
+            <div v-else class="flex flex-col gap-y-2">
+                <template v-if="guides.length > 0">
+                    <div class="space-y-1">
+                        <p class="text-sm font-semibold text-highlighted">{{ $t('help_guides.title') }}</p>
+                        <p class="text-sm text-muted">{{ $t('help_guides.description') }}</p>
+                    </div>
+
+                    <UAccordion
+                        :items="guideFeatureGroups"
+                        type="multiple"
+                        :default-value="guideFeatureGroups.map((feature) => feature.id)"
+                        :unmount-on-hide="true"
+                        :ui="{ body: 'px-0 pt-0 pb-2' }"
+                    >
+                        <template #content="{ item: feature }">
+                            <div class="grid grid-cols-1 gap-2 py-2 sm:grid-cols-2">
+                                <UButton
+                                    v-for="guide in feature.guides"
+                                    :key="guide.id"
+                                    color="neutral"
+                                    :icon="guide.icon"
+                                    :label="guide.title"
+                                    :description="guide.description"
+                                    variant="soft"
+                                    :ui="{ base: 'flex-col', label: 'line-clamp-2 whitespace-normal overflow-visible' }"
+                                    @click="startGuide(guide.id)"
+                                />
+                            </div>
+                        </template>
+                    </UAccordion>
+                </template>
+            </div>
+        </template>
+
+        <template #footer>
+            <div class="flex w-full flex-col gap-y-2">
                 <UButton v-for="(link, index) in links" :key="index" v-bind="link" />
             </div>
         </template>

@@ -134,6 +134,7 @@ const dispatchDetailsSlideover = overlay.create(DispatchDetailsSlideover);
         <div v-if="settings?.enabled" class="flex flex-col gap-2">
             <UInput
                 v-model="dispatchQueryRaw"
+                data-tour="livemap-dispatch-search"
                 class="max-w-40"
                 type="text"
                 name="searchPlayer"
@@ -141,7 +142,7 @@ const dispatchDetailsSlideover = overlay.create(DispatchDetailsSlideover);
                 :placeholder="`${$t('common.dispatch', 2)} ${$t('common.search')}`"
                 autocomplete="off"
                 leading-icon="i-mdi-car-emergency"
-                :ui="{ trailing: 'pe-1' }"
+                :ui="{ leading: 'z-10', trailing: 'z-10 pe-1' }"
             >
                 <template #trailing>
                     <UButton

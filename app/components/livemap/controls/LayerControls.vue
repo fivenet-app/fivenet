@@ -1,4 +1,5 @@
 <script lang="ts" setup>
+import { HELP_GUIDE_ACTION_EVENT, type HelpGuideActionDetail } from '~/composables/useHelpGuides';
 import { useSettingsStore, type LivemapLayer } from '~/stores/settings';
 import { tileLayers } from '~/types/livemap';
 
@@ -7,6 +8,23 @@ const { attr, can } = useAuth();
 const settingsStore = useSettingsStore();
 const { livemapLayers, livemapLayerCategories, livemapTileLayer } = storeToRefs(settingsStore);
 const tileLayerItems = computed(() => [...tileLayers]);
+const layersOpen = ref(false);
+
+function onHelpGuideAction(event: Event): void {
+    const action = event instanceof CustomEvent ? (event.detail as HelpGuideActionDetail | undefined) : undefined;
+    if (!action) return;
+
+    if (action.actionId === 'livemap-open-layers' && action.phase === 'enter') {
+        layersOpen.value = true;
+    }
+
+    if (action.actionId === 'livemap-close-layers' && action.phase === 'leave') {
+        layersOpen.value = false;
+    }
+}
+
+onMounted(() => window.addEventListener(HELP_GUIDE_ACTION_EVENT, onHelpGuideAction));
+onBeforeUnmount(() => window.removeEventListener(HELP_GUIDE_ACTION_EVENT, onHelpGuideAction));
 
 const groupedLayers = computed(() => {
     const reduced = livemapLayers.value.reduce(
@@ -65,9 +83,10 @@ function toggleAllLayers(category: string, visible: boolean) {
 
 <template>
     <LControl position="topright">
-        <UPopover :ui="{ content: 'w-full' }">
+        <UPopover v-model:open="layersOpen" :ui="{ content: 'w-full' }">
             <UTooltip :text="$t('common.layer', 2)">
                 <UButton
+                    data-tour="livemap-layers"
                     class="border border-black/20 bg-clip-padding p-1.5"
                     size="xl"
                     icon="i-mdi-layers-triple"

@@ -2,6 +2,7 @@
 import { fromDate, getLocalTimeZone } from '@internationalized/date';
 import { addDays } from 'date-fns';
 import { z } from 'zod';
+import { HELP_GUIDE_ACTION_EVENT, type HelpGuideActionDetail } from '~/composables/useHelpGuides';
 import ListEntry from '~/components/documents/ListEntry.vue';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
@@ -160,8 +161,44 @@ const activeTab = computed({
 });
 
 const isPinnedDocumentsVisible = ref<boolean>(false);
+const isPinnedGuideInteractive = ref(false);
 
 const templateDrawer = overlay.create(TemplateDrawer);
+
+function openTemplateDrawer(guideInteractive = false, selectFirstTemplate = false): void {
+    templateDrawer.open({ guideInteractive, selectFirstTemplate });
+}
+
+function onHelpGuideAction(event: Event): void {
+    const action = event instanceof CustomEvent ? (event.detail as HelpGuideActionDetail | undefined) : undefined;
+    if (action?.actionId === 'documents-open-template-chooser' && (action.phase === 'enter' || action.phase === 'trigger')) {
+        openTemplateDrawer(true);
+    }
+
+    if (
+        action?.actionId === 'documents-open-template-chooser-first-template' &&
+        (action.phase === 'enter' || action.phase === 'trigger')
+    ) {
+        openTemplateDrawer(true, true);
+    }
+
+    if (action?.actionId === 'documents-close-template-chooser' && action.phase === 'leave') {
+        templateDrawer.close();
+    }
+
+    if (action?.actionId === 'documents-open-pinned' && action.phase === 'enter') {
+        isPinnedGuideInteractive.value = true;
+        isPinnedDocumentsVisible.value = true;
+    }
+
+    if (action?.actionId === 'documents-close-pinned' && action.phase === 'leave') {
+        isPinnedGuideInteractive.value = false;
+        isPinnedDocumentsVisible.value = false;
+    }
+}
+
+onMounted(() => window.addEventListener(HELP_GUIDE_ACTION_EVENT, onHelpGuideAction));
+onBeforeUnmount(() => window.removeEventListener(HELP_GUIDE_ACTION_EVENT, onHelpGuideAction));
 
 const inputRef = useTemplateRef('inputRef');
 const focusInput = () => inputRef.value?.inputRef?.focus();
@@ -217,11 +254,12 @@ defineShortcuts({
 
                     <UTooltip v-if="can('documents.DocumentsService/UpdateDocument').value" :text="$t('common.create')">
                         <UButton
+                            data-tour="documents-create"
                             color="neutral"
                             variant="outline"
                             trailing-icon="i-mdi-plus"
                             truncate
-                            @click="templateDrawer.open({})"
+                            @click="openTemplateDrawer()"
                         >
                             <span class="hidden truncate sm:block">
                                 {{ $t('common.document', 1) }}
@@ -234,6 +272,7 @@ defineShortcuts({
             <UDashboardToolbar>
                 <UForm
                     ref="formRef"
+                    data-tour="documents-search"
                     class="my-2 flex w-full flex-1 flex-col gap-2"
                     :schema="schema"
                     :state="query"
@@ -283,7 +322,7 @@ defineShortcuts({
                         </UFormField>
                     </div>
 
-                    <UCollapsible :unmount-on-hide="false">
+                    <UCollapsible data-tour="documents-filters" :unmount-on-hide="false">
                         <UButton
                             class="group"
                             color="neutral"
@@ -466,6 +505,7 @@ defineShortcuts({
 
             <ul
                 v-else-if="data?.documents || isRequestPending(status)"
+                data-tour="documents-list"
                 class="min-w-full divide-y divide-default"
                 :class="[
                     design.documents.listStyle === 'double' ? '2xl:grid 2xl:grid-cols-2' : '',
@@ -508,5 +548,5 @@ defineShortcuts({
         </template>
     </UDashboardPanel>
 
-    <PinnedList v-model:open="isPinnedDocumentsVisible" />
+    <PinnedList v-model:open="isPinnedDocumentsVisible" :guide-interactive="isPinnedGuideInteractive" />
 </template>

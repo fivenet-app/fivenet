@@ -11,6 +11,11 @@ import type { ObjectSpecs, TemplateRequirements, TemplateShort } from '~~/gen/ts
 const clipboardStore = useClipboardStore();
 const { activeStack } = storeToRefs(clipboardStore);
 
+const props = defineProps<{
+    guideInteractive?: boolean;
+    selectFirstTemplate?: boolean;
+}>();
+
 const emits = defineEmits<{
     (e: 'close', v: boolean): void;
 }>();
@@ -138,6 +143,8 @@ const query = useSearchForm('documents-templates', schema);
 
 <template>
     <UDrawer
+        :modal="!props.guideInteractive"
+        :overlay="!props.guideInteractive"
         :close="{ onClick: () => $emit('close', false) }"
         :ui="{ container: 'flex-1', content: 'min-h-[70%]', title: 'flex flex-row gap-2 justify-between', body: 'h-full' }"
     >
@@ -162,15 +169,24 @@ const query = useSearchForm('documents-templates', schema);
             <div class="mx-auto w-full max-w-[80%] min-w-3/4">
                 <template v-if="steps.selectTemplate">
                     <UButton
+                        data-tour="documents-create-blank"
                         block
                         icon="i-mdi-plus"
-                        :label="$t('components.documents.templates.templates_modal.no_template')"
+                        :label="$t('components.documents.templates.no_template')"
+                        :class="props.guideInteractive ? 'pointer-events-none' : ''"
                         @click="clipboardDialog()"
                     />
 
                     <USeparator class="my-4" />
 
-                    <List :search-title="query.title" @selected="selectTemplate($event)" />
+                    <div data-tour="documents-create-template">
+                        <List
+                            :auto-select-first="props.selectFirstTemplate"
+                            :search-title="query.title"
+                            :disabled="props.guideInteractive"
+                            @selected="selectTemplate($event)"
+                        />
+                    </div>
                 </template>
 
                 <div v-else-if="template !== undefined && reqs !== undefined && steps.selectClipboard">

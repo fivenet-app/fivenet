@@ -113,6 +113,7 @@ const markersByJob = computed(() => {
         <div class="flex flex-col gap-2">
             <UInput
                 v-model.trim="playerQueryRaw"
+                data-tour="livemap-employee-search"
                 class="max-w-40"
                 type="text"
                 name="searchPlayer"
@@ -120,7 +121,7 @@ const markersByJob = computed(() => {
                 :placeholder="`${$t('common.employee', 1)} ${$t('common.search')}`"
                 autocomplete="off"
                 leading-icon="i-mdi-user-multiple"
-                :ui="{ trailing: 'pe-1' }"
+                :ui="{ leading: 'z-10', trailing: 'z-10 pe-1' }"
             >
                 <template #trailing>
                     <UButton

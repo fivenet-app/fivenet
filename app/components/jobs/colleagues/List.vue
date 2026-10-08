@@ -289,6 +289,7 @@ defineShortcuts({
             <UDashboardToolbar>
                 <UForm
                     ref="formRef"
+                    data-tour="jobs-colleagues"
                     class="my-2 flex w-full flex-1 flex-col gap-2"
                     :schema="schema"
                     :state="query"

@@ -106,20 +106,22 @@ const navItems = computed(() => pages.value?.map((p) => mapPageToNavItem(p)) ?? 
         :nav-items="navItems ?? []"
     >
         <template #left>
-            <DataErrorBlock v-if="pagesError" :error="pagesError" :retry="pagesRefresh" />
+            <div data-tour="wiki-sidebar">
+                <DataErrorBlock v-if="pagesError" :error="pagesError" :retry="pagesRefresh" />
 
-            <UPageAside v-else :ui="{ root: 'px-0 lg:pe-3 lg:gap-2' }">
-                <ClientOnly>
-                    <PageList :items="navItems" />
+                <UPageAside v-else :ui="{ root: 'px-0 lg:pe-3 lg:gap-2' }">
+                    <ClientOnly>
+                        <PageList :items="navItems" />
 
-                    <RefreshButton
-                        class="mt-1 -ml-2"
-                        :loading="isRequestPending(pagesStatus)"
-                        icon-only
-                        @click="() => pagesRefresh()"
-                    />
-                </ClientOnly>
-            </UPageAside>
+                        <RefreshButton
+                            class="mt-1 -ml-2"
+                            :loading="isRequestPending(pagesStatus)"
+                            icon-only
+                            @click="() => pagesRefresh()"
+                        />
+                    </ClientOnly>
+                </UPageAside>
+            </div>
         </template>
     </PageView>
 </template>

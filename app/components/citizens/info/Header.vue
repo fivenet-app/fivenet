@@ -44,7 +44,13 @@ const { game } = useAppConfig();
         </div>
 
         <div class="flex shrink-0 flex-col gap-1 sm:flex-row">
-            <UButton class="lg:hidden" :label="$t('common.action', 2)" icon="i-mdi-menu" @click="$emit('toggle-actions')" />
+            <UButton
+                data-tour="citizen-profile-actions"
+                class="lg:hidden"
+                :label="$t('common.action', 2)"
+                icon="i-mdi-menu"
+                @click="$emit('toggle-actions')"
+            />
         </div>
     </div>
 </template>

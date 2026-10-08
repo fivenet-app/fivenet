@@ -256,8 +256,8 @@ const scrollRef = useTemplateRef('scrollRef');
                     <slot name="left" />
                 </template>
 
-                <UPage>
-                    <UNavigationMenu class="mt-4 lg:hidden" :items="navItems" orientation="vertical" />
+                <UPage data-tour="wiki-content">
+                    <UNavigationMenu data-tour="wiki-sidebar" class="mt-4 lg:hidden" :items="navItems" orientation="vertical" />
 
                     <UBreadcrumb class="pt-4 lg:pt-0" :items="breadcrumbs" />
 

@@ -58,6 +58,7 @@ const selfServicePropsAvatarModal = overlay.create(SelfServiceAvatarModal);
                     activeChar?.userId === colleagueSelf.colleague?.userId &&
                     can('jobs.ColleaguesService/SetColleagueProps').value
                 "
+                data-tour="jobs-self-service-absence"
                 class="flex-1"
                 block
                 icon="i-mdi-island"
@@ -70,6 +71,7 @@ const selfServicePropsAvatarModal = overlay.create(SelfServiceAvatarModal);
                 "
             />
             <UButton
+                data-tour="jobs-self-service-avatar"
                 class="flex-1"
                 block
                 icon="i-mdi-camera"

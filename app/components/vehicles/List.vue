@@ -298,6 +298,7 @@ defineShortcuts({
         <template #default>
             <UForm
                 ref="formRef"
+                data-tour="vehicles-search"
                 class="my-2 flex w-full flex-row gap-2"
                 :schema="schema"
                 :state="query"
@@ -376,6 +377,7 @@ defineShortcuts({
     <UTable
         v-else
         v-model:sorting="query.sorting.columns"
+        data-tour="vehicles-list"
         class="flex-1"
         :loading="isRequestPending(status)"
         :columns="columns"

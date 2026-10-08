@@ -338,6 +338,7 @@ const { game } = useAppConfig();
                 <template #default>
                     <UForm
                         ref="formRef"
+                        data-tour="jobs-timeclock"
                         class="flex flex-1 flex-col gap-1"
                         :schema="schema"
                         :state="query"

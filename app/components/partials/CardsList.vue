@@ -6,10 +6,12 @@ import type { CardElement } from '~/utils/types';
 withDefaults(
     defineProps<{
         items: CardElement[];
+        disabled?: boolean;
         showIcon?: boolean;
         getContextMenuItems?: (item: CardElement, idx: number) => ContextMenuItem[][];
     }>(),
     {
+        disabled: false,
         showIcon: true,
         getContextMenuItems: undefined,
     },
@@ -23,7 +25,7 @@ const { can } = useAuth();
 </script>
 
 <template>
-    <UPageGrid>
+    <UPageGrid data-tour="overview-feature-cards">
         <template
             v-for="(module, index) in items.filter((i) => i.permission === undefined || can(i.permission).value)"
             :key="module.to ?? index"
@@ -33,15 +35,12 @@ const { can } = useAuth();
                 :disabled="(getContextMenuItems?.(module, index) ?? []).length === 0"
             >
                 <UPageCard
+                    data-tour="overview-feature-card"
+                    :icon="showIcon && module.icon?.startsWith('i-') ? module.icon : undefined"
                     :to="module.to"
                     :title="module.label"
-                    :icon="showIcon && module.icon?.startsWith('i-') ? module.icon : undefined"
                     :ui="{ title: 'w-full flex flex-row gap-2' }"
-                    @click="
-                        () => {
-                            !module.to && $emit('selected', index);
-                        }
-                    "
+                    @click="() => !disabled && !module.to && $emit('selected', index)"
                 >
                     <template #title>
                         <span>{{ module.label }}</span>

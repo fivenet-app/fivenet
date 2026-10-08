@@ -27,6 +27,7 @@ import { StatusDispatch } from '~~/gen/ts/resources/centrum/dispatches/dispatche
 import { CentrumMode } from '~~/gen/ts/resources/centrum/settings/settings';
 import { StatusUnit } from '~~/gen/ts/resources/centrum/units/units';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
+import { HELP_GUIDE_ACTION_EVENT, type HelpGuideActionDetail, useHelpGuides } from '~/composables/useHelpGuides';
 
 const { can, jobProps } = useAuth();
 
@@ -34,6 +35,9 @@ const centrumStore = useCentrumStore();
 const { startStream, stopStream } = centrumStore;
 const { getCurrentMode, getOwnUnit, dispatches, getSortedOwnDispatches, pendingDispatches, timeCorrection, settings } =
     storeToRefs(centrumStore);
+const { isDemo } = storeToRefs(centrumStore);
+const { beginDemoSession, endDemoSession, updateDemoUnitStatus, updateDemoDispatchStatus } = centrumStore;
+const { activeGuide, finishGuide } = useHelpGuides();
 
 const livemapStore = useLivemapStore();
 const { userOnDuty, ownMarker } = storeToRefs(livemapStore);
@@ -90,6 +94,12 @@ const centrumUnitsClient = await getCentrumUnitsClient();
 
 const selectedDispatch = ref<number | undefined>();
 
+function dispatchStatusLabel(status?: StatusDispatch): string {
+    return `enums.centrum.StatusDispatch.${StatusDispatch[status ?? StatusDispatch.NEW]}`;
+}
+
+const cancelledDispatchStatus = StatusDispatch.CANCELLED;
+
 const dispatchStatusUpdateModal = overlay.create(DispatchStatusUpdateModal);
 const unitStatusUpdateModal = overlay.create(UnitStatusUpdateModal);
 const joinUnitSlideover = overlay.create(JoinUnitSlideover);
@@ -97,6 +107,11 @@ const takeDispatchSlideover = overlay.create(TakeDispatchSlideover);
 const unitDetailsSlideover = overlay.create(UnitDetailsSlideover);
 
 async function updateDispatchStatus(dispatchId: number, status: StatusDispatch): Promise<void> {
+    if (isDemo.value) {
+        updateDemoDispatchStatus(dispatchId, status);
+        return;
+    }
+
     try {
         const call = centrumDispatchesClient.updateDispatchStatus({
             dispatchId: dispatchId,
@@ -143,6 +158,11 @@ async function updateDspStatus(dispatchId?: number, status?: StatusDispatch): Pr
 }
 
 async function updateUnitStatus(id: number, status: StatusUnit): Promise<void> {
+    if (isDemo.value) {
+        updateDemoUnitStatus(id, status);
+        return;
+    }
+
     try {
         const call = centrumUnitsClient.updateUnitStatus({
             unitId: id,
@@ -181,6 +201,58 @@ async function updateUtStatus(id: number, status?: StatusUnit): Promise<void> {
 }
 
 const open = ref<boolean>(false);
+let demoSidebarOpen = false;
+
+function onHelpGuideAction(event: Event): void {
+    const action = event instanceof CustomEvent ? (event.detail as HelpGuideActionDetail | undefined) : undefined;
+    if (!action) return;
+
+    if (action.actionId === 'centrum-open-sidebar' && action.phase === 'enter') {
+        open.value = true;
+    }
+
+    if (action.actionId === 'centrum-open-unit-selector' && action.phase === 'enter') {
+        joinUnitSlideover.open({});
+    }
+
+    if (action.actionId === 'centrum-close-unit-selector' && action.phase === 'leave') {
+        joinUnitSlideover.close();
+    }
+
+    if (action.actionId === 'centrum-open-take-dispatches' && action.phase === 'enter') {
+        takeDispatchSlideover.open({});
+    }
+
+    if (action.actionId === 'centrum-close-take-dispatches' && action.phase === 'leave') {
+        takeDispatchSlideover.close();
+    }
+
+    if (action.actionId === 'centrum-select-demo-dispatch' && action.phase === 'enter') {
+        selectedDispatch.value = getSortedOwnDispatches.value[0];
+    }
+
+    if (action.actionId === 'centrum-select-demo-dispatch' && action.phase === 'leave') {
+        selectedDispatch.value = undefined;
+    }
+}
+
+onMounted(() => window.addEventListener(HELP_GUIDE_ACTION_EVENT, onHelpGuideAction));
+onBeforeUnmount(() => window.removeEventListener(HELP_GUIDE_ACTION_EVENT, onHelpGuideAction));
+
+watch(
+    activeGuide,
+    async (guideId) => {
+        if (guideId === 'centrum-basics') {
+            demoSidebarOpen = open.value;
+            beginDemoSession();
+            open.value = true;
+        } else if (isDemo.value) {
+            await endDemoSession();
+            open.value = demoSidebarOpen;
+        }
+    },
+    { immediate: true },
+);
 
 async function toggleSidebarBasedOnUnit(): Promise<void> {
     if (getOwnUnit.value !== undefined) {
@@ -317,6 +389,11 @@ onBeforeMount(async () => {
 });
 
 onBeforeRouteLeave(async (to) => {
+    if (isDemo.value) {
+        await endDemoSession(to.path.startsWith('/livemap') || to.path === '/dispatch' || to.path === '/centrum');
+        finishGuide();
+    }
+
     // Don't end centrum stream if user is switching to dispatch center or livemap page
     if (to.path.startsWith('/livemap') || to.path === '/dispatch' || to.path === '/centrum') return;
 
@@ -394,6 +471,7 @@ defineShortcuts({
 <template>
     <div class="flex h-full min-h-0 w-full pb-(--page-content-bottom-offset)" :class="sidebarPlacementClassMap.container">
         <UDashboardPanel
+            data-tour="livemap-side-panel"
             class="min-h-0 min-w-0 flex-1"
             :class="isSidebarFirst ? 'order-2' : 'order-1'"
             :ui="{ body: 'p-0 sm:p-0 gap-0 sm:gap-0' }"
@@ -420,6 +498,7 @@ defineShortcuts({
                         <template #default>
                             <template v-if="canStream">
                                 <DispatchLayer
+                                    data-tour="livemap-dispatch-markers"
                                     :show-all-dispatches="
                                         livemap.showAllDispatches || getCurrentMode === CentrumMode.SIMPLIFIED
                                     "
@@ -544,6 +623,7 @@ defineShortcuts({
 
                                 <UFieldGroup class="w-full" orientation="vertical">
                                     <UButton
+                                        data-tour="centrum-unit-membership"
                                         :class="getOwnUnit !== undefined ? 'rounded-t-none' : ''"
                                         variant="soft"
                                         color="primary"
@@ -579,7 +659,10 @@ defineShortcuts({
                                     </li>
 
                                     <li>
-                                        <div class="grid grid-cols-2 gap-px overflow-hidden rounded-md bg-default">
+                                        <div
+                                            data-tour="centrum-unit-status"
+                                            class="grid grid-cols-2 gap-px overflow-hidden rounded-md bg-default"
+                                        >
                                             <UButton
                                                 v-for="item in unitStatuses"
                                                 :key="item.status"
@@ -624,10 +707,13 @@ defineShortcuts({
                                     </li>
 
                                     <li>
-                                        <div class="grid grid-cols-2 gap-px overflow-hidden rounded-md bg-default">
+                                        <div
+                                            data-tour="centrum-dispatch-status"
+                                            class="grid grid-cols-2 gap-px overflow-hidden rounded-md bg-default"
+                                        >
                                             <UButton
                                                 v-for="item in dispatchStatuses.filter(
-                                                    (s) => s.status !== StatusDispatch.CANCELLED,
+                                                    (s) => s.status !== cancelledDispatchStatus,
                                                 )"
                                                 :key="item.status"
                                                 class="rounded-none"
@@ -639,7 +725,7 @@ defineShortcuts({
                                                     dispatches.get(selectedDispatch)?.status?.status === item.status
                                                 "
                                                 :icon="item.icon"
-                                                :label="$t(`enums.centrum.StatusDispatch.${StatusDispatch[item.status ?? 0]}`)"
+                                                :label="$t(dispatchStatusLabel(item.status))"
                                                 :ui="{ label: 'line-clamp-2' }"
                                                 @click="onSubmitDispatchStatusThrottle(selectedDispatch, item.status)"
                                             />
@@ -669,7 +755,11 @@ defineShortcuts({
 
                         <section :class="[sidebarContentPaneBaseClass, sidebarPlacementClassMap.secondColumn]">
                             <template v-if="getOwnUnit !== undefined">
-                                <ul role="list" :class="isVerticalSidebarPlacement ? 'flex min-h-0 flex-1 flex-col' : ''">
+                                <ul
+                                    data-tour="centrum-own-dispatches"
+                                    role="list"
+                                    :class="isVerticalSidebarPlacement ? 'flex min-h-0 flex-1 flex-col' : ''"
+                                >
                                     <li class="inline-flex items-center text-xs leading-6 font-semibold">
                                         {{ $t('common.your_dispatches') }}
                                     </li>

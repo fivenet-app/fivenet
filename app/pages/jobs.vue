@@ -105,7 +105,7 @@ inject('links', items);
             </UDashboardNavbar>
 
             <UDashboardToolbar :ui="{ root: 'overflow-x-visible' }">
-                <UNavigationMenu class="-mx-1 flex-1" orientation="horizontal" :items="items" />
+                <UNavigationMenu data-tour="jobs-navigation" class="-mx-1 flex-1" orientation="horizontal" :items="items" />
             </UDashboardToolbar>
         </template>
 

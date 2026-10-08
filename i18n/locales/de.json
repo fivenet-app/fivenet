@@ -1,4 +1,579 @@
 {
+    "help_guides": {
+        "title": "Anleitungen",
+        "description": "Schritt-für-Schritt-Hilfe für FiveNet-Funktionen.",
+        "step_count": "Schritt {current} von {total}",
+        "skip": "Anleitung überspringen",
+        "finish": "Anleitung beenden",
+        "overview_quick_access": {
+            "title": "Elemente zur Schnellzugriffsleiste hinzufügen",
+            "description": "Lerne, häufig verwendete Funktionen auf der Übersichtsseite zum Schnellzugriff hinzuzufügen.",
+            "steps": {
+                "intro": {
+                    "title": "Die Übersicht anpassen",
+                    "body": "Der Schnellzugriff bietet dir Verknüpfungen zu den Funktionen, die du am häufigsten verwendest. Du kannst ihn auf der Übersichtsseite anpassen."
+                },
+                "feature_card": {
+                    "title": "Das Menü einer Funktion öffnen",
+                    "body": "Klicke mit der rechten Maustaste auf eine Funktionskarte, um ihr Kontextmenü zu öffnen. Wähle Anheften, um die Funktion zum Schnellzugriff hinzuzufügen."
+                },
+                "quick_access": {
+                    "title": "Angeheftete Funktionen finden",
+                    "body": "Angeheftete Funktionen erscheinen oben auf der Übersichtsseite im Bereich Schnellzugriff. Dort kannst du sie direkt öffnen und über Reihenfolge ändern neu anordnen."
+                },
+                "finish": {
+                    "title": "Schnellzugriff anpassen",
+                    "body": "Hefte regelmäßig verwendete Funktionen an. Über dasselbe Kontextmenü kannst du sie jederzeit wieder lösen."
+                }
+            }
+        },
+        "clipboard_basics": {
+            "title": "Die Zwischenablage verwenden",
+            "description": "Lerne, Inhalte für Dokumentvorlagen in der Zwischenablage zu sammeln und zu verwalten. Verfügbare Kategorien und Aktionen hängen von deinen Berechtigungen ab.",
+            "steps": {
+                "intro": {
+                    "title": "Deine persönliche Zwischenablage",
+                    "body": "In der Zwischenablage hältst du Bürger, Dokumente und Fahrzeuge während deiner Arbeit griffbereit. Sie ist an dein Konto gebunden und kann in der gesamten Anwendung verwendet werden. Welche Kategorien und Aktionen verfügbar sind, hängt von deinen Berechtigungen ab."
+                },
+                "open": {
+                    "title": "Zwischenablage öffnen",
+                    "body": "Öffne sie über die Zwischenablage-Schaltfläche in der Navigation oder mit dem Kürzel Q, C. Bürger, Dokumente und Fahrzeuge können auf ihren jeweiligen Seiten hinzugefügt werden, wenn du darauf zugreifen darfst."
+                },
+                "modal": {
+                    "title": "Inhalte der Zwischenablage prüfen",
+                    "body": "Das Fenster zeigt die gesammelten Bürger, Fahrzeuge und Dokumente. Die Zähler zeigen, wie viele Einträge je Kategorie gespeichert sind; verfügbare Kategorien hängen von deinen Berechtigungen ab."
+                },
+                "categories": {
+                    "title": "Zwischen Kategorien wechseln",
+                    "body": "Mit den Tabs prüfst du die einzelnen Eintragstypen. Hier kannst du Einträge auswählen, wenn eine Dokumentvorlage Daten aus der Zwischenablage anfordert."
+                },
+                "remove": {
+                    "title": "Einträge entfernen",
+                    "body": "Entferne einzelne Einträge aus ihrer Kategorie oder leere die Kategorie mit der Schaltfläche unter dem Fenster. Entfernte Einträge werden auch aus der aktiven Vorlagenauswahl entfernt."
+                },
+                "templates": {
+                    "title": "Zwischenablage in Vorlagen verwenden",
+                    "body": "Vorlagen können erforderliche oder optionale Bürger, Dokumente und Fahrzeuge definieren. Beim Erstellen eines Dokuments aus einer Vorlage wählst du die passenden Einträge aus und ergänzt optionale Daten, sofern die Vorlage dies unterstützt."
+                },
+                "finish": {
+                    "title": "Nützliche Daten griffbereit halten",
+                    "body": "Füge Einträge hinzu, sobald du sie findest, entferne veraltete Inhalte und bereite Dokumentvorlagen mit der Zwischenablage schneller vor."
+                }
+            }
+        },
+        "dispatch_workflow": {
+            "title": "Leitstelle entdecken",
+            "description": "Entdecke den Aufbau der Leitstelle, ihre Bereiche und die Disponenten-Steuerung.",
+            "steps": {
+                "intro": {
+                    "title": "Was die Einsatzzentrale zeigt",
+                    "body": "Die Einsatzzentrale vereint die Livemap, aktuelle Einsätze, Einheiten und den Aktivitätsfeed, damit laufende Aufgaben koordiniert werden können."
+                },
+                "layout": {
+                    "title": "Einsatzzentrale anordnen",
+                    "body": "Mit dieser Schaltfläche kannst du die Reihenfolge der Karte und Bereiche ändern. Ordne Einsatzliste, Einheitenliste und Aktivitätsfeed passend zu deiner Arbeitsweise an."
+                },
+                "units": {
+                    "title": "Die Einheitenliste",
+                    "body": "Dieser Bereich zeigt die Einheiten deines Jobs und ihren aktuellen Status. So siehst du, wer aktiv ist, und kannst Ressourcen koordinieren."
+                },
+                "dispatches": {
+                    "title": "Die Einsatzliste",
+                    "body": "Dieser Bereich zeigt aktuelle Einsätze und ihren Fortschritt. Wähle einen Einsatz aus, um ihn zu prüfen, zuzuweisen oder seinen Status zu verfolgen."
+                },
+                "dispatcher": {
+                    "title": "Als Disponent arbeiten",
+                    "body": "Wenn du als Disponent freigeschaltet bist, kannst du dich mit dieser Schaltfläche als Disponent an- oder abmelden. So kannst du Einsätze aus der Leitstelle koordinieren."
+                },
+                "finish": {
+                    "title": "Alles an einem Ort koordinieren",
+                    "body": "Nutze Karte, Einsatzliste, Einheitenliste und Aktivitätsfeed gemeinsam, um den Überblick über den Einsatzbetrieb zu behalten und auf Veränderungen zu reagieren."
+                }
+            }
+        },
+        "livemap_dispatch": {
+            "title": "Einsätze auf der Livemap",
+            "description": "Einsätze, Einheiten und wichtige Orte auf der Karte finden.",
+            "steps": {
+                "intro": {
+                    "title": "Einsatzwerkzeuge der Livemap",
+                    "body": "Die Livemap zeigt Einheiten und Einsatzinformationen geografisch an."
+                },
+                "markers": {
+                    "title": "Kartenmarkierungen",
+                    "body": "Wähle Einsatz- und Einheitenmarkierungen aus, um Ort und Details zu prüfen."
+                },
+                "panel": {
+                    "title": "Seitenleiste",
+                    "body": "Prüfe ausgewählte Einheiten oder Einsätze und nutze verfügbare Aktionen in der Seitenleiste."
+                },
+                "finish": {
+                    "title": "Karte verwenden",
+                    "body": "Kombiniere Markierungen, Suchen und den Heimat-Postleitzahlpunkt."
+                }
+            }
+        },
+        "citizen_lookup": {
+            "title": "Bürger suchen und Profile",
+            "description": "Bürger suchen und verfügbare Informationen prüfen.",
+            "steps": {
+                "intro": {
+                    "title": "Bürger finden",
+                    "body": "Nutze die Bürgersuche für Profile, verknüpfte Einträge oder aktuelle Aktivitäten."
+                },
+                "search": {
+                    "title": "Schnellsuche",
+                    "body": "Suche mit passenden Identifikationsdaten nach Bürgern."
+                },
+                "advanced": {
+                    "title": "Erweiterte Suche",
+                    "body": "Nutze zusätzliche Filter, wenn die Schnellsuche zu viele Treffer liefert."
+                },
+                "open_profile": {
+                    "title": "Bürgerprofil öffnen",
+                    "body": "Die Anleitung öffnet den ersten Bürger in der Liste, damit du das Profil ansehen und die Tour fortsetzen kannst."
+                },
+                "profile": {
+                    "title": "Profil ansehen",
+                    "body": "Im Profil sind die für dich verfügbaren Informationen zusammengefasst. Sichtbare Karten, Tabs und Aktionen hängen von deinen Berechtigungen und deinem Dienstrang ab."
+                },
+                "profile_tabs": {
+                    "title": "Profilbereiche",
+                    "body": "Über die verfügbaren Tabs siehst du das Profil und weitere Informationen zum Bürger. Der Aktivitätsfeed kann aktuelle Änderungen anzeigen; Fahrzeuge, Dokumente und weitere Bereiche werden nur eingeblendet, wenn du darauf zugreifen darfst."
+                },
+                "profile_actions": {
+                    "title": "Verfügbare Aktionen",
+                    "body": "Auf größeren Bildschirmen findest du die Aktionen in der Seitenleiste, auf kleineren über die Schaltfläche \"Aktionen\". Welche Aktionen verfügbar sind, hängt von deinen Berechtigungen und deinem Dienstrang ab."
+                },
+                "finish": {
+                    "title": "Sicher prüfen",
+                    "body": "Verfügbare Profilbereiche und Aktionen hängen von deinen Berechtigungen ab."
+                }
+            }
+        },
+        "documents_workflow": {
+            "title": "Dokumente finden und verwalten",
+            "description": "Dokumente suchen, filtern, prüfen und bearbeiten.",
+            "steps": {
+                "intro": {
+                    "title": "Dokumentablauf",
+                    "body": "Die Dokumentliste ist der Ausgangspunkt für die Verwaltung von Dokumenten."
+                },
+                "search": {
+                    "title": "Dokumente suchen",
+                    "body": "Suche mit den verfügbaren Kennungen nach Dokumenten."
+                },
+                "filters": {
+                    "title": "Liste filtern",
+                    "body": "Kombiniere Filter, um die passenden Dokumente zu finden."
+                },
+                "pinned": {
+                    "title": "Angepinnte Dokumente öffnen",
+                    "body": "Angepinnte Dokumente findest du hier, wenn du die nötigen Berechtigungen hast. Auf kleineren Bildschirmen öffnet die Schaltfläche \"Angepinnt\" diese Leiste, auf größeren Bildschirmen erscheint sie als Seitenleiste."
+                },
+                "actions": {
+                    "title": "Dokumentaktionen",
+                    "body": "Wähle ein Dokument, um es zu prüfen, anzupinnen, zu bearbeiten oder zur Genehmigung einzureichen."
+                },
+                "finish": {
+                    "title": "Dokument weiter bearbeiten",
+                    "body": "Aktionen und Genehmigungsoptionen werden nur mit den nötigen Berechtigungen angezeigt."
+                }
+            }
+        },
+        "documents_approval": {
+            "title": "Dokument genehmigen oder ablehnen",
+            "description": "Lerne, ein sichtbares Dokument zu prüfen und eine Genehmigungsentscheidung zu treffen.",
+            "steps": {
+                "intro": {
+                    "title": "Eine Dokumentgenehmigung prüfen",
+                    "body": "Für diese Anleitung wurde ein veröffentlichtes Dokument geöffnet, das du sehen darfst. Die Genehmigungsoptionen hängen vom Dokument und deinen Zugriffsrechten ab."
+                },
+                "actions": {
+                    "title": "Dokumentaktionen öffnen",
+                    "body": "In der Aktionsleiste findest du den Genehmigungseintrag. Mit der Schaltfläche in der Anleitung kannst du die Genehmigungsübersicht für dieses Dokument öffnen.",
+                    "action": "Genehmigungsübersicht öffnen"
+                },
+                "approval_panel": {
+                    "title": "Genehmigungsübersicht prüfen",
+                    "body": "Prüfe die Genehmigungsrichtlinie, bestehende Genehmigungen und zugewiesene Aufgaben, bevor du eine Entscheidung triffst."
+                },
+                "decision_buttons": {
+                    "title": "Genehmigen oder ablehnen",
+                    "body": "Genehmigen bestätigt das Dokument, Ablehnen weist es zurück. Je nach Richtlinie kann für die Genehmigung eine Unterschrift und für die Ablehnung eine Begründung erforderlich sein. Diese Anleitung übermittelt keine Entscheidung."
+                },
+                "finish": {
+                    "title": "Informierte Entscheidungen treffen",
+                    "body": "Prüfe Richtlinie und Aufgaben, lies das Dokument und ergänze vor der Genehmigung oder Ablehnung die erforderliche Unterschrift oder Begründung."
+                }
+            }
+        },
+        "job_management": {
+            "title": "Eigenverwaltung im Beruf",
+            "description": "Verwalte in der Beruf-Übersicht deine Abwesenheit und dein Profilbild und erkunde die verfügbaren Jobbereiche.",
+            "steps": {
+                "intro": {
+                    "title": "Eigenverwaltung",
+                    "body": "In der Eigenverwaltung findest du persönliche Aktionen sowie die Jobbereiche, für die du berechtigt bist."
+                },
+                "navigation": {
+                    "title": "Was du im Beruf sehen kannst",
+                    "body": "Über diese Tabs kannst du die Übersicht, Kollegen und Aktivitäten aufrufen. Je nach deinen Berechtigungen stehen dir außerdem Zeiterfassung, Führungsregister und Gruppen zur Verfügung."
+                },
+                "absence": {
+                    "title": "Deine Abwesenheit festlegen",
+                    "body": "Wenn du die Berechtigung hast, kannst du hier deine Abwesenheitszeiten, zum Beispiel deinen Urlaub, festlegen oder entfernen."
+                },
+                "profile_picture": {
+                    "title": "Dein Profilbild festlegen",
+                    "body": "Mit dieser Schaltfläche kannst du dein eigenes Profilbild hochladen, ersetzen oder entfernen."
+                },
+                "finish": {
+                    "title": "In deinem Tempo erkunden",
+                    "body": "Du kannst jederzeit zur Beruf-Übersicht zurückkehren und die anderen verfügbaren Tabs erkunden."
+                }
+            }
+        },
+        "calendar_workflow": {
+            "title": "Kalendereinträge verwalten",
+            "description": "Einträge erstellen, Personen einladen, ändern oder absagen.",
+            "steps": {
+                "intro": {
+                    "title": "Kalendereinträge",
+                    "body": "Der Kalender hilft dir, Arbeit zu planen und Einträge zu teilen."
+                },
+                "create": {
+                    "title": "Eintrag erstellen",
+                    "body": "Wähle Formular öffnen, um das Eintragsfenster zu öffnen, und ergänze Titel, Zeit und Ort.",
+                    "action": "Formular öffnen"
+                },
+                "invitees": {
+                    "title": "Teilnehmer hinzufügen",
+                    "body": "Wähle Teilnehmer und prüfe ihre Antworten beim Bearbeiten."
+                },
+                "finish": {
+                    "title": "Eintrag verwalten",
+                    "body": "Öffne Einträge später, um sie zu ändern, Antworten zu prüfen oder abzusagen."
+                }
+            }
+        },
+        "qualifications_workflow": {
+            "title": "Mit Qualifikationen arbeiten",
+            "description": "Anforderungen, Prüfungen, Bewertungen und Genehmigungen finden.",
+            "steps": {
+                "intro": {
+                    "title": "Qualifikationen",
+                    "body": "Qualifikationen zeigen verfügbare oder erforderliche Schulungen und Genehmigungen."
+                },
+                "your_qualifications": {
+                    "title": "Ihre Qualifizierungen",
+                    "body": "In diesem Tab sehen Sie Qualifizierungen, die Sie bereits abgeschlossen haben, sowie Qualifizierungen, die Sie angefragt haben oder derzeit absolvieren."
+                },
+                "all_qualifications": {
+                    "title": "Alle Qualifizierungen",
+                    "body": "In diesem Tab können Sie aktiv nach verfügbaren Qualifizierungen suchen. Öffnen Sie eine Qualifizierung, um Anforderungen zu prüfen und zu sehen, ob Sie sie ablegen oder anfragen können."
+                },
+                "find": {
+                    "title": "Qualifikation finden",
+                    "body": "Verwenden Sie das Suchfeld und die Liste, um eine Qualifizierung zum Ablegen oder Anfragen zu finden."
+                },
+                "review": {
+                    "title": "Anforderungen und Prüfungen prüfen",
+                    "body": "Öffne eine Qualifikation, um Anforderungen, Prüfungen und Ergebnisse zu sehen."
+                },
+                "finish": {
+                    "title": "Genehmigung verfolgen",
+                    "body": "Reiche Fortschritte ein oder prüfe sie gemäß dem verfügbaren Ablauf."
+                }
+            }
+        },
+        "wiki_workflow": {
+            "title": "Wiki verwenden",
+            "description": "Die Wissensbasis durchsuchen und pflegen.",
+            "steps": {
+                "intro": {
+                    "title": "Wiki",
+                    "body": "Das Wiki organisiert Jobwissen in Seiten und einer übersichtlichen Hierarchie."
+                },
+                "search": {
+                    "title": "Wiki durchsuchen",
+                    "body": "Finde Seiten über die Suche, ohne die gesamte Hierarchie zu öffnen."
+                },
+                "select_wiki": {
+                    "title": "Ein Wiki auswählen",
+                    "body": "Wenn verfügbar, öffnet der Guide das Wiki deines Jobs, ansonsten das erste verfügbare Wiki und dessen erste Seite."
+                },
+                "sidebar": {
+                    "title": "Wiki-Navigation",
+                    "body": "Nutze die Seitenleiste, um durch die Seitenhierarchie zu navigieren und verwandte Wiki-Seiten zu öffnen."
+                },
+                "content": {
+                    "title": "Inhalt der Wiki-Seite",
+                    "body": "Im Inhaltsbereich siehst du die ausgewählte Seite mit Details sowie verfügbaren Verknüpfungen und Anhängen."
+                },
+                "finish": {
+                    "title": "Erstellen und bearbeiten",
+                    "body": "Mit den nötigen Rechten kannst du Seiten erstellen, bearbeiten, Dateien anhängen und Berechtigungen verwalten."
+                }
+            }
+        },
+        "vehicle_lookup": {
+            "title": "Fahrzeugsuche",
+            "description": "Fahrzeuge suchen und Verknüpfungen zu Haltern und Bürgern verfolgen.",
+            "steps": {
+                "intro": {
+                    "title": "Fahrzeug finden",
+                    "body": "Nutze die Fahrzeugsuche für Kennzeichen und verknüpfte Einträge."
+                },
+                "search": {
+                    "title": "Suchen und filtern",
+                    "body": "Suche nach verfügbaren Fahrzeugdaten und grenze die Treffer mit Filtern ein."
+                },
+                "profile": {
+                    "title": "Fahrzeugprofil öffnen",
+                    "body": "Wähle ein Ergebnis, um Profil, Halter, verknüpfte Bürger und Aktionen zu prüfen."
+                },
+                "finish": {
+                    "title": "Fahrzeugdaten prüfen",
+                    "body": "Angezeigte Aktionen und Verknüpfungen hängen von deinen Berechtigungen ab."
+                }
+            }
+        },
+        "documents_create": {
+            "title": "Dokument erstellen",
+            "description": "Ein leeres Dokument oder eine Vorlage verwenden.",
+            "steps": {
+                "intro": {
+                    "title": "Dokument erstellen",
+                    "body": "Dokumente können als leere Seite oder anhand einer wiederverwendbaren Vorlage erstellt werden. Diese Anleitung zeigt beide Möglichkeiten."
+                },
+                "open_chooser": {
+                    "title": "Erstellungsart auswählen",
+                    "body": "Mit der Schaltfläche zum Erstellen eines Dokuments öffnest du die Vorlagenauswahl. Dort kannst du zwischen einem leeren Dokument und den für deinen Job verfügbaren Vorlagen wählen."
+                },
+                "blank": {
+                    "title": "Leeres Dokument beginnen",
+                    "body": "Wähle \"Ohne Vorlage\" aus, um ein neues leeres Dokument direkt im Editor zu öffnen. Das eignet sich für einmalige Dokumente."
+                },
+                "template": {
+                    "title": "Vorlage verwenden",
+                    "body": "Die verfügbaren Vorlagen verwenden Strukturen und Inhalte für häufige Dokumente wieder. Welche Vorlagen hier angezeigt werden, hängt von deinen Berechtigungen und deinem Job ab."
+                },
+                "template_requirements": {
+                    "title": "Vorlagenanforderungen prüfen",
+                    "body": "Einige Vorlagen benötigen zusätzliche Informationen, bevor das Dokument erstellt werden kann. Wähle je nach Vorlage die erforderlichen Bürger, Dokumente oder Fahrzeuge aus der Zwischenablage aus."
+                },
+                "finish": {
+                    "title": "Speichern und veröffentlichen",
+                    "body": "Neue Dokumente beginnen als Entwürfe. Füge Inhalte im Editor hinzu, prüfe sie, speichere deine Arbeit und veröffentliche das Dokument, wenn es bereit ist."
+                }
+            }
+        },
+        "livemap_basics": {
+            "title": "Die Livemap verwenden",
+            "description": "Lerne die Kartensteuerung, Suchfelder, Ebenen und Anzeigeeinstellungen kennen.",
+            "steps": {
+                "intro": {
+                    "title": "Die Livemap entdecken",
+                    "body": "Mit der Livemap kannst du Orte finden und die für dich verfügbaren Informationen verfolgen. Diese Anleitung zeigt die wichtigsten Bedienelemente."
+                },
+                "zoom": {
+                    "title": "Zoom-Steuerung",
+                    "body": "Verwende die Plus- und Minus-Schaltflächen, um den Kartenausschnitt zu vergrößern oder zu verkleinern. Die Zahl dazwischen zeigt die aktuelle Zoomstufe."
+                },
+                "layers": {
+                    "title": "Kartenebenen",
+                    "body": "Öffne das Ebenenmenü, um zwischen Postleitzahl- und Satellitenkarte zu wechseln und verfügbare Kartenebenen ein- oder auszublenden."
+                },
+                "postal_search": {
+                    "title": "Nach Postleitzahl suchen",
+                    "body": "Verwende die Postleitzahlensuche, um eine Postleitzahl zu finden und die Karte dort zu zentrieren. Diese Suche ist auf der Livemap verfügbar."
+                },
+                "employee_search": {
+                    "title": "Nach Kollegen suchen",
+                    "body": "Wenn dir Kollegenpositionen zur Verfügung stehen, kannst du hier nach ihnen suchen und die angezeigten Kollegen auf der Karte filtern."
+                },
+                "dispatch_search": {
+                    "title": "Einsätze suchen",
+                    "body": "Wenn du Zugriff auf Einsätze hast, kannst du hier nach Einsatznummer, Nachricht oder Ersteller suchen."
+                },
+                "settings": {
+                    "title": "Karteneinstellungen",
+                    "body": "Öffne das Einstellungsmenü für zusätzliche Optionen wie Markergröße, Zentrierung ausgewählter Marker, Einheitenamen und Status, Raster und Markerfarben."
+                },
+                "finish": {
+                    "title": "Auf der Karte bewegen",
+                    "body": "Die Karte ist jetzt vollständig sichtbar. Ziehe sie mit dem Cursor oder der Maus, um dich umzusehen, und verwende die Zoom-Steuerung, um den Bereich zu erkunden. Verfügbare Suchen und Ebenen hängen von deinen Berechtigungen und deinem Jobzugriff ab."
+                }
+            }
+        },
+        "centrum_basics": {
+            "title": "Die Einsatzleiste verwenden",
+            "description": "Lerne, einer Einheit beizutreten, Einsätze zu bearbeiten sowie Einheiten- und Einsatzstatus zu aktualisieren.",
+            "steps": {
+                "intro": {
+                    "title": "Willkommen in der Einsatzleiste",
+                    "body": "Die Einsatzleiste ist dein Arbeitsbereich, um einer Einheit beizutreten, Einsätze zu erhalten und den Status deiner Einheit und Einsätze aktuell zu halten."
+                },
+                "membership_button": {
+                    "title": "Einheitenauswahl öffnen",
+                    "body": "Mit dieser Schaltfläche öffnest du die Einheitenauswahl. Dort siehst du deine aktuelle Einheit und kannst einer Einheit beitreten oder sie verlassen."
+                },
+                "membership_dialog": {
+                    "title": "Eine Einheit auswählen",
+                    "body": "Die Auswahl zeigt dir Einheiten, denen du beitreten kannst. Wähle eine Einheit aus oder verlasse deine Einheit, wenn du fertig bist."
+                },
+                "unit_status": {
+                    "title": "Status deiner Einheit",
+                    "body": "Diese Schaltflächen gehören zu deiner Einheit. Zeige damit, ob deine Einheit verfügbar, beschäftigt, in einer Pause oder nicht verfügbar ist."
+                },
+                "take_dispatch": {
+                    "title": "Eingehende Einsätze annehmen",
+                    "body": "Die Einsatz-Schaltfläche öffnet eingehende Einsätze. Wähle die Einsätze aus, die du bearbeiten möchtest, und wähle dann Annehmen oder Ablehnen."
+                },
+                "own_dispatches": {
+                    "title": "Deine zugewiesenen Einsätze",
+                    "body": "Von deiner Einheit angenommene Einsätze erscheinen hier. Wähle einen aus, um ihn als aktiven Einsatz festzulegen, oder zentriere die Karte mit der Kartenschaltfläche auf seinen Standort."
+                },
+                "dispatch_status": {
+                    "title": "Status des ausgewählten Einsatzes",
+                    "body": "Diese Schaltflächen gehören zum ausgewählten Einsatz, nicht zu deiner Einheit. Wähle zuerst einen zugewiesenen Einsatz aus und aktualisiere ihn dann während der Anfahrt, vor Ort, bei Unterstützungsbedarf und nach Abschluss."
+                },
+                "finish": {
+                    "title": "Centrum aktuell halten",
+                    "body": "Tritt der richtigen Einheit bei, halte ihren Status aktuell, nimm die von dir bearbeiteten Einsätze an und aktualisiere den ausgewählten Einsatz, während die Arbeit voranschreitet."
+                }
+            }
+        },
+        "calendar_basics": {
+            "title": "Den Kalender entdecken",
+            "description": "Lerne, dich im Kalender zu bewegen, Kalender auszuwählen und Erinnerungen zu verwalten.",
+            "steps": {
+                "intro": {
+                    "title": "Willkommen im Kalender",
+                    "body": "Der Kalender vereint die persönlichen, beruflichen und öffentlichen Kalender, die dir zur Verfügung stehen. Diese Anleitung zeigt das Durchsuchen und Auswählen von Kalendern."
+                },
+                "navigation": {
+                    "title": "Durch Datumsbereiche navigieren",
+                    "body": "Verwende die Schaltflächen für den vorherigen und nächsten Zeitraum, um dich in der aktuellen Ansicht zu bewegen. Mit Heute kehrst du zum aktuellen Datum zurück."
+                },
+                "view": {
+                    "title": "Kalenderansicht auswählen",
+                    "body": "Wechsle zwischen Tages-, Wochen-, Monats- und Agenda-Ansicht, je nachdem wie viele Details du sehen möchtest."
+                },
+                "calendar_list": {
+                    "title": "Kalender auswählen",
+                    "body": "Verwende die Kalenderliste, um die verfügbaren persönlichen und beruflichen Kalender ein- oder auszublenden. Wähle einen Kalendernamen aus, um seine Details zu sehen."
+                },
+                "public_calendars": {
+                    "title": "Öffentliche Kalender finden",
+                    "body": "Mit Kalender suchen öffnest du öffentlich verfügbare Kalender. Dort kannst du Kalender abonnieren, die du zu deiner Liste hinzufügen möchtest."
+                },
+                "date_picker": {
+                    "title": "Zu einem Datum springen",
+                    "body": "Verwende den Datumsauswahlschalter, um direkt zu einem bestimmten Tag zu springen. Der Hauptkalender wird auf dieses Datum aktualisiert."
+                },
+                "reminders": {
+                    "title": "Kalendererinnerungen",
+                    "body": "Du kannst die Erinnerungszeiten unter Benutzereinstellungen → Benachrichtigungen → Kalender-Benachrichtigungen auswählen. Das gilt für Termine, auf die du mit Ja oder Vielleicht geantwortet hast."
+                },
+                "finish": {
+                    "title": "Den Kalender erkunden",
+                    "body": "Der Kalender ist jetzt bereit. Durchsuche Datumsbereiche, wähle die gewünschten Kalender aus und öffne einen Termin, um seine Details zu sehen."
+                }
+            }
+        },
+        "mailer_basics": {
+            "title": "E-Mail verwenden",
+            "description": "Lerne, E-Mails zu durchsuchen, zu finden und zu verfassen.",
+            "steps": {
+                "intro": {
+                    "title": "Willkommen bei E-Mail",
+                    "body": "E-Mails sind in Postfächern und Unterhaltungen organisiert. Diese Anleitung zeigt die wichtigsten Werkzeuge zum Finden und Senden von Nachrichten."
+                },
+                "email_name": {
+                    "title": "Namen für deine E-Mail auswählen",
+                    "body": "Wähle den Namensteil vor dem {'@'} aus. Die verfügbaren Vorschläge basieren auf deinem Konto und deinem Job."
+                },
+                "create_email": {
+                    "title": "E-Mail-Adresse erstellen",
+                    "body": "Bestätige die Adresse und wähle Erstellen. Deine persönliche E-Mail-Adresse wird erstellt und du kehrst zu E-Mail zurück, um die Anleitung fortzusetzen."
+                },
+                "mailbox": {
+                    "title": "Postfach auswählen",
+                    "body": "Deine verfügbare E-Mail-Adresse wird automatisch ausgewählt. Wenn du Zugriff auf mehrere Adressen hast, kannst du hier zwischen den Postfächern wechseln."
+                },
+                "filters": {
+                    "title": "Unterhaltungen filtern",
+                    "body": "Verwende Alle, Ungelesen und Archiv, um die Liste auf die benötigten Nachrichten zu beschränken."
+                },
+                "search": {
+                    "title": "E-Mails durchsuchen",
+                    "body": "Durchsuche deine Nachrichten, um eine Unterhaltung anhand ihres Inhalts oder Titels zu finden."
+                },
+                "compose": {
+                    "title": "Unterhaltung verfassen",
+                    "body": "Starte hier eine neue Unterhaltung. Füge Empfänger hinzu, schreibe deine Nachricht, hänge unterstützte Anhänge an und sende sie ab."
+                },
+                "templates": {
+                    "title": "Vorlagen verwenden",
+                    "body": "Öffne deine verfügbaren Vorlagen über die Fußzeile, um beim Verfassen von E-Mails häufige Nachrichten wiederzuverwenden."
+                },
+                "threads": {
+                    "title": "Deine Unterhaltungen durchsuchen",
+                    "body": "Deine Unterhaltungen werden hier aufgelistet. Wähle eine Unterhaltung aus, um sie zu öffnen, und wechsle anschließend mit den Pfeiltasten ↑ und ↓ zwischen den Unterhaltungen.",
+                    "action": "Erste Unterhaltung öffnen"
+                },
+                "thread_actions": {
+                    "title": "Geöffnete Unterhaltung verwalten",
+                    "body": "Mit diesen Aktionen kannst du die Unterhaltung als gelesen oder wichtig markieren, mit einem Stern markieren, stummschalten oder archivieren."
+                },
+                "finish": {
+                    "title": "Schnell zwischen Unterhaltungen wechseln",
+                    "body": "Mit den Pfeiltasten ↑ und ↓ wechselst du zur vorherigen oder nächsten Unterhaltung."
+                }
+            }
+        },
+        "mailer_advanced": {
+            "title": "E-Mail-Einstellungen verwalten",
+            "description": "Lerne E-Mail-Adressen, Zugriff, Blockierungen, Adressbuch und Signaturen kennen.",
+            "steps": {
+                "intro": {
+                    "title": "Erweiterte E-Mail-Einstellungen",
+                    "body": "Mit der E-Mail-Verwaltung können berechtigte Benutzer E-Mail-Adressen und deren Einstellungen konfigurieren."
+                },
+                "select_email": {
+                    "title": "E-Mail-Adresse auswählen",
+                    "body": "Wähle zuerst eine Adresse aus, damit Zugriff, Blockierungen, Adressbuch und Signatur bearbeitet werden können.",
+                    "action": "Erste Adresse auswählen"
+                },
+                "addresses": {
+                    "title": "E-Mail-Adressen verwalten",
+                    "body": "Wähle eine vorhandene Adresse zum Bearbeiten oder erstelle eine neue Adresse, wenn du die nötigen Berechtigungen hast."
+                },
+                "access": {
+                    "title": "Zugriff für Job-E-Mails",
+                    "body": "Persönliche E-Mail-Adressen gehören dir und haben keine Zugriffskontrolle. Für Job-E-Mail-Adressen gibt es hier separate Zugriffseinstellungen, mit denen du festlegst, welche Bürger, Jobs und Qualifizierungen die Adresse verwenden können."
+                },
+                "blocked": {
+                    "title": "Blockierte Adressen verwalten",
+                    "body": "Füge E-Mail-Adressen zur Blockliste hinzu, damit unerwünschte Nachrichten diese Adresse nicht erreichen."
+                },
+                "address_book": {
+                    "title": "Adressbuch",
+                    "body": "Das Adressbuch speichert Empfänger zum schnelleren Verfassen. Berechtigte Benutzer können es hier leeren."
+                },
+                "signature": {
+                    "title": "Signatur festlegen",
+                    "body": "Verfasse eine Signatur, die neuen Nachrichten dieser Adresse hinzugefügt wird. Speichere das Formular, wenn die Einstellungen fertig sind."
+                },
+                "finish": {
+                    "title": "E-Mail ist eingerichtet",
+                    "body": "Verwende die E-Mail-Verwaltung, wenn du eine Adresse oder ihre Einstellungen aktualisieren möchtest. Kehre zum Postfach zurück, um Nachrichten zu lesen und zu senden."
+                }
+            }
+        }
+    },
     "pages": {
         "index": {
             "welcome": "Willkommen bei FiveNet!",
@@ -399,6 +974,7 @@
         "playtime": "Spielzeit",
         "choose": "Auswählen",
         "clipboard": "Zwischenablage",
+        "personal_productivity": "Persönliche Produktivität",
         "select": "Auswählen | Ausgewählt",
         "title": "Titel",
         "creator": "Ersteller",
@@ -1142,12 +1718,7 @@
                 }
             },
             "templates": {
-                "modal": {
-                    "no_template": "Ohne Vorlage"
-                },
-                "templates_modal": {
-                    "no_template": "Ohne Vorlage"
-                }
+                "no_template": "Ohne Vorlage"
             },
             "activity_list": {
                 "legend": {

@@ -3,6 +3,7 @@ import AddToButton from '~/components/clipboard/AddToButton.vue';
 import List from '~/components/documents/activity/List.vue';
 import Comments from '~/components/documents/comments/Comments.vue';
 import { checkDocAccess } from '~/components/documents/helpers';
+import { HELP_GUIDE_ACTION_EVENT, type HelpGuideActionDetail } from '~/composables/useHelpGuides';
 import References from '~/components/documents/References.vue';
 import Relations from '~/components/documents/Relations.vue';
 import RequestAccess from '~/components/documents/requests/RequestAccess.vue';
@@ -157,6 +158,7 @@ const canDo = computed(() => ({
 
 const requestDrawer = overlay.create(RequestDrawer);
 const approvalDrawer = overlay.create(ApprovalDrawer);
+const approvalDrawerOpen = ref(false);
 
 const hash = useRouteHash('', { mode: 'push' });
 
@@ -174,24 +176,48 @@ async function openRequestsDrawer(): Promise<void> {
     hash.value = `#requests`;
 }
 
-async function openApprovalDrawer(): Promise<void> {
+async function openApprovalDrawer(modal = true): Promise<void> {
+    if (approvalDrawerOpen.value || doc.value?.document === undefined) return;
+
+    approvalDrawerOpen.value = true;
     approvalDrawer
         .open({
             documentId: props.documentId,
             docCreatorId: doc.value?.document?.creatorId,
-            docMeta: doc.value!.document!.meta,
+            docMeta: doc.value.document.meta,
             canEdit: canDo.value.contentUpdate,
+            modal,
+            disableDecisions: !modal,
             'onUpdate:docMeta': ($event) => {
                 if (doc.value?.document) doc.value.document.meta = $event;
             },
         })
         .then(() => (hash.value = ''))
         .finally(() => {
+            approvalDrawerOpen.value = false;
             hash.value = '';
         });
 
     hash.value = `#approvals`;
 }
+
+function onHelpGuideAction(event: Event): void {
+    const action = event instanceof CustomEvent ? (event.detail as HelpGuideActionDetail | undefined) : undefined;
+    if (!action) return;
+
+    if (action.actionId === 'documents-open-approval-drawer' && (action.phase === 'enter' || action.phase === 'trigger')) {
+        void openApprovalDrawer(false);
+    }
+
+    if (action.actionId === 'documents-close-approval-drawer' && action.phase === 'leave') {
+        approvalDrawer.close();
+        approvalDrawerOpen.value = false;
+        hash.value = '';
+    }
+}
+
+onMounted(() => window.addEventListener(HELP_GUIDE_ACTION_EVENT, onHelpGuideAction));
+onBeforeUnmount(() => window.removeEventListener(HELP_GUIDE_ACTION_EVENT, onHelpGuideAction));
 
 async function handleHash(): Promise<void> {
     if (hash.value === undefined || hash.value === null) return;
@@ -480,6 +506,7 @@ const actionItems = computed<ResponsiveActionEntry[]>(() => {
                 : t('common.approve'),
             icon: 'i-mdi-approval',
             disabled: !!doc.value.document?.meta?.draft,
+            kbds: ['D', 'A'],
             color: 'neutral',
             onClick: () => {
                 void openApprovalDrawer();
@@ -585,7 +612,7 @@ const reminderDrawer = overlay.create(ReminderDrawer, { props: { documentId: pro
                 </template>
             </UDashboardNavbar>
 
-            <UDashboardToolbar v-if="doc && actionItems.length" class="p-1 print:hidden">
+            <UDashboardToolbar v-if="doc && actionItems.length" data-tour="documents-action-toolbar" class="p-1 print:hidden">
                 <ResponsiveActions :items="actionItems" :label="$t('common.action', 2)" />
             </UDashboardToolbar>
 

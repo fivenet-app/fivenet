@@ -60,6 +60,7 @@ const dispatchersLabel = computed(() =>
         <template v-if="!hideJoin">
             <UTooltip :text="`${$t('common.join', 1)}/ ${$t('common.leave', 1)}`" :kbds="['C', 'Q']">
                 <UButton
+                    data-tour="dispatch-center-join"
                     :disabled="!canSubmit"
                     :loading="isSubmitting"
                     :icon="!isDispatcher ? 'i-mdi-location-enter' : 'i-mdi-location-exit'"

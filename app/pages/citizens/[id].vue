@@ -196,7 +196,12 @@ const isOpen = ref<boolean>(false);
             </UDashboardToolbar>
 
             <UDashboardToolbar v-if="user" class="overflow-x-auto">
-                <UNavigationMenu class="-mx-1 min-w-max flex-1" orientation="horizontal" :items="items" />
+                <UNavigationMenu
+                    data-tour="citizen-profile-tabs"
+                    class="-mx-1 min-w-max flex-1"
+                    orientation="horizontal"
+                    :items="items"
+                />
             </UDashboardToolbar>
         </template>
 
@@ -221,6 +226,7 @@ const isOpen = ref<boolean>(false);
     <UDashboardPanel
         v-if="!isMobile"
         id="citizen-id-actions"
+        data-tour="citizen-profile-actions"
         class="bg-elevated/25"
         resizable
         :default-size="23"

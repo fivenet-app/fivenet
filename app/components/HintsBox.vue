@@ -5,8 +5,9 @@ const { discord } = useAppConfig();
 
 const settingsStore = useSettingsStore();
 const { eventsShowSnowflakes } = storeToRefs(settingsStore);
+const { startGuide } = useHelpGuides();
 
-type Hint = { key: string; keyboard?: boolean; to?: RoutesNamedLocations; hide?: boolean };
+type Hint = { key: string; keyboard?: boolean; to?: RoutesNamedLocations; guide?: string; hide?: boolean };
 
 const hints = computed(() =>
     shuffleArray(
@@ -21,6 +22,7 @@ const hints = computed(() =>
             },
             {
                 key: 'overview_quick_access',
+                guide: 'overview-quick-access',
             },
             {
                 key: 'sociallogin_discord',
@@ -35,6 +37,10 @@ const hints = computed(() =>
         ].flatMap((h) => (!h.hide ? [h] : [])) as Hint[],
     ),
 );
+
+function startHintGuide(guide?: string): void {
+    if (guide) void startGuide(guide);
+}
 </script>
 
 <template>
@@ -66,9 +72,15 @@ const hints = computed(() =>
                         {{ $t(`components.hints.${hint.key}.content`) }}
                     </p>
 
-                    <div v-if="hint.keyboard || hint.to" class="shrink-0">
+                    <div v-if="hint.keyboard || hint.to || hint.guide" class="shrink-0">
                         <UKbd v-if="hint.keyboard" size="md" :value="$t(`components.hints.${hint.key}.keyboard`)" />
                         <UButton v-else-if="hint.to" size="sm" :to="hint.to" :label="$t('components.hints.click_me')" />
+                        <UButton
+                            v-else-if="hint.guide"
+                            size="sm"
+                            :label="$t('components.hints.click_me')"
+                            @click="startHintGuide(hint.guide)"
+                        />
                     </div>
                 </div>
             </div>

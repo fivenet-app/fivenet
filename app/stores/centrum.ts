@@ -32,6 +32,20 @@ const initialReconnectBackoffTime = 0.75;
 
 export type canDoAction = 'TakeControl' | 'TakeDispatch' | 'AssignDispatch' | 'UpdateDispatchStatus' | 'UpdateUnitStatus';
 
+type CentrumDemoSnapshot = {
+    settings: Settings | undefined;
+    acls: EffectiveAccess | undefined;
+    dispatchers: Dispatchers[];
+    feed: (DispatchStatus | UnitStatus)[];
+    isDispatcher: boolean;
+    isCenter: boolean;
+    units: Map<number, Unit>;
+    dispatches: Map<number, Dispatch>;
+    ownUnitId: number | undefined;
+    ownDispatches: number[];
+    pendingDispatches: number[];
+};
+
 type ProjectionRevision = {
     revision: number;
     deletedAt?: number;
@@ -68,6 +82,20 @@ export const useCentrumStore = defineStore(
         const ownDispatches = ref<number[]>([]);
         const pendingDispatches = ref<number[]>([]);
         const pendingDispatchExpiryTimers = new Map<number, ReturnType<typeof setTimeout>>();
+        const isDemo = ref(false);
+        let demoSnapshot: CentrumDemoSnapshot | undefined;
+
+        const demoUnitId = -910001;
+        const demoSecondUnitId = -910002;
+        const demoDispatchId = -920001;
+        const demoAssignedDispatchId = -920002;
+
+        const demoTimestamp = (): Timestamp => ({
+            timestamp: {
+                seconds: Math.floor(Date.now() / 1000),
+                nanos: 0,
+            },
+        });
 
         const dispatchSOS = useSounds('dispatch.dispatchSOS');
         const dispatchAssigned = useSounds('dispatch.dispatchAssigned');
@@ -636,6 +664,216 @@ export const useCentrumStore = defineStore(
             pendingDispatches.value = pending;
         };
 
+        const beginDemoSession = (): void => {
+            if (isDemo.value) return;
+
+            const { activeChar } = useAuth();
+            const job = activeChar.value?.job ?? '';
+            const now = demoTimestamp();
+            const unit: Unit = {
+                id: demoUnitId,
+                job,
+                jobLabel: activeChar.value?.jobLabel,
+                sortOrder: 1,
+                name: 'Demo Unit One',
+                initials: 'D1',
+                color: '#2563eb',
+                icon: 'i-mdi-car-emergency',
+                description: 'Example unit for the Centrum guide.',
+                homePostal: '123',
+                users: [],
+                status: {
+                    id: 1,
+                    createdAt: now,
+                    unitId: demoUnitId,
+                    status: StatusUnit.AVAILABLE,
+                },
+            };
+            const secondUnit: Unit = {
+                id: demoSecondUnitId,
+                job,
+                jobLabel: activeChar.value?.jobLabel,
+                sortOrder: 2,
+                name: 'Demo Unit Two',
+                initials: 'D2',
+                color: '#16a34a',
+                icon: 'i-mdi-car',
+                description: 'A second example unit.',
+                users: [],
+                status: {
+                    id: 1,
+                    createdAt: now,
+                    unitId: demoSecondUnitId,
+                    status: StatusUnit.AVAILABLE,
+                },
+            };
+            const dispatch: Dispatch = {
+                id: demoDispatchId,
+                job,
+                jobs: { jobs: [{ name: job, label: activeChar.value?.jobLabel ?? job }] },
+                createdAt: now,
+                message: 'Example incoming dispatch',
+                description: 'This dispatch is part of the Centrum guide.',
+                x: 0,
+                y: 0,
+                postal: '123',
+                anon: false,
+                units: [
+                    {
+                        dispatchId: demoDispatchId,
+                        unitId: demoUnitId,
+                        unit,
+                        createdAt: now,
+                        expiresAt: {
+                            timestamp: {
+                                seconds: Math.floor(Date.now() / 1000) + 15 * 60,
+                                nanos: 0,
+                            },
+                        },
+                    },
+                ],
+                status: {
+                    id: 1,
+                    createdAt: now,
+                    dispatchId: demoDispatchId,
+                    status: StatusDispatch.NEW,
+                },
+            };
+            const assignedDispatch: Dispatch = {
+                ...dispatch,
+                id: demoAssignedDispatchId,
+                message: 'Example assigned dispatch',
+                units: [{ ...dispatch.units[0]!, expiresAt: undefined }],
+                status: {
+                    ...dispatch.status!,
+                    dispatchId: demoAssignedDispatchId,
+                    status: StatusDispatch.EN_ROUTE,
+                },
+            };
+
+            const { activeChar: currentCharacter } = useAuth();
+            if (currentCharacter.value?.userId !== undefined) {
+                unit.users.push({ unitId: demoUnitId, userId: currentCharacter.value.userId });
+            }
+
+            demoSnapshot = {
+                settings: settings.value,
+                acls: acls.value,
+                dispatchers: dispatchers.value,
+                feed: feed.value,
+                isDispatcher: isDispatcher.value,
+                isCenter: isCenter.value,
+                units: units.value,
+                dispatches: dispatches.value,
+                ownUnitId: ownUnitId.value,
+                ownDispatches: [...ownDispatches.value],
+                pendingDispatches: [...pendingDispatches.value],
+            };
+
+            clearPendingDispatchExpiries();
+            isDemo.value = true;
+            settings.value = {
+                ...(settings.value ?? {}),
+                job,
+                enabled: true,
+                mode: CentrumMode.SIMPLIFIED,
+                fallbackMode: CentrumMode.SIMPLIFIED,
+                type: CentrumType.DISPATCH,
+                public: false,
+            };
+            dispatchers.value = [];
+            feed.value = [];
+            units.value = new Map([
+                [unit.id, unit],
+                [secondUnit.id, secondUnit],
+            ]);
+            dispatches.value = new Map([
+                [dispatch.id, dispatch],
+                [assignedDispatch.id, assignedDispatch],
+            ]);
+            ownUnitId.value = demoUnitId;
+            ownDispatches.value = [demoAssignedDispatchId];
+            pendingDispatches.value = [demoDispatchId];
+        };
+
+        const endDemoSession = async (restartStreamAfter = true): Promise<void> => {
+            if (!isDemo.value || !demoSnapshot) return;
+
+            const snapshot = demoSnapshot;
+            demoSnapshot = undefined;
+            clearPendingDispatchExpiries();
+            settings.value = snapshot.settings;
+            acls.value = snapshot.acls;
+            dispatchers.value = snapshot.dispatchers;
+            feed.value = snapshot.feed;
+            isDispatcher.value = snapshot.isDispatcher;
+            isCenter.value = snapshot.isCenter;
+            units.value = snapshot.units;
+            dispatches.value = snapshot.dispatches;
+            ownUnitId.value = snapshot.ownUnitId;
+            ownDispatches.value = snapshot.ownDispatches;
+            pendingDispatches.value = snapshot.pendingDispatches;
+            isDemo.value = false;
+
+            if (restartStreamAfter && abort.value && !abort.value.signal.aborted) {
+                await restartStream();
+            }
+        };
+
+        const joinDemoUnit = (id: number): void => {
+            if (!isDemo.value) return;
+            const unit = units.value.get(id);
+            if (!unit) return;
+
+            const { activeChar } = useAuth();
+            const userId = activeChar.value?.userId;
+            if (userId !== undefined && !unit.users.some((user) => user.userId === userId)) {
+                unit.users.push({ unitId: id, userId });
+            }
+            setOwnUnit(id);
+            pendingDispatches.value = [demoDispatchId];
+        };
+
+        const leaveDemoUnit = (): void => {
+            if (!isDemo.value) return;
+            const unit = getOwnUnit.value;
+            const { activeChar } = useAuth();
+            if (unit && activeChar.value?.userId !== undefined) {
+                unit.users = unit.users.filter((user) => user.userId !== activeChar.value?.userId);
+            }
+            setOwnUnit(undefined);
+            ownDispatches.value = [];
+            pendingDispatches.value = [];
+        };
+
+        const takeDemoDispatches = (ids: number[], response: TakeDispatchResp): void => {
+            if (!isDemo.value) return;
+
+            ids.forEach((id) => {
+                if (response === TakeDispatchResp.ACCEPTED) {
+                    removePendingDispatch(id);
+                    addOrUpdateOwnDispatch(id);
+                    const dispatch = dispatches.value.get(id);
+                    const assignment = dispatch?.units.find((unit) => unit.unitId === ownUnitId.value);
+                    if (assignment) assignment.expiresAt = undefined;
+                } else if (response === TakeDispatchResp.DECLINED) {
+                    removePendingDispatch(id);
+                    const dispatch = dispatches.value.get(id);
+                    if (dispatch) dispatch.units = dispatch.units.filter((unit) => unit.unitId !== ownUnitId.value);
+                }
+            });
+        };
+
+        const updateDemoUnitStatus = (id: number, status: StatusUnit): void => {
+            if (!isDemo.value) return;
+            updateUnitStatus({ id: Date.now(), createdAt: demoTimestamp(), unitId: id, status });
+        };
+
+        const updateDemoDispatchStatus = (id: number, status: StatusDispatch): void => {
+            if (!isDemo.value) return;
+            updateDispatchStatus({ id: Date.now(), createdAt: demoTimestamp(), dispatchId: id, status });
+        };
+
         // Dispatchers
         /**
          * Checks if the user is a dispatcher.
@@ -700,6 +938,7 @@ export const useCentrumStore = defineStore(
                 })) {
                     // The gRPC stream may yield unknown, so cast to the expected type
                     const resp = respRaw as StreamResponse;
+                    if (isDemo.value) continue;
                     error.value = undefined;
 
                     if (!resp || !resp.change) continue;
@@ -1113,6 +1352,7 @@ export const useCentrumStore = defineStore(
          * @returns {Promise<void>} A promise that resolves when cleanup is complete.
          */
         const cleanup = async (): Promise<void> => {
+            if (isDemo.value) return;
             logger.debug('Running cleanup tasks');
             const now = new Date().getTime() - timeCorrection.value;
 
@@ -1218,6 +1458,11 @@ export const useCentrumStore = defineStore(
          * @returns {Promise<void>} A promise that resolves when the self-assignment is complete.
          */
         const selfAssign = async (id: number): Promise<void> => {
+            if (isDemo.value) {
+                takeDemoDispatches([id], TakeDispatchResp.ACCEPTED);
+                return;
+            }
+
             if (ownUnitId.value === undefined) {
                 notifications.add({
                     title: { key: 'notifications.centrum.unitUpdated.not_in_unit.title', parameters: {} },
@@ -1269,6 +1514,7 @@ export const useCentrumStore = defineStore(
             streamState,
             reconnectBackoffTime,
             timeCorrection,
+            isDemo,
             settings,
             acls,
             isDispatcher,
@@ -1299,6 +1545,13 @@ export const useCentrumStore = defineStore(
             addOrUpdateDispatch,
             rebuildOwnDispatches,
             updateDispatchStatus,
+            beginDemoSession,
+            endDemoSession,
+            joinDemoUnit,
+            leaveDemoUnit,
+            takeDemoDispatches,
+            updateDemoUnitStatus,
+            updateDemoDispatchStatus,
             removeDispatch,
             addOrUpdateOwnDispatch,
             handleDispatchAssignment,

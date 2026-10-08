@@ -22,6 +22,8 @@ const props = defineProps<{
     documentId: number;
     docCreatorId: number | undefined;
     canEdit?: boolean;
+    modal?: boolean;
+    disableDecisions?: boolean;
 }>();
 
 defineEmits<{
@@ -103,8 +105,10 @@ const taskFormDrawer = overlay.create(TaskForm);
 
 <template>
     <UDrawer
+        data-tour="documents-approval-drawer"
         :title="$t('common.approve')"
         :overlay="false"
+        :modal="props.modal ?? true"
         handle-only
         :close="{ onClick: () => $emit('close', false) }"
         :ui="{ container: 'flex-1', content: 'min-h-[60%]', title: 'flex flex-row gap-2 justify-between', body: 'h-full' }"
@@ -352,7 +356,7 @@ const taskFormDrawer = overlay.create(TaskForm);
         <template #footer>
             <div class="mx-auto flex w-full max-w-[80%] min-w-3/4 flex-1 flex-col gap-4">
                 <!-- RevokeApproval / ReopenApprovalTask perms are indicators for being able to do ad-hoc approval, otherwise a policy and a matching task is required -->
-                <UFieldGroup class="w-full flex-1">
+                <UFieldGroup data-tour="documents-approval-decisions" class="w-full flex-1">
                     <TaskDecideDrawer
                         v-model:policy="policy"
                         :document-id="documentId"
@@ -361,7 +365,14 @@ const taskFormDrawer = overlay.create(TaskForm);
                         @update:policy="($event) => (policy = $event)"
                         @close="(val) => val && refresh()"
                     >
-                        <UButton color="success" icon="i-mdi-check-bold" block size="lg" :label="$t('common.approve')" />
+                        <UButton
+                            color="success"
+                            icon="i-mdi-check-bold"
+                            block
+                            size="lg"
+                            :label="$t('common.approve')"
+                            :disabled="props.disableDecisions"
+                        />
                     </TaskDecideDrawer>
 
                     <TaskDecideDrawer
@@ -372,7 +383,14 @@ const taskFormDrawer = overlay.create(TaskForm);
                         @update:policy="($event) => (policy = $event)"
                         @close="(val) => val && refresh()"
                     >
-                        <UButton color="error" icon="i-mdi-close-bold" block size="lg" :label="$t('common.decline')" />
+                        <UButton
+                            color="error"
+                            icon="i-mdi-close-bold"
+                            block
+                            size="lg"
+                            :label="$t('common.decline')"
+                            :disabled="props.disableDecisions"
+                        />
                     </TaskDecideDrawer>
                 </UFieldGroup>
 
