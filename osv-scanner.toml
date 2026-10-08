@@ -17,3 +17,28 @@ ignoreUntil = 2027-01-01
 id = "GHSA-86w9-cpqp-85rv"
 reason = "node-forge is transitive and no compatible fixed version is currently selected in the lockfile."
 ignoreUntil = 2027-01-01
+
+[[IgnoredVulns]]
+id = "GHSA-v5rq-49vh-5v5c"
+reason = "@simple-git/argv-parser is not used in production or live environments."
+ignoreUntil = 2027-01-01
+
+[[IgnoredVulns]]
+id = "GHSA-rj75-hqrm-r3gf"
+reason = "postcss-selector-parser is not used in production or live environments."
+ignoreUntil = 2027-01-01
+
+[[IgnoredVulns]]
+id = "GHSA-858h-whjf-mvg5"
+reason = "simple-git is not used in production or live environments."
+ignoreUntil = 2027-01-01
+
+[[IgnoredVulns]]
+id = "GHSA-g4wm-2vf7-vfgr"
+reason = "simple-git is not used in production or live environments."
+ignoreUntil = 2027-01-01
+
+[[IgnoredVulns]]
+id = "GHSA-x6jw-m9v5-85vh"
+reason = "simple-git is not used in production or live environments."
+ignoreUntil = 2027-01-01
