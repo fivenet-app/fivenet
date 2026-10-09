@@ -33,8 +33,9 @@ import (
 )
 
 const (
-	PingTTL  = 8 * time.Second  // OFFLINE
-	EmptyTTL = 30 * time.Second // No crew -> delete
+	PingTTL   = 8 * time.Second  // OFFLINE
+	EmptyTTL  = 30 * time.Second // No crew -> delete
+	PingKVTTL = 10 * time.Minute // Maximum age of unit ping stream history
 )
 
 var unitSubjectAccessOptions = access.SubjectAccessOptions{
@@ -120,7 +121,7 @@ func New(p Params) *UnitDB {
 			Description:    "Centrum Unit Ping Timers",
 			Storage:        jetstream.MemoryStorage,
 			History:        1,
-			TTL:            0,
+			TTL:            PingKVTTL,
 			LimitMarkerTTL: 2 * PingTTL, // Tombstones live 2× rule
 		})
 		if err != nil {

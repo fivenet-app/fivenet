@@ -179,6 +179,7 @@ const (
 	CompletedTTL           = 15 * time.Minute   // How long completed dispatches remain visible
 	ProjectionTTL          = 4 * time.Hour      // Maximum time a dispatch projection remains in KV
 	DispatchKVTTL          = 2 * 24 * time.Hour // Maximum time dispatch KV entries remain as a final safety net
+	IdleKVTTL              = 24 * time.Hour     // Maximum age of idle dispatch timer history
 )
 
 func cleanupKey(id int64) string {

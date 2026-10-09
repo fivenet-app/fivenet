@@ -29,6 +29,12 @@ const (
 	// LockTimeout is the default timeout for acquiring a lock.
 	LockTimeout = 750 * time.Millisecond
 
+	// LockKVTTL bounds the underlying lock KV stream history. Individual lock
+	// keys expire after maxLockAge, so this only retains enough history for
+	// short-lived watcher/recovery windows without allowing lock churn to grow
+	// the stream indefinitely.
+	LockKVTTL = 10 * time.Minute
+
 	// KeyPrefix is the prefix used for all lock keys in the KV store.
 	KeyPrefix = "LOCK."
 )
@@ -106,6 +112,7 @@ func New(
 		History:        1,
 		MaxBytes:       -1,
 		Storage:        jetstream.MemoryStorage,
+		TTL:            LockKVTTL,
 		LimitMarkerTTL: maxLockAge, // Set a limit marker TTL to avoid stale locks
 	})
 	if err != nil {

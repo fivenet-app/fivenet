@@ -144,7 +144,7 @@ func New(p Params) *DispatchDB {
 			Storage:        jetstream.MemoryStorage,
 			History:        1,
 			MaxBytes:       0,
-			TTL:            0,
+			TTL:            IdleKVTTL,
 			LimitMarkerTTL: InactiveLimitMarkerTTL,
 		})
 		if err != nil {
