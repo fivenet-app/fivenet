@@ -14,7 +14,7 @@ overrides:
   "fontless>esbuild": "0.28.2"
   "nuxt-typed-router>defu": "6.1.7"
   "nuxt-typed-router>lodash-es": "4.18.1"
-  "nuxt-typed-router>nanoid": "6.0.1"
+  "nuxt-typed-router>nanoid": "6.0.2"
   "release-it>undici": "^8.11.2"
   "get-uri>basic-ftp": "^6.2.2"
   "unhead": "3.4.2"

@@ -1,4 +1,4 @@
-# syntax=docker/dockerfile:1.27-labs
+# syntax=docker/dockerfile:1.28-labs
 
 # Version helper, computed once for the whole image build.
 FROM docker.io/library/alpine:3.24.2 AS version
@@ -59,7 +59,7 @@ RUN apk add --no-cache git python3 make gcc g++ pkgconfig && \
         COMMIT_REF="$version" pnpm generate
 
 # Backend Build
-FROM docker.io/library/golang:1.27.1 AS backendbuild
+FROM docker.io/library/golang:1.27.2 AS backendbuild
 
 WORKDIR /go/src/github.com/fivenet-app/fivenet/v2026/
 

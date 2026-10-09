@@ -28,7 +28,7 @@
         "@galexrt/nuxt-update": "2.2.0",
         "@iconify-json/flagpack": "1.2.8",
         "@iconify-json/mdi": "1.2.3",
-        "@iconify-json/simple-icons": "1.2.98",
+        "@iconify-json/simple-icons": "1.2.99",
         "@internationalized/date": "3.12.4",
         "@nuxt/content": "3.16.1",
         "@nuxt/fonts": "0.14.0",
@@ -142,7 +142,7 @@
         "@vueuse/nuxt": "15.0.0",
         "@vueuse/router": "15.0.0",
         "autoprefixer": "10.6.1",
-        "cssnano": "9.2.2",
+        "cssnano": "9.3.2",
         "eslint": "10.12.0",
         "eslint-config-prettier": "10.1.8",
         "eslint-plugin-prettier": "5.5.6",
@@ -150,11 +150,11 @@
         "happy-dom": "20.14.5",
         "nuxt": "4.5.2",
         "nuxt-tiptap-editor": "3.4.0",
-        "nuxt-typed-router": "4.0.10",
+        "nuxt-typed-router": "4.0.11",
         "pinia-plugin-persistedstate": "4.7.1",
         "playwright-core": "1.63.0",
-        "postcss": "8.5.28",
-        "postcss-preset-env": "11.6.0",
+        "postcss": "8.5.29",
+        "postcss-preset-env": "11.6.1",
         "prettier": "3.9.9",
         "prettier-plugin-organize-imports": "4.3.0",
         "prettier-plugin-tailwindcss": "0.8.1",
@@ -162,7 +162,7 @@
         "sass": "1.105.1",
         "tailwindcss": "4.3.3",
         "typescript": "catalog:",
-        "vite": "8.3.2",
+        "vite": "8.3.3",
         "vitest": "5.0.3",
         "vue-router": "5.3.1",
         "vue-tsc": "3.3.12",
@@ -175,5 +175,5 @@
         "@tiptap/pm": "3.31.4",
         "@tiptap/vue-3": "3.31.4"
     },
-    "packageManager": "pnpm@12.9.1"
+    "packageManager": "pnpm@12.10.1"
 }
