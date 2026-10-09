@@ -150,7 +150,7 @@
         "happy-dom": "20.14.5",
         "nuxt": "4.5.2",
         "nuxt-tiptap-editor": "3.4.0",
-        "nuxt-typed-router": "4.0.10",
+        "nuxt-typed-router": "4.0.11",
         "pinia-plugin-persistedstate": "4.7.1",
         "playwright-core": "1.63.0",
         "postcss": "8.5.29",
