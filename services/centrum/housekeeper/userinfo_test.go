@@ -173,6 +173,11 @@ func TestUserInfoReconcileConsumerRetainsEventAcrossLeadershipHandoff(t *testing
 	// published. The durable consumer must retain that event for its successor.
 	stopFirstLeader()
 	firstConsume.ctx.Stop()
+	select {
+	case <-firstConsume.ctx.Closed():
+	case <-time.After(time.Second):
+		t.Fatal("timed out waiting for first consumer to stop")
+	}
 
 	event := &pbuserinfo.UserInfoChanged{AccountId: 1, UserId: 42}
 	event.SetJob("ambulance") // Deliberately stale: the handler reloads "police".
@@ -436,7 +441,7 @@ func TestHandleUserInfoReconcileMessageUsesAuthoritativeJobAcrossStaleEvents(t *
 	assert.True(t, second.acked)
 }
 
-func TestHandleUserInfoReconcileMessageDoesNotAckAfterContextCancellation(t *testing.T) {
+func TestHandleUserInfoReconcileMessageRequeuesAfterContextCancellation(t *testing.T) {
 	t.Parallel()
 
 	msg := userInfoReconcileMessage(t, 42, "police")
@@ -450,7 +455,7 @@ func TestHandleUserInfoReconcileMessageDoesNotAckAfterContextCancellation(t *tes
 	h.handleUserInfoReconcileMessage(ctx, msg)
 
 	assert.False(t, msg.acked)
-	assert.Zero(t, msg.nakDelay)
+	assert.Equal(t, userInfoReconcileLeaderRetry, msg.nakDelay)
 	assert.False(t, msg.terminated)
 }
 

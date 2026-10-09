@@ -20,6 +20,7 @@ const (
 	userInfoReconcileConsumerName = "centrum_userinfo_reconcile"
 	userInfoReconcileAckWait      = 30 * time.Second
 	userInfoReconcileRetryDelay   = 5 * time.Second
+	userInfoReconcileLeaderRetry  = 100 * time.Millisecond
 	userInfoReconcileSlowAfter    = 10
 	userInfoReconcileSlowRetry    = 5 * time.Minute
 )
@@ -145,6 +146,7 @@ func (s *Housekeeper) handleUserInfoReconcileMessage(ctx context.Context, msg je
 		return
 	}
 	if ctx.Err() != nil {
+		s.requeueUserInfoReconcileMessage(msg, "leadership_lost")
 		return
 	}
 	info, err := s.userinfo.GetUserInfo(ctx, event.GetUserId())
@@ -154,7 +156,11 @@ func (s *Housekeeper) handleUserInfoReconcileMessage(ctx context.Context, msg je
 			zap.Int32("user_id", event.GetUserId()),
 			zap.Error(err),
 		)
-		s.retryUserInfoReconcileMessage(msg, "userinfo_lookup")
+		if ctx.Err() != nil {
+			s.requeueUserInfoReconcileMessage(msg, "leadership_lost")
+		} else {
+			s.retryUserInfoReconcileMessage(msg, "userinfo_lookup")
+		}
 		return
 	}
 	job := info.GetJob()
@@ -177,10 +183,11 @@ func (s *Housekeeper) handleUserInfoReconcileMessage(ctx context.Context, msg je
 			zap.String("authoritative_job", job),
 			zap.Error(err),
 		)
-		s.retryUserInfoReconcileMessage(msg, "reconcile")
-		return
-	}
-	if ctx.Err() != nil {
+		if ctx.Err() != nil {
+			s.requeueUserInfoReconcileMessage(msg, "leadership_lost")
+		} else {
+			s.retryUserInfoReconcileMessage(msg, "reconcile")
+		}
 		return
 	}
 	if err := msg.Ack(); err != nil {
@@ -189,6 +196,16 @@ func (s *Housekeeper) handleUserInfoReconcileMessage(ctx context.Context, msg je
 		return
 	}
 	s.metrics.IncHousekeeperEvent("userinfo_reconcile", "reconciled")
+}
+
+// requeueUserInfoReconcileMessage promptly returns an in-flight event to the
+// durable consumer when leadership is lost. Leaving it unacknowledged would
+// make the successor wait for the full AckWait interval before redelivery.
+func (s *Housekeeper) requeueUserInfoReconcileMessage(msg jetstream.Msg, operation string) {
+	s.metrics.IncHousekeeperEvent("userinfo_reconcile", operation+"_requeued")
+	if err := msg.NakWithDelay(userInfoReconcileLeaderRetry); err != nil {
+		s.logger.Error("failed to requeue user info reconciliation event", zap.Error(err))
+	}
 }
 
 // retryUserInfoReconcileMessage backs off repeatedly failing messages without

@@ -216,7 +216,9 @@ func waitForFeedEvent(
 ) *feedEvent {
 	t.Helper()
 
-	timeout := time.NewTimer(2 * time.Second)
+	// Feed workers may need to observe a deleted JetStream consumer and restart
+	// while the test process is competing for CPU with other package tests.
+	timeout := time.NewTimer(5 * time.Second)
 	defer timeout.Stop()
 	for {
 		select {
