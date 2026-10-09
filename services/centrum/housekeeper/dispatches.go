@@ -162,25 +162,33 @@ func (s *Housekeeper) cancelOldDispatches(ctx context.Context) (int, int, bool, 
 			}
 		}
 
-		if _, err := s.dispatches.UpdateStatus(
-			ctx,
-			ds.DispatchID,
-			&centrumdispatches.DispatchStatus{
-				CreatedAt:  timestamp.Now(),
-				DispatchId: ds.DispatchID,
-				Status:     centrumdispatches.StatusDispatch_STATUS_DISPATCH_CANCELLED,
-			},
-		); err != nil {
-			s.logger.Error(
-				"failed to cancel dispatch",
-				zap.Int64("dispatch_id", ds.DispatchID),
-				zap.Error(err),
-			)
-			continue
+		status := &centrumdispatches.DispatchStatus{
+			CreatedAt:  timestamp.Now(),
+			DispatchId: ds.DispatchID,
+			Status:     centrumdispatches.StatusDispatch_STATUS_DISPATCH_CANCELLED,
 		}
-		cancelled++
-
-		// Remove dispatch from state and publish event so clients remove it
+		if _, err := s.dispatches.UpdateStatus(ctx, ds.DispatchID, status); err != nil {
+			if errors.Is(err, jetstream.ErrKeyNotFound) {
+				// The live projection has a bounded lifetime and may already be
+				// gone even though SQL still contains an active dispatch. Keep the
+				// authoritative SQL lifecycle state progressing in that case.
+				if _, dbErr := s.dispatches.UpdateStatusInDB(ctx, ds.DispatchID, status); dbErr != nil {
+					s.logger.Error(
+						"failed to cancel dispatch in db after projection was missing",
+						zap.Int64("dispatch_id", ds.DispatchID),
+						zap.Error(dbErr),
+					)
+					continue
+				}
+			} else {
+				s.logger.Error(
+					"failed to cancel dispatch",
+					zap.Int64("dispatch_id", ds.DispatchID),
+					zap.Error(err),
+				)
+				continue
+			}
+		}
 		if err := s.dispatches.Delete(ctx, ds.DispatchID, false); err != nil {
 			s.logger.Error(
 				"failed to delete cancelled dispatch",
@@ -189,6 +197,7 @@ func (s *Housekeeper) cancelOldDispatches(ctx context.Context) (int, int, bool, 
 			)
 			continue
 		}
+		cancelled++
 	}
 
 	return cancelled, flaggedTooOld, backlogRemaining, nil

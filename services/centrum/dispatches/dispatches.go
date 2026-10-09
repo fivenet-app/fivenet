@@ -9,7 +9,6 @@ import (
 	"strconv"
 	"strings"
 	"sync"
-	"time"
 
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/centrum"
 	centrumdispatches "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/centrum/dispatches"
@@ -161,7 +160,7 @@ func New(p Params) *DispatchDB {
 			store.WithKVPrefix[common.IDMapping, *common.IDMapping]("job"),
 			store.WithLocks[common.IDMapping, *common.IDMapping](nil),
 			store.WithKVConfig[common.IDMapping, *common.IDMapping](
-				jetstream.KeyValueConfig{TTL: 7 * 24 * time.Hour},
+				jetstream.KeyValueConfig{TTL: DispatchKVTTL},
 			),
 		)
 		if err != nil {
@@ -207,9 +206,10 @@ func New(p Params) *DispatchDB {
 			p.JS,
 			"centrum_dispatches",
 			store.WithKVPrefix[centrumdispatches.Dispatch, *centrumdispatches.Dispatch]("id"),
-			// Make sure dispatches are removed from the store after 7 days of inactivity (if all other cleanup mechanisms fail)
+			// Make sure dispatches are removed from the store after DispatchKVTTL
+			// of inactivity if all other cleanup mechanisms fail.
 			store.WithKVConfig[centrumdispatches.Dispatch, *centrumdispatches.Dispatch](
-				jetstream.KeyValueConfig{TTL: 7 * 24 * time.Hour},
+				jetstream.KeyValueConfig{TTL: DispatchKVTTL},
 			),
 			store.WithOnUpdateFn[centrumdispatches.Dispatch, *centrumdispatches.Dispatch](
 				func(ctx context.Context, old *centrumdispatches.Dispatch, dispatch *centrumdispatches.Dispatch) (*centrumdispatches.Dispatch, error) {

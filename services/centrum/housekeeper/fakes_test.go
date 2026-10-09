@@ -64,11 +64,12 @@ func (f fakeDispatcherUserState) Range(fn func(string, *centrumdispatchers.Dispa
 }
 
 type fakeDispatchLifecycle struct {
-	get       func(context.Context, int64) (*centrumdispatches.Dispatch, error)
-	update    func(context.Context, int64, *centrumdispatches.DispatchStatus) (*centrumdispatches.DispatchStatus, error)
-	attribute func(context.Context, *centrumdispatches.Dispatch, centrumdispatches.DispatchAttribute) error
-	delete    func(context.Context, int64, bool) error
-	schedule  func(context.Context, int64, *timestamp.Timestamp) error
+	get        func(context.Context, int64) (*centrumdispatches.Dispatch, error)
+	update     func(context.Context, int64, *centrumdispatches.DispatchStatus) (*centrumdispatches.DispatchStatus, error)
+	updateInDB func(context.Context, int64, *centrumdispatches.DispatchStatus) (*centrumdispatches.DispatchStatus, error)
+	attribute  func(context.Context, *centrumdispatches.Dispatch, centrumdispatches.DispatchAttribute) error
+	delete     func(context.Context, int64, bool) error
+	schedule   func(context.Context, int64, *timestamp.Timestamp) error
 }
 
 func (f fakeDispatchLifecycle) Get(
@@ -90,6 +91,17 @@ func (f fakeDispatchLifecycle) UpdateStatus(
 		return nil, fmt.Errorf("unexpected dispatch status update for %d", id)
 	}
 	return f.update(ctx, id, status)
+}
+
+func (f fakeDispatchLifecycle) UpdateStatusInDB(
+	ctx context.Context,
+	id int64,
+	status *centrumdispatches.DispatchStatus,
+) (*centrumdispatches.DispatchStatus, error) {
+	if f.updateInDB == nil {
+		return nil, fmt.Errorf("unexpected db-only dispatch status update for %d", id)
+	}
+	return f.updateInDB(ctx, id, status)
 }
 
 func (f fakeDispatchLifecycle) AddAttributeToDispatch(

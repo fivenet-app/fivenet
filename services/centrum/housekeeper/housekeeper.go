@@ -134,6 +134,11 @@ type dispatchLifecycle interface {
 		int64,
 		*centrumdispatches.DispatchStatus,
 	) (*centrumdispatches.DispatchStatus, error)
+	UpdateStatusInDB(
+		context.Context,
+		int64,
+		*centrumdispatches.DispatchStatus,
+	) (*centrumdispatches.DispatchStatus, error)
 	AddAttributeToDispatch(
 		context.Context,
 		*centrumdispatches.Dispatch,

@@ -228,6 +228,23 @@ func (s *DispatchDB) UpdateStatus(
 	return in, nil
 }
 
+// UpdateStatusInDB persists a status without requiring the live NATS
+// projection. This is used by recovery/housekeeper paths after a projection
+// has expired or was otherwise removed from KV. The normal UpdateStatus path
+// remains projection-backed because it needs the current dispatch snapshot
+// for validation, hydration, and live publication.
+func (s *DispatchDB) UpdateStatusInDB(
+	ctx context.Context,
+	_ int64,
+	in *centrumdispatches.DispatchStatus,
+) (*centrumdispatches.DispatchStatus, error) {
+	if in.GetCreatedAt() == nil {
+		in.CreatedAt = timestamp.Now()
+	}
+
+	return s.AddDispatchStatus(ctx, s.db, in)
+}
+
 func (s *DispatchDB) publishDispatchStatus(
 	ctx context.Context,
 	status *centrumdispatches.DispatchStatus,
