@@ -4,6 +4,7 @@ import { compareUnitsBySortOrder } from '~/components/dispatch/helpers';
 import { type ReconnectingStreamState, reconnectingServerStream } from '~/composables/grpcws/reconnectingServerStream';
 import type { NotificationActionI18n } from '~/types/notifications';
 import { restartForAuthContext as restartAuthContextStream } from '~/utils/authContextStream';
+import { type StreamErrorDetails, getStreamErrorDetails } from '~/utils/stream-error';
 import { getCentrumCentrumClient, getCentrumDispatchesClient } from '~~/gen/ts/clients';
 import type { Dispatchers } from '~~/gen/ts/resources/centrum/dispatchers/dispatchers';
 import {
@@ -29,6 +30,7 @@ const maxRevisionTombstones = 1_000;
 // In seconds
 const maxBackOffTime = 7;
 const initialReconnectBackoffTime = 0.75;
+const maxStreamErrorHistory = 15;
 
 export type canDoAction = 'TakeControl' | 'TakeDispatch' | 'AssignDispatch' | 'UpdateDispatchStatus' | 'UpdateUnitStatus';
 
@@ -57,6 +59,7 @@ export const useCentrumStore = defineStore(
         const notifications = useNotificationsStore();
 
         const error = ref<RpcError | undefined>(undefined);
+        const errorHistory = ref<StreamErrorDetails[]>([]);
         const abort = ref<AbortController | undefined>(undefined);
         const cleanupIntervalId = ref<ReturnType<typeof setInterval> | undefined>(undefined);
         const stopping = ref<boolean>(false);
@@ -933,6 +936,11 @@ export const useCentrumStore = defineStore(
                     },
                     onRetry: (streamError, delayMs) => {
                         reconnectBackoffTime.value = delayMs / 1000;
+                        if (streamError !== undefined) {
+                            errorHistory.value = [...errorHistory.value, getStreamErrorDetails(streamError)].slice(
+                                -maxStreamErrorHistory,
+                            );
+                        }
                         logger.debug('Centrum stream reconnect scheduled', streamError, delayMs);
                     },
                 })) {
@@ -1187,6 +1195,7 @@ export const useCentrumStore = defineStore(
 
                 // Log and handle other errors
                 logger.error('Stream failed', rpcError.code, rpcError.message, rpcError.cause);
+                errorHistory.value = [...errorHistory.value, getStreamErrorDetails(e)].slice(-maxStreamErrorHistory);
                 streamState.value = 'error';
 
                 if (abort.value === streamAbort && !streamAbort.signal.aborted) {
@@ -1508,6 +1517,7 @@ export const useCentrumStore = defineStore(
 
         return {
             error,
+            errorHistory,
             abort,
             cleanupIntervalId,
             stopping,

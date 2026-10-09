@@ -21,6 +21,7 @@ const {
     stopping: livemapStopping,
     reconnectBackoffTime: livemapReconnectBackoffTime,
     error: livemapError,
+    errorHistory: livemapErrorHistory,
     userOnDuty,
     jobsUsers,
     jobsMarkers,
@@ -32,6 +33,7 @@ const {
     stopping: centrumStopping,
     reconnectBackoffTime: centrumReconnectBackoffTime,
     error: centrumError,
+    errorHistory: centrumErrorHistory,
     cleanupIntervalId: centrumCleanupIntervalId,
     acls: centrumAcls,
 } = storeToRefs(centrumStore);
@@ -74,6 +76,7 @@ const collectLivemapDebugInfo = (): string =>
                 jobsUsers: jobsUsers.value.length,
                 jobsMarkers: jobsMarkers.value.length,
                 error: livemapErrorText.value,
+                errorHistory: livemapErrorHistory.value,
             },
             centrum: {
                 streamStatus: centrumStreamStatus.value,
@@ -84,6 +87,7 @@ const collectLivemapDebugInfo = (): string =>
                 cleanupInterval: centrumCleanupIntervalId.value !== undefined,
                 aclJobs: centrumAclJobsCount.value,
                 error: centrumErrorText.value,
+                errorHistory: centrumErrorHistory.value,
             },
         },
         undefined,
@@ -218,7 +222,28 @@ const schema = z.object({
                                     <dd class="font-mono">{{ jobsMarkers.length }}</dd>
                                     <dt class="text-muted">Error</dt>
                                     <dd class="font-mono break-all">{{ livemapErrorText }}</dd>
+                                    <dt class="text-muted">Errors retained</dt>
+                                    <dd class="font-mono">{{ livemapErrorHistory.length }}</dd>
                                 </dl>
+                                <div v-if="livemapErrorHistory.length" class="space-y-2">
+                                    <h4 class="font-semibold">Recent errors</h4>
+                                    <div
+                                        v-for="(streamError, index) in [...livemapErrorHistory].reverse()"
+                                        :key="`${streamError.timestamp}-${index}`"
+                                        class="rounded border border-default p-2"
+                                    >
+                                        <div class="font-mono break-all">
+                                            {{ streamError.timestamp }} — {{ streamError.code }}: {{ streamError.message }}
+                                        </div>
+                                        <div v-if="streamError.cause !== 'N/A'" class="mt-1 font-mono break-all">
+                                            Cause: {{ streamError.cause }}
+                                        </div>
+                                        <pre
+                                            v-if="streamError.stack !== 'N/A'"
+                                            class="mt-1 max-h-48 overflow-auto whitespace-pre-wrap"
+                                            >{{ streamError.stack }}</pre>
+                                    </div>
+                                </div>
                             </section>
 
                             <section class="space-y-2">
@@ -240,7 +265,28 @@ const schema = z.object({
                                     <dd class="font-mono">{{ centrumAclJobsCount }}</dd>
                                     <dt class="text-muted">Error</dt>
                                     <dd class="font-mono break-all">{{ centrumErrorText }}</dd>
+                                    <dt class="text-muted">Errors retained</dt>
+                                    <dd class="font-mono">{{ centrumErrorHistory.length }}</dd>
                                 </dl>
+                                <div v-if="centrumErrorHistory.length" class="space-y-2">
+                                    <h4 class="font-semibold">Recent errors</h4>
+                                    <div
+                                        v-for="(streamError, index) in [...centrumErrorHistory].reverse()"
+                                        :key="`${streamError.timestamp}-${index}`"
+                                        class="rounded border border-default p-2"
+                                    >
+                                        <div class="font-mono break-all">
+                                            {{ streamError.timestamp }} — {{ streamError.code }}: {{ streamError.message }}
+                                        </div>
+                                        <div v-if="streamError.cause !== 'N/A'" class="mt-1 font-mono break-all">
+                                            Cause: {{ streamError.cause }}
+                                        </div>
+                                        <pre
+                                            v-if="streamError.stack !== 'N/A'"
+                                            class="mt-1 max-h-48 overflow-auto whitespace-pre-wrap"
+                                            >{{ streamError.stack }}</pre>
+                                    </div>
+                                </div>
                             </section>
                         </div>
                     </template>

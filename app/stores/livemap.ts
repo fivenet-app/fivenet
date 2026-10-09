@@ -2,6 +2,7 @@ import type { RpcError } from '@protobuf-ts/runtime-rpc';
 import { defineStore } from 'pinia';
 import { reconnectingServerStream, type ReconnectingStreamState } from '~/composables/grpcws/reconnectingServerStream';
 import { restartForAuthContext as restartAuthContextStream } from '~/utils/authContextStream';
+import { getStreamErrorDetails, type StreamErrorDetails } from '~/utils/stream-error';
 import { getLivemapLivemapClient } from '~~/gen/ts/clients';
 import type { Job } from '~~/gen/ts/resources/jobs/jobs';
 import type { Coords } from '~~/gen/ts/resources/livemap/coords';
@@ -23,11 +24,15 @@ const logger = useLogger('🗺️ Livemap');
 // In seconds
 const maxBackOffTime = 15;
 const initialReconnectBackoffTime = 1.75;
+const maxStreamErrorHistory = 15;
+
+export type LivemapStreamError = StreamErrorDetails;
 
 export const useLivemapStore = defineStore(
     'livemap',
     () => {
         const error = ref<RpcError | undefined>(undefined);
+        const errorHistory = ref<LivemapStreamError[]>([]);
         const abort = ref<AbortController | undefined>(undefined);
         const stopping = ref<boolean>(false);
         const streamState = ref<ReconnectingStreamState>('idle');
@@ -377,6 +382,11 @@ export const useLivemapStore = defineStore(
                     },
                     onRetry: (streamError, delayMs) => {
                         reconnectBackoffTime.value = delayMs / 1000;
+                        if (streamError !== undefined) {
+                            errorHistory.value = [...errorHistory.value, getStreamErrorDetails(streamError)].slice(
+                                -maxStreamErrorHistory,
+                            );
+                        }
                         logger.debug('Livemap stream reconnect scheduled', streamError, delayMs);
                     },
                 })) {
@@ -393,6 +403,7 @@ export const useLivemapStore = defineStore(
                     return;
                 }
                 logger.error('Stream failed', err.code, err.message, err.cause);
+                errorHistory.value = [...errorHistory.value, getStreamErrorDetails(e)].slice(-maxStreamErrorHistory);
                 streamState.value = 'error';
                 if (abort.value === streamAbort && !streamAbort.signal.aborted) {
                     await restartStream();
@@ -465,6 +476,7 @@ export const useLivemapStore = defineStore(
 
         return {
             error,
+            errorHistory,
             abort,
             stopping,
             streamState,
