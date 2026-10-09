@@ -80,7 +80,7 @@ const unitDetailsSlideover = overlay.create(UnitDetailsSlideover);
         :key="`user_${marker.userId}`"
         :lat-lng="[marker.y, marker.x]"
         :z-index-offset="activeChar === null || marker.user?.userId !== activeChar.userId ? 20 : 30"
-        :options="{ userMarker: marker }"
+        :options="{ bubblingMouseEvents: true, userMarker: marker }"
         @click="$emit('selected', $event)"
     >
         <LIcon

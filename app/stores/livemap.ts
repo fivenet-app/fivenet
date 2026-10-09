@@ -112,7 +112,15 @@ export const useLivemapStore = defineStore(
             if (dest.data !== src.data) dest.data = src.data;
             dest.creatorId = src.creatorId;
             if (src.creator !== undefined) {
-                updateUserInfo(dest.creator!, src.creator);
+                if (dest.creator === undefined) {
+                    logger.warn('Livemap marker update had no cached creator; replacing it', {
+                        markerId: dest.id,
+                        creatorId: src.creatorId,
+                    });
+                    dest.creator = src.creator;
+                } else {
+                    updateUserInfo(dest.creator, src.creator);
+                }
             }
         };
 
@@ -170,7 +178,19 @@ export const useLivemapStore = defineStore(
             if (dest.jobLabel !== src.jobLabel) dest.jobLabel = src.jobLabel;
             if (dest.userId !== src.userId) {
                 dest.userId = src.userId;
-                updateUserInfo(dest.user!, src.user!);
+                if (src.user === undefined) {
+                    logger.warn('Livemap user marker update had no user details', {
+                        userId: src.userId,
+                    });
+                    dest.user = undefined;
+                } else if (dest.user === undefined) {
+                    logger.warn('Livemap user marker update had no cached user; replacing it', {
+                        userId: src.userId,
+                    });
+                    dest.user = src.user;
+                } else {
+                    updateUserInfo(dest.user, src.user);
+                }
             }
             if (dest.unitId !== src.unitId) {
                 dest.unitId = src.unitId;

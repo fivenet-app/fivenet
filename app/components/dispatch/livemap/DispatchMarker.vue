@@ -43,7 +43,7 @@ const zIndexOffset = computed(() => calculateDispatchZIndexOffset(props.dispatch
         :lat-lng="[dispatch.y, dispatch.x]"
         :name="dispatch.id.toString()"
         :z-index-offset="zIndexOffset"
-        :options="{ dispatchMarker: dispatch }"
+        :options="{ bubblingMouseEvents: true, dispatchMarker: dispatch }"
     >
         <LIcon :icon-anchor="iconAnchor" :popup-anchor="popupAnchor" :icon-size="[size, size]">
             <div class="flex flex-col items-center uppercase">

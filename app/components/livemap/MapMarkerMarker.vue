@@ -208,7 +208,7 @@ function getShapeDragPoints(marker: MarkerMarker, kind: PointShapeKind): { x: nu
         :name="marker.name"
         :lat-lng="[marker.y, marker.x]"
         :draggable="canMoveMarker(marker)"
-        :options="{ markerMarker: marker }"
+        :options="{ bubblingMouseEvents: true, markerMarker: marker }"
         @click="$emit('selected')"
         @dragstart="onMarkerDragStart"
         @dragend="onMarkerDragEnd($event, marker)"
@@ -231,7 +231,7 @@ function getShapeDragPoints(marker: MarkerMarker, kind: PointShapeKind): { x: nu
             :fill-opacity="(marker.data.data.circle.opacity ?? 15) / 100"
             :stroke="marker.data.data.circle.stroke === undefined ? true : marker.data.data.circle.stroke"
             :weight="marker.data.data.circle.strokeWidth ?? 3"
-            :options="{ markerMarker: marker }"
+            :options="{ bubblingMouseEvents: true, markerMarker: marker }"
         >
             <MarkerMarkerPopup :marker="marker" />
         </LCircle>
@@ -266,7 +266,7 @@ function getShapeDragPoints(marker: MarkerMarker, kind: PointShapeKind): { x: nu
         :color="marker.color ?? livemap.markerMarkers.fallbackColor"
         :fill-color="marker.color ?? livemap.markerMarkers.fallbackColor"
         :fill-opacity="(marker.data.data.rectangle.opacity ?? 15) / 100"
-        :options="{ markerMarker: marker }"
+        :options="{ bubblingMouseEvents: true, markerMarker: marker }"
     >
         <MarkerMarkerPopup :marker="marker" />
     </LRectangle>
@@ -303,7 +303,7 @@ function getShapeDragPoints(marker: MarkerMarker, kind: PointShapeKind): { x: nu
         :color="marker.color ?? livemap.markerMarkers.fallbackColor"
         :fill-color="marker.color ?? livemap.markerMarkers.fallbackColor"
         :fill-opacity="(marker.data.data.polygon.opacity ?? 15) / 100"
-        :options="{ markerMarker: marker }"
+        :options="{ bubblingMouseEvents: true, markerMarker: marker }"
     >
         <MarkerMarkerPopup :marker="marker" />
     </LPolygon>
@@ -328,7 +328,7 @@ function getShapeDragPoints(marker: MarkerMarker, kind: PointShapeKind): { x: nu
             ...marker.data.data.polyline.points.map((point) => [point.y, point.x] satisfies LatLngTuple),
         ]"
         :color="marker.color ?? livemap.markerMarkers.fallbackColor"
-        :options="{ markerMarker: marker }"
+        :options="{ bubblingMouseEvents: true, markerMarker: marker }"
     >
         <MarkerMarkerPopup :marker="marker" />
     </LPolyline>
@@ -350,7 +350,7 @@ function getShapeDragPoints(marker: MarkerMarker, kind: PointShapeKind): { x: nu
         :name="marker.name"
         :lat-lng="[marker.y, marker.x]"
         :draggable="canMoveMarker(marker)"
-        :options="{ markerMarker: marker }"
+        :options="{ bubblingMouseEvents: true, markerMarker: marker }"
         @click="$emit('selected')"
         @dragstart="onMarkerDragStart"
         @dragend="onMarkerDragEnd($event, marker)"
@@ -380,7 +380,7 @@ function getShapeDragPoints(marker: MarkerMarker, kind: PointShapeKind): { x: nu
         :name="marker.name"
         :lat-lng="[marker.y, marker.x]"
         :draggable="canMoveMarker(marker)"
-        :options="{ markerMarker: marker }"
+        :options="{ bubblingMouseEvents: true, markerMarker: marker }"
         @click="$emit('selected')"
         @dragstart="onMarkerDragStart"
         @dragend="onMarkerDragEnd($event, marker)"
