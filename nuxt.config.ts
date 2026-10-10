@@ -298,21 +298,20 @@ export default defineNuxtConfig({
                 '@unovis/ts',
                 '@unovis/vue',
                 '@vue-leaflet/vue-leaflet',
-                '@vue/devtools-core',
                 '@vue/devtools-kit',
                 '@vueuse/integrations/useSortable',
                 '@zxcvbn-ts/core',
-                'browser-headers', // CJS
+                'browser-headers',
                 'css-blank-pseudo/browser',
                 'css-has-pseudo/browser',
                 'date-fns',
-                'diff-match-patch', // CJS
+                'diff-match-patch',
                 'emoji-blast',
                 'fabric',
                 'fabric/extensions',
-                'howler', // CJS
-                'leaflet', // CJS
-                'leaflet.heat', // CJS
+                'howler',
+                'leaflet',
+                'leaflet.heat',
                 'lib0/observable',
                 'maska/vue',
                 'mdi-vue3',
