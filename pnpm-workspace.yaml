@@ -5,6 +5,7 @@ catalog:
 
 overrides:
   "@internationalized/date": "3.12.4"
+  "@nuxt/devtools": "4.0.0-beta.4"
   "@nuxt/kit": "4.6.1"
   "@tiptap/core": "3.31.4"
   "@tiptap/pm": "3.31.4"
