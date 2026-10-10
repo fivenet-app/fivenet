@@ -737,6 +737,42 @@ func (s *Store[T, U]) Put(ctx context.Context, key string, msg U) error {
 
 const maxPutWriteAttempts = 3
 
+// PutWithRetry writes a KV value using optimistic CAS and retries transient
+// create/update conflicts caused by concurrent writers. Create options apply
+// only when the key does not exist, which allows callers to set a TTL.
+func PutWithRetry(
+	ctx context.Context,
+	kv jetstream.KeyValue,
+	key string,
+	value []byte,
+	opts ...jetstream.KVCreateOpt,
+) (uint64, int, error) {
+	for attempt := 1; attempt <= maxPutWriteAttempts; attempt++ {
+		entry, err := kv.Get(ctx, key)
+		if err == nil {
+			revision, err := kv.Update(ctx, key, value, entry.Revision())
+			if err == nil {
+				return revision, attempt - 1, nil
+			}
+			if !errors.Is(err, jetstream.ErrKeyRevisionMismatch) {
+				return 0, attempt - 1, err
+			}
+		} else if errors.Is(err, jetstream.ErrKeyNotFound) {
+			revision, err := kv.Create(ctx, key, value, opts...)
+			if err == nil {
+				return revision, attempt - 1, nil
+			}
+			if !errors.Is(err, jetstream.ErrKeyExists) {
+				return 0, attempt - 1, err
+			}
+		} else {
+			return 0, attempt - 1, err
+		}
+	}
+
+	return 0, maxPutWriteAttempts - 1, jetstream.ErrKeyRevisionMismatch
+}
+
 func (s *Store[T, U]) put(ctx context.Context, key string, msg U, oldItem U) error {
 	data, err := proto.Marshal(msg)
 	if err != nil {
@@ -747,26 +783,16 @@ func (s *Store[T, U]) put(ctx context.Context, key string, msg U, oldItem U) err
 	// retry a bounded number of optimistic-CAS conflicts instead of dropping a
 	// logically idempotent projection update.
 
-	var rev uint64
-	for attempt := 1; attempt <= maxPutWriteAttempts; attempt++ {
-		entry, err := s.kv.Get(ctx, key)
-		if err == nil {
-			rev, err = s.kv.Update(ctx, key, data, entry.Revision())
-		} else if errors.Is(err, jetstream.ErrKeyNotFound) {
-			rev, err = s.kv.Create(ctx, key, data)
-		}
-		if err == nil {
-			break
-		}
-		if !errors.Is(err, jetstream.ErrKeyExists) || attempt == maxPutWriteAttempts {
-			return fmt.Errorf("failed to write value for key %s in put. %w", key, err)
-		}
-
-		s.metrics.writeConflicts.WithLabelValues(s.bucket).Inc()
+	rev, retries, err := PutWithRetry(ctx, s.kv, key, data)
+	if err != nil {
+		return fmt.Errorf("failed to write value for key %s in put. %w", key, err)
+	}
+	if retries > 0 {
+		s.metrics.writeConflicts.WithLabelValues(s.bucket).Add(float64(retries))
 		s.logger.Debug(
 			"retrying kv write after revision conflict",
 			zap.String("key", key),
-			zap.Int("attempt", attempt),
+			zap.Int("retries", retries),
 		)
 	}
 
