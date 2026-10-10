@@ -11,6 +11,10 @@
     "lockFileMaintenance": {
         "enabled": true
     },
+    "osvVulnerabilityAlerts": true,
+    "vulnerabilityAlerts": {
+        "enabled": true
+    },
     "packageRules": [
         {
             "matchManagers": ["gomod"],
@@ -33,6 +37,11 @@
         {
             "matchManagers": ["gomod"],
             "matchPackageNames": ["github.com/fivenet-app/fivenet/**"],
+            "minimumReleaseAge": null
+        },
+        {
+            "matchManagers": ["gomod"],
+            "matchPackageNames": ["golang.org/x/**"],
             "minimumReleaseAge": null
         }
     ],
