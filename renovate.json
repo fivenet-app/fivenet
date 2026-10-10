@@ -27,7 +27,8 @@
         },
         {
             "matchDatasources": ["npm"],
-            "minimumReleaseAge": "3 days"
+            "matchPackageNames": ["nuxt", "@nuxt/ui"],
+            "minimumReleaseAge": null
         },
         {
             "matchManagers": ["gomod"],
