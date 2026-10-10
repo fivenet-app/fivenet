@@ -23,6 +23,8 @@ import (
 const (
 	// Path is the base path for the image proxy API endpoint.
 	Path = "/api/image_proxy"
+	// fallbackPath is shown when the requested image cannot be proxied.
+	fallbackPath = "/images/broken_image.webp"
 
 	// UserAgentPrefix is the prefix for the User-Agent header sent by the image proxy.
 	UserAgentPrefix = "FiveNet Image Proxy "
@@ -100,12 +102,12 @@ func (p *ImageProxy) handle(c *gin.Context) {
 	target, err := targetURL(c.Request)
 	if err != nil {
 		p.logger.Warn("invalid image proxy URL", zap.Error(err))
-		c.String(http.StatusBadRequest, "invalid image URL")
+		redirectToFallback(c)
 		return
 	}
 	if !p.allowedURL(target) {
 		p.logger.Warn("image proxy host is not allowed", zap.String("host", target.Hostname()))
-		c.String(http.StatusForbidden, "image host is not allowed")
+		redirectToFallback(c)
 		return
 	}
 
@@ -116,7 +118,7 @@ func (p *ImageProxy) handle(c *gin.Context) {
 		nil,
 	)
 	if err != nil {
-		c.String(http.StatusBadRequest, "invalid image URL")
+		redirectToFallback(c)
 		return
 	}
 	upstreamRequest.Header.Set("Accept", "image/*")
@@ -129,21 +131,21 @@ func (p *ImageProxy) handle(c *gin.Context) {
 			zap.Error(err),
 			zap.String("url", target.Redacted()),
 		)
-		c.String(http.StatusBadGateway, "failed to fetch image")
+		redirectToFallback(c)
 		return
 	}
 	defer response.Body.Close()
 
 	if response.StatusCode == http.StatusNotFound {
-		c.Status(http.StatusNotFound)
+		redirectToFallback(c)
 		return
 	}
 	if response.StatusCode < http.StatusOK || response.StatusCode >= http.StatusMultipleChoices {
-		c.Status(http.StatusBadGateway)
+		redirectToFallback(c)
 		return
 	}
 	if response.ContentLength > maxImageSize {
-		c.String(http.StatusRequestEntityTooLarge, "image is too large")
+		redirectToFallback(c)
 		return
 	}
 
@@ -153,17 +155,17 @@ func (p *ImageProxy) handle(c *gin.Context) {
 	}
 	if contentType != "" && contentType != "application/octet-stream" &&
 		contentType != "binary/octet-stream" && !strings.HasPrefix(contentType, "image/") {
-		c.String(http.StatusForbidden, "remote resource is not an image")
+		redirectToFallback(c)
 		return
 	}
 
 	body, err := io.ReadAll(io.LimitReader(response.Body, maxImageSize+1))
 	if err != nil {
-		c.String(http.StatusBadGateway, "failed to read image")
+		redirectToFallback(c)
 		return
 	}
 	if len(body) > maxImageSize {
-		c.String(http.StatusRequestEntityTooLarge, "image is too large")
+		redirectToFallback(c)
 		return
 	}
 	if contentType == "" || contentType == "application/octet-stream" ||
@@ -171,7 +173,7 @@ func (p *ImageProxy) handle(c *gin.Context) {
 		contentType = http.DetectContentType(body)
 	}
 	if !strings.HasPrefix(contentType, "image/") {
-		c.String(http.StatusForbidden, "remote resource is not an image")
+		redirectToFallback(c)
 		return
 	}
 
@@ -184,6 +186,10 @@ func (p *ImageProxy) handle(c *gin.Context) {
 	c.Header("X-Content-Type-Options", "nosniff")
 	c.Status(http.StatusOK)
 	_, _ = c.Writer.Write(body)
+}
+
+func redirectToFallback(c *gin.Context) {
+	c.Redirect(http.StatusFound, fallbackPath)
 }
 
 func targetURL(request *http.Request) (*url.URL, error) {

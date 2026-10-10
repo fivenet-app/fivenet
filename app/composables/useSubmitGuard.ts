@@ -35,7 +35,7 @@ export function useSubmitGuard<Args extends readonly unknown[], Result>(
     }
 
     return {
-        submit,
+        submit: submit,
         isSubmitting: readonly(isSubmitting),
         canSubmit: computed(() => !isSubmitting.value),
     };
