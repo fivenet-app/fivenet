@@ -31,7 +31,7 @@
         },
         {
             "matchDatasources": ["npm"],
-            "matchPackageNames": ["nuxt", "@nuxt/ui"],
+            "matchPackageNames": ["nuxt", "@nuxt/ui", "@galexrt/**"],
             "minimumReleaseAge": null
         },
         {
