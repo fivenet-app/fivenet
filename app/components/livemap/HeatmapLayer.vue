@@ -41,21 +41,28 @@ async function getDispatchHeatmap(signal: AbortSignal): Promise<GetDispatchHeatm
 }
 
 const heat = inject<Ref<HeatLayer | undefined>>('heat');
+let updateGeneration = 0;
 
 async function handleProps(show: boolean): Promise<void> {
+    const generation = ++updateGeneration;
+
     if (show) {
         // If we have no heatmap data, or it's still pending, refresh it
         if (!heatmap.value || isRequestPending(status.value)) await refresh();
 
-        heatmap.value?.entries.forEach((e) => heat?.value?.addLatLng([e.y, e.x, e.w]));
-    } else {
-        heat?.value?.setLatLngs([]);
+        // The heat layer is created asynchronously by BaseMap. If this runs
+        // before that happens, the watcher will retry when the layer becomes ready.
+        if (generation !== updateGeneration || !heat?.value) return;
+
+        heat.value.setLatLngs(heatmap.value?.entries.map((e) => [e.y, e.x, e.w]) ?? []);
+        return;
     }
+
+    heat?.value?.setLatLngs([]);
 }
 
-watch(() => props.show, handleProps);
+watch([() => props.show, () => heat?.value], ([show]) => handleProps(show), { immediate: true });
 
-onBeforeMount(() => handleProps(props.show));
 </script>
 
 <template>

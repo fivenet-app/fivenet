@@ -45,7 +45,16 @@ const emit = defineEmits<{
 
 const mapRef = useTemplateRef('mapRef');
 const mapContainer = useTemplateRef('mapContainer');
-const mapResize = useDebounceFn(() => mapRef.value?.leafletObject?.invalidateSize(), 150, { maxWait: 400 });
+const mapResize = useDebounceFn(
+    () => {
+        const container = mapContainer.value;
+        if (!container || container.clientWidth <= 0 || container.clientHeight <= 0) return;
+
+        mapRef.value?.leafletObject?.invalidateSize();
+    },
+    150,
+    { maxWait: 400 },
+);
 
 const backgroundColor = computed(() => getMapBackgroundColor(props.backgroundLayer));
 
