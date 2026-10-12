@@ -9,12 +9,16 @@ import (
 )
 
 func TestSuperuserAttributesUsesValidValues(t *testing.T) {
+	t.Parallel()
+
 	attrs := []*permissionsattributes.RoleAttribute{
 		{
 			Namespace: "citizens",
 			ValidValues: &permissionsattributes.AttributeValues{
 				ValidValues: &permissionsattributes.AttributeValues_StringList{
-					StringList: &permissionsattributes.StringList{Strings: []string{"name", "phone"}},
+					StringList: &permissionsattributes.StringList{
+						Strings: []string{"name", "phone"},
+					},
 				},
 			},
 			Value: &permissionsattributes.AttributeValues{
@@ -32,5 +36,9 @@ func TestSuperuserAttributesUsesValidValues(t *testing.T) {
 	assert.Equal(t, []string{"name", "phone"}, got[0].GetValidValues().GetStringList().GetStrings())
 
 	got[0].GetValue().GetStringList().Strings[0] = "mutated"
-	assert.Equal(t, []string{"name", "phone"}, attrs[0].GetValidValues().GetStringList().GetStrings())
+	assert.Equal(
+		t,
+		[]string{"name", "phone"},
+		attrs[0].GetValidValues().GetStringList().GetStrings(),
+	)
 }

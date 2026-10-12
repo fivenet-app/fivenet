@@ -62,7 +62,6 @@ async function handleProps(show: boolean): Promise<void> {
 }
 
 watch([() => props.show, () => heat?.value], ([show]) => handleProps(show), { immediate: true });
-
 </script>
 
 <template>

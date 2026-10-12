@@ -125,15 +125,20 @@ func (s *Server) SetVehicleProps(
 	// Resolve it against the configured safety maximum before persisting it.
 	if req.GetProps().GetWanted() && req.GetProps().GetWantedTill() != nil {
 		wantedTill := req.GetProps().GetWantedTill()
-		if wantedTill.GetTimestamp() != nil && wantedTill.GetTimestamp().GetSeconds() == 0 && wantedTill.GetTimestamp().GetNanos() == 0 {
+		if wantedTill.GetTimestamp() != nil && wantedTill.GetTimestamp().GetSeconds() == 0 &&
+			wantedTill.GetTimestamp().GetNanos() == 0 {
 			game := s.appCfg.Get().GetGame()
-			if max := game.GetMaxWantedDurationVehicle(); max != nil && game.GetMaxWantedDurationVehicleEnabled() {
-				req.Props.SetWantedTill(timestamp.New(time.Now().UTC().Add(max.AsDuration())))
+			if maxDuration := game.GetMaxWantedDurationVehicle(); maxDuration != nil &&
+				game.GetMaxWantedDurationVehicleEnabled() {
+				req.Props.SetWantedTill(
+					timestamp.New(time.Now().UTC().Add(maxDuration.AsDuration())),
+				)
 			}
 		} else if wantedTill.GetTimestamp() != nil {
 			game := s.appCfg.Get().GetGame()
-			if max := game.GetMaxWantedDurationVehicle(); max != nil && game.GetMaxWantedDurationVehicleEnabled() {
-				maxTill := time.Now().UTC().Add(max.AsDuration())
+			if maxDuration := game.GetMaxWantedDurationVehicle(); maxDuration != nil &&
+				game.GetMaxWantedDurationVehicleEnabled() {
+				maxTill := time.Now().UTC().Add(maxDuration.AsDuration())
 				if wantedTill.AsTime().After(maxTill) {
 					req.Props.SetWantedTill(timestamp.New(maxTill))
 				}

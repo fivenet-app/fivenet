@@ -172,7 +172,11 @@ func (s *Housekeeper) cancelOldDispatches(ctx context.Context) (int, int, bool, 
 				// The live projection has a bounded lifetime and may already be
 				// gone even though SQL still contains an active dispatch. Keep the
 				// authoritative SQL lifecycle state progressing in that case.
-				if _, dbErr := s.dispatches.UpdateStatusInDB(ctx, ds.DispatchID, status); dbErr != nil {
+				if _, dbErr := s.dispatches.UpdateStatusInDB(
+					ctx,
+					ds.DispatchID,
+					status,
+				); dbErr != nil {
 					s.logger.Error(
 						"failed to cancel dispatch in db after projection was missing",
 						zap.Int64("dispatch_id", ds.DispatchID),
