@@ -4,10 +4,11 @@
 
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs?ref=release-26.05";
+    nixpkgs-unstable.url = "github:nixos/nixpkgs?ref=nixos-unstable";
   };
 
   outputs =
-    { self, nixpkgs }:
+    { self, nixpkgs, nixpkgs-unstable }:
     let
       goMajorVersion = 1;
       goMinorVersion = 27; # Change this to update the whole stack
@@ -27,6 +28,7 @@
               inherit system;
               overlays = [ self.overlays.default ];
             };
+            unstablePkgs = import nixpkgs-unstable { inherit system; };
           }
         );
     in
@@ -36,7 +38,7 @@
       };
 
       devShells = forEachSupportedSystem (
-        { pkgs }: {
+        { pkgs, unstablePkgs }: {
           default = pkgs.mkShell {
             # Workaround CGO issue https://nixos.wiki/wiki/Go#Using_cgo_on_NixOS
             hardeningDisable = [ "fortify" ];
@@ -48,7 +50,7 @@
               gotools
               gofumpt
               # https://github.com/golangci/golangci-lint
-              golangci-lint
+              unstablePkgs.golangci-lint
 
               # NodeJS stuff
               nodejs_24
