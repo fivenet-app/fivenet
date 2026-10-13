@@ -16,8 +16,9 @@ import SelectMenu from '~/components/partials/SelectMenu.vue';
 import TableSortButton from '~/components/partials/TableSortButton.vue';
 import SortButton from '~/components/partials/SortButton.vue';
 import { useSettingsStore } from '~/stores/settings';
-import { getJobsColleaguesClient } from '~~/gen/ts/clients';
+import { getJobsColleaguesClient, getSettingsSystemClient } from '~~/gen/ts/clients';
 import type { SortByColumn } from '~~/gen/ts/resources/common/database/database';
+import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 import type { Colleague } from '~~/gen/ts/resources/jobs/colleagues/colleagues';
 import type { GroupMemberShort } from '~~/gen/ts/resources/jobs/groups/short/group_member_short';
 import type { Label } from '~~/gen/ts/resources/jobs/labels/labels';
@@ -35,6 +36,9 @@ const { t } = useI18n();
 const overlay = useOverlay();
 
 const { attr, can, activeChar } = useAuth();
+const canTriggerUserSync = can('internal.Superuser/ConfigAdmin');
+
+const notifications = useNotificationsStore();
 
 const jobsColleaguesClient = await getJobsColleaguesClient();
 
@@ -115,6 +119,33 @@ async function getColleagueLabels(search?: string): Promise<GetColleagueLabelsRe
         handleGRPCError(e as RpcError);
         throw e;
     }
+}
+
+async function triggerUserSync(userId: number): Promise<void> {
+    try {
+        const settingsSystemClient = await getSettingsSystemClient();
+        await settingsSystemClient.triggerUserSync({
+            userId: [userId],
+            identifiers: [],
+        });
+
+        notifications.add({
+            title: { key: 'notifications.action_successful.title', parameters: {} },
+            description: { key: 'notifications.action_successful.content', parameters: {} },
+            type: NotificationType.SUCCESS,
+        });
+    } catch (e) {
+        handleGRPCError(e as RpcError);
+    }
+}
+
+function canSetAbsenceDate(colleague: Colleague): boolean {
+    return (
+        canDo.value.setJobsUserProps &&
+        (colleague.userId === activeChar.value!.userId ||
+            attr('jobs.ColleaguesService/SetColleagueProps', 'Types', 'AbsenceDate').value) &&
+        checkIfCanAccessColleague(colleague, 'jobs.ColleaguesService/SetColleagueProps')
+    );
 }
 
 function updateAbsenceDates(value: { userId: number; absenceBegin?: Timestamp; absenceEnd?: Timestamp }): void {
@@ -551,10 +582,8 @@ defineShortcuts({
                         >
                             <template
                                 v-if="
-                                    (canDo.setJobsUserProps &&
-                                        (colleague.userId === activeChar!.userId ||
-                                            attr('jobs.ColleaguesService/SetColleagueProps', 'Types', 'AbsenceDate').value) &&
-                                        checkIfCanAccessColleague(colleague, 'jobs.ColleaguesService/SetColleagueProps')) ||
+                                    canTriggerUserSync ||
+                                    canSetAbsenceDate(colleague) ||
                                     (canDo.getColleague &&
                                         checkIfCanAccessColleague(colleague, 'jobs.ColleaguesService/GetColleague'))
                                 "
@@ -582,24 +611,32 @@ defineShortcuts({
                                     </UTooltip>
 
                                     <UDropdownMenu
-                                        v-if="
-                                            canDo.setJobsUserProps &&
-                                            (colleague.userId === activeChar!.userId ||
-                                                attr('jobs.ColleaguesService/SetColleagueProps', 'Types', 'AbsenceDate')
-                                                    .value) &&
-                                            checkIfCanAccessColleague(colleague, 'jobs.ColleaguesService/SetColleagueProps')
-                                        "
+                                        v-if="canTriggerUserSync || canSetAbsenceDate(colleague)"
                                         :content="{ side: 'top' }"
                                         :items="[
-                                            {
-                                                label: $t('components.jobs.self_service.set_absence_date'),
-                                                icon: 'i-mdi-island',
-                                                onClick: () =>
-                                                    selfServicePropsAbsenceDateModal.open({
-                                                        userId: colleague.userId,
-                                                        'onUpdate:absenceDates': ($event) => updateAbsenceDates($event),
-                                                    }),
-                                            },
+                                            ...(canTriggerUserSync
+                                                ? [
+                                                      {
+                                                          label: $t('common.request_sync'),
+                                                          icon: 'i-mdi-sync',
+                                                          onClick: () => triggerUserSync(colleague.userId),
+                                                      },
+                                                  ]
+                                                : []),
+                                            ...(canSetAbsenceDate(colleague)
+                                                ? [
+                                                      {
+                                                          label: $t('components.jobs.self_service.set_absence_date'),
+                                                          icon: 'i-mdi-island',
+                                                          onClick: () =>
+                                                              selfServicePropsAbsenceDateModal.open({
+                                                                  userId: colleague.userId,
+                                                                  'onUpdate:absenceDates': ($event) =>
+                                                                      updateAbsenceDates($event),
+                                                              }),
+                                                      },
+                                                  ]
+                                                : []),
                                         ]"
                                     >
                                         <UButton icon="i-mdi-menu" color="neutral" variant="outline" />

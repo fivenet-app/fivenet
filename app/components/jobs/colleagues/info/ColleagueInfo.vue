@@ -4,7 +4,9 @@ import SelfServiceAbsenceDateModal from '~/components/jobs/colleagues/SelfServic
 import { checkIfCanAccessColleague } from '~/components/jobs/colleagues/helpers';
 import ProfilePictureImg from '~/components/partials/citizens/ProfilePictureImg.vue';
 import GenericTime from '~/components/partials/elements/GenericTime.vue';
+import { getSettingsSystemClient } from '~~/gen/ts/clients';
 import type { Colleague } from '~~/gen/ts/resources/jobs/colleagues/colleagues';
+import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 import type { Timestamp } from '~~/gen/ts/resources/timestamp/timestamp';
 import ColleagueName from '../ColleagueName.vue';
 
@@ -19,10 +21,31 @@ defineEmits<{
 const overlay = useOverlay();
 
 const { attr, can, activeChar } = useAuth();
+const canTriggerUserSync = can('internal.Superuser/ConfigAdmin');
+
+const notifications = useNotificationsStore();
 
 const { game } = useAppConfig();
 
 const selfServicePropsAbsenceDateModal = overlay.create(SelfServiceAbsenceDateModal);
+
+async function triggerUserSync(userId: number): Promise<void> {
+    try {
+        const settingsSystemClient = await getSettingsSystemClient();
+        await settingsSystemClient.triggerUserSync({
+            userId: [userId],
+            identifiers: [],
+        });
+
+        notifications.add({
+            title: { key: 'notifications.action_successful.title', parameters: {} },
+            description: { key: 'notifications.action_successful.content', parameters: {} },
+            type: NotificationType.SUCCESS,
+        });
+    } catch (e) {
+        handleGRPCError(e as RpcError);
+    }
+}
 </script>
 
 <template>
@@ -63,6 +86,14 @@ const selfServicePropsAbsenceDateModal = overlay.create(SelfServiceAbsenceDateMo
 
         <div class="flex flex-col gap-1 sm:flex-row">
             <PartialsBackButton fallback-to="/jobs/colleagues" />
+
+            <UButton
+                v-if="canTriggerUserSync"
+                icon="i-mdi-sync"
+                size="md"
+                :label="$t('common.request_sync')"
+                @click="triggerUserSync(colleague.userId)"
+            />
 
             <UButton
                 v-if="
