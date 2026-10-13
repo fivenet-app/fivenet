@@ -59,6 +59,18 @@ func watcherUpdatesClosedError(ctx context.Context) error {
 	return errWatcherUpdatesClosed
 }
 
+// deleteStaleDispatchProjection removes a KV projection whose SQL dispatch has
+// already been deleted. A concurrent projection cleanup may have deleted the
+// key first, which is the desired end state as well.
+func (s *Housekeeper) deleteStaleDispatchProjection(ctx context.Context, dispatchID int64) error {
+	if err := s.dispatchLifecycle.Delete(ctx, dispatchID, false); err != nil &&
+		!errors.Is(err, jetstream.ErrKeyNotFound) {
+		return fmt.Errorf("failed to delete stale dispatch %d projection: %w", dispatchID, err)
+	}
+
+	return nil
+}
+
 type Housekeeper struct {
 	ctx    context.Context //nolint:containedctx // Housekeeper retains lifecycle context for watcher loops across files.
 	logger *zap.Logger
@@ -77,6 +89,7 @@ type Housekeeper struct {
 	dispatchers                *dispatchers.DispatchersDB
 	units                      *units.UnitDB
 	unitAssignments            unitAssignments
+	unitDispatchAssignments    unitDispatchAssignments
 	unitAssignmentWatchSource  unitAssignmentWatchSource
 	dispatches                 *dispatches.DispatchDB
 	assignmentExpirationSource dispatchAssignmentExpirationSource
@@ -108,6 +121,11 @@ type unitAssignments interface {
 		toAdd []int32,
 		toRemove []int32,
 	) error
+}
+
+type unitDispatchAssignments interface {
+	UpdateAssignments(context.Context, *string, *int32, int64, []int64, []int64, time.Time) error
+	Delete(context.Context, int64, bool) error
 }
 
 type unitAssignmentWatchSource interface {
@@ -208,6 +226,7 @@ func New(p Params) Result {
 		dispatchers:                p.Dispatchers,
 		units:                      p.Units,
 		unitAssignments:            p.Units,
+		unitDispatchAssignments:    p.Dispatches,
 		dispatches:                 p.Dispatches,
 		assignmentExpirationSource: p.Dispatches,
 		assignmentExpirationWriter: p.Dispatches,

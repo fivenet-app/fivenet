@@ -11,6 +11,7 @@ import (
 	centrumdispatches "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/centrum/dispatches"
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/timestamp"
 	"github.com/fivenet-app/fivenet/v2026/services/centrum/dispatches"
+	errorscentrum "github.com/fivenet-app/fivenet/v2026/services/centrum/errors"
 	centrumutils "github.com/fivenet-app/fivenet/v2026/services/centrum/utils"
 	"github.com/nats-io/nats.go/jetstream"
 	"go.uber.org/zap"
@@ -280,6 +281,12 @@ func (s *Housekeeper) cancelDispatch(ctx context.Context, dsp *centrumdispatches
 			Status:     centrumdispatches.StatusDispatch_STATUS_DISPATCH_CANCELLED,
 		},
 	); err != nil {
+		if errors.Is(err, errorscentrum.ErrDispatchNotFound) {
+			if deleteErr := s.deleteStaleDispatchProjection(ctx, dsp.GetId()); deleteErr != nil {
+				s.logger.Warn("failed to delete stale dispatch projection", zap.Int64("dispatch_id", dsp.GetId()), zap.Error(deleteErr))
+			}
+			return
+		}
 		s.logger.Error(
 			"failed to update dispatch status to cancelled",
 			zap.Int64("dispatch_id", dsp.GetId()),

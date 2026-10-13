@@ -11,6 +11,7 @@ import (
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/cron"
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/timestamp"
 	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
+	errorscentrum "github.com/fivenet-app/fivenet/v2026/services/centrum/errors"
 	centrumutils "github.com/fivenet-app/fivenet/v2026/services/centrum/utils"
 	"github.com/go-jet/jet/v2/mysql"
 	"github.com/nats-io/nats.go/jetstream"
@@ -184,6 +185,13 @@ func (s *Housekeeper) cancelOldDispatches(ctx context.Context) (int, int, bool, 
 					)
 					continue
 				}
+			} else if errors.Is(err, errorscentrum.ErrDispatchNotFound) {
+				// The dispatch vanished after it was selected for cancellation.
+				// Remove the stale projection and let the next item proceed.
+				if deleteErr := s.deleteStaleDispatchProjection(ctx, ds.DispatchID); deleteErr != nil {
+					s.logger.Warn("failed to delete stale dispatch projection", zap.Int64("dispatch_id", ds.DispatchID), zap.Error(deleteErr))
+				}
+				continue
 			} else {
 				s.logger.Error(
 					"failed to cancel dispatch",

@@ -3,12 +3,40 @@ package housekeeper
 import (
 	"context"
 	"fmt"
+	"time"
 
 	centrumdispatchers "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/centrum/dispatchers"
 	centrumdispatches "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/centrum/dispatches"
 	centrumunits "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/centrum/units"
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/timestamp"
 )
+
+type fakeUnitDispatchAssignments struct {
+	update func(context.Context, *string, *int32, int64, []int64, []int64, time.Time) error
+	delete func(context.Context, int64, bool) error
+}
+
+func (f fakeUnitDispatchAssignments) UpdateAssignments(
+	ctx context.Context,
+	creatorJob *string,
+	creatorID *int32,
+	dispatchID int64,
+	toAdd []int64,
+	toRemove []int64,
+	expiresAt time.Time,
+) error {
+	if f.update == nil {
+		return nil
+	}
+	return f.update(ctx, creatorJob, creatorID, dispatchID, toAdd, toRemove, expiresAt)
+}
+
+func (f fakeUnitDispatchAssignments) Delete(ctx context.Context, id int64, removeFromDB bool) error {
+	if f.delete == nil {
+		return nil
+	}
+	return f.delete(ctx, id, removeFromDB)
+}
 
 type fakeUnitUserState struct {
 	sync      func(context.Context, int32) error

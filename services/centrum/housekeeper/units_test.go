@@ -19,12 +19,44 @@ import (
 	"github.com/fivenet-app/fivenet/v2026/internal/tests/nats"
 	"github.com/fivenet-app/fivenet/v2026/pkg/nats/store"
 	"github.com/fivenet-app/fivenet/v2026/services/centrum/dispatches"
+	errorscentrum "github.com/fivenet-app/fivenet/v2026/services/centrum/errors"
 	centrummetrics "github.com/fivenet-app/fivenet/v2026/services/centrum/metrics"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"go.opentelemetry.io/otel/trace/noop"
 	"go.uber.org/zap"
 )
+
+func TestRemoveUnitFromDispatchEvictsMissingDispatchProjection(t *testing.T) {
+	t.Parallel()
+
+	var deletedID int64
+	var removeFromDB bool
+	h := &Housekeeper{
+		unitDispatchAssignments: fakeUnitDispatchAssignments{
+			update: func(
+				_ context.Context,
+				_ *string,
+				_ *int32,
+				_ int64,
+				_ []int64,
+				_ []int64,
+				_ time.Time,
+			) error {
+				return errorscentrum.ErrDispatchNotFound
+			},
+			delete: func(_ context.Context, id int64, fromDB bool) error {
+				deletedID = id
+				removeFromDB = fromDB
+				return nil
+			},
+		},
+	}
+
+	require.NoError(t, h.removeUnitFromDispatch(t.Context(), 530199, 5, nil))
+	assert.Equal(t, int64(530199), deletedID)
+	assert.False(t, removeFromDB)
+}
 
 type unitAssignmentWatchSourceStub struct {
 	store *store.Store[centrumunits.Unit, *centrumunits.Unit]

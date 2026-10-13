@@ -9,6 +9,7 @@ import (
 
 	centrumdispatches "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/centrum/dispatches"
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/timestamp"
+	errorscentrum "github.com/fivenet-app/fivenet/v2026/services/centrum/errors"
 	centrumutils "github.com/fivenet-app/fivenet/v2026/services/centrum/utils"
 	"github.com/nats-io/nats.go/jetstream"
 	"github.com/paulmach/orb"
@@ -64,6 +65,12 @@ func (s *Housekeeper) watchDispatches(ctx context.Context) error {
 			}
 
 			if err := s.tryDispatchDeduplicate(ctx, dsp); err != nil {
+				if errors.Is(err, errorscentrum.ErrDispatchNotFound) {
+					if deleteErr := s.deleteStaleDispatchProjection(ctx, dsp.GetId()); deleteErr != nil {
+						s.logger.Warn("failed to delete stale dispatch projection after deduplication race", zap.Int64("dispatch_id", dsp.GetId()), zap.Error(deleteErr))
+					}
+					continue
+				}
 				s.logger.Error(
 					"dispatch deduplication failed",
 					zap.Int64("dispatch_id", dsp.GetId()),

@@ -12,6 +12,7 @@ import (
 	centrumunits "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/centrum/units"
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/cron"
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/timestamp"
+	errorscentrum "github.com/fivenet-app/fivenet/v2026/services/centrum/errors"
 	centrumutils "github.com/fivenet-app/fivenet/v2026/services/centrum/utils"
 	"go.uber.org/zap"
 )
@@ -271,10 +272,6 @@ func (s *Housekeeper) cleanupUnitStatus(ctx context.Context) (int, error) {
 				continue
 			}
 
-			var userID *int32
-			if unit.GetStatus() != nil && unit.Status.UserId != nil {
-				userID = unit.GetStatus().UserId
-			}
 			s.logger.Debug(
 				"setting unit status to unavailable because it is empty or static with a wrong status",
 				zap.String(
@@ -282,13 +279,13 @@ func (s *Housekeeper) cleanupUnitStatus(ctx context.Context) (int, error) {
 					job,
 				),
 				zap.Int64("unit_id", unit.GetId()),
-				zap.Int32p("user_id", userID),
 			)
 			if _, _, err := s.units.UpdateStatus(ctx, unit.GetId(), &centrumunits.UnitStatus{
-				CreatedAt:  timestamp.Now(),
-				UnitId:     unit.GetId(),
-				Status:     centrumunits.StatusUnit_STATUS_UNIT_UNAVAILABLE,
-				UserId:     userID,
+				CreatedAt: timestamp.Now(),
+				UnitId:    unit.GetId(),
+				Status:    centrumunits.StatusUnit_STATUS_UNIT_UNAVAILABLE,
+				// This reconciliation is independent automation, so it has no
+				// user or creator actor.
 				CreatorJob: &job,
 			}); err != nil {
 				s.logger.Error(
@@ -341,6 +338,12 @@ func (s *Housekeeper) removeDispatchesFromEmptyUnits(ctx context.Context) (int, 
 						CreatorJob: &job,
 					},
 				); err != nil {
+					if errors.Is(err, errorscentrum.ErrDispatchNotFound) {
+						if deleteErr := s.deleteStaleDispatchProjection(ctx, dispatch.GetId()); deleteErr != nil {
+							return dispatchesUnassigned, emptyUnitsRemoved, deleteErr
+						}
+						continue
+					}
 					return dispatchesUnassigned, emptyUnitsRemoved, err
 				}
 				dispatchesUnassigned++

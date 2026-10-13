@@ -8,6 +8,7 @@ import (
 
 	centrumunits "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/centrum/units"
 	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
+	errorscentrum "github.com/fivenet-app/fivenet/v2026/services/centrum/errors"
 	"github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
 	"github.com/nats-io/nats.go/jetstream"
@@ -125,7 +126,7 @@ func (s *Housekeeper) removeUnitFromDispatch(
 	dispatchID, unitID int64,
 	creatorJob *string,
 ) error {
-	return s.dispatches.UpdateAssignments(
+	err := s.unitDispatchAssignments.UpdateAssignments(
 		ctx,
 		creatorJob,
 		nil,
@@ -134,4 +135,17 @@ func (s *Housekeeper) removeUnitFromDispatch(
 		[]int64{unitID},
 		time.Time{},
 	)
+	if !errors.Is(err, errorscentrum.ErrDispatchNotFound) {
+		return err
+	}
+
+	// A dispatch projection can be observed just before the backing SQL row is
+	// deleted. Evict it so later reconciliation runs do not retry and log the
+	// expected NotFound result.
+	if err := s.unitDispatchAssignments.Delete(ctx, dispatchID, false); err != nil &&
+		!errors.Is(err, jetstream.ErrKeyNotFound) {
+		return fmt.Errorf("failed to delete stale dispatch %d projection. %w", dispatchID, err)
+	}
+
+	return nil
 }

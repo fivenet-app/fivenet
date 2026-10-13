@@ -120,22 +120,18 @@ func (s *Housekeeper) handleUnitKVPing(ctx context.Context, unitId int64) error 
 		return s.resetUnitPing(ctx, unitId)
 	}
 
-	var userId *int32
-	if unit.GetStatus() != nil && unit.Status.UserId != nil {
-		userId = unit.GetStatus().UserId
-	}
-
 	s.logger.Debug(
 		"setting unit status to unavailable it is empty or static attribute (wrong status)",
 		zap.String("job", unit.GetJob()),
 		zap.Int64("unit_id", unit.GetId()),
-		zap.Int32p("user_id", userId),
 	)
 	if _, _, err := s.units.UpdateStatus(ctx, unit.GetId(), &centrumunits.UnitStatus{
-		CreatedAt:  timestamp.Now(),
-		UnitId:     unit.GetId(),
-		Status:     centrumunits.StatusUnit_STATUS_UNIT_UNAVAILABLE,
-		UserId:     userId,
+		CreatedAt: timestamp.Now(),
+		UnitId:    unit.GetId(),
+		Status:    centrumunits.StatusUnit_STATUS_UNIT_UNAVAILABLE,
+		// A timer expiration is independent automation. Do not attribute it to
+		// the user of the preceding status; clients can render actorless entries
+		// as system actions.
 		CreatorJob: &unit.Job,
 	}); err != nil {
 		s.logger.Error("failed to update empty unit status to unavailable",

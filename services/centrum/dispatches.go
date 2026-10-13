@@ -485,6 +485,9 @@ func (s *Server) UpdateDispatchStatus(
 		CreatorJob: &userInfo.Job,
 	})
 	if err != nil {
+		if errors.Is(err, errorscentrum.ErrDispatchNotFound) {
+			return nil, errorscentrum.ErrDispatchNotFound
+		}
 		return nil, errswrap.NewError(err, errorscentrum.ErrFailedQuery)
 	}
 

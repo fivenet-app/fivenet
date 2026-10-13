@@ -8,6 +8,7 @@ import (
 	centrumdispatches "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/centrum/dispatches"
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/timestamp"
 	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
+	errorscentrum "github.com/fivenet-app/fivenet/v2026/services/centrum/errors"
 	eventscentrum "github.com/fivenet-app/fivenet/v2026/services/centrum/events"
 	centrumutils "github.com/fivenet-app/fivenet/v2026/services/centrum/utils"
 	colleagueshydrator "github.com/fivenet-app/fivenet/v2026/stores/jobs/colleagues/hydrator"
@@ -192,7 +193,7 @@ func (s *DispatchDB) UpdateStatus(
 		in.CreatedAt = timestamp.Now()
 	}
 
-	in, err = s.AddDispatchStatus(ctx, s.db, in)
+	in, err = s.addDispatchStatusWithParentLock(ctx, dspId, in)
 	if err != nil {
 		return nil, err
 	}
@@ -228,6 +229,47 @@ func (s *DispatchDB) UpdateStatus(
 	return in, nil
 }
 
+// addDispatchStatusWithParentLock keeps a deletion from racing a status
+// insert. It is shared by projection-backed and DB-only status updates.
+func (s *DispatchDB) addDispatchStatusWithParentLock(
+	ctx context.Context,
+	dspID int64,
+	in *centrumdispatches.DispatchStatus,
+) (*centrumdispatches.DispatchStatus, error) {
+	// A KV projection may survive briefly after its SQL row was deleted;
+	// without this lock the race turns into an opaque foreign-key error.
+	tx, err := s.db.BeginTx(ctx, nil)
+	if err != nil {
+		return nil, err
+	}
+	defer tx.Rollback()
+
+	dispatchExists := struct {
+		ID int64 `alias:"id"`
+	}{}
+	dispatchStmt := table.FivenetCentrumDispatches.
+		SELECT(table.FivenetCentrumDispatches.ID).
+		FROM(table.FivenetCentrumDispatches).
+		WHERE(table.FivenetCentrumDispatches.ID.EQ(mysql.Int64(dspID))).
+		FOR(mysql.UPDATE())
+	if err := dispatchStmt.QueryContext(ctx, tx, &dispatchExists); err != nil {
+		if errors.Is(err, qrm.ErrNoRows) {
+			return nil, errorscentrum.ErrDispatchNotFound
+		}
+		return nil, err
+	}
+
+	in, err = s.AddDispatchStatus(ctx, tx, in)
+	if err != nil {
+		return nil, err
+	}
+	if err := tx.Commit(); err != nil {
+		return nil, err
+	}
+
+	return in, nil
+}
+
 // UpdateStatusInDB persists a status without requiring the live NATS
 // projection. This is used by recovery/housekeeper paths after a projection
 // has expired or was otherwise removed from KV. The normal UpdateStatus path
@@ -242,7 +284,7 @@ func (s *DispatchDB) UpdateStatusInDB(
 		in.CreatedAt = timestamp.Now()
 	}
 
-	return s.AddDispatchStatus(ctx, s.db, in)
+	return s.addDispatchStatusWithParentLock(ctx, in.GetDispatchId(), in)
 }
 
 func (s *DispatchDB) publishDispatchStatus(
