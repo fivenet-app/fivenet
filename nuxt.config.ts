@@ -298,10 +298,11 @@ export default defineNuxtConfig({
                 '@unovis/ts',
                 '@unovis/vue',
                 '@vue-leaflet/vue-leaflet',
+                '@vue/devtools-core',
                 '@vue/devtools-kit',
                 '@vueuse/integrations/useSortable',
                 '@zxcvbn-ts/core',
-                'browser-headers',
+                'browser-headers', // CJS
                 'css-blank-pseudo/browser',
                 'css-has-pseudo/browser',
                 'date-fns',
@@ -309,9 +310,9 @@ export default defineNuxtConfig({
                 'emoji-blast',
                 'fabric',
                 'fabric/extensions',
-                'howler',
-                'leaflet',
-                'leaflet.heat',
+                'howler', // CJS
+                'leaflet', // CJS
+                'leaflet.heat', // CJS
                 'lib0/observable',
                 'maska/vue',
                 'mdi-vue3',
