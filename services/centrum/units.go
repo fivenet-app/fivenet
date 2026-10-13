@@ -552,7 +552,8 @@ func (s *Server) ListUnitActivity(
 		}
 	}
 
-	targets := make([]colleagueshydrator.Target, 0, len(resp.GetActivity()))
+	// Each activity entry can have an affected user and a distinct creator.
+	targets := make([]colleagueshydrator.Target, 0, len(resp.GetActivity())*2)
 	for i := range resp.GetActivity() {
 		if resp.Activity[i].GetUserId() > 0 {
 			targets = append(targets, colleagueshydrator.Target{
