@@ -5,11 +5,23 @@ import GenericTime from '~/components/partials/elements/GenericTime.vue';
 import { useLivemapStore } from '~/stores/livemap';
 import { type UnitStatus, StatusUnit } from '~~/gen/ts/resources/centrum/units/units';
 
-defineProps<{
+const props = defineProps<{
     item: UnitStatus;
 }>();
 
 const { gotoCoords } = useLivemapStore();
+
+const isMembershipChange = computed(
+    () => props.item.status === StatusUnit.USER_ADDED || props.item.status === StatusUnit.USER_REMOVED,
+);
+const actor = computed(() => props.item.creator ?? props.item.user);
+const showActor = computed(
+    () =>
+        actor.value !== undefined &&
+        (!isMembershipChange.value ||
+            props.item.user === undefined ||
+            (props.item.creator !== undefined && props.item.creatorId !== props.item.userId)),
+);
 </script>
 
 <template>
@@ -35,7 +47,17 @@ const { gotoCoords } = useLivemapStore();
                     icon="i-mdi-map-marker"
                     @click="gotoCoords({ x: item.x, y: item.y })"
                 />
-                <CitizenInfoPopover v-if="item.user" :user="item.user" :trailing="false" text-class="text-xs" />
+                <span v-if="isMembershipChange && item.user" class="inline-flex items-center gap-1">
+                    <span class="text-dimmed">{{ $t('common.member', 1) }}:</span>
+                    <CitizenInfoPopover :user="item.user" :trailing="false" text-class="text-xs" />
+                </span>
+
+                <span v-if="showActor && actor" class="inline-flex items-center gap-1">
+                    <span v-if="isMembershipChange && item.user" class="text-dimmed">{{ $t('common.creator') }}:</span>
+                    <CitizenInfoPopover :user="actor" :trailing="false" text-class="text-xs" />
+                </span>
+
+                <span v-if="!actor" class="text-dimmed">{{ $t('common.system') }}</span>
             </span>
         </div>
     </div>

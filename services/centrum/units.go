@@ -554,14 +554,19 @@ func (s *Server) ListUnitActivity(
 
 	targets := make([]colleagueshydrator.Target, 0, len(resp.GetActivity()))
 	for i := range resp.GetActivity() {
-		if resp.Activity[i].GetUserId() <= 0 {
-			continue
+		if resp.Activity[i].GetUserId() > 0 {
+			targets = append(targets, colleagueshydrator.Target{
+				UserID: resp.Activity[i].GetUserId(),
+				Set:    resp.Activity[i].SetUser,
+			})
 		}
 
-		targets = append(targets, colleagueshydrator.Target{
-			UserID: resp.Activity[i].GetUserId(),
-			Set:    resp.Activity[i].SetUser,
-		})
+		if resp.Activity[i].GetCreatorId() > 0 {
+			targets = append(targets, colleagueshydrator.Target{
+				UserID: resp.Activity[i].GetCreatorId(),
+				Set:    resp.Activity[i].SetCreator,
+			})
+		}
 	}
 
 	if err := s.colleagueHydrator.HydrateTargets(

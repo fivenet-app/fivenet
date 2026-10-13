@@ -90,6 +90,32 @@ func (s *UnitDB) GetStatusByID(
 	}
 
 	// We can't use the units store to get the unit as we might be in a "locked" update unit call
+	if dest.GetCreatorId() > 0 {
+		if dest.GetCreatorId() == dest.GetUserId() {
+			dest.SetCreator(dest.GetUser())
+		} else {
+			creatorOpts := colleagueshydrator.ResolveOpts{
+				Scope: colleagueshydrator.JobScope{Mode: colleagueshydrator.JobScopePrimary},
+			}
+			if dest.GetCreatorJob() != "" {
+				creatorOpts.Scope = colleagueshydrator.JobScope{
+					Mode: colleagueshydrator.JobScopeExplicit,
+					Job:  dest.GetCreatorJob(),
+				}
+			}
+			creator, err := s.colleagueHydrator.GetBasicByUserID(
+				ctx,
+				tx,
+				nil,
+				dest.GetCreatorId(),
+				creatorOpts,
+			)
+			if err != nil {
+				return nil, err
+			}
+			dest.SetCreator(creator)
+		}
+	}
 
 	return &dest, nil
 }
