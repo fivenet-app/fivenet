@@ -265,16 +265,30 @@ function refresh() {
                                         <span v-else class="text-muted">{{ $t('common.na') }}</span>
                                     </dd>
                                 </div>
-
-                                <div v-if="table.lastError" class="grid grid-cols-[1fr_auto] gap-3">
-                                    <dt class="font-medium text-muted">
-                                        {{ $t('components.settings.system_status.db_sync.last_error') }}
-                                    </dt>
-                                    <dd class="max-w-56 text-right break-words text-error">
-                                        {{ table.lastError }}
-                                    </dd>
-                                </div>
                             </dl>
+
+                            <UCollapsible v-if="table.lastError" class="group">
+                                <template #default>
+                                    <div class="grid cursor-pointer grid-cols-[1fr_auto] items-start gap-3 text-sm">
+                                        <span class="font-medium text-muted">
+                                            {{ $t('components.settings.system_status.db_sync.last_error') }}
+                                        </span>
+                                        <span class="flex max-w-56 items-start gap-1 text-right text-error">
+                                            <span class="line-clamp-3 break-words">{{ table.lastError }}</span>
+                                            <UIcon
+                                                name="i-mdi-chevron-down"
+                                                class="mt-0.5 size-4 shrink-0 transition-transform duration-200 group-data-[state=open]:rotate-180"
+                                            />
+                                        </span>
+                                    </div>
+                                </template>
+
+                                <template #content>
+                                    <p class="mt-3 font-mono text-sm break-words text-error">
+                                        {{ table.lastError }}
+                                    </p>
+                                </template>
+                            </UCollapsible>
                         </UCard>
                     </UPageGrid>
                 </div>
