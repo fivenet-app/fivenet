@@ -160,7 +160,10 @@ func New(p Params) *DispatchDB {
 			store.WithKVPrefix[common.IDMapping, *common.IDMapping]("job"),
 			store.WithLocks[common.IDMapping, *common.IDMapping](nil),
 			store.WithKVConfig[common.IDMapping, *common.IDMapping](
-				jetstream.KeyValueConfig{TTL: DispatchKVTTL},
+				jetstream.KeyValueConfig{
+					TTL:            DispatchKVTTL,
+					LimitMarkerTTL: DispatchKVTTL,
+				},
 			),
 		)
 		if err != nil {
@@ -209,7 +212,10 @@ func New(p Params) *DispatchDB {
 			// Make sure dispatches are removed from the store after DispatchKVTTL
 			// of inactivity if all other cleanup mechanisms fail.
 			store.WithKVConfig[centrumdispatches.Dispatch, *centrumdispatches.Dispatch](
-				jetstream.KeyValueConfig{TTL: DispatchKVTTL},
+				jetstream.KeyValueConfig{
+					TTL:            DispatchKVTTL,
+					LimitMarkerTTL: DispatchKVTTL,
+				},
 			),
 			store.WithOnUpdateFn[centrumdispatches.Dispatch, *centrumdispatches.Dispatch](
 				func(ctx context.Context, old *centrumdispatches.Dispatch, dispatch *centrumdispatches.Dispatch) (*centrumdispatches.Dispatch, error) {

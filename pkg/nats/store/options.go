@@ -85,11 +85,12 @@ func WithOnRemoteDeletedFn[T any, U protoutils.ProtoMessageWithMerge[T]](
 	}
 }
 
-// WithKVConfig currently only used to set the TTL of the KeyValue store.
+// WithKVConfig applies retention settings to the KeyValue store.
 func WithKVConfig[T any, U protoutils.ProtoMessageWithMerge[T]](
 	config jetstream.KeyValueConfig,
 ) Option[T, U] {
 	return func(s *Store[T, U], kvConfig *jetstream.KeyValueConfig) {
 		kvConfig.TTL = config.TTL
+		kvConfig.LimitMarkerTTL = config.LimitMarkerTTL
 	}
 }
