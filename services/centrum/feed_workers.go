@@ -33,9 +33,19 @@ func (s *Server) runCentrumEventFeed(ctx context.Context) {
 }
 
 func (s *Server) runKVFeed(ctx context.Context, feed feedCfg) {
+	backoff := newFeedRestartBackoff()
+	hadConsumer := false
 	for {
-		err := s.consumeKVFeed(ctx, feed)
+		started, err := s.consumeKVFeed(ctx, feed)
+		if started {
+			backoff.reset()
+			hadConsumer = true
+		}
 		if ctx.Err() == nil && !protoutils.IsContextCanceled(err) {
+			if hadConsumer {
+				hadConsumer = false
+				s.publishFeedResync(feed.StreamName)
+			}
 			if err != nil {
 				s.logger.Error(
 					"centrum KV feed stopped",
@@ -43,12 +53,11 @@ func (s *Server) runKVFeed(ctx context.Context, feed feedCfg) {
 					zap.String("bucket", feed.Bucket),
 				)
 			}
-			s.publishFeedResync(feed.StreamName)
 		}
 		select {
 		case <-ctx.Done():
 			return
-		case <-time.After(2 * time.Second):
+		case <-time.After(backoff.next()):
 		}
 	}
 }

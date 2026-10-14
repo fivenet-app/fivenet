@@ -31,6 +31,25 @@ type capturedWatchKV struct {
 	watchers chan jetstream.KeyWatcher
 }
 
+type revisionConflictKV struct {
+	jetstream.KeyValue
+
+	conflicts atomic.Int32
+}
+
+func (k *revisionConflictKV) Update(
+	ctx context.Context,
+	key string,
+	value []byte,
+	revision uint64,
+) (uint64, error) {
+	if k.conflicts.CompareAndSwap(1, 0) {
+		return 0, jetstream.ErrKeyRevisionMismatch
+	}
+
+	return k.KeyValue.Update(ctx, key, value, revision)
+}
+
 func (k *capturedWatchKV) Watch(
 	ctx context.Context,
 	keys string,
@@ -246,6 +265,28 @@ func TestBasicStoreCreateAndUse(t *testing.T) {
 
 	list = store.List()
 	assert.Empty(t, list)
+}
+
+func TestPutWithRetryRetriesRevisionMismatch(t *testing.T) {
+	t.Parallel()
+
+	ctx := t.Context()
+	js := nats.NewServer(t, nats.ServerOptions{InProcess: true}).GetJS()
+	kv, err := js.CreateOrUpdateKeyValue(ctx, jetstream.KeyValueConfig{Bucket: "put_with_retry"})
+	require.NoError(t, err)
+	_, err = kv.Put(ctx, "key", []byte("old"))
+	require.NoError(t, err)
+
+	conflictingKV := &revisionConflictKV{KeyValue: kv}
+	conflictingKV.conflicts.Store(1)
+	revision, retries, err := PutWithRetry(ctx, conflictingKV, "key", []byte("new"))
+	require.NoError(t, err)
+	assert.Equal(t, 1, retries)
+	assert.NotZero(t, revision)
+
+	entry, err := kv.Get(ctx, "key")
+	require.NoError(t, err)
+	assert.Equal(t, []byte("new"), entry.Value())
 }
 
 func TestRangeWithKVPrefixUsesCallerKeys(t *testing.T) {

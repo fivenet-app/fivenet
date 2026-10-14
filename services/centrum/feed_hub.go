@@ -385,7 +385,7 @@ func (s *Server) consumeCentrumEvents(ctx context.Context) error {
 	}
 }
 
-func (s *Server) consumeKVFeed(ctx context.Context, feed feedCfg) error {
+func (s *Server) consumeKVFeed(ctx context.Context, feed feedCfg) (bool, error) {
 	consumer, err := s.js.CreateConsumer(ctx, "KV_"+feed.StreamName, jetstream.ConsumerConfig{
 		FilterSubject: "$KV." + feed.Bucket + ".>",
 		DeliverPolicy: jetstream.DeliverNewPolicy,
@@ -393,7 +393,7 @@ func (s *Server) consumeKVFeed(ctx context.Context, feed feedCfg) error {
 		MaxWaiting:    8,
 	})
 	if err != nil {
-		return fmt.Errorf("failed to create KV feed consumer. %w", err)
+		return false, fmt.Errorf("failed to create KV feed consumer. %w", err)
 	}
 
 	msgs, err := consumer.Messages(
@@ -401,7 +401,7 @@ func (s *Server) consumeKVFeed(ctx context.Context, feed feedCfg) error {
 		jetstream.WithMessagesErrOnMissingHeartbeat(false),
 	)
 	if err != nil {
-		return err
+		return true, err
 	}
 	defer msgs.Stop()
 
@@ -409,15 +409,15 @@ func (s *Server) consumeKVFeed(ctx context.Context, feed feedCfg) error {
 		msg, err := msgs.Next(jetstream.NextContext(ctx))
 		if err != nil {
 			if errors.Is(err, jetstream.ErrMsgIteratorClosed) {
-				return nil
+				return true, nil
 			}
-			return err
+			return true, err
 		}
 
 		key := strings.TrimPrefix(msg.Subject(), "$KV."+feed.Bucket+".")
 		metadata, err := msg.Metadata()
 		if err != nil {
-			return fmt.Errorf("failed to read KV feed message metadata. %w", err)
+			return true, fmt.Errorf("failed to read KV feed message metadata. %w", err)
 		}
 		kvRevision := metadata.Sequence.Stream
 		job := key

@@ -35,6 +35,10 @@ func (s *Housekeeper) runTTLWatcher(ctx context.Context) error {
 }
 
 func (s *Housekeeper) unitKVPing(ctx context.Context) error {
+	if err := s.reconcileUnitPings(ctx); err != nil {
+		return err
+	}
+
 	watch, err := s.units.KVPing.Watch(ctx, "ping.*")
 	if err != nil {
 		return err
@@ -60,7 +64,11 @@ func (s *Housekeeper) unitKVPing(ctx context.Context) error {
 				continue
 			}
 
-			id, _ := strconv.ParseInt(strings.TrimPrefix(e.Key(), "ping."), 10, 64)
+			id, err := parseUnitPingKey(e.Key())
+			if err != nil {
+				s.logger.Warn("ignoring malformed unit ping key", zap.String("key", e.Key()), zap.Error(err))
+				continue
+			}
 			if err := s.handleUnitKVPing(ctx, id); err != nil {
 				s.logger.Error(
 					"failed to handle TTL event",
@@ -70,6 +78,48 @@ func (s *Housekeeper) unitKVPing(ctx context.Context) error {
 			}
 		}
 	}
+}
+
+// reconcileUnitPings repairs the local in-memory timer bucket after leadership
+// changes. A unit may have expired from this process while another instance
+// was leader, so relying only on replayed ping keys would leave a supervision
+// gap after failover.
+func (s *Housekeeper) reconcileUnitPings(ctx context.Context) error {
+	s.units.Range(func(_ string, unit *centrumunits.Unit) bool {
+		if ctx.Err() != nil {
+			return false
+		}
+
+		if err := s.units.SyncUnitPing(ctx, unit); err != nil {
+			if ctx.Err() == nil {
+				s.logger.Warn(
+					"failed to reconcile unit ping",
+					zap.Int64("unit_id", unit.GetId()),
+					zap.Error(err),
+				)
+			}
+		}
+		return true
+	})
+
+	return ctx.Err()
+}
+
+func parseUnitPingKey(key string) (int64, error) {
+	const prefix = "ping."
+	if !strings.HasPrefix(key, prefix) {
+		return 0, fmt.Errorf("invalid unit ping key %q", key)
+	}
+
+	id, err := strconv.ParseInt(strings.TrimPrefix(key, prefix), 10, 64)
+	if err != nil || id <= 0 {
+		if err == nil {
+			err = fmt.Errorf("unit ID must be positive")
+		}
+		return 0, fmt.Errorf("invalid unit ping key %q: %w", key, err)
+	}
+
+	return id, nil
 }
 
 // handleUnitKVPing checks if a unit is empty or has the static attribute and sets its status to unavailable if so.
