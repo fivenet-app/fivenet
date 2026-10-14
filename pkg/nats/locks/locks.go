@@ -13,12 +13,12 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"math/rand/v2"
 	"strings"
 	"sync"
 	"time"
 
 	"github.com/fivenet-app/fivenet/v2026/pkg/events"
+	"github.com/fivenet-app/fivenet/v2026/pkg/retry"
 	"github.com/fivenet-app/fivenet/v2026/pkg/utils/instance"
 	"github.com/nats-io/nats.go/jetstream"
 	"github.com/prometheus/client_golang/prometheus"
@@ -38,6 +38,13 @@ const (
 	// KeyPrefix is the prefix used for all lock keys in the KV store.
 	KeyPrefix = "LOCK."
 )
+
+var lockAcquireBackoff = retry.BackoffConfig{
+	InitialDelay: 50 * time.Millisecond,
+	MaxDelay:     200 * time.Millisecond,
+	Multiplier:   2,
+	Jitter:       0.2,
+}
 
 type lockMetrics struct {
 	acquireTotal *prometheus.CounterVec
@@ -186,44 +193,43 @@ func (l *Locks) Lock(ctx context.Context, key string) error {
 	start := time.Now()
 	lockKey := makeLockKey(key)
 	l.logger.Debug("lock", zap.String("key", lockKey))
+	backoff := retry.NewBackoff(lockAcquireBackoff)
 
-loop:
 	for {
 		revision, err := l.kv.Get(ctx, lockKey)
 		if err != nil && !errors.Is(err, jetstream.ErrKeyNotFound) {
 			return err
 		}
-		if revision == nil {
-			break // Nobody holds the lock
+		if revision != nil {
+			if err := backoff.Wait(ctx); err != nil {
+				l.metrics.acquireTotal.WithLabelValues(l.bucket, "fail").Inc()
+				return err
+			}
+			continue
 		}
 
-		// Wait a little and retry
-		select {
-		case <-time.After(jitterDelay()):
-		case <-ctx.Done():
+		// Lock doesn't exist, create it.
+		nrev, err := l.kv.Create(ctx, lockKey, l.debugPayload(), jetstream.KeyTTL(l.maxLockAge))
+		if err != nil && isWrongSequence(err) {
+			// Another process created the lock after our read.
+			if err := backoff.Wait(ctx); err != nil {
+				l.metrics.acquireTotal.WithLabelValues(l.bucket, "fail").Inc()
+				return err
+			}
+			continue
+		}
+
+		if err != nil {
 			l.metrics.acquireTotal.WithLabelValues(l.bucket, "fail").Inc()
-			return ctx.Err()
+			return err
 		}
+
+		l.setRev(lockKey, nrev)
+
+		l.metrics.acquireTotal.WithLabelValues(l.bucket, "success").Inc()
+		l.metrics.heldDuration.WithLabelValues(l.bucket).Observe(time.Since(start).Seconds())
+		return nil
 	}
-
-	// Lock doesn't exist, create it
-	nrev, err := l.kv.Create(ctx, lockKey, l.debugPayload(), jetstream.KeyTTL(l.maxLockAge))
-	if err != nil && isWrongSequence(err) {
-		// another process created the lock in the meantime
-		// try again
-		goto loop
-	}
-
-	if err != nil {
-		l.metrics.acquireTotal.WithLabelValues(l.bucket, "fail").Inc()
-		return err
-	}
-
-	l.setRev(lockKey, nrev)
-
-	l.metrics.acquireTotal.WithLabelValues(l.bucket, "success").Inc()
-	l.metrics.heldDuration.WithLabelValues(l.bucket).Observe(time.Since(start).Seconds())
-	return nil
 }
 
 // TryLock attempts to acquire the lock for key without blocking.
@@ -302,10 +308,4 @@ func isWrongSequence(err error) bool {
 // makeLockKey returns the full key for a lock.
 func makeLockKey(key string) string {
 	return KeyPrefix + key
-}
-
-// jitterDelay returns a random delay for lock retry backoff.
-func jitterDelay() time.Duration {
-	//nolint:gosec // G404: Use of weak random number generator is acceptable here
-	return time.Duration(50+rand.Float64()*150) * time.Millisecond
 }

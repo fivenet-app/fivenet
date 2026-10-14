@@ -4,6 +4,7 @@ import (
 	"context"
 	"time"
 
+	"github.com/fivenet-app/fivenet/v2026/pkg/retry"
 	"github.com/fivenet-app/fivenet/v2026/pkg/utils/protoutils"
 	"go.uber.org/zap"
 )
@@ -33,12 +34,12 @@ func (s *Server) runCentrumEventFeed(ctx context.Context) {
 }
 
 func (s *Server) runKVFeed(ctx context.Context, feed feedCfg) {
-	backoff := newFeedRestartBackoff()
+	backoff := retry.NewBackoff(feedRestartBackoff)
 	hadConsumer := false
 	for {
 		started, err := s.consumeKVFeed(ctx, feed)
 		if started {
-			backoff.reset()
+			backoff.Reset()
 			hadConsumer = true
 		}
 		if ctx.Err() == nil && !protoutils.IsContextCanceled(err) {
@@ -57,7 +58,7 @@ func (s *Server) runKVFeed(ctx context.Context, feed feedCfg) {
 		select {
 		case <-ctx.Done():
 			return
-		case <-time.After(backoff.next()):
+		case <-time.After(backoff.Next()):
 		}
 	}
 }

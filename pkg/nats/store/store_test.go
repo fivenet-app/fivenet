@@ -37,6 +37,13 @@ type revisionConflictKV struct {
 	conflicts atomic.Int32
 }
 
+type rebaseConflictKV struct {
+	jetstream.KeyValue
+
+	replacement []byte
+	conflicted  atomic.Bool
+}
+
 func (k *revisionConflictKV) Update(
 	ctx context.Context,
 	key string,
@@ -44,6 +51,23 @@ func (k *revisionConflictKV) Update(
 	revision uint64,
 ) (uint64, error) {
 	if k.conflicts.CompareAndSwap(1, 0) {
+		return 0, jetstream.ErrKeyRevisionMismatch
+	}
+
+	return k.KeyValue.Update(ctx, key, value, revision)
+}
+
+func (k *rebaseConflictKV) Update(
+	ctx context.Context,
+	key string,
+	value []byte,
+	revision uint64,
+) (uint64, error) {
+	if k.conflicted.CompareAndSwap(false, true) {
+		if _, err := k.KeyValue.Update(ctx, key, k.replacement, revision); err != nil {
+			return 0, err
+		}
+
 		return 0, jetstream.ErrKeyRevisionMismatch
 	}
 
@@ -287,6 +311,30 @@ func TestPutWithRetryRetriesRevisionMismatch(t *testing.T) {
 	entry, err := kv.Get(ctx, "key")
 	require.NoError(t, err)
 	assert.Equal(t, []byte("new"), entry.Value())
+}
+
+func TestComputeUpdateRebasesAfterRevisionMismatch(t *testing.T) {
+	t.Parallel()
+
+	ctx := t.Context()
+	js := nats.NewServer(t, nats.ServerOptions{InProcess: true}).GetJS()
+	kv, err := js.CreateOrUpdateKeyValue(ctx, jetstream.KeyValueConfig{Bucket: "compute_update_rebase"})
+	require.NoError(t, err)
+
+	replacement, err := proto.Marshal(&tests.SimpleObject{Field1: "external", Field2: true})
+	require.NoError(t, err)
+	store := newScriptedStore(t, &rebaseConflictKV{KeyValue: kv, replacement: replacement})
+	require.NoError(t, store.Put(ctx, "key", &tests.SimpleObject{Field1: "initial"}))
+
+	require.NoError(t, store.ComputeUpdate(ctx, "key", func(_ string, existing *tests.SimpleObject) (*tests.SimpleObject, bool, error) {
+		existing.Field1 = "local"
+		return existing, true, nil
+	}))
+
+	item, err := store.Get("key")
+	require.NoError(t, err)
+	assert.Equal(t, "local", item.GetField1())
+	assert.True(t, item.GetField2(), "the concurrent update must be preserved")
 }
 
 func TestRangeWithKVPrefixUsesCallerKeys(t *testing.T) {

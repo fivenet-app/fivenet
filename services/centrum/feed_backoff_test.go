@@ -4,42 +4,37 @@ import (
 	"testing"
 	"time"
 
+	"github.com/fivenet-app/fivenet/v2026/pkg/retry"
 	"github.com/stretchr/testify/require"
 )
 
 func TestFeedRestartBackoffGrowsAndCaps(t *testing.T) {
 	t.Parallel()
 
-	backoff := newFeedRestartBackoff()
-	backoff.jitter = func(delay time.Duration) time.Duration { return delay }
+	config := feedRestartBackoff
+	config.Jitter = 0
+	backoff := retry.NewBackoff(config)
 
-	require.Equal(t, time.Second, backoff.next())
-	require.Equal(t, 2*time.Second, backoff.next())
-	require.Equal(t, 4*time.Second, backoff.next())
-	require.Equal(t, 8*time.Second, backoff.next())
-	require.Equal(t, 10*time.Second, backoff.next())
-	require.Equal(t, 10*time.Second, backoff.next())
+	require.Equal(t, time.Second, backoff.Next())
+	require.Equal(t, 2*time.Second, backoff.Next())
+	require.Equal(t, 4*time.Second, backoff.Next())
+	require.Equal(t, 8*time.Second, backoff.Next())
+	require.Equal(t, 10*time.Second, backoff.Next())
+	require.Equal(t, 10*time.Second, backoff.Next())
 }
 
 func TestFeedRestartBackoffReset(t *testing.T) {
 	t.Parallel()
 
-	backoff := newFeedRestartBackoff()
-	backoff.jitter = func(delay time.Duration) time.Duration { return delay }
+	config := feedRestartBackoff
+	config.Jitter = 0
+	backoff := retry.NewBackoff(config)
 
-	backoff.next()
-	backoff.next()
-	backoff.reset()
+	backoff.Next()
+	backoff.Next()
+	backoff.Reset()
 
-	require.Equal(t, time.Second, backoff.next())
-}
-
-func TestFeedRestartBackoffZeroValueIsUsable(t *testing.T) {
-	t.Parallel()
-
-	var backoff feedRestartBackoff
-
-	require.NotZero(t, backoff.next())
+	require.Equal(t, time.Second, backoff.Next())
 }
 
 func TestJitterFeedRestartDelayStaysWithinBounds(t *testing.T) {
@@ -50,7 +45,11 @@ func TestJitterFeedRestartDelayStaysWithinBounds(t *testing.T) {
 	maxJitter := time.Duration(float64(delay) * (1 + feedRestartJitter))
 
 	for range 100 {
-		jittered := jitterFeedRestartDelay(delay)
+		backoff := retry.NewBackoff(feedRestartBackoff)
+		var jittered time.Duration
+		for range 5 {
+			jittered = backoff.Next()
+		}
 		require.GreaterOrEqual(t, jittered, minJitter)
 		require.LessOrEqual(t, jittered, maxJitter)
 	}

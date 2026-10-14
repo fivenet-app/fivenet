@@ -321,6 +321,10 @@ func (s *Scheduler) claimJob(ctx context.Context, name string) (*cron.Cronjob, e
 		ctx,
 		name,
 		func(_ string, existing *cron.Cronjob) (*cron.Cronjob, bool, error) {
+			// ComputeUpdate may retry after a CAS conflict. Do not retain a
+			// candidate from an attempt which did not commit the claim.
+			claimed = nil
+
 			if existing == nil {
 				return existing, false, nil
 			}
