@@ -323,10 +323,11 @@ const formRef = useTemplateRef('formRef');
                                 <ClientOnly>
                                     <USelectMenu
                                         v-model="state.mode"
-                                        :items="modes"
-                                        value-key="mode"
-                                        :search-input="{ placeholder: $t('common.search_field') }"
+                                        class="w-full"
                                         :disabled="!canSubmit"
+                                        :items="modes"
+                                        :search-input="{ placeholder: $t('common.search_field') }"
+                                        value-key="mode"
                                     >
                                         <template #default>
                                             {{ $t(`enums.centrum.CentrumMode.${CentrumMode[state.mode ?? 0]}`) }}
@@ -347,10 +348,11 @@ const formRef = useTemplateRef('formRef');
                                 <ClientOnly>
                                     <USelectMenu
                                         v-model="state.fallbackMode"
-                                        :items="modes"
-                                        value-key="mode"
-                                        :search-input="{ placeholder: $t('common.search_field') }"
+                                        class="w-full"
                                         :disabled="!canSubmit"
+                                        :items="modes"
+                                        :search-input="{ placeholder: $t('common.search_field') }"
+                                        value-key="mode"
                                     >
                                         <template #default>
                                             {{ $t(`enums.centrum.CentrumMode.${CentrumMode[state.fallbackMode ?? 0]}`) }}
@@ -400,6 +402,7 @@ const formRef = useTemplateRef('formRef');
                             >
                                 <UInputNumber
                                     v-model="state.configuration.deduplicationRadius"
+                                    class="w-full"
                                     :min="5"
                                     :placeholder="$t('common.meters', 2)"
                                     :disabled="!canSubmit"
@@ -516,10 +519,11 @@ const formRef = useTemplateRef('formRef');
                             >
                                 <UInputNumber
                                     v-model="state.timings.dispatchMaxWait"
+                                    class="w-full"
+                                    :disabled="!canSubmit"
                                     :min="30"
                                     :max="300"
                                     :placeholder="$t('common.time_ago.second', 2)"
-                                    :disabled="!canSubmit"
                                     :format-options="{ style: 'unit', unit: 'second', unitDisplay: 'short' }"
                                 />
                             </UFormField>
@@ -539,10 +543,11 @@ const formRef = useTemplateRef('formRef');
                             >
                                 <UInputNumber
                                     v-model="state.timings.requireUnitReminderSeconds"
+                                    class="w-full"
+                                    :disabled="!canSubmit"
                                     :min="60"
                                     :max="7200"
                                     :placeholder="$t('common.time_ago.second', 2)"
-                                    :disabled="!canSubmit"
                                     :format-options="{ style: 'unit', unit: 'second', unitDisplay: 'short' }"
                                 />
                             </UFormField>

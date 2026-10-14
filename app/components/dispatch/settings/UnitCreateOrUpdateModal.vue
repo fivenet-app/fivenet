@@ -27,11 +27,16 @@ const notifications = useNotificationsStore();
 
 const centrumUnitsClient = await getCentrumUnitsClient();
 
-const availableAttributes = ref<{ label: string; value: UnitAttribute }[]>([
-    { label: t(`enums.centrum.UnitAttribute.${UnitAttribute[UnitAttribute.STATIC]}`, 2), value: UnitAttribute.STATIC },
+const availableAttributes = ref<{ label: string; value: UnitAttribute; description: string }[]>([
+    {
+        label: t(`enums.centrum.UnitAttribute.${UnitAttribute[UnitAttribute.STATIC]}`, 2),
+        value: UnitAttribute.STATIC,
+        description: t('components.dispatch.units.attributes.STATIC'),
+    },
     {
         label: t(`enums.centrum.UnitAttribute.${UnitAttribute[UnitAttribute.NO_DISPATCH_AUTO_ASSIGN]}`, 2),
         value: UnitAttribute.NO_DISPATCH_AUTO_ASSIGN,
+        description: t('components.dispatch.units.attributes.NO_DISPATCH_AUTO_ASSIGN'),
     },
 ]);
 
@@ -216,6 +221,13 @@ const formRef = useTemplateRef('formRef');
                             </template>
                         </USelectMenu>
                     </ClientOnly>
+
+                    <ul class="mt-2 space-y-1 text-xs text-muted">
+                        <li v-for="attribute in availableAttributes" :key="attribute.value">
+                            <span class="font-medium text-highlighted">{{ attribute.label }}:</span>
+                            {{ attribute.description }}
+                        </li>
+                    </ul>
                 </UFormField>
 
                 <UFormField class="flex-1" name="color" :label="$t('common.color')">

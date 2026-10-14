@@ -115,6 +115,24 @@ func (s *Housekeeper) checkAndUpdateUnitUsers(
 			continue
 		}
 
+		marker, markerFound := s.tracker.GetUserMarkerById(userId)
+		markerJob := ""
+		markerHidden := false
+		if marker != nil {
+			markerJob = marker.GetJob()
+			markerHidden = marker.GetHidden()
+		}
+		s.logger.Info(
+			"removing ineligible user from unit",
+			zap.String("job", unit.GetJob()),
+			zap.Int64("unit_id", unit.GetId()),
+			zap.Int32("user_id", userId),
+			zap.Bool("marker_found", markerFound),
+			zap.Bool("on_duty", s.tracker.IsUserOnDuty(userId)),
+			zap.String("marker_job", markerJob),
+			zap.Bool("marker_hidden", markerHidden),
+		)
+
 		toRemove = append(toRemove, userId)
 	}
 
@@ -265,7 +283,8 @@ func (s *Housekeeper) cleanupUnitStatus(ctx context.Context) (int, error) {
 				if unit.GetStatus() != nil &&
 					(unit.GetStatus().GetStatus() == centrumunits.StatusUnit_STATUS_UNIT_BUSY ||
 						unit.GetStatus().GetStatus() == centrumunits.StatusUnit_STATUS_UNIT_ON_BREAK ||
-						unit.GetStatus().GetStatus() == centrumunits.StatusUnit_STATUS_UNIT_UNAVAILABLE) {
+						unit.GetStatus().GetStatus() == centrumunits.StatusUnit_STATUS_UNIT_UNAVAILABLE ||
+						unit.GetStatus().GetStatus() == centrumunits.StatusUnit_STATUS_UNIT_AVAILABLE) {
 					continue
 				}
 			} else if unit.GetStatus() != nil && unit.GetStatus().GetStatus() == centrumunits.StatusUnit_STATUS_UNIT_UNAVAILABLE {

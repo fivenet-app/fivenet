@@ -1891,6 +1891,10 @@
             "units": {
                 "create_unit": "Create Unit",
                 "update_unit": "Update Unit",
+                "attributes": {
+                    "STATIC": "Marks a permanently stationed unit. It can be available, busy, on break, or unavailable.",
+                    "NO_DISPATCH_AUTO_ASSIGN": "Prevents dispatches from being automatically assigned to this unit."
+                },
                 "feed": {
                     "item": {
                         "UNKNOWN": "Unknown Unit Status",

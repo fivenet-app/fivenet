@@ -160,7 +160,8 @@ func (s *Housekeeper) handleUnitKVPing(ctx context.Context, unitId int64) error 
 		} else if unit.GetStatus() != nil &&
 			(unit.GetStatus().GetStatus() == centrumunits.StatusUnit_STATUS_UNIT_BUSY ||
 				unit.GetStatus().GetStatus() == centrumunits.StatusUnit_STATUS_UNIT_ON_BREAK ||
-				unit.GetStatus().GetStatus() == centrumunits.StatusUnit_STATUS_UNIT_UNAVAILABLE) {
+				unit.GetStatus().GetStatus() == centrumunits.StatusUnit_STATUS_UNIT_UNAVAILABLE ||
+				unit.GetStatus().GetStatus() == centrumunits.StatusUnit_STATUS_UNIT_AVAILABLE) {
 			stillAvailable = true
 		}
 	}

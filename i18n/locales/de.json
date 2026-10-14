@@ -1891,6 +1891,10 @@
             "units": {
                 "create_unit": "Einheit erstellen",
                 "update_unit": "Einheit aktualisieren",
+                "attributes": {
+                    "STATIC": "Kennzeichnet eine dauerhaft stationierte Einheit. Sie kann verfügbar, beschäftigt, auf Pause oder nicht verfügbar sein.",
+                    "NO_DISPATCH_AUTO_ASSIGN": "Verhindert, dass Einsätze dieser Einheit automatisch zugewiesen werden."
+                },
                 "feed": {
                     "item": {
                         "UNKNOWN": "Unbekannter Einheiten-Status",

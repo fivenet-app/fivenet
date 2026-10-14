@@ -305,10 +305,11 @@ func (s *UnitDB) UpdateStatus(
 
 	if unit.GetAttributes() != nil &&
 		unit.GetAttributes().Has(centrumunits.UnitAttribute_UNIT_ATTRIBUTE_STATIC) {
-		// Only allow a static unit to be set busy, on break or unavailable
+		// Static units may remain permanently available, busy, on break, or unavailable.
 		if in.GetStatus() != centrumunits.StatusUnit_STATUS_UNIT_BUSY &&
 			in.GetStatus() != centrumunits.StatusUnit_STATUS_UNIT_ON_BREAK &&
-			in.GetStatus() != centrumunits.StatusUnit_STATUS_UNIT_UNAVAILABLE {
+			in.GetStatus() != centrumunits.StatusUnit_STATUS_UNIT_UNAVAILABLE &&
+			in.GetStatus() != centrumunits.StatusUnit_STATUS_UNIT_AVAILABLE {
 			return unit.GetStatus(), false, nil
 		}
 	}
