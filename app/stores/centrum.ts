@@ -961,7 +961,10 @@ export const useCentrumStore = defineStore(
                         acls.value = resp.change.handshake.access;
 
                         if (resp.change.handshake.settings) {
-                            if (!resp.change.handshake.settings.enabled) {
+                            const incomingSettings = resp.change.handshake.settings;
+                            const wasDisabled =
+                                settings.value?.job === incomingSettings.job && settings.value.enabled === false;
+                            if (!incomingSettings.enabled && !wasDisabled) {
                                 notifications.add({
                                     title: { key: 'notifications.centrum.disabled.title', parameters: {} },
                                     description: { key: 'notifications.centrum.disabled.content', parameters: {} },
@@ -973,7 +976,7 @@ export const useCentrumStore = defineStore(
                                 logger.info('Centrum is enabled for job.');
                             }
 
-                            setOrUpdateSettings(resp.change.handshake.settings);
+                            setOrUpdateSettings(incomingSettings);
                         }
                     } else if (resp.change.oneofKind === 'latestState') {
                         logger.info(

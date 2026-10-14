@@ -343,7 +343,10 @@ func TestComputeUpdateRebasesAfterRevisionMismatch(t *testing.T) {
 
 	ctx := t.Context()
 	js := nats.NewServer(t, nats.ServerOptions{InProcess: true}).GetJS()
-	kv, err := js.CreateOrUpdateKeyValue(ctx, jetstream.KeyValueConfig{Bucket: "compute_update_rebase"})
+	kv, err := js.CreateOrUpdateKeyValue(
+		ctx,
+		jetstream.KeyValueConfig{Bucket: "compute_update_rebase"},
+	)
 	require.NoError(t, err)
 
 	replacement, err := proto.Marshal(&tests.SimpleObject{Field1: "external", Field2: true})
@@ -351,10 +354,14 @@ func TestComputeUpdateRebasesAfterRevisionMismatch(t *testing.T) {
 	store := newScriptedStore(t, &rebaseConflictKV{KeyValue: kv, replacement: replacement})
 	require.NoError(t, store.Put(ctx, "key", &tests.SimpleObject{Field1: "initial"}))
 
-	_, err = store.ComputeUpdate(ctx, "key", func(_ string, existing *tests.SimpleObject) (*tests.SimpleObject, bool, error) {
-		existing.Field1 = "local"
-		return existing, true, nil
-	})
+	_, err = store.ComputeUpdate(
+		ctx,
+		"key",
+		func(_ string, existing *tests.SimpleObject) (*tests.SimpleObject, bool, error) {
+			existing.Field1 = "local"
+			return existing, true, nil
+		},
+	)
 	require.NoError(t, err)
 
 	item, err := store.Get("key")

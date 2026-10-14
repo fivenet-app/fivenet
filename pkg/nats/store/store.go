@@ -759,7 +759,8 @@ var kvCASRetryBackoff = retry.BackoffConfig{
 }
 
 func isKVWriteConflict(err error) bool {
-	return errors.Is(err, jetstream.ErrKeyExists) || errors.Is(err, jetstream.ErrKeyRevisionMismatch)
+	return errors.Is(err, jetstream.ErrKeyExists) ||
+		errors.Is(err, jetstream.ErrKeyRevisionMismatch)
 }
 
 // PutWithRetry writes a KV value using optimistic CAS and retries transient
@@ -773,18 +774,24 @@ func PutWithRetry(
 	opts ...jetstream.KVCreateOpt,
 ) (uint64, int, error) {
 	var revision uint64
-	retries, err := retry.DoWithBackoff(ctx, maxPutWriteAttempts, retry.NewBackoff(kvCASRetryBackoff), func() error {
-		entry, err := kv.Get(ctx, key)
-		if err == nil {
-			revision, err = kv.Update(ctx, key, value, entry.Revision())
-			return err
-		}
-		if errors.Is(err, jetstream.ErrKeyNotFound) {
-			revision, err = kv.Create(ctx, key, value, opts...)
-		}
+	retries, err := retry.DoWithBackoff(
+		ctx,
+		maxPutWriteAttempts,
+		retry.NewBackoff(kvCASRetryBackoff),
+		func() error {
+			entry, err := kv.Get(ctx, key)
+			if err == nil {
+				revision, err = kv.Update(ctx, key, value, entry.Revision())
+				return err
+			}
+			if errors.Is(err, jetstream.ErrKeyNotFound) {
+				revision, err = kv.Create(ctx, key, value, opts...)
+			}
 
-		return err
-	}, isKVWriteConflict)
+			return err
+		},
+		isKVWriteConflict,
+	)
 
 	return revision, retries, err
 }
@@ -871,80 +878,102 @@ func (s *Store[T, U]) ComputeUpdate(
 	}
 
 	// Always compute from the current KV value. A retry must re-run fn after a
-	// revision conflict: reusing the previously marshalled message can otherwise
+	// revision conflict: reusing the previously marshaled message can otherwise
 	// overwrite fields written by another worker with a stale local projection.
 	var result U
-	_, err := retry.DoWithBackoff(ctx, maxPutWriteAttempts, retry.NewBackoff(kvCASRetryBackoff), func() error {
-		// A previous attempt may have computed a value but lost its CAS race.
-		// Never return that uncommitted result.
-		result = nil
+	_, err := retry.DoWithBackoff(
+		ctx,
+		maxPutWriteAttempts,
+		retry.NewBackoff(kvCASRetryBackoff),
+		func() error {
+			// A previous attempt may have computed a value but lost its CAS race.
+			// Never return that uncommitted result.
+			result = nil
 
-		entry, err := s.kv.Get(ctx, key)
-		var existing U
-		if err == nil {
-			existing = U(new(T))
-			if err := proto.Unmarshal(entry.Value(), existing); err != nil {
-				return fmt.Errorf("failed to unmarshal current value for key %s. %w", key, err)
+			entry, err := s.kv.Get(ctx, key)
+			var existing U
+			if err == nil {
+				existing = U(new(T))
+				if err := proto.Unmarshal(entry.Value(), existing); err != nil {
+					return fmt.Errorf("failed to unmarshal current value for key %s. %w", key, err)
+				}
+			} else if !errors.Is(err, jetstream.ErrKeyNotFound) {
+				return fmt.Errorf("failed to load current value for key %s. %w", key, err)
 			}
-		} else if !errors.Is(err, jetstream.ErrKeyNotFound) {
-			return fmt.Errorf("failed to load current value for key %s. %w", key, err)
-		}
 
-		var previous U
-		if existing != nil {
-			previous = proto.Clone(existing).(U)
-		}
+			var previous U
+			if existing != nil {
+				previous = proto.Clone(existing).(U)
+			}
 
-		computed, changed, err := fn(key, existing)
-		if err != nil {
-			return fmt.Errorf("store compute update function call returned error. %w", err)
-		}
-		if computed == nil {
-			s.logger.Error("compute update returned nil, skipping store put", zap.String("key", key))
-			return nil
-		}
-		if !changed {
-			item := s.updateFromType(key, computed, false)
+			computed, changed, err := fn(key, existing)
+			if err != nil {
+				return fmt.Errorf("store compute update function call returned error. %w", err)
+			}
+			if computed == nil {
+				s.logger.Error(
+					"compute update returned nil, skipping store put",
+					zap.String("key", key),
+				)
+				return nil
+			}
+			if !changed {
+				item := s.updateFromType(key, computed, false)
+				result = proto.Clone(item).(U)
+				s.logger.Debug("store compute update has not changed state", zap.String("key", key))
+				return nil
+			}
+
+			data, err := proto.Marshal(computed)
+			if err != nil {
+				return fmt.Errorf(
+					"failed to marshal proto msg for key %s compute update. %w",
+					key,
+					err,
+				)
+			}
+
+			if entry == nil {
+				_, err = s.kv.Create(ctx, key, data)
+			} else {
+				_, err = s.kv.Update(ctx, key, data, entry.Revision())
+			}
+			if err != nil {
+				if isKVWriteConflict(err) {
+					s.metrics.writeConflicts.WithLabelValues(s.bucket).Inc()
+				}
+				return fmt.Errorf(
+					"failed to write value for key %s in compute update. %w",
+					key,
+					err,
+				)
+			}
+
+			item := proto.Clone(computed).(U)
+			item = s.updateFromType(key, item, false)
 			result = proto.Clone(item).(U)
-			s.logger.Debug("store compute update has not changed state", zap.String("key", key))
+			if previous == nil && s.onCreated != nil {
+				if err := s.onCreated(ctx, key, item); err != nil {
+					s.logger.Error("onCreated hook failed", zap.String("key", key), zap.Error(err))
+				}
+			} else if previous != nil && s.onUpdate != nil {
+				if _, err := s.onUpdate(ctx, previous, item); err != nil {
+					s.logger.Error("onUpdate hook failed", zap.String("key", key), zap.Error(err))
+				}
+			}
+
 			return nil
-		}
-
-		data, err := proto.Marshal(computed)
-		if err != nil {
-			return fmt.Errorf("failed to marshal proto msg for key %s compute update. %w", key, err)
-		}
-
-		if entry == nil {
-			_, err = s.kv.Create(ctx, key, data)
-		} else {
-			_, err = s.kv.Update(ctx, key, data, entry.Revision())
-		}
-		if err != nil {
-			if isKVWriteConflict(err) {
-				s.metrics.writeConflicts.WithLabelValues(s.bucket).Inc()
-			}
-			return fmt.Errorf("failed to write value for key %s in compute update. %w", key, err)
-		}
-
-		item := proto.Clone(computed).(U)
-		item = s.updateFromType(key, item, false)
-		result = proto.Clone(item).(U)
-		if previous == nil && s.onCreated != nil {
-			if err := s.onCreated(ctx, key, item); err != nil {
-				s.logger.Error("onCreated hook failed", zap.String("key", key), zap.Error(err))
-			}
-		} else if previous != nil && s.onUpdate != nil {
-			if _, err := s.onUpdate(ctx, previous, item); err != nil {
-				s.logger.Error("onUpdate hook failed", zap.String("key", key), zap.Error(err))
-			}
-		}
-
-		return nil
-	}, isKVWriteConflict)
+		},
+		isKVWriteConflict,
+	)
 	if err != nil {
 		if isKVWriteConflict(err) {
-			return nil, fmt.Errorf("failed to write value for key %s in compute update after %d conflicts: %w", key, maxPutWriteAttempts, err)
+			return nil, fmt.Errorf(
+				"failed to write value for key %s in compute update after %d conflicts: %w",
+				key,
+				maxPutWriteAttempts,
+				err,
+			)
 		}
 
 		return nil, err

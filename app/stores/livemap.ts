@@ -319,7 +319,12 @@ export const useLivemapStore = defineStore(
          */
         const handleSnapshotUpdate = (snapshot: Snapshot, activeChar: UserLike | null): void => {
             markersUsers.value.clear();
+            ownMarker.value = undefined;
             snapshot.markers.forEach((marker: UserMarker) => addOrUpdateUserMarker(marker, activeChar?.userId));
+            if (selectedMarker.value && !markersUsers.value.has(selectedMarker.value.userId)) {
+                followMarker.value = false;
+                selectedMarker.value = undefined;
+            }
             initiated.value = true;
         };
 

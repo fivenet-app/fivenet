@@ -98,7 +98,7 @@ func Do(attempts int, fn func() error, shouldRetry func(error) bool) (int, error
 	}
 
 	var lastErr error
-	for attempt := 0; attempt < attempts; attempt++ {
+	for attempt := range attempts {
 		err := fn()
 		if err == nil || !shouldRetry(err) {
 			return attempt, err
@@ -122,7 +122,7 @@ func DoWithBackoff(
 	}
 
 	var lastErr error
-	for attempt := 0; attempt < attempts; attempt++ {
+	for attempt := range attempts {
 		err := fn()
 		if err == nil || !shouldRetry(err) {
 			return attempt, err

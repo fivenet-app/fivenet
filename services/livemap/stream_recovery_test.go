@@ -181,6 +181,7 @@ func TestStreamRecoversAfterUserConsumerDeletion(t *testing.T) {
 	}
 
 	var kvStream jetstream.Stream
+	deletedConsumer := ""
 	require.Eventually(t, func() bool {
 		kvStream, err = js.Stream(ctx, "KV_"+tracker.BucketUserLoc)
 		if err != nil {
@@ -188,17 +189,30 @@ func TestStreamRecoversAfterUserConsumerDeletion(t *testing.T) {
 		}
 		for name := range kvStream.ConsumerNames(ctx).Name() {
 			if err := kvStream.DeleteConsumer(ctx, name); err == nil {
+				deletedConsumer = name
 				return true
 			}
 		}
 		return false
 	}, time.Second, 10*time.Millisecond)
+	require.NotEmpty(t, deletedConsumer)
+
+	// Wait until the replacement pull consumer exists. This synchronizes on the
+	// recovery boundary instead of relying on the timing of its terminal status.
+	require.Eventually(t, func() bool {
+		for name := range kvStream.ConsumerNames(ctx).Name() {
+			if name != deletedConsumer {
+				return true
+			}
+		}
+		return false
+	}, 7*time.Second, 10*time.Millisecond)
 
 	// Recreating the stream produces the same ACL and snapshots without ending the RPC.
 	for range 3 {
 		select {
 		case <-responses:
-		case <-time.After(2 * time.Second):
+		case <-time.After(7 * time.Second):
 			t.Fatal("timed out waiting for stream resync response")
 		}
 	}

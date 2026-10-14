@@ -145,12 +145,18 @@ func TestDoWithBackoffRetriesAndRespectsCancellation(t *testing.T) {
 	ctx, cancel := context.WithCancel(t.Context())
 	cancel()
 	calls = 0
-	_, err = DoWithBackoff(ctx, 3, NewBackoff(BackoffConfig{InitialDelay: time.Second}), func() error {
-		calls++
-		return retryable
-	}, func(err error) bool {
-		return errors.Is(err, retryable)
-	})
+	_, err = DoWithBackoff(
+		ctx,
+		3,
+		NewBackoff(BackoffConfig{InitialDelay: time.Second}),
+		func() error {
+			calls++
+			return retryable
+		},
+		func(err error) bool {
+			return errors.Is(err, retryable)
+		},
+	)
 
 	require.ErrorIs(t, err, context.Canceled)
 	assert.Equal(t, 1, calls)

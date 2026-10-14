@@ -15,6 +15,7 @@ import (
 	permslivemap "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/livemap/perms"
 	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/auth"
 	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/errswrap"
+	"github.com/fivenet-app/fivenet/v2026/pkg/retry"
 	"github.com/fivenet-app/fivenet/v2026/pkg/tracker"
 	"github.com/fivenet-app/fivenet/v2026/pkg/utils/protoutils"
 	errorslivemap "github.com/fivenet-app/fivenet/v2026/services/livemap/errors"
@@ -28,6 +29,10 @@ const (
 	markerMarkerChunkSize = 75
 
 	feedFetch = 16
+
+	streamRestartInitialBackoff = 100 * time.Millisecond
+	streamRestartMaxBackoff     = 5 * time.Second
+	streamPullHeartbeat         = 3 * time.Second
 )
 
 var (
@@ -173,12 +178,18 @@ func (s *Server) Stream(
 	}()
 
 	s.logger.Debug("starting livemap stream", zap.Int32("user_id", userInfo.GetUserId()))
+	resyncBackoff := retry.NewBackoff(retry.BackoffConfig{
+		InitialDelay: streamRestartInitialBackoff,
+		MaxDelay:     streamRestartMaxBackoff,
+		Multiplier:   2,
+		Jitter:       0.2,
+	})
 	for {
 		if err := s.refreshStreamUserInfo(ctx, userInfo); err != nil {
 			return errswrap.NewError(err, errorslivemap.ErrStreamFailed)
 		}
 
-		err := s.stream(ctx, srv, userInfo, userInfoChanges)
+		err := s.stream(ctx, srv, userInfo, userInfoChanges, resyncBackoff.Reset)
 		if errors.Is(err, errLivemapUserInfoChanged) {
 			continue
 		}
@@ -195,10 +206,16 @@ func (s *Server) Stream(
 			if ctx.Err() != nil {
 				return nil
 			}
+			if err := resyncBackoff.Wait(ctx); err != nil {
+				return nil
+			}
 			continue
 		}
 		if errors.Is(err, errLivemapUserFeedResync) {
 			if ctx.Err() != nil {
+				return nil
+			}
+			if err := resyncBackoff.Wait(ctx); err != nil {
 				return nil
 			}
 			continue
@@ -225,6 +242,7 @@ func (s *Server) stream(
 	srv pblivemap.LivemapService_StreamServer,
 	userInfo *userinfo.UserInfo,
 	userInfoChanges <-chan *userinfo.UserInfoChanged,
+	onEstablished func(),
 ) error {
 	markerUpdateCh := s.broker.Subscribe()
 	defer s.broker.Unsubscribe(markerUpdateCh)
@@ -252,14 +270,19 @@ func (s *Server) stream(
 			},
 		)
 		if err != nil {
-			return fmt.Errorf("failed to create consumer: %w", err)
+			return fmt.Errorf("%w: failed to create consumer: %w", errLivemapUserFeedResync, err)
 		}
 		userMessages, err = consumer.Messages(
 			jetstream.PullMaxMessages(feedFetch),
-			jetstream.WithMessagesErrOnMissingHeartbeat(false),
+			jetstream.PullHeartbeat(streamPullHeartbeat),
+			jetstream.WithMessagesErrOnMissingHeartbeat(true),
 		)
 		if err != nil {
-			return err
+			return fmt.Errorf(
+				"%w: failed to start consumer messages: %w",
+				errLivemapUserFeedResync,
+				err,
+			)
 		}
 		defer userMessages.Stop()
 	}
@@ -292,6 +315,9 @@ func (s *Server) stream(
 			return err
 		}
 	}
+	// The ACL and both snapshots have been sent after the replacement feeds
+	// were established. Future failures should start with the short delay again.
+	onEstablished()
 
 	// Central pipe: all feeds push messages into outCh
 	outCh := make(chan *pblivemap.StreamResponse, 128)
