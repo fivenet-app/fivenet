@@ -47,6 +47,7 @@ func newTrackerManagerForTest(t *testing.T) (*Manager, *sql.DB, *tracker.TestTra
 			fx.Provide(settings.New),
 			fx.Provide(units.New),
 			fx.Provide(New),
+			fx.Supply(&TestOptions{DisableBackgroundRefresh: true}),
 			fx.Provide(access.NewCentrumUnitsSubjectObjectAccess),
 			fx.Provide(access.NewJobGroupsSubjectObjectAccess),
 
@@ -66,6 +67,7 @@ func newTrackerManagerForTest(t *testing.T) (*Manager, *sql.DB, *tracker.TestTra
 	require.NoError(t, err)
 	require.NotNil(t, manager)
 	require.NotNil(t, trackerStub)
+	require.NoError(t, manager.WaitForInitialStoreLoad(ctx))
 
 	return manager, db, trackerStub, func() {
 		app.RequireStop()

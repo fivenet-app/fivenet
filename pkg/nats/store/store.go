@@ -10,7 +10,6 @@ import (
 	"slices"
 	"strings"
 	"sync"
-	"sync/atomic"
 	"time"
 
 	"github.com/fivenet-app/fivenet/v2026/pkg/events"
@@ -105,6 +104,11 @@ type Store[T any, U protoutils.ProtoMessageWithMerge[T]] struct {
 	data    *xsync.Map[string, U]
 	metrics *storeMetrics
 
+	// ready is closed once the watcher has completed its first snapshot. It lets
+	// callers that start asynchronously wait for a consistent initial cache.
+	ready     chan struct{}
+	readyOnce sync.Once
+
 	// callback for update events
 	onUpdate OnUpdateFn[T, U]
 	// callback for delete events
@@ -152,6 +156,7 @@ func New[T any, U protoutils.ProtoMessageWithMerge[T]](
 		mu:      xsync.NewMap[string, *sync.Mutex](),
 		data:    xsync.NewMap[string, U](),
 		metrics: getStoreMetrics(),
+		ready:   make(chan struct{}),
 	}
 
 	kvConfig := jetstream.KeyValueConfig{
@@ -190,16 +195,27 @@ func New[T any, U protoutils.ProtoMessageWithMerge[T]](
 	return s, nil
 }
 
+// WaitForReady blocks until the watcher has applied its initial KV snapshot.
+// It is useful for consumers that deliberately start the store asynchronously
+// but need a stable cache before continuing.
+func (s *Store[T, U]) WaitForReady(ctx context.Context) error {
+	select {
+	case <-s.ready:
+		return nil
+	case <-ctx.Done():
+		return ctx.Err()
+	}
+}
+
 func (s *Store[T, U]) Start(ctx context.Context, wait bool) error {
 	watcher, err := s.kv.Watch(ctx, s.prefix+">")
 	if err != nil {
 		return fmt.Errorf("failed to start store kv. %w", err)
 	}
 
-	var ready atomic.Bool
-	var wg sync.WaitGroup
-
-	wg.Add(1)
+	markReady := func() {
+		s.readyOnce.Do(func() { close(s.ready) })
+	}
 	go func() {
 		for {
 			updateCh := watcher.Updates()
@@ -217,9 +233,7 @@ func (s *Store[T, U]) Start(ctx context.Context, wait bool) error {
 							s.logger.Error("error while stopping watcher", zap.Error(err))
 						}
 					}
-					if !ready.Swap(true) {
-						wg.Done()
-					}
+					markReady()
 					return
 
 				case entry, ok := <-updateCh:
@@ -234,9 +248,7 @@ func (s *Store[T, U]) Start(ctx context.Context, wait bool) error {
 					// by the JetStream KV watcher.
 					if entry == nil {
 						s.reconcileWatcherSnapshot(ctx, seen)
-						if !ready.Swap(true) {
-							wg.Done()
-						}
+						markReady()
 						continue
 					}
 
@@ -263,9 +275,7 @@ func (s *Store[T, U]) Start(ctx context.Context, wait bool) error {
 			}
 			select {
 			case <-ctx.Done():
-				if !ready.Swap(true) {
-					wg.Done()
-				}
+				markReady()
 				return
 			case <-time.After(time.Second):
 			}
@@ -277,17 +287,13 @@ func (s *Store[T, U]) Start(ctx context.Context, wait bool) error {
 					break
 				}
 				if ctx.Err() != nil {
-					if !ready.Swap(true) {
-						wg.Done()
-					}
+					markReady()
 					return
 				}
 				s.logger.Error("failed to restart store watcher", zap.Error(err))
 				select {
 				case <-ctx.Done():
-					if !ready.Swap(true) {
-						wg.Done()
-					}
+					markReady()
 					return
 				case <-time.After(time.Second):
 				}
@@ -309,7 +315,7 @@ func (s *Store[T, U]) Start(ctx context.Context, wait bool) error {
 	}()
 
 	if wait {
-		wg.Wait()
+		<-s.ready
 	}
 
 	return nil
@@ -527,7 +533,11 @@ func (s *Store[T, U]) updateFromType(key string, incoming U, _ bool) U {
 		// which are absent from the incoming snapshot.
 		if !proto.Equal(current, incoming) {
 			proto.Reset(current)
-			current.Merge(incoming)
+			// Use protobuf's merge after Reset rather than the generated custom
+			// Merge method. Some custom merge implementations assume optional
+			// destination fields are already allocated, which Reset intentionally
+			// clears.
+			proto.Merge(current, incoming)
 		}
 
 		// Note: onUpdate must be triggered externally after this call if needed

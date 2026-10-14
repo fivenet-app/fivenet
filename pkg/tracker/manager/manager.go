@@ -78,6 +78,16 @@ type Params struct {
 	Units       *units.UnitDB
 	Helpers     *helpers.Helpers
 	Dispatchers *dispatchers.DispatchersDB
+
+	// TestOptions is intentionally optional so production startup remains
+	// asynchronous even when loading a large tracker cache.
+	TestOptions *TestOptions `optional:"true"`
+}
+
+// TestOptions controls manager behavior that is useful only in tests.
+type TestOptions struct {
+	// DisableBackgroundRefresh leaves refresh timing under test control.
+	DisableBackgroundRefresh bool
 }
 
 func New(p Params) (*Manager, error) {
@@ -286,7 +296,9 @@ func New(p Params) (*Manager, error) {
 		}
 		m.userByIDStore = byID
 
-		go m.start(ctxCancel)
+		if p.TestOptions == nil || !p.TestOptions.DisableBackgroundRefresh {
+			go m.start(ctxCancel)
+		}
 
 		return nil
 	}))
@@ -300,6 +312,25 @@ func New(p Params) (*Manager, error) {
 	}))
 
 	return m, nil
+}
+
+// WaitForInitialStoreLoad waits until all tracker KV stores have completed
+// their initial snapshots. Production starts these stores asynchronously to
+// avoid delaying service startup; tests can call this before asserting state.
+func (m *Manager) WaitForInitialStoreLoad(ctx context.Context) error {
+	for _, s := range []interface {
+		WaitForReady(context.Context) error
+	}{
+		m.userMappingsStore,
+		m.userLocStore,
+		m.userByIDStore,
+	} {
+		if err := s.WaitForReady(ctx); err != nil {
+			return err
+		}
+	}
+
+	return nil
 }
 
 func (m *Manager) handleAppConfigUpdate(appCfg *appconfig.Cfg) {

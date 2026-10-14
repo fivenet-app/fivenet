@@ -177,6 +177,31 @@ func newScriptedStore(
 	return store
 }
 
+func TestStoreWaitForReadyAfterAsyncStart(t *testing.T) {
+	t.Parallel()
+
+	watcher := newScriptedKeyWatcher(false)
+	store := newScriptedStore(t, &scriptedWatchKV{
+		results: []scriptedWatchResult{{watcher: watcher}},
+	})
+
+	ctx, cancel := context.WithCancel(t.Context())
+	t.Cleanup(cancel)
+	require.NoError(t, store.Start(ctx, false))
+
+	ready := make(chan error, 1)
+	go func() { ready <- store.WaitForReady(ctx) }()
+
+	select {
+	case err := <-ready:
+		t.Fatalf("store became ready before its initial snapshot completed: %v", err)
+	case <-time.After(20 * time.Millisecond):
+	}
+
+	watcher.updates <- nil
+	require.NoError(t, <-ready)
+}
+
 func TestBasicStoreCreateAndUse(t *testing.T) {
 	t.Parallel()
 	js := nats.NewServer(t, nats.ServerOptions{InProcess: true}).GetJS()
