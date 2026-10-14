@@ -29,7 +29,7 @@ func (s *DispatchDB) updateInKV(
 	id int64,
 	dsp *centrumdispatches.Dispatch,
 ) error {
-	if err := s.store.ComputeUpdate(
+	if _, err := s.store.ComputeUpdate(
 		ctx,
 		centrumutils.IdKey(id),
 		func(key string, existing *centrumdispatches.Dispatch) (*centrumdispatches.Dispatch, bool, error) {
@@ -154,7 +154,7 @@ func (s *DispatchDB) updateStatusInKV(
 	id int64,
 	status *centrumdispatches.DispatchStatus,
 ) error {
-	if err := s.store.ComputeUpdate(
+	if _, err := s.store.ComputeUpdate(
 		ctx,
 		centrumutils.IdKey(id),
 		func(key string, existing *centrumdispatches.Dispatch) (*centrumdispatches.Dispatch, bool, error) {

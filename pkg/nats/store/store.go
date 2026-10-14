@@ -835,7 +835,7 @@ func (s *Store[T, U]) put(ctx context.Context, key string, msg U, oldItem U) err
 // concurrent writer can make a later retry a no-op after it was set to true.
 func (s *Store[T, U]) PutIfChanged(ctx context.Context, key string, msg U) (bool, error) {
 	changed := false
-	err := s.ComputeUpdate(ctx, key, func(_ string, existing U) (U, bool, error) {
+	_, err := s.ComputeUpdate(ctx, key, func(_ string, existing U) (U, bool, error) {
 		if existing != nil && proto.Equal(existing, msg) {
 			return existing, false, nil
 		}
@@ -846,11 +846,14 @@ func (s *Store[T, U]) PutIfChanged(ctx context.Context, key string, msg U) (bool
 	return changed, err
 }
 
+// ComputeUpdate applies fn to the latest KV snapshot and returns the resulting
+// committed/current snapshot as a clone. The function may be invoked again
+// when a concurrent writer causes an optimistic-CAS conflict.
 func (s *Store[T, U]) ComputeUpdate(
 	ctx context.Context,
 	key string,
 	fn func(key string, existing U) (U, bool, error),
-) error {
+) (U, error) {
 	key = s.prefixed(key)
 
 	mu, _ := s.mu.LoadOrCompute(key, mutexCompute)
@@ -862,7 +865,7 @@ func (s *Store[T, U]) ComputeUpdate(
 
 	if s.l != nil {
 		if err := s.l.Lock(ctx, key); err != nil {
-			return fmt.Errorf("failed to lock key %s for compute update. %w", key, err)
+			return nil, fmt.Errorf("failed to lock key %s for compute update. %w", key, err)
 		}
 		defer s.l.Unlock(ctx, key)
 	}
@@ -870,7 +873,12 @@ func (s *Store[T, U]) ComputeUpdate(
 	// Always compute from the current KV value. A retry must re-run fn after a
 	// revision conflict: reusing the previously marshalled message can otherwise
 	// overwrite fields written by another worker with a stale local projection.
+	var result U
 	_, err := retry.DoWithBackoff(ctx, maxPutWriteAttempts, retry.NewBackoff(kvCASRetryBackoff), func() error {
+		// A previous attempt may have computed a value but lost its CAS race.
+		// Never return that uncommitted result.
+		result = nil
+
 		entry, err := s.kv.Get(ctx, key)
 		var existing U
 		if err == nil {
@@ -896,7 +904,8 @@ func (s *Store[T, U]) ComputeUpdate(
 			return nil
 		}
 		if !changed {
-			s.updateFromType(key, computed, false)
+			item := s.updateFromType(key, computed, false)
+			result = proto.Clone(item).(U)
 			s.logger.Debug("store compute update has not changed state", zap.String("key", key))
 			return nil
 		}
@@ -920,6 +929,7 @@ func (s *Store[T, U]) ComputeUpdate(
 
 		item := proto.Clone(computed).(U)
 		item = s.updateFromType(key, item, false)
+		result = proto.Clone(item).(U)
 		if previous == nil && s.onCreated != nil {
 			if err := s.onCreated(ctx, key, item); err != nil {
 				s.logger.Error("onCreated hook failed", zap.String("key", key), zap.Error(err))
@@ -934,13 +944,13 @@ func (s *Store[T, U]) ComputeUpdate(
 	}, isKVWriteConflict)
 	if err != nil {
 		if isKVWriteConflict(err) {
-			return fmt.Errorf("failed to write value for key %s in compute update after %d conflicts: %w", key, maxPutWriteAttempts, err)
+			return nil, fmt.Errorf("failed to write value for key %s in compute update after %d conflicts: %w", key, maxPutWriteAttempts, err)
 		}
 
-		return err
+		return nil, err
 	}
 
-	return nil
+	return result, nil
 }
 
 func (s *Store[T, U]) Delete(ctx context.Context, key string) error {

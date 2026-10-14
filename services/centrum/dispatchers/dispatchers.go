@@ -126,7 +126,7 @@ func (s *DispatchersDB) SetUserState(
 		s.enricher.EnrichJobName(dispatcher)
 	}
 
-	return s.store.ComputeUpdate(
+	_, err := s.store.ComputeUpdate(
 		ctx,
 		job,
 		func(_ string, existing *centrumdispatchers.Dispatchers) (*centrumdispatchers.Dispatchers, bool, error) {
@@ -157,4 +157,5 @@ func (s *DispatchersDB) SetUserState(
 			return existing, true, nil
 		},
 	)
+	return err
 }

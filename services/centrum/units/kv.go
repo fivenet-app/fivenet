@@ -22,7 +22,7 @@ func (s *UnitDB) Range(fn func(string, *centrumunits.Unit) bool) {
 }
 
 func (s *UnitDB) updateInKV(ctx context.Context, id int64, unit *centrumunits.Unit) error {
-	if err := s.store.ComputeUpdate(
+	if _, err := s.store.ComputeUpdate(
 		ctx,
 		centrumutils.IdKey(id),
 		func(key string, existing *centrumunits.Unit) (*centrumunits.Unit, bool, error) {
@@ -165,7 +165,7 @@ func (s *UnitDB) updateStatusInKV(
 	id int64,
 	status *centrumunits.UnitStatus,
 ) error {
-	if err := s.store.ComputeUpdate(
+	if _, err := s.store.ComputeUpdate(
 		ctx,
 		centrumutils.IdKey(id),
 		func(key string, existing *centrumunits.Unit) (*centrumunits.Unit, bool, error) {

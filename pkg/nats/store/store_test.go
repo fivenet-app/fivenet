@@ -274,7 +274,7 @@ func TestBasicStoreCreateAndUse(t *testing.T) {
 
 	// Make sure that ComputeUpdate works as expected
 	newField1Val := "Hello World!"
-	err = store.ComputeUpdate(
+	_, err = store.ComputeUpdate(
 		ctx,
 		"second",
 		func(key string, existing *tests.SimpleObject) (*tests.SimpleObject, bool, error) {
@@ -351,10 +351,11 @@ func TestComputeUpdateRebasesAfterRevisionMismatch(t *testing.T) {
 	store := newScriptedStore(t, &rebaseConflictKV{KeyValue: kv, replacement: replacement})
 	require.NoError(t, store.Put(ctx, "key", &tests.SimpleObject{Field1: "initial"}))
 
-	require.NoError(t, store.ComputeUpdate(ctx, "key", func(_ string, existing *tests.SimpleObject) (*tests.SimpleObject, bool, error) {
+	_, err = store.ComputeUpdate(ctx, "key", func(_ string, existing *tests.SimpleObject) (*tests.SimpleObject, bool, error) {
 		existing.Field1 = "local"
 		return existing, true, nil
-	}))
+	})
+	require.NoError(t, err)
 
 	item, err := store.Get("key")
 	require.NoError(t, err)

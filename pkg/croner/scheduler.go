@@ -315,16 +315,11 @@ func (s *Scheduler) RunJob(ctx context.Context, name string) (*jetstream.PubAck,
 func (s *Scheduler) claimJob(ctx context.Context, name string) (*cron.Cronjob, error) {
 	name = normalizeCronjobName(name)
 	runID := uuid.New().String()
-	var claimed *cron.Cronjob
 
-	if err := s.registry.store.ComputeUpdate(
+	claimed, err := s.registry.store.ComputeUpdate(
 		ctx,
 		name,
 		func(_ string, existing *cron.Cronjob) (*cron.Cronjob, bool, error) {
-			// ComputeUpdate may retry after a CAS conflict. Do not retain a
-			// candidate from an attempt which did not commit the claim.
-			claimed = nil
-
 			if existing == nil {
 				return existing, false, nil
 			}
@@ -339,12 +334,15 @@ func (s *Scheduler) claimJob(ctx context.Context, name string) (*cron.Cronjob, e
 			existing.SetLastAttemptTime(timestamp.Now())
 			existing.SetState(cron.CronjobState_CRONJOB_STATE_RUNNING)
 			existing.SetRunId(runID)
-			claimed = existing
 
 			return existing, true, nil
 		},
-	); err != nil {
+	)
+	if err != nil {
 		return nil, err
+	}
+	if claimed == nil || claimed.GetRunId() != runID {
+		return nil, nil
 	}
 
 	return claimed, nil
@@ -352,7 +350,7 @@ func (s *Scheduler) claimJob(ctx context.Context, name string) (*cron.Cronjob, e
 
 func (s *Scheduler) releaseJob(ctx context.Context, name, runID string, retry bool) error {
 	name = normalizeCronjobName(name)
-	return s.registry.store.ComputeUpdate(
+	_, err := s.registry.store.ComputeUpdate(
 		ctx,
 		name,
 		func(_ string, existing *cron.Cronjob) (*cron.Cronjob, bool, error) {
@@ -370,6 +368,7 @@ func (s *Scheduler) releaseJob(ctx context.Context, name, runID string, retry bo
 			return existing, true, nil
 		},
 	)
+	return err
 }
 
 func (s *Scheduler) registerSubscriptions(
@@ -451,7 +450,7 @@ func (s *Scheduler) watchForCompletions(msg jetstream.Msg) {
 		)
 	}
 
-	if err := s.registry.store.ComputeUpdate(
+	if _, err := s.registry.store.ComputeUpdate(
 		s.ctxCancel,
 		event.GetName(),
 		func(key string, existing *cron.Cronjob) (*cron.Cronjob, bool, error) {

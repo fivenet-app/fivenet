@@ -445,7 +445,7 @@ func (s *DispatchDB) updateAssignments(
 	)
 
 	key := centrumutils.IdKey(dspId)
-	if err := s.store.ComputeUpdate(
+	if _, err := s.store.ComputeUpdate(
 		ctx,
 		key,
 		func(key string, dsp *centrumdispatches.Dispatch) (*centrumdispatches.Dispatch, bool, error) {
@@ -933,23 +933,26 @@ func (s *DispatchDB) TakeDispatch(
 		}
 
 		key := centrumutils.IdKey(dspId)
-		if err := s.store.ComputeUpdate(
+		var projectionChanged bool
+		var preserveOperationalStatus bool
+		dsp, err := s.store.ComputeUpdate(
 			ctx,
 			key,
 			func(key string, dsp *centrumdispatches.Dispatch) (*centrumdispatches.Dispatch, bool, error) {
+				// ComputeUpdate may retry this function after a KV CAS conflict.
+				// Keep only retry-safe projection state here; durable status writes
+				// happen once below, after the projection update commits.
+				projectionChanged = false
+				preserveOperationalStatus = false
+
 				// If dispatch is nil or completed, disallow to accept the dispatch
 				if dsp == nil ||
 					(dsp.GetStatus() != nil && centrumutils.IsStatusDispatchComplete(dsp.GetStatus().GetStatus())) {
 					return nil, false, errorscentrum.ErrDispatchAlreadyCompleted
 				}
 
-				var status centrumdispatches.StatusDispatch
-				var preserveOperationalStatus bool
-
 				// Dispatch accepted
 				if resp == centrumdispatches.TakeDispatchResp_TAKE_DISPATCH_RESP_ACCEPTED {
-					status = centrumdispatches.StatusDispatch_STATUS_DISPATCH_UNIT_ACCEPTED
-
 					found := false
 					// Set unit expires at to nil
 					for _, ua := range dsp.GetUnits() {
@@ -976,32 +979,8 @@ func (s *DispatchDB) TakeDispatch(
 					preserveOperationalStatus = centrumutils.IsStatusDispatchOperational(
 						dsp.GetStatus().GetStatus(),
 					)
-
-					// Set unit to busy when unit accepts a dispatch.
-					if unit.GetStatus() == nil ||
-						unit.GetStatus().GetStatus() != centrumunits.StatusUnit_STATUS_UNIT_BUSY {
-						if _, _, err := s.units.UpdateStatus(
-							ctx,
-							unit.GetId(),
-							&centrumunits.UnitStatus{
-								CreatedAt:  timestamp.Now(),
-								UnitId:     unit.GetId(),
-								Status:     centrumunits.StatusUnit_STATUS_UNIT_BUSY,
-								UserId:     &userId,
-								CreatorId:  &userId,
-								X:          x,
-								Y:          y,
-								Postal:     postal,
-								CreatorJob: &userJob,
-							},
-						); err != nil {
-							return nil, false, err
-						}
-					}
 				} else {
 					// Dispatch declined
-					status = centrumdispatches.StatusDispatch_STATUS_DISPATCH_UNIT_DECLINED
-
 					// Remove the unit's assignment
 					dsp.Units = slices.DeleteFunc(
 						dsp.GetUnits(),
@@ -1012,37 +991,78 @@ func (s *DispatchDB) TakeDispatch(
 					preserveOperationalStatus = len(dsp.GetUnits()) > 0 &&
 						centrumutils.IsStatusDispatchOperational(dsp.GetStatus().GetStatus())
 				}
+				projectionChanged = true
 
-				persistedStatus, err := s.AddDispatchStatus(
+				return dsp, true, nil
+			},
+		)
+		if err != nil {
+			// Ignore errors that are "okay" to encounter
+			if !errors.Is(err, errorscentrum.ErrDispatchAlreadyCompleted) {
+				return errswrap.NewError(err, errorscentrum.ErrFailedQuery)
+			}
+		}
+		if projectionChanged {
+			if resp == centrumdispatches.TakeDispatchResp_TAKE_DISPATCH_RESP_ACCEPTED &&
+				(unit.GetStatus() == nil || unit.GetStatus().GetStatus() != centrumunits.StatusUnit_STATUS_UNIT_BUSY) {
+				if _, _, err := s.units.UpdateStatus(
 					ctx,
-					s.db,
-					&centrumdispatches.DispatchStatus{
+					unit.GetId(),
+					&centrumunits.UnitStatus{
 						CreatedAt:  timestamp.Now(),
-						DispatchId: dspId,
-						Status:     status,
-						UnitId:     &unitId,
+						UnitId:     unit.GetId(),
+						Status:     centrumunits.StatusUnit_STATUS_UNIT_BUSY,
 						UserId:     &userId,
+						CreatorId:  &userId,
 						X:          x,
 						Y:          y,
 						Postal:     postal,
 						CreatorJob: &userJob,
 					},
-				)
-				if err != nil {
-					return nil, false, err
+				); err != nil {
+					return errswrap.NewError(err, errorscentrum.ErrFailedQuery)
 				}
-				if !preserveOperationalStatus {
-					dsp.SetStatus(persistedStatus)
-				}
-				statusToPublish = persistedStatus
-				publishJobs = slices.Clone(dsp.GetJobs().GetJobStrings())
+			}
 
-				return dsp, true, nil
-			},
-		); err != nil {
-			// Ignore errors that are "okay" to encounter
-			if !errors.Is(err, errorscentrum.ErrDispatchAlreadyCompleted) {
+			status := centrumdispatches.StatusDispatch_STATUS_DISPATCH_UNIT_DECLINED
+			if resp == centrumdispatches.TakeDispatchResp_TAKE_DISPATCH_RESP_ACCEPTED {
+				status = centrumdispatches.StatusDispatch_STATUS_DISPATCH_UNIT_ACCEPTED
+			}
+			statusToPublish, err = s.AddDispatchStatus(
+				ctx,
+				s.db,
+				&centrumdispatches.DispatchStatus{
+					CreatedAt:  timestamp.Now(),
+					DispatchId: dspId,
+					Status:     status,
+					UnitId:     &unitId,
+					UserId:     &userId,
+					X:          x,
+					Y:          y,
+					Postal:     postal,
+					CreatorJob: &userJob,
+				},
+			)
+			if err != nil {
 				return errswrap.NewError(err, errorscentrum.ErrFailedQuery)
+			}
+			publishJobs = slices.Clone(dsp.GetJobs().GetJobStrings())
+
+			if !preserveOperationalStatus {
+				if _, err := s.store.ComputeUpdate(
+					ctx,
+					key,
+					func(_ string, current *centrumdispatches.Dispatch) (*centrumdispatches.Dispatch, bool, error) {
+						if current == nil ||
+							(current.GetStatus() != nil && centrumutils.IsStatusDispatchComplete(current.GetStatus().GetStatus())) {
+							return current, false, errorscentrum.ErrDispatchAlreadyCompleted
+						}
+						current.SetStatus(statusToPublish)
+						return current, true, nil
+					},
+				); err != nil && !errors.Is(err, errorscentrum.ErrDispatchAlreadyCompleted) {
+					return errswrap.NewError(err, errorscentrum.ErrFailedQuery)
+				}
 			}
 		}
 

@@ -175,7 +175,7 @@ func (r *Registry) RegisterCronjob(ctx context.Context, cronjob *cron.Cronjob) e
 		cronjob.NextScheduleTime = timestamp.New(nextTime)
 	}
 
-	if err := r.store.ComputeUpdate(
+	if _, err := r.store.ComputeUpdate(
 		ctx,
 		cronjob.GetName(),
 		func(key string, existing *cron.Cronjob) (*cron.Cronjob, bool, error) {
