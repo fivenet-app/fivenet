@@ -1,7 +1,6 @@
 package units
 
 import (
-	"errors"
 	"testing"
 
 	centrumunits "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/centrum/units"
@@ -26,7 +25,9 @@ func TestUnitNeedsPing(t *testing.T) {
 		{name: "nil", want: false},
 		{
 			name: "empty unavailable",
-			unit: &centrumunits.Unit{Status: status(centrumunits.StatusUnit_STATUS_UNIT_UNAVAILABLE)},
+			unit: &centrumunits.Unit{
+				Status: status(centrumunits.StatusUnit_STATUS_UNIT_UNAVAILABLE),
+			},
 			want: false,
 		},
 		{
@@ -42,8 +43,10 @@ func TestUnitNeedsPing(t *testing.T) {
 		{
 			name: "occupied unavailable",
 			unit: &centrumunits.Unit{
-				Status: &centrumunits.UnitStatus{Status: centrumunits.StatusUnit_STATUS_UNIT_UNAVAILABLE},
-				Users:  []*centrumunits.UnitAssignment{{UserId: 1}},
+				Status: &centrumunits.UnitStatus{
+					Status: centrumunits.StatusUnit_STATUS_UNIT_UNAVAILABLE,
+				},
+				Users: []*centrumunits.UnitAssignment{{UserId: 1}},
 			},
 			want: true,
 		},
@@ -51,6 +54,8 @@ func TestUnitNeedsPing(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
 			assert.Equal(t, tt.want, unitNeedsPing(tt.unit))
 		})
 	}
@@ -79,7 +84,7 @@ func TestSyncUnitPingCreatesOnlyNeededTimers(t *testing.T) {
 
 	require.NoError(t, db.SyncUnitPing(ctx, unit))
 	_, err = kv.Get(ctx, "ping.42")
-	assert.ErrorIs(t, err, jetstream.ErrKeyNotFound)
+	require.ErrorIs(t, err, jetstream.ErrKeyNotFound)
 
 	unit.Status.Status = centrumunits.StatusUnit_STATUS_UNIT_AVAILABLE
 	require.NoError(t, db.SyncUnitPing(ctx, unit))
@@ -95,5 +100,5 @@ func TestSyncUnitPingCreatesOnlyNeededTimers(t *testing.T) {
 	unit.Users = nil
 	require.NoError(t, db.SyncUnitPing(ctx, unit))
 	_, err = kv.Get(ctx, "ping.42")
-	assert.True(t, errors.Is(err, jetstream.ErrKeyNotFound))
+	require.ErrorIs(t, err, jetstream.ErrKeyNotFound)
 }

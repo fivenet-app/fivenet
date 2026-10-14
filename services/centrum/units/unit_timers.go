@@ -37,7 +37,11 @@ func (s *UnitDB) SyncUnitPing(ctx context.Context, unit *centrumunits.Unit) erro
 
 	key := fmt.Sprintf("ping.%d", unit.GetId())
 	if !unitNeedsPing(unit) {
-		if err := s.KVPing.Delete(ctx, key); err != nil && !errors.Is(err, jetstream.ErrKeyNotFound) {
+		if err := s.KVPing.Delete(
+			ctx,
+			key,
+		); err != nil &&
+			!errors.Is(err, jetstream.ErrKeyNotFound) {
 			return err
 		}
 		return nil

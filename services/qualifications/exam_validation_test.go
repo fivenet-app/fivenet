@@ -195,7 +195,7 @@ func TestEffectiveExamForAutoGradingLoadsPersistedQuestionsWhenOmitted(t *testin
 	assert.Same(t, persistedExam, effectiveExam)
 	assert.Equal(t, int64(42), store.qualificationID)
 	assert.True(t, store.withAnswers)
-	assert.ErrorIs(
+	require.ErrorIs(
 		t,
 		validateExamAutoGrading(effectiveExam, &qualificationsexam.QualificationExamSettings{
 			AutoGrade: true,

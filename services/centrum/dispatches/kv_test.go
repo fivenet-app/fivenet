@@ -85,7 +85,7 @@ func TestCancelScheduledCleanupRemovesProjectionEntry(t *testing.T) {
 	require.NoError(t, dispatches.CancelScheduledCleanup(t.Context(), 42))
 
 	_, err = idleKV.Get(t.Context(), cleanupKey(42))
-	assert.ErrorIs(t, err, jetstream.ErrKeyNotFound)
+	require.ErrorIs(t, err, jetstream.ErrKeyNotFound)
 }
 
 func TestAssignmentExpirationTimerCanBeScheduledAndCancelled(t *testing.T) {
@@ -111,7 +111,7 @@ func TestAssignmentExpirationTimerCanBeScheduledAndCancelled(t *testing.T) {
 
 	require.NoError(t, dispatches.CancelAssignmentExpiration(t.Context(), 42, 7))
 	_, err = idleKV.Get(t.Context(), assignmentExpirationKey(42, 7))
-	assert.ErrorIs(t, err, jetstream.ErrKeyNotFound)
+	require.ErrorIs(t, err, jetstream.ErrKeyNotFound)
 }
 
 func TestAssignmentExpirationTimerIsRescheduledWithNewTTL(t *testing.T) {

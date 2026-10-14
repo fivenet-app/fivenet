@@ -46,12 +46,12 @@ func TestJitterFeedRestartDelayStaysWithinBounds(t *testing.T) {
 	t.Parallel()
 
 	const delay = 10 * time.Second
-	min := time.Duration(float64(delay) * (1 - feedRestartJitter))
-	max := time.Duration(float64(delay) * (1 + feedRestartJitter))
+	minJitter := time.Duration(float64(delay) * (1 - feedRestartJitter))
+	maxJitter := time.Duration(float64(delay) * (1 + feedRestartJitter))
 
 	for range 100 {
 		jittered := jitterFeedRestartDelay(delay)
-		require.GreaterOrEqual(t, jittered, min)
-		require.LessOrEqual(t, jittered, max)
+		require.GreaterOrEqual(t, jittered, minJitter)
+		require.LessOrEqual(t, jittered, maxJitter)
 	}
 }

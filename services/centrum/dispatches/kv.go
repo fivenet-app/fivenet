@@ -174,12 +174,12 @@ func (s *DispatchDB) updateStatusInKV(
 }
 
 const (
-	InactiveTTL            = 60 * time.Minute   // How long a Dispatch may stay idle/quiet
-	InactiveLimitMarkerTTL = 2 * time.Hour      // How long tombstones live
-	CompletedTTL           = 15 * time.Minute   // How long completed dispatches remain visible
-	ProjectionTTL          = 4 * time.Hour      // Maximum time a dispatch projection remains in KV
-	DispatchKVTTL          = 24 * time.Hour     // Maximum time dispatch KV entries remain as a final safety net
-	IdleKVTTL              = 20 * time.Hour     // Maximum age of idle dispatch timer history
+	InactiveTTL            = 60 * time.Minute // How long a Dispatch may stay idle/quiet
+	InactiveLimitMarkerTTL = 2 * time.Hour    // How long tombstones live
+	CompletedTTL           = 15 * time.Minute // How long completed dispatches remain visible
+	ProjectionTTL          = 4 * time.Hour    // Maximum time a dispatch projection remains in KV
+	DispatchKVTTL          = 24 * time.Hour   // Maximum time dispatch KV entries remain as a final safety net
+	IdleKVTTL              = 20 * time.Hour   // Maximum age of idle dispatch timer history
 )
 
 func cleanupKey(id int64) string {

@@ -66,7 +66,11 @@ func (s *Housekeeper) unitKVPing(ctx context.Context) error {
 
 			id, err := parseUnitPingKey(e.Key())
 			if err != nil {
-				s.logger.Warn("ignoring malformed unit ping key", zap.String("key", e.Key()), zap.Error(err))
+				s.logger.Warn(
+					"ignoring malformed unit ping key",
+					zap.String("key", e.Key()),
+					zap.Error(err),
+				)
 				continue
 			}
 			if err := s.handleUnitKVPing(ctx, id); err != nil {
@@ -114,7 +118,7 @@ func parseUnitPingKey(key string) (int64, error) {
 	id, err := strconv.ParseInt(strings.TrimPrefix(key, prefix), 10, 64)
 	if err != nil || id <= 0 {
 		if err == nil {
-			err = fmt.Errorf("unit ID must be positive")
+			err = errors.New("unit ID must be positive")
 		}
 		return 0, fmt.Errorf("invalid unit ping key %q: %w", key, err)
 	}

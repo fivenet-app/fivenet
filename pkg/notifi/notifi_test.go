@@ -83,7 +83,7 @@ func (s notificationStoreStub) ResolveDelivery(
 func TestNoopPublish(t *testing.T) {
 	t.Parallel()
 
-	assert.NoError(t, noopPublish(t.Context()))
+	require.NoError(t, noopPublish(t.Context()))
 }
 
 func TestNewUserNotification(t *testing.T) {

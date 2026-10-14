@@ -72,7 +72,7 @@ func TestRemoveOrphanedProjections(t *testing.T) {
 	require.NoError(t, err)
 	assert.Equal(t, int64(8), got.GetId())
 	_, err = jobStore.Get("police.8")
-	assert.NoError(t, err)
+	require.NoError(t, err)
 }
 
 func TestUpdateReturnsNoRowsForMissingUnit(t *testing.T) {

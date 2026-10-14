@@ -358,7 +358,10 @@ func (s *Housekeeper) removeDispatchesFromEmptyUnits(ctx context.Context) (int, 
 					},
 				); err != nil {
 					if errors.Is(err, errorscentrum.ErrDispatchNotFound) {
-						if deleteErr := s.deleteStaleDispatchProjection(ctx, dispatch.GetId()); deleteErr != nil {
+						if deleteErr := s.deleteStaleDispatchProjection(
+							ctx,
+							dispatch.GetId(),
+						); deleteErr != nil {
 							return dispatchesUnassigned, emptyUnitsRemoved, deleteErr
 						}
 						continue

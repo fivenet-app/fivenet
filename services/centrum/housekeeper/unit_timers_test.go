@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func TestParseUnitPingKey(t *testing.T) {
@@ -24,9 +25,11 @@ func TestParseUnitPingKey(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.key, func(t *testing.T) {
+			t.Parallel()
+
 			id, err := parseUnitPingKey(tt.key)
 			if tt.ok {
-				assert.NoError(t, err)
+				require.NoError(t, err)
 				assert.Equal(t, tt.id, id)
 			} else {
 				assert.Error(t, err)

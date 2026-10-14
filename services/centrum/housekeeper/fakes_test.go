@@ -31,7 +31,11 @@ func (f fakeUnitDispatchAssignments) UpdateAssignments(
 	return f.update(ctx, creatorJob, creatorID, dispatchID, toAdd, toRemove, expiresAt)
 }
 
-func (f fakeUnitDispatchAssignments) Delete(ctx context.Context, id int64, removeFromDB bool) error {
+func (f fakeUnitDispatchAssignments) Delete(
+	ctx context.Context,
+	id int64,
+	removeFromDB bool,
+) error {
 	if f.delete == nil {
 		return nil
 	}

@@ -66,8 +66,15 @@ func (s *Housekeeper) watchDispatches(ctx context.Context) error {
 
 			if err := s.tryDispatchDeduplicate(ctx, dsp); err != nil {
 				if errors.Is(err, errorscentrum.ErrDispatchNotFound) {
-					if deleteErr := s.deleteStaleDispatchProjection(ctx, dsp.GetId()); deleteErr != nil {
-						s.logger.Warn("failed to delete stale dispatch projection after deduplication race", zap.Int64("dispatch_id", dsp.GetId()), zap.Error(deleteErr))
+					if deleteErr := s.deleteStaleDispatchProjection(
+						ctx,
+						dsp.GetId(),
+					); deleteErr != nil {
+						s.logger.Warn(
+							"failed to delete stale dispatch projection after deduplication race",
+							zap.Int64("dispatch_id", dsp.GetId()),
+							zap.Error(deleteErr),
+						)
 					}
 					continue
 				}

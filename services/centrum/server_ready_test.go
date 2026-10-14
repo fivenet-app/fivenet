@@ -5,7 +5,7 @@ import (
 	"errors"
 	"testing"
 
-	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func TestWaitForReadyReturnsLoadError(t *testing.T) {
@@ -16,7 +16,7 @@ func TestWaitForReadyReturnsLoadError(t *testing.T) {
 	close(ready)
 	server := &Server{ready: ready, readyErr: loadErr}
 
-	assert.ErrorIs(t, server.waitForReady(t.Context()), loadErr)
+	require.ErrorIs(t, server.waitForReady(t.Context()), loadErr)
 }
 
 func TestWaitForReadyHonorsContextCancellation(t *testing.T) {
@@ -26,5 +26,5 @@ func TestWaitForReadyHonorsContextCancellation(t *testing.T) {
 	cancel()
 	server := &Server{ready: make(chan struct{})}
 
-	assert.ErrorIs(t, server.waitForReady(ctx), context.Canceled)
+	require.ErrorIs(t, server.waitForReady(ctx), context.Canceled)
 }

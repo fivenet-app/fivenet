@@ -166,7 +166,7 @@ func TestStreamIgnoresEventsCoveredBySnapshot(t *testing.T) {
 		1,
 	)
 
-	assert.NoError(t, err)
+	require.NoError(t, err)
 }
 
 func TestStreamIgnoresEventsOutsideAuthorizedJobs(t *testing.T) {
@@ -195,7 +195,7 @@ func TestStreamIgnoresEventsOutsideAuthorizedJobs(t *testing.T) {
 		0,
 	)
 
-	assert.NoError(t, err)
+	require.NoError(t, err)
 }
 
 func TestStreamRequestsSnapshotAfterOwnSettingsDeletion(t *testing.T) {

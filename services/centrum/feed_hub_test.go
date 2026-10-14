@@ -214,6 +214,7 @@ func waitForFeedEvent(
 	feed <-chan *feedEvent,
 	match func(*feedEvent) bool,
 ) *feedEvent {
+	t.Helper()
 	return waitForFeedEventWithin(t, feed, match, 2*time.Second)
 }
 

@@ -283,7 +283,11 @@ func (s *Housekeeper) cancelDispatch(ctx context.Context, dsp *centrumdispatches
 	); err != nil {
 		if errors.Is(err, errorscentrum.ErrDispatchNotFound) {
 			if deleteErr := s.deleteStaleDispatchProjection(ctx, dsp.GetId()); deleteErr != nil {
-				s.logger.Warn("failed to delete stale dispatch projection", zap.Int64("dispatch_id", dsp.GetId()), zap.Error(deleteErr))
+				s.logger.Warn(
+					"failed to delete stale dispatch projection",
+					zap.Int64("dispatch_id", dsp.GetId()),
+					zap.Error(deleteErr),
+				)
 			}
 			return
 		}
