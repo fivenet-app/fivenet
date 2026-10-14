@@ -23,6 +23,18 @@ const { jobs } = storeToRefs(completorStore);
 const { listJobs } = completorStore;
 
 const selectedJob = ref<Job | undefined>();
+const isUpdatingSuperuserMode = ref(false);
+
+const updateSuperuserMode = async (superuser: boolean, job?: Job): Promise<void> => {
+    if (isUpdatingSuperuserMode.value) return;
+
+    isUpdatingSuperuserMode.value = true;
+    try {
+        await setSuperuserMode(superuser, job);
+    } finally {
+        isUpdatingSuperuserMode.value = false;
+    }
+};
 
 watch(activeChar, () => {
     if (!activeChar.value) {
@@ -44,7 +56,7 @@ watchDebounced(
     async () => {
         if (activeChar.value?.job === selectedJob.value?.name) return;
 
-        await setSuperuserMode(isSuperuser.value, selectedJob.value);
+        await updateSuperuserMode(isSuperuser.value, selectedJob.value);
     },
     {
         debounce: 100,
@@ -60,7 +72,8 @@ const items = computed(
                 icon: 'i-mdi-square-root',
                 type: 'link' as const,
                 active: isSuperuser.value,
-                onSelect: () => authStore.setSuperuserMode(!isSuperuser.value),
+                disabled: isUpdatingSuperuserMode.value,
+                onSelect: () => updateSuperuserMode(!isSuperuser.value),
             },
         ] satisfies NavigationMenuItem[],
 );
@@ -75,6 +88,8 @@ onBeforeMount(async () => listJobs());
             v-model="selectedJob"
             class="relative -mb-3.5"
             variant="soft"
+            :loading="isUpdatingSuperuserMode"
+            :disabled="isUpdatingSuperuserMode"
             :filter-fields="['name', 'label']"
             :placeholder="$t('common.job', 1)"
             :items="jobs"
@@ -87,6 +102,7 @@ onBeforeMount(async () => listJobs());
         >
             <template #empty> {{ $t('common.not_found', [$t('common.job', 2)]) }} </template>
         </UInputMenu>
+
         <UPopover v-else placement="right">
             <UTooltip
                 :text="`${$t('common.job', 1)}: ${selectedJob?.label ?? $t('common.not_found', [$t('common.job', 2)])}`"
@@ -100,6 +116,8 @@ onBeforeMount(async () => listJobs());
                     v-model="selectedJob"
                     class="relative -mb-3.5"
                     variant="soft"
+                    :loading="isUpdatingSuperuserMode"
+                    :disabled="isUpdatingSuperuserMode"
                     :filter-fields="['name', 'label']"
                     :placeholder="$t('common.job', 1)"
                     :items="jobs"
