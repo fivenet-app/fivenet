@@ -4,12 +4,17 @@ import (
 	"fmt"
 	"strconv"
 	"strings"
+	"time"
 )
 
 const (
 	BucketUserLoc         = "userloc"       // JOB.GRADE.USER_ID -> UserMarker
 	BucketUserMappingsMap = "user_mappings" // USER_ID           -> UserMapping
 	BucketUserLocByID     = "userloc_by_id" // USER_ID           -> UserMapping (no Job/Grade)
+
+	// UserLocPurgeMarkerTTL retains user-tracker deletion tombstones without
+	// expiring active markers. Four hours covers transient watcher disconnects.
+	UserLocPurgeMarkerTTL = 4 * time.Hour
 )
 
 func UserIdKey(id int32) string {

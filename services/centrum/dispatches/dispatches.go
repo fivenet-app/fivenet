@@ -10,7 +10,6 @@ import (
 	"strings"
 	"sync"
 
-	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/centrum"
 	centrumdispatches "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/centrum/dispatches"
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/common"
 	jobscolleagues "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/jobs/colleagues"
@@ -165,6 +164,7 @@ func New(p Params) *DispatchDB {
 					LimitMarkerTTL: DispatchKVTTL,
 				},
 			),
+			store.WithPurgeMarkerTTL[common.IDMapping, *common.IDMapping](DispatchPurgeMarkerTTL),
 		)
 		if err != nil {
 			return err
@@ -217,6 +217,7 @@ func New(p Params) *DispatchDB {
 					LimitMarkerTTL: DispatchKVTTL,
 				},
 			),
+			store.WithPurgeMarkerTTL[centrumdispatches.Dispatch, *centrumdispatches.Dispatch](DispatchPurgeMarkerTTL),
 			store.WithOnUpdateFn[centrumdispatches.Dispatch, *centrumdispatches.Dispatch](
 				func(ctx context.Context, old *centrumdispatches.Dispatch, dispatch *centrumdispatches.Dispatch) (*centrumdispatches.Dispatch, error) {
 					if dispatch == nil {
@@ -664,22 +665,7 @@ func (s *DispatchDB) LoadFromDB(ctx context.Context, cond mysql.BoolExpression) 
 			}
 		}
 
-		// Ensure dispatch has a valid job list (fallback to deprecated Jobs field for old dispatches)
-		if dsp.GetJobs() == nil || len(dsp.GetJobs().GetJobs()) == 0 {
-			dsp.Jobs = &centrum.JobList{
-				Jobs: []*centrum.JobListEntry{
-					{
-						//nolint:staticcheck // This is a fallback for old dispatches.
-						Name: dsp.GetJob(),
-					},
-				},
-			}
-			//nolint:staticcheck // Clear old job info. This is a fallback for old dispatches.
-			dsp.Job = ""
-		}
-		for _, job := range dsp.GetJobs().GetJobs() {
-			s.enricher.EnrichJobName(job)
-		}
+		s.EnrichJobLabels(dsp)
 
 		// Update dispatch in db and in kv
 		if _, err := s.Update(ctx, nil, dsp); err != nil {
@@ -797,32 +783,16 @@ func (s *DispatchDB) Create(
 	ctx context.Context,
 	dsp *centrumdispatches.Dispatch,
 ) (*centrumdispatches.Dispatch, error) {
-	// Check if the dispatch has at least one job, till the Job field is removed keep using it as a fallback
-	//nolint:staticcheck // Check old job info. This is a fallback for old dispatches.
-	if (dsp.GetJobs() == nil || len(dsp.GetJobs().GetJobs()) == 0) && dsp.GetJob() == "" {
-		return nil, errorscentrum.ErrDispatchNoJobs
-	}
-
-	// If the deprecated Job field is used, convert it to Jobs but only if the jobs list is empty
 	if dsp.GetJobs() == nil || len(dsp.GetJobs().GetJobs()) == 0 {
-		dsp.SetJobs(&centrum.JobList{
-			Jobs: []*centrum.JobListEntry{
-				{
-					//nolint:staticcheck // This is a fallback for old dispatches.
-					Name: dsp.GetJob(),
-				},
-			},
-		})
-		//nolint:staticcheck // Clear old job info. This is a fallback for old dispatches.
-		dsp.SetJob("")
+		return nil, errorscentrum.ErrDispatchNoJobs
 	}
 
 	for _, job := range dsp.GetJobs().GetJobs() {
 		if strings.TrimSpace(job.GetName()) == "" {
 			return nil, errorscentrum.ErrDispatchNoJobs
 		}
-		s.enricher.EnrichJobName(job)
 	}
+	s.EnrichJobLabels(dsp)
 
 	if dsp.Postal == nil || dsp.GetPostal() == "" {
 		if postal, ok := s.postals.Closest(dsp.GetX(), dsp.GetY()); postal != nil && ok {
@@ -942,6 +912,9 @@ func (s *DispatchDB) Update(
 	_ *int32,
 	dsp *centrumdispatches.Dispatch,
 ) (*centrumdispatches.Dispatch, error) {
+	// Labels are derived presentation data and are not retained in the SQL job
+	// list. Restore them before persisting the projection and publishing it.
+	s.EnrichJobLabels(dsp)
 	dsp.UpdatedAt = timestamp.Now()
 
 	tDispatch := table.FivenetCentrumDispatches

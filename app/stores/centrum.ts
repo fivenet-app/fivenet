@@ -467,7 +467,6 @@ export const useCentrumStore = defineStore(
             } else {
                 existing.createdAt = dispatchObj.createdAt;
                 existing.updatedAt = dispatchObj.updatedAt;
-                existing.job = dispatchObj.job;
                 existing.jobs = dispatchObj.jobs;
                 existing.message = dispatchObj.message;
                 existing.description = dispatchObj.description;
@@ -712,7 +711,6 @@ export const useCentrumStore = defineStore(
             };
             const dispatch: Dispatch = {
                 id: demoDispatchId,
-                job,
                 jobs: { jobs: [{ name: job, label: activeChar.value?.jobLabel ?? job }] },
                 createdAt: now,
                 message: 'Example incoming dispatch',

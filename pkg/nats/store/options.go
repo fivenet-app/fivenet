@@ -1,6 +1,8 @@
 package store
 
 import (
+	"time"
+
 	"github.com/fivenet-app/fivenet/v2026/pkg/nats/locks"
 	"github.com/fivenet-app/fivenet/v2026/pkg/utils/protoutils"
 	"github.com/nats-io/nats.go/jetstream"
@@ -92,5 +94,15 @@ func WithKVConfig[T any, U protoutils.ProtoMessageWithMerge[T]](
 	return func(s *Store[T, U], kvConfig *jetstream.KeyValueConfig) {
 		kvConfig.TTL = config.TTL
 		kvConfig.LimitMarkerTTL = config.LimitMarkerTTL
+	}
+}
+
+// WithPurgeMarkerTTL limits the lifetime of the tombstone emitted by Delete.
+// The target KeyValue bucket must have LimitMarkerTTL enabled.
+func WithPurgeMarkerTTL[T any, U protoutils.ProtoMessageWithMerge[T]](
+	ttl time.Duration,
+) Option[T, U] {
+	return func(s *Store[T, U], _ *jetstream.KeyValueConfig) {
+		s.purgeMarkerTTL = ttl
 	}
 }

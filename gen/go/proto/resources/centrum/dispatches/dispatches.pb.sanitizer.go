@@ -46,9 +46,6 @@ func (m *Dispatch) Sanitize() error {
 		*m.Description = htmlsanitizer.SanitizeAndUnescape(*m.Description)
 	}
 
-	// Field: Job
-	m.Job = htmlsanitizer.SanitizeAndUnescape(m.Job)
-
 	// Field: Jobs
 	if m.Jobs != nil {
 		if v, ok := any(m.GetJobs()).(interface{ Sanitize() error }); ok {

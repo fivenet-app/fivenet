@@ -84,6 +84,9 @@ func (s *Server) sendLatestState(
 		centrumdispatches.StatusDispatch_STATUS_DISPATCH_COMPLETED,
 		centrumdispatches.StatusDispatch_STATUS_DISPATCH_DELETED,
 	})
+	for _, dispatch := range dispatches {
+		s.dispatches.EnrichJobLabels(dispatch)
+	}
 
 	// Send initial state to client
 	if err := srv.Send(&pbcentrum.StreamResponse{

@@ -99,6 +99,10 @@ func New(p Params) (ITracker, error) {
 		userMappingsStore, err := store.New[tracker.UserMapping, *tracker.UserMapping](
 			ctxStartup, storeLogger, p.JS, BucketUserMappingsMap,
 			store.WithLocks[tracker.UserMapping, *tracker.UserMapping](nil),
+			store.WithKVConfig[tracker.UserMapping, *tracker.UserMapping](
+				jetstream.KeyValueConfig{LimitMarkerTTL: UserLocPurgeMarkerTTL},
+			),
+			store.WithPurgeMarkerTTL[tracker.UserMapping, *tracker.UserMapping](UserLocPurgeMarkerTTL),
 		)
 		if err != nil {
 			return err
@@ -114,6 +118,10 @@ func New(p Params) (ITracker, error) {
 			p.JS,
 			BucketUserLoc,
 			store.WithLocks[livemapmarkers.UserMarker, *livemapmarkers.UserMarker](nil),
+			store.WithKVConfig[livemapmarkers.UserMarker, *livemapmarkers.UserMarker](
+				jetstream.KeyValueConfig{LimitMarkerTTL: UserLocPurgeMarkerTTL},
+			),
+			store.WithPurgeMarkerTTL[livemapmarkers.UserMarker, *livemapmarkers.UserMarker](UserLocPurgeMarkerTTL),
 		)
 		if err != nil {
 			return err
@@ -126,6 +134,10 @@ func New(p Params) (ITracker, error) {
 		byID, err := store.New[livemapmarkers.UserMarker, *livemapmarkers.UserMarker](
 			ctxStartup, storeLogger, p.JS, BucketUserLocByID,
 			store.WithLocks[livemapmarkers.UserMarker, *livemapmarkers.UserMarker](nil),
+			store.WithKVConfig[livemapmarkers.UserMarker, *livemapmarkers.UserMarker](
+				jetstream.KeyValueConfig{LimitMarkerTTL: UserLocPurgeMarkerTTL},
+			),
+			store.WithPurgeMarkerTTL[livemapmarkers.UserMarker, *livemapmarkers.UserMarker](UserLocPurgeMarkerTTL),
 		)
 		if err != nil {
 			return err

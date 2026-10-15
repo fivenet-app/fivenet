@@ -15,13 +15,13 @@ import "tagger/tagger.proto";
 option go_package = "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/centrum/dispatches;centrumdispatches";
 
 message Dispatch {
+  // Kept reserved after the legacy single-job field was removed.
+  reserved 4;
+  reserved "job";
+
   int64 id = 1 [(tagger.tags) = "sql:\"primary_key\" alias:\"id\""];
   optional resources.timestamp.Timestamp created_at = 2;
   optional resources.timestamp.Timestamp updated_at = 3;
-  string job = 4 [
-    deprecated = true,
-    (buf.validate.field).string.max_len = 20
-  ];
   resources.centrum.JobList jobs = 18;
   optional DispatchStatus status = 5;
   string message = 7 [

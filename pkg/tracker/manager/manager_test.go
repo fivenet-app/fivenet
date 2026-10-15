@@ -207,6 +207,25 @@ func TestRefreshUserLocations(t *testing.T) {
 	assert.NotNil(t, kv)
 }
 
+func TestUserTrackerStoresConfigurePurgeMarkerTTL(t *testing.T) {
+	t.Parallel()
+
+	manager, _, _, stop := newTrackerManagerForTest(t)
+	defer stop()
+
+	for _, bucket := range []string{
+		tracker.BucketUserLoc,
+		tracker.BucketUserLocByID,
+		tracker.BucketUserMappingsMap,
+	} {
+		kv, err := manager.js.KeyValue(t.Context(), bucket)
+		require.NoError(t, err)
+		status, err := kv.Status(t.Context())
+		require.NoError(t, err)
+		assert.Equal(t, tracker.UserLocPurgeMarkerTTL, status.Config().LimitMarkerTTL, bucket)
+	}
+}
+
 func TestRefreshUserLocationsRemovesOldJobDispatcherOnJobChange(t *testing.T) {
 	t.Parallel()
 

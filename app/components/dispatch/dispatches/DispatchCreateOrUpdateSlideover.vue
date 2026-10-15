@@ -117,7 +117,6 @@ async function createDispatch(values: Schema): Promise<void> {
         const call = centrumDispatchesClient.createDispatch({
             dispatch: {
                 id: 0,
-                job: '',
                 jobs: {
                     jobs: values.jobs.jobs.map((name) => ({ name })),
                 },

@@ -33,11 +33,6 @@ export interface Dispatch {
      */
     updatedAt?: Timestamp;
     /**
-     * @deprecated
-     * @generated from protobuf field: string job = 4 [deprecated = true]
-     */
-    job: string;
-    /**
      * @generated from protobuf field: resources.centrum.JobList jobs = 18
      */
     jobs?: JobList;
@@ -363,7 +358,6 @@ class Dispatch$Type extends MessageType<Dispatch> {
             { no: 1, name: "id", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/, options: { "tagger.tags": "sql:\"primary_key\" alias:\"id\"" } },
             { no: 2, name: "created_at", kind: "message", T: () => Timestamp },
             { no: 3, name: "updated_at", kind: "message", T: () => Timestamp },
-            { no: 4, name: "job", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "20" } } } },
             { no: 18, name: "jobs", kind: "message", T: () => JobList },
             { no: 5, name: "status", kind: "message", T: () => DispatchStatus },
             { no: 7, name: "message", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "255" } }, "codegen.sanitizer.sanitizer": { enabled: true } } },
@@ -382,7 +376,6 @@ class Dispatch$Type extends MessageType<Dispatch> {
     create(value?: PartialMessage<Dispatch>): Dispatch {
         const message = globalThis.Object.create((this.messagePrototype!));
         message.id = 0;
-        message.job = "";
         message.message = "";
         message.x = 0;
         message.y = 0;
@@ -405,9 +398,6 @@ class Dispatch$Type extends MessageType<Dispatch> {
                     break;
                 case /* optional resources.timestamp.Timestamp updated_at */ 3:
                     message.updatedAt = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.updatedAt);
-                    break;
-                case /* string job = 4 [deprecated = true] */ 4:
-                    message.job = reader.string();
                     break;
                 case /* resources.centrum.JobList jobs */ 18:
                     message.jobs = JobList.internalBinaryRead(reader, reader.uint32(), options, message.jobs);
@@ -469,9 +459,6 @@ class Dispatch$Type extends MessageType<Dispatch> {
         /* optional resources.timestamp.Timestamp updated_at = 3; */
         if (message.updatedAt)
             Timestamp.internalBinaryWrite(message.updatedAt, writer.tag(3, WireType.LengthDelimited).fork(), options).join();
-        /* string job = 4 [deprecated = true]; */
-        if (message.job !== "")
-            writer.tag(4, WireType.LengthDelimited).string(message.job);
         /* optional resources.centrum.dispatches.DispatchStatus status = 5; */
         if (message.status)
             DispatchStatus.internalBinaryWrite(message.status, writer.tag(5, WireType.LengthDelimited).fork(), options).join();

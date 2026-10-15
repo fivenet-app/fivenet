@@ -36,6 +36,10 @@ const (
 	PingTTL   = 8 * time.Second  // OFFLINE
 	EmptyTTL  = 30 * time.Second // No crew -> delete
 	PingKVTTL = 10 * time.Minute // Maximum age of unit ping stream history
+
+	// UnitPurgeMarkerTTL retains deleted unit projections and job indexes long
+	// enough for watcher recovery without accumulating durable tombstones.
+	UnitPurgeMarkerTTL = 4 * time.Hour
 )
 
 var unitSubjectAccessOptions = access.SubjectAccessOptions{
@@ -136,6 +140,10 @@ func New(p Params) *UnitDB {
 			"centrum_units",
 			store.WithKVPrefix[common.IDMapping, *common.IDMapping]("job"),
 			store.WithLocks[common.IDMapping, *common.IDMapping](nil),
+			store.WithKVConfig[common.IDMapping, *common.IDMapping](
+				jetstream.KeyValueConfig{LimitMarkerTTL: UnitPurgeMarkerTTL},
+			),
+			store.WithPurgeMarkerTTL[common.IDMapping, *common.IDMapping](UnitPurgeMarkerTTL),
 		)
 		if err != nil {
 			return err
@@ -177,6 +185,10 @@ func New(p Params) *UnitDB {
 			p.JS,
 			"centrum_units",
 			store.WithKVPrefix[centrumunits.Unit, *centrumunits.Unit]("id"),
+			store.WithKVConfig[centrumunits.Unit, *centrumunits.Unit](
+				jetstream.KeyValueConfig{LimitMarkerTTL: UnitPurgeMarkerTTL},
+			),
+			store.WithPurgeMarkerTTL[centrumunits.Unit, *centrumunits.Unit](UnitPurgeMarkerTTL),
 			store.WithOnUpdateFn[centrumunits.Unit, *centrumunits.Unit](
 				func(ctx context.Context, old *centrumunits.Unit, unit *centrumunits.Unit) (*centrumunits.Unit, error) {
 					if unit == nil {

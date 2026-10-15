@@ -4,7 +4,6 @@ import { selectOwnDispatch } from './centrum-dispatch-selection';
 
 const dispatch = (id: number, status = StatusDispatch.NEW): Dispatch => ({
     id,
-    job: 'ambulance',
     message: '',
     x: 0,
     y: 0,

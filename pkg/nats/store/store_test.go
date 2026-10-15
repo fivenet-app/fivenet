@@ -316,6 +316,50 @@ func TestBasicStoreCreateAndUse(t *testing.T) {
 	assert.Empty(t, list)
 }
 
+func TestStorePurgeMarkerTTL(t *testing.T) {
+	t.Parallel()
+
+	ctx := t.Context()
+	js := nats.NewServer(t, nats.ServerOptions{InProcess: true}).GetJS()
+
+	store, err := New[tests.SimpleObject](
+		ctx,
+		zaptest.NewLogger(t),
+		js,
+		"purge_marker_ttl",
+		WithLocks[tests.SimpleObject](nil),
+		WithKVConfig[tests.SimpleObject](jetstream.KeyValueConfig{LimitMarkerTTL: time.Second}),
+		WithPurgeMarkerTTL[tests.SimpleObject](time.Second),
+	)
+	require.NoError(t, err)
+	require.NoError(t, store.Put(ctx, "deleted", &tests.SimpleObject{Field1: "value"}))
+	require.NoError(t, store.Delete(ctx, "deleted"))
+
+	stream, err := js.Stream(ctx, "KV_purge_marker_ttl")
+	require.NoError(t, err)
+	marker, err := stream.GetLastMsgForSubject(ctx, "$KV.purge_marker_ttl.deleted")
+	require.NoError(t, err)
+	assert.Equal(t, "1s", marker.Header.Get(jetstream.MsgTTLHeader))
+	require.Eventually(t, func() bool {
+		_, err := stream.GetLastMsgForSubject(ctx, "$KV.purge_marker_ttl.deleted")
+		return errors.Is(err, jetstream.ErrMsgNotFound)
+	}, 3*time.Second, 10*time.Millisecond)
+}
+
+func TestStorePurgeMarkerTTLRequiresLimitMarkerTTL(t *testing.T) {
+	t.Parallel()
+
+	_, err := New[tests.SimpleObject](
+		t.Context(),
+		zaptest.NewLogger(t),
+		nats.NewServer(t, nats.ServerOptions{InProcess: true}).GetJS(),
+		"purge_marker_ttl_requires_limit",
+		WithLocks[tests.SimpleObject](nil),
+		WithPurgeMarkerTTL[tests.SimpleObject](time.Second),
+	)
+	require.ErrorContains(t, err, "requires LimitMarkerTTL")
+}
+
 func TestPutWithRetryRetriesRevisionMismatch(t *testing.T) {
 	t.Parallel()
 

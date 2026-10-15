@@ -255,25 +255,23 @@ func (x DispatchAttribute) Number() protoreflect.EnumNumber {
 }
 
 type Dispatch struct {
-	state     protoimpl.MessageState `protogen:"hybrid.v1"`
-	Id        int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty" alias:"id" sql:"primary_key"`
-	CreatedAt *timestamp.Timestamp   `protobuf:"bytes,2,opt,name=created_at,json=createdAt,proto3,oneof" json:"created_at,omitempty"`
-	UpdatedAt *timestamp.Timestamp   `protobuf:"bytes,3,opt,name=updated_at,json=updatedAt,proto3,oneof" json:"updated_at,omitempty"`
-	// Deprecated: Marked as deprecated in resources/centrum/dispatches/dispatches.proto.
-	Job           string                `protobuf:"bytes,4,opt,name=job,proto3" json:"job,omitempty"`
-	Jobs          *centrum.JobList      `protobuf:"bytes,18,opt,name=jobs,proto3" json:"jobs,omitempty"`
-	Status        *DispatchStatus       `protobuf:"bytes,5,opt,name=status,proto3,oneof" json:"status,omitempty"`
-	Message       string                `protobuf:"bytes,7,opt,name=message,proto3" json:"message,omitempty"`
-	Description   *string               `protobuf:"bytes,8,opt,name=description,proto3,oneof" json:"description,omitempty"`
-	Attributes    *DispatchAttributes   `protobuf:"bytes,9,opt,name=attributes,proto3,oneof" json:"attributes,omitempty"`
-	X             float64               `protobuf:"fixed64,10,opt,name=x,proto3" json:"x,omitempty"`
-	Y             float64               `protobuf:"fixed64,11,opt,name=y,proto3" json:"y,omitempty"`
-	Postal        *string               `protobuf:"bytes,12,opt,name=postal,proto3,oneof" json:"postal,omitempty"`
-	Anon          bool                  `protobuf:"varint,13,opt,name=anon,proto3" json:"anon,omitempty"`
-	CreatorId     *int32                `protobuf:"varint,14,opt,name=creator_id,json=creatorId,proto3,oneof" json:"creator_id,omitempty"`
-	Creator       *short.UserShort      `protobuf:"bytes,15,opt,name=creator,proto3,oneof" json:"creator,omitempty"`
-	Units         []*DispatchAssignment `protobuf:"bytes,16,rep,name=units,proto3" json:"units,omitempty"`
-	References    *DispatchReferences   `protobuf:"bytes,17,opt,name=references,proto3,oneof" json:"references,omitempty"`
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
+	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty" alias:"id" sql:"primary_key"`
+	CreatedAt     *timestamp.Timestamp   `protobuf:"bytes,2,opt,name=created_at,json=createdAt,proto3,oneof" json:"created_at,omitempty"`
+	UpdatedAt     *timestamp.Timestamp   `protobuf:"bytes,3,opt,name=updated_at,json=updatedAt,proto3,oneof" json:"updated_at,omitempty"`
+	Jobs          *centrum.JobList       `protobuf:"bytes,18,opt,name=jobs,proto3" json:"jobs,omitempty"`
+	Status        *DispatchStatus        `protobuf:"bytes,5,opt,name=status,proto3,oneof" json:"status,omitempty"`
+	Message       string                 `protobuf:"bytes,7,opt,name=message,proto3" json:"message,omitempty"`
+	Description   *string                `protobuf:"bytes,8,opt,name=description,proto3,oneof" json:"description,omitempty"`
+	Attributes    *DispatchAttributes    `protobuf:"bytes,9,opt,name=attributes,proto3,oneof" json:"attributes,omitempty"`
+	X             float64                `protobuf:"fixed64,10,opt,name=x,proto3" json:"x,omitempty"`
+	Y             float64                `protobuf:"fixed64,11,opt,name=y,proto3" json:"y,omitempty"`
+	Postal        *string                `protobuf:"bytes,12,opt,name=postal,proto3,oneof" json:"postal,omitempty"`
+	Anon          bool                   `protobuf:"varint,13,opt,name=anon,proto3" json:"anon,omitempty"`
+	CreatorId     *int32                 `protobuf:"varint,14,opt,name=creator_id,json=creatorId,proto3,oneof" json:"creator_id,omitempty"`
+	Creator       *short.UserShort       `protobuf:"bytes,15,opt,name=creator,proto3,oneof" json:"creator,omitempty"`
+	Units         []*DispatchAssignment  `protobuf:"bytes,16,rep,name=units,proto3" json:"units,omitempty"`
+	References    *DispatchReferences    `protobuf:"bytes,17,opt,name=references,proto3,oneof" json:"references,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -322,14 +320,6 @@ func (x *Dispatch) GetUpdatedAt() *timestamp.Timestamp {
 		return x.UpdatedAt
 	}
 	return nil
-}
-
-// Deprecated: Marked as deprecated in resources/centrum/dispatches/dispatches.proto.
-func (x *Dispatch) GetJob() string {
-	if x != nil {
-		return x.Job
-	}
-	return ""
 }
 
 func (x *Dispatch) GetJobs() *centrum.JobList {
@@ -433,11 +423,6 @@ func (x *Dispatch) SetCreatedAt(v *timestamp.Timestamp) {
 
 func (x *Dispatch) SetUpdatedAt(v *timestamp.Timestamp) {
 	x.UpdatedAt = v
-}
-
-// Deprecated: Marked as deprecated in resources/centrum/dispatches/dispatches.proto.
-func (x *Dispatch) SetJob(v string) {
-	x.Job = v
 }
 
 func (x *Dispatch) SetJobs(v *centrum.JobList) {
@@ -605,11 +590,9 @@ func (x *Dispatch) ClearReferences() {
 type Dispatch_builder struct {
 	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
 
-	Id        int64
-	CreatedAt *timestamp.Timestamp
-	UpdatedAt *timestamp.Timestamp
-	// Deprecated: Marked as deprecated in resources/centrum/dispatches/dispatches.proto.
-	Job         string
+	Id          int64
+	CreatedAt   *timestamp.Timestamp
+	UpdatedAt   *timestamp.Timestamp
 	Jobs        *centrum.JobList
 	Status      *DispatchStatus
 	Message     string
@@ -632,7 +615,6 @@ func (b0 Dispatch_builder) Build() *Dispatch {
 	x.Id = b.Id
 	x.CreatedAt = b.CreatedAt
 	x.UpdatedAt = b.UpdatedAt
-	x.Job = b.Job
 	x.Jobs = b.Jobs
 	x.Status = b.Status
 	x.Message = b.Message
@@ -1429,14 +1411,13 @@ var File_resources_centrum_dispatches_dispatches_proto protoreflect.FileDescript
 
 const file_resources_centrum_dispatches_dispatches_proto_rawDesc = "" +
 	"\n" +
-	"-resources/centrum/dispatches/dispatches.proto\x12\x1cresources.centrum.dispatches\x1a!codegen/dbscanner/dbscanner.proto\x1a!codegen/sanitizer/sanitizer.proto\x1a\x1fresources/centrum/joblist.proto\x1a#resources/centrum/units/units.proto\x1a*resources/jobs/colleagues/colleagues.proto\x1a#resources/timestamp/timestamp.proto\x1a resources/users/short/user.proto\x1a\x13tagger/tagger.proto\"\xd4\a\n" +
+	"-resources/centrum/dispatches/dispatches.proto\x12\x1cresources.centrum.dispatches\x1a!codegen/dbscanner/dbscanner.proto\x1a!codegen/sanitizer/sanitizer.proto\x1a\x1fresources/centrum/joblist.proto\x1a#resources/centrum/units/units.proto\x1a*resources/jobs/colleagues/colleagues.proto\x1a#resources/timestamp/timestamp.proto\x1a resources/users/short/user.proto\x1a\x13tagger/tagger.proto\"\xc9\a\n" +
 	"\bDispatch\x121\n" +
 	"\x02id\x18\x01 \x01(\x03B!\x9a\x84\x9e\x03\x1csql:\"primary_key\" alias:\"id\"R\x02id\x12B\n" +
 	"\n" +
 	"created_at\x18\x02 \x01(\v2\x1e.resources.timestamp.TimestampH\x00R\tcreatedAt\x88\x01\x01\x12B\n" +
 	"\n" +
-	"updated_at\x18\x03 \x01(\v2\x1e.resources.timestamp.TimestampH\x01R\tupdatedAt\x88\x01\x01\x12\x14\n" +
-	"\x03job\x18\x04 \x01(\tB\x02\x18\x01R\x03job\x12.\n" +
+	"updated_at\x18\x03 \x01(\v2\x1e.resources.timestamp.TimestampH\x01R\tupdatedAt\x88\x01\x01\x12.\n" +
 	"\x04jobs\x18\x12 \x01(\v2\x1a.resources.centrum.JobListR\x04jobs\x12I\n" +
 	"\x06status\x18\x05 \x01(\v2,.resources.centrum.dispatches.DispatchStatusH\x02R\x06status\x88\x01\x01\x12 \n" +
 	"\amessage\x18\a \x01(\tB\x06\xda\xf3\x18\x02\b\x01R\amessage\x12-\n" +
@@ -1465,7 +1446,7 @@ const file_resources_centrum_dispatches_dispatches_proto_rawDesc = "" +
 	"\v_creator_idB\n" +
 	"\n" +
 	"\b_creatorB\r\n" +
-	"\v_references\"\x90\x01\n" +
+	"\v_referencesJ\x04\b\x04\x10\x05R\x03job\"\x90\x01\n" +
 	"\x13DispatchAssignments\x12\x1f\n" +
 	"\vdispatch_id\x18\x01 \x01(\x03R\n" +
 	"dispatchId\x12\x10\n" +

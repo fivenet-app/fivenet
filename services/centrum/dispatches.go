@@ -196,23 +196,7 @@ func (s *Server) ListDispatches(
 			resp.Dispatches[i].Creator.JobGrade = 0
 		}
 
-		// Ensure dispatch has a valid job list (fallback to deprecated Jobs field for old dispatches)
-		if dsps[i].GetJobs() == nil ||
-			len(dsps[i].GetJobs().GetJobs()) == 0 {
-			resp.Dispatches[i].Jobs = &centrum.JobList{
-				Jobs: []*centrum.JobListEntry{
-					{
-						//nolint:staticcheck // Use the old job field as the fallback for old plugins.
-						Name: dsps[i].GetJob(),
-					},
-				},
-			}
-			//nolint:staticcheck // Clear old job info. Clear the job field used by old plugins.
-			resp.Dispatches[i].Job = ""
-		}
-		for _, job := range dsps[i].GetJobs().GetJobs() {
-			s.enricher.EnrichJobName(job)
-		}
+		s.dispatches.EnrichJobLabels(dsps[i])
 	}
 
 	grpc_audit.SetAction(ctx, audit.EventAction_EVENT_ACTION_VIEWED)
@@ -308,6 +292,7 @@ func (s *Server) GetDispatch(
 	if err := s.hydrateDispatchCreator(ctx, userInfo, resp.Dispatch); err != nil {
 		return nil, err
 	}
+	s.dispatches.EnrichJobLabels(resp.Dispatch)
 
 	grpc_audit.SetAction(ctx, audit.EventAction_EVENT_ACTION_VIEWED)
 

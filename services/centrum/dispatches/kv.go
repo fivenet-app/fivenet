@@ -70,7 +70,21 @@ func (s *DispatchDB) Get(ctx context.Context, id int64) (*centrumdispatches.Disp
 		return nil, err
 	}
 
+	s.EnrichJobLabels(dsp)
+
 	return dsp, nil
+}
+
+// EnrichJobLabels adds the presentation-only job labels that are intentionally
+// omitted from the database representation of a dispatch's job list.
+func (s *DispatchDB) EnrichJobLabels(dsp *centrumdispatches.Dispatch) {
+	if dsp == nil {
+		return
+	}
+
+	for _, job := range dsp.GetJobs().GetJobs() {
+		s.enricher.EnrichJobName(job)
+	}
 }
 
 // List returns all dispatches that match the given job prefixes.
@@ -101,6 +115,7 @@ func (s *DispatchDB) List(ctx context.Context, jobs []string) []*centrumdispatch
 		if err != nil {
 			continue
 		}
+		s.EnrichJobLabels(dsp)
 		// Skip any broken dispatches (e.g. missing job or ID)
 		if dsp == nil || dsp.GetId() == 0 || len(dsp.GetJobs().GetJobs()) == 0 {
 			continue
@@ -175,11 +190,12 @@ func (s *DispatchDB) updateStatusInKV(
 
 const (
 	InactiveTTL            = 60 * time.Minute // How long a Dispatch may stay idle/quiet
-	InactiveLimitMarkerTTL = 2 * time.Hour    // How long tombstones live
+	InactiveLimitMarkerTTL = 2 * time.Hour    // How long TTL-expiration markers remain replayable
 	CompletedTTL           = 15 * time.Minute // How long completed dispatches remain visible
 	ProjectionTTL          = 4 * time.Hour    // Maximum time a dispatch projection remains in KV
 	DispatchKVTTL          = 24 * time.Hour   // Maximum time dispatch KV entries remain as a final safety net
-	IdleKVTTL              = 20 * time.Hour   // Maximum age of idle dispatch timer history
+	DispatchPurgeMarkerTTL = 4 * time.Hour    // How long removed dispatch/index tombstones remain replayable
+	IdleKVTTL              = 6 * time.Hour    // Projection timer lifetime plus recovery headroom
 )
 
 func cleanupKey(id int64) string {

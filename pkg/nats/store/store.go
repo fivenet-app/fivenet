@@ -31,6 +31,8 @@ var ErrPrefixAmbiguous = errors.New("multiple keys found with given prefix")
 
 type storeMetrics struct {
 	dataMapCount   *prometheus.GaugeVec
+	kvValues       *prometheus.GaugeVec
+	kvBytes        *prometheus.GaugeVec
 	writeConflicts *prometheus.CounterVec
 }
 
@@ -48,6 +50,18 @@ func getStoreMetrics() *storeMetrics {
 				Name:      "datamap_count",
 				Help:      "Count of data map entries.",
 			}, []string{"bucket"}),
+			kvValues: prometheus.NewGaugeVec(prometheus.GaugeOpts{
+				Namespace: admin.MetricsNamespace,
+				Subsystem: "nats_store",
+				Name:      "kv_values",
+				Help:      "Current messages retained by the backing JetStream KeyValue bucket.",
+			}, []string{"bucket"}),
+			kvBytes: prometheus.NewGaugeVec(prometheus.GaugeOpts{
+				Namespace: admin.MetricsNamespace,
+				Subsystem: "nats_store",
+				Name:      "kv_bytes",
+				Help:      "Current bytes retained by the backing JetStream KeyValue bucket.",
+			}, []string{"bucket"}),
 			writeConflicts: prometheus.NewCounterVec(prometheus.CounterOpts{
 				Namespace: admin.MetricsNamespace,
 				Subsystem: "nats_store",
@@ -56,8 +70,12 @@ func getStoreMetrics() *storeMetrics {
 			}, []string{"bucket"}),
 		}
 
-		prometheus.MustRegister(storeMetricsInst.dataMapCount)
-		prometheus.MustRegister(storeMetricsInst.writeConflicts)
+		prometheus.MustRegister(
+			storeMetricsInst.dataMapCount,
+			storeMetricsInst.kvValues,
+			storeMetricsInst.kvBytes,
+			storeMetricsInst.writeConflicts,
+		)
 	})
 
 	return storeMetricsInst
@@ -97,6 +115,8 @@ type Store[T any, U protoutils.ProtoMessageWithMerge[T]] struct {
 	prefix string
 	// list of keys to ignore in store operations
 	ignoredKeys []string
+	// purgeMarkerTTL limits how long tombstones written by Delete are retained.
+	purgeMarkerTTL time.Duration
 
 	// concurrent map of per-key mutexes
 	mu *xsync.Map[string, *sync.Mutex]
@@ -177,6 +197,20 @@ func New[T any, U protoutils.ProtoMessageWithMerge[T]](
 		}
 
 		s.kv = storeKV
+	}
+
+	if s.purgeMarkerTTL != 0 {
+		if s.purgeMarkerTTL < 0 {
+			return nil, fmt.Errorf("purge marker TTL must be positive")
+		}
+
+		status, err := s.kv.Status(ctx)
+		if err != nil {
+			return nil, fmt.Errorf("failed to get kv status for purge marker TTL: %w", err)
+		}
+		if status.Config().LimitMarkerTTL == 0 {
+			return nil, errors.New("purge marker TTL requires LimitMarkerTTL to be enabled")
+		}
 	}
 
 	// Create locks only if not overridden by option
@@ -304,6 +338,21 @@ func (s *Store[T, U]) Start(ctx context.Context, wait bool) error {
 	go func() {
 		for {
 			s.metrics.dataMapCount.WithLabelValues(s.bucket).Set(float64(s.data.Size()))
+
+			statusCtx, cancel := context.WithTimeout(ctx, 5*time.Second)
+			status, err := s.kv.Status(statusCtx)
+			cancel()
+			if err != nil {
+				if ctx.Err() == nil {
+					s.logger.Debug(
+						"failed to get key-value bucket status for metrics",
+						zap.Error(err),
+					)
+				}
+			} else {
+				s.metrics.kvValues.WithLabelValues(s.bucket).Set(float64(status.Values()))
+				s.metrics.kvBytes.WithLabelValues(s.bucket).Set(float64(status.Bytes()))
+			}
 
 			select {
 			case <-ctx.Done():
@@ -1000,7 +1049,11 @@ func (s *Store[T, U]) Delete(ctx context.Context, key string) error {
 	}
 
 	item, _ := s.data.Load(key)
-	if err := s.kv.Purge(ctx, key); err != nil {
+	var opts []jetstream.KVDeleteOpt
+	if s.purgeMarkerTTL > 0 {
+		opts = append(opts, jetstream.PurgeTTL(s.purgeMarkerTTL))
+	}
+	if err := s.kv.Purge(ctx, key, opts...); err != nil {
 		return fmt.Errorf("failed to purge key %s. %w", key, err)
 	}
 

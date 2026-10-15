@@ -23,6 +23,6 @@ defineProps<Props>();
         </div>
     </template>
     <span v-else>
-        {{ $t('common.none', [$t('common.attributes', 2)]) }}
+        {{ $t('common.na') }}
     </span>
 </template>

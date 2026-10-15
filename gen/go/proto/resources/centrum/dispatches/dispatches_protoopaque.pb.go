@@ -259,7 +259,6 @@ type Dispatch struct {
 	xxx_hidden_Id          int64                  `protobuf:"varint,1,opt,name=id,proto3"`
 	xxx_hidden_CreatedAt   *timestamp.Timestamp   `protobuf:"bytes,2,opt,name=created_at,json=createdAt,proto3,oneof"`
 	xxx_hidden_UpdatedAt   *timestamp.Timestamp   `protobuf:"bytes,3,opt,name=updated_at,json=updatedAt,proto3,oneof"`
-	xxx_hidden_Job         string                 `protobuf:"bytes,4,opt,name=job,proto3"`
 	xxx_hidden_Jobs        *centrum.JobList       `protobuf:"bytes,18,opt,name=jobs,proto3"`
 	xxx_hidden_Status      *DispatchStatus        `protobuf:"bytes,5,opt,name=status,proto3,oneof"`
 	xxx_hidden_Message     string                 `protobuf:"bytes,7,opt,name=message,proto3"`
@@ -323,14 +322,6 @@ func (x *Dispatch) GetUpdatedAt() *timestamp.Timestamp {
 		return x.xxx_hidden_UpdatedAt
 	}
 	return nil
-}
-
-// Deprecated: Marked as deprecated in resources/centrum/dispatches/dispatches.proto.
-func (x *Dispatch) GetJob() string {
-	if x != nil {
-		return x.xxx_hidden_Job
-	}
-	return ""
 }
 
 func (x *Dispatch) GetJobs() *centrum.JobList {
@@ -444,11 +435,6 @@ func (x *Dispatch) SetUpdatedAt(v *timestamp.Timestamp) {
 	x.xxx_hidden_UpdatedAt = v
 }
 
-// Deprecated: Marked as deprecated in resources/centrum/dispatches/dispatches.proto.
-func (x *Dispatch) SetJob(v string) {
-	x.xxx_hidden_Job = v
-}
-
 func (x *Dispatch) SetJobs(v *centrum.JobList) {
 	x.xxx_hidden_Jobs = v
 }
@@ -463,7 +449,7 @@ func (x *Dispatch) SetMessage(v string) {
 
 func (x *Dispatch) SetDescription(v string) {
 	x.xxx_hidden_Description = &v
-	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 7, 17)
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 6, 16)
 }
 
 func (x *Dispatch) SetAttributes(v *DispatchAttributes) {
@@ -480,7 +466,7 @@ func (x *Dispatch) SetY(v float64) {
 
 func (x *Dispatch) SetPostal(v string) {
 	x.xxx_hidden_Postal = &v
-	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 11, 17)
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 10, 16)
 }
 
 func (x *Dispatch) SetAnon(v bool) {
@@ -489,7 +475,7 @@ func (x *Dispatch) SetAnon(v bool) {
 
 func (x *Dispatch) SetCreatorId(v int32) {
 	x.xxx_hidden_CreatorId = v
-	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 13, 17)
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 12, 16)
 }
 
 func (x *Dispatch) SetCreator(v *short.UserShort) {
@@ -536,7 +522,7 @@ func (x *Dispatch) HasDescription() bool {
 	if x == nil {
 		return false
 	}
-	return protoimpl.X.Present(&(x.XXX_presence[0]), 7)
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 6)
 }
 
 func (x *Dispatch) HasAttributes() bool {
@@ -550,14 +536,14 @@ func (x *Dispatch) HasPostal() bool {
 	if x == nil {
 		return false
 	}
-	return protoimpl.X.Present(&(x.XXX_presence[0]), 11)
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 10)
 }
 
 func (x *Dispatch) HasCreatorId() bool {
 	if x == nil {
 		return false
 	}
-	return protoimpl.X.Present(&(x.XXX_presence[0]), 13)
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 12)
 }
 
 func (x *Dispatch) HasCreator() bool {
@@ -591,7 +577,7 @@ func (x *Dispatch) ClearStatus() {
 }
 
 func (x *Dispatch) ClearDescription() {
-	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 7)
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 6)
 	x.xxx_hidden_Description = nil
 }
 
@@ -600,12 +586,12 @@ func (x *Dispatch) ClearAttributes() {
 }
 
 func (x *Dispatch) ClearPostal() {
-	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 11)
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 10)
 	x.xxx_hidden_Postal = nil
 }
 
 func (x *Dispatch) ClearCreatorId() {
-	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 13)
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 12)
 	x.xxx_hidden_CreatorId = 0
 }
 
@@ -620,11 +606,9 @@ func (x *Dispatch) ClearReferences() {
 type Dispatch_builder struct {
 	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
 
-	Id        int64
-	CreatedAt *timestamp.Timestamp
-	UpdatedAt *timestamp.Timestamp
-	// Deprecated: Marked as deprecated in resources/centrum/dispatches/dispatches.proto.
-	Job         string
+	Id          int64
+	CreatedAt   *timestamp.Timestamp
+	UpdatedAt   *timestamp.Timestamp
 	Jobs        *centrum.JobList
 	Status      *DispatchStatus
 	Message     string
@@ -647,24 +631,23 @@ func (b0 Dispatch_builder) Build() *Dispatch {
 	x.xxx_hidden_Id = b.Id
 	x.xxx_hidden_CreatedAt = b.CreatedAt
 	x.xxx_hidden_UpdatedAt = b.UpdatedAt
-	x.xxx_hidden_Job = b.Job
 	x.xxx_hidden_Jobs = b.Jobs
 	x.xxx_hidden_Status = b.Status
 	x.xxx_hidden_Message = b.Message
 	if b.Description != nil {
-		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 7, 17)
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 6, 16)
 		x.xxx_hidden_Description = b.Description
 	}
 	x.xxx_hidden_Attributes = b.Attributes
 	x.xxx_hidden_X = b.X
 	x.xxx_hidden_Y = b.Y
 	if b.Postal != nil {
-		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 11, 17)
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 10, 16)
 		x.xxx_hidden_Postal = b.Postal
 	}
 	x.xxx_hidden_Anon = b.Anon
 	if b.CreatorId != nil {
-		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 13, 17)
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 12, 16)
 		x.xxx_hidden_CreatorId = *b.CreatorId
 	}
 	x.xxx_hidden_Creator = b.Creator
@@ -1511,14 +1494,13 @@ var File_resources_centrum_dispatches_dispatches_proto protoreflect.FileDescript
 
 const file_resources_centrum_dispatches_dispatches_proto_rawDesc = "" +
 	"\n" +
-	"-resources/centrum/dispatches/dispatches.proto\x12\x1cresources.centrum.dispatches\x1a!codegen/dbscanner/dbscanner.proto\x1a!codegen/sanitizer/sanitizer.proto\x1a\x1fresources/centrum/joblist.proto\x1a#resources/centrum/units/units.proto\x1a*resources/jobs/colleagues/colleagues.proto\x1a#resources/timestamp/timestamp.proto\x1a resources/users/short/user.proto\x1a\x13tagger/tagger.proto\"\xd4\a\n" +
+	"-resources/centrum/dispatches/dispatches.proto\x12\x1cresources.centrum.dispatches\x1a!codegen/dbscanner/dbscanner.proto\x1a!codegen/sanitizer/sanitizer.proto\x1a\x1fresources/centrum/joblist.proto\x1a#resources/centrum/units/units.proto\x1a*resources/jobs/colleagues/colleagues.proto\x1a#resources/timestamp/timestamp.proto\x1a resources/users/short/user.proto\x1a\x13tagger/tagger.proto\"\xc9\a\n" +
 	"\bDispatch\x121\n" +
 	"\x02id\x18\x01 \x01(\x03B!\x9a\x84\x9e\x03\x1csql:\"primary_key\" alias:\"id\"R\x02id\x12B\n" +
 	"\n" +
 	"created_at\x18\x02 \x01(\v2\x1e.resources.timestamp.TimestampH\x00R\tcreatedAt\x88\x01\x01\x12B\n" +
 	"\n" +
-	"updated_at\x18\x03 \x01(\v2\x1e.resources.timestamp.TimestampH\x01R\tupdatedAt\x88\x01\x01\x12\x14\n" +
-	"\x03job\x18\x04 \x01(\tB\x02\x18\x01R\x03job\x12.\n" +
+	"updated_at\x18\x03 \x01(\v2\x1e.resources.timestamp.TimestampH\x01R\tupdatedAt\x88\x01\x01\x12.\n" +
 	"\x04jobs\x18\x12 \x01(\v2\x1a.resources.centrum.JobListR\x04jobs\x12I\n" +
 	"\x06status\x18\x05 \x01(\v2,.resources.centrum.dispatches.DispatchStatusH\x02R\x06status\x88\x01\x01\x12 \n" +
 	"\amessage\x18\a \x01(\tB\x06\xda\xf3\x18\x02\b\x01R\amessage\x12-\n" +
@@ -1547,7 +1529,7 @@ const file_resources_centrum_dispatches_dispatches_proto_rawDesc = "" +
 	"\v_creator_idB\n" +
 	"\n" +
 	"\b_creatorB\r\n" +
-	"\v_references\"\x90\x01\n" +
+	"\v_referencesJ\x04\b\x04\x10\x05R\x03job\"\x90\x01\n" +
 	"\x13DispatchAssignments\x12\x1f\n" +
 	"\vdispatch_id\x18\x01 \x01(\x03R\n" +
 	"dispatchId\x12\x10\n" +

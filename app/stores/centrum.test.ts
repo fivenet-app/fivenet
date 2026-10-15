@@ -28,7 +28,6 @@ vi.mock('~/composables/useSounds', () => ({
 
 const dispatch = (overrides: Partial<Dispatch> = {}): Dispatch => ({
     id: 0,
-    job: 'ambulance',
     message: '',
     x: 0,
     y: 0,
