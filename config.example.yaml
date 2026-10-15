@@ -56,6 +56,9 @@ http:
   origins:
     # Origins lists browser origins allowed to access the frontend and API.
     - "https://fivenet.example.com"
+    # Allow the default FiveM plugin NUI origin. If the resource is renamed, use
+    # https://cfx-nui-<resource-name> instead.
+    - "https://cfx-nui-fivenet"
     #- "http://localhost:3000" # Only for development
   # TrustedProxies lists reverse-proxy IPs or CIDRs trusted to forward client IP and protocol headers.
   trustedProxies: []
