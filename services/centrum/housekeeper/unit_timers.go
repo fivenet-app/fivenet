@@ -155,11 +155,13 @@ func (s *Housekeeper) handleUnitKVPing(ctx context.Context, unitId int64) error 
 		s.logger.Error("failed to check users in unit", zap.Error(err))
 	}
 	stillAvailable := removed > 0
+	isStatic := unit.GetAttributes() != nil &&
+		unit.GetAttributes().Has(centrumunits.UnitAttribute_UNIT_ATTRIBUTE_STATIC)
+	statusReason := "no_cached_members"
 
 	// If all users are still valid (toRemove is empty) and status checks pass, keep the unit available
 	if len(unit.GetUsers()) > 0 && len(toRemove) == 0 {
-		if unit.GetAttributes() == nil ||
-			!unit.GetAttributes().Has(centrumunits.UnitAttribute_UNIT_ATTRIBUTE_STATIC) {
+		if !isStatic {
 			stillAvailable = true
 		} else if unit.GetStatus() != nil &&
 			(unit.GetStatus().GetStatus() == centrumunits.StatusUnit_STATUS_UNIT_BUSY ||
@@ -167,7 +169,12 @@ func (s *Housekeeper) handleUnitKVPing(ctx context.Context, unitId int64) error 
 				unit.GetStatus().GetStatus() == centrumunits.StatusUnit_STATUS_UNIT_UNAVAILABLE ||
 				unit.GetStatus().GetStatus() == centrumunits.StatusUnit_STATUS_UNIT_AVAILABLE) {
 			stillAvailable = true
+		} else {
+			statusReason = "static_unit_invalid_status"
 		}
+	}
+	if err != nil {
+		statusReason = "membership_validation_failed"
 	}
 
 	if stillAvailable {
@@ -175,10 +182,17 @@ func (s *Housekeeper) handleUnitKVPing(ctx context.Context, unitId int64) error 
 		return s.resetUnitPing(ctx, unitId)
 	}
 
-	s.logger.Debug(
-		"setting unit status to unavailable it is empty or static attribute (wrong status)",
+	s.logger.Info(
+		"setting unit status unavailable",
+		zap.String("reason", statusReason),
+		zap.String("trigger", "unit_ping_expired"),
 		zap.String("job", unit.GetJob()),
 		zap.Int64("unit_id", unit.GetId()),
+		zap.Int("cached_user_count", len(unit.GetUsers())),
+		zap.Int("membership_result_count", len(toRemove)),
+		zap.Int("removed_user_count", removed),
+		zap.String("previous_status", unit.GetStatus().GetStatus().String()),
+		zap.Bool("static_unit", isStatic),
 	)
 	if _, _, err := s.units.UpdateStatus(ctx, unit.GetId(), &centrumunits.UnitStatus{
 		CreatedAt: timestamp.Now(),

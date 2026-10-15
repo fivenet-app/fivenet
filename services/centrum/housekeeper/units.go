@@ -115,6 +115,37 @@ func (s *Housekeeper) checkAndUpdateUnitUsers(
 			continue
 		}
 
+		marker, markerFound := s.tracker.GetUserMarkerById(userId)
+		markerJob := ""
+		markerHidden := false
+		if marker != nil {
+			markerJob = marker.GetJob()
+			markerHidden = marker.GetHidden()
+		}
+
+		reason := "eligibility_rejected"
+		switch {
+		case !markerFound || marker == nil:
+			reason = "marker_not_found"
+		case markerHidden:
+			reason = "marker_hidden"
+		case !s.tracker.IsUserOnDuty(userId):
+			reason = "user_off_duty"
+		case markerJob != unit.GetJob():
+			reason = "marker_job_mismatch"
+		}
+		s.logger.Info(
+			"removing user from unit",
+			zap.String("reason", reason),
+			zap.String("unit_job", unit.GetJob()),
+			zap.Int64("unit_id", unit.GetId()),
+			zap.Int32("user_id", userId),
+			zap.Bool("marker_found", markerFound),
+			zap.Bool("marker_hidden", markerHidden),
+			zap.Bool("on_duty", s.tracker.IsUserOnDuty(userId)),
+			zap.String("marker_job", markerJob),
+		)
+
 		toRemove = append(toRemove, userId)
 	}
 
