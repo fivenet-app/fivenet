@@ -333,6 +333,7 @@ async function onMapReady(m: Map): Promise<void> {
 
     map.on('preclick', async (e: LeafletMouseEvent) => {
         if (!map) return;
+        if (markerCoordPickerActive.value) return;
         if (Date.now() < suppressMapPreclickUntil.value) return;
 
         const px = e.containerPoint;
