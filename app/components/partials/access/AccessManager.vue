@@ -27,6 +27,7 @@ const props = withDefaults(
         disabled?: boolean;
         requiredMode?: 'badge' | 'checkbox' | 'none';
         lockRequiredCheckbox?: boolean;
+        lockRequiredEntries?: boolean;
         defaultAccessType?: AccessEntryType;
         totalLimit?: number;
         hideGrade?: boolean;
@@ -49,6 +50,7 @@ const props = withDefaults(
         hideJobs: () => [],
         hideOtherJobs: false,
         lockRequiredCheckbox: false,
+        lockRequiredEntries: true,
         name: undefined,
         fullName: false,
     },
@@ -232,6 +234,7 @@ const { data: jobsList } = useAuthedLazyAsyncData('userState', 'completor-jobs',
             :disabled="disabled"
             :required-mode="requiredMode"
             :lock-required-checkbox="lockRequiredCheckbox"
+            :lock-required-entries="lockRequiredEntries"
             :jobs="jobsList"
             :hide-grade="hideGrade"
             :hide-jobs="hideJobs"

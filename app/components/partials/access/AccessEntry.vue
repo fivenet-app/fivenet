@@ -14,6 +14,7 @@ const props = withDefaults(
         disabled?: boolean;
         requiredMode?: 'badge' | 'checkbox' | 'none';
         lockRequiredCheckbox?: boolean;
+        lockRequiredEntries?: boolean;
         accessTypes: AccessType[];
         accessRoles?: AccessLevelEnum[];
         jobs?: Job[] | undefined;
@@ -27,6 +28,7 @@ const props = withDefaults(
         disabled: false,
         requiredMode: 'badge',
         lockRequiredCheckbox: false,
+        lockRequiredEntries: true,
         accessRoles: () => [],
         jobs: () => [],
         hideGrade: false,
@@ -63,7 +65,9 @@ const accessRoleItems = computed(() => {
     return props.accessRoles.filter((role) => role.value >= requiredAccessFloor.value!);
 });
 
-const requiredSubjectLocked = computed(() => props.disabled || !!entry.value.required);
+const requiredSubjectLocked = computed(
+    () => props.disabled || (props.lockRequiredEntries && !!entry.value.required),
+);
 const otherEntries = computed(() =>
     props.existingEntries.filter((existing) => existing.id !== entry.value.id || existing.type !== entry.value.type),
 );
@@ -526,13 +530,16 @@ watch(
         </div>
 
         <UFormField class="md:mt-1" :ui="{ container: 'flex justify-end-safe md:inline' }">
-            <UTooltip v-if="!disabled" :text="entry.required ? $t('common.required') : $t('components.access.remove_entry')">
+            <UTooltip
+                v-if="!disabled"
+                :text="entry.required && lockRequiredEntries ? $t('common.required') : $t('components.access.remove_entry')"
+            >
                 <UButton
                     class="flex-initial"
-                    :color="entry.required ? 'gray' : 'red'"
+                    :color="entry.required && lockRequiredEntries ? 'gray' : 'red'"
                     icon="i-mdi-remove"
                     :label="$t('components.access.remove_entry')"
-                    :disabled="entry.required"
+                    :disabled="lockRequiredEntries && entry.required"
                     :ui="{ label: 'md:hidden' }"
                     @click="$emit('delete')"
                 />

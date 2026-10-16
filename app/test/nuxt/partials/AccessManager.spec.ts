@@ -308,6 +308,34 @@ describe('AccessEntry', () => {
         expect(wrapper.emitted('delete')).toBeUndefined();
     });
 
+    it('allows required entries to be edited and removed when unlocked', async () => {
+        const entry: MixedAccessEntry = {
+            id: 1,
+            type: 'job',
+            job: 'police',
+            minimumGrade: 0,
+            access: 2,
+            required: true,
+        };
+        const wrapper = await mountSuspended(AccessEntry, {
+            props: {
+                modelValue: entry,
+                accessTypes: [{ label: 'Jobs', value: 'job' }],
+                accessRoles,
+                jobs: [{ name: 'police', label: 'Police', grades: [{ grade: 0, label: 'Cadet' }] }],
+                lockRequiredEntries: false,
+            },
+            global: { stubs: entryStubs(), mocks: { $t: (key: string) => key } },
+        });
+
+        const removeButton = wrapper.find('button[data-label="components.access.remove_entry"]');
+        expect(removeButton.attributes('disabled')).toBeUndefined();
+        expect(wrapper.findAll('.u-select-menu-stub').every((menu) => menu.attributes('data-disabled') === 'false')).toBe(true);
+
+        await removeButton.trigger('click');
+        expect(wrapper.emitted('delete')).toHaveLength(1);
+    });
+
     it('raises access to the required access floor', async () => {
         const entry: MixedAccessEntry = {
             id: 1,

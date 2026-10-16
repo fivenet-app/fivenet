@@ -730,6 +730,7 @@ const formRef = useTemplateRef('formRef');
                                     :access-types="contentAccessTypes"
                                     :access-roles="enumToAccessLevelEnums(AccessLevel, 'enums.documents.AccessLevel')"
                                     required-mode="checkbox"
+                                    :lock-required-entries="false"
                                     name="contentAccess"
                                 />
                             </UPageCard>

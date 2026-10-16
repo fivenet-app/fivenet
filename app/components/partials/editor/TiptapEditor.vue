@@ -230,8 +230,10 @@ if (props.enableCollab && ydoc && yjsProvider) {
             return;
         }
 
-        // Only set initial content if authoritative and Yjs doc is empty
-        if (yjsProvider.isAuthoritative && modelValue.value) {
+        // Seed only a new room. A synced provider can emit again after a reconnect;
+        // applying the persisted model to an existing Yjs fragment would append the
+        // initial document content a second time.
+        if (yjsProvider.isAuthoritative && ydoc.getXmlFragment('content').length === 0 && modelValue.value) {
             seedDocument(yjsSchema!, modelValue.value);
         }
 
