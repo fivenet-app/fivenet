@@ -43,6 +43,10 @@ export default defineNuxtConfig({
         indexable: false,
     },
 
+    robots: {
+        blockAiBots: 'training',
+    },
+
     css: ['~/assets/css/main.css'],
 
     fonts: {
