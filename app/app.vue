@@ -1,6 +1,5 @@
 <!-- eslint-disable vue/multi-word-component-names -->
 <script lang="ts" setup>
-import * as locales from '@nuxt/ui/locale';
 import NotificationProvider from '~/components/notifications/NotificationProvider.vue';
 import CookieControl from '~/components/partials/CookieControl.vue';
 import { useSettingsStore } from '~/stores/settings';
@@ -36,7 +35,7 @@ await initLocale();
 </script>
 
 <template>
-    <UApp :locale="locales[locale]">
+    <UApp>
         <NuxtLoadingIndicator color="repeating-linear-gradient(to right, #55dde0 0%, #34cdfe 50%, #7161ef 100%)" />
         <NuxtRouteAnnouncer />
 
