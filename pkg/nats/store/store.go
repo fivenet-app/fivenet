@@ -201,7 +201,7 @@ func New[T any, U protoutils.ProtoMessageWithMerge[T]](
 
 	if s.purgeMarkerTTL != 0 {
 		if s.purgeMarkerTTL < 0 {
-			return nil, fmt.Errorf("purge marker TTL must be positive")
+			return nil, errors.New("purge marker TTL must be positive")
 		}
 
 		status, err := s.kv.Status(ctx)

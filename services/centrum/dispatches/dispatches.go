@@ -217,7 +217,9 @@ func New(p Params) *DispatchDB {
 					LimitMarkerTTL: DispatchKVTTL,
 				},
 			),
-			store.WithPurgeMarkerTTL[centrumdispatches.Dispatch, *centrumdispatches.Dispatch](DispatchPurgeMarkerTTL),
+			store.WithPurgeMarkerTTL[centrumdispatches.Dispatch, *centrumdispatches.Dispatch](
+				DispatchPurgeMarkerTTL,
+			),
 			store.WithOnUpdateFn[centrumdispatches.Dispatch, *centrumdispatches.Dispatch](
 				func(ctx context.Context, old *centrumdispatches.Dispatch, dispatch *centrumdispatches.Dispatch) (*centrumdispatches.Dispatch, error) {
 					if dispatch == nil {

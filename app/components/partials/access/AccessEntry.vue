@@ -65,9 +65,7 @@ const accessRoleItems = computed(() => {
     return props.accessRoles.filter((role) => role.value >= requiredAccessFloor.value!);
 });
 
-const requiredSubjectLocked = computed(
-    () => props.disabled || (props.lockRequiredEntries && !!entry.value.required),
-);
+const requiredSubjectLocked = computed(() => props.disabled || (props.lockRequiredEntries && !!entry.value.required));
 const otherEntries = computed(() =>
     props.existingEntries.filter((existing) => existing.id !== entry.value.id || existing.type !== entry.value.type),
 );

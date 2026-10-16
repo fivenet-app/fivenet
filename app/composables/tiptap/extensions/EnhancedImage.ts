@@ -3,6 +3,7 @@ import { Node, mergeAttributes } from '@tiptap/core';
 import { VueNodeViewRenderer } from '@tiptap/vue-3';
 import EnhancedImageView from '~/components/partials/editor/EnhancedImageView.vue';
 import { deleteImageTrackerForceRemovedMetaKey } from './DeleteImageTracker';
+import { isEmbeddedImageSource } from './EmbeddedImageGuard';
 
 export interface EnhancedImageOptions {
     /**
@@ -261,6 +262,10 @@ export const EnhancedImage = Node.create<EnhancedImageOptions>({
         return [
             {
                 tag: 'img[src]',
+                getAttrs: (node) => {
+                    const source = (node as HTMLElement).getAttribute('src');
+                    return isEmbeddedImageSource(source) ? false : null;
+                },
             },
         ];
     },
@@ -300,13 +305,16 @@ export const EnhancedImage = Node.create<EnhancedImageOptions>({
         return {
             setEnhancedImage:
                 (attrs) =>
-                ({ chain }) =>
-                    chain()
+                ({ chain }) => {
+                    if (isEmbeddedImageSource(attrs.src)) return false;
+
+                    return chain()
                         .insertContent({
                             type: this.name,
                             attrs,
                         })
-                        .run(),
+                        .run();
+                },
 
             removeEnhancedImageByFileId:
                 (fileId) =>

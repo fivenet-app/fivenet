@@ -1604,6 +1604,12 @@
                     "image_upload_failed": {
                         "title": "Image upload failed",
                         "content": "The image could not be uploaded. Please try again."
+                    },
+                    "embedded_image_blocked": {
+                        "title": "Embedded image blocked",
+                        "document": "Embedded base64 images are not supported. Upload the image or, if you have access, select it from Job Assets.",
+                        "template": "Embedded base64 images are not supported. If you have access, select the image from Job Assets.",
+                        "generic": "Embedded base64 images are not supported. Use a supported image URL instead."
                     }
                 },
                 "file_list": "File List",

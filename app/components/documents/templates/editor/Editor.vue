@@ -758,6 +758,8 @@ const formRef = useTemplateRef('formRef');
                                             :extensions="extensions"
                                             name="content"
                                             :limit="125_000"
+                                            enable-images-job-assets
+                                            embedded-image-blocked-context="template"
                                             show-penalty-calculator-button
                                             disable-penalty-calculator-block-editing
                                             enable-penalty-calculator-block-removal

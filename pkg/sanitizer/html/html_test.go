@@ -53,6 +53,13 @@ func TestSanitize(t *testing.T) {
 	}
 }
 
+func TestSanitizeReplacesEmbeddedBase64Image(t *testing.T) {
+	t.Parallel()
+
+	out := Sanitize(`<p><img src="data:image/png;base64,aGVsbG8=" alt="embedded"></p>`)
+	assert.Equal(t, `<p><img src="/images/broken_image.webp" alt="embedded"></p>`, out)
+}
+
 func TestStripHTMLTags(t *testing.T) {
 	t.Parallel()
 	for _, run := range []struct {

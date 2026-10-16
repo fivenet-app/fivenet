@@ -1604,6 +1604,12 @@
                     "image_upload_failed": {
                         "title": "Bild-Upload fehlgeschlagen",
                         "content": "Das Bild konnte nicht hochgeladen werden. Bitte versuche es erneut."
+                    },
+                    "embedded_image_blocked": {
+                        "title": "Eingebettetes Bild blockiert",
+                        "document": "Eingebettete Base64-Bilder werden nicht unterstützt. Lade das Bild hoch oder wähle es, falls du Zugriff hast, aus den Job-Assets aus.",
+                        "template": "Eingebettete Base64-Bilder werden nicht unterstützt. Wähle das Bild, falls du Zugriff hast, aus den Job-Assets aus.",
+                        "generic": "Eingebettete Base64-Bilder werden nicht unterstützt. Verwende stattdessen eine unterstützte Bild-URL."
                     }
                 },
                 "file_list": "Liste der Anhänge",

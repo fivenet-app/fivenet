@@ -146,7 +146,9 @@ func New(p Params) (*Manager, error) {
 			store.WithKVConfig[pbtracker.UserMapping, *pbtracker.UserMapping](
 				jetstream.KeyValueConfig{LimitMarkerTTL: tracker.UserLocPurgeMarkerTTL},
 			),
-			store.WithPurgeMarkerTTL[pbtracker.UserMapping, *pbtracker.UserMapping](tracker.UserLocPurgeMarkerTTL),
+			store.WithPurgeMarkerTTL[pbtracker.UserMapping, *pbtracker.UserMapping](
+				tracker.UserLocPurgeMarkerTTL,
+			),
 			store.WithOnDeleteFn(
 				func(ctx context.Context, key string, um *pbtracker.UserMapping) error {
 					if um == nil {
@@ -189,7 +191,9 @@ func New(p Params) (*Manager, error) {
 			store.WithKVConfig[livemapmarkers.UserMarker, *livemapmarkers.UserMarker](
 				jetstream.KeyValueConfig{LimitMarkerTTL: tracker.UserLocPurgeMarkerTTL},
 			),
-			store.WithPurgeMarkerTTL[livemapmarkers.UserMarker, *livemapmarkers.UserMarker](tracker.UserLocPurgeMarkerTTL),
+			store.WithPurgeMarkerTTL[livemapmarkers.UserMarker, *livemapmarkers.UserMarker](
+				tracker.UserLocPurgeMarkerTTL,
+			),
 		)
 		if err != nil {
 			return fmt.Errorf("failed to create user location store. %w", err)
@@ -208,7 +212,9 @@ func New(p Params) (*Manager, error) {
 			store.WithKVConfig[livemapmarkers.UserMarker, *livemapmarkers.UserMarker](
 				jetstream.KeyValueConfig{LimitMarkerTTL: tracker.UserLocPurgeMarkerTTL},
 			),
-			store.WithPurgeMarkerTTL[livemapmarkers.UserMarker, *livemapmarkers.UserMarker](tracker.UserLocPurgeMarkerTTL),
+			store.WithPurgeMarkerTTL[livemapmarkers.UserMarker, *livemapmarkers.UserMarker](
+				tracker.UserLocPurgeMarkerTTL,
+			),
 			store.WithOnUpdateFn(
 				func(ctx context.Context, _ *livemapmarkers.UserMarker, newValue *livemapmarkers.UserMarker) (*livemapmarkers.UserMarker, error) {
 					if newValue == nil {

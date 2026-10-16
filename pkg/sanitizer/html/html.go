@@ -54,7 +54,14 @@ var (
 	detailsClassRegex = regexp.MustCompile(`^details$`)
 	// detailsContentType matches the Tiptap details content wrapper marker.
 	detailsContentType = regexp.MustCompile(`^detailsContent$`)
+	// embeddedImageSource matches base64 image sources so they can be replaced
+	// before bluemonday processes the surrounding HTML.
+	embeddedImageSource = regexp.MustCompile(
+		`(?is)(\bsrc\s*=\s*)(?:"\s*data:image/[^"]*;base64,[^"]*"|'\s*data:image/[^']*;base64,[^']*')`,
+	)
 )
+
+const brokenImagePath = "/images/broken_image.webp"
 
 // Module provides the Fx module for the HTML sanitizer, wiring up dependency injection.
 var Module = fx.Module("htmlsanitizer",
@@ -209,6 +216,11 @@ func New(cfg *config.Config) (*bluemonday.Policy, error) {
 // Sanitize applies the main HTML sanitizer policy to the input string and trims trailing empty paragraphs.
 func Sanitize(in string) string {
 	sanitizerOnce.Do(setupSanitizer)
+
+	// Base64 image payloads must never be persisted in rich text. Apart from
+	// needlessly inflating stored content, they can exceed collaboration frame
+	// limits. Keep the image node so users see a clear broken-image placeholder.
+	in = embeddedImageSource.ReplaceAllString(in, `${1}"`+brokenImagePath+`"`)
 
 	out := sanitizer.Sanitize(in)
 	return strings.TrimSuffix(out, "<p><br></p>")

@@ -721,6 +721,7 @@ provide('yjsProvider', provider);
                                 :limit="maxContentLength"
                                 :saving="saving"
                                 enable-images-job-assets
+                                embedded-image-blocked-context="document"
                                 enable-collab
                                 :target-id="document.document?.id"
                                 filestore-namespace="documents"

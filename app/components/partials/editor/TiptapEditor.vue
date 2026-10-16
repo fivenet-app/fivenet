@@ -13,6 +13,7 @@ import { initProseMirrorDoc, prosemirrorJSONToYDoc } from '@tiptap/y-tiptap';
 import * as Y from 'yjs';
 import { toPenaltyCalculatorData, type SelectedPenalty } from '~/components/quickbuttons/penaltycalculator/helpers';
 import { DeleteImageTracker } from '~/composables/tiptap/extensions/DeleteImageTracker';
+import { EmbeddedImageGuard } from '~/composables/tiptap/extensions/EmbeddedImageGuard';
 import AutoLinkIds from '~/composables/tiptap/extensions/AutoLinkIds';
 import { imageUploadPlugin } from '~/composables/tiptap/extensions/ImageUploadPlugin';
 import type { UploadNamespaces } from '~/composables/useFileUploader';
@@ -20,6 +21,7 @@ import type GrpcProvider from '~/composables/yjs/yjs';
 import { PenaltyCalculatorData, type DocumentData } from '~~/gen/ts/resources/documents/data/data';
 import type { File as FileGrpc } from '~~/gen/ts/resources/file/file';
 import type { UploadFileRequest, UploadFileResponse } from '~~/gen/ts/resources/file/filestore';
+import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 import TiptapToolbar from './TiptapToolbar.vue';
 import YJSUserPopover from './YJSUserPopover.vue';
 
@@ -41,6 +43,7 @@ const props = withDefaults(
         historyType?: string;
         enableCollab?: boolean;
         disableAutoLinkIds?: boolean;
+        embeddedImageBlockedContext?: 'document' | 'template' | 'generic';
 
         extensions?: Extensions;
 
@@ -67,6 +70,7 @@ const props = withDefaults(
         historyType: undefined,
         enableCollab: false,
         disableAutoLinkIds: false,
+        embeddedImageBlockedContext: 'generic',
 
         extensions: () => [],
 
@@ -105,12 +109,29 @@ const { activeChar } = useAuth();
 
 const { t } = useI18n();
 
+const notifications = useNotificationsStore();
+
 const settingsStore = useSettingsStore();
 const { editor: editorSettings } = storeToRefs(settingsStore);
 
 const { uploadImages } = useImageUpload();
 
 const extensions = useTiptapEditor(toRef(props, 'limit'), toRef(props, 'placeholder'));
+
+extensions.push(
+    EmbeddedImageGuard.configure({
+        onBlocked: () => {
+            notifications.add({
+                title: { key: 'components.partials.tiptap_editor.notifications.embedded_image_blocked.title', parameters: {} },
+                description: {
+                    key: `components.partials.tiptap_editor.notifications.embedded_image_blocked.${props.embeddedImageBlockedContext}`,
+                    parameters: {},
+                },
+                type: NotificationType.ERROR,
+            });
+        },
+    }),
+);
 
 if (!props.disableAutoLinkIds) {
     extensions.push(AutoLinkIds);
