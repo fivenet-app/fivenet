@@ -20,7 +20,7 @@ func (s *Server) SendUsers(
 	req *pbsync.SendUsersRequest,
 ) (*pbsync.SendDataResponse, error) {
 	s.lastSyncedData.Store(time.Now().Unix())
-	rowsAffected, err := s.store.SendUsers(ctx, req.GetUsers())
+	rowsAffected, err := s.store.SendUsers(ctx, req.GetUsers(), req.GetForce())
 	if err != nil {
 		return nil, err
 	}

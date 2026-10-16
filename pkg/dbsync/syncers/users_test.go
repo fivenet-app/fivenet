@@ -23,6 +23,21 @@ type deleteUsersClient struct {
 	req *pbsync.DeleteUsersRequest
 }
 
+type sendUsersClient struct {
+	pbsync.SyncServiceClient
+
+	req *pbsync.SendUsersRequest
+}
+
+func (c *sendUsersClient) SendUsers(
+	_ context.Context,
+	req *pbsync.SendUsersRequest,
+	_ ...grpc.CallOption,
+) (*pbsync.SendDataResponse, error) {
+	c.req = req
+	return &pbsync.SendDataResponse{}, nil
+}
+
 func (c *deleteUsersClient) DeleteUsers(
 	_ context.Context,
 	req *pbsync.DeleteUsersRequest,
@@ -114,6 +129,24 @@ func TestSyncUserDryRunDoesNotCallDeleteRPC(t *testing.T) {
 	require.NoError(t, syncer.SyncUser(t.Context(), 42))
 	require.Nil(t, client.req)
 	require.NoError(t, mock.ExpectationsWereMet())
+}
+
+func TestSendUsersDataInChunksPreservesForce(t *testing.T) {
+	t.Parallel()
+
+	client := &sendUsersClient{}
+	syncer := &UsersSync{
+		Syncer: &Syncer{
+			logger: zap.NewNop(),
+			cfg:    &dbsyncconfig.DBSyncConfig{},
+			cli:    client,
+		},
+	}
+
+	err := syncer.sendUsersDataInChunks(t.Context(), []*syncdata.DataUser{{UserId: 42}}, nil, true)
+	require.NoError(t, err)
+	require.NotNil(t, client.req)
+	require.True(t, client.req.GetForce())
 }
 
 func TestCleanupUserJobUsesJobsWhenScalarJobEmpty(t *testing.T) {

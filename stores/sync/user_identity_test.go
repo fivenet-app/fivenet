@@ -79,7 +79,7 @@ func TestHandleUsersDataSkipsInvalidIdentity(t *testing.T) {
 
 			store, mock := newTestStore(t)
 
-			rows, err := store.handleUsersData(t.Context(), []*syncdata.DataUser{tt.user})
+			rows, err := store.handleUsersData(t.Context(), []*syncdata.DataUser{tt.user}, false)
 			require.NoError(t, err)
 			require.Zero(t, rows)
 			require.NoError(t, mock.ExpectationsWereMet())

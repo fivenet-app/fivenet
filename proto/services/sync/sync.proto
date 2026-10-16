@@ -193,6 +193,9 @@ message SendAccountsRequest {
 
 message SendUsersRequest {
   repeated resources.sync.data.DataUser users = 1 [(buf.validate.field).repeated.max_items = 300];
+  // Force bypasses the destination's unchanged-data hash check, so every supplied
+  // existing user is reconciled. Intended for periodic full resyncs only.
+  bool force = 2;
 }
 
 message SendVehiclesRequest {

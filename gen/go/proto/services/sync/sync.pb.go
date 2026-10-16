@@ -2561,8 +2561,11 @@ func (b0 SendAccountsRequest_builder) Build() *SendAccountsRequest {
 }
 
 type SendUsersRequest struct {
-	state         protoimpl.MessageState `protogen:"hybrid.v1"`
-	Users         []*data.DataUser       `protobuf:"bytes,1,rep,name=users,proto3" json:"users,omitempty"`
+	state protoimpl.MessageState `protogen:"hybrid.v1"`
+	Users []*data.DataUser       `protobuf:"bytes,1,rep,name=users,proto3" json:"users,omitempty"`
+	// Force bypasses the destination's unchanged-data hash check, so every supplied
+	// existing user is reconciled. Intended for periodic full resyncs only.
+	Force         bool `protobuf:"varint,2,opt,name=force,proto3" json:"force,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -2599,14 +2602,28 @@ func (x *SendUsersRequest) GetUsers() []*data.DataUser {
 	return nil
 }
 
+func (x *SendUsersRequest) GetForce() bool {
+	if x != nil {
+		return x.Force
+	}
+	return false
+}
+
 func (x *SendUsersRequest) SetUsers(v []*data.DataUser) {
 	x.Users = v
+}
+
+func (x *SendUsersRequest) SetForce(v bool) {
+	x.Force = v
 }
 
 type SendUsersRequest_builder struct {
 	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
 
 	Users []*data.DataUser
+	// Force bypasses the destination's unchanged-data hash check, so every supplied
+	// existing user is reconciled. Intended for periodic full resyncs only.
+	Force bool
 }
 
 func (b0 SendUsersRequest_builder) Build() *SendUsersRequest {
@@ -2614,6 +2631,7 @@ func (b0 SendUsersRequest_builder) Build() *SendUsersRequest {
 	b, x := &b0, m0
 	_, _ = b, x
 	x.Users = b.Users
+	x.Force = b.Force
 	return m0
 }
 
@@ -4720,9 +4738,10 @@ const file_services_sync_sync_proto_rawDesc = "" +
 	"\blicenses\x18\x01 \x03(\v2$.resources.citizens.licenses.LicenseR\blicenses\"|\n" +
 	"\x13SendAccountsRequest\x12O\n" +
 	"\x0faccount_updates\x18\x01 \x03(\v2&.resources.sync.activity.AccountUpdateR\x0eaccountUpdates\x12\x14\n" +
-	"\x05clear\x18\x02 \x01(\bR\x05clear\"G\n" +
+	"\x05clear\x18\x02 \x01(\bR\x05clear\"]\n" +
 	"\x10SendUsersRequest\x123\n" +
-	"\x05users\x18\x01 \x03(\v2\x1d.resources.sync.data.DataUserR\x05users\"N\n" +
+	"\x05users\x18\x01 \x03(\v2\x1d.resources.sync.data.DataUserR\x05users\x12\x14\n" +
+	"\x05force\x18\x02 \x01(\bR\x05force\"N\n" +
 	"\x13SendVehiclesRequest\x127\n" +
 	"\bvehicles\x18\x01 \x03(\v2\x1b.resources.vehicles.VehicleR\bvehicles\"\x87\x01\n" +
 	"\x18SendUserLocationsRequest\x12;\n" +

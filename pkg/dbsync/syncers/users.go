@@ -282,7 +282,7 @@ func (s *UsersSync) syncOnce(
 
 	// Sync users to FiveNet server (if there are any left after hash check)
 	if len(us) > 0 {
-		if err := s.sendUsersDataInChunks(ctx, us, pendingHashes); err != nil {
+		if err := s.sendUsersDataInChunks(ctx, us, pendingHashes, !s.saveUpdatedAt); err != nil {
 			return 0, 0, "", nil, err
 		}
 	}
@@ -794,7 +794,7 @@ func (s *UsersSync) syncUserData(ctx context.Context, user *syncdata.DataUser) e
 	us = s.applyFiltersAndTransformations(us, s.cfg.Tables.Users)
 
 	if len(us) > 0 {
-		if err := s.sendUsersDataInChunks(ctx, us, nil); err != nil {
+		if err := s.sendUsersDataInChunks(ctx, us, nil, false); err != nil {
 			return fmt.Errorf("failed to send user data for user %d. %w", userID, err)
 		}
 	}
@@ -838,6 +838,7 @@ func (s *UsersSync) sendUsersDataInChunks(
 	ctx context.Context,
 	us []*syncdata.DataUser,
 	pendingHashes map[int32]uint64,
+	force bool,
 ) error {
 	if len(us) == 0 {
 		return nil
@@ -848,6 +849,7 @@ func (s *UsersSync) sendUsersDataInChunks(
 		chunk := us[start:end]
 		req := &pbsync.SendUsersRequest{
 			Users: chunk,
+			Force: force,
 		}
 
 		if err := s.send(ctx, req, func(ctx context.Context, cli pbsync.SyncServiceClient) error {

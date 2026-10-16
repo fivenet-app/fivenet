@@ -81,7 +81,7 @@ type IStore interface {
 		req *pbsync.CloseUserDispatchesRequest,
 	) (*pbsync.CloseUserDispatchesResponse, error)
 
-	SendUsers(ctx context.Context, data []*syncdata.DataUser) (int64, error)
+	SendUsers(ctx context.Context, data []*syncdata.DataUser, force bool) (int64, error)
 	DeleteUsers(
 		ctx context.Context,
 		userIDs []int32,

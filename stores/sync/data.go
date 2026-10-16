@@ -39,7 +39,7 @@ func (s *Store) SendData(
 		}
 
 	case *pbsync.SendDataRequest_Users:
-		if resp.RowsAffected, err = s.handleUsersData(ctx, d.Users.GetUsers()); err != nil {
+		if resp.RowsAffected, err = s.handleUsersData(ctx, d.Users.GetUsers(), false); err != nil {
 			return nil, fmt.Errorf("failed to handle users data. %w", err)
 		}
 
