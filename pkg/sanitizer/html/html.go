@@ -54,14 +54,7 @@ var (
 	detailsClassRegex = regexp.MustCompile(`^details$`)
 	// detailsContentType matches the Tiptap details content wrapper marker.
 	detailsContentType = regexp.MustCompile(`^detailsContent$`)
-	// embeddedImageSource matches base64 image sources so they can be replaced
-	// before bluemonday processes the surrounding HTML.
-	embeddedImageSource = regexp.MustCompile(
-		`(?is)(\bsrc\s*=\s*)(?:"\s*data:image/[^"]*;base64,[^"]*"|'\s*data:image/[^']*;base64,[^']*')`,
-	)
 )
-
-const brokenImagePath = "/images/broken_image.webp"
 
 // Module provides the Fx module for the HTML sanitizer, wiring up dependency injection.
 var Module = fx.Module("htmlsanitizer",
@@ -174,41 +167,38 @@ func setupSanitizer() {
 		OnElements("span")
 	sanitizer.AllowAttrs("data-type").Matching(exportedPenaltyCalculatorType).OnElements("div")
 	sanitizer.AllowAttrs("data-embed").Matching(exportedPenaltyCalculatorType).OnElements("div")
+
+	proxyPath := strings.TrimRight(imageproxy.Path, "/")
+	sanitizer.RewriteSrc(func(u *url.URL) {
+		// AllowDataURIImages guarantees this is a valid base64 image. Replace it
+		// with a local placeholder instead of retaining binary data in rich text.
+		if u.Scheme == "data" {
+			u.Scheme = ""
+			u.Opaque = ""
+			u.Host = ""
+			u.Path = imageproxy.BrokenImagePath
+			u.RawQuery = ""
+			u.Fragment = ""
+			return
+		}
+
+		// Rewrite URLs to image proxy to proxy all requests through a single URL.
+		imgURL, _ := url.PathUnescape(u.String())
+		u.Scheme = ""
+		u.Host = ""
+		u.User = nil
+		u.RawPath = ""
+		if !strings.HasPrefix(u.Path, proxyPath) && !strings.HasPrefix(u.Path, "/api/filestore/") {
+			imgURL = base64.RawURLEncoding.EncodeToString([]byte(imgURL))
+			u.Path = proxyPath + imgURL
+		}
+		u.RawQuery = ""
+	})
 }
 
 // New creates and returns a new bluemonday.Policy for HTML sanitization, optionally enabling image proxy rewriting if configured.
 func New(cfg *config.Config) (*bluemonday.Policy, error) {
 	sanitizerOnce.Do(setupSanitizer)
-
-	// Use Image Proxy if enabled using the rewrite src function
-	proxyUrl, err := url.Parse(strings.TrimRight(imageproxy.Path, "/"))
-	if err != nil {
-		return nil, err
-	}
-
-	sanitizer.RewriteSrc(func(u *url.URL) {
-		// Rewrite URLs to image proxy to proxy all requests through a single URL.
-		imgUrl, _ := url.PathUnescape(u.String())
-
-		if u.Scheme == "data" {
-			return
-		}
-
-		if u.Scheme != proxyUrl.Scheme {
-			u.Scheme = proxyUrl.Scheme
-		}
-		if u.Host != proxyUrl.Host {
-			u.Host = proxyUrl.Host
-		}
-		if !strings.HasPrefix(u.Path, proxyUrl.Path) &&
-			!strings.HasPrefix(u.Path, "/api/filestore/") {
-			// Base64 encode the image URL to ensure it is safe for use in the proxy path
-			imgUrl = base64.RawURLEncoding.EncodeToString([]byte(imgUrl))
-
-			u.Path = proxyUrl.Path + imgUrl
-		}
-		u.RawQuery = ""
-	})
 
 	return sanitizer, nil
 }
@@ -216,11 +206,6 @@ func New(cfg *config.Config) (*bluemonday.Policy, error) {
 // Sanitize applies the main HTML sanitizer policy to the input string and trims trailing empty paragraphs.
 func Sanitize(in string) string {
 	sanitizerOnce.Do(setupSanitizer)
-
-	// Base64 image payloads must never be persisted in rich text. Apart from
-	// needlessly inflating stored content, they can exceed collaboration frame
-	// limits. Keep the image node so users see a clear broken-image placeholder.
-	in = embeddedImageSource.ReplaceAllString(in, `${1}"`+brokenImagePath+`"`)
 
 	out := sanitizer.Sanitize(in)
 	return strings.TrimSuffix(out, "<p><br></p>")

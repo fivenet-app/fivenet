@@ -23,8 +23,8 @@ import (
 const (
 	// Path is the base path for the image proxy API endpoint.
 	Path = "/api/image_proxy"
-	// fallbackPath is shown when the requested image cannot be proxied.
-	fallbackPath = "/images/broken_image.webp"
+	// BrokenImagePath is shown when an image cannot be proxied or displayed.
+	BrokenImagePath = "/images/broken_image.webp"
 
 	// UserAgentPrefix is the prefix for the User-Agent header sent by the image proxy.
 	UserAgentPrefix = "FiveNet Image Proxy "
@@ -189,7 +189,7 @@ func (p *ImageProxy) handle(c *gin.Context) {
 }
 
 func redirectToFallback(c *gin.Context) {
-	c.Redirect(http.StatusFound, fallbackPath)
+	c.Redirect(http.StatusFound, BrokenImagePath)
 }
 
 func targetURL(request *http.Request) (*url.URL, error) {

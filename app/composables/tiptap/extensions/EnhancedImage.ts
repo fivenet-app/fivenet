@@ -2,8 +2,8 @@
 import { Node, mergeAttributes } from '@tiptap/core';
 import { VueNodeViewRenderer } from '@tiptap/vue-3';
 import EnhancedImageView from '~/components/partials/editor/EnhancedImageView.vue';
+import { isEmbeddedImageSource } from '../imageSources';
 import { deleteImageTrackerForceRemovedMetaKey } from './DeleteImageTracker';
-import { isEmbeddedImageSource } from './EmbeddedImageGuard';
 
 export interface EnhancedImageOptions {
     /**

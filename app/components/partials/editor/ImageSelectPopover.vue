@@ -259,7 +259,12 @@ function openJobAssets(): void {
                     />
                 </UFieldGroup>
 
-                <USeparator v-if="!disableImages" class="my-2" :label="$t('common.or')" orientation="horizontal" />
+                <USeparator
+                    v-if="!disableImages && enableImagesJobAssets && canListJobAssets"
+                    class="my-2"
+                    :label="$t('common.or')"
+                    orientation="horizontal"
+                />
 
                 <UForm v-if="!disableImages" ref="formRef" :schema="schema" :state="imageState" @submit="submit">
                     <UFormField name="url" :label="$t('components.partials.tiptap_editor.url')">
@@ -286,10 +291,10 @@ function openJobAssets(): void {
                     </UFormField>
                 </UForm>
 
-                <USeparator class="my-2" :label="$t('common.or')" orientation="horizontal" />
+                <USeparator v-if="uploadHandler" class="my-2" :label="$t('common.or')" orientation="horizontal" />
 
-                <NotSupportedTabletBlock v-if="nuiEnabled" />
-                <div v-else class="grid gap-2">
+                <NotSupportedTabletBlock v-if="uploadHandler && nuiEnabled" />
+                <div v-else-if="uploadHandler" class="grid gap-2">
                     <UFileUpload
                         name="file"
                         block

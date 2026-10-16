@@ -1,13 +1,9 @@
 import { Extension } from '@tiptap/core';
 import type { Node as ProseMirrorNode } from '@tiptap/pm/model';
 import { Plugin, PluginKey } from '@tiptap/pm/state';
+import { isEmbeddedImageSource } from '../imageSources';
 
 const embeddedImageGuardPluginKey = new PluginKey('embeddedImageGuard');
-
-/** Embedded images make documents needlessly large and cannot be stored safely in collaborative updates. */
-export function isEmbeddedImageSource(source: unknown): boolean {
-    return typeof source === 'string' && source.trimStart().toLowerCase().startsWith('data:image/');
-}
 
 export function hasEmbeddedImage(doc: ProseMirrorNode): boolean {
     let found = false;
