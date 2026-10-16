@@ -35,6 +35,10 @@
             "minimumReleaseAge": null
         },
         {
+            "matchPackageNames": ["nuxt-typed-router"],
+            "allowedVersions": "!/^(?:4\\.0\\.11)$/"
+        },
+        {
             "matchManagers": ["gomod"],
             "matchPackageNames": ["github.com/fivenet-app/fivenet/**"],
             "minimumReleaseAge": null
