@@ -1714,7 +1714,6 @@ Lightweight group information attached to a colleague.
 | `id` | [int64](#int64) |  |  |
 | `created_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
 | `updated_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
-| `job` | [string](#string) |  | **Deprecated.**  |
 | `jobs` | [resources.centrum.JobList](#resourcescentrumJobList) |  |  |
 | `status` | [DispatchStatus](#resourcescentrumdispatchesDispatchStatus) | optional |  |
 | `message` | [string](#string) |  |  |
@@ -15324,6 +15323,7 @@ Response containing the number of dispatches closed for the user.
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | `users` | [resources.sync.data.DataUser](#resourcessyncdataDataUser) | repeated |  |
+| `force` | [bool](#bool) |  | Force bypasses the destination's unchanged-data hash check, so every supplied existing user is reconciled. Intended for periodic full resyncs only. |
 
 
 

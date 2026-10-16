@@ -187,6 +187,7 @@ overrides:
   get-uri>basic-ftp: ^6.2.3
   unhead: 3.4.3
   vue: 3.5.44
+  '@protobuf-ts/plugin>typescript': 3.9.10
 
 packageExtensionsChecksum: sha256-7+0BRckKAdS1Y1fGbYDn/DTQer+VqQHXj8450tVLHaY=
 
@@ -242,9 +243,6 @@ importers:
       '@tailwindcss/typography':
         specifier: 0.5.20
         version: 0.5.20(tailwindcss@4.3.3)
-      '@tanstack/charts':
-        specifier: 1.1.0
-        version: 1.1.0(react-dom@19.3.1(react@19.3.1))(react@19.3.1)(vue@3.5.44(typescript-native-bridge@6.0.3-bridge.18.tsgo.7.0.2))
       '@tiptap/extension-blockquote':
         specifier: 3.32.0
         version: 3.32.0(@tiptap/core@3.32.0(@tiptap/pm@3.32.0))(@tiptap/pm@3.32.0)
@@ -9368,6 +9366,11 @@ packages:
     engines: {node: '>=20.19'}
     hasBin: true
 
+  typescript@3.9.10:
+    resolution: {integrity: sha512-w6fIxVE/H1PkLKcCPsFqKE7Kv7QUwhU8qQY2MueZXWx5cPZdwFupLgKK3vntcK98BtNHZtAF4LA/yl2a7k8R6Q==}
+    engines: {node: '>=4.2.0'}
+    hasBin: true
+
   ufo@1.6.4:
     resolution: {integrity: sha512-JFNbkD1Svwe0KvGi8GOeLcP4kAWQ609twvCdcHxq1oSL8svv39ZuSvajcD8B+5D0eL4+s1Is2D/O6KN3qcTeRA==}
 
@@ -13288,7 +13291,7 @@ snapshots:
       '@protobuf-ts/protoc': 2.11.1
       '@protobuf-ts/runtime': 2.11.1
       '@protobuf-ts/runtime-rpc': 2.11.1
-      typescript: typescript-native-bridge@6.0.3-bridge.18.tsgo.7.0.2
+      typescript: 3.9.10
     transitivePeerDependencies:
       - supports-color
 
@@ -13718,6 +13721,7 @@ snapshots:
       react: 19.3.1
       react-dom: 19.3.1(react@19.3.1)
       vue: 3.5.44(typescript-native-bridge@6.0.3-bridge.18.tsgo.7.0.2)
+    optional: true
 
   '@tanstack/table-core@8.21.3': {}
 
@@ -15678,7 +15682,8 @@ snapshots:
     dependencies:
       d3-array: 3.2.4
 
-  d3-hexbin@0.2.2: {}
+  d3-hexbin@0.2.2:
+    optional: true
 
   d3-hierarchy@3.1.2: {}
 
@@ -20439,6 +20444,8 @@ snapshots:
       '@typescript-native-bridge/linux-x64': 6.0.3-bridge.18.tsgo.7.0.2
       '@typescript-native-bridge/win32-arm64': 6.0.3-bridge.18.tsgo.7.0.2
       '@typescript-native-bridge/win32-x64': 6.0.3-bridge.18.tsgo.7.0.2
+
+  typescript@3.9.10: {}
 
   ufo@1.6.4: {}
 

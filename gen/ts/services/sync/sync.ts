@@ -432,6 +432,13 @@ export interface SendUsersRequest {
      * @generated from protobuf field: repeated resources.sync.data.DataUser users = 1
      */
     users: DataUser[];
+    /**
+     * Force bypasses the destination's unchanged-data hash check, so every supplied
+     * existing user is reconciled. Intended for periodic full resyncs only.
+     *
+     * @generated from protobuf field: bool force = 2
+     */
+    force: boolean;
 }
 /**
  * @generated from protobuf message services.sync.SendVehiclesRequest
@@ -2347,12 +2354,14 @@ export const SendAccountsRequest = new SendAccountsRequest$Type();
 class SendUsersRequest$Type extends MessageType<SendUsersRequest> {
     constructor() {
         super("services.sync.SendUsersRequest", [
-            { no: 1, name: "users", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => DataUser, options: { "buf.validate.field": { repeated: { maxItems: "300" } } } }
+            { no: 1, name: "users", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => DataUser, options: { "buf.validate.field": { repeated: { maxItems: "300" } } } },
+            { no: 2, name: "force", kind: "scalar", T: 8 /*ScalarType.BOOL*/ }
         ]);
     }
     create(value?: PartialMessage<SendUsersRequest>): SendUsersRequest {
         const message = globalThis.Object.create((this.messagePrototype!));
         message.users = [];
+        message.force = false;
         if (value !== undefined)
             reflectionMergePartial<SendUsersRequest>(this, message, value);
         return message;
@@ -2364,6 +2373,9 @@ class SendUsersRequest$Type extends MessageType<SendUsersRequest> {
             switch (fieldNo) {
                 case /* repeated resources.sync.data.DataUser users */ 1:
                     message.users.push(DataUser.internalBinaryRead(reader, reader.uint32(), options));
+                    break;
+                case /* bool force */ 2:
+                    message.force = reader.bool();
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -2380,6 +2392,9 @@ class SendUsersRequest$Type extends MessageType<SendUsersRequest> {
         /* repeated resources.sync.data.DataUser users = 1; */
         for (let i = 0; i < message.users.length; i++)
             DataUser.internalBinaryWrite(message.users[i], writer.tag(1, WireType.LengthDelimited).fork(), options).join();
+        /* bool force = 2; */
+        if (message.force !== false)
+            writer.tag(2, WireType.Varint).bool(message.force);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);

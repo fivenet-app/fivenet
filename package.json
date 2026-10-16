@@ -40,7 +40,6 @@
         "@samemichaeltadele/tiptap-compare": "0.0.3",
         "@selemondev/vue3-signature-pad": "1.10.0",
         "@tailwindcss/typography": "0.5.20",
-        "@tanstack/charts": "1.1.0",
         "@tiptap/extension-blockquote": "3.32.0",
         "@tiptap/extension-bold": "3.32.0",
         "@tiptap/extension-character-count": "3.32.0",
