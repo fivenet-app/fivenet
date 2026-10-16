@@ -108,6 +108,13 @@ func (s *scriptedWatchKV) Watch(
 	return result.watcher, result.err
 }
 
+// Status is called by Store's metrics collector. Scripted watchers do not
+// model a backing KV bucket, so report that status is unavailable instead of
+// dispatching to the nil embedded KeyValue interface.
+func (*scriptedWatchKV) Status(context.Context) (jetstream.KeyValueStatus, error) {
+	return nil, errors.New("scripted KV status unavailable")
+}
+
 type scriptedKeyWatcher struct {
 	updates chan jetstream.KeyValueEntry
 }
