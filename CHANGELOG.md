@@ -2,6 +2,64 @@
 
 All notable changes to this project will be documented in this file.
 
+## [2026.10.1] - 2026-10-17
+
+### 🚀 Features
+
+- *(citizens)* Add configurable wanted durations
+- *(vehicles)* Add configurable wanted durations
+- *(app)* Add help guides using useTour
+- *(centrum)* Add better failure logging for stores
+- *(server)* Redirect to fallback image
+- *(centrum)* Distinguish system unit status activity
+- *(colleagues)* Add user resync action for superuser
+- *(centrum)* Improve unit_ping kv usage
+- *(dbsync)* Resync uses force for user sync
+
+### 🐛 Bug Fixes
+
+- Wanted till picker time picker design
+- *(citizens)* Props not returning wanted at + till columns
+- *(grpcws)* Immediately clean up streams on websocket disconnect
+- Activity feed auto wanted change not showing
+- *(perms)* Expose all attributes to superusers"
+- *(editor)* Word/overflow wrap issue
+- *(centrum)* Handle expired dispatch KV projections
+- *(centrum)* Adjust kv TTLs and MaxAge settings
+- *(livemap)* Clusterpickercard click issue
+- *(centrum)* Improve centrum feed recovery
+- *(pnpm)* Nuxt-typed-router better-sqlite3 dep issue
+- *(nuxt)* OptimizeDeps include list
+- *(livemap)* Guard zero-size map and heatmap initialization
+- *(centrum)* Handle stale dispatch projections safely
+- *(centrum)* Batch hydrate unit activity actors
+- *(dbsync)* Improve error display in drawer cards
+- *(centrum)* Improve unit ping and feed recovery reliability
+- *(centrum)* Bound dispatch KV retention and tombstones
+- *(centrum)* Add debug info log for unit timer issues
+- *(ui)* Show loading state for superuser job toggle/select
+- *(lint)* Address linter complaints
+- *(nats)* Rebase KV updates and centralize retry backoff
+- *(nats)* Make asynchronous KV store startup testable
+- *(centrum)* Make dispatch take KV retries side-effect free
+- *(livemap)* Harden stream feed recovery
+- *(livemap)* Prevent marker popovers while selecting coordinates
+- *(centrum)* Improve nats store handling
+- *(centrum)* Add debug log for unit status issue
+- *(config)* Add fivem plugin origin to example config
+- *(editor)* Template required access editing
+- *(documents)* Disable base64 images and add hints to job assets
+- *(nats)* Nil in test
+- *(editor)* Prevent embedded base64 images from breaking collaboration
+- *(ci)* Disallow 4.0.11 of nuxt-typed-router
+- *(proto)* Ts gen issues
+- *(editor)* Issues with empty string content for json mode
+- *(editor)* Handle empty collaborative Tiptap documents
+- *(nui)* Improve message handling
+- *(centrum)* Prevent valid units from being marked unavailable
+- *(nui)* Adjust handling of focus events
+- *(vehicles)* Model search field
+
 ## [2026.10.0] - 2026-10-04
 
 ### 🏗️ Breaking changes
