@@ -295,16 +295,35 @@ function countImages(editor: Editor): number {
 
 const disabled = computed(() => props.disabled || loading.value);
 
-function normalizeToJSONContent(value: JSONContent | string | undefined): JSONContent {
-    if (!value) return { type: 'doc', content: [{ type: 'paragraph' }] };
+function createEmptyDocument(): JSONContent {
+    return { type: 'doc', content: [{ type: 'paragraph' }] };
+}
 
+function normalizeToJSONContent(value: JSONContent | string | undefined): JSONContent {
+    if (!value) return createEmptyDocument();
+
+    let normalized: JSONContent;
     if (typeof value === 'string') {
-        return generateJSON(value, [...extensions, ...markRaw(props.extensions)], {
+        normalized = generateJSON(value, [...extensions, ...markRaw(props.extensions)], {
             preserveWhitespace: 'full',
         }) as JSONContent;
+    } else {
+        normalized = value;
     }
 
-    return value;
+    // An empty JSON document is not valid for the default ProseMirror schema.
+    // This can be returned for newly-created records and must be normalized
+    // before it reaches the editor or setContent().
+    if (normalized.type === 'doc' && (!normalized.content || normalized.content.length === 0)) {
+        return createEmptyDocument();
+    }
+
+    return normalized;
+}
+
+function setEditorContent(value: JSONContent | string | undefined): void {
+    const content = props.contentType === 'json' ? normalizeToJSONContent(value) : (value ?? '');
+    unref(editor)?.commands.setContent(content, { emitUpdate: true });
 }
 
 function hasPenaltyCalculatorNode(editor: Editor): boolean {
@@ -339,7 +358,9 @@ function syncPenaltyCalculatorData(editor: Editor): void {
 let fileUploadHandler: undefined | ((files: File[]) => Promise<boolean>) = undefined;
 
 const editor = useEditor({
-    content: '',
+    // ProseMirror documents must contain at least one block node. Using an
+    // empty HTML string here creates `doc: <>` before the real model is loaded.
+    content: createEmptyDocument(),
     parseOptions: {
         preserveWhitespace: 'full',
     },
@@ -654,7 +675,7 @@ defineExpose<{
                 :history-type="historyType"
                 :file-limit="fileLimit"
                 :file-upload-handler="fileUploadHandler"
-                @update:content="($event) => editor?.commands.setContent($event ?? '', { emitUpdate: true })"
+                @update:content="setEditorContent"
             >
                 <template #toolbar>
                     <slot name="toolbar" :editor="editor" :disabled="disabled" />

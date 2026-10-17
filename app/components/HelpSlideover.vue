@@ -143,9 +143,30 @@ const guideFeatureGroups = computed(() =>
                 trigger: (feature.activePaths ?? [feature.to]).some((path) => isRoute(route.path, path))
                     ? 'text-primary'
                     : undefined,
+                item: `help-guide-feature-${feature.id}`,
             },
         }))
         .filter((feature) => feature.guides.length > 0),
+);
+
+const activeFeatureGroupId = computed(() => guideFeatureGroups.value.find((feature) => feature.ui.trigger !== undefined)?.id);
+
+async function scrollActiveFeatureIntoView(): Promise<void> {
+    await nextTick();
+    await new Promise<void>((resolve) => requestAnimationFrame(() => resolve()));
+
+    const featureId = activeFeatureGroupId.value;
+    if (!featureId) return;
+
+    document.querySelector(`.help-guide-feature-${featureId}`)?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+}
+
+watch(
+    [isHelpSlideoverOpen, () => route.path, shortcuts, activeFeatureGroupId],
+    ([isOpen, , isShowingShortcuts]) => {
+        if (isOpen && !isShowingShortcuts) void scrollActiveFeatureIntoView();
+    },
+    { flush: 'post' },
 );
 </script>
 
@@ -215,7 +236,7 @@ const guideFeatureGroups = computed(() =>
                                     :label="guide.title"
                                     :description="guide.description"
                                     variant="soft"
-                                    :ui="{ base: 'flex-col', label: 'line-clamp-2 whitespace-normal overflow-visible' }"
+                                    :ui="{ base: 'flex-col', label: 'line-clamp-2 whitespace-normal' }"
                                     @click="startGuide(guide.id)"
                                 />
                             </div>
