@@ -126,6 +126,10 @@ func parseUnitPingKey(key string) (int64, error) {
 	return id, nil
 }
 
+func unitHasOnlyValidMembers(unit *centrumunits.Unit, validUserIDs []int32) bool {
+	return unit != nil && len(unit.GetUsers()) > 0 && len(validUserIDs) == len(unit.GetUsers())
+}
+
 // handleUnitKVPing checks if a unit is empty or has the static attribute and sets its status to unavailable if so.
 func (s *Housekeeper) handleUnitKVPing(ctx context.Context, unitId int64) error {
 	unit, err := s.units.Get(ctx, unitId)
@@ -150,17 +154,17 @@ func (s *Housekeeper) handleUnitKVPing(ctx context.Context, unitId int64) error 
 	}
 
 	// Check and verify the users in the unit and in case of changes, "schedule" another ping check
-	toRemove, removed, err := s.checkAndUpdateUnitUsers(ctx, unit)
+	foundUserIDs, removed, err := s.checkAndUpdateUnitUsers(ctx, unit)
 	if err != nil {
 		s.logger.Error("failed to check users in unit", zap.Error(err))
 	}
 	stillAvailable := removed > 0
 	isStatic := unit.GetAttributes() != nil &&
 		unit.GetAttributes().Has(centrumunits.UnitAttribute_UNIT_ATTRIBUTE_STATIC)
-	statusReason := "no_cached_members"
+	statusReason := "no_valid_members"
 
-	// If all users are still valid (toRemove is empty) and status checks pass, keep the unit available
-	if len(unit.GetUsers()) > 0 && len(toRemove) == 0 {
+	// If all cached users are still valid and status checks pass, keep the unit available.
+	if unitHasOnlyValidMembers(unit, foundUserIDs) {
 		if !isStatic {
 			stillAvailable = true
 		} else if unit.GetStatus() != nil &&
@@ -189,7 +193,7 @@ func (s *Housekeeper) handleUnitKVPing(ctx context.Context, unitId int64) error 
 		zap.String("job", unit.GetJob()),
 		zap.Int64("unit_id", unit.GetId()),
 		zap.Int("cached_user_count", len(unit.GetUsers())),
-		zap.Int("membership_result_count", len(toRemove)),
+		zap.Int("valid_user_count", len(foundUserIDs)),
 		zap.Int("removed_user_count", removed),
 		zap.String("previous_status", unit.GetStatus().GetStatus().String()),
 		zap.Bool("static_unit", isStatic),
