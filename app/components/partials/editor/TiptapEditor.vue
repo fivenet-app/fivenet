@@ -9,7 +9,7 @@ import { gitHubEmojis } from '@tiptap/extension-emoji';
 import { UndoRedo } from '@tiptap/extensions';
 import { generateJSON } from '@tiptap/html';
 import type { Schema } from '@tiptap/pm/model';
-import { initProseMirrorDoc, prosemirrorJSONToYDoc } from '@tiptap/y-tiptap';
+import { initProseMirrorDoc, prosemirrorJSONToYDoc, type ProsemirrorMapping } from '@tiptap/y-tiptap';
 import * as Y from 'yjs';
 import { toPenaltyCalculatorData, type SelectedPenalty } from '~/components/quickbuttons/penaltycalculator/helpers';
 import { DeleteImageTracker } from '~/composables/tiptap/extensions/DeleteImageTracker';
@@ -199,13 +199,17 @@ if (props.enableCollab && ydoc && yjsProvider) {
     yjsSchema = getSchema([...extensions, ...markRaw(props.extensions)]);
 
     const yXml = ydoc.getXmlFragment('content');
-    const { mapping } = initProseMirrorDoc(yXml, yjsSchema!);
+    // An empty Yjs fragment is valid before the provider has synced, but it
+    // cannot be converted to a ProseMirror document because `doc` requires a
+    // block child. The editor starts with an empty paragraph and the Yjs
+    // binding will populate it once the fragment is seeded or synced.
+    const mapping: ProsemirrorMapping = yXml.length === 0 ? new Map() : initProseMirrorDoc(yXml, yjsSchema).mapping;
 
     extensions.push(
         Collaboration.configure({
             document: ydoc,
             field: 'content',
-            ySyncOptions: { mapping },
+            ySyncOptions: { mapping: mapping },
         }),
         CollaborationCaret.configure({
             provider: yjsProvider,
