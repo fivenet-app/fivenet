@@ -14,6 +14,7 @@ type NUIEvents = {
 export const nuiEvents = mitt<NUIEvents>();
 
 const logger = useLogger('🎮 NUI');
+const focusSource = 'embedded';
 
 // Use settings store to see if NUI is enabled
 const _isNUIEnabled = (): Ref<boolean> => {
@@ -33,6 +34,8 @@ export const focusNUITargets = ['input', 'textarea', 'select'] as const;
 
 let textInputFocused = false;
 let focusUpdateQueued = false;
+let focusRevision = 0;
+let focusSession: number | undefined;
 
 export function isNUITextTarget(target: EventTarget | null): target is HTMLElement {
     if (!(target instanceof HTMLElement)) return false;
@@ -54,12 +57,26 @@ function updateNUIInputFocus(): void {
         focusUpdateQueued = false;
 
         const nextState = isNUITextTarget(document.activeElement);
-        if (nextState === textInputFocused) return;
-
-        textInputFocused = nextState;
-        logger.debug('text input focus changed:', nextState);
-        void focusTablet(nextState);
+        sendFocusState(nextState);
     });
+}
+
+function sendFocusState(state: boolean, force = false): void {
+    if (!force && state === textInputFocused) return;
+
+    textInputFocused = state;
+    focusRevision += 1;
+    logger.debug('text input focus changed:', state);
+    void focusTablet(state, focusRevision, focusSource);
+}
+
+export function syncNUIInputFocus(): void {
+    sendFocusState(isNUITextTarget(document.activeElement), true);
+}
+
+export function setNUIFocusSession(session: number): void {
+    focusSession = session;
+    focusRevision = 0;
 }
 
 /**
@@ -102,6 +119,10 @@ type NUIMessage =
           state: boolean;
       }
     | {
+          type: 'syncFocus';
+          session: number;
+      }
+    | {
           type: undefined;
       };
 
@@ -110,6 +131,9 @@ export async function onNUIMessage(event: MessageEvent<NUIMessage>): Promise<voi
         await rawNavigateTo(event.data.route);
     } else if (event.data.type === 'openTablet') {
         nuiEvents.emit('openTablet', { type: 'openTablet', state: event.data.state });
+    } else if (event.data.type === 'syncFocus') {
+        setNUIFocusSession(event.data.session);
+        syncNUIInputFocus();
     } else {
         logger.error('Message - Unknown message type received', event.data);
     }
@@ -123,10 +147,10 @@ export async function toggleTablet(state: boolean): Promise<void> {
     return await fetchNUI(state ? 'openTablet' : 'closeTablet', { ok: true });
 }
 
-export async function focusTablet(state: boolean): Promise<void> {
+export async function focusTablet(state: boolean, revision?: number, source?: string): Promise<void> {
     if (!isNUIEnabled().value) return;
 
-    return await fetchNUI('focusTablet', { state: state });
+    return await fetchNUI('focusTablet', { state: state, revision: revision, source: source, session: focusSession });
 }
 
 export async function openTokenMgmt(): Promise<void> {
