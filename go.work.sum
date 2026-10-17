@@ -1315,8 +1315,7 @@ github.com/fatih/structs v1.1.0/go.mod h1:9NiDSp5zOcgEDl+j00MP/WkGVPOlPRLejGD8Ga
 github.com/felixge/fgprof v0.9.3/go.mod h1:RdbpDgzqYVh/T9fPELJyV7EYJuHB55UTEULNun8eiPw=
 github.com/firefart/nonamedreturns v1.0.6/go.mod h1:R8NisJnSIpvPWheCq0mNRXJok6D8h7fagJTF8EMEwCo=
 github.com/firefart/nonamedreturns v1.0.8/go.mod h1:vxFNvm5AfP/8rgAKFzYmnqx0yp1HjrYsErZ9pHPTznA=
-github.com/fivenet-app/fivenet/v2026 v2026.3.2/go.mod h1:ToRBJtWAFilzPWek5dvdPyzZ3f6/CLz/IAil8bwO2u8=
-github.com/fivenet-app/fivenet/v2026 v2026.6.2/go.mod h1:BKTi3/tiIfCFW/i/jvO7J4k2T3EJV5KRoEUXO51/NTk=
+github.com/fivenet-app/fivenet/v2026 v2026.10.1/go.mod h1:zs2NT8/Jc1DzROO/CTFZHgOsyB8w0NqYsQEVBoLDXZo=
 github.com/flosch/pongo2/v4 v4.0.2/go.mod h1:B5ObFANs/36VwxxlgKpdchIJHMvHB562PW+BWPhwZD8=
 github.com/flynn/go-shlex v0.0.0-20150515145356-3f9db97f8568/go.mod h1:xEzjJPgXI435gkrCt3MPfRiAkVrwSbHsst4LCFVfpJc=
 github.com/form3tech-oss/jwt-go v3.2.5+incompatible/go.mod h1:pbq4aXjuKjdthFRnoDwaVPLA+WlJuPGy+QneDUgJi2k=
