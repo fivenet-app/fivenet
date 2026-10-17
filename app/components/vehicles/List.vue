@@ -54,7 +54,7 @@ const vehicleInfoSlideover = overlay.create(VehicleInfoSlideover);
 
 const schema = z.object({
     licensePlate: z.coerce.string().max(32).default(''),
-    model: z.string().min(6).max(32).optional(),
+    model: z.union([z.string().optional(), z.string().min(1).max(32)]),
     userIds: z.coerce.number().array().max(5).default([]),
     wanted: z.boolean().default(false),
 
