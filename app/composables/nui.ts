@@ -1,4 +1,4 @@
-import type { TypedRouteFromName } from '@typed-router';
+import { navigateTo as rawNavigateTo } from '#app';
 import mitt from 'mitt';
 import { useSettingsStore } from '~/stores/settings';
 
@@ -95,8 +95,7 @@ export async function fetchNUI<T = NUIRequest, V = NUIResponse>(method: string, 
 type NUIMessage =
     | {
           type: 'navigateTo';
-          /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
-          route: TypedRouteFromName<any>;
+          route: string;
       }
     | {
           type: 'openTablet';
@@ -108,7 +107,7 @@ type NUIMessage =
 
 export async function onNUIMessage(event: MessageEvent<NUIMessage>): Promise<void> {
     if (event.data.type === 'navigateTo') {
-        await navigateTo(event.data.route);
+        await rawNavigateTo(event.data.route);
     } else if (event.data.type === 'openTablet') {
         nuiEvents.emit('openTablet', { type: 'openTablet', state: event.data.state });
     } else {

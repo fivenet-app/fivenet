@@ -34,12 +34,11 @@ export default defineNuxtPlugin({
 
         if (nuiEnabled.value) {
             useEventListener(window, 'message', onNUIMessage);
+            useTimeoutFn(() => window.parent.postMessage({ type: 'fivenetReady' }, '*'), 250);
 
             // Close tablet on escape presses outside of inputs and overlays.
             const stopEscapeKey = onKeyStroke('Escape', (event: KeyboardEvent) => {
-                if (isNUITextTarget(event.target)) {
-                    return;
-                }
+                if (isNUITextTarget(event.target)) return;
 
                 if (isDashboardSidebarSlideoverOpen.value || overlay.overlays.some((o) => o.isOpen)) return;
 
