@@ -46,6 +46,25 @@ message Dispatch {
   optional DispatchReferences references = 17;
 }
 
+// DispatchSpec contains the independently reconciled, non-status portion of
+// a dispatch projection.
+message DispatchSpec {
+  int64 id = 1;
+  optional resources.timestamp.Timestamp created_at = 2;
+  optional resources.timestamp.Timestamp updated_at = 3;
+  resources.centrum.JobList jobs = 18;
+  string message = 7;
+  optional string description = 8;
+  optional DispatchAttributes attributes = 9;
+  double x = 10;
+  double y = 11;
+  optional string postal = 12;
+  bool anon = 13;
+  optional int32 creator_id = 14;
+  optional resources.users.short.UserShort creator = 15;
+  optional DispatchReferences references = 17;
+}
+
 message DispatchAssignments {
   int64 dispatch_id = 1;
   string job = 2 [(buf.validate.field).string.max_len = 20];

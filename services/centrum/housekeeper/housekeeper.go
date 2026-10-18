@@ -129,15 +129,15 @@ type unitDispatchAssignments interface {
 }
 
 type unitAssignmentWatchSource interface {
-	WatchAll(
+	WatchMembers(
 		ctx context.Context,
-	) (store.IKVWatcher[centrumunits.Unit, *centrumunits.Unit], error)
+	) (store.IKVWatcher[centrumunits.UnitAssignments, *centrumunits.UnitAssignments], error)
 }
 
 type unitUserState interface {
 	SyncUserUnitMapping(context.Context, int32) error
 	ReconcileUserJobChange(context.Context, int32, string) (bool, error)
-	Range(func(string, *centrumunits.Unit) bool)
+	Range(context.Context, func(string, *centrumunits.Unit) bool)
 }
 
 type dispatcherUserState interface {
@@ -241,11 +241,7 @@ func New(p Params) Result {
 		// UnitDB creates its KV-backed store in its own start hook. Capture it
 		// only after that hook has run; doing so in New stores a typed nil pointer
 		// in the interface and panics when the elected housekeeper starts watching.
-		unitStore := p.Units.Store()
-		if unitStore == nil {
-			return errors.New("unit assignment watch source is not initialized")
-		}
-		s.unitAssignmentWatchSource = unitStore
+		s.unitAssignmentWatchSource = p.Units
 
 		if err := s.ensureUserInfoReconcileConsumer(ctxStartup); err != nil {
 			return fmt.Errorf("failed to register user info reconciliation consumer: %w", err)

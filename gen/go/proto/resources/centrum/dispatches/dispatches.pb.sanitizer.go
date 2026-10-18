@@ -207,6 +207,83 @@ func (m *DispatchReferences) Sanitize() error {
 
 // Sanitize sanitizes the message's fields, in case of complex types it calls
 // their Sanitize() method recursively.
+func (m *DispatchSpec) Sanitize() error {
+	if m == nil {
+		return nil
+	}
+
+	// Field: Attributes
+	if m.Attributes != nil {
+		if v, ok := any(m.GetAttributes()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+	}
+
+	// Field: CreatedAt
+	if m.CreatedAt != nil {
+		if v, ok := any(m.GetCreatedAt()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+	}
+
+	// Field: Creator
+	if m.Creator != nil {
+		if v, ok := any(m.GetCreator()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+	}
+
+	// Field: Description
+	if m.Description != nil {
+		*m.Description = htmlsanitizer.SanitizeAndUnescape(*m.Description)
+	}
+
+	// Field: Jobs
+	if m.Jobs != nil {
+		if v, ok := any(m.GetJobs()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+	}
+
+	// Field: Message
+	m.Message = htmlsanitizer.SanitizeAndUnescape(m.Message)
+
+	// Field: Postal
+	if m.Postal != nil {
+		*m.Postal = htmlsanitizer.SanitizeAndUnescape(*m.Postal)
+	}
+
+	// Field: References
+	if m.References != nil {
+		if v, ok := any(m.GetReferences()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+	}
+
+	// Field: UpdatedAt
+	if m.UpdatedAt != nil {
+		if v, ok := any(m.GetUpdatedAt()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+	}
+
+	return nil
+}
+
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *DispatchStatus) Sanitize() error {
 	if m == nil {
 		return nil

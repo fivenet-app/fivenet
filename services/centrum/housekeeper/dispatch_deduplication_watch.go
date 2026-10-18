@@ -35,18 +35,56 @@ func (s *Housekeeper) runDispatchWatch(ctx context.Context) {
 }
 
 func (s *Housekeeper) watchDispatches(ctx context.Context) error {
-	watch, err := s.dispatches.Store().WatchAll(ctx)
+	specWatch, err := s.dispatches.WatchSpecs(ctx)
 	if err != nil {
 		return err
 	}
-	defer watch.Stop()
+	defer specWatch.Stop()
+	statusWatch, err := s.dispatches.WatchStatuses(ctx)
+	if err != nil {
+		return err
+	}
+	defer statusWatch.Stop()
+
+	process := func(dispatchID int64) {
+		dsp, err := s.dispatches.Get(ctx, dispatchID)
+		if err != nil || dsp == nil {
+			s.logger.Warn(
+				"cannot compose dispatch from projection update",
+				zap.Int64("dispatch_id", dispatchID),
+				zap.Error(err),
+			)
+			return
+		}
+
+		if err := s.tryDispatchDeduplicate(ctx, dsp); err != nil {
+			if errors.Is(err, errorscentrum.ErrDispatchNotFound) {
+				if deleteErr := s.deleteStaleDispatchProjection(
+					ctx,
+					dsp.GetId(),
+				); deleteErr != nil {
+					s.logger.Warn(
+						"failed to delete stale dispatch projection after deduplication race",
+						zap.Int64("dispatch_id", dsp.GetId()),
+						zap.Error(deleteErr),
+					)
+				}
+				return
+			}
+			s.logger.Error(
+				"dispatch deduplication failed",
+				zap.Int64("dispatch_id", dsp.GetId()),
+				zap.Error(err),
+			)
+		}
+	}
 
 	for {
 		select {
 		case <-ctx.Done():
 			return nil
 
-		case e, ok := <-watch.Updates():
+		case e, ok := <-specWatch.Updates():
 			if !ok {
 				return watcherUpdatesClosedError(ctx)
 			}
@@ -58,32 +96,26 @@ func (s *Housekeeper) watchDispatches(ctx context.Context) error {
 				continue
 			}
 
-			dsp, err := e.Value()
+			spec, err := e.Value()
 			if err != nil {
-				s.logger.Warn("cannot read dispatch value", zap.Error(err))
+				s.logger.Warn("cannot read dispatch specification value", zap.Error(err))
 				continue
 			}
+			process(spec.GetId())
 
-			if err := s.tryDispatchDeduplicate(ctx, dsp); err != nil {
-				if errors.Is(err, errorscentrum.ErrDispatchNotFound) {
-					if deleteErr := s.deleteStaleDispatchProjection(
-						ctx,
-						dsp.GetId(),
-					); deleteErr != nil {
-						s.logger.Warn(
-							"failed to delete stale dispatch projection after deduplication race",
-							zap.Int64("dispatch_id", dsp.GetId()),
-							zap.Error(deleteErr),
-						)
-					}
-					continue
-				}
-				s.logger.Error(
-					"dispatch deduplication failed",
-					zap.Int64("dispatch_id", dsp.GetId()),
-					zap.Error(err),
-				)
+		case e, ok := <-statusWatch.Updates():
+			if !ok {
+				return watcherUpdatesClosedError(ctx)
 			}
+			if e == nil || e.Operation() != jetstream.KeyValuePut {
+				continue
+			}
+			status, err := e.Value()
+			if err != nil {
+				s.logger.Warn("cannot read dispatch status value", zap.Error(err))
+				continue
+			}
+			process(status.GetDispatchId())
 		}
 	}
 }

@@ -581,12 +581,7 @@ func (s *Store[T, U]) updateFromType(key string, incoming U, _ bool) U {
 		// so callers holding it see the current state without retaining fields
 		// which are absent from the incoming snapshot.
 		if !proto.Equal(current, incoming) {
-			proto.Reset(current)
-			// Use protobuf's merge after Reset rather than the generated custom
-			// Merge method. Some custom merge implementations assume optional
-			// destination fields are already allocated, which Reset intentionally
-			// clears.
-			proto.Merge(current, incoming)
+			current.Merge(incoming)
 		}
 
 		// Note: onUpdate must be triggered externally after this call if needed

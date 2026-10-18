@@ -86,6 +86,70 @@ export interface Dispatch {
     references?: DispatchReferences;
 }
 /**
+ * DispatchSpec contains the independently reconciled, non-status portion of
+ * a dispatch projection.
+ *
+ * @generated from protobuf message resources.centrum.dispatches.DispatchSpec
+ */
+export interface DispatchSpec {
+    /**
+     * @generated from protobuf field: int64 id = 1
+     */
+    id: number;
+    /**
+     * @generated from protobuf field: optional resources.timestamp.Timestamp created_at = 2
+     */
+    createdAt?: Timestamp;
+    /**
+     * @generated from protobuf field: optional resources.timestamp.Timestamp updated_at = 3
+     */
+    updatedAt?: Timestamp;
+    /**
+     * @generated from protobuf field: resources.centrum.JobList jobs = 18
+     */
+    jobs?: JobList;
+    /**
+     * @generated from protobuf field: string message = 7
+     */
+    message: string;
+    /**
+     * @generated from protobuf field: optional string description = 8
+     */
+    description?: string;
+    /**
+     * @generated from protobuf field: optional resources.centrum.dispatches.DispatchAttributes attributes = 9
+     */
+    attributes?: DispatchAttributes;
+    /**
+     * @generated from protobuf field: double x = 10
+     */
+    x: number;
+    /**
+     * @generated from protobuf field: double y = 11
+     */
+    y: number;
+    /**
+     * @generated from protobuf field: optional string postal = 12
+     */
+    postal?: string;
+    /**
+     * @generated from protobuf field: bool anon = 13
+     */
+    anon: boolean;
+    /**
+     * @generated from protobuf field: optional int32 creator_id = 14
+     */
+    creatorId?: number;
+    /**
+     * @generated from protobuf field: optional resources.users.short.UserShort creator = 15
+     */
+    creator?: UserShort;
+    /**
+     * @generated from protobuf field: optional resources.centrum.dispatches.DispatchReferences references = 17
+     */
+    references?: DispatchReferences;
+}
+/**
  * @generated from protobuf message resources.centrum.dispatches.DispatchAssignments
  */
 export interface DispatchAssignments {
@@ -508,6 +572,148 @@ class Dispatch$Type extends MessageType<Dispatch> {
  * @generated MessageType for protobuf message resources.centrum.dispatches.Dispatch
  */
 export const Dispatch = new Dispatch$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class DispatchSpec$Type extends MessageType<DispatchSpec> {
+    constructor() {
+        super("resources.centrum.dispatches.DispatchSpec", [
+            { no: 1, name: "id", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ },
+            { no: 2, name: "created_at", kind: "message", T: () => Timestamp },
+            { no: 3, name: "updated_at", kind: "message", T: () => Timestamp },
+            { no: 18, name: "jobs", kind: "message", T: () => JobList },
+            { no: 7, name: "message", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
+            { no: 8, name: "description", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/ },
+            { no: 9, name: "attributes", kind: "message", T: () => DispatchAttributes },
+            { no: 10, name: "x", kind: "scalar", T: 1 /*ScalarType.DOUBLE*/ },
+            { no: 11, name: "y", kind: "scalar", T: 1 /*ScalarType.DOUBLE*/ },
+            { no: 12, name: "postal", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/ },
+            { no: 13, name: "anon", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
+            { no: 14, name: "creator_id", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/ },
+            { no: 15, name: "creator", kind: "message", T: () => UserShort },
+            { no: 17, name: "references", kind: "message", T: () => DispatchReferences }
+        ]);
+    }
+    create(value?: PartialMessage<DispatchSpec>): DispatchSpec {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        message.id = 0;
+        message.message = "";
+        message.x = 0;
+        message.y = 0;
+        message.anon = false;
+        if (value !== undefined)
+            reflectionMergePartial<DispatchSpec>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: DispatchSpec): DispatchSpec {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* int64 id */ 1:
+                    message.id = reader.int64().toNumber();
+                    break;
+                case /* optional resources.timestamp.Timestamp created_at */ 2:
+                    message.createdAt = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.createdAt);
+                    break;
+                case /* optional resources.timestamp.Timestamp updated_at */ 3:
+                    message.updatedAt = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.updatedAt);
+                    break;
+                case /* resources.centrum.JobList jobs */ 18:
+                    message.jobs = JobList.internalBinaryRead(reader, reader.uint32(), options, message.jobs);
+                    break;
+                case /* string message */ 7:
+                    message.message = reader.string();
+                    break;
+                case /* optional string description */ 8:
+                    message.description = reader.string();
+                    break;
+                case /* optional resources.centrum.dispatches.DispatchAttributes attributes */ 9:
+                    message.attributes = DispatchAttributes.internalBinaryRead(reader, reader.uint32(), options, message.attributes);
+                    break;
+                case /* double x */ 10:
+                    message.x = reader.double();
+                    break;
+                case /* double y */ 11:
+                    message.y = reader.double();
+                    break;
+                case /* optional string postal */ 12:
+                    message.postal = reader.string();
+                    break;
+                case /* bool anon */ 13:
+                    message.anon = reader.bool();
+                    break;
+                case /* optional int32 creator_id */ 14:
+                    message.creatorId = reader.int32();
+                    break;
+                case /* optional resources.users.short.UserShort creator */ 15:
+                    message.creator = UserShort.internalBinaryRead(reader, reader.uint32(), options, message.creator);
+                    break;
+                case /* optional resources.centrum.dispatches.DispatchReferences references */ 17:
+                    message.references = DispatchReferences.internalBinaryRead(reader, reader.uint32(), options, message.references);
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: DispatchSpec, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* int64 id = 1; */
+        if (message.id !== 0)
+            writer.tag(1, WireType.Varint).int64(message.id);
+        /* optional resources.timestamp.Timestamp created_at = 2; */
+        if (message.createdAt)
+            Timestamp.internalBinaryWrite(message.createdAt, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
+        /* optional resources.timestamp.Timestamp updated_at = 3; */
+        if (message.updatedAt)
+            Timestamp.internalBinaryWrite(message.updatedAt, writer.tag(3, WireType.LengthDelimited).fork(), options).join();
+        /* string message = 7; */
+        if (message.message !== "")
+            writer.tag(7, WireType.LengthDelimited).string(message.message);
+        /* optional string description = 8; */
+        if (message.description !== undefined)
+            writer.tag(8, WireType.LengthDelimited).string(message.description);
+        /* optional resources.centrum.dispatches.DispatchAttributes attributes = 9; */
+        if (message.attributes)
+            DispatchAttributes.internalBinaryWrite(message.attributes, writer.tag(9, WireType.LengthDelimited).fork(), options).join();
+        /* double x = 10; */
+        if (message.x !== 0)
+            writer.tag(10, WireType.Bit64).double(message.x);
+        /* double y = 11; */
+        if (message.y !== 0)
+            writer.tag(11, WireType.Bit64).double(message.y);
+        /* optional string postal = 12; */
+        if (message.postal !== undefined)
+            writer.tag(12, WireType.LengthDelimited).string(message.postal);
+        /* bool anon = 13; */
+        if (message.anon !== false)
+            writer.tag(13, WireType.Varint).bool(message.anon);
+        /* optional int32 creator_id = 14; */
+        if (message.creatorId !== undefined)
+            writer.tag(14, WireType.Varint).int32(message.creatorId);
+        /* optional resources.users.short.UserShort creator = 15; */
+        if (message.creator)
+            UserShort.internalBinaryWrite(message.creator, writer.tag(15, WireType.LengthDelimited).fork(), options).join();
+        /* optional resources.centrum.dispatches.DispatchReferences references = 17; */
+        if (message.references)
+            DispatchReferences.internalBinaryWrite(message.references, writer.tag(17, WireType.LengthDelimited).fork(), options).join();
+        /* resources.centrum.JobList jobs = 18; */
+        if (message.jobs)
+            JobList.internalBinaryWrite(message.jobs, writer.tag(18, WireType.LengthDelimited).fork(), options).join();
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message resources.centrum.dispatches.DispatchSpec
+ */
+export const DispatchSpec = new DispatchSpec$Type();
 // @generated message type with reflection information, may provide speed optimized methods
 class DispatchAssignments$Type extends MessageType<DispatchAssignments> {
     constructor() {

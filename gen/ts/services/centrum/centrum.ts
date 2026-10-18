@@ -12,6 +12,10 @@ import { UnknownFieldHandler } from "@protobuf-ts/runtime";
 import type { PartialMessage } from "@protobuf-ts/runtime";
 import { reflectionMergePartial } from "@protobuf-ts/runtime";
 import { MessageType } from "@protobuf-ts/runtime";
+import { DispatchAssignments } from "../../resources/centrum/dispatches/dispatches";
+import { DispatchSpec } from "../../resources/centrum/dispatches/dispatches";
+import { UnitAssignments } from "../../resources/centrum/units/units";
+import { UnitSpec } from "../../resources/centrum/units/units";
 import { DispatchStatus } from "../../resources/centrum/dispatches/dispatches";
 import { UnitStatus } from "../../resources/centrum/units/units";
 import { Dispatch } from "../../resources/centrum/dispatches/dispatches";
@@ -245,6 +249,33 @@ export interface StreamResponse {
          * @generated from protobuf field: string settings_deleted = 12
          */
         settingsDeleted: string;
+    } | {
+        oneofKind: "unitSpecUpdated";
+        /**
+         * Independent unit projection updates. These replace the corresponding
+         * portion of a unit without requiring the full composed resource.
+         *
+         * @generated from protobuf field: resources.centrum.units.UnitSpec unit_spec_updated = 14
+         */
+        unitSpecUpdated: UnitSpec;
+    } | {
+        oneofKind: "unitMembersUpdated";
+        /**
+         * @generated from protobuf field: resources.centrum.units.UnitAssignments unit_members_updated = 15
+         */
+        unitMembersUpdated: UnitAssignments;
+    } | {
+        oneofKind: "dispatchSpecUpdated";
+        /**
+         * @generated from protobuf field: resources.centrum.dispatches.DispatchSpec dispatch_spec_updated = 16
+         */
+        dispatchSpecUpdated: DispatchSpec;
+    } | {
+        oneofKind: "dispatchAssignmentsUpdated";
+        /**
+         * @generated from protobuf field: resources.centrum.dispatches.DispatchAssignments dispatch_assignments_updated = 17
+         */
+        dispatchAssignmentsUpdated: DispatchAssignments;
     } | {
         oneofKind: undefined;
     };
@@ -894,7 +925,11 @@ class StreamResponse$Type extends MessageType<StreamResponse> {
             { no: 9, name: "dispatch_deleted", kind: "scalar", oneof: "change", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ },
             { no: 10, name: "dispatch_updated", kind: "message", oneof: "change", T: () => Dispatch },
             { no: 11, name: "dispatch_status", kind: "message", oneof: "change", T: () => DispatchStatus },
-            { no: 12, name: "settings_deleted", kind: "scalar", oneof: "change", T: 9 /*ScalarType.STRING*/ }
+            { no: 12, name: "settings_deleted", kind: "scalar", oneof: "change", T: 9 /*ScalarType.STRING*/ },
+            { no: 14, name: "unit_spec_updated", kind: "message", oneof: "change", T: () => UnitSpec },
+            { no: 15, name: "unit_members_updated", kind: "message", oneof: "change", T: () => UnitAssignments },
+            { no: 16, name: "dispatch_spec_updated", kind: "message", oneof: "change", T: () => DispatchSpec },
+            { no: 17, name: "dispatch_assignments_updated", kind: "message", oneof: "change", T: () => DispatchAssignments }
         ]);
     }
     create(value?: PartialMessage<StreamResponse>): StreamResponse {
@@ -985,6 +1020,30 @@ class StreamResponse$Type extends MessageType<StreamResponse> {
                         settingsDeleted: reader.string()
                     };
                     break;
+                case /* resources.centrum.units.UnitSpec unit_spec_updated */ 14:
+                    message.change = {
+                        oneofKind: "unitSpecUpdated",
+                        unitSpecUpdated: UnitSpec.internalBinaryRead(reader, reader.uint32(), options, (message.change as any).unitSpecUpdated)
+                    };
+                    break;
+                case /* resources.centrum.units.UnitAssignments unit_members_updated */ 15:
+                    message.change = {
+                        oneofKind: "unitMembersUpdated",
+                        unitMembersUpdated: UnitAssignments.internalBinaryRead(reader, reader.uint32(), options, (message.change as any).unitMembersUpdated)
+                    };
+                    break;
+                case /* resources.centrum.dispatches.DispatchSpec dispatch_spec_updated */ 16:
+                    message.change = {
+                        oneofKind: "dispatchSpecUpdated",
+                        dispatchSpecUpdated: DispatchSpec.internalBinaryRead(reader, reader.uint32(), options, (message.change as any).dispatchSpecUpdated)
+                    };
+                    break;
+                case /* resources.centrum.dispatches.DispatchAssignments dispatch_assignments_updated */ 17:
+                    message.change = {
+                        oneofKind: "dispatchAssignmentsUpdated",
+                        dispatchAssignmentsUpdated: DispatchAssignments.internalBinaryRead(reader, reader.uint32(), options, (message.change as any).dispatchAssignmentsUpdated)
+                    };
+                    break;
                 default:
                     let u = options.readUnknownField;
                     if (u === "throw")
@@ -1036,6 +1095,18 @@ class StreamResponse$Type extends MessageType<StreamResponse> {
         /* uint64 kv_revision = 13; */
         if (message.kvRevision !== 0)
             writer.tag(13, WireType.Varint).uint64(message.kvRevision);
+        /* resources.centrum.units.UnitSpec unit_spec_updated = 14; */
+        if (message.change.oneofKind === "unitSpecUpdated")
+            UnitSpec.internalBinaryWrite(message.change.unitSpecUpdated, writer.tag(14, WireType.LengthDelimited).fork(), options).join();
+        /* resources.centrum.units.UnitAssignments unit_members_updated = 15; */
+        if (message.change.oneofKind === "unitMembersUpdated")
+            UnitAssignments.internalBinaryWrite(message.change.unitMembersUpdated, writer.tag(15, WireType.LengthDelimited).fork(), options).join();
+        /* resources.centrum.dispatches.DispatchSpec dispatch_spec_updated = 16; */
+        if (message.change.oneofKind === "dispatchSpecUpdated")
+            DispatchSpec.internalBinaryWrite(message.change.dispatchSpecUpdated, writer.tag(16, WireType.LengthDelimited).fork(), options).join();
+        /* resources.centrum.dispatches.DispatchAssignments dispatch_assignments_updated = 17; */
+        if (message.change.oneofKind === "dispatchAssignmentsUpdated")
+            DispatchAssignments.internalBinaryWrite(message.change.dispatchAssignmentsUpdated, writer.tag(17, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);

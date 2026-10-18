@@ -6,7 +6,6 @@ import (
 	"errors"
 	"fmt"
 	"slices"
-	"strconv"
 	"strings"
 	"sync"
 
@@ -36,7 +35,6 @@ import (
 	"github.com/paulmach/orb"
 	"github.com/prometheus/client_golang/prometheus"
 	"go.uber.org/fx"
-	"go.uber.org/multierr"
 	"go.uber.org/zap"
 )
 
@@ -85,10 +83,12 @@ type DispatchDB struct {
 	dispatchLocationsMutex *sync.Mutex
 	dispatchLocations      map[string]*coords.Coords[*centrumdispatches.Dispatch]
 
-	store      *store.Store[centrumdispatches.Dispatch, *centrumdispatches.Dispatch]
-	jobMapping *store.Store[common.IDMapping, *common.IDMapping]
-	idleKV     jetstream.KeyValue
-	metrics    *dispatchMetrics
+	specStore        *store.Store[centrumdispatches.DispatchSpec, *centrumdispatches.DispatchSpec]
+	assignmentsStore *store.Store[centrumdispatches.DispatchAssignments, *centrumdispatches.DispatchAssignments]
+	statusStore      *store.Store[centrumdispatches.DispatchStatus, *centrumdispatches.DispatchStatus]
+	jobMapping       *store.Store[common.IDMapping, *common.IDMapping]
+	idleKV           jetstream.KeyValue
+	metrics          *dispatchMetrics
 }
 
 type Params struct {
@@ -174,361 +174,71 @@ func New(p Params) *DispatchDB {
 			return err
 		}
 		d.jobMapping = jobSt
-		ensureJobMapping := func(ctx context.Context, job string, dispatchID int64, source string, refresh bool) error {
-			if strings.TrimSpace(job) == "" {
-				return nil
-			}
-			key := centrumutils.JobIdKey(job, dispatchID)
-			mapping := &common.IDMapping{Id: dispatchID}
-			var changed bool
-			var err error
-			if refresh {
-				// The job mapping is the job-scoped stream trigger. Rewrite it for
-				// every local dispatch projection update, even when its ID is unchanged.
-				err = jobSt.Put(ctx, key, mapping)
-				changed = err == nil
-			} else {
-				// Remote watchers only repair a missing mapping. Rewriting it from
-				// every server would duplicate the stream trigger.
-				changed, err = jobSt.PutIfChanged(ctx, key, mapping)
-			}
-			logger.Debug(
-				"ensured dispatch job mapping",
-				zap.String("source", source),
-				zap.String("key", key),
-				zap.Int64("dispatch_id", dispatchID),
-				zap.Bool("changed", changed),
-				zap.Error(err),
-			)
-			return err
+		componentConfig := func() jetstream.KeyValueConfig {
+			return jetstream.KeyValueConfig{TTL: DispatchKVTTL, LimitMarkerTTL: DispatchKVTTL}
 		}
-
-		st, err := store.New[centrumdispatches.Dispatch, *centrumdispatches.Dispatch](
+		specSt, err := store.New[centrumdispatches.DispatchSpec, *centrumdispatches.DispatchSpec](
 			ctxCancel,
 			logger,
 			p.JS,
 			"centrum_dispatches",
-			store.WithKVPrefix[centrumdispatches.Dispatch, *centrumdispatches.Dispatch]("id"),
-			// Make sure dispatches are removed from the store after DispatchKVTTL
-			// of inactivity if all other cleanup mechanisms fail.
-			store.WithKVConfig[centrumdispatches.Dispatch, *centrumdispatches.Dispatch](
-				jetstream.KeyValueConfig{
-					TTL:            DispatchKVTTL,
-					LimitMarkerTTL: DispatchKVTTL,
-				},
+			store.WithKVPrefix[centrumdispatches.DispatchSpec, *centrumdispatches.DispatchSpec](
+				"spec",
 			),
-			store.WithPurgeMarkerTTL[centrumdispatches.Dispatch, *centrumdispatches.Dispatch](
+			store.WithKVConfig[centrumdispatches.DispatchSpec, *centrumdispatches.DispatchSpec](
+				componentConfig(),
+			),
+			store.WithPurgeMarkerTTL[centrumdispatches.DispatchSpec, *centrumdispatches.DispatchSpec](
 				DispatchPurgeMarkerTTL,
-			),
-			store.WithOnUpdateFn[centrumdispatches.Dispatch, *centrumdispatches.Dispatch](
-				func(ctx context.Context, old *centrumdispatches.Dispatch, dispatch *centrumdispatches.Dispatch) (*centrumdispatches.Dispatch, error) {
-					if dispatch == nil {
-						return nil, nil
-					}
-
-					var errs error
-					if err := d.TouchActivity(ctx, dispatch.GetId()); err != nil {
-						errs = multierr.Append(
-							errs,
-							fmt.Errorf(
-								"failed to touch activity for dispatch %d. %w",
-								dispatch.GetId(),
-								err,
-							),
-						)
-					}
-
-					newJobSet := make(map[string]struct{}, len(dispatch.GetJobs().GetJobStrings()))
-					for _, job := range dispatch.GetJobs().GetJobStrings() {
-						if strings.TrimSpace(job) == "" {
-							continue
-						}
-						newJobSet[job] = struct{}{}
-						if err := ensureJobMapping(
-							ctx,
-							job,
-							dispatch.GetId(),
-							"local_update",
-							true,
-						); err != nil {
-							errs = multierr.Append(
-								errs,
-								fmt.Errorf(
-									"failed to update job %s mapping for dispatch %d. %w",
-									job,
-									dispatch.GetId(),
-									err,
-								),
-							)
-							continue
-						}
-					}
-
-					if old != nil && old.GetJobs() != nil {
-						for _, oldJob := range old.GetJobs().GetJobStrings() {
-							if strings.TrimSpace(oldJob) == "" {
-								continue
-							}
-							if _, ok := newJobSet[oldJob]; ok {
-								continue
-							}
-
-							if err := jobSt.Delete(
-								ctx,
-								centrumutils.JobIdKey(oldJob, dispatch.GetId()),
-							); err != nil {
-								errs = multierr.Append(
-									errs,
-									fmt.Errorf(
-										"failed to delete stale job %s mapping for dispatch %d. %w",
-										oldJob,
-										dispatch.GetId(),
-										err,
-									),
-								)
-							}
-						}
-					}
-
-					if errs != nil {
-						return nil, fmt.Errorf(
-							"failed to update dispatch %d in kv store. %w",
-							dispatch.GetId(),
-							errs,
-						)
-					}
-
-					return dispatch, nil
-				},
-			),
-			store.WithOnDeleteFn[centrumdispatches.Dispatch, *centrumdispatches.Dispatch](
-				func(ctx context.Context, _ string, dispatch *centrumdispatches.Dispatch) error {
-					if dispatch == nil {
-						return nil
-					}
-
-					var errs error
-					for _, job := range dispatch.GetJobs().GetJobStrings() {
-						if strings.TrimSpace(job) == "" {
-							continue
-						}
-						if err := jobSt.Delete(
-							ctx,
-							centrumutils.JobIdKey(job, dispatch.GetId()),
-						); err != nil {
-							errs = multierr.Append(
-								errs,
-								fmt.Errorf(
-									"failed to delete job %s mapping for dispatch %d. %w",
-									job,
-									dispatch.GetId(),
-									err,
-								),
-							)
-							continue
-						}
-					}
-
-					if err := d.idleKV.Delete(
-						ctx,
-						"idle."+centrumutils.IdKey(dispatch.GetId()),
-					); err != nil {
-						errs = multierr.Append(
-							errs,
-							fmt.Errorf(
-								"failed to delete idle key for dispatch %d. %w",
-								dispatch.GetId(),
-								err,
-							),
-						)
-					}
-
-					return errs
-				},
-			),
-			store.WithOnRemoteUpdatedFn[centrumdispatches.Dispatch, *centrumdispatches.Dispatch](
-				func(ctx context.Context, old *centrumdispatches.Dispatch, dispatch *centrumdispatches.Dispatch) (*centrumdispatches.Dispatch, error) {
-					if dispatch == nil {
-						return dispatch, nil
-					}
-
-					newJobSet := make(map[string]struct{}, len(dispatch.GetJobs().GetJobStrings()))
-					for _, job := range dispatch.GetJobs().GetJobStrings() {
-						if strings.TrimSpace(job) == "" {
-							continue
-						}
-						newJobSet[job] = struct{}{}
-						if err := ensureJobMapping(
-							ctx,
-							job,
-							dispatch.GetId(),
-							"remote_update",
-							false,
-						); err != nil {
-							return nil, fmt.Errorf(
-								"failed to update job %s mapping for dispatch %d. %w",
-								job,
-								dispatch.GetId(),
-								err,
-							)
-						}
-					}
-
-					if old != nil && old.GetJobs() != nil {
-						for _, oldJob := range old.GetJobs().GetJobStrings() {
-							if strings.TrimSpace(oldJob) == "" {
-								continue
-							}
-							if _, ok := newJobSet[oldJob]; ok {
-								continue
-							}
-
-							if err := jobSt.Delete(
-								ctx,
-								centrumutils.JobIdKey(oldJob, dispatch.GetId()),
-							); err != nil {
-								return nil, fmt.Errorf(
-									"failed to delete stale job %s mapping for dispatch %d. %w",
-									oldJob,
-									dispatch.GetId(),
-									err,
-								)
-							}
-						}
-					}
-
-					removeLoc := dispatch.GetStatus() != nil &&
-						centrumutils.IsStatusDispatchComplete(dispatch.GetStatus().GetStatus())
-					// Ensure the dispatch has a valid ID
-					for _, job := range dispatch.GetJobs().GetJobStrings() {
-						if strings.TrimSpace(job) == "" {
-							continue
-						}
-						locs := d.GetLocations(job)
-						if locs == nil {
-							continue
-						}
-
-						if removeLoc {
-							if locs.Has(
-								dispatch,
-								centrumdispatches.DispatchPointMatchFn(dispatch.GetId()),
-							) {
-								locs.Remove(
-									dispatch,
-									centrumdispatches.DispatchPointMatchFn(dispatch.GetId()),
-								)
-							}
-						} else {
-							if err := locs.Replace(
-								dispatch,
-								centrumdispatches.DispatchPointMatchFn(dispatch.GetId()),
-								func(p1, p2 orb.Pointer) bool {
-									return p1.Point().Equal(p2.Point())
-								},
-							); err != nil {
-								d.logger.Error(
-									"failed to add non-existent dispatch to locations",
-									zap.Int64("dispatch_id", dispatch.GetId()),
-								)
-							}
-						}
-					}
-
-					return dispatch, nil
-				},
-			),
-			store.WithOnRemoteDeletedFn[centrumdispatches.Dispatch, *centrumdispatches.Dispatch](
-				func(ctx context.Context, key string, dispatch *centrumdispatches.Dispatch) error {
-					if dispatch != nil {
-						var errs error
-						for _, job := range dispatch.GetJobs().GetJobStrings() {
-							if strings.TrimSpace(job) == "" {
-								continue
-							}
-							if err := jobSt.Delete(
-								ctx,
-								centrumutils.JobIdKey(job, dispatch.GetId()),
-							); err != nil {
-								errs = multierr.Append(
-									errs,
-									fmt.Errorf(
-										"failed to delete job %s mapping for dispatch %d. %w",
-										job,
-										dispatch.GetId(),
-										err,
-									),
-								)
-							}
-						}
-
-						for _, job := range dispatch.GetJobs().GetJobStrings() {
-							if strings.TrimSpace(job) == "" {
-								continue
-							}
-							if locs := d.GetLocations(job); locs != nil {
-								locs.Remove(
-									nil,
-									centrumdispatches.DispatchPointMatchFn(dispatch.GetId()),
-								)
-							}
-						}
-
-						return errs
-					}
-
-					// Fallback to iterating over each job's locations map and delete the dispatch from the map by id
-					split := strings.Split(key, ".")
-					if len(split) < 2 {
-						d.logger.Warn(
-							"unable to delete dispatch location, invalid key",
-							zap.String("store_dispatch_key", key),
-						)
-						return fmt.Errorf("invalid key format for dispatch remote delete. %s", key)
-					}
-
-					idKey := split[1]
-					dspId, err := strconv.ParseInt(idKey, 10, 64)
-					if err != nil {
-						return fmt.Errorf("failed to parse dispatch id from key %s. %w", key, err)
-					}
-
-					var errs error
-					for _, jobKey := range jobSt.KeysFiltered("", func(jobKey string) bool {
-						id, err := centrumutils.ExtractIDString(jobKey)
-						return err == nil && id == idKey
-					}) {
-						if err := jobSt.Delete(ctx, jobKey); err != nil {
-							errs = multierr.Append(
-								errs,
-								fmt.Errorf(
-									"failed to delete job mapping %s for dispatch %d. %w",
-									jobKey,
-									dspId,
-									err,
-								),
-							)
-						}
-					}
-
-					for _, job := range d.GetLocationsJob() {
-						if locs := d.GetLocations(job); locs != nil {
-							locs.Remove(nil, centrumdispatches.DispatchPointMatchFn(dspId))
-						}
-					}
-
-					return errs
-				},
 			),
 		)
 		if err != nil {
 			return err
 		}
-
-		if err := st.Start(ctxCancel, true); err != nil {
+		assignmentsSt, err := store.New[centrumdispatches.DispatchAssignments, *centrumdispatches.DispatchAssignments](
+			ctxCancel,
+			logger,
+			p.JS,
+			"centrum_dispatches",
+			store.WithKVPrefix[centrumdispatches.DispatchAssignments, *centrumdispatches.DispatchAssignments](
+				"assignments",
+			),
+			store.WithKVConfig[centrumdispatches.DispatchAssignments, *centrumdispatches.DispatchAssignments](
+				componentConfig(),
+			),
+			store.WithPurgeMarkerTTL[centrumdispatches.DispatchAssignments, *centrumdispatches.DispatchAssignments](
+				DispatchPurgeMarkerTTL,
+			),
+		)
+		if err != nil {
 			return err
 		}
-		d.store = st
+		statusSt, err := store.New[centrumdispatches.DispatchStatus, *centrumdispatches.DispatchStatus](
+			ctxCancel,
+			logger,
+			p.JS,
+			"centrum_dispatches",
+			store.WithKVPrefix[centrumdispatches.DispatchStatus, *centrumdispatches.DispatchStatus](
+				"status",
+			),
+			store.WithKVConfig[centrumdispatches.DispatchStatus, *centrumdispatches.DispatchStatus](
+				componentConfig(),
+			),
+			store.WithPurgeMarkerTTL[centrumdispatches.DispatchStatus, *centrumdispatches.DispatchStatus](
+				DispatchPurgeMarkerTTL,
+			),
+		)
+		if err != nil {
+			return err
+		}
+		for _, component := range []interface {
+			Start(context.Context, bool) error
+		}{specSt, assignmentsSt, statusSt} {
+			if err := component.Start(ctxCancel, true); err != nil {
+				return err
+			}
+		}
+		d.specStore, d.assignmentsStore, d.statusStore = specSt, assignmentsSt, statusSt
 
 		return nil
 	}))
@@ -726,11 +436,11 @@ func (s *DispatchDB) LoadFromDB(ctx context.Context, cond mysql.BoolExpression) 
 
 func (s *DispatchDB) removeOrphanedProjections(ctx context.Context) error {
 	tDispatch := table.FivenetCentrumDispatches
-	var orphaned []*centrumdispatches.Dispatch
+	var orphaned []*centrumdispatches.DispatchSpec
 
-	s.store.Range(func(_ string, dispatch *centrumdispatches.Dispatch) bool {
-		if dispatch != nil {
-			orphaned = append(orphaned, dispatch)
+	s.specStore.Range(func(_ string, spec *centrumdispatches.DispatchSpec) bool {
+		if spec != nil {
+			orphaned = append(orphaned, spec)
 		}
 		return true
 	})
@@ -751,7 +461,7 @@ func (s *DispatchDB) removeOrphanedProjections(ctx context.Context) error {
 			return fmt.Errorf("failed to check dispatch projection %d: %w", dispatch.GetId(), err)
 		}
 
-		if err := s.store.Delete(ctx, centrumutils.IdKey(dispatch.GetId())); err != nil &&
+		if err := s.deleteComponents(ctx, dispatch.GetId()); err != nil &&
 			!errors.Is(err, jetstream.ErrKeyNotFound) {
 			return fmt.Errorf(
 				"failed to remove orphaned dispatch projection %d: %w",

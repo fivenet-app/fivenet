@@ -94,6 +94,13 @@ message StreamResponse {
     resources.centrum.dispatches.Dispatch dispatch_updated = 10;
     resources.centrum.dispatches.DispatchStatus dispatch_status = 11;
     string settings_deleted = 12;
+
+    // Independent unit projection updates. These replace the corresponding
+    // portion of a unit without requiring the full composed resource.
+    resources.centrum.units.UnitSpec unit_spec_updated = 14;
+    resources.centrum.units.UnitAssignments unit_members_updated = 15;
+    resources.centrum.dispatches.DispatchSpec dispatch_spec_updated = 16;
+    resources.centrum.dispatches.DispatchAssignments dispatch_assignments_updated = 17;
   }
 }
 

@@ -533,6 +533,369 @@ func (b0 Unit_builder) Build() *Unit {
 	return m0
 }
 
+// UnitSpec contains the configured, non-volatile portion of a unit
+// projection. Runtime status and current membership are stored independently.
+type UnitSpec struct {
+	state                  protoimpl.MessageState `protogen:"opaque.v1"`
+	xxx_hidden_Id          int64                  `protobuf:"varint,1,opt,name=id,proto3"`
+	xxx_hidden_CreatedAt   *timestamp.Timestamp   `protobuf:"bytes,2,opt,name=created_at,json=createdAt,proto3,oneof"`
+	xxx_hidden_UpdatedAt   *timestamp.Timestamp   `protobuf:"bytes,3,opt,name=updated_at,json=updatedAt,proto3,oneof"`
+	xxx_hidden_Job         string                 `protobuf:"bytes,4,opt,name=job,proto3"`
+	xxx_hidden_JobLabel    *string                `protobuf:"bytes,15,opt,name=job_label,json=jobLabel,proto3,oneof"`
+	xxx_hidden_SortOrder   int32                  `protobuf:"varint,17,opt,name=sort_order,json=sortOrder,proto3"`
+	xxx_hidden_Name        string                 `protobuf:"bytes,5,opt,name=name,proto3"`
+	xxx_hidden_Initials    string                 `protobuf:"bytes,6,opt,name=initials,proto3"`
+	xxx_hidden_Color       string                 `protobuf:"bytes,7,opt,name=color,proto3"`
+	xxx_hidden_Icon        *string                `protobuf:"bytes,16,opt,name=icon,proto3,oneof"`
+	xxx_hidden_Description *string                `protobuf:"bytes,8,opt,name=description,proto3,oneof"`
+	xxx_hidden_Attributes  *UnitAttributes        `protobuf:"bytes,12,opt,name=attributes,proto3,oneof"`
+	xxx_hidden_HomePostal  *string                `protobuf:"bytes,13,opt,name=home_postal,json=homePostal,proto3,oneof"`
+	xxx_hidden_Access      *access.Access         `protobuf:"bytes,14,opt,name=access,proto3"`
+	XXX_raceDetectHookData protoimpl.RaceDetectHookData
+	XXX_presence           [1]uint32
+	unknownFields          protoimpl.UnknownFields
+	sizeCache              protoimpl.SizeCache
+}
+
+func (x *UnitSpec) Reset() {
+	*x = UnitSpec{}
+	mi := &file_resources_centrum_units_units_proto_msgTypes[1]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *UnitSpec) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*UnitSpec) ProtoMessage() {}
+
+func (x *UnitSpec) ProtoReflect() protoreflect.Message {
+	mi := &file_resources_centrum_units_units_proto_msgTypes[1]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+func (x *UnitSpec) GetId() int64 {
+	if x != nil {
+		return x.xxx_hidden_Id
+	}
+	return 0
+}
+
+func (x *UnitSpec) GetCreatedAt() *timestamp.Timestamp {
+	if x != nil {
+		return x.xxx_hidden_CreatedAt
+	}
+	return nil
+}
+
+func (x *UnitSpec) GetUpdatedAt() *timestamp.Timestamp {
+	if x != nil {
+		return x.xxx_hidden_UpdatedAt
+	}
+	return nil
+}
+
+func (x *UnitSpec) GetJob() string {
+	if x != nil {
+		return x.xxx_hidden_Job
+	}
+	return ""
+}
+
+func (x *UnitSpec) GetJobLabel() string {
+	if x != nil {
+		if x.xxx_hidden_JobLabel != nil {
+			return *x.xxx_hidden_JobLabel
+		}
+		return ""
+	}
+	return ""
+}
+
+func (x *UnitSpec) GetSortOrder() int32 {
+	if x != nil {
+		return x.xxx_hidden_SortOrder
+	}
+	return 0
+}
+
+func (x *UnitSpec) GetName() string {
+	if x != nil {
+		return x.xxx_hidden_Name
+	}
+	return ""
+}
+
+func (x *UnitSpec) GetInitials() string {
+	if x != nil {
+		return x.xxx_hidden_Initials
+	}
+	return ""
+}
+
+func (x *UnitSpec) GetColor() string {
+	if x != nil {
+		return x.xxx_hidden_Color
+	}
+	return ""
+}
+
+func (x *UnitSpec) GetIcon() string {
+	if x != nil {
+		if x.xxx_hidden_Icon != nil {
+			return *x.xxx_hidden_Icon
+		}
+		return ""
+	}
+	return ""
+}
+
+func (x *UnitSpec) GetDescription() string {
+	if x != nil {
+		if x.xxx_hidden_Description != nil {
+			return *x.xxx_hidden_Description
+		}
+		return ""
+	}
+	return ""
+}
+
+func (x *UnitSpec) GetAttributes() *UnitAttributes {
+	if x != nil {
+		return x.xxx_hidden_Attributes
+	}
+	return nil
+}
+
+func (x *UnitSpec) GetHomePostal() string {
+	if x != nil {
+		if x.xxx_hidden_HomePostal != nil {
+			return *x.xxx_hidden_HomePostal
+		}
+		return ""
+	}
+	return ""
+}
+
+func (x *UnitSpec) GetAccess() *access.Access {
+	if x != nil {
+		return x.xxx_hidden_Access
+	}
+	return nil
+}
+
+func (x *UnitSpec) SetId(v int64) {
+	x.xxx_hidden_Id = v
+}
+
+func (x *UnitSpec) SetCreatedAt(v *timestamp.Timestamp) {
+	x.xxx_hidden_CreatedAt = v
+}
+
+func (x *UnitSpec) SetUpdatedAt(v *timestamp.Timestamp) {
+	x.xxx_hidden_UpdatedAt = v
+}
+
+func (x *UnitSpec) SetJob(v string) {
+	x.xxx_hidden_Job = v
+}
+
+func (x *UnitSpec) SetJobLabel(v string) {
+	x.xxx_hidden_JobLabel = &v
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 4, 14)
+}
+
+func (x *UnitSpec) SetSortOrder(v int32) {
+	x.xxx_hidden_SortOrder = v
+}
+
+func (x *UnitSpec) SetName(v string) {
+	x.xxx_hidden_Name = v
+}
+
+func (x *UnitSpec) SetInitials(v string) {
+	x.xxx_hidden_Initials = v
+}
+
+func (x *UnitSpec) SetColor(v string) {
+	x.xxx_hidden_Color = v
+}
+
+func (x *UnitSpec) SetIcon(v string) {
+	x.xxx_hidden_Icon = &v
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 9, 14)
+}
+
+func (x *UnitSpec) SetDescription(v string) {
+	x.xxx_hidden_Description = &v
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 10, 14)
+}
+
+func (x *UnitSpec) SetAttributes(v *UnitAttributes) {
+	x.xxx_hidden_Attributes = v
+}
+
+func (x *UnitSpec) SetHomePostal(v string) {
+	x.xxx_hidden_HomePostal = &v
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 12, 14)
+}
+
+func (x *UnitSpec) SetAccess(v *access.Access) {
+	x.xxx_hidden_Access = v
+}
+
+func (x *UnitSpec) HasCreatedAt() bool {
+	if x == nil {
+		return false
+	}
+	return x.xxx_hidden_CreatedAt != nil
+}
+
+func (x *UnitSpec) HasUpdatedAt() bool {
+	if x == nil {
+		return false
+	}
+	return x.xxx_hidden_UpdatedAt != nil
+}
+
+func (x *UnitSpec) HasJobLabel() bool {
+	if x == nil {
+		return false
+	}
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 4)
+}
+
+func (x *UnitSpec) HasIcon() bool {
+	if x == nil {
+		return false
+	}
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 9)
+}
+
+func (x *UnitSpec) HasDescription() bool {
+	if x == nil {
+		return false
+	}
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 10)
+}
+
+func (x *UnitSpec) HasAttributes() bool {
+	if x == nil {
+		return false
+	}
+	return x.xxx_hidden_Attributes != nil
+}
+
+func (x *UnitSpec) HasHomePostal() bool {
+	if x == nil {
+		return false
+	}
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 12)
+}
+
+func (x *UnitSpec) HasAccess() bool {
+	if x == nil {
+		return false
+	}
+	return x.xxx_hidden_Access != nil
+}
+
+func (x *UnitSpec) ClearCreatedAt() {
+	x.xxx_hidden_CreatedAt = nil
+}
+
+func (x *UnitSpec) ClearUpdatedAt() {
+	x.xxx_hidden_UpdatedAt = nil
+}
+
+func (x *UnitSpec) ClearJobLabel() {
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 4)
+	x.xxx_hidden_JobLabel = nil
+}
+
+func (x *UnitSpec) ClearIcon() {
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 9)
+	x.xxx_hidden_Icon = nil
+}
+
+func (x *UnitSpec) ClearDescription() {
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 10)
+	x.xxx_hidden_Description = nil
+}
+
+func (x *UnitSpec) ClearAttributes() {
+	x.xxx_hidden_Attributes = nil
+}
+
+func (x *UnitSpec) ClearHomePostal() {
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 12)
+	x.xxx_hidden_HomePostal = nil
+}
+
+func (x *UnitSpec) ClearAccess() {
+	x.xxx_hidden_Access = nil
+}
+
+type UnitSpec_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Id          int64
+	CreatedAt   *timestamp.Timestamp
+	UpdatedAt   *timestamp.Timestamp
+	Job         string
+	JobLabel    *string
+	SortOrder   int32
+	Name        string
+	Initials    string
+	Color       string
+	Icon        *string
+	Description *string
+	Attributes  *UnitAttributes
+	HomePostal  *string
+	Access      *access.Access
+}
+
+func (b0 UnitSpec_builder) Build() *UnitSpec {
+	m0 := &UnitSpec{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.xxx_hidden_Id = b.Id
+	x.xxx_hidden_CreatedAt = b.CreatedAt
+	x.xxx_hidden_UpdatedAt = b.UpdatedAt
+	x.xxx_hidden_Job = b.Job
+	if b.JobLabel != nil {
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 4, 14)
+		x.xxx_hidden_JobLabel = b.JobLabel
+	}
+	x.xxx_hidden_SortOrder = b.SortOrder
+	x.xxx_hidden_Name = b.Name
+	x.xxx_hidden_Initials = b.Initials
+	x.xxx_hidden_Color = b.Color
+	if b.Icon != nil {
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 9, 14)
+		x.xxx_hidden_Icon = b.Icon
+	}
+	if b.Description != nil {
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 10, 14)
+		x.xxx_hidden_Description = b.Description
+	}
+	x.xxx_hidden_Attributes = b.Attributes
+	if b.HomePostal != nil {
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 12, 14)
+		x.xxx_hidden_HomePostal = b.HomePostal
+	}
+	x.xxx_hidden_Access = b.Access
+	return m0
+}
+
 type UnitAssignments struct {
 	state             protoimpl.MessageState `protogen:"opaque.v1"`
 	xxx_hidden_UnitId int64                  `protobuf:"varint,1,opt,name=unit_id,json=unitId,proto3"`
@@ -544,7 +907,7 @@ type UnitAssignments struct {
 
 func (x *UnitAssignments) Reset() {
 	*x = UnitAssignments{}
-	mi := &file_resources_centrum_units_units_proto_msgTypes[1]
+	mi := &file_resources_centrum_units_units_proto_msgTypes[2]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -556,7 +919,7 @@ func (x *UnitAssignments) String() string {
 func (*UnitAssignments) ProtoMessage() {}
 
 func (x *UnitAssignments) ProtoReflect() protoreflect.Message {
-	mi := &file_resources_centrum_units_units_proto_msgTypes[1]
+	mi := &file_resources_centrum_units_units_proto_msgTypes[2]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -631,7 +994,7 @@ type UnitAssignment struct {
 
 func (x *UnitAssignment) Reset() {
 	*x = UnitAssignment{}
-	mi := &file_resources_centrum_units_units_proto_msgTypes[2]
+	mi := &file_resources_centrum_units_units_proto_msgTypes[3]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -643,7 +1006,7 @@ func (x *UnitAssignment) String() string {
 func (*UnitAssignment) ProtoMessage() {}
 
 func (x *UnitAssignment) ProtoReflect() protoreflect.Message {
-	mi := &file_resources_centrum_units_units_proto_msgTypes[2]
+	mi := &file_resources_centrum_units_units_proto_msgTypes[3]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -741,7 +1104,7 @@ type UnitStatus struct {
 
 func (x *UnitStatus) Reset() {
 	*x = UnitStatus{}
-	mi := &file_resources_centrum_units_units_proto_msgTypes[3]
+	mi := &file_resources_centrum_units_units_proto_msgTypes[4]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -753,7 +1116,7 @@ func (x *UnitStatus) String() string {
 func (*UnitStatus) ProtoMessage() {}
 
 func (x *UnitStatus) ProtoReflect() protoreflect.Message {
-	mi := &file_resources_centrum_units_units_proto_msgTypes[3]
+	mi := &file_resources_centrum_units_units_proto_msgTypes[4]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1164,7 +1527,7 @@ type UnitAttributes struct {
 
 func (x *UnitAttributes) Reset() {
 	*x = UnitAttributes{}
-	mi := &file_resources_centrum_units_units_proto_msgTypes[4]
+	mi := &file_resources_centrum_units_units_proto_msgTypes[5]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1176,7 +1539,7 @@ func (x *UnitAttributes) String() string {
 func (*UnitAttributes) ProtoMessage() {}
 
 func (x *UnitAttributes) ProtoReflect() protoreflect.Message {
-	mi := &file_resources_centrum_units_units_proto_msgTypes[4]
+	mi := &file_resources_centrum_units_units_proto_msgTypes[5]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1248,6 +1611,35 @@ const file_resources_centrum_units_units_proto_rawDesc = "" +
 	"\f_descriptionB\t\n" +
 	"\a_statusB\r\n" +
 	"\v_attributesB\x0e\n" +
+	"\f_home_postal\"\xa8\x05\n" +
+	"\bUnitSpec\x121\n" +
+	"\x02id\x18\x01 \x01(\x03B!\x9a\x84\x9e\x03\x1csql:\"primary_key\" alias:\"id\"R\x02id\x12B\n" +
+	"\n" +
+	"created_at\x18\x02 \x01(\v2\x1e.resources.timestamp.TimestampH\x00R\tcreatedAt\x88\x01\x01\x12B\n" +
+	"\n" +
+	"updated_at\x18\x03 \x01(\v2\x1e.resources.timestamp.TimestampH\x01R\tupdatedAt\x88\x01\x01\x12\x10\n" +
+	"\x03job\x18\x04 \x01(\tR\x03job\x12 \n" +
+	"\tjob_label\x18\x0f \x01(\tH\x02R\bjobLabel\x88\x01\x01\x12\x1d\n" +
+	"\n" +
+	"sort_order\x18\x11 \x01(\x05R\tsortOrder\x12\x12\n" +
+	"\x04name\x18\x05 \x01(\tR\x04name\x12\x1a\n" +
+	"\binitials\x18\x06 \x01(\tR\binitials\x12\x14\n" +
+	"\x05color\x18\a \x01(\tR\x05color\x12\x17\n" +
+	"\x04icon\x18\x10 \x01(\tH\x03R\x04icon\x88\x01\x01\x12%\n" +
+	"\vdescription\x18\b \x01(\tH\x04R\vdescription\x88\x01\x01\x12L\n" +
+	"\n" +
+	"attributes\x18\f \x01(\v2'.resources.centrum.units.UnitAttributesH\x05R\n" +
+	"attributes\x88\x01\x01\x12$\n" +
+	"\vhome_postal\x18\r \x01(\tH\x06R\n" +
+	"homePostal\x88\x01\x01\x120\n" +
+	"\x06access\x18\x0e \x01(\v2\x18.resources.access.AccessR\x06accessB\r\n" +
+	"\v_created_atB\r\n" +
+	"\v_updated_atB\f\n" +
+	"\n" +
+	"_job_labelB\a\n" +
+	"\x05_iconB\x0e\n" +
+	"\f_descriptionB\r\n" +
+	"\v_attributesB\x0e\n" +
 	"\f_home_postal\"{\n" +
 	"\x0fUnitAssignments\x12\x17\n" +
 	"\aunit_id\x18\x01 \x01(\x03R\x06unitId\x12\x10\n" +
@@ -1312,39 +1704,44 @@ const file_resources_centrum_units_units_proto_rawDesc = "" +
 	"&UNIT_ATTRIBUTE_NO_DISPATCH_AUTO_ASSIGN\x10\x02BXZVgithub.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/centrum/units;centrumunitsb\x06proto3"
 
 var file_resources_centrum_units_units_proto_enumTypes = make([]protoimpl.EnumInfo, 2)
-var file_resources_centrum_units_units_proto_msgTypes = make([]protoimpl.MessageInfo, 5)
+var file_resources_centrum_units_units_proto_msgTypes = make([]protoimpl.MessageInfo, 6)
 var file_resources_centrum_units_units_proto_goTypes = []any{
 	(StatusUnit)(0),              // 0: resources.centrum.units.StatusUnit
 	(UnitAttribute)(0),           // 1: resources.centrum.units.UnitAttribute
 	(*Unit)(nil),                 // 2: resources.centrum.units.Unit
-	(*UnitAssignments)(nil),      // 3: resources.centrum.units.UnitAssignments
-	(*UnitAssignment)(nil),       // 4: resources.centrum.units.UnitAssignment
-	(*UnitStatus)(nil),           // 5: resources.centrum.units.UnitStatus
-	(*UnitAttributes)(nil),       // 6: resources.centrum.units.UnitAttributes
-	(*timestamp.Timestamp)(nil),  // 7: resources.timestamp.Timestamp
-	(*access.Access)(nil),        // 8: resources.access.Access
-	(*colleagues.Colleague)(nil), // 9: resources.jobs.colleagues.Colleague
+	(*UnitSpec)(nil),             // 3: resources.centrum.units.UnitSpec
+	(*UnitAssignments)(nil),      // 4: resources.centrum.units.UnitAssignments
+	(*UnitAssignment)(nil),       // 5: resources.centrum.units.UnitAssignment
+	(*UnitStatus)(nil),           // 6: resources.centrum.units.UnitStatus
+	(*UnitAttributes)(nil),       // 7: resources.centrum.units.UnitAttributes
+	(*timestamp.Timestamp)(nil),  // 8: resources.timestamp.Timestamp
+	(*access.Access)(nil),        // 9: resources.access.Access
+	(*colleagues.Colleague)(nil), // 10: resources.jobs.colleagues.Colleague
 }
 var file_resources_centrum_units_units_proto_depIdxs = []int32{
-	7,  // 0: resources.centrum.units.Unit.created_at:type_name -> resources.timestamp.Timestamp
-	7,  // 1: resources.centrum.units.Unit.updated_at:type_name -> resources.timestamp.Timestamp
-	5,  // 2: resources.centrum.units.Unit.status:type_name -> resources.centrum.units.UnitStatus
-	4,  // 3: resources.centrum.units.Unit.users:type_name -> resources.centrum.units.UnitAssignment
-	6,  // 4: resources.centrum.units.Unit.attributes:type_name -> resources.centrum.units.UnitAttributes
-	8,  // 5: resources.centrum.units.Unit.access:type_name -> resources.access.Access
-	4,  // 6: resources.centrum.units.UnitAssignments.users:type_name -> resources.centrum.units.UnitAssignment
-	9,  // 7: resources.centrum.units.UnitAssignment.user:type_name -> resources.jobs.colleagues.Colleague
-	7,  // 8: resources.centrum.units.UnitStatus.created_at:type_name -> resources.timestamp.Timestamp
-	2,  // 9: resources.centrum.units.UnitStatus.unit:type_name -> resources.centrum.units.Unit
-	0,  // 10: resources.centrum.units.UnitStatus.status:type_name -> resources.centrum.units.StatusUnit
-	9,  // 11: resources.centrum.units.UnitStatus.user:type_name -> resources.jobs.colleagues.Colleague
-	9,  // 12: resources.centrum.units.UnitStatus.creator:type_name -> resources.jobs.colleagues.Colleague
-	1,  // 13: resources.centrum.units.UnitAttributes.list:type_name -> resources.centrum.units.UnitAttribute
-	14, // [14:14] is the sub-list for method output_type
-	14, // [14:14] is the sub-list for method input_type
-	14, // [14:14] is the sub-list for extension type_name
-	14, // [14:14] is the sub-list for extension extendee
-	0,  // [0:14] is the sub-list for field type_name
+	8,  // 0: resources.centrum.units.Unit.created_at:type_name -> resources.timestamp.Timestamp
+	8,  // 1: resources.centrum.units.Unit.updated_at:type_name -> resources.timestamp.Timestamp
+	6,  // 2: resources.centrum.units.Unit.status:type_name -> resources.centrum.units.UnitStatus
+	5,  // 3: resources.centrum.units.Unit.users:type_name -> resources.centrum.units.UnitAssignment
+	7,  // 4: resources.centrum.units.Unit.attributes:type_name -> resources.centrum.units.UnitAttributes
+	9,  // 5: resources.centrum.units.Unit.access:type_name -> resources.access.Access
+	8,  // 6: resources.centrum.units.UnitSpec.created_at:type_name -> resources.timestamp.Timestamp
+	8,  // 7: resources.centrum.units.UnitSpec.updated_at:type_name -> resources.timestamp.Timestamp
+	7,  // 8: resources.centrum.units.UnitSpec.attributes:type_name -> resources.centrum.units.UnitAttributes
+	9,  // 9: resources.centrum.units.UnitSpec.access:type_name -> resources.access.Access
+	5,  // 10: resources.centrum.units.UnitAssignments.users:type_name -> resources.centrum.units.UnitAssignment
+	10, // 11: resources.centrum.units.UnitAssignment.user:type_name -> resources.jobs.colleagues.Colleague
+	8,  // 12: resources.centrum.units.UnitStatus.created_at:type_name -> resources.timestamp.Timestamp
+	2,  // 13: resources.centrum.units.UnitStatus.unit:type_name -> resources.centrum.units.Unit
+	0,  // 14: resources.centrum.units.UnitStatus.status:type_name -> resources.centrum.units.StatusUnit
+	10, // 15: resources.centrum.units.UnitStatus.user:type_name -> resources.jobs.colleagues.Colleague
+	10, // 16: resources.centrum.units.UnitStatus.creator:type_name -> resources.jobs.colleagues.Colleague
+	1,  // 17: resources.centrum.units.UnitAttributes.list:type_name -> resources.centrum.units.UnitAttribute
+	18, // [18:18] is the sub-list for method output_type
+	18, // [18:18] is the sub-list for method input_type
+	18, // [18:18] is the sub-list for extension type_name
+	18, // [18:18] is the sub-list for extension extendee
+	0,  // [0:18] is the sub-list for field type_name
 }
 
 func init() { file_resources_centrum_units_units_proto_init() }
@@ -1353,15 +1750,16 @@ func file_resources_centrum_units_units_proto_init() {
 		return
 	}
 	file_resources_centrum_units_units_proto_msgTypes[0].OneofWrappers = []any{}
-	file_resources_centrum_units_units_proto_msgTypes[2].OneofWrappers = []any{}
+	file_resources_centrum_units_units_proto_msgTypes[1].OneofWrappers = []any{}
 	file_resources_centrum_units_units_proto_msgTypes[3].OneofWrappers = []any{}
+	file_resources_centrum_units_units_proto_msgTypes[4].OneofWrappers = []any{}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_resources_centrum_units_units_proto_rawDesc), len(file_resources_centrum_units_units_proto_rawDesc)),
 			NumEnums:      2,
-			NumMessages:   5,
+			NumMessages:   6,
 			NumExtensions: 0,
 			NumServices:   0,
 		},
