@@ -1644,6 +1644,32 @@ Lightweight group information attached to a colleague.
 
 
 
+### resources.centrum.units.UnitSpec
+UnitSpec contains the configured, non-volatile portion of a unit projection. Runtime status and current membership are stored independently.
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `id` | [int64](#int64) |  |  |
+| `created_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
+| `updated_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
+| `job` | [string](#string) |  |  |
+| `job_label` | [string](#string) | optional |  |
+| `sort_order` | [int32](#int32) |  |  |
+| `name` | [string](#string) |  |  |
+| `initials` | [string](#string) |  |  |
+| `color` | [string](#string) |  |  |
+| `icon` | [string](#string) | optional |  |
+| `description` | [string](#string) | optional |  |
+| `attributes` | [UnitAttributes](#resourcescentrumunitsUnitAttributes) | optional |  |
+| `home_postal` | [string](#string) | optional |  |
+| `access` | [resources.access.Access](#resourcesaccessAccess) |  |  |
+
+
+
+
+
 ### resources.centrum.units.UnitStatus
 
 
@@ -1789,6 +1815,32 @@ Lightweight group information attached to a colleague.
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | `references` | [DispatchReference](#resourcescentrumdispatchesDispatchReference) | repeated |  |
+
+
+
+
+
+### resources.centrum.dispatches.DispatchSpec
+DispatchSpec contains the independently reconciled, non-status portion of a dispatch projection.
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `id` | [int64](#int64) |  |  |
+| `created_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
+| `updated_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
+| `jobs` | [resources.centrum.JobList](#resourcescentrumJobList) |  |  |
+| `message` | [string](#string) |  |  |
+| `description` | [string](#string) | optional |  |
+| `attributes` | [DispatchAttributes](#resourcescentrumdispatchesDispatchAttributes) | optional |  |
+| `x` | [double](#double) |  |  |
+| `y` | [double](#double) |  |  |
+| `postal` | [string](#string) | optional |  |
+| `anon` | [bool](#bool) |  |  |
+| `creator_id` | [int32](#int32) | optional |  |
+| `creator` | [resources.users.short.UserShort](#resourcesusersshortUserShort) | optional |  |
+| `references` | [DispatchReferences](#resourcescentrumdispatchesDispatchReferences) | optional |  |
 
 
 
@@ -8823,6 +8875,10 @@ Auth Service handles user authentication, character selection and oauth2 connect
 | `dispatch_updated` | [resources.centrum.dispatches.Dispatch](#resourcescentrumdispatchesDispatch) |  |  |
 | `dispatch_status` | [resources.centrum.dispatches.DispatchStatus](#resourcescentrumdispatchesDispatchStatus) |  |  |
 | `settings_deleted` | [string](#string) |  |  |
+| `unit_spec_updated` | [resources.centrum.units.UnitSpec](#resourcescentrumunitsUnitSpec) |  | Independent unit projection updates. These replace the corresponding portion of a unit without requiring the full composed resource. |
+| `unit_members_updated` | [resources.centrum.units.UnitAssignments](#resourcescentrumunitsUnitAssignments) |  |  |
+| `dispatch_spec_updated` | [resources.centrum.dispatches.DispatchSpec](#resourcescentrumdispatchesDispatchSpec) |  |  |
+| `dispatch_assignments_updated` | [resources.centrum.dispatches.DispatchAssignments](#resourcescentrumdispatchesDispatchAssignments) |  |  |
 
 
 

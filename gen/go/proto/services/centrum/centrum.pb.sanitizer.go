@@ -157,6 +157,28 @@ func (m *StreamResponse) Sanitize() error {
 			}
 		}
 
+		// Field: DispatchAssignmentsUpdated
+	case *StreamResponse_DispatchAssignmentsUpdated:
+
+		if v.DispatchAssignmentsUpdated != nil {
+			if s, ok := any(v.DispatchAssignmentsUpdated).(interface{ Sanitize() error }); ok {
+				if err := s.Sanitize(); err != nil {
+					return err
+				}
+			}
+		}
+
+		// Field: DispatchSpecUpdated
+	case *StreamResponse_DispatchSpecUpdated:
+
+		if v.DispatchSpecUpdated != nil {
+			if s, ok := any(v.DispatchSpecUpdated).(interface{ Sanitize() error }); ok {
+				if err := s.Sanitize(); err != nil {
+					return err
+				}
+			}
+		}
+
 		// Field: DispatchStatus
 	case *StreamResponse_DispatchStatus:
 
@@ -227,6 +249,28 @@ func (m *StreamResponse) Sanitize() error {
 	case *StreamResponse_SettingsDeleted:
 
 		v.SettingsDeleted = htmlsanitizer.SanitizeAndUnescape(v.SettingsDeleted)
+
+		// Field: UnitMembersUpdated
+	case *StreamResponse_UnitMembersUpdated:
+
+		if v.UnitMembersUpdated != nil {
+			if s, ok := any(v.UnitMembersUpdated).(interface{ Sanitize() error }); ok {
+				if err := s.Sanitize(); err != nil {
+					return err
+				}
+			}
+		}
+
+		// Field: UnitSpecUpdated
+	case *StreamResponse_UnitSpecUpdated:
+
+		if v.UnitSpecUpdated != nil {
+			if s, ok := any(v.UnitSpecUpdated).(interface{ Sanitize() error }); ok {
+				if err := s.Sanitize(); err != nil {
+					return err
+				}
+			}
+		}
 
 		// Field: UnitStatus
 	case *StreamResponse_UnitStatus:

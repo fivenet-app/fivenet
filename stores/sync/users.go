@@ -186,7 +186,11 @@ type userJobChange struct {
 	grade int32
 }
 
-func (s *Store) SendUsers(ctx context.Context, data []*syncdata.DataUser, force bool) (int64, error) {
+func (s *Store) SendUsers(
+	ctx context.Context,
+	data []*syncdata.DataUser,
+	force bool,
+) (int64, error) {
 	return s.handleUsersData(ctx, data, force)
 }
 
@@ -244,7 +248,11 @@ func (s *Store) DeleteUsers(
 	return &pbsync.DeleteDataResponse{RowsAffected: rows}, nil
 }
 
-func (s *Store) handleUsersData(ctx context.Context, us []*syncdata.DataUser, force bool) (int64, error) {
+func (s *Store) handleUsersData(
+	ctx context.Context,
+	us []*syncdata.DataUser,
+	force bool,
+) (int64, error) {
 	if len(us) == 0 {
 		return 0, nil
 	}

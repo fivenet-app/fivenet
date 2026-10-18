@@ -10,7 +10,7 @@ import {
 } from '~~/gen/ts/resources/centrum/dispatches/dispatches';
 import { CentrumMode, type EffectiveAccess, type Settings } from '~~/gen/ts/resources/centrum/settings/settings';
 import { StatusUnit, type Unit, type UnitStatus } from '~~/gen/ts/resources/centrum/units/units';
-import { useCentrumStore } from './centrum';
+import { replaceUnitMembersWithTransition, useCentrumStore } from './centrum';
 
 const mocks = vi.hoisted(() => ({
     notifications: {
@@ -478,6 +478,19 @@ describe('useCentrumStore', () => {
         store.updateUnitStatus({ id: 8, unitId: 7, status: StatusUnit.AVAILABLE } as UnitStatus);
 
         expect(store.units.get(7)?.status?.status).toBe(StatusUnit.BUSY);
+    });
+
+    it('detects membership component joins and leaves against the previous snapshot', () => {
+        const current = unit({ id: 7, users: [] });
+        const joined = replaceUnitMembersWithTransition(current, { unitId: 7, job: 'ambulance', users: [{ userId: 17 }] }, 17);
+
+        expect(joined).toEqual({ wasOwnUnit: false, isOwnUnit: true });
+        expect(current.users.map((user) => user.userId)).toEqual([17]);
+
+        const left = replaceUnitMembersWithTransition(current, { unitId: 7, job: 'ambulance', users: [] }, 17);
+
+        expect(left).toEqual({ wasOwnUnit: true, isOwnUnit: false });
+        expect(current.users).toEqual([]);
     });
 
     it('keeps the feed bounded while retaining the newest entries', () => {

@@ -61,6 +61,25 @@ message Unit {
   resources.access.Access access = 14;
 }
 
+// UnitSpec contains the configured, non-volatile portion of a unit
+// projection. Runtime status and current membership are stored independently.
+message UnitSpec {
+  int64 id = 1 [(tagger.tags) = "sql:\"primary_key\" alias:\"id\""];
+  optional resources.timestamp.Timestamp created_at = 2;
+  optional resources.timestamp.Timestamp updated_at = 3;
+  string job = 4 [(buf.validate.field).string.max_len = 20];
+  optional string job_label = 15 [(buf.validate.field).string.max_len = 50];
+  int32 sort_order = 17 [(buf.validate.field).int32.gte = 0];
+  string name = 5 [(buf.validate.field).string = {min_len: 3 max_len: 24}];
+  string initials = 6 [(buf.validate.field).string = {min_len: 2 max_len: 4}];
+  string color = 7 [(buf.validate.field).string = {len: 7 pattern: "^#[A-Fa-f0-9]{6}$"}];
+  optional string icon = 16 [(buf.validate.field).string.max_len = 128];
+  optional string description = 8 [(buf.validate.field).string.max_len = 255];
+  optional UnitAttributes attributes = 12;
+  optional string home_postal = 13 [(buf.validate.field).string.max_len = 48];
+  resources.access.Access access = 14;
+}
+
 message UnitAssignments {
   int64 unit_id = 1 [(buf.validate.field).int64.gt = 0];
   string job = 2 [(buf.validate.field).string.max_len = 20];

@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"strconv"
+	"strings"
 	"time"
 
 	centrumdispatches "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/centrum/dispatches"
@@ -509,7 +510,7 @@ func (s *Housekeeper) deleteOldDispatchesFromKV(ctx context.Context) (int, int, 
 	listCtx, cancelList := context.WithCancel(ctx)
 	defer cancelList()
 
-	keyIter, err := s.dispatches.Store().KV().ListKeysFiltered(listCtx, "id.*")
+	keyIter, err := s.dispatches.SpecStore().KV().ListKeysFiltered(listCtx, "spec.*")
 	if err != nil {
 		s.logger.Error("failed to list dispatches from KV", zap.Error(err))
 		return 0, 0, 0, false, err
@@ -530,7 +531,7 @@ func (s *Housekeeper) deleteOldDispatchesFromKV(ctx context.Context) (int, int, 
 			continue
 		}
 
-		dispatchID, err := centrumutils.ExtractIDString(key)
+		dispatchIDString, err := centrumutils.ExtractIDString(strings.TrimPrefix(key, "spec."))
 		if err != nil {
 			s.logger.Error(
 				"failed to extract dispatch ID from key",
@@ -545,10 +546,15 @@ func (s *Housekeeper) deleteOldDispatchesFromKV(ctx context.Context) (int, int, 
 			continue
 		}
 
-		dispatch, err := s.dispatches.Store().Get(dispatchID)
+		dispatchID, err := strconv.ParseInt(dispatchIDString, 10, 64)
+		if err != nil {
+			invalid++
+			continue
+		}
+		dispatch, err := s.dispatches.Get(ctx, dispatchID)
 		if err != nil {
 			s.logger.Error("failed to get dispatch from KV", zap.String("key", key), zap.Error(err))
-			if err := s.dispatches.Store().Delete(ctx, key); err != nil {
+			if err := s.deleteStaleDispatchProjection(ctx, dispatchID); err != nil {
 				s.logger.Error(
 					"failed to delete unavailable dispatch from KV",
 					zap.String("key", key),

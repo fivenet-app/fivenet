@@ -5,8 +5,8 @@ import (
 	"google.golang.org/protobuf/reflect/protoreflect"
 )
 
-// ProtoMessageWithMerge is a generic interface for protobuf messages that support merging.
-// T is the underlying message type. Implementations must provide a Merge method.
+// ProtoMessageWithMerge is a generic interface for protobuf messages with the
+// application-specific merge semantics required by the cached KV store.
 type ProtoMessageWithMerge[T any] interface {
 	*T
 	proto.Message
