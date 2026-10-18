@@ -79,7 +79,7 @@ async function subscribeToCalendar(calendarId: number, subscribe: boolean): Prom
 </script>
 
 <template>
-    <UDrawer
+    <ResponsiveDrawerModal
         :title="$t('components.calendar.calendar.FindCalendarDrawer.title')"
         :close="{ onClick: () => $emit('close', false) }"
         :ui="{ title: 'flex flex-row gap-2' }"
@@ -156,5 +156,5 @@ async function subscribeToCalendar(calendarId: number, subscribe: boolean): Prom
                 <UButton class="flex-1" color="neutral" block :label="$t('common.close', 1)" @click="$emit('close', false)" />
             </UFieldGroup>
         </template>
-    </UDrawer>
+    </ResponsiveDrawerModal>
 </template>

@@ -128,7 +128,11 @@ async function closeModal(): Promise<void> {
 </script>
 
 <template>
-    <UDrawer :title="$t('pages.jobs.colleagues.labels.title')" :close="false" :dismissible="!hasUnsavedChanges && canSubmit">
+    <ResponsiveDrawerModal
+        :title="$t('pages.jobs.colleagues.labels.title')"
+        :close="false"
+        :dismissible="!hasUnsavedChanges && canSubmit"
+    >
         <template #header>
             <div class="flex w-full items-center justify-between gap-2">
                 <h3 class="font-semibold text-highlighted">
@@ -185,5 +189,5 @@ async function closeModal(): Promise<void> {
                 />
             </UFieldGroup>
         </template>
-    </UDrawer>
+    </ResponsiveDrawerModal>
 </template>

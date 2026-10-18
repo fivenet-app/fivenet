@@ -84,7 +84,7 @@ async function closeModal(): Promise<void> {
 </script>
 
 <template>
-    <UDrawer
+    <ResponsiveDrawerModal
         :title="
             user.props?.wanted
                 ? $t('components.citizens.CitizenInfoProfile.revoke_wanted')
@@ -166,5 +166,5 @@ async function closeModal(): Promise<void> {
                 />
             </div>
         </template>
-    </UDrawer>
+    </ResponsiveDrawerModal>
 </template>

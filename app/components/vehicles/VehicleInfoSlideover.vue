@@ -4,7 +4,7 @@ import ActivityFeed from '~/components/vehicles/ActivityFeed.vue';
 import type { Vehicle } from '~~/gen/ts/resources/vehicles/vehicles';
 import GenericTime from '../partials/elements/GenericTime.vue';
 import LicensePlate from '../partials/LicensePlate.vue';
-import SetWantedModal from './SetWantedModal.vue';
+import SetWantedDrawer from './SetWantedDrawer.vue';
 import CitizenInfoPopover from '~/components/partials/citizens/CitizenInfoPopover.vue';
 
 defineEmits<{
@@ -14,7 +14,7 @@ defineEmits<{
 const vehicle = defineModel<Vehicle>({ required: true });
 
 const overlay = useOverlay();
-const setWantedModal = overlay.create(SetWantedModal);
+const setWantedDrawer = overlay.create(SetWantedDrawer);
 
 const { attr, can } = useAuth();
 
@@ -33,7 +33,7 @@ const canSetWanted = computed(
     <USlideover
         :title="$t('components.vehicles.VehicleInfoSlideover.title')"
         :overlay="false"
-        :ui="{ body: 'flex flex-col p-0 sm:p-0 overflow-y-hidden', content: 'max-w-3xl' }"
+        :ui="{ body: 'flex flex-col p-0 sm:p-0 overflow-y-hidden', content: 'w-full max-w-6xl sm:max-w-5xl' }"
     >
         <template #body>
             <div class="flex h-full flex-1 flex-col">
@@ -63,7 +63,7 @@ const canSetWanted = computed(
                                         :label="vehicle.props?.wanted ? $t('common.revoke_wanted') : $t('common.set_wanted')"
                                         @click="
                                             () =>
-                                                setWantedModal.open({
+                                                setWantedDrawer.open({
                                                     vehicleProps: vehicle.props,
                                                     plate: vehicle.plate,
                                                     'onUpdate:vehicleProps': ($event) => {

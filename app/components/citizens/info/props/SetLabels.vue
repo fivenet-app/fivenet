@@ -9,7 +9,7 @@ import type { Label, Labels } from '~~/gen/ts/resources/citizens/labels/labels';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 import type { Timestamp } from '~~/gen/ts/resources/timestamp/timestamp';
 import type { UserProps } from '~~/gen/ts/resources/users/props/props';
-import ConfigureLabelModal from '../../labels/ConfigureLabelModal.vue';
+import ConfigureLabelDrawer from '../../labels/ConfigureLabelDrawer.vue';
 import { AccessLevel } from '~~/gen/ts/resources/citizens/labels/access';
 import type { Access } from '~~/gen/ts/resources/access/access';
 
@@ -110,13 +110,13 @@ watch(labels, () => setFromProps());
 
 const selectedLabel = ref<Label | null>(null);
 
-const configureLabelModal = overlay.create(ConfigureLabelModal);
+const configureLabelDrawer = overlay.create(ConfigureLabelDrawer);
 
 function handleLabelUpdate(label: Label | null): void {
     if (!label) return;
     selectedLabel.value = null;
 
-    configureLabelModal.open({
+    configureLabelDrawer.open({
         label: label,
         onClose: ($event) => {
             if (!$event) return;

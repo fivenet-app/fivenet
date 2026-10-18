@@ -103,7 +103,7 @@ async function closeModal(): Promise<void> {
 </script>
 
 <template>
-    <UModal :close="false" :dismissible="!hasUnsavedChanges">
+    <ResponsiveDrawerModal :close="false" :dismissible="!hasUnsavedChanges">
         <template #header>
             <div class="flex w-full items-center justify-between gap-2">
                 <div class="inline-flex gap-2">
@@ -163,5 +163,5 @@ async function closeModal(): Promise<void> {
                 <UButton class="flex-1" block :label="$t('common.save')" @click="formRef?.submit()" />
             </UFieldGroup>
         </template>
-    </UModal>
+    </ResponsiveDrawerModal>
 </template>

@@ -89,7 +89,7 @@ async function closeModal(): Promise<void> {
 </script>
 
 <template>
-    <UModal
+    <ResponsiveDrawerModal
         :title="vehicleProps?.wanted ? $t('common.revoke_wanted') : $t('common.set_wanted')"
         :close="false"
         :dismissible="!hasUnsavedChanges && canSubmit"
@@ -146,5 +146,5 @@ async function closeModal(): Promise<void> {
                 />
             </UFieldGroup>
         </template>
-    </UModal>
+    </ResponsiveDrawerModal>
 </template>

@@ -163,7 +163,7 @@ async function closeDrawer(): Promise<void> {
 </script>
 
 <template>
-    <UDrawer
+    <ResponsiveDrawerModal
         :title="$t('common.request', 2)"
         :overlay="false"
         :dismissible="!hasUnsavedChanges && canSubmit"
@@ -301,5 +301,5 @@ async function closeDrawer(): Promise<void> {
                 />
             </UFieldGroup>
         </template>
-    </UDrawer>
+    </ResponsiveDrawerModal>
 </template>

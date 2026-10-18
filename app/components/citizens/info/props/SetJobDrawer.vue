@@ -144,7 +144,7 @@ onBeforeMount(async () => {
 </script>
 
 <template>
-    <UDrawer
+    <ResponsiveDrawerModal
         :title="$t('components.citizens.CitizenInfoProfile.set_job')"
         :close="false"
         :dismissible="!hasUnsavedChanges && canSubmit"
@@ -248,5 +248,5 @@ onBeforeMount(async () => {
                 />
             </div>
         </template>
-    </UDrawer>
+    </ResponsiveDrawerModal>
 </template>

@@ -248,7 +248,7 @@ async function closeModal(): Promise<void> {
 </script>
 
 <template>
-    <UDrawer
+    <ResponsiveDrawerModal
         :title="$t('components.citizens.citizen_labels.title')"
         :close="false"
         :dismissible="!hasUnsavedChanges && canSubmit"
@@ -367,5 +367,5 @@ async function closeModal(): Promise<void> {
                 />
             </UFieldGroup>
         </template>
-    </UDrawer>
+    </ResponsiveDrawerModal>
 </template>
