@@ -253,7 +253,10 @@ func (s *Store) HandleUserPropsChanges(
 			Reason:       reason,
 			Data: &usersactivity.UserActivityData{
 				Data: &usersactivity.UserActivityData_WantedChange{
-					WantedChange: &usersactivity.WantedChange{Wanted: wanted},
+					WantedChange: &usersactivity.WantedChange{
+						Wanted:     wanted,
+						WantedTill: in.GetWantedTill(),
+					},
 				},
 			},
 		})

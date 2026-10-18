@@ -245,6 +245,13 @@ const denyView = computed(
                                             : `${$t('common.not')} ${$t('common.wanted')}`
                                     }}
                                 </span>
+                                <span
+                                    v-if="activity.data.data.wantedChange.wanted && activity.data.data.wantedChange.wantedTill"
+                                    class="inline-flex gap-1"
+                                >
+                                    ({{ $t('common.until') }}
+                                    <GenericTime :value="activity.data.data.wantedChange.wantedTill" />)
+                                </span>
                             </template>
 
                             <template

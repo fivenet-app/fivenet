@@ -186,6 +186,10 @@ export interface WantedChange {
      * @generated from protobuf field: bool auto = 2
      */
     auto: boolean;
+    /**
+     * @generated from protobuf field: optional resources.timestamp.Timestamp wanted_till = 3
+     */
+    wantedTill?: Timestamp;
 }
 /**
  * @generated from protobuf message resources.users.activity.TrafficInfractionPointsChange
@@ -757,7 +761,8 @@ class WantedChange$Type extends MessageType<WantedChange> {
     constructor() {
         super("resources.users.activity.WantedChange", [
             { no: 1, name: "wanted", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
-            { no: 2, name: "auto", kind: "scalar", T: 8 /*ScalarType.BOOL*/ }
+            { no: 2, name: "auto", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
+            { no: 3, name: "wanted_till", kind: "message", T: () => Timestamp }
         ]);
     }
     create(value?: PartialMessage<WantedChange>): WantedChange {
@@ -779,6 +784,9 @@ class WantedChange$Type extends MessageType<WantedChange> {
                 case /* bool auto */ 2:
                     message.auto = reader.bool();
                     break;
+                case /* optional resources.timestamp.Timestamp wanted_till */ 3:
+                    message.wantedTill = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.wantedTill);
+                    break;
                 default:
                     let u = options.readUnknownField;
                     if (u === "throw")
@@ -797,6 +805,9 @@ class WantedChange$Type extends MessageType<WantedChange> {
         /* bool auto = 2; */
         if (message.auto !== false)
             writer.tag(2, WireType.Varint).bool(message.auto);
+        /* optional resources.timestamp.Timestamp wanted_till = 3; */
+        if (message.wantedTill)
+            Timestamp.internalBinaryWrite(message.wantedTill, writer.tag(3, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);

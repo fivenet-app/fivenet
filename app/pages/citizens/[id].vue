@@ -244,7 +244,7 @@ const isOpen = ref<boolean>(false);
                 v-if="user"
                 :user="user"
                 register-kbds
-                @update:wanted-status="user.props!.wanted = $event"
+                @update:wanted-status="user.props = $event"
                 @update:job="
                     user.job = $event.job.name;
                     user.jobLabel = $event.job.label;
@@ -284,7 +284,7 @@ const isOpen = ref<boolean>(false);
                             v-if="user"
                             :user="user"
                             register-kbds
-                            @update:wanted-status="user.props!.wanted = $event"
+                            @update:wanted-status="user.props = $event"
                             @update:job="
                                 user.job = $event.job.name;
                                 user.jobLabel = $event.job.label;

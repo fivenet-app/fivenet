@@ -1063,6 +1063,7 @@ type WantedChange struct {
 	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	Wanted        bool                   `protobuf:"varint,1,opt,name=wanted,proto3" json:"wanted,omitempty"`
 	Auto          bool                   `protobuf:"varint,2,opt,name=auto,proto3" json:"auto,omitempty"`
+	WantedTill    *timestamp.Timestamp   `protobuf:"bytes,3,opt,name=wanted_till,json=wantedTill,proto3,oneof" json:"wanted_till,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1106,6 +1107,13 @@ func (x *WantedChange) GetAuto() bool {
 	return false
 }
 
+func (x *WantedChange) GetWantedTill() *timestamp.Timestamp {
+	if x != nil {
+		return x.WantedTill
+	}
+	return nil
+}
+
 func (x *WantedChange) SetWanted(v bool) {
 	x.Wanted = v
 }
@@ -1114,11 +1122,27 @@ func (x *WantedChange) SetAuto(v bool) {
 	x.Auto = v
 }
 
+func (x *WantedChange) SetWantedTill(v *timestamp.Timestamp) {
+	x.WantedTill = v
+}
+
+func (x *WantedChange) HasWantedTill() bool {
+	if x == nil {
+		return false
+	}
+	return x.WantedTill != nil
+}
+
+func (x *WantedChange) ClearWantedTill() {
+	x.WantedTill = nil
+}
+
 type WantedChange_builder struct {
 	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
 
-	Wanted bool
-	Auto   bool
+	Wanted     bool
+	Auto       bool
+	WantedTill *timestamp.Timestamp
 }
 
 func (b0 WantedChange_builder) Build() *WantedChange {
@@ -1127,6 +1151,7 @@ func (b0 WantedChange_builder) Build() *WantedChange {
 	_, _ = b, x
 	x.Wanted = b.Wanted
 	x.Auto = b.Auto
+	x.WantedTill = b.WantedTill
 	return m0
 }
 
@@ -1915,10 +1940,13 @@ const file_resources_users_activity_activity_proto_rawDesc = "" +
 	"\x03new\x18\x02 \x01(\tR\x03new\"g\n" +
 	"\rLicenseChange\x12\x14\n" +
 	"\x05added\x18\x01 \x01(\bR\x05added\x12@\n" +
-	"\blicenses\x18\x02 \x03(\v2$.resources.citizens.licenses.LicenseR\blicenses\":\n" +
+	"\blicenses\x18\x02 \x03(\v2$.resources.citizens.licenses.LicenseR\blicenses\"\x90\x01\n" +
 	"\fWantedChange\x12\x16\n" +
 	"\x06wanted\x18\x01 \x01(\bR\x06wanted\x12\x12\n" +
-	"\x04auto\x18\x02 \x01(\bR\x04auto\"C\n" +
+	"\x04auto\x18\x02 \x01(\bR\x04auto\x12D\n" +
+	"\vwanted_till\x18\x03 \x01(\v2\x1e.resources.timestamp.TimestampH\x00R\n" +
+	"wantedTill\x88\x01\x01B\x0e\n" +
+	"\f_wanted_till\"C\n" +
 	"\x1dTrafficInfractionPointsChange\x12\x10\n" +
 	"\x03old\x18\x01 \x01(\rR\x03old\x12\x10\n" +
 	"\x03new\x18\x02 \x01(\rR\x03new\".\n" +
@@ -2018,16 +2046,17 @@ var file_resources_users_activity_activity_proto_depIdxs = []int32{
 	12, // 13: resources.users.activity.UserActivityData.jail_change:type_name -> resources.users.activity.JailChange
 	13, // 14: resources.users.activity.UserActivityData.fine_change:type_name -> resources.users.activity.FineChange
 	16, // 15: resources.users.activity.LicenseChange.licenses:type_name -> resources.citizens.licenses.License
-	17, // 16: resources.users.activity.LabelsChange.added:type_name -> resources.citizens.labels.Label
-	17, // 17: resources.users.activity.LabelsChange.removed:type_name -> resources.citizens.labels.Label
-	9,  // 18: resources.users.activity.LabelsChange.added_ids:type_name -> resources.users.activity.LabelAdded
-	14, // 19: resources.users.activity.LabelAdded.expires_at:type_name -> resources.timestamp.Timestamp
-	18, // 20: resources.users.activity.CitizenDocumentRelation.relation:type_name -> resources.documents.relations.DocRelation
-	21, // [21:21] is the sub-list for method output_type
-	21, // [21:21] is the sub-list for method input_type
-	21, // [21:21] is the sub-list for extension type_name
-	21, // [21:21] is the sub-list for extension extendee
-	0,  // [0:21] is the sub-list for field type_name
+	14, // 16: resources.users.activity.WantedChange.wanted_till:type_name -> resources.timestamp.Timestamp
+	17, // 17: resources.users.activity.LabelsChange.added:type_name -> resources.citizens.labels.Label
+	17, // 18: resources.users.activity.LabelsChange.removed:type_name -> resources.citizens.labels.Label
+	9,  // 19: resources.users.activity.LabelsChange.added_ids:type_name -> resources.users.activity.LabelAdded
+	14, // 20: resources.users.activity.LabelAdded.expires_at:type_name -> resources.timestamp.Timestamp
+	18, // 21: resources.users.activity.CitizenDocumentRelation.relation:type_name -> resources.documents.relations.DocRelation
+	22, // [22:22] is the sub-list for method output_type
+	22, // [22:22] is the sub-list for method input_type
+	22, // [22:22] is the sub-list for extension type_name
+	22, // [22:22] is the sub-list for extension extendee
+	0,  // [0:22] is the sub-list for field type_name
 }
 
 func init() { file_resources_users_activity_activity_proto_init() }
@@ -2048,6 +2077,7 @@ func file_resources_users_activity_activity_proto_init() {
 		(*UserActivityData_JailChange)(nil),
 		(*UserActivityData_FineChange)(nil),
 	}
+	file_resources_users_activity_activity_proto_msgTypes[4].OneofWrappers = []any{}
 	file_resources_users_activity_activity_proto_msgTypes[6].OneofWrappers = []any{}
 	file_resources_users_activity_activity_proto_msgTypes[8].OneofWrappers = []any{}
 	file_resources_users_activity_activity_proto_msgTypes[9].OneofWrappers = []any{}

@@ -109,6 +109,7 @@ message LicenseChange {
 message WantedChange {
   bool wanted = 1;
   bool auto = 2;
+  optional resources.timestamp.Timestamp wanted_till = 3;
 }
 
 message TrafficInfractionPointsChange {

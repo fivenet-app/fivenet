@@ -346,3 +346,22 @@ func (m *UserActivityData) Sanitize() error {
 
 	return nil
 }
+
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
+func (m *WantedChange) Sanitize() error {
+	if m == nil {
+		return nil
+	}
+
+	// Field: WantedTill
+	if m.WantedTill != nil {
+		if v, ok := any(m.GetWantedTill()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+	}
+
+	return nil
+}

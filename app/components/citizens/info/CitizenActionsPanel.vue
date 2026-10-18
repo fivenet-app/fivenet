@@ -3,6 +3,7 @@ import Actions from '~/components/citizens/info/Actions.vue';
 import SetLabels from '~/components/citizens/info/props/SetLabels.vue';
 import type { File } from '~~/gen/ts/resources/file/file';
 import type { Job, JobGrade } from '~~/gen/ts/resources/jobs/jobs';
+import type { UserProps } from '~~/gen/ts/resources/users/props/props';
 import type { User } from '~~/gen/ts/resources/users/user';
 
 defineProps<{
@@ -11,7 +12,7 @@ defineProps<{
 }>();
 
 const emit = defineEmits<{
-    (e: 'update:wantedStatus', value: boolean): void;
+    (e: 'update:wantedStatus', value: UserProps): void;
     (e: 'update:job', value: { job: Job; grade: JobGrade }): void;
     (e: 'update:trafficInfractionPoints', value: number): void;
     (e: 'update:mugshot', value?: File): void;

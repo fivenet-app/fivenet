@@ -134,8 +134,8 @@ func TestStoreHandleUserPropsChangesUpdatesWanted(t *testing.T) {
 	store := New(testParams(db))
 	zeroInt64 := int64(0)
 	zeroUint32 := uint32(0)
-	wanted := true
-	wantedFalse := false
+	wanted := false
+	wantedTrue := true
 	x := &usersprops.UserProps{
 		UserId:                  42,
 		Wanted:                  &wanted,
@@ -144,7 +144,9 @@ func TestStoreHandleUserPropsChangesUpdatesWanted(t *testing.T) {
 		MugshotFileId:           &zeroInt64,
 	}
 	in := proto.Clone(x).(*usersprops.UserProps)
-	in.Wanted = &wantedFalse
+	in.Wanted = &wantedTrue
+	wantedTill := timestamp.New(time.Date(2026, 7, 24, 10, 0, 0, 0, time.UTC))
+	in.SetWantedTill(wantedTill)
 
 	mock.ExpectExec(regexp.QuoteMeta(`INSERT INTO fivenet_user_props`) + `(?s).*` + regexp.QuoteMeta(`ON DUPLICATE KEY UPDATE`)).
 		WillReturnResult(sqlmock.NewResult(0, 1))
@@ -152,5 +154,6 @@ func TestStoreHandleUserPropsChangesUpdatesWanted(t *testing.T) {
 	activities, err := store.HandleUserPropsChanges(t.Context(), db, x, in, nil, "manual")
 	require.NoError(t, err)
 	require.Len(t, activities, 1)
+	assert.Equal(t, wantedTill, activities[0].GetData().GetWantedChange().GetWantedTill())
 	require.NoError(t, mock.ExpectationsWereMet())
 }

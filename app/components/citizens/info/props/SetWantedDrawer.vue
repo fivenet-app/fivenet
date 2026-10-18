@@ -14,7 +14,7 @@ const props = defineProps<{
 
 const emit = defineEmits<{
     (e: 'close', v: boolean): void;
-    (e: 'update:wantedStatus', value: boolean): void;
+    (e: 'update:wantedStatus', value: UserProps): void;
 }>();
 
 const notifications = useNotificationsStore();
@@ -51,7 +51,9 @@ async function setWantedState(values: Schema): Promise<void> {
         });
         const { response } = await call;
 
-        emit('update:wantedStatus', response.props?.wanted ?? false);
+        if (response.props) {
+            emit('update:wantedStatus', response.props);
+        }
 
         notifications.add({
             title: { key: 'notifications.action_successful.title', parameters: {} },

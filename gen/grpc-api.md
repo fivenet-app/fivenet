@@ -7694,6 +7694,7 @@ Detailed user information for sync purposes Should be kept inline with `resource
 | ----- | ---- | ----- | ----------- |
 | `wanted` | [bool](#bool) |  |  |
 | `auto` | [bool](#bool) |  |  |
+| `wanted_till` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
 
 
 
