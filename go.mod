@@ -12,7 +12,7 @@ ignore (
 require (
 	buf.build/go/protovalidate v1.4.0
 	github.com/DATA-DOG/go-sqlmock v1.5.2
-	github.com/DeRuina/timberjack v1.4.8
+	github.com/DeRuina/timberjack v1.4.9
 	github.com/HugoSmits86/nativewebp v1.3.0
 	github.com/XSAM/otelsql v0.44.0
 	github.com/adhocore/gronx v1.20.5
