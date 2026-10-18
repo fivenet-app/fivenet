@@ -146,7 +146,7 @@
         "eslint": "10.13.0",
         "eslint-config-prettier": "10.1.8",
         "eslint-plugin-prettier": "5.5.7",
-        "h3-next": "npm:h3@2.0.2",
+        "h3-next": "npm:h3@2.0.3",
         "happy-dom": "21.0.3",
         "nuxt": "4.6.2",
         "nuxt-tiptap-editor": "3.4.0",
