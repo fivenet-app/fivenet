@@ -1,4 +1,4 @@
-package events
+package eventsmigrations
 
 import (
 	"context"
@@ -34,15 +34,25 @@ type Migration struct {
 	// ID should be a monotonically increasing string, e.g. "001", "002"
 	ID string
 	// Fn performs the migration against the provided JetStream context.
-	Fn func(ctx context.Context, js *JSWrapper) error
+	Fn func(ctx context.Context, js JetStream) error
 }
 
-// runMigrations executes any pending migrations.  On a fresh install (no version recorded),
+// JetStream is the subset of JetStream operations used by the NATS migrations.
+type JetStream interface {
+	CreateOrUpdateKeyValue(context.Context, jetstream.KeyValueConfig) (jetstream.KeyValue, error)
+	KeyValue(context.Context, string) (jetstream.KeyValue, error)
+	DeleteKeyValue(context.Context, string) error
+	DeleteStream(context.Context, string) error
+	Stream(context.Context, string) (jetstream.Stream, error)
+	DeleteConsumer(context.Context, string, string) error
+}
+
+// Run executes any pending migrations. On a fresh install (no version recorded),
 // it records the latest migration ID and does nothing else.
-func runMigrations(
+func Run(
 	ctx context.Context,
 	logger *zap.Logger,
-	js *JSWrapper,
+	js JetStream,
 	req *reqs.NatsReqs,
 ) error {
 	// Ensure the migration tracking bucket exists
@@ -108,7 +118,7 @@ func init() {
 	registerMigration(Migration{ID: "003_remove_legacy_cron_consumers", Fn: migrate003})
 }
 
-func migrate001(ctx context.Context, js *JSWrapper) error {
+func migrate001(ctx context.Context, js JetStream) error {
 	// Remove any existing "_snapshot" mapping from the tracker buckets, as it is not used anymore
 	for _, bucket := range []string{
 		"userloc",
@@ -160,7 +170,7 @@ func migrate001(ctx context.Context, js *JSWrapper) error {
 	return nil
 }
 
-func migrate002(ctx context.Context, js *JSWrapper) error {
+func migrate002(ctx context.Context, js JetStream) error {
 	if err := js.DeleteKeyValue(ctx, "userinfo_poll_ttl"); err != nil &&
 		!errors.Is(err, jetstream.ErrBucketNotFound) {
 		return fmt.Errorf("failed to delete user info poller ttl bucket. %w", err)
@@ -174,7 +184,7 @@ func migrate002(ctx context.Context, js *JSWrapper) error {
 	return nil
 }
 
-func migrate003(ctx context.Context, js *JSWrapper) error {
+func migrate003(ctx context.Context, js JetStream) error {
 	const (
 		streamName            = "CRON_SCHEDULE"
 		scheduleSubject       = "cron_schedule.schedule"

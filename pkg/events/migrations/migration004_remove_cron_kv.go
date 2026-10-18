@@ -1,4 +1,4 @@
-package events
+package eventsmigrations
 
 import (
 	"context"
@@ -12,7 +12,7 @@ func init() {
 	registerMigration(Migration{ID: "004_remove_cron_kv", Fn: migrate004})
 }
 
-func migrate004(ctx context.Context, js *JSWrapper) error {
+func migrate004(ctx context.Context, js JetStream) error {
 	// The cron KV storage changed from file-backed to memory-backed. NATS does
 	// not allow changing the storage type of an existing bucket, so remove the
 	// old bucket and let the cron registry recreate it with the new settings.
