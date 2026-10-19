@@ -371,7 +371,13 @@ async function closeModal(): Promise<void> {
                 <DataNoDataBlock v-else-if="props.entryId && !data" :type="$t('common.entry', 1)" icon="i-mdi-calendar" />
 
                 <template v-else>
-                    <UFormField class="flex-1" name="calendar" :label="$t('common.calendar')" required>
+                    <UFormField
+                        class="flex-1"
+                        name="calendar"
+                        :label="$t('common.calendar')"
+                        :description="$t('components.calendar.EntryCreateOrUpdateModal.calendar_description')"
+                        required
+                    >
                         <SelectMenu
                             v-model="state.calendar"
                             class="w-full"
@@ -443,7 +449,11 @@ async function closeModal(): Promise<void> {
                         <IconSelectMenu v-model="state.icon" class="w-full" :color="state.calendar?.color" clear />
                     </UFormField>
 
-                    <UFormField class="flex-1" name="allDay">
+                    <UFormField
+                        class="flex-1"
+                        name="allDay"
+                        :description="$t('components.calendar.EntryCreateOrUpdateModal.all_day_description')"
+                    >
                         <UTabs
                             :model-value="state.allDay ? '1' : '0'"
                             :items="[
@@ -453,7 +463,13 @@ async function closeModal(): Promise<void> {
                             @update:model-value="($event) => (state.allDay = $event === '1')"
                         >
                             <template #content>
-                                <UFormField class="flex-1" name="startTime" :label="$t('common.begins_at')" required>
+                                <UFormField
+                                    class="flex-1"
+                                    name="startTime"
+                                    :label="$t('common.begins_at')"
+                                    :description="$t('components.calendar.EntryCreateOrUpdateModal.start_time_description')"
+                                    required
+                                >
                                     <InputDatePicker
                                         v-model="state.startTime"
                                         class="w-full"
@@ -466,6 +482,7 @@ async function closeModal(): Promise<void> {
                                     class="flex-1"
                                     name="endTime"
                                     :label="$t('common.ends_at')"
+                                    :description="$t('components.calendar.EntryCreateOrUpdateModal.end_time_description')"
                                     :required="!state.allDay"
                                 >
                                     <InputDatePicker
@@ -574,15 +591,30 @@ async function closeModal(): Promise<void> {
                         </div>
                     </div>
 
-                    <UFormField class="flex-1" name="closed" :label="$t('common.close', 2)">
+                    <UFormField
+                        class="flex-1"
+                        name="closed"
+                        :label="$t('common.close', 2)"
+                        :description="$t('components.calendar.EntryCreateOrUpdateModal.closed_description')"
+                    >
                         <USwitch v-model="state.closed" />
                     </UFormField>
 
-                    <UFormField class="flex-1" name="rsvpOpen" :label="$t('common.rsvp')">
+                    <UFormField
+                        class="flex-1"
+                        name="rsvpOpen"
+                        :label="$t('common.rsvp')"
+                        :description="$t('components.calendar.EntryCreateOrUpdateModal.rsvp_description')"
+                    >
                         <USwitch v-model="state.rsvpOpen" />
                     </UFormField>
 
-                    <UFormField class="flex-1" name="users" :label="$t('common.guest', 2)">
+                    <UFormField
+                        class="flex-1"
+                        name="users"
+                        :label="$t('common.guest', 2)"
+                        :description="$t('components.calendar.EntryCreateOrUpdateModal.guests_description')"
+                    >
                         <SelectMenu
                             v-model="state.users"
                             class="w-full"

@@ -611,6 +611,11 @@ async function closeModal(): Promise<void> {
                                                             'components.calendar.calendar.CreateOrUpdateModal.discord_settings.reminder_steps.embed_color',
                                                         )
                                                     "
+                                                    :description="
+                                                        $t(
+                                                            'components.calendar.calendar.CreateOrUpdateModal.discord_settings.reminder_steps.embed_color_description',
+                                                        )
+                                                    "
                                                 >
                                                     <ColorPicker
                                                         v-model="state.discordSettings.reminderSteps[idx]!.embed.color"
@@ -624,6 +629,11 @@ async function closeModal(): Promise<void> {
                                                     :label="
                                                         $t(
                                                             'components.calendar.calendar.CreateOrUpdateModal.discord_settings.reminder_steps.embed_title',
+                                                        )
+                                                    "
+                                                    :description="
+                                                        $t(
+                                                            'components.calendar.calendar.CreateOrUpdateModal.discord_settings.reminder_steps.embed_title_description',
                                                         )
                                                     "
                                                 >
@@ -646,6 +656,11 @@ async function closeModal(): Promise<void> {
                                                 :label="
                                                     $t(
                                                         'components.calendar.calendar.CreateOrUpdateModal.discord_settings.reminder_steps.embed_description',
+                                                    )
+                                                "
+                                                :description="
+                                                    $t(
+                                                        'components.calendar.calendar.CreateOrUpdateModal.discord_settings.reminder_steps.embed_description_description',
                                                     )
                                                 "
                                             >

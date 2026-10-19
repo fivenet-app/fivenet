@@ -108,7 +108,7 @@ function getPermissionsForService(service: PermissionServiceGroup): Permission[]
 <template>
     <USlideover
         :title="`${$t('common.effective_permissions')}: ${role?.role?.jobLabel!} - ${role?.role?.jobGradeLabel} (${role?.role?.grade})`"
-        :ui="{ content: 'max-w-4xl' }"
+        :ui="{ content: 'sm:max-w-4xl' }"
     >
         <template #actions>
             <UButton variant="link" trailing-icon="i-mdi-refresh" color="primary" @click="refresh()" />

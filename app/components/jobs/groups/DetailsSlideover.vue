@@ -195,7 +195,7 @@ async function handlePanelChanged(): Promise<void> {
         :title="slideoverTitle"
         :overlay="false"
         :close="{ onClick: () => emit('close', false) }"
-        :ui="{ content: 'max-w-5xl' }"
+        :ui="{ content: 'sm:max-w-5xl' }"
     >
         <template #body>
             <div class="flex flex-col gap-4">

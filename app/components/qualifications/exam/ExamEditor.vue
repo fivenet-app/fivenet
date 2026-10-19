@@ -143,6 +143,7 @@ export type ExamSettingsSchema = z.output<typeof examSettingsSchema>;
                         class="grid grid-cols-2 items-center gap-2"
                         name="minimumPoints"
                         :label="$t('components.qualifications.exam_editor.minimum_points')"
+                        :description="$t('components.qualifications.exam_editor.minimum_points_description')"
                     >
                         <UInputNumber
                             v-model="examSettings.minimumPoints"

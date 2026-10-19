@@ -1821,13 +1821,20 @@
             "create_marker": {
                 "title": "Markierung erstellen",
                 "subtitle": "Erstelle eine neue Markierung.",
+                "name_description": "Name, der für diese Markierung auf der Karte und in Markierungslisten angezeigt wird.",
+                "description_description": "Optionaler Text, der mit der Markierung angezeigt wird.",
+                "color_description": "Farbe, mit der die Markierung auf der Karte angezeigt wird.",
                 "expires_at_description": "Blende diese Markierung optional nach dem ausgewählten Datum aus.",
                 "marker_type_description": "Wähle die Form, mit der die Markierung auf der Karte angezeigt wird.",
                 "coordinate_description": "Lege die Kartenposition fest oder verwende die Kartenauswahl.",
                 "radius_description": "Lege die Größe der kreisförmigen Markierung fest.",
                 "stroke_width_description": "Lege die Breite des Kreisumrisses fest.",
+                "stroke_description": "Zeige einen Umriss um die kreisförmige Markierung an.",
                 "blink_description": "Lasse den Kreisumriss auf der Karte blinken.",
-                "opacity_description": "Lege fest, wie transparent die Form auf der Karte erscheint."
+                "opacity_description": "Lege fest, wie transparent die Form auf der Karte erscheint.",
+                "rectangle_end_x_description": "Lege den Längengrad der gegenüberliegenden Ecke des Rechtecks fest.",
+                "rectangle_end_y_description": "Lege den Breitengrad der gegenüberliegenden Ecke des Rechtecks fest.",
+                "icon_description": "Wähle das Symbol aus, das für Symbolmarkierungen angezeigt wird."
             },
             "update_marker": {
                 "title": "Markierung aktualisieren",
@@ -2125,6 +2132,7 @@
                         "qualification_rule_type_description": "Wähle, wie die ausgewählten Qualifizierungen ausgewertet werden.",
                         "require_completed_description": "Verlange, dass Mitglieder die ausgewählten Qualifizierungen abgeschlossen haben.",
                         "qualification_description": "Wähle die Qualifizierungen für diese Mitgliedschaftsregel aus.",
+                        "reason_description": "Optionaler Kontext, der erklärt, warum diese Mitgliedschaftsregel eingerichtet ist.",
                     "qualification_id": "Qualifikation #{id}",
                     "require_completed": "Abgeschlossen voraussetzen",
                     "add_manual_member": "Manuelles Mitglied hinzufügen",
@@ -2223,6 +2231,7 @@
                     "image": "Bild"
                 },
                 "minimum_points": "Mindestpunktzahl",
+                "minimum_points_description": "Mindestpunktzahl, die für das Bestehen einer automatisch bewerteten Prüfung erforderlich ist.",
                 "auto_grade": {
                     "title": "Automatische Benotung",
                     "description": "Wenn aktiviert, werden eingereichte Prüfungen automatisch bewertet. Das System verwendet die ausgewählten Antworten, um die Prüfung automatisch zu bewerten (der Antwortschlüssel dient zur Unterstützung der Tutoren)."
@@ -2643,9 +2652,9 @@
                     "private": "Privater Kalender",
                     "private_description": "Dies ist dein persönlicher Kalender und er ist nicht mit deinem aktuellen Job verknüpft.",
                     "public": "Öffentlicher Kalender",
-                    "public_description": "Öffentliche Kalender können von Benutzern mit Zugriff auf deinen Job angesehen werden.",
+                    "public_description": "Erlaube Benutzern Lesezugriff auf diesen Kalender, ohne dass ihnen ausdrücklich Zugriff gewährt wurde.",
                     "closed_description": "Geschlossene Kalender bleiben sichtbar, aber neue Einträge können erst wieder hinzugefügt oder bearbeitet werden, wenn der Kalender geöffnet wird.",
-                    "access_description": "Wähle, welche Benutzer und Jobs auf diesen Kalender zugreifen können.",
+                    "access_description": "Lege fest, welche Jobs und Benutzer auf diesen Kalender zugreifen können und welche Zugriffsstufe sie erhalten.",
                     "discord_settings": {
                         "title": "Discord-Erinnerungen",
                         "description": "Sende Erinnerungsnachrichten an einen Discord-Textkanal, bevor Kalenderereignisse beginnen.",
@@ -2662,10 +2671,13 @@
                             "message_description": "Sie können Rollen im Format <\\@&ROLE_ID> erwähnen.",
                             "message_placeholder": "Optionale Discord Nachricht",
                             "embed_title": "Embed Titel",
+                            "embed_title_description": "Optionaler Titel am Anfang des Discord-Embeds.",
                             "embed_title_placeholder": "Optionaler Embed Titel",
                             "embed_description": "Embed description",
+                            "embed_description_description": "Optionale Details im Text des Discord-Embeds.",
                             "embed_description_placeholder": "Optionale Embed Beschreibung",
-                            "embed_color": "Embed Farbe"
+                            "embed_color": "Embed Farbe",
+                            "embed_color_description": "Optionale Akzentfarbe für den Discord-Embed."
                         }
                     }
                 },
@@ -2680,6 +2692,13 @@
                 "update": {
                     "title": "Kalendereintrag aktualisieren"
                 },
+                "calendar_description": "Wähle den Kalender aus, in dem dieser Eintrag sichtbar sein wird.",
+                "all_day_description": "Lege fest, ob der Eintrag den ganzen Tag oder eine bestimmte Start- und Endzeit umfasst.",
+                "start_time_description": "Lege fest, wann der Kalendereintrag beginnt.",
+                "end_time_description": "Lege fest, wann der Kalendereintrag endet. Bei einem ganztägigen Eintrag ist die Angabe optional.",
+                "closed_description": "Geschlossene Einträge bleiben sichtbar, aber Teilnehmer können nicht mehr zusagen.",
+                "rsvp_description": "Erlaube eingeladenen Gästen, auf diesen Eintrag zu antworten.",
+                "guests_description": "Wähle die Benutzer aus, die zu diesem Kalendereintrag eingeladen werden sollen.",
                 "recurring": {
                     "title": "Wiederkehrend",
                     "subtitle": "Diesen Eintrag nach einem festen Rhythmus wiederholen.",
@@ -2761,47 +2780,60 @@
             "job_props": {
                 "job_properties": "Job Eigenschaften",
                 "your_job_properties": "Deine FiveNet Job Eigenschaften.",
+                "logo_description": "Wird in FiveNet für das Logo des Jobs verwendet, unter anderem auf der Wiki-Seite und in anderen Jobansichten.",
                 "livemap_marker_color": "Karten-Marker-Farbe",
+                "livemap_marker_color_description": "Farbe des Markers dieses Jobs auf der Live-Karte.",
+                "radio_frequency_description": "Hauptfunkfrequenz, die dieser Job verwendet.",
                 "quick_buttons": "Schnellzugriff Knöpfe",
+                "quick_buttons_description": "Schnellzugriff auf den Strafrechner für diesen Job aktivieren.",
                 "discord_sync_settings": {
                     "title": "Discord-Bot-Einstellungen",
                     "subtitle": "Verwalte die Discord-Bot-Einstellungen. Um mit dem Discord-Bot loszulegen, laden Sie den Bot ein, legen Sie unten Ihre Discord-Server-ID fest und konfigurieren Sie die Einstellungen nach Wunsch.",
                     "discord_guild_id": "Discord Guild/Server ID",
+                    "discord_guild_id_description": "Discord-Server, auf dem die Rollen und Statusmeldungen dieses Jobs synchronisiert werden.",
                     "invite_bot": "Bot einladen",
                     "last_sync": "Letzte Synchronisation",
                     "user_info_sync": "Mitarbeiter Sync (Namen und Ränge-Rollen)",
+                    "user_info_sync_description": "Mitarbeiternamen und Rangrollen mit Discord synchronisieren.",
                     "user_info_sync_settings": {
                         "employee_role_enabled": "Erstelle und Verwalte Mitarbeiter Rolle",
                         "employee_role_enabled_description": "Erstelle eine Discord-Rolle für Mitarbeiter und halte ihre Mitglieder synchron.",
                         "employee_role_format": "Mitarbeiter-Rollen-Format",
+                        "employee_role_format_description": "Format für die Mitarbeiterrolle; den Job-Platzhalter für den Jobnamen verwenden.",
                         "unemployed_enabled": "Verwalte die Rolle für Arbeitslose",
                         "unemployed_enabled_description": "Halte eine separate Discord-Rolle für arbeitslose Benutzer synchron.",
                         "unemployed_mode": "Modus für das Behandeln von Arbeitslosen",
                         "unemployed_mode_description": "Wähle, ob arbeitslose Benutzer eine Discord-Rolle erhalten oder behalten.",
                         "unemployed_role_name": "Arbeitslosen Rolle",
+                        "unemployed_role_name_description": "Discord-Rolle für Benutzer ohne Job.",
                         "sync_nicknames": "Nicknames synchronisieren",
+                        "sync_nicknames_description": "FiveNet-Namen als Discord-Nicknames synchronisieren.",
                         "group_mapping": {
                             "title": "Zuordnung von Gruppenrollen",
-                            "description": "Gruppieren von einer oder mehreren Rängen in einer \"Gruppen\"-Rolle.",
+                            "description": "Konfiguriere Zuordnungen, die einen oder mehrere Jobränge zu einer Discord-Gruppenrolle zusammenfassen.",
                             "name": "Rollen-Name",
                             "from_grade": "Von Rang",
                             "to_grade": "Bis Rang"
                         },
                         "grade_role_format": {
                             "title": "Rang-Rollen-Format",
+                            "description": "Format für Discord-Rollen, die für Arbeitsgrade erstellt werden.",
                             "grade": "Arbeitsgrad (e.g., 01, 02, etc.)",
                             "grade_label": "Arbeitsgrad-Name (e.g., Officer, Sergeant, etc.)",
                             "grade_single": "Arbeitsgrad (1, 2, 3, etc.)"
                         }
                     },
                     "status_log": "Statusprotokoll",
+                    "status_log_description": "Synchronisations-Statusmeldungen im ausgewählten Discord-Kanal protokollieren.",
                     "status_log_settings": {
-                        "channel_id": "Statusprotokoll-Channel-ID"
+                        "channel_id": "Statusprotokoll-Channel-ID",
+                        "channel_id_description": "Discord-Kanal, in dem Synchronisations-Statusmeldungen veröffentlicht werden."
                     },
                     "jobs_absence_settings": {
                         "jobs_absence_role_enabled": "Verwalte die Abwesenheitsrolle",
                         "jobs_absence_role_enabled_description": "Synchronisiere eine Discord-Rolle für als abwesend markierte Kollegen.",
-                        "jobs_absence_role_name": "Abwesenheitsrolle"
+                        "jobs_absence_role_name": "Abwesenheitsrolle",
+                        "jobs_absence_role_name_description": "Discord-Rolle für als abwesend markierte Benutzer."
                     },
                     "group_sync_settings": {
                         "title": "Gruppen-Synchronisierungseinstellungen",
@@ -2813,6 +2845,7 @@
                         }
                     },
                     "dry_run": "Trockenlaufmodus",
+                    "dry_run_description": "Synchronisationsänderungen anzeigen, ohne sie in Discord anzuwenden.",
                     "qualifications_role_format": {
                         "title": "Qualifizierungen-Rollen-Format",
                         "description": "Namesformat der Discord-Rollen, welche für Qualifizierungen erstellt wird."
@@ -2825,7 +2858,9 @@
                     "absence": {
                         "title": "Abwesenheit",
                         "past_days": "Maximale Rückdatierung einer Abwesenheit in Tagen",
-                        "future_days": "Maximale Vordatierung einer Abwesenheit in Tagen"
+                        "past_days_description": "Wie viele Tage zurück eine Abwesenheit beginnen darf.",
+                        "future_days": "Maximale Vordatierung einer Abwesenheit in Tagen",
+                        "future_days_description": "Wie viele Tage im Voraus eine Abwesenheit geplant werden darf."
                     }
                 },
                 "discord_sync_features": {
@@ -2886,6 +2921,8 @@
                 "website": {
                     "title": "Website",
                     "description": "Konfiguriere Website-Verlinkungen und Einstellungen für öffentliche Statistiken.",
+                    "privacy_policy_description": "Öffentliche URL zur Datenschutzerklärung der Website.",
+                    "imprint_description": "Öffentliche URL zum Impressum der Website.",
                     "links": {
                         "title": "Verlinkungen"
                     },
@@ -2946,13 +2983,17 @@
                         "title": "Banner Nachricht",
                         "subtitle": "Konfiguriere eine kurze, global angezeigte Nachricht mit optionalem Ablaufdatum.",
                         "enabled_description": "Zeige die konfigurierte Bannermeldung in der gesamten Anwendung an.",
+                        "message_description": "Inhalt der globalen Bannermeldung der Anwendung.",
                         "expires_at_description": "Optionales Datum, nach dem die Bannermeldung automatisch ausgeblendet wird."
                     }
                 },
                 "display": {
                     "title": "Anzeige",
                     "description": "Anzeigeeinstellungen, wie Sprache und Währung.",
-                    "intl_locale": "Datums- und Zahlenformat"
+                    "default_locale_description": "Sprache, die standardmäßig verwendet wird, wenn ein Benutzer keine persönliche Präferenz ausgewählt hat.",
+                    "intl_locale": "Datums- und Zahlenformat",
+                    "intl_locale_description": "Regionale Formatierung für Datumsangaben, Zahlen und andere lokalisierte Werte.",
+                    "currency_description": "Währung, die in der gesamten Anwendung für Geldbeträge verwendet wird."
                 },
                 "game": {
                     "tab": "Spiel",
@@ -2979,11 +3020,14 @@
                         "max_leeway_description": "Erlaube diesen Prozentsatz an Toleranz bei der Berechnung der Strafe.",
                         "detention_time_unit": {
                             "title": "Einheit der Haftzeit",
-                            "description": "Die Einheit der Haftzeit (e.g., Monat / Monate, Tag / Tage)."
+                            "description": "Die Einheit der Haftzeit (e.g., Monat / Monate, Tag / Tage).",
+                            "singular_description": "Einheitenbezeichnung für die Anzeige einer Haftzeit.",
+                            "plural_description": "Einheitenbezeichnung für die Anzeige mehrerer Haftzeiten."
                         },
                         "warn_settings": {
                             "title": "Warnungseinstellungen",
                             "description": "Einstellungen für die Warnmeldung, wenn einer der Schwellenwerte erreicht wird.",
+                            "enabled_description": "Zeige eine Warnmeldung an, wenn ein konfigurierter Schwellenwert erreicht wird.",
                             "thresholds": {
                                 "title": "Schwellenwerte",
                                 "description": "Die Gesamtbeträge, bei denen die Warnmeldung angezeigt wird.",

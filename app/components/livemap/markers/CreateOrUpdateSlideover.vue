@@ -620,7 +620,7 @@ onBeforeUnmount(() => {
         :modal="false"
         :close="false"
         :dismissible="!initialDismissGuard && !isPickingCoordinates && !hasUnsavedChanges"
-        :ui="{ content: isPickingCoordinates ? 'max-w-sm' : 'max-w-xl' }"
+        :ui="{ content: isPickingCoordinates ? 'sm:max-w-sm' : 'sm:max-w-xl' }"
     >
         <template #header>
             <div class="flex w-full items-center justify-between gap-2">
@@ -648,7 +648,11 @@ onBeforeUnmount(() => {
                             </label>
                         </dt>
                         <dd class="mt-1 text-sm leading-6 sm:col-span-2 sm:mt-0">
-                            <UFormField name="name" required>
+                            <UFormField
+                                name="name"
+                                :description="$t('components.livemap.create_marker.name_description')"
+                                required
+                            >
                                 <UInput
                                     v-model="state.name"
                                     class="w-full"
@@ -667,7 +671,10 @@ onBeforeUnmount(() => {
                             </label>
                         </dt>
                         <dd class="mt-1 text-sm leading-6 sm:col-span-2 sm:mt-0">
-                            <UFormField name="description">
+                            <UFormField
+                                name="description"
+                                :description="$t('components.livemap.create_marker.description_description')"
+                            >
                                 <UInput
                                     v-model="state.description"
                                     class="w-full"
@@ -702,7 +709,7 @@ onBeforeUnmount(() => {
                             </label>
                         </dt>
                         <dd class="mt-1 text-sm leading-6 sm:col-span-2 sm:mt-0">
-                            <UFormField name="color">
+                            <UFormField name="color" :description="$t('components.livemap.create_marker.color_description')">
                                 <ColorPicker v-model="state.color" class="w-full" />
                             </UFormField>
                         </dd>
@@ -823,7 +830,10 @@ onBeforeUnmount(() => {
                             </label>
                         </dt>
                         <dd class="mt-1 text-sm leading-6 sm:col-span-2 sm:mt-0">
-                            <UFormField name="circleStroke">
+                            <UFormField
+                                name="circleStroke"
+                                :description="$t('components.livemap.create_marker.stroke_description')"
+                            >
                                 <USwitch v-model="state.circleStroke" name="circleStroke" />
                             </UFormField>
                         </dd>
@@ -884,7 +894,10 @@ onBeforeUnmount(() => {
                             </label>
                         </dt>
                         <dd class="mt-1 text-sm leading-6 sm:col-span-2 sm:mt-0">
-                            <UFormField name="rectangleEndX">
+                            <UFormField
+                                name="rectangleEndX"
+                                :description="$t('components.livemap.create_marker.rectangle_end_x_description')"
+                            >
                                 <UInputNumber
                                     v-model="state.rectangleEndX"
                                     class="w-full"
@@ -906,7 +919,10 @@ onBeforeUnmount(() => {
                             </label>
                         </dt>
                         <dd class="mt-1 text-sm leading-6 sm:col-span-2 sm:mt-0">
-                            <UFormField name="rectangleEndY">
+                            <UFormField
+                                name="rectangleEndY"
+                                :description="$t('components.livemap.create_marker.rectangle_end_y_description')"
+                            >
                                 <UInputNumber
                                     v-model="state.rectangleEndY"
                                     class="w-full"
@@ -966,7 +982,10 @@ onBeforeUnmount(() => {
                                     />
                                 </div>
                                 <div class="grid grid-cols-2 gap-2">
-                                    <UFormField :name="`${currentShapeFieldName}.0.x`">
+                                    <UFormField
+                                        :name="`${currentShapeFieldName}.0.x`"
+                                        :description="$t('components.livemap.create_marker.coordinate_description')"
+                                    >
                                         <UInputNumber
                                             v-model="state.x"
                                             class="w-full"
@@ -976,7 +995,10 @@ onBeforeUnmount(() => {
                                         />
                                     </UFormField>
 
-                                    <UFormField :name="`${currentShapeFieldName}.0.y`">
+                                    <UFormField
+                                        :name="`${currentShapeFieldName}.0.y`"
+                                        :description="$t('components.livemap.create_marker.coordinate_description')"
+                                    >
                                         <UInputNumber
                                             v-model="state.y"
                                             class="w-full"
@@ -1018,7 +1040,10 @@ onBeforeUnmount(() => {
                                 </div>
 
                                 <div class="grid grid-cols-2 gap-2">
-                                    <UFormField :name="`${currentShapeFieldName}.${idx + 1}.x`">
+                                    <UFormField
+                                        :name="`${currentShapeFieldName}.${idx + 1}.x`"
+                                        :description="$t('components.livemap.create_marker.coordinate_description')"
+                                    >
                                         <UInputNumber
                                             v-model="point.x"
                                             class="w-full"
@@ -1028,7 +1053,10 @@ onBeforeUnmount(() => {
                                         />
                                     </UFormField>
 
-                                    <UFormField :name="`${currentShapeFieldName}.${idx + 1}.y`">
+                                    <UFormField
+                                        :name="`${currentShapeFieldName}.${idx + 1}.y`"
+                                        :description="$t('components.livemap.create_marker.coordinate_description')"
+                                    >
                                         <UInputNumber
                                             v-model="point.y"
                                             class="w-full"
@@ -1058,7 +1086,7 @@ onBeforeUnmount(() => {
                             </label>
                         </dt>
                         <dd class="mt-1 text-sm leading-6 sm:col-span-2 sm:mt-0">
-                            <UFormField name="icon">
+                            <UFormField name="icon" :description="$t('components.livemap.create_marker.icon_description')">
                                 <IconSelectMenu v-model="state.icon" class="w-full" :hex-color="state.color" />
                             </UFormField>
                         </dd>

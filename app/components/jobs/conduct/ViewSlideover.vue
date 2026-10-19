@@ -42,7 +42,7 @@ onBeforeMount(() => {
 </script>
 
 <template>
-    <USlideover :title="$t('common.entry')" :overlay="false" :ui="{ content: 'max-w-3xl' }">
+    <USlideover :title="$t('common.entry')" :overlay="false" :ui="{ content: 'sm:max-w-3xl' }">
         <template #actions>
             <IDCopyBadge :id="entry.id" class="mx-2" prefix="CON" />
         </template>

@@ -1195,6 +1195,11 @@ const formRef = useTemplateRef('formRef');
                                     class="flex-1"
                                     :label="$t('common.singular')"
                                     name="quickButtons.penaltyCalculator.detentionTimeUnit.singular"
+                                    :description="
+                                        $t(
+                                            'components.settings.app_config.quick_buttons.penalty_calculator.detention_time_unit.singular_description',
+                                        )
+                                    "
                                 >
                                     <UInput
                                         v-model="state.quickButtons.penaltyCalculator.detentionTimeUnit!.singular"
@@ -1207,6 +1212,11 @@ const formRef = useTemplateRef('formRef');
                                     class="flex-1"
                                     :label="$t('common.plural')"
                                     name="quickButtons.penaltyCalculator.detentionTimeUnit.plural"
+                                    :description="
+                                        $t(
+                                            'components.settings.app_config.quick_buttons.penalty_calculator.detention_time_unit.plural_description',
+                                        )
+                                    "
                                 >
                                     <UInput
                                         v-model="state.quickButtons.penaltyCalculator.detentionTimeUnit!.plural"
@@ -1227,7 +1237,14 @@ const formRef = useTemplateRef('formRef');
                                     )
                                 "
                             >
-                                <UFormField name="quickButtons.penaltyCalculator.warnSettings.enabled">
+                                <UFormField
+                                    name="quickButtons.penaltyCalculator.warnSettings.enabled"
+                                    :description="
+                                        $t(
+                                            'components.settings.app_config.quick_buttons.penalty_calculator.warn_settings.enabled_description',
+                                        )
+                                    "
+                                >
                                     <USwitch v-model="state.quickButtons.penaltyCalculator.warnSettings!.enabled" />
                                 </UFormField>
 
@@ -1358,6 +1375,7 @@ const formRef = useTemplateRef('formRef');
                                 class="grid grid-cols-2 items-center gap-2"
                                 name="defaultLocale"
                                 :label="$t('common.default_lang')"
+                                :description="$t('components.settings.app_config.display.default_locale_description')"
                             >
                                 <USelectMenu
                                     v-model="state.defaultLocale"
@@ -1373,6 +1391,7 @@ const formRef = useTemplateRef('formRef');
                                 class="grid grid-cols-2 items-center gap-2"
                                 name="display.intlLocale"
                                 :label="$t('components.settings.app_config.display.intl_locale')"
+                                :description="$t('components.settings.app_config.display.intl_locale_description')"
                             >
                                 <USelectMenu
                                     v-model="state.display.intlLocale"
@@ -1393,6 +1412,7 @@ const formRef = useTemplateRef('formRef');
                                 class="grid grid-cols-2 items-center gap-2"
                                 name="display.currencyName"
                                 :label="$t('common.currency')"
+                                :description="$t('components.settings.app_config.display.currency_description')"
                             >
                                 <USelectMenu
                                     v-model="state.display.currencyName"
@@ -1418,6 +1438,7 @@ const formRef = useTemplateRef('formRef');
                                 class="grid grid-cols-2 items-center gap-2"
                                 name="website.links.privacyPolicy"
                                 :label="$t('common.privacy_policy')"
+                                :description="$t('components.settings.app_config.website.privacy_policy_description')"
                             >
                                 <UInput
                                     v-model="state.website.links.privacyPolicy"
@@ -1432,6 +1453,7 @@ const formRef = useTemplateRef('formRef');
                                 class="grid grid-cols-2 items-center gap-2"
                                 name="website.links.imprint"
                                 :label="$t('common.imprint')"
+                                :description="$t('components.settings.app_config.website.imprint_description')"
                             >
                                 <UInput
                                     v-model="state.website.links.imprint"
@@ -1473,6 +1495,7 @@ const formRef = useTemplateRef('formRef');
                                 class="grid grid-cols-2 items-center gap-2"
                                 name="system.bannerMessage.title"
                                 :label="$t('common.message')"
+                                :description="$t('components.settings.app_config.system.banner_message.message_description')"
                                 :ui="{ container: '', error: 'hidden' }"
                             >
                                 <TiptapEditor

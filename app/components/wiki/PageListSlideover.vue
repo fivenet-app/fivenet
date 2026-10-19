@@ -103,7 +103,7 @@ async function onDragEnd(event: { oldIndex?: number; newIndex?: number }): Promi
 </script>
 
 <template>
-    <USlideover :title="$t('common.change_order')" :overlay="false" :ui="{ content: 'max-w-4xl' }">
+    <USlideover :title="$t('common.change_order')" :overlay="false" :ui="{ content: 'sm:max-w-4xl' }">
         <template #actions>
             <RefreshButton :loading="isRequestPending(status)" @click="() => refresh()" />
         </template>

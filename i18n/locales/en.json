@@ -1821,13 +1821,20 @@
             "create_marker": {
                 "title": "Create Marker",
                 "subtitle": "Create a new Marker.",
+                "name_description": "Name shown for this marker on the map and in marker lists.",
+                "description_description": "Optional text shown with the marker.",
+                "color_description": "Color used to display the marker on the map.",
                 "expires_at_description": "Optionally hide this marker after the selected date.",
                 "marker_type_description": "Choose the shape used to display the marker on the map.",
                 "coordinate_description": "Set the map position, or use the map picker.",
                 "radius_description": "Set the size of the circular marker.",
                 "stroke_width_description": "Set the width of the circle outline.",
+                "stroke_description": "Show an outline around the circular marker.",
                 "blink_description": "Make the circle outline blink on the map.",
-                "opacity_description": "Set how transparent the shape appears on the map."
+                "opacity_description": "Set how transparent the shape appears on the map.",
+                "rectangle_end_x_description": "Set the longitude of the rectangle's opposite corner.",
+                "rectangle_end_y_description": "Set the latitude of the rectangle's opposite corner.",
+                "icon_description": "Choose the icon displayed for icon markers."
             },
             "update_marker": {
                 "title": "Update Marker",
@@ -2125,6 +2132,7 @@
                         "qualification_rule_type_description": "Choose how the selected qualifications are evaluated.",
                         "require_completed_description": "Require members to have completed the selected qualifications.",
                         "qualification_description": "Select the qualifications used by this membership rule.",
+                        "reason_description": "Optional context explaining why this membership rule is configured.",
                     "qualification_id": "Qualification #{id}",
                     "require_completed": "Require completed",
                     "add_manual_member": "Add manual member",
@@ -2223,6 +2231,7 @@
                     "image": "Image"
                 },
                 "minimum_points": "Minimum Points",
+                "minimum_points_description": "Minimum score required for an automatically graded exam to be considered passed.",
                 "auto_grade": {
                     "title": "Automatic Grading",
                     "description": "If enabled, the exam will be automatically graded after the user has submitted it. If disabled, the exam will be graded manually by a tutor. The system uses the selected answers to grade the exam automatically (answer key is for helping tutors.)"
@@ -2643,9 +2652,9 @@
                     "private": "Private Calendar",
                     "private_description": "This is your personal calendar and is not associated with your current job.",
                     "public": "Public Calendar",
-                    "public_description": "Public calendars can be viewed by users who have access to your job.",
+                    "public_description": "Allow users to read this calendar without being granted explicit access.",
                     "closed_description": "Closed calendars remain visible, but new entries cannot be added or edited until the calendar is reopened.",
-                    "access_description": "Choose which users and jobs can access this calendar.",
+                    "access_description": "Choose which jobs and users can access this calendar and what level of access they receive.",
                     "discord_settings": {
                         "title": "Discord Reminders",
                         "description": "Send reminder messages to a Discord text channel before calendar events start.",
@@ -2662,10 +2671,13 @@
                             "message_description": "You can mention roles using the <\\@&ROLE_ID> format.",
                             "message_placeholder": "Optional Discord message",
                             "embed_title": "Embed title",
+                            "embed_title_description": "Optional title shown at the top of the Discord embed.",
                             "embed_title_placeholder": "Optional embed title",
                             "embed_description": "Embed description",
+                            "embed_description_description": "Optional details shown in the body of the Discord embed.",
                             "embed_description_placeholder": "Optional embed description",
-                            "embed_color": "Embed color"
+                            "embed_color": "Embed color",
+                            "embed_color_description": "Optional accent color for the Discord embed."
                         }
                     }
                 },
@@ -2680,6 +2692,13 @@
                 "update": {
                     "title": "Update Calendar Entry"
                 },
+                "calendar_description": "Select the calendar where this entry will be visible.",
+                "all_day_description": "Choose whether the entry covers a whole day or has specific start and end times.",
+                "start_time_description": "Set when the calendar entry begins.",
+                "end_time_description": "Set when the calendar entry ends. This is required unless the entry is an all-day entry.",
+                "closed_description": "Closed entries remain visible, but participants can no longer RSVP.",
+                "rsvp_description": "Allow invited guests to respond to this entry.",
+                "guests_description": "Select the users who should be invited to this calendar entry.",
                 "recurring": {
                     "title": "Recurring",
                     "subtitle": "Repeat this entry on a schedule.",
@@ -2761,47 +2780,60 @@
             "job_props": {
                 "job_properties": "Job Properties",
                 "your_job_properties": "Your job's FiveNet properties.",
+                "logo_description": "Used for the job's logo throughout FiveNet, including the wiki page and other job displays.",
                 "livemap_marker_color": "Map Marker Color",
+                "livemap_marker_color_description": "Color used for this job's marker on the live map.",
+                "radio_frequency_description": "Main radio frequency used by this job.",
                 "quick_buttons": "Quick Access Buttons",
+                "quick_buttons_description": "Enable quick access to the penalty calculator for this job.",
                 "discord_sync_settings": {
                     "title": "Discord Bot Settings",
                     "subtitle": "Manage the basic Discord Bot settings. To get started with the Discord bot, invite the bot, set your Discord server ID below, and configure the settings as you want.",
                     "discord_guild_id": "Discord Guild/ Server ID",
+                    "discord_guild_id_description": "Discord server where this job's roles and status updates are synchronized.",
                     "invite_bot": "Invite Bot",
                     "last_sync": "Last Sync",
                     "user_info_sync": "User Info Sync (Names and Job Grade Roles)",
+                    "user_info_sync_description": "Synchronize employee names and job grade roles with Discord.",
                     "user_info_sync_settings": {
                         "employee_role_enabled": "Create and manage Employee Role",
                         "employee_role_enabled_description": "Create a Discord role for employees and keep its membership synchronized.",
                         "employee_role_format": "Employee Role format",
+                        "employee_role_format_description": "Format used for the employee role; use the job placeholder for the job name.",
                         "unemployed_enabled": "Manage the unemployed role",
                         "unemployed_enabled_description": "Keep a separate Discord role synchronized for unemployed users.",
                         "unemployed_mode": "Mode for handling unemployed users",
                         "unemployed_mode_description": "Choose whether unemployed users receive or retain a Discord role.",
                         "unemployed_role_name": "Unemployed Role Name",
+                        "unemployed_role_name_description": "Discord role assigned to users without a job.",
                         "sync_nicknames": "Sync Nicknames",
+                        "sync_nicknames_description": "Synchronize users' FiveNet names as their Discord nicknames.",
                         "group_mapping": {
                             "title": "Group role mapping",
-                            "description": "Map one or more grades to a \"group\" role.",
+                            "description": "Configure mappings that combine one or more job grades into a single Discord group role.",
                             "name": "Role name",
                             "from_grade": "From Grade",
                             "to_grade": "To Grade"
                         },
                         "grade_role_format": {
                             "title": "Grade Role format",
+                            "description": "Format used for Discord roles created for job grades.",
                             "grade": "Job Grade (e.g., 01, 02, etc.)",
                             "grade_label": "Job Grade Label (e.g., Officer, Sergeant, etc.)",
                             "grade_single": "Job Grade (1, 2, 3, etc.)"
                         }
                     },
                     "status_log": "Status Log",
+                    "status_log_description": "Record synchronization status updates in the selected Discord channel.",
                     "status_log_settings": {
-                        "channel_id": "Status Log Channel ID"
+                        "channel_id": "Status Log Channel ID",
+                        "channel_id_description": "Discord channel where synchronization status messages are posted."
                     },
                     "jobs_absence_settings": {
                         "jobs_absence_role_enabled": "Manage the absence role",
                         "jobs_absence_role_enabled_description": "Synchronize a Discord role for colleagues marked as absent.",
-                        "jobs_absence_role_name": "Absence Role"
+                        "jobs_absence_role_name": "Absence Role",
+                        "jobs_absence_role_name_description": "Discord role used for users marked as absent."
                     },
                     "group_sync_settings": {
                         "title": "Group Sync Settings",
@@ -2813,6 +2845,7 @@
                         }
                     },
                     "dry_run": "Dry run mode",
+                    "dry_run_description": "Preview synchronization changes without applying them to Discord.",
                     "qualifications_role_format": {
                         "title": "Qualifications Role Format",
                         "description": "Name format of the Discord roles created for Qualifications."
@@ -2825,7 +2858,9 @@
                     "absence": {
                         "title": "Absence",
                         "past_days": "Maximum backdating of an absence in days",
-                        "future_days": "Maximum days in the future an absence can be dated"
+                        "past_days_description": "How many days back an absence may start.",
+                        "future_days": "Maximum days in the future an absence can be dated",
+                        "future_days_description": "How many days ahead an absence may be scheduled."
                     }
                 },
                 "discord_sync_features": {
@@ -2886,6 +2921,8 @@
                 "website": {
                     "title": "Website",
                     "description": "Configure website links and public statistics settings.",
+                    "privacy_policy_description": "Public URL for the website privacy policy.",
+                    "imprint_description": "Public URL for the website imprint/legal information.",
                     "links": {
                         "title": "Links"
                     },
@@ -2946,13 +2983,17 @@
                         "title": "Banner Message",
                         "subtitle": "Configure a short message shown globally, with an optional expiry date.",
                         "enabled_description": "Show the configured banner message to users across the application.",
+                        "message_description": "Message content displayed in the global application banner.",
                         "expires_at_description": "Optionally hide the banner automatically after this date."
                     }
                 },
                 "display": {
                     "title": "Display",
                     "description": "Display settings, such as language and currency.",
-                    "intl_locale": "International locale"
+                    "default_locale_description": "Language used by default when a user has not selected a personal preference.",
+                    "intl_locale": "International locale",
+                    "intl_locale_description": "Regional formatting for dates, numbers, and other locale-sensitive values.",
+                    "currency_description": "Currency used for monetary values throughout the application."
                 },
                 "game": {
                     "tab": "Game",
@@ -2979,11 +3020,14 @@
                         "max_leeway_description": "Allow this percentage of leeway when calculating the final penalty.",
                         "detention_time_unit": {
                             "title": "Detention Time Unit",
-                            "description": "The unit of the detention time (e.g., month / months, day / days)."
+                            "description": "The unit of the detention time (e.g., month / months, day / days).",
+                            "singular_description": "Unit label used when one detention period is shown.",
+                            "plural_description": "Unit label used when multiple detention periods are shown."
                         },
                         "warn_settings": {
                             "title": "Warn Settings",
                             "description": "Settings for warn message if one of the thresholds is reached.",
+                            "enabled_description": "Show a warning message when a configured penalty threshold is reached.",
                             "thresholds": {
                                 "title": "Threshold Amounts",
                                 "description": "The amounts at which the warn message is shown."

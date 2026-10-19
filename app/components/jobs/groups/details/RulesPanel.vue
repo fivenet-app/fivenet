@@ -646,7 +646,10 @@ watch(
                     </UFormField>
                 </div>
 
-                <UFormField :label="$t('common.reason', 1)">
+                <UFormField
+                    :label="$t('common.reason', 1)"
+                    :description="$t('components.jobs.groups.details.reason_description')"
+                >
                     <UTextarea
                         v-model="ruleForm.reason"
                         class="w-full"

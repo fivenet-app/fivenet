@@ -191,7 +191,7 @@ onBeforeUnmount(() => {
         :modal="false"
         :dismissible="!initialDismissGuard && !isPickingCoordinates && !hasUnsavedChanges && canSubmit"
         :overlay="false"
-        :ui="{ content: isPickingCoordinates ? 'max-w-sm' : 'max-w-xl' }"
+        :ui="{ content: isPickingCoordinates ? 'sm:max-w-sm' : 'sm:max-w-xl' }"
     >
         <template #header>
             <div class="flex w-full items-center justify-between gap-2">

@@ -59,8 +59,8 @@ const schema = z.object({
             groupMapping: z
                 .object({
                     name: z.coerce.string().max(64),
-                    fromGrade: z.coerce.number().min(0).max(99999),
-                    toGrade: z.coerce.number().min(0).max(99999),
+                    fromGrade: z.coerce.number().min(appConfig.game.startJobGrade).max(99999),
+                    toGrade: z.coerce.number().min(appConfig.game.startJobGrade).max(99999),
                 })
                 .array()
                 .max(25)
@@ -452,6 +452,7 @@ const confirmModal = overlay.create(ConfirmModal);
                                     class="grid grid-cols-2 items-center gap-2"
                                     name="logoFile"
                                     :label="$t('common.logo')"
+                                    :description="$t('components.settings.job_props.logo_description')"
                                 >
                                     <div
                                         v-if="jobProps.logoFile?.filePath"
@@ -508,6 +509,7 @@ const confirmModal = overlay.create(ConfirmModal);
                                     class="grid grid-cols-2 items-center gap-2"
                                     name="livemapMarkerColor"
                                     :label="$t('components.settings.job_props.livemap_marker_color')"
+                                    :description="$t('components.settings.job_props.livemap_marker_color_description')"
                                 >
                                     <ColorPicker
                                         v-model="state.livemapMarkerColor"
@@ -520,6 +522,7 @@ const confirmModal = overlay.create(ConfirmModal);
                                     class="grid grid-cols-2 items-center gap-2"
                                     name="radioFrequency"
                                     :label="$t('common.radio_frequency')"
+                                    :description="$t('components.settings.job_props.radio_frequency_description')"
                                 >
                                     <UInput
                                         v-model="state.radioFrequency"
@@ -539,6 +542,7 @@ const confirmModal = overlay.create(ConfirmModal);
                                     class="grid grid-cols-2 items-center gap-2"
                                     name="quickButtons"
                                     :label="$t('components.settings.job_props.quick_buttons')"
+                                    :description="$t('components.settings.job_props.quick_buttons_description')"
                                 >
                                     <div class="flex flex-col gap-2">
                                         <div class="space-y-4">
@@ -561,7 +565,7 @@ const confirmModal = overlay.create(ConfirmModal);
                                     class="grid grid-cols-2 items-center gap-2"
                                     name="settings.absencePastDays"
                                     :label="$t('components.settings.job_props.settings.absence.past_days')"
-                                    :description="$t('common.day', 2)"
+                                    :description="$t('components.settings.job_props.settings.absence.past_days_description')"
                                 >
                                     <UInputNumber
                                         v-model="state.settings.absencePastDays"
@@ -576,7 +580,7 @@ const confirmModal = overlay.create(ConfirmModal);
                                     class="grid grid-cols-2 items-center gap-2"
                                     name="settings.absenceFutureDays"
                                     :label="$t('components.settings.job_props.settings.absence.future_days')"
-                                    :description="$t('common.day', 2)"
+                                    :description="$t('components.settings.job_props.settings.absence.future_days_description')"
                                 >
                                     <UInputNumber
                                         v-model="state.settings.absenceFutureDays"
@@ -619,6 +623,9 @@ const confirmModal = overlay.create(ConfirmModal);
                                     class="grid grid-cols-2 items-center gap-2"
                                     name="discordGuildId"
                                     :label="$t('components.settings.job_props.discord_sync_settings.discord_guild_id')"
+                                    :description="
+                                        $t('components.settings.job_props.discord_sync_settings.discord_guild_id_description')
+                                    "
                                 >
                                     <template v-if="nuiEnabled || dcConnectRequired">
                                         <NotSupportedTabletBlock v-if="nuiEnabled" />
@@ -687,6 +694,7 @@ const confirmModal = overlay.create(ConfirmModal);
                                     class="grid grid-cols-2 items-center gap-2"
                                     name="discordSyncSettings.dryRun"
                                     :label="$t('components.settings.job_props.discord_sync_settings.dry_run')"
+                                    :description="$t('components.settings.job_props.discord_sync_settings.dry_run_description')"
                                 >
                                     <USwitch v-model="state.discordSyncSettings.dryRun" :disabled="!canSubmit || !canEdit" />
                                 </UFormField>
@@ -695,6 +703,9 @@ const confirmModal = overlay.create(ConfirmModal);
                                     class="grid grid-cols-2 items-center gap-2"
                                     name="discordSyncSettings.statusLog"
                                     :label="$t('components.settings.job_props.discord_sync_settings.status_log')"
+                                    :description="
+                                        $t('components.settings.job_props.discord_sync_settings.status_log_description')
+                                    "
                                 >
                                     <USwitch v-model="state.discordSyncSettings.statusLog" :disabled="!canSubmit || !canEdit" />
                                 </UFormField>
@@ -704,6 +715,11 @@ const confirmModal = overlay.create(ConfirmModal);
                                     name="discordSyncSettings.statusLogSettings.channelId"
                                     :label="
                                         $t('components.settings.job_props.discord_sync_settings.status_log_settings.channel_id')
+                                    "
+                                    :description="
+                                        $t(
+                                            'components.settings.job_props.discord_sync_settings.status_log_settings.channel_id_description',
+                                        )
                                     "
                                 >
                                     <SelectMenu
@@ -766,6 +782,9 @@ const confirmModal = overlay.create(ConfirmModal);
                                     class="grid grid-cols-2 items-center gap-2"
                                     name="discordSyncSettings.userInfoSync"
                                     :label="$t('components.settings.job_props.discord_sync_settings.user_info_sync')"
+                                    :description="
+                                        $t('components.settings.job_props.discord_sync_settings.user_info_sync_description')
+                                    "
                                 >
                                     <USwitch
                                         v-model="state.discordSyncSettings.userInfoSync"
@@ -780,6 +799,11 @@ const confirmModal = overlay.create(ConfirmModal);
                                         :label="
                                             $t(
                                                 'components.settings.job_props.discord_sync_settings.user_info_sync_settings.grade_role_format.title',
+                                            )
+                                        "
+                                        :description="
+                                            $t(
+                                                'components.settings.job_props.discord_sync_settings.user_info_sync_settings.grade_role_format.description',
                                             )
                                         "
                                     >
@@ -835,6 +859,11 @@ const confirmModal = overlay.create(ConfirmModal);
                                         :label="
                                             $t(
                                                 'components.settings.job_props.discord_sync_settings.user_info_sync_settings.employee_role_format',
+                                            )
+                                        "
+                                        :description="
+                                            $t(
+                                                'components.settings.job_props.discord_sync_settings.user_info_sync_settings.employee_role_format_description',
                                             )
                                         "
                                     >
@@ -939,6 +968,11 @@ const confirmModal = overlay.create(ConfirmModal);
                                                 'components.settings.job_props.discord_sync_settings.user_info_sync_settings.unemployed_role_name',
                                             )
                                         "
+                                        :description="
+                                            $t(
+                                                'components.settings.job_props.discord_sync_settings.user_info_sync_settings.unemployed_role_name_description',
+                                            )
+                                        "
                                     >
                                         <UInput
                                             v-model="state.discordSyncSettings.userInfoSyncSettings.unemployedRoleName"
@@ -965,6 +999,11 @@ const confirmModal = overlay.create(ConfirmModal);
                                         :label="
                                             $t(
                                                 'components.settings.job_props.discord_sync_settings.user_info_sync_settings.sync_nicknames',
+                                            )
+                                        "
+                                        :description="
+                                            $t(
+                                                'components.settings.job_props.discord_sync_settings.user_info_sync_settings.sync_nicknames_description',
                                             )
                                         "
                                     >
@@ -1036,7 +1075,7 @@ const confirmModal = overlay.create(ConfirmModal);
                                                                 )
                                                             "
                                                         >
-                                                            <UInput
+                                                            <UInputNumber
                                                                 v-model="
                                                                     state.discordSyncSettings.userInfoSyncSettings.groupMapping[
                                                                         idx
@@ -1044,8 +1083,7 @@ const confirmModal = overlay.create(ConfirmModal);
                                                                 "
                                                                 class="w-full"
                                                                 :name="`discordSyncSettings.userInfoSyncSettings.${idx}.fromGrade`"
-                                                                type="number"
-                                                                :min="0"
+                                                                :min="appConfig.game.startJobGrade"
                                                                 :disabled="
                                                                     !state.discordSyncSettings.userInfoSync ||
                                                                     !canSubmit ||
@@ -1058,6 +1096,7 @@ const confirmModal = overlay.create(ConfirmModal);
                                                                 "
                                                             />
                                                         </UFormField>
+
                                                         <UFormField
                                                             class="flex-1"
                                                             :name="`discordSyncSettings.userInfoSyncSettings.groupMapping.${idx}.toGrade`"
@@ -1067,7 +1106,7 @@ const confirmModal = overlay.create(ConfirmModal);
                                                                 )
                                                             "
                                                         >
-                                                            <UInput
+                                                            <UInputNumber
                                                                 v-model="
                                                                     state.discordSyncSettings.userInfoSyncSettings.groupMapping[
                                                                         idx
@@ -1075,8 +1114,7 @@ const confirmModal = overlay.create(ConfirmModal);
                                                                 "
                                                                 class="w-full"
                                                                 :name="`userInfoSyncSettings.${idx}.toGrade`"
-                                                                type="number"
-                                                                :min="0"
+                                                                :min="appConfig.game.startJobGrade"
                                                                 :disabled="
                                                                     !state.discordSyncSettings.userInfoSync ||
                                                                     !canSubmit ||
@@ -1155,6 +1193,11 @@ const confirmModal = overlay.create(ConfirmModal);
                                             :label="
                                                 $t(
                                                     'components.settings.job_props.discord_sync_settings.jobs_absence_settings.jobs_absence_role_name',
+                                                )
+                                            "
+                                            :description="
+                                                $t(
+                                                    'components.settings.job_props.discord_sync_settings.jobs_absence_settings.jobs_absence_role_name_description',
                                                 )
                                             "
                                         >
