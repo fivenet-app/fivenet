@@ -1,5 +1,6 @@
 <script lang="ts" setup>
 import type { BadgeProps } from '@nuxt/ui';
+import ResponsiveDrawerModal from '~/components/partials/ResponsiveDrawerModal.vue';
 import CitizenInfoPopover from '~/components/partials/citizens/CitizenInfoPopover.vue';
 import CustomContentRenderer from '~/components/partials/content/CustomContentRenderer.vue';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';

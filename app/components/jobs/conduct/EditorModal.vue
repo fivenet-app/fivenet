@@ -240,7 +240,10 @@ async function closeModal(): Promise<void> {
                         </dt>
 
                         <dd class="mt-1 text-sm leading-6 sm:col-span-2 sm:mt-0">
-                            <UFormField name="type">
+                            <UFormField
+                                name="type"
+                                :description="$t('components.jobs.conduct.CreateOrUpdateModal.type_description')"
+                            >
                                 <ClientOnly>
                                     <USelectMenu
                                         v-model="state.type"
@@ -282,7 +285,10 @@ async function closeModal(): Promise<void> {
                         </dt>
 
                         <dd class="mt-1 text-sm leading-6 sm:col-span-2 sm:mt-0">
-                            <UFormField name="targetUserId">
+                            <UFormField
+                                name="targetUserId"
+                                :description="$t('components.jobs.conduct.CreateOrUpdateModal.target_user_description')"
+                            >
                                 <SelectMenu
                                     v-model="state.targetUserId"
                                     class="w-full"
@@ -357,7 +363,10 @@ async function closeModal(): Promise<void> {
                         </dt>
 
                         <dd class="mt-1 text-sm leading-6 sm:col-span-2 sm:mt-0">
-                            <UFormField name="expiresAt">
+                            <UFormField
+                                name="expiresAt"
+                                :description="$t('components.jobs.conduct.CreateOrUpdateModal.expires_at_description')"
+                            >
                                 <InputDatePicker v-model="state.expiresAt" clearable time />
                             </UFormField>
                         </dd>

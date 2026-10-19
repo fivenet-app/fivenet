@@ -983,6 +983,7 @@
         "owner": "Eigentümer",
         "category": "Kategorie | Kategorien",
         "description": "Beschreibung",
+        "details": "Details",
         "create": "Erstellen",
         "account": "Konto",
         "info": "Info",
@@ -1689,6 +1690,9 @@
             }
         },
         "documents": {
+            "ReminderDrawer": {
+                "reminder_time_description": "Wähle, wann die Dokumentenerinnerung gesendet werden soll."
+            },
             "document_comment_entry": {
                 "edit_comment": "Bearbeite deinen Kommentar"
             },
@@ -1707,9 +1711,11 @@
                 "open_document": "Dokument öffnen",
                 "remove_reference": "Referenz entfernen",
                 "add_reference": "Referenz hinzufügen",
+                "references_description": "Referenzen verknüpfen dieses Dokument mit anderen Dokumenten und beschreiben deren Zusammenhang, z. B. verlinkt, gelöst, abgeschlossen oder veraltet.",
                 "open_citizen": "Bürger öffnen",
                 "remove_relation": "Beziehung entfernen",
                 "add_relation": "Beziehung hinzufügen",
+                "relations_description": "Beziehungen verknüpfen dieses Dokument mit Bürgern und beschreiben deren Beteiligung, z. B. erwähnt, betroffen oder ursächlich.",
                 "mentioned": "Erwähnt",
                 "targets": "Zielt",
                 "caused": "Verursacht"
@@ -1751,9 +1757,11 @@
             },
             "template_workflow_editor": {
                 "reminder": {
+                    "enabled_description": "Aktiviere Erinnerungen für Besitzer und Ersteller von Dokumenten.",
                     "description": "Dokumenten-Erinnerungen, werden nur an den Besitzer/Ersteller des Dokumentes geschickt. Die Erinnerungen werden in Reihenfolge verschickt, jeweils aufbauend auf der vorherigen Erinnerung. E.g., Erinnerung 1 (3 Tage) wird 3 Tage nach Dokumenten-Erstellung/letzter Aktualisierung verschickt, Erinnerung 2 (2 Tage) wird so gesehen erst in 5 Tagen verschickt.\nDie Erinnerungen starten wieder bei der Ersten sollte das zwischendurch Dokument aktualisiert worden sein."
                 },
                 "auto_close": {
+                    "enabled_description": "Schließe das Dokument nach der konfigurierten Anzahl von Tagen automatisch.",
                     "description": "Automatisches Schließen des Dokumentes nach der Anzahl der Tagen. Die Anzahl der Tage wird mit dem Dokumenten-Erstellungs- oder Änderungszeitpunkt plus gerechnet."
                 },
                 "max_reminder_count": {
@@ -1762,21 +1770,34 @@
                 }
             },
             "template_approval_editor": {
-                "due_in": "Fällig in Tagen"
+                "due_in": "Fällig in Tagen",
+                "due_in_description": "Lege fest, wie viele Tage der Zuständige für diese Genehmigungsaufgabe hat."
+            },
+            "template_schema": {
+                "users_description": "Lege fest, wie viele Bürger in Dokumenten mit dieser Vorlage enthalten sein müssen.",
+                "documents_description": "Lege fest, wie viele zugehörige Dokumente diese Vorlage erfordert.",
+                "vehicles_description": "Lege fest, wie viele Fahrzeuge in Dokumenten mit dieser Vorlage enthalten sein müssen."
             },
             "approval": {
                 "policy_form": {
                     "title": "Genehmigungsrichtlinie",
                     "rule_kind": "Regeltyp",
+                    "rule_kind_description": "Wähle, ob die Genehmigung einer Person oder einem Job/Rang zugewiesen wird.",
                     "on_edit_behavior": "Bearbeitungsverhalten",
-                    "required_approvals": "Erforderliche Genehmigungen"
+                    "on_edit_behavior_description": "Lege fest, ob die Bearbeitung den Genehmigungsfortschritt beibehält oder zurücksetzt.",
+                    "required_approvals": "Erforderliche Genehmigungen",
+                    "required_approvals_description": "Lege fest, wie viele Genehmigungen bei einer Quorum-Regel benötigt werden."
                 },
                 "tasks": "Genehmigungsaufgaben",
                 "task_form": {
-                    "title": "Aufgaben"
+                    "title": "Aufgaben",
+                    "minimum_grade_description": "Nur Benutzer ab diesem Jobrang können die Aufgabe erfüllen.",
+                    "due_at_description": "Lege das Datum fest, bis zu dem diese Genehmigungsaufgabe abgeschlossen sein muss."
                 },
                 "slots": "Genehmigungs-Slots",
+                "slots_description": "Lege fest, wie viele Zuständige diese Genehmigungsaufgabe erfüllen können.",
                 "signature_required": "Unterschrift(en) erforderlich",
+                "signature_required_description": "Genehmiger müssen zusätzlich zu ihrer Genehmigung eine Unterschrift abgeben.",
                 "document_not_published": "Das Dokument wurde nicht veröffentlicht.",
                 "self_approve_allowed": {
                     "title": "Selbstgenehmigung zulassen",
@@ -1799,7 +1820,14 @@
             },
             "create_marker": {
                 "title": "Markierung erstellen",
-                "subtitle": "Erstelle eine neue Markierung."
+                "subtitle": "Erstelle eine neue Markierung.",
+                "expires_at_description": "Blende diese Markierung optional nach dem ausgewählten Datum aus.",
+                "marker_type_description": "Wähle die Form, mit der die Markierung auf der Karte angezeigt wird.",
+                "coordinate_description": "Lege die Kartenposition fest oder verwende die Kartenauswahl.",
+                "radius_description": "Lege die Größe der kreisförmigen Markierung fest.",
+                "stroke_width_description": "Lege die Breite des Kreisumrisses fest.",
+                "blink_description": "Lasse den Kreisumriss auf der Karte blinken.",
+                "opacity_description": "Lege fest, wie transparent die Form auf der Karte erscheint."
             },
             "update_marker": {
                 "title": "Markierung aktualisieren",
@@ -1950,6 +1978,7 @@
             "settings": {
                 "title": "Leitstellen-Einstellungen",
                 "description": "Einstellungen zur Änderung des Leistellen-Systems und vordefinierter Status von Einheiten und Einsätzen.",
+                    "enabled_description": "Deaktiviere diese Option, um die Nutzung der Leitstelle zu verhindern.",
                 "predefined": {
                     "title": "Vordefinierte Status",
                     "description": "Verwalte vordefinierte Einsatz- und Einheit-Status-Gründe."
@@ -1958,8 +1987,11 @@
                     "title": "Zeitangaben",
                     "description": "Zeitangaben für Einsatz- und Einheit-Status-Pings.",
                     "dispatch_max_wait": "Einsatz: Wartezeit (in Sekunden)",
+                    "dispatch_max_wait_description": "Lege fest, wie lange ein Einsatz auf eine Einheit warten kann, bevor er eskaliert oder aktualisiert wird.",
                     "require_unit": "Kollegen müssen in einer Einheit sein",
+                    "require_unit_description": "Verlange, dass Kollegen einer Einheit beitreten, bevor sie Einsätze bearbeiten können.",
                     "require_unit_reminder_seconds": "Erinnerungsintervall (in Sekunden), um Kollegen anzupingen, die nicht in einer Einheit sind"
+                    ,"require_unit_reminder_seconds_description": "Lege fest, wie oft Kollegen außerhalb einer Einheit an den Beitritt erinnert werden."
                 },
                 "access": {
                     "title": "Geteilter Zugriff",
@@ -1968,13 +2000,17 @@
                 "deduplication": {
                     "title": "Einsatz-Deduplizierung",
                     "description": "Aktivieren Sie die Deduplizierung von Einsätzen. Wenn diese Option aktiviert ist, werden Einstäze im gleichen Radius als Duplikate makiert und abgebrochen.",
+                    "enabled_description": "Markiere neue Einsätze am gleichen Ort während des konfigurierten Zeitfensters als Duplikate.",
                     "deduplication_duration": "Deduplizierungs-Zeitfenster (in Sekunden)",
+                    "deduplication_duration_description": "Lege fest, wie lange Einsätze am gleichen Ort als Duplikate gelten.",
                     "deduplication_radius": "Deduplizierungs-Radius (in Metern)",
                     "deduplication_radius_description": "Der Radius, in dem die Einsätze dedupliziert werden. Wenn ein neuer Einsatz innerhalb dieses Radius eines bestehenden Einsatz erstellt wird, wird der neue Einsatz entsprechend als Duplikat markiert und abgebrochen."
                 },
                 "public": {
                     "description": "Wenn aktiviert, wird Ihr Job für jeden auswählbar sein, der die Berechtigung zum erstellen von Einsätzen hat. Dies ist nützlich für öffentliche Jobs wie Polizei-, Taxi- oder Busdienste."
                 },
+                "mode_description": "Wähle, wie die Leitstelle Einsätze verarbeitet und darstellt.",
+                "fallback_mode_description": "Wähle den Modus, der verwendet wird, wenn der primäre Modus nicht genutzt werden kann.",
                 "offered_access": {
                     "title": "Angebotene Zugriffe",
                     "description": "Dies sind Zugriffe, die von anderen Jobs angeboten werden. Um angebotene Zugriffe zu aktivieren, aktivieren Sie den Eintrag über den Schalter und speichern Sie Ihre Einstellungen."
@@ -1996,7 +2032,10 @@
                     },
                     "update": {
                         "title": "Aktualisiere Führungsregister-Eintrag"
-                    }
+                    },
+                    "target_user_description": "Wähle den Kollegen aus, auf den sich dieser Führungsregister-Eintrag bezieht.",
+                    "type_description": "Wähle die Kategorie für diesen Führungsregister-Eintrag aus.",
+                    "expires_at_description": "Lege optional fest, ab wann dieser Führungsregister-Eintrag nicht mehr aktiv ist."
                 }
             },
             "timeclock": {
@@ -2077,6 +2116,15 @@
                     "excluded": "Ausgeschlossen",
                     "rule": "Regel",
                     "rule_type": "Regeltyp",
+                        "rule_type_description": "Wähle, ob diese Regel auf einem Jobrang oder einer Qualifizierung basiert.",
+                        "rule_enabled_description": "Deaktivierte Regeln beeinflussen die Gruppenmitgliedschaft nicht.",
+                        "grade_rule_type_description": "Wähle, ob ein Mindest-, exakter Rang oder ein Rangbereich gilt.",
+                        "grade_description": "Wähle den Rang aus, auf den diese Regel angewendet wird.",
+                        "min_grade_description": "Wähle den niedrigsten Rang des Bereichs.",
+                        "max_grade_description": "Wähle den höchsten Rang des Bereichs.",
+                        "qualification_rule_type_description": "Wähle, wie die ausgewählten Qualifizierungen ausgewertet werden.",
+                        "require_completed_description": "Verlange, dass Mitglieder die ausgewählten Qualifizierungen abgeschlossen haben.",
+                        "qualification_description": "Wähle die Qualifizierungen für diese Mitgliedschaftsregel aus.",
                     "qualification_id": "Qualifikation #{id}",
                     "require_completed": "Abgeschlossen voraussetzen",
                     "add_manual_member": "Manuelles Mitglied hinzufügen",
@@ -2180,6 +2228,13 @@
                     "description": "Wenn aktiviert, werden eingereichte Prüfungen automatisch bewertet. Das System verwendet die ausgewählten Antworten, um die Prüfung automatisch zu bewerten (der Antwortschlüssel dient zur Unterstützung der Tutoren)."
                 },
                 "exam_duration": "Prüfungsdauer",
+                "exam_mode_description": "Wähle, ob die Prüfung deaktiviert ist, aktiviert ist oder zum Ablegen eine genehmigte Anfrage erfordert.",
+                "exam_duration_description": "Lege die maximale Zeit fest, die zum Abschließen der Prüfung zur Verfügung steht.",
+                "min_length_description": "Lege die Mindestanzahl an Zeichen für die Antwort fest.",
+                "max_length_description": "Lege die maximale Anzahl an Zeichen für die Antwort fest.",
+                "answer_key_description": "Füge Hinweise oder die erwartete Antwort für Tutoren und die Bewertung hinzu.",
+                "points_description": "Lege fest, wie viele Punkte diese Frage zur Prüfung beiträgt.",
+                "multiple_choice_limit_description": "Lege fest, wie viele Antworten maximal ausgewählt werden dürfen.",
                 "auto_grade_mode": {
                     "title": "Bewertungsmodus",
                     "description": "Der Modus für die automatische Bewertung. 'Strikter Modus' gibt keine Punkte für teilweise richtige Antworten (z. B. müssen alle Multiple-Choice-Antworten ausgewählt und korrekt sein.)"
@@ -2282,6 +2337,11 @@
             },
             "correct_question": "Richtig",
             "qualification_editor": {
+                "closed_description": "Verhindere neue Anfragen und Änderungen an dieser Qualifizierung, während bestehende Ergebnisse verfügbar bleiben.",
+                "public_description": "Erlaube jedem, diese Qualifizierung ohne ausdrücklichen Zugriff anzusehen.",
+                "discord_enabled_description": "Synchronisiere diese Qualifizierung mit einer Discord-Rolle.",
+                "discord_role_description": "Wähle die Discord-Rolle, die Benutzern nach Abschluss zugewiesen wird.",
+                "label_sync_enabled_description": "Wende das konfigurierte Label automatisch an, wenn diese Qualifizierung abgeschlossen wird.",
                 "label_sync_format": {
                     "label": "Label Format",
                     "description": "Sollte der Label Name länger als 64 Zeichen werden, so wird dieser abgeschnitten."
@@ -2345,6 +2405,7 @@
             "registration_form": {
                 "title": "Konto erstellen",
                 "registration_token": "Registrierungstoken",
+                "registration_token_description": "Gib den sechsstelligen Token ein, den der FiveM-Server für die Registrierung bereitstellt.",
                 "submit_button": "Konto erstellen",
                 "back_to_login_button": "Zurück zur Anmeldung",
                 "create_error": "Es gab einen Fehler während dein Konto erstellt wurde, bitte versuche es erneut!",
@@ -2357,6 +2418,7 @@
                 "subtitle": "Passen Sie Ihre Benutzererfahrung an und verwalten Sie Ihre Einstellungen.",
                 "set_startpage": {
                     "title": "Startseite nach Charakterauswahl",
+                    "description": "Wähle die Seite aus, die nach der Charakterauswahl automatisch geöffnet wird.",
                     "no_char_selected": "Um eine Startseite auszuwählen, müssen Sie zuerst einen Charakter auswählen."
                 },
                 "app_theme": {
@@ -2383,6 +2445,7 @@
                 "customization": "Passen Sie das Aussehen von FiveNet an.",
                 "documents_lists_style": {
                     "title": "Dokumenten-Listen-Stil",
+                    "description": "Wähle, ob Dokumente auf großen Bildschirmen ein- oder zweispaltig angezeigt werden.",
                     "single": "Einzelspalte",
                     "double": "Doppelspalte (Großansicht)"
                 },
@@ -2499,8 +2562,12 @@
                 "title": "Bürger-Labels",
                 "settings": {
                     "requires_expiration": "Benötigt Ablaufdatum",
+                    "requires_expiration_description": "Mache ein Ablaufdatum für Labels mit dieser Konfiguration verpflichtend.",
+                    "expires_at_description": "Wähle das Ablaufdatum für dieses Label. Konfigurierte Zeitlimits werden berücksichtigt.",
                     "min_duration": "Mindest Dauer",
+                    "min_duration_description": "Lege die kürzeste zulässige Dauer für dieses Label fest.",
                     "max_duration": "Maximale Dauer"
+                    ,"max_duration_description": "Lege die längste zulässige Dauer für dieses Label fest."
                 }
             },
             "List": {
@@ -2518,6 +2585,9 @@
             "VehicleInfoSlideover": {
                 "title": "Fahrzeuginfo"
             },
+            "SetWantedDrawer": {
+                "wanted_till_description": "Lege fest, wie lange das Fahrzeug gesucht bleibt, oder lasse den Status dauerhaft bestehen."
+            },
             "VehicleActivityFeedEntry": {
                 "wanted_set": "Setzte das Fahrzeug auf",
                 "automatic": "Automatische Aktualisierung"
@@ -2527,6 +2597,14 @@
                     "title": "Sie können Ihren eigenen Fahrzeug-Aktivitätsfeed nicht sehen",
                     "message": "Ihnen fehlen die Berechtigungen, um Ihren eigenen Fahrzeug-Aktivitätsfeed sehen zu können."
                 }
+            }
+        },
+        "wiki": {
+            "PageEditor": {
+                "public_description": "Erlaube jedem, diese Seite ohne ausdrücklichen Zugriff anzusehen.",
+                "startpage_description": "Verwende diese Seite als Wiki-Startseite.",
+                "parent_page_description": "Ordne diese Seite einer anderen Wiki-Seite unter, um die Seitenhierarchie zu strukturieren.",
+                "toc_description": "Erstelle automatisch ein Inhaltsverzeichnis aus den Überschriften dieser Seite."
             }
         },
         "CookieControl": {
@@ -2563,10 +2641,16 @@
                         "title": "Kalender aktualisieren"
                     },
                     "private": "Privater Kalender",
+                    "private_description": "Dies ist dein persönlicher Kalender und er ist nicht mit deinem aktuellen Job verknüpft.",
                     "public": "Öffentlicher Kalender",
+                    "public_description": "Öffentliche Kalender können von Benutzern mit Zugriff auf deinen Job angesehen werden.",
+                    "closed_description": "Geschlossene Kalender bleiben sichtbar, aber neue Einträge können erst wieder hinzugefügt oder bearbeitet werden, wenn der Kalender geöffnet wird.",
+                    "access_description": "Wähle, welche Benutzer und Jobs auf diesen Kalender zugreifen können.",
                     "discord_settings": {
                         "title": "Discord-Erinnerungen",
                         "description": "Sende Erinnerungsnachrichten an einen Discord-Textkanal, bevor Kalenderereignisse beginnen.",
+                        "enabled_description": "Sende Kalendererinnerungen an den konfigurierten Discord-Kanal.",
+                        "channel_description": "Wähle den Discord-Textkanal, der Kalendererinnerungen erhält.",
                         "reminder_steps": {
                             "label": "Erinnerungsintervall",
                             "description": "Jeder Schritt erfolgt zur ausgewählten Anzahl an Minuten vor Beginn des Ereignisses.",
@@ -2599,10 +2683,14 @@
                 "recurring": {
                     "title": "Wiederkehrend",
                     "subtitle": "Diesen Eintrag nach einem festen Rhythmus wiederholen.",
+                    "description": "Aktiviere diese Option, um mehrere Vorkommen des Kalendereintrags zu erstellen.",
                     "enabled": "Eintrag wiederholen",
                     "every": "Wiederhole alle",
+                    "every_description": "Lege fest, wie häufig der Eintrag wiederholt wird.",
                     "count": "Intervall",
+                    "count_description": "Lege fest, wie viele Vorkommen erstellt werden.",
                     "until": "Endet am",
+                    "until_description": "Optionales Datum, nach dem keine weiteren Vorkommen erstellt werden.",
                     "every_day": "Täglich",
                     "every_week": "Wöchentlich",
                     "every_month": "Monatlich",
@@ -2684,9 +2772,12 @@
                     "user_info_sync": "Mitarbeiter Sync (Namen und Ränge-Rollen)",
                     "user_info_sync_settings": {
                         "employee_role_enabled": "Erstelle und Verwalte Mitarbeiter Rolle",
+                        "employee_role_enabled_description": "Erstelle eine Discord-Rolle für Mitarbeiter und halte ihre Mitglieder synchron.",
                         "employee_role_format": "Mitarbeiter-Rollen-Format",
                         "unemployed_enabled": "Verwalte die Rolle für Arbeitslose",
+                        "unemployed_enabled_description": "Halte eine separate Discord-Rolle für arbeitslose Benutzer synchron.",
                         "unemployed_mode": "Modus für das Behandeln von Arbeitslosen",
+                        "unemployed_mode_description": "Wähle, ob arbeitslose Benutzer eine Discord-Rolle erhalten oder behalten.",
                         "unemployed_role_name": "Arbeitslosen Rolle",
                         "sync_nicknames": "Nicknames synchronisieren",
                         "group_mapping": {
@@ -2709,6 +2800,7 @@
                     },
                     "jobs_absence_settings": {
                         "jobs_absence_role_enabled": "Verwalte die Abwesenheitsrolle",
+                        "jobs_absence_role_enabled_description": "Synchronisiere eine Discord-Rolle für als abwesend markierte Kollegen.",
                         "jobs_absence_role_name": "Abwesenheitsrolle"
                     },
                     "group_sync_settings": {
@@ -2758,15 +2850,17 @@
             "app_config": {
                 "auth": {
                     "title": "Authentifizierung",
-                    "description": "Authentifizierung Einstellungen",
+                    "description": "Konfiguriere die Benutzerregistrierung und den Zugriff auf Charaktere.",
                     "sign_up": {
                         "title": "Registrierung",
                         "description": "Aktiviere die Registrierung neuer Benutzer."
                     },
                     "last_char_lock": "Spieler auf ihren letzten aktiven Charakter sperren",
+                    "last_char_lock_description": "Wenn aktiviert, können Spieler nur auf den zuletzt verwendeten Charakter zugreifen.",
                     "social_login_providers": {
                         "title": "Social Login Anbieter",
-                        "description": "Liste der konfigurierten Social Login Anbieter."
+                        "description": "Liste der konfigurierten Social Login Anbieter.",
+                        "configuration_notice": "Social Login Anbieter können nur über die FiveNet-Konfigurationsdatei konfiguriert werden."
                     },
                     "admin_groups": {
                         "title": "Admin-Gruppen",
@@ -2786,12 +2880,12 @@
                     "description": "Berechtigungssystem Optionen.",
                     "default_perms": {
                         "title": "Standardberechtigungen",
-                        "description": "Standardberechtigungen für Nutzer."
+                        "description": "Konfiguriere die Berechtigungen, die Benutzern standardmäßig zugewiesen werden."
                     }
                 },
                 "website": {
                     "title": "Website",
-                    "description": "Website Einstellunge, wie zum Beispiel die Fußzeilen Verlinkungen.",
+                    "description": "Konfiguriere Website-Verlinkungen und Einstellungen für öffentliche Statistiken.",
                     "links": {
                         "title": "Verlinkungen"
                     },
@@ -2803,34 +2897,46 @@
                 "jobs_users": {
                     "tab": "Berufe & Tracker",
                     "title": "Berufe",
-                    "description": "Liste der öffentlichen und versteckten Berufe.",
+                    "description": "Konfiguriere öffentliche und versteckte Berufe sowie Berufe für Livemap- und Stempeluhr-Tracking.",
                     "unemployed_job": {
                         "title": "Beruf der Arbeitslosen",
                         "description": "Der Beruf, der für arbeitslose Benutzer verwendet wird."
                     },
                     "public_jobs": "Öffentliche Berufe",
+                    "public_jobs_description": "Hier gelistete Berufe stehen für öffentliche Funktionen wie den Leitstellenzugriff zur Verfügung.",
                     "hidden_jobs": "Versteckte Berufe",
+                    "hidden_jobs_description": "Hier gelistete Berufe werden in unterstützten Berufelisten und Auswahlmenüs ausgeblendet.",
                     "user_tracker": {
                         "title": "Spieler-Tracker",
                         "description": "Liste der über die Livemap getrackten Berufe, und welche Berufe in der Stempeluhr getrackt werden sollen.",
                         "refresh_time": "Aktualisierungszeit",
-                        "db_refresh_time": "Datenbank-Aktualisierungszeit"
+                        "refresh_time_description": "Wie häufig die Positionen aktiver Benutzer auf der Leitstellenkarte aktualisiert werden.",
+                        "db_refresh_time": "Datenbank-Aktualisierungszeit",
+                        "db_refresh_time_description": "Wie häufig die Trackerdaten aus der Datenbank aktualisiert werden."
                     }
                 },
                 "discord": {
-                    "description": "FiveNet Discord-Bot-Einstellungen.",
+                    "description": "Konfiguriere Discord-Synchronisierung, Bot-Berechtigungen, ignorierte Berufe und die Bot-Präsenz.",
+                    "enabled_description": "Aktiviere die FiveNet-Discord-Bot-Integration und ihre konfigurierten Synchronisierungen.",
                     "bot_invite_url": "Bot-Einladungs-URL",
                     "sync_interval": "Synchronisierungsinterval",
+                    "sync_interval_description": "Wie häufig der Discord-Bot Daten mit FiveNet synchronisiert.",
                     "ignored_jobs": "Ignorierte Berufe (e.g., Insassen-Beruf)",
+                    "ignored_jobs_description": "Hier gelistete Berufe werden von der Discord-Synchronisierung ausgeschlossen.",
                     "bot_presence": {
                         "title": "Bot-Präsenz-Status",
-                        "description": "Konfiguriere den Bot-Präsenz-Status.",
+                        "description": "Konfiguriere die Aktivität und den Status des FiveNet-Discord-Bots.",
                         "type": "Art",
+                        "type_description": "Wähle die Aktivitätsart, die in der Discord-Bot-Präsenz angezeigt wird.",
                         "status": "Status",
-                        "url": "URL"
+                        "status_description": "Der Text, der als aktuelle Aktivität des Discord-Bots angezeigt wird.",
+                        "url": "URL",
+                        "url_description": "Optionale URL für Präsenzarten, die einen anklickbaren Aktivitätslink unterstützen."
                     },
                     "bot_id": "Bot ID",
-                    "bot_permissions": "Bot Berechtigungen"
+                    "bot_id_description": "Die Discord-Anwendungs- oder Bot-ID für diese Integration.",
+                    "bot_permissions": "Bot Berechtigungen",
+                    "bot_permissions_description": "Das von der Integration angeforderte Discord-Berechtigungsbitfeld."
                 },
                 "save": {
                     "description": "Stellen Sie sicher, dass Sie alle Konfigurationsoptionen vor dem Speichern der Konfiguration überprüfen."
@@ -2838,7 +2944,9 @@
                 "system": {
                     "banner_message": {
                         "title": "Banner Nachricht",
-                        "subtitle": "Global angezeigte Bannermeldung (sollte kurz und prägnant sein)."
+                        "subtitle": "Konfiguriere eine kurze, global angezeigte Nachricht mit optionalem Ablaufdatum.",
+                        "enabled_description": "Zeige die konfigurierte Bannermeldung in der gesamten Anwendung an.",
+                        "expires_at_description": "Optionales Datum, nach dem die Bannermeldung automatisch ausgeblendet wird."
                     }
                 },
                 "display": {
@@ -2851,18 +2959,24 @@
                     "description": "Einstellungen, die rollenspielrelevantes Verhalten beeinflussen.",
                     "max_wanted_duration": {
                         "title": "Maximale Fahndungsdauer",
-                        "description": "Die maximale Dauer, für die Personen und Fahrzeuge auf der Fahndungsliste bleiben kann, bevor sie automatisch entfernt wird.",
+                        "description": "Entferne Fahndungsstatus von Bürgern und Fahrzeugen nach der konfigurierten maximalen Dauer automatisch.",
                         "enabled_user": "Aktivieren für Bürger",
+                        "enabled_user_description": "Fahndungsstatus von Bürgern nach Ablauf der maximalen Dauer automatisch entfernen.",
                         "enabled_vehicle": "Aktivieren für Fahrzeuge",
-                        "max": "Maximale Dauer"
+                        "enabled_vehicle_description": "Fahndungsstatus von Fahrzeugen nach Ablauf der maximalen Dauer automatisch entfernen.",
+                        "max": "Maximale Dauer",
+                        "max_user_description": "Maximale Dauer, die ein Bürger gesucht bleiben kann.",
+                        "max_vehicle_description": "Maximale Dauer, die ein Fahrzeug gesucht bleiben kann."
                     }
                 },
                 "quick_buttons": {
                     "penalty_calculator": {
                         "title": "Strafenrechner",
-                        "description": "Konfigurieren Sie Optionen für den Strafenrechner.",
+                        "description": "Konfiguriere Verstoßlimits, Toleranz, Haftzeiteinheiten und Warnschwellen für den Strafenrechner.",
                         "max_count": "Maximale Anzahl von Verstößen",
+                        "max_count_description": "Begrenze, wie viele Verstöße der Rechner gleichzeitig akzeptiert.",
                         "max_leeway": "Maximale Toleranz Prozent",
+                        "max_leeway_description": "Erlaube diesen Prozentsatz an Toleranz bei der Berechnung der Strafe.",
                         "detention_time_unit": {
                             "title": "Einheit der Haftzeit",
                             "description": "Die Einheit der Haftzeit (e.g., Monat / Monate, Tag / Tage)."
@@ -2872,7 +2986,10 @@
                             "description": "Einstellungen für die Warnmeldung, wenn einer der Schwellenwerte erreicht wird.",
                             "thresholds": {
                                 "title": "Schwellenwerte",
-                                "description": "Die Gesamtbeträge, bei denen die Warnmeldung angezeigt wird."
+                                "description": "Die Gesamtbeträge, bei denen die Warnmeldung angezeigt wird.",
+                                "fine_description": "Zeige eine Warnung, wenn die Geldstrafe diesen Betrag erreicht.",
+                                "detention_description": "Zeige eine Warnung, wenn die Haftzeit diese Dauer erreicht.",
+                                "points_description": "Zeige eine Warnung, wenn die Verkehrspunkte diesen Wert erreichen."
                             },
                             "warn_message": {
                                 "title": "Warnmeldung",
@@ -2883,8 +3000,9 @@
                 },
                 "livemap": {
                     "title": "Livemap",
-                    "description": "Einstellungen für die Livemap.",
-                    "enable_cayo_perico": "Cayo Perico auf der Livemap anzeigen"
+                    "description": "Konfiguriere, welche zusätzlichen Inseln auf der Livemap verfügbar sind.",
+                    "enable_cayo_perico": "Cayo Perico auf der Livemap anzeigen",
+                    "enable_cayo_perico_description": "Cayo Perico als verfügbare Insel auf der Livemap anzeigen."
                 }
             },
             "accounts": {

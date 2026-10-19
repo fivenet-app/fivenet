@@ -331,6 +331,12 @@ const parentPages = computedAsync(() => {
 
 const items = computed(() => [
     {
+        slot: 'details' as const,
+        label: t('common.details'),
+        icon: 'i-mdi-information-outline',
+        value: 'details',
+    },
+    {
         slot: 'content' as const,
         label: t('common.content'),
         icon: 'i-mdi-pencil',
@@ -497,108 +503,116 @@ const formRef = useTemplateRef('formRef');
                     :unmount-on-hide="false"
                     :ui="{ content: 'h-full' }"
                 >
+                    <template #details>
+                        <UDashboardPanel :ui="{ root: 'h-full min-h-0', body: 'p-0 sm:p-0 gap-0 sm:gap-0' }">
+                            <template #body>
+                                <div class="mx-auto flex w-full max-w-(--breakpoint-xl) flex-col gap-4 overflow-y-auto p-4">
+                                    <UFormField
+                                        class="flex-1"
+                                        name="meta.parentId"
+                                        :label="$t('common.parent_page')"
+                                        :description="$t('components.wiki.PageEditor.parent_page_description')"
+                                    >
+                                        <div class="flex items-center gap-1">
+                                            <ClientOnly>
+                                                <USelectMenu
+                                                    v-model="state.parentId"
+                                                    class="flex-1"
+                                                    value-key="id"
+                                                    label-key="title"
+                                                    :disabled="!canDo.edit"
+                                                    :items="parentPages"
+                                                >
+                                                    <template #default>
+                                                        {{
+                                                            state.parentId
+                                                                ? (parentPages?.find((p) => p.id === state.parentId)?.title ??
+                                                                  $t('common.na'))
+                                                                : $t('common.none_selected', [$t('common.parent_page')])
+                                                        }}
+                                                    </template>
+
+                                                    <template #empty>
+                                                        {{ $t('common.not_found', [$t('common.page', 2)]) }}
+                                                    </template>
+                                                </USelectMenu>
+                                            </ClientOnly>
+
+                                            <RefreshButton
+                                                class="mt-1 -ml-2"
+                                                :loading="isRequestPending(pagesStatus)"
+                                                icon-only
+                                                @click="() => pagesRefresh()"
+                                            />
+                                        </div>
+                                    </UFormField>
+
+                                    <UFormField name="meta.title" :label="$t('common.title')">
+                                        <UInput v-model="state.meta.title" class="w-full" size="xl" :disabled="!canDo.edit" />
+                                    </UFormField>
+
+                                    <UFormField name="meta.description" :label="$t('common.description')">
+                                        <UTextarea
+                                            v-model="state.meta.description"
+                                            class="w-full"
+                                            :rows="2"
+                                            :disabled="!canDo.edit"
+                                        />
+                                    </UFormField>
+
+                                    <div class="grid gap-4 md:grid-cols-2">
+                                        <UPageCard v-if="canDo.public">
+                                            <UFormField
+                                                class="md:flex md:items-center md:gap-4"
+                                                name="meta.public"
+                                                :label="$t('common.public')"
+                                                :description="$t('components.wiki.PageEditor.public_description')"
+                                                :ui="{ wrapper: 'flex-1' }"
+                                            >
+                                                <USwitch v-model="state.meta.public" :disabled="!canDo.edit || !canDo.public" />
+                                            </UFormField>
+                                        </UPageCard>
+
+                                        <UPageCard>
+                                            <UFormField
+                                                class="md:flex md:items-center md:gap-4"
+                                                name="meta.startpage"
+                                                :label="$t('common.startpage')"
+                                                :description="$t('components.wiki.PageEditor.startpage_description')"
+                                                :ui="{ wrapper: 'flex-1' }"
+                                            >
+                                                <USwitch
+                                                    v-model="state.meta.startpage"
+                                                    :disabled="!canDo.edit || !canDo.public"
+                                                />
+                                            </UFormField>
+                                        </UPageCard>
+
+                                        <UPageCard>
+                                            <UFormField
+                                                class="md:flex md:items-center md:gap-4"
+                                                name="meta.toc"
+                                                :label="$t('common.toc', 2)"
+                                                :description="$t('components.wiki.PageEditor.toc_description')"
+                                                :ui="{ wrapper: 'flex-1' }"
+                                            >
+                                                <USwitch v-model="state.meta.toc" :disabled="!canDo.edit" />
+                                            </UFormField>
+                                        </UPageCard>
+                                    </div>
+                                </div>
+                            </template>
+                        </UDashboardPanel>
+                    </template>
+
                     <template #content>
                         <UDashboardPanel :ui="{ root: 'h-full min-h-0', body: 'p-0 sm:p-0 gap-0 sm:gap-0' }">
-                            <template #header>
-                                <UDashboardToolbar>
-                                    <template #default>
-                                        <div class="mx-auto my-2 flex w-full max-w-(--breakpoint-xl) flex-col gap-2">
-                                            <UFormField class="flex-1" name="meta.parentId" :label="$t('common.parent_page')">
-                                                <div class="flex items-center gap-1">
-                                                    <ClientOnly>
-                                                        <USelectMenu
-                                                            v-model="state.parentId"
-                                                            class="flex-1"
-                                                            value-key="id"
-                                                            label-key="title"
-                                                            :disabled="!canDo.edit"
-                                                            :items="parentPages"
-                                                        >
-                                                            <template #default>
-                                                                {{
-                                                                    state.parentId
-                                                                        ? (parentPages?.find((p) => p.id === state.parentId)
-                                                                              ?.title ?? $t('common.na'))
-                                                                        : $t('common.none_selected', [$t('common.parent_page')])
-                                                                }}
-                                                            </template>
-
-                                                            <template #empty>
-                                                                {{ $t('common.not_found', [$t('common.page', 2)]) }}
-                                                            </template>
-                                                        </USelectMenu>
-                                                    </ClientOnly>
-
-                                                    <RefreshButton
-                                                        class="mt-1 -ml-2"
-                                                        :loading="isRequestPending(pagesStatus)"
-                                                        icon-only
-                                                        @click="() => pagesRefresh()"
-                                                    />
-                                                </div>
-                                            </UFormField>
-
-                                            <UFormField name="meta.title" :label="$t('common.title')">
-                                                <UInput
-                                                    v-model="state.meta.title"
-                                                    class="w-full"
-                                                    size="xl"
-                                                    :disabled="!canDo.edit"
-                                                />
-                                            </UFormField>
-
-                                            <UFormField name="meta.description" :label="$t('common.description')">
-                                                <UTextarea
-                                                    v-model="state.meta.description"
-                                                    class="w-full"
-                                                    :rows="2"
-                                                    :disabled="!canDo.edit"
-                                                />
-                                            </UFormField>
-
-                                            <div class="flex flex-1 gap-2">
-                                                <UFormField
-                                                    class="flex-1 md:grid md:grid-cols-2 md:items-center"
-                                                    name="meta.public"
-                                                    :label="$t('common.public')"
-                                                >
-                                                    <USwitch
-                                                        v-model="state.meta.public"
-                                                        :disabled="!canDo.edit || !canDo.public"
-                                                    />
-                                                </UFormField>
-
-                                                <UFormField
-                                                    v-if="canDo.public"
-                                                    class="flex-1 md:grid md:grid-cols-2 md:items-center"
-                                                    name="meta.startpage"
-                                                    :label="`${$t('common.startpage')}?`"
-                                                >
-                                                    <USwitch
-                                                        v-model="state.meta.startpage"
-                                                        :disabled="!canDo.edit || !canDo.public"
-                                                    />
-                                                </UFormField>
-
-                                                <UFormField
-                                                    class="flex-1 md:grid md:grid-cols-2 md:items-center"
-                                                    name="meta.toc"
-                                                    :label="`${$t('common.toc', 2)}?`"
-                                                >
-                                                    <USwitch v-model="state.meta.toc" :disabled="!canDo.edit" />
-                                                </UFormField>
-                                            </div>
-                                        </div>
-                                    </template>
-                                </UDashboardToolbar>
-                            </template>
-
                             <template #body>
                                 <ClientOnly>
                                     <TiptapEditor
                                         v-model="state.content"
                                         v-model:files="state.files"
-                                        class="mx-auto my-2 h-full w-full max-w-(--breakpoint-xl) flex-1 overflow-y-hidden"
+                                        class="mx-auto mb-2 h-full w-full max-w-(--breakpoint-xl) flex-1 overflow-y-hidden"
                                         name="content"
                                         :limit="maxContentLength"
                                         :disabled="!canDo.edit"

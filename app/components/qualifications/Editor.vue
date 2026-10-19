@@ -781,20 +781,6 @@ const formRef = useTemplateRef('formRef');
                                                     :disabled="!canDo.edit"
                                                 />
                                             </UFormField>
-
-                                            <div class="flex flex-initial flex-col">
-                                                <UFormField
-                                                    class="flex-initial"
-                                                    name="closed"
-                                                    :label="`${$t('common.close', 2)}?`"
-                                                >
-                                                    <USwitch v-model="state.closed" :disabled="!canDo.edit" />
-                                                </UFormField>
-
-                                                <UFormField class="flex-initial" name="public" :label="$t('common.public')">
-                                                    <USwitch v-model="state.public" :disabled="!canDo.public" />
-                                                </UFormField>
-                                            </div>
                                         </div>
                                     </div>
                                 </template>
@@ -857,6 +843,30 @@ const formRef = useTemplateRef('formRef');
                         <UDashboardPanel :ui="{ root: 'min-h-0 overflow-y-auto' }">
                             <template #body>
                                 <UContainer class="mb-4 flex flex-col gap-4">
+                                    <UPageCard :title="$t('common.setting', 2)">
+                                        <div class="grid gap-4 md:grid-cols-2">
+                                            <UFormField
+                                                name="closed"
+                                                :label="$t('common.close', 2)"
+                                                :description="
+                                                    $t('components.qualifications.qualification_editor.closed_description')
+                                                "
+                                            >
+                                                <USwitch v-model="state.closed" :disabled="!canDo.edit" />
+                                            </UFormField>
+
+                                            <UFormField
+                                                name="public"
+                                                :label="$t('common.public')"
+                                                :description="
+                                                    $t('components.qualifications.qualification_editor.public_description')
+                                                "
+                                            >
+                                                <USwitch v-model="state.public" :disabled="!canDo.public" />
+                                            </UFormField>
+                                        </div>
+                                    </UPageCard>
+
                                     <UPageCard :title="$t('common.requirements', 2)">
                                         <RequirementEntry
                                             v-for="(requirement, idx) in state.requirements"
@@ -888,11 +898,20 @@ const formRef = useTemplateRef('formRef');
                                             class="grid grid-cols-2 items-center gap-2"
                                             name="discordSettings.enabled"
                                             :label="$t('common.enabled')"
+                                            :description="
+                                                $t('components.qualifications.qualification_editor.discord_enabled_description')
+                                            "
                                         >
                                             <USwitch v-model="state.discordSyncEnabled" :disabled="!canDo.edit" />
                                         </UFormField>
 
-                                        <UFormField name="discordSettings.roleName" :label="$t('common.role')">
+                                        <UFormField
+                                            name="discordSettings.roleName"
+                                            :label="$t('common.role')"
+                                            :description="
+                                                $t('components.qualifications.qualification_editor.discord_role_description')
+                                            "
+                                        >
                                             <UInput
                                                 v-model="state.discordSettings.roleName"
                                                 class="w-full"
@@ -932,6 +951,11 @@ const formRef = useTemplateRef('formRef');
                                             class="grid grid-cols-2 items-center gap-2"
                                             name="labelSyncEnabled"
                                             :label="$t('common.enabled')"
+                                            :description="
+                                                $t(
+                                                    'components.qualifications.qualification_editor.label_sync_enabled_description',
+                                                )
+                                            "
                                         >
                                             <USwitch v-model="state.labelSyncEnabled" :disabled="!canDo.edit" />
                                         </UFormField>

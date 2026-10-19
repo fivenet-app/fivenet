@@ -6,6 +6,7 @@ import IconSelectMenu from '~/components/partials/IconSelectMenu.vue';
 import { getJobsColleaguesClient } from '~~/gen/ts/clients';
 import type { Label } from '~~/gen/ts/resources/jobs/labels/labels';
 import type { CreateOrUpdateLabelResponse } from '~~/gen/ts/services/jobs/colleagues';
+import ResponsiveDrawerModal from '~/components/partials/ResponsiveDrawerModal.vue';
 
 const props = defineProps<{
     label?: Label;

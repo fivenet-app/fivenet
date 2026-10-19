@@ -12,6 +12,7 @@ import type { DocumentShort } from '~~/gen/ts/resources/documents/documents';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 import type { ListDocumentReqsResponse } from '~~/gen/ts/services/documents/documents';
 import RequestListEntry from './RequestListEntry.vue';
+import ResponsiveDrawerModal from '~/components/partials/ResponsiveDrawerModal.vue';
 
 const props = defineProps<{
     doc: DocumentShort;

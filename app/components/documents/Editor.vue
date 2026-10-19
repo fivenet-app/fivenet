@@ -694,7 +694,7 @@ provide('yjsProvider', provider);
                                             />
                                         </UFormField>
 
-                                        <UFormField class="flex-initial" name="closed" :label="`${$t('common.close', 2)}?`">
+                                        <UFormField class="flex-initial" name="closed" :label="$t('common.close', 2)">
                                             <UTooltip
                                                 :text="
                                                     !canDo.status
@@ -768,6 +768,13 @@ provide('yjsProvider', provider);
                                     :document-id="documentId"
                                     :disabled="!canEditDocument"
                                 />
+
+                                <UAlert
+                                    class="mt-4"
+                                    icon="i-mdi-information-outline"
+                                    :description="$t('components.documents.document_managers.references_description')"
+                                    variant="subtle"
+                                />
                             </UPageCard>
                         </UContainer>
                     </template>
@@ -791,6 +798,13 @@ provide('yjsProvider', provider);
                                     v-model="state.relations"
                                     :document-id="documentId"
                                     :disabled="!canEditDocument"
+                                />
+
+                                <UAlert
+                                    class="mt-4"
+                                    icon="i-mdi-information-outline"
+                                    :description="$t('components.documents.document_managers.relations_description')"
+                                    variant="subtle"
                                 />
                             </UPageCard>
                         </UContainer>

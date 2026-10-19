@@ -555,6 +555,7 @@ const formRef = useTemplateRef('formRef');
                                 class="grid grid-cols-2 items-center gap-2"
                                 name="auth.lastCharLock"
                                 :label="$t('components.settings.app_config.auth.last_char_lock')"
+                                :description="$t('components.settings.app_config.auth.last_char_lock_description')"
                             >
                                 <USwitch v-model="state.auth.lastCharLock" />
                             </UFormField>
@@ -760,6 +761,15 @@ const formRef = useTemplateRef('formRef');
                                     </template>
                                 </UCard>
                             </UPageGrid>
+
+                            <UAlert
+                                :description="
+                                    $t('components.settings.app_config.auth.social_login_providers.configuration_notice')
+                                "
+                                color="info"
+                                icon="i-mdi-information-outline"
+                                variant="outline"
+                            />
                         </UPageCard>
                     </template>
 
@@ -814,6 +824,7 @@ const formRef = useTemplateRef('formRef');
                                 class="grid grid-cols-2 items-center gap-2"
                                 name="jobInfo.publicJobs"
                                 :label="$t('components.settings.app_config.jobs_users.public_jobs')"
+                                :description="$t('components.settings.app_config.jobs_users.public_jobs_description')"
                             >
                                 <ClientOnly>
                                     <USelectMenu
@@ -843,6 +854,7 @@ const formRef = useTemplateRef('formRef');
                                 class="grid grid-cols-2 items-center gap-2"
                                 name="jobInfo.hiddenJobs"
                                 :label="$t('components.settings.app_config.jobs_users.hidden_jobs')"
+                                :description="$t('components.settings.app_config.jobs_users.hidden_jobs_description')"
                             >
                                 <ClientOnly>
                                     <USelectMenu
@@ -878,6 +890,9 @@ const formRef = useTemplateRef('formRef');
                                 class="grid grid-cols-2 items-center gap-2"
                                 name="userTracker.refreshTime"
                                 :label="$t('components.settings.app_config.jobs_users.user_tracker.refresh_time')"
+                                :description="
+                                    $t('components.settings.app_config.jobs_users.user_tracker.refresh_time_description')
+                                "
                             >
                                 <InputDurationPicker
                                     v-model="state.userTracker.refreshTime"
@@ -893,6 +908,9 @@ const formRef = useTemplateRef('formRef');
                                 class="grid grid-cols-2 items-center gap-2"
                                 name="userTracker.dbRefreshTime"
                                 :label="$t('components.settings.app_config.jobs_users.user_tracker.db_refresh_time')"
+                                :description="
+                                    $t('components.settings.app_config.jobs_users.user_tracker.db_refresh_time_description')
+                                "
                             >
                                 <InputDurationPicker
                                     v-model="state.userTracker.dbRefreshTime"
@@ -915,6 +933,7 @@ const formRef = useTemplateRef('formRef');
                                 class="grid grid-cols-2 items-center gap-2"
                                 name="discordEnabled"
                                 :label="$t('common.enabled')"
+                                :description="$t('components.settings.app_config.discord.enabled_description')"
                             >
                                 <USwitch v-model="state.discord.enabled" />
                             </UFormField>
@@ -923,6 +942,7 @@ const formRef = useTemplateRef('formRef');
                                 class="grid grid-cols-2 items-center gap-2"
                                 name="discord.syncInterval"
                                 :label="$t('components.settings.app_config.discord.sync_interval')"
+                                :description="$t('components.settings.app_config.discord.sync_interval_description')"
                             >
                                 <InputDurationPicker
                                     v-model="state.discord.syncInterval"
@@ -938,6 +958,7 @@ const formRef = useTemplateRef('formRef');
                                 class="grid grid-cols-2 items-center gap-2"
                                 name="discord.botId"
                                 :label="$t('components.settings.app_config.discord.bot_id')"
+                                :description="$t('components.settings.app_config.discord.bot_id_description')"
                             >
                                 <UInput
                                     v-model="state.discord.botId"
@@ -951,6 +972,7 @@ const formRef = useTemplateRef('formRef');
                                 class="grid grid-cols-2 items-center gap-2"
                                 name="discord.botPermissions"
                                 :label="$t('components.settings.app_config.discord.bot_permissions')"
+                                :description="$t('components.settings.app_config.discord.bot_permissions_description')"
                             >
                                 <UInput
                                     v-model="state.discord.botPermissions"
@@ -964,6 +986,7 @@ const formRef = useTemplateRef('formRef');
                                 class="grid grid-cols-2 items-center gap-2"
                                 name="discord.ignoredJobs"
                                 :label="$t('components.settings.app_config.discord.ignored_jobs')"
+                                :description="$t('components.settings.app_config.discord.ignored_jobs_description')"
                             >
                                 <ClientOnly>
                                     <USelectMenu
@@ -999,6 +1022,7 @@ const formRef = useTemplateRef('formRef');
                                 class="grid grid-cols-2 items-center gap-2"
                                 name="discord.botPresence.type"
                                 :label="$t('components.settings.app_config.discord.bot_presence.type')"
+                                :description="$t('components.settings.app_config.discord.bot_presence.type_description')"
                             >
                                 <USelectMenu
                                     v-model="state.discord.botPresence.type"
@@ -1029,6 +1053,7 @@ const formRef = useTemplateRef('formRef');
                                 class="grid grid-cols-2 items-center gap-2"
                                 name="discord.botPresence.status"
                                 :label="$t('components.settings.app_config.discord.bot_presence.status')"
+                                :description="$t('components.settings.app_config.discord.bot_presence.status_description')"
                             >
                                 <UInput
                                     v-model="state.discord.botPresence.status"
@@ -1042,6 +1067,7 @@ const formRef = useTemplateRef('formRef');
                                 class="grid grid-cols-2 items-center gap-2"
                                 name="discord.botPresence.url"
                                 :label="$t('components.settings.app_config.discord.bot_presence.url')"
+                                :description="$t('components.settings.app_config.discord.bot_presence.url_description')"
                             >
                                 <UInput
                                     v-model="state.discord.botPresence.url"
@@ -1061,6 +1087,9 @@ const formRef = useTemplateRef('formRef');
                             <UFormField
                                 :label="$t('components.settings.app_config.game.max_wanted_duration.enabled_user')"
                                 name="game.maxWantedDurationUserEnabled"
+                                :description="
+                                    $t('components.settings.app_config.game.max_wanted_duration.enabled_user_description')
+                                "
                             >
                                 <USwitch v-model="state.game.maxWantedDurationUserEnabled" />
                             </UFormField>
@@ -1068,6 +1097,9 @@ const formRef = useTemplateRef('formRef');
                             <UFormField
                                 :label="$t('components.settings.app_config.game.max_wanted_duration.max')"
                                 name="game.maxWantedDurationUser"
+                                :description="
+                                    $t('components.settings.app_config.game.max_wanted_duration.max_user_description')
+                                "
                             >
                                 <InputDurationPicker
                                     v-model="state.game.maxWantedDurationUser"
@@ -1082,6 +1114,9 @@ const formRef = useTemplateRef('formRef');
                             <UFormField
                                 :label="$t('components.settings.app_config.game.max_wanted_duration.enabled_vehicle')"
                                 name="game.maxWantedDurationVehicleEnabled"
+                                :description="
+                                    $t('components.settings.app_config.game.max_wanted_duration.enabled_vehicle_description')
+                                "
                             >
                                 <USwitch v-model="state.game.maxWantedDurationVehicleEnabled" />
                             </UFormField>
@@ -1089,6 +1124,9 @@ const formRef = useTemplateRef('formRef');
                             <UFormField
                                 :label="$t('components.settings.app_config.game.max_wanted_duration.max')"
                                 name="game.maxWantedDurationVehicle"
+                                :description="
+                                    $t('components.settings.app_config.game.max_wanted_duration.max_vehicle_description')
+                                "
                             >
                                 <InputDurationPicker
                                     v-model="state.game.maxWantedDurationVehicle"
@@ -1108,6 +1146,9 @@ const formRef = useTemplateRef('formRef');
                             <UFormField
                                 :label="$t('components.settings.app_config.quick_buttons.penalty_calculator.max_count')"
                                 name="quickButtons.penaltyCalculator.maxCount"
+                                :description="
+                                    $t('components.settings.app_config.quick_buttons.penalty_calculator.max_count_description')
+                                "
                             >
                                 <UInputNumber
                                     v-model="state.quickButtons.penaltyCalculator.maxCount"
@@ -1123,6 +1164,9 @@ const formRef = useTemplateRef('formRef');
                             <UFormField
                                 :label="$t('components.settings.app_config.quick_buttons.penalty_calculator.max_leeway')"
                                 name="quickButtons.penaltyCalculator.maxLeeway"
+                                :description="
+                                    $t('components.settings.app_config.quick_buttons.penalty_calculator.max_leeway_description')
+                                "
                             >
                                 <UInputNumber
                                     v-model="state.quickButtons.penaltyCalculator.maxLeeway"
@@ -1204,6 +1248,11 @@ const formRef = useTemplateRef('formRef');
                                             class="flex-1"
                                             :label="$t('common.fine', 2)"
                                             name="quickButtons.penaltyCalculator.warnSettings.fine"
+                                            :description="
+                                                $t(
+                                                    'components.settings.app_config.quick_buttons.penalty_calculator.warn_settings.thresholds.fine_description',
+                                                )
+                                            "
                                         >
                                             <UInputNumber
                                                 v-model="state.quickButtons.penaltyCalculator.warnSettings!.fine"
@@ -1226,6 +1275,11 @@ const formRef = useTemplateRef('formRef');
                                             class="flex-1"
                                             :label="$t('common.detention_time', 2)"
                                             name="quickButtons.penaltyCalculator.warnSettings.detentionTime"
+                                            :description="
+                                                $t(
+                                                    'components.settings.app_config.quick_buttons.penalty_calculator.warn_settings.thresholds.detention_description',
+                                                )
+                                            "
                                         >
                                             <UInputNumber
                                                 v-model="state.quickButtons.penaltyCalculator.warnSettings!.detentionTime"
@@ -1240,6 +1294,11 @@ const formRef = useTemplateRef('formRef');
                                             class="flex-1"
                                             :label="$t('common.traffic_infraction_points', 2)"
                                             name="quickButtons.penaltyCalculator.warnSettings.stvoPoints"
+                                            :description="
+                                                $t(
+                                                    'components.settings.app_config.quick_buttons.penalty_calculator.warn_settings.thresholds.points_description',
+                                                )
+                                            "
                                         >
                                             <UInputNumber
                                                 v-model="state.quickButtons.penaltyCalculator.warnSettings!.stvoPoints"
@@ -1283,6 +1342,7 @@ const formRef = useTemplateRef('formRef');
                                 class="grid grid-cols-2 items-center gap-2"
                                 name="livemap.enableCayoPerico"
                                 :label="$t('components.settings.app_config.livemap.enable_cayo_perico')"
+                                :description="$t('components.settings.app_config.livemap.enable_cayo_perico_description')"
                             >
                                 <USwitch v-model="state.livemap.enableCayoPerico" />
                             </UFormField>
@@ -1404,6 +1464,7 @@ const formRef = useTemplateRef('formRef');
                                 class="grid grid-cols-2 items-center gap-2"
                                 name="system.bannerMessageEnabled"
                                 :label="$t('common.enabled')"
+                                :description="$t('components.settings.app_config.system.banner_message.enabled_description')"
                             >
                                 <USwitch v-model="state.system.bannerMessageEnabled" />
                             </UFormField>
@@ -1426,6 +1487,7 @@ const formRef = useTemplateRef('formRef');
                                 class="grid grid-cols-2 items-center gap-2"
                                 name="system.bannerMessage.expiresAt"
                                 :label="$t('common.expires_at')"
+                                :description="$t('components.settings.app_config.system.banner_message.expires_at_description')"
                             >
                                 <InputDatePicker v-model="state.system.bannerMessage.expiresAt" clearable time />
                             </UFormField>

@@ -127,6 +127,7 @@ async function closeModal(): Promise<void> {
                 <UFormField
                     name="expiresAt"
                     :label="$t('common.expires_at')"
+                    :description="$t('components.citizens.citizen_labels.settings.expires_at_description')"
                     :required="label.settings?.requiresExpiration"
                     :ui="{ container: 'flex flex-col gap-2' }"
                 >

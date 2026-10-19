@@ -79,6 +79,7 @@ watch(designDocumentListStyle, async () => {
             class="grid grid-cols-2 items-center gap-2"
             name="designDocumentListStyle"
             :label="$t('components.auth.user_settings.documents_lists_style.title')"
+            :description="$t('components.auth.user_settings.documents_lists_style.description')"
         >
             <div class="inline-flex items-center gap-2 text-sm">
                 <span>{{ $t('components.auth.user_settings.documents_lists_style.single') }}</span>
@@ -91,6 +92,7 @@ watch(designDocumentListStyle, async () => {
             class="grid grid-cols-2 items-center gap-2"
             name="selectedHomepage"
             :label="$t('components.auth.user_settings.set_startpage.title')"
+            :description="$t('components.auth.user_settings.set_startpage.description')"
         >
             <ClientOnly v-if="activeChar">
                 <USelectMenu

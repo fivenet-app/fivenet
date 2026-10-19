@@ -16,7 +16,11 @@ const { moveUp, moveDown } = useListReorder(toRef(() => workflow.value.reminders
 <template>
     <UPageCard :title="`${$t('common.workflow')}: ${$t('common.auto_close')}`">
         <!-- Auto Close -->
-        <UFormField name="workflow.autoClose.autoClose" :label="$t('common.enabled')">
+        <UFormField
+            name="workflow.autoClose.autoClose"
+            :label="$t('common.enabled')"
+            :description="$t('components.documents.template_workflow_editor.auto_close.enabled_description')"
+        >
             <USwitch v-model="workflow.autoClose.autoClose" />
         </UFormField>
 
@@ -53,7 +57,11 @@ const { moveUp, moveDown } = useListReorder(toRef(() => workflow.value.reminders
 
     <UPageCard :title="`${$t('common.workflow')}: ${$t('common.reminder', 2)}`">
         <!-- Reminders -->
-        <UFormField name="workflow.reminders.reminder" :label="$t('common.enabled')">
+        <UFormField
+            name="workflow.reminders.reminder"
+            :label="$t('common.enabled')"
+            :description="$t('components.documents.template_workflow_editor.reminder.enabled_description')"
+        >
             <USwitch v-model="workflow.reminders.reminder" />
         </UFormField>
 

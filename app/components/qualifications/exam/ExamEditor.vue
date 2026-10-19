@@ -64,6 +64,7 @@ export type ExamSettingsSchema = z.output<typeof examSettingsSchema>;
                     class="grid grid-cols-2 items-center gap-2"
                     name="examMode"
                     :label="$t('components.qualifications.exam_mode')"
+                    :description="$t('components.qualifications.exam_editor.exam_mode_description')"
                 >
                     <ClientOnly>
                         <USelectMenu v-model="examMode" class="w-full" :items="examModes" value-key="mode">
@@ -87,6 +88,7 @@ export type ExamSettingsSchema = z.output<typeof examSettingsSchema>;
                         class="grid grid-cols-2 items-center gap-2"
                         name="time"
                         :label="$t('components.qualifications.exam_editor.exam_duration')"
+                        :description="$t('components.qualifications.exam_editor.exam_duration_description')"
                     >
                         <InputDurationPicker
                             v-model="examSettings.time"

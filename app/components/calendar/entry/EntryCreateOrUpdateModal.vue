@@ -497,6 +497,7 @@ async function closeModal(): Promise<void> {
                         class="flex-1"
                         name="recurringEnabled"
                         :label="$t('components.calendar.EntryCreateOrUpdateModal.recurring.title')"
+                        :description="$t('components.calendar.EntryCreateOrUpdateModal.recurring.description')"
                     >
                         <div class="flex items-center gap-3">
                             <USwitch v-model="state.recurringEnabled" />
@@ -523,6 +524,7 @@ async function closeModal(): Promise<void> {
                                 class="flex-1"
                                 name="recurringCount"
                                 :label="$t('components.calendar.EntryCreateOrUpdateModal.recurring.count')"
+                                :description="$t('components.calendar.EntryCreateOrUpdateModal.recurring.count_description')"
                             >
                                 <UInputNumber
                                     v-model="state.recurringCount"
@@ -536,6 +538,7 @@ async function closeModal(): Promise<void> {
                                 class="flex-1"
                                 name="recurringEvery"
                                 :label="$t('components.calendar.EntryCreateOrUpdateModal.recurring.every')"
+                                :description="$t('components.calendar.EntryCreateOrUpdateModal.recurring.every_description')"
                             >
                                 <USelectMenu
                                     v-model="state.recurringEvery"
@@ -559,6 +562,7 @@ async function closeModal(): Promise<void> {
                                 class="flex-1"
                                 name="recurringUntil"
                                 :label="$t('components.calendar.EntryCreateOrUpdateModal.recurring.until')"
+                                :description="$t('components.calendar.EntryCreateOrUpdateModal.recurring.until_description')"
                             >
                                 <InputDatePicker
                                     v-model="state.recurringUntil"
@@ -570,7 +574,7 @@ async function closeModal(): Promise<void> {
                         </div>
                     </div>
 
-                    <UFormField class="flex-1" name="closed" :label="`${$t('common.close', 2)}?`">
+                    <UFormField class="flex-1" name="closed" :label="$t('common.close', 2)">
                         <USwitch v-model="state.closed" />
                     </UFormField>
 

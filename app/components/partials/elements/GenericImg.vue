@@ -73,7 +73,7 @@ const src = useImageURL(props.src, !props.srcFallback ? undefined : brokenImageU
         <template #content>
             <div class="p-4">
                 <NuxtImg
-                    class="h-96 max-w-full"
+                    class="h-96 max-w-full min-w-[200px] object-contain"
                     :class="[visible ? '' : 'blur', rounded && 'rounded-md']"
                     :src="src"
                     :alt="alt"

@@ -106,6 +106,7 @@ const { submit, isSubmitting, canSubmit } = useSubmitGuard(async (event: FormSub
             <UFormField
                 name="registrationToken"
                 :label="$t('components.auth.forgot_password.registration_token')"
+                :description="$t('components.auth.registration_form.registration_token_description')"
                 :ui="{
                     root: 'w-full',
                 }"

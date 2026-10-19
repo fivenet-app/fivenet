@@ -817,6 +817,11 @@ const confirmModal = overlay.create(ConfirmModal);
                                                 'components.settings.job_props.discord_sync_settings.user_info_sync_settings.employee_role_enabled',
                                             )
                                         "
+                                        :description="
+                                            $t(
+                                                'components.settings.job_props.discord_sync_settings.user_info_sync_settings.employee_role_enabled_description',
+                                            )
+                                        "
                                     >
                                         <USwitch
                                             v-model="state.discordSyncSettings.userInfoSyncSettings.employeeRoleEnabled"
@@ -853,6 +858,11 @@ const confirmModal = overlay.create(ConfirmModal);
                                                 'components.settings.job_props.discord_sync_settings.user_info_sync_settings.unemployed_enabled',
                                             )
                                         "
+                                        :description="
+                                            $t(
+                                                'components.settings.job_props.discord_sync_settings.user_info_sync_settings.unemployed_enabled_description',
+                                            )
+                                        "
                                     >
                                         <USwitch
                                             v-model="state.discordSyncSettings.userInfoSyncSettings.unemployedEnabled"
@@ -866,6 +876,11 @@ const confirmModal = overlay.create(ConfirmModal);
                                         :label="
                                             $t(
                                                 'components.settings.job_props.discord_sync_settings.user_info_sync_settings.unemployed_mode',
+                                            )
+                                        "
+                                        :description="
+                                            $t(
+                                                'components.settings.job_props.discord_sync_settings.user_info_sync_settings.unemployed_mode_description',
                                             )
                                         "
                                     >
@@ -1119,6 +1134,11 @@ const confirmModal = overlay.create(ConfirmModal);
                                         :label="
                                             $t(
                                                 'components.settings.job_props.discord_sync_settings.jobs_absence_settings.jobs_absence_role_enabled',
+                                            )
+                                        "
+                                        :description="
+                                            $t(
+                                                'components.settings.job_props.discord_sync_settings.jobs_absence_settings.jobs_absence_role_enabled_description',
                                             )
                                         "
                                     >

@@ -983,6 +983,7 @@
         "owner": "Owner",
         "category": "Category | Categories",
         "description": "Description",
+        "details": "Details",
         "create": "Create",
         "account": "Account",
         "info": "Info",
@@ -1689,6 +1690,9 @@
             }
         },
         "documents": {
+            "ReminderDrawer": {
+                "reminder_time_description": "Choose when the document reminder should be sent."
+            },
             "document_comment_entry": {
                 "edit_comment": "Edit your comment"
             },
@@ -1707,9 +1711,11 @@
                 "open_document": "Open Document",
                 "remove_reference": "Remove Reference",
                 "add_reference": "Add Reference",
+                "references_description": "References connect this document to other documents and describe how they relate, such as being linked, solved, closed, or deprecated.",
                 "open_citizen": "Open Citizen",
                 "remove_relation": "Remove Relation",
                 "add_relation": "Add Relation",
+                "relations_description": "Relations connect this document to citizens and describe their involvement, such as being mentioned, targeted, or causing the document.",
                 "mentioned": "Mentioned",
                 "targets": "Targets",
                 "caused": "Caused"
@@ -1751,9 +1757,11 @@
             },
             "template_workflow_editor": {
                 "reminder": {
+                    "enabled_description": "Enable reminders for document owners and creators.",
                     "description": "Document reminders are only sent to the owner/creator of the document. The reminders are sent in sequence, each based on the previous reminder. E.g., reminder 1 (3 days) will be sent 3 days after document creation/last update, reminder 2 (2 days) will be sent in 5 days.\nThe reminders start again with the first reminder if the document has been updated in the meantime."
                 },
                 "auto_close": {
+                    "enabled_description": "Automatically close the document after the configured number of days.",
                     "description": "Automatic closing of the document after the number of days. The number of days is counted plus the document creation or modification time."
                 },
                 "max_reminder_count": {
@@ -1762,21 +1770,34 @@
                 }
             },
             "template_approval_editor": {
-                "due_in": "Due in (days)"
+                "due_in": "Due in (days)",
+                "due_in_description": "Set how many days the assignee has to complete this approval task."
+            },
+            "template_schema": {
+                "users_description": "Configure the number of citizens that must be included in documents using this template.",
+                "documents_description": "Configure the number of related documents required by this template.",
+                "vehicles_description": "Configure the number of vehicles that must be included in documents using this template."
             },
             "approval": {
                 "policy_form": {
                     "title": "Approval Policy",
                     "rule_kind": "Rule Kind",
+                    "rule_kind_description": "Choose whether approval is assigned to a user or a job/grade.",
                     "on_edit_behavior": "On Edit Behavior",
-                    "required_approvals": "Required Approvals"
+                    "on_edit_behavior_description": "Choose whether editing the document keeps or resets approval progress.",
+                    "required_approvals": "Required Approvals",
+                    "required_approvals_description": "Set how many approvals are needed when using quorum approval."
                 },
                 "tasks": "Approval Tasks",
                 "task_form": {
-                    "title": "Tasks"
+                    "title": "Tasks",
+                    "minimum_grade_description": "Only users at or above this job grade can complete the task.",
+                    "due_at_description": "Set the date by which this approval task must be completed."
                 },
                 "slots": "Approval Slots",
+                "slots_description": "Set how many assignees can satisfy this approval task.",
                 "signature_required": "Signature(s) Required",
+                "signature_required_description": "Require approvers to provide a signature along with their approval.",
                 "document_not_published": "Document must be published to request approvals.",
                 "self_approve_allowed": {
                     "title": "Count self-approve",
@@ -1799,7 +1820,14 @@
             },
             "create_marker": {
                 "title": "Create Marker",
-                "subtitle": "Create a new Marker."
+                "subtitle": "Create a new Marker.",
+                "expires_at_description": "Optionally hide this marker after the selected date.",
+                "marker_type_description": "Choose the shape used to display the marker on the map.",
+                "coordinate_description": "Set the map position, or use the map picker.",
+                "radius_description": "Set the size of the circular marker.",
+                "stroke_width_description": "Set the width of the circle outline.",
+                "blink_description": "Make the circle outline blink on the map.",
+                "opacity_description": "Set how transparent the shape appears on the map."
             },
             "update_marker": {
                 "title": "Update Marker",
@@ -1950,6 +1978,7 @@
             "settings": {
                 "title": "Dispatch Center Settings",
                 "description": "Settings to change dispatch center usage and predefined settings affecting dispatches and units.",
+                    "enabled_description": "Disable this to prevent the dispatch center from being used.",
                 "predefined": {
                     "title": "Predefined Status",
                     "description": "Configure predefined dispatch and unit status reasons."
@@ -1958,8 +1987,11 @@
                     "title": "Timings",
                     "description": "Timings for dispatch and unit status updates/pings.",
                     "dispatch_max_wait": "Dispatch: Max Wait (in seconds)",
+                    "dispatch_max_wait_description": "Set how long a dispatch can wait for a unit before it is escalated or updated.",
                     "require_unit": "Require colleagues to be in an unit",
+                    "require_unit_description": "Require colleagues to join a unit before they can handle dispatches.",
                     "require_unit_reminder_seconds": "Reminder interval (in seconds) to ping colleagues not in an unit to join an unit"
+                    ,"require_unit_reminder_seconds_description": "Set how often colleagues outside a unit are reminded to join one."
                 },
                 "access": {
                     "title": "Shared Access",
@@ -1968,13 +2000,17 @@
                 "deduplication": {
                     "title": "Deduplication",
                     "description": "Enable deduplication of dispatches. If enabled, dispatches within the same location (radius) will be marked as a duplicate and canelled.",
+                    "enabled_description": "Mark new dispatches at the same location as duplicates during the configured time window.",
                     "deduplication_duration": "Deduplication Duration (in seconds)",
+                    "deduplication_duration_description": "Set how long dispatches at the same location are considered duplicates.",
                     "deduplication_radius": "Deduplication Radius (in meters)",
                     "deduplication_radius_description": "The radius in which dispatches will be deduplicated. If a new dispatch is created within this radius of an existing dispatch, it will be marked as a duplicate and and canelled."
                 },
                 "public": {
                     "description": "If enabled, will make your job available to anyone with access to create dispatches. This is useful for public jobs like police, taxi or bus services."
                 },
+                "mode_description": "Select how the dispatch center handles and presents dispatches.",
+                "fallback_mode_description": "Select the mode used when the primary dispatch mode cannot be used.",
                 "offered_access": {
                     "title": "Offered Access",
                     "description": "These are accesses offered from other jobs. To enable offered accesses, enable the entry via the toggle, and save your settings."
@@ -1996,7 +2032,10 @@
                     },
                     "update": {
                         "title": "Update Conduct Entry"
-                    }
+                    },
+                    "target_user_description": "Select the colleague this conduct entry concerns.",
+                    "type_description": "Choose the category used to classify this conduct entry.",
+                    "expires_at_description": "Optionally set when this conduct entry should no longer be active."
                 }
             },
             "timeclock": {
@@ -2077,6 +2116,15 @@
                     "excluded": "Excluded",
                     "rule": "Rule",
                     "rule_type": "Rule type",
+                        "rule_type_description": "Choose whether this rule is based on a job grade or a qualification.",
+                        "rule_enabled_description": "Disabled rules do not affect group membership.",
+                        "grade_rule_type_description": "Choose whether to match a minimum, exact, or grade range.",
+                        "grade_description": "Select the job grade used by this rule.",
+                        "min_grade_description": "Select the lowest job grade included in the range.",
+                        "max_grade_description": "Select the highest job grade included in the range.",
+                        "qualification_rule_type_description": "Choose how the selected qualifications are evaluated.",
+                        "require_completed_description": "Require members to have completed the selected qualifications.",
+                        "qualification_description": "Select the qualifications used by this membership rule.",
                     "qualification_id": "Qualification #{id}",
                     "require_completed": "Require completed",
                     "add_manual_member": "Add manual member",
@@ -2180,6 +2228,13 @@
                     "description": "If enabled, the exam will be automatically graded after the user has submitted it. If disabled, the exam will be graded manually by a tutor. The system uses the selected answers to grade the exam automatically (answer key is for helping tutors.)"
                 },
                 "exam_duration": "Exam Duration",
+                "exam_mode_description": "Choose whether the exam is disabled, enabled, or requires an approved request to take.",
+                "exam_duration_description": "Set the maximum amount of time allowed to complete the exam.",
+                "min_length_description": "Set the minimum number of characters required in the answer.",
+                "max_length_description": "Set the maximum number of characters allowed in the answer.",
+                "answer_key_description": "Add guidance or the expected answer for tutors and grading.",
+                "points_description": "Set how many points this question contributes to the exam.",
+                "multiple_choice_limit_description": "Set the maximum number of choices a participant may select.",
                 "auto_grade_mode": {
                     "title": "Grade Mode",
                     "description": "The mode for the automatic grading. 'Strict mode' gives no points for partial answers (e.g., all multiple choice answers must be selected and correct.)"
@@ -2282,6 +2337,11 @@
             },
             "correct_question": "Correct",
             "qualification_editor": {
+                "closed_description": "Prevent new requests and changes to this qualification while keeping existing results available.",
+                "public_description": "Allow anyone to view this qualification without explicit access.",
+                "discord_enabled_description": "Synchronize this qualification with a Discord role.",
+                "discord_role_description": "Choose the Discord role assigned to users who complete this qualification.",
+                "label_sync_enabled_description": "Automatically apply the configured label when this qualification is completed.",
                 "label_sync_format": {
                     "label": "Label Format",
                     "description": "Should the name be longer than 64 characters, it will be cut off."
@@ -2345,6 +2405,7 @@
             "registration_form": {
                 "title": "Create Account",
                 "registration_token": "Registration Token",
+                "registration_token_description": "Enter the six-digit token provided by the FiveM server to register this account.",
                 "submit_button": "Create Account",
                 "back_to_login_button": "Back to Login",
                 "create_error": "There was an error creating your account, please try again!",
@@ -2357,6 +2418,7 @@
                 "subtitle": "Customize your user experience and manage your settings.",
                 "set_startpage": {
                     "title": "Start Page after character selection",
+                    "description": "Choose the page that opens automatically after selecting a character.",
                     "no_char_selected": "To select a start page you must select a character first."
                 },
                 "app_theme": {
@@ -2383,6 +2445,7 @@
                 "customization": "Customize the look and feel of FiveNet.",
                 "documents_lists_style": {
                     "title": "Document List Style",
+                    "description": "Choose whether documents use one column or two columns on larger screens.",
                     "single": "Single Column",
                     "double": "Double Column (Big Screens)"
                 },
@@ -2499,8 +2562,12 @@
                 "title": "Citizen Labels",
                 "settings": {
                     "requires_expiration": "Requires Expiration",
+                    "requires_expiration_description": "Make an expiration date mandatory for labels using this configuration.",
+                    "expires_at_description": "Choose the expiration date for this label. Configured duration limits are enforced.",
                     "min_duration": "Min Duration",
+                    "min_duration_description": "Set the shortest allowed duration for this label.",
                     "max_duration": "Max Duration"
+                    ,"max_duration_description": "Set the longest allowed duration for this label."
                 }
             },
             "List": {
@@ -2518,6 +2585,9 @@
             "VehicleInfoSlideover": {
                 "title": "Vehicle Info"
             },
+            "SetWantedDrawer": {
+                "wanted_till_description": "Set how long the vehicle remains wanted, or leave it permanent when applicable."
+            },
             "VehicleActivityFeedEntry": {
                 "wanted_set": "Set the vehicle as",
                 "automatic": "Automatic update"
@@ -2527,6 +2597,14 @@
                     "title": "You aren't able to see your own vehicle activity feed",
                     "message": "Because you don't have permissions to see your own vehicle activity feed."
                 }
+            }
+        },
+        "wiki": {
+            "PageEditor": {
+                "public_description": "Allow anyone to view this page without explicit access.",
+                "startpage_description": "Use this page as a wiki start page.",
+                "parent_page_description": "Place this page under another wiki page to organize it in the page hierarchy.",
+                "toc_description": "Automatically generate a table of contents from the headings in this page."
             }
         },
         "CookieControl": {
@@ -2563,10 +2641,16 @@
                         "title": "Update Calendar"
                     },
                     "private": "Private Calendar",
+                    "private_description": "This is your personal calendar and is not associated with your current job.",
                     "public": "Public Calendar",
+                    "public_description": "Public calendars can be viewed by users who have access to your job.",
+                    "closed_description": "Closed calendars remain visible, but new entries cannot be added or edited until the calendar is reopened.",
+                    "access_description": "Choose which users and jobs can access this calendar.",
                     "discord_settings": {
                         "title": "Discord Reminders",
                         "description": "Send reminder messages to a Discord text channel before calendar events start.",
+                        "enabled_description": "Send calendar reminders to the configured Discord channel.",
+                        "channel_description": "Choose the Discord text channel that receives calendar reminders.",
                         "reminder_steps": {
                             "label": "Reminder Intervals",
                             "description": "Each step sends at the selected number of minutes before the event starts.",
@@ -2599,10 +2683,14 @@
                 "recurring": {
                     "title": "Recurring",
                     "subtitle": "Repeat this entry on a schedule.",
+                    "description": "Enable this to create multiple occurrences of the calendar entry.",
                     "enabled": "Repeat this entry",
                     "every": "Repeat every",
+                    "every_description": "Choose how often the entry repeats.",
                     "count": "Interval",
+                    "count_description": "Set how many occurrences to create.",
                     "until": "Ends on",
+                    "until_description": "Optionally stop creating occurrences after this date.",
                     "every_day": "Daily",
                     "every_week": "Weekly",
                     "every_month": "Monthly",
@@ -2684,9 +2772,12 @@
                     "user_info_sync": "User Info Sync (Names and Job Grade Roles)",
                     "user_info_sync_settings": {
                         "employee_role_enabled": "Create and manage Employee Role",
+                        "employee_role_enabled_description": "Create a Discord role for employees and keep its membership synchronized.",
                         "employee_role_format": "Employee Role format",
                         "unemployed_enabled": "Manage the unemployed role",
+                        "unemployed_enabled_description": "Keep a separate Discord role synchronized for unemployed users.",
                         "unemployed_mode": "Mode for handling unemployed users",
+                        "unemployed_mode_description": "Choose whether unemployed users receive or retain a Discord role.",
                         "unemployed_role_name": "Unemployed Role Name",
                         "sync_nicknames": "Sync Nicknames",
                         "group_mapping": {
@@ -2709,6 +2800,7 @@
                     },
                     "jobs_absence_settings": {
                         "jobs_absence_role_enabled": "Manage the absence role",
+                        "jobs_absence_role_enabled_description": "Synchronize a Discord role for colleagues marked as absent.",
                         "jobs_absence_role_name": "Absence Role"
                     },
                     "group_sync_settings": {
@@ -2758,15 +2850,17 @@
             "app_config": {
                 "auth": {
                     "title": "Auth",
-                    "description": "Authentication settings",
+                    "description": "Configure user sign-up and character access behavior.",
                     "sign_up": {
                         "title": "Sign-up",
                         "description": "Enable user sign-up for new users."
                     },
                     "last_char_lock": "Lock players into their last active character",
+                    "last_char_lock_description": "When enabled, players can only access the character they used most recently.",
                     "social_login_providers": {
                         "title": "Social Login Providers",
-                        "description": "List of configured social login providers."
+                        "description": "List of configured social login providers.",
+                        "configuration_notice": "Social login providers can only be configured through the FiveNet configuration file."
                     },
                     "admin_groups": {
                         "title": "Admin Groups",
@@ -2786,12 +2880,12 @@
                     "description": "Permissions system options.",
                     "default_perms": {
                         "title": "Default Permissions",
-                        "description": "Default permissions for any user."
+                        "description": "Configure the permissions assigned by default to users."
                     }
                 },
                 "website": {
                     "title": "Website",
-                    "description": "Website settings, such as the footer links.",
+                    "description": "Configure website links and public statistics settings.",
                     "links": {
                         "title": "Links"
                     },
@@ -2803,34 +2897,46 @@
                 "jobs_users": {
                     "tab": "Jobs & Tracker",
                     "title": "Jobs",
-                    "description": "Unemployed job info for the system to fill in and list of public and hidden jobs.",
+                    "description": "Configure public and hidden jobs, plus the jobs tracked on the livemap and timeclock.",
                     "unemployed_job": {
                         "title": "Unemployed Job",
                         "description": "The unemployed job info that users without a job have assigned."
                     },
                     "public_jobs": "Public Jobs",
+                    "public_jobs_description": "Jobs listed here are available for public-facing features such as dispatch access.",
                     "hidden_jobs": "Hidden Jobs",
+                    "hidden_jobs_description": "Jobs listed here are hidden from job lists and selection menus where supported.",
                     "user_tracker": {
                         "title": "User Tracker",
                         "description": "List of jobs to track on the livemap and to maintain timeclock updates for.",
                         "refresh_time": "Refresh Time",
-                        "db_refresh_time": "DB Refresh Time"
+                        "refresh_time_description": "How often live user positions are refreshed on the livemap.",
+                        "db_refresh_time": "DB Refresh Time",
+                        "db_refresh_time_description": "How often tracker data is refreshed from the database."
                     }
                 },
                 "discord": {
-                    "description": "FiveNet Discord Bot settings.",
+                    "description": "Configure Discord synchronization, bot permissions, ignored jobs, and bot presence.",
+                    "enabled_description": "Enable the FiveNet Discord bot integration and its configured synchronization tasks.",
                     "bot_invite_url": "Bot Invite URL",
                     "sync_interval": "Sync Interval",
+                    "sync_interval_description": "How often the Discord bot synchronizes data with FiveNet.",
                     "ignored_jobs": "Ignored Jobs (e.g., Prisoner job)",
+                    "ignored_jobs_description": "Jobs listed here are excluded from Discord synchronization.",
                     "bot_presence": {
                         "title": "Bot Presence Status",
-                        "description": "Set the FiveNet Discord's bot status presence.",
+                        "description": "Configure the activity and status shown by the FiveNet Discord bot.",
                         "type": "Type",
+                        "type_description": "Choose the activity type shown in the Discord bot presence.",
                         "status": "Status",
-                        "url": "URL"
+                        "status_description": "The text displayed as the Discord bot's current activity.",
+                        "url": "URL",
+                        "url_description": "Optional URL used by presence types that support a clickable activity link."
                     },
                     "bot_id": "Bot ID",
-                    "bot_permissions": "Bot Permissions"
+                    "bot_id_description": "The Discord application or bot ID used by the integration.",
+                    "bot_permissions": "Bot Permissions",
+                    "bot_permissions_description": "The Discord permission bit field requested for the bot."
                 },
                 "save": {
                     "description": "Make sure to double check any config options before saving the config."
@@ -2838,7 +2944,9 @@
                 "system": {
                     "banner_message": {
                         "title": "Banner Message",
-                        "subtitle": "Globally displayed banner message (the message should be kept short)."
+                        "subtitle": "Configure a short message shown globally, with an optional expiry date.",
+                        "enabled_description": "Show the configured banner message to users across the application.",
+                        "expires_at_description": "Optionally hide the banner automatically after this date."
                     }
                 },
                 "display": {
@@ -2851,18 +2959,24 @@
                     "description": "Game related settings, such as law calculation options.",
                     "max_wanted_duration": {
                         "title": "Max Wanted Duration",
-                        "description": "The maximum duration for wanted status. If enabled, this setting will limit the duration of the wanted status of citizens and vehicles (automatically removed after the duration).",
+                        "description": "Automatically remove citizen and vehicle wanted statuses after the configured maximum duration.",
                         "enabled_user": "Enabled for citizens",
+                        "enabled_user_description": "Automatically remove citizen wanted status after the maximum duration.",
                         "enabled_vehicle": "Enabled for vehicles",
-                        "max": "Max Duration"
+                        "enabled_vehicle_description": "Automatically remove vehicle wanted status after the maximum duration.",
+                        "max": "Max Duration",
+                        "max_user_description": "Maximum time a citizen can remain wanted.",
+                        "max_vehicle_description": "Maximum time a vehicle can remain wanted."
                     }
                 },
                 "quick_buttons": {
                     "penalty_calculator": {
                         "title": "Penalty Calculator",
-                        "description": "Configure the penalty calculator quick access button.",
+                        "description": "Configure violation limits, leeway, detention units, and warning thresholds for the penalty calculator.",
                         "max_count": "Maximum Count of Violations",
+                        "max_count_description": "Limit how many violations the calculator accepts at once.",
                         "max_leeway": "Maximum Leeway Percentage",
+                        "max_leeway_description": "Allow this percentage of leeway when calculating the final penalty.",
                         "detention_time_unit": {
                             "title": "Detention Time Unit",
                             "description": "The unit of the detention time (e.g., month / months, day / days)."
@@ -2873,6 +2987,9 @@
                             "thresholds": {
                                 "title": "Threshold Amounts",
                                 "description": "The amounts at which the warn message is shown."
+                                ,"fine_description": "Show a warning when the fine reaches this amount.",
+                                "detention_description": "Show a warning when detention reaches this duration.",
+                                "points_description": "Show a warning when traffic points reach this amount."
                             },
                             "warn_message": {
                                 "title": "Warn Message",
@@ -2883,8 +3000,9 @@
                 },
                 "livemap": {
                     "title": "Livemap",
-                    "description": "Settings for the livemap.",
-                    "enable_cayo_perico": "Enable Cayo Perico Island on the livemap"
+                    "description": "Configure which additional islands are available on the livemap.",
+                    "enable_cayo_perico": "Enable Cayo Perico Island on the livemap",
+                    "enable_cayo_perico_description": "Show Cayo Perico as an available island on the livemap."
                 }
             },
             "accounts": {

@@ -7,6 +7,7 @@ import type { UserProps } from '~~/gen/ts/resources/users/props/props';
 import type { User } from '~~/gen/ts/resources/users/user';
 import WantedTillPicker from '~/components/partials/WantedTillPicker.vue';
 import { toTimestamp } from '~/utils/time';
+import ResponsiveDrawerModal from '~/components/partials/ResponsiveDrawerModal.vue';
 
 const props = defineProps<{
     user: User;

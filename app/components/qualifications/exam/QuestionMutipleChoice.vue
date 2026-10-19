@@ -37,7 +37,12 @@ watch(
         v-if="question.data!.data.oneofKind === 'multipleChoice' && question.answer!.answer.oneofKind === 'multipleChoice'"
         class="flex flex-col gap-2"
     >
-        <UFormField :name="`exam.questions.${index}.data.data.multipleChoice.limit`" :label="$t('common.max')" required>
+        <UFormField
+            :name="`exam.questions.${index}.data.data.multipleChoice.limit`"
+            :label="$t('common.max')"
+            :description="$t('components.qualifications.exam_editor.multiple_choice_limit_description')"
+            required
+        >
             <UInputNumber
                 v-model="question.data!.data.multipleChoice.limit"
                 :min="1"

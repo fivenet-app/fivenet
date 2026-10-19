@@ -153,7 +153,12 @@ watch(
                     </ClientOnly>
                 </UFormField>
 
-                <UFormField class="flex-1" name="minimumGrade" :label="$t('common.job_grade')">
+                <UFormField
+                    class="flex-1"
+                    name="minimumGrade"
+                    :label="$t('common.job_grade')"
+                    :description="$t('components.documents.approval.task_form.minimum_grade_description')"
+                >
                     <ClientOnly>
                         <USelectMenu
                             v-model="task.minimumGrade"
@@ -181,7 +186,12 @@ watch(
                 </UFormField>
             </template>
 
-            <UFormField class="flex-1" name="dueAt" :label="$t('common.due_at')">
+            <UFormField
+                class="flex-1"
+                name="dueAt"
+                :label="$t('common.due_at')"
+                :description="$t('components.documents.approval.task_form.due_at_description')"
+            >
                 <InputDatePicker v-model="task.dueAt" class="w-full" :disabled="disabled" />
             </UFormField>
         </div>
@@ -195,6 +205,7 @@ watch(
                 class="h-full flex-initial"
                 name="signatureRequired"
                 :label="$t('components.documents.approval.signature_required')"
+                :description="$t('components.documents.approval.signature_required_description')"
             >
                 <USwitch v-model="task.signatureRequired" :disabled="policy?.signatureRequired === true || disabled" />
             </UFormField>
@@ -204,6 +215,7 @@ watch(
                 class="flex-initial"
                 name="slots"
                 :label="$t('components.documents.approval.slots')"
+                :description="$t('components.documents.approval.slots_description')"
             >
                 <UInputNumber
                     v-model="task.slots"

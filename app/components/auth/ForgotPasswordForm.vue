@@ -103,6 +103,7 @@ watch(isSubmitting, (value) => (parentCanSubmit.value = !value), { immediate: tr
         <UFormField
             name="registrationToken"
             :label="$t('components.auth.forgot_password.registration_token')"
+            :description="$t('components.auth.registration_form.registration_token_description')"
             :ui="{
                 root: 'w-full',
             }"

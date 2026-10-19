@@ -6,6 +6,7 @@ import { NotificationType } from '~~/gen/ts/resources/notifications/notification
 import type { VehicleProps } from '~~/gen/ts/resources/vehicles/props/props';
 import { toTimestamp } from '~/utils/time';
 import WantedTillPicker from '~/components/partials/WantedTillPicker.vue';
+import ResponsiveDrawerModal from '~/components/partials/ResponsiveDrawerModal.vue';
 
 const props = defineProps<{
     plate: string;
@@ -118,7 +119,11 @@ async function closeModal(): Promise<void> {
                 </UFormField>
 
                 <template v-if="!vehicleProps?.wanted">
-                    <UFormField name="wantedTill" :label="$t('common.duration')">
+                    <UFormField
+                        name="wantedTill"
+                        :label="$t('common.duration')"
+                        :description="$t('components.vehicles.SetWantedDrawer.wanted_till_description')"
+                    >
                         <WantedTillPicker v-model="state.wantedTill" v-model:permanent="state.permanent" />
                     </UFormField>
                 </template>

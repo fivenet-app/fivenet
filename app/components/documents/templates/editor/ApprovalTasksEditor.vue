@@ -164,6 +164,7 @@ onBeforeMount(async () => listJobs());
                         class="flex-1"
                         name="dueInDays"
                         :label="$t('components.documents.template_approval_editor.due_in')"
+                        :description="$t('components.documents.template_approval_editor.due_in_description')"
                     >
                         <UFieldGroup>
                             <UInputNumber v-model="task.dueInDays" class="w-full" :min="1" :max="30" :disabled="disabled" />
@@ -186,6 +187,7 @@ onBeforeMount(async () => listJobs());
                         class="h-full flex-initial"
                         name="signatureRequired"
                         :label="$t('components.documents.approval.signature_required')"
+                        :description="$t('components.documents.approval.signature_required_description')"
                     >
                         <USwitch v-model="task.signatureRequired" :disabled="signatureRequired || disabled" />
                     </UFormField>
@@ -195,6 +197,7 @@ onBeforeMount(async () => listJobs());
                         class="flex-initial"
                         name="slots"
                         :label="$t('components.documents.approval.slots')"
+                        :description="$t('components.documents.approval.slots_description')"
                     >
                         <UInputNumber
                             v-model="task.slots"

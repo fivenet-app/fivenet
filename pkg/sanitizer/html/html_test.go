@@ -60,7 +60,11 @@ func TestSanitizeReplacesEmbeddedBase64Image(t *testing.T) {
 		`<p><img src="data:image/png;base64,aGVsbG8=" alt="embedded"></p>`,
 		`<p><img src=data:image/png;base64,aGVsbG8= alt="embedded"></p>`,
 	} {
-		assert.Equal(t, `<p><img src="/images/broken_image.webp" alt="embedded"></p>`, Sanitize(input))
+		assert.Equal(
+			t,
+			`<p><img src="/images/broken_image.webp" alt="embedded"></p>`,
+			Sanitize(input),
+		)
 	}
 }
 

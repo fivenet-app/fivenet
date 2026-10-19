@@ -435,7 +435,11 @@ watch(
                 />
 
                 <div class="flex flex-1 gap-3 lg:flex-row lg:items-end">
-                    <UFormField class="w-full" :label="$t('common.type')">
+                    <UFormField
+                        class="w-full"
+                        :label="$t('common.type')"
+                        :description="$t('components.jobs.groups.details.rule_type_description')"
+                    >
                         <USelectMenu
                             v-model="ruleForm.type"
                             class="w-full"
@@ -445,7 +449,10 @@ watch(
                         />
                     </UFormField>
 
-                    <UFormField :label="$t('common.status')">
+                    <UFormField
+                        :label="$t('common.status')"
+                        :description="$t('components.jobs.groups.details.rule_enabled_description')"
+                    >
                         <USwitch
                             v-model="ruleForm.enabled"
                             :label="$t('common.enabled')"
@@ -478,7 +485,10 @@ watch(
                 </div>
 
                 <div v-if="ruleForm.type === GroupRuleType.GRADE" class="grid gap-3 sm:grid-cols-3">
-                    <UFormField :label="$t('components.jobs.groups.details.rule_type')">
+                    <UFormField
+                        :label="$t('components.jobs.groups.details.rule_type')"
+                        :description="$t('components.jobs.groups.details.grade_rule_type_description')"
+                    >
                         <USelectMenu
                             v-model="ruleForm.gradeType"
                             class="w-full"
@@ -488,7 +498,11 @@ watch(
                         />
                     </UFormField>
 
-                    <UFormField v-if="ruleForm.gradeType !== GroupGradeRuleType.RANGE" :label="$t('common.rank')">
+                    <UFormField
+                        v-if="ruleForm.gradeType !== GroupGradeRuleType.RANGE"
+                        :label="$t('common.rank')"
+                        :description="$t('components.jobs.groups.details.grade_description')"
+                    >
                         <USelectMenu
                             v-model="ruleForm.grade"
                             class="w-full"
@@ -510,7 +524,10 @@ watch(
                     </UFormField>
 
                     <template v-else>
-                        <UFormField :label="$t('common.min')">
+                        <UFormField
+                            :label="$t('common.min')"
+                            :description="$t('components.jobs.groups.details.min_grade_description')"
+                        >
                             <USelectMenu
                                 v-model="ruleForm.minGrade"
                                 class="w-full"
@@ -530,7 +547,10 @@ watch(
                                 </template>
                             </USelectMenu>
                         </UFormField>
-                        <UFormField :label="$t('common.max')">
+                        <UFormField
+                            :label="$t('common.max')"
+                            :description="$t('components.jobs.groups.details.max_grade_description')"
+                        >
                             <USelectMenu
                                 v-model="ruleForm.maxGrade"
                                 class="w-full"
@@ -555,7 +575,10 @@ watch(
 
                 <div v-else class="grid gap-3">
                     <div class="grid gap-3 sm:grid-cols-2">
-                        <UFormField :label="$t('components.jobs.groups.details.rule_type')">
+                        <UFormField
+                            :label="$t('components.jobs.groups.details.rule_type')"
+                            :description="$t('components.jobs.groups.details.qualification_rule_type_description')"
+                        >
                             <USelectMenu
                                 v-model="ruleForm.qualificationType"
                                 class="w-full"
@@ -565,7 +588,10 @@ watch(
                             />
                         </UFormField>
 
-                        <UFormField :label="$t('common.status')">
+                        <UFormField
+                            :label="$t('common.status')"
+                            :description="$t('components.jobs.groups.details.require_completed_description')"
+                        >
                             <UCheckbox
                                 v-model="ruleForm.requireCompleted"
                                 :label="$t('components.jobs.groups.details.require_completed')"
@@ -574,7 +600,10 @@ watch(
                         </UFormField>
                     </div>
 
-                    <UFormField :label="$t('common.qualification', 2)">
+                    <UFormField
+                        :label="$t('common.qualification', 2)"
+                        :description="$t('components.jobs.groups.details.qualification_description')"
+                    >
                         <SelectMenu
                             v-model="selectedQualifications"
                             class="w-full"

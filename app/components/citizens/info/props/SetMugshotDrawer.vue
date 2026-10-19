@@ -8,6 +8,7 @@ import { getCitizensCitizensClient } from '~~/gen/ts/clients';
 import type { File as FilestoreFile } from '~~/gen/ts/resources/file/file';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 import type { User } from '~~/gen/ts/resources/users/user';
+import ResponsiveDrawerModal from '~/components/partials/ResponsiveDrawerModal.vue';
 
 const emit = defineEmits<{
     (e: 'close', v: boolean): void;

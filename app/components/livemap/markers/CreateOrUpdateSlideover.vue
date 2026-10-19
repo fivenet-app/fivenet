@@ -686,7 +686,10 @@ onBeforeUnmount(() => {
                             </label>
                         </dt>
                         <dd class="mt-1 text-sm leading-6 sm:col-span-2 sm:mt-0">
-                            <UFormField name="expiresAt">
+                            <UFormField
+                                name="expiresAt"
+                                :description="$t('components.livemap.create_marker.expires_at_description')"
+                            >
                                 <InputDatePicker v-model="state.expiresAt" clearable time />
                             </UFormField>
                         </dd>
@@ -712,7 +715,10 @@ onBeforeUnmount(() => {
                             </label>
                         </dt>
                         <dd class="mt-1 text-sm leading-6 sm:col-span-2 sm:mt-0">
-                            <UFormField name="markerType">
+                            <UFormField
+                                name="markerType"
+                                :description="$t('components.livemap.create_marker.marker_type_description')"
+                            >
                                 <ClientOnly>
                                     <USelectMenu
                                         v-model="state.markerType"
@@ -735,7 +741,7 @@ onBeforeUnmount(() => {
                             </label>
                         </dt>
                         <dd class="mt-1 text-sm leading-6 sm:col-span-2 sm:mt-0">
-                            <UFormField name="x">
+                            <UFormField name="x" :description="$t('components.livemap.create_marker.coordinate_description')">
                                 <UInputNumber
                                     v-model="state.x"
                                     class="w-full"
@@ -754,7 +760,7 @@ onBeforeUnmount(() => {
                             </label>
                         </dt>
                         <dd class="mt-1 text-sm leading-6 sm:col-span-2 sm:mt-0">
-                            <UFormField name="y">
+                            <UFormField name="y" :description="$t('components.livemap.create_marker.coordinate_description')">
                                 <UInputNumber
                                     v-model="state.y"
                                     class="w-full"
@@ -791,7 +797,10 @@ onBeforeUnmount(() => {
                             </label>
                         </dt>
                         <dd class="mt-1 text-sm leading-6 sm:col-span-2 sm:mt-0">
-                            <UFormField name="circleRadius">
+                            <UFormField
+                                name="circleRadius"
+                                :description="$t('components.livemap.create_marker.radius_description')"
+                            >
                                 <UInputNumber
                                     v-model="state.circleRadius"
                                     class="w-full"
@@ -830,7 +839,10 @@ onBeforeUnmount(() => {
                             </label>
                         </dt>
                         <dd class="mt-1 text-sm leading-6 sm:col-span-2 sm:mt-0">
-                            <UFormField name="circleStrokeWidth">
+                            <UFormField
+                                name="circleStrokeWidth"
+                                :description="$t('components.livemap.create_marker.stroke_width_description')"
+                            >
                                 <UInputNumber
                                     v-model="state.circleStrokeWidth"
                                     class="w-full"
@@ -853,7 +865,10 @@ onBeforeUnmount(() => {
                             </label>
                         </dt>
                         <dd class="mt-1 text-sm leading-6 sm:col-span-2 sm:mt-0">
-                            <UFormField name="circleBlink">
+                            <UFormField
+                                name="circleBlink"
+                                :description="$t('components.livemap.create_marker.blink_description')"
+                            >
                                 <USwitch v-model="state.circleBlink" name="circleBlink" />
                             </UFormField>
                         </dd>
@@ -913,7 +928,10 @@ onBeforeUnmount(() => {
                             </label>
                         </dt>
                         <dd class="mt-1 text-sm leading-6 sm:col-span-2 sm:mt-0">
-                            <UFormField name="shapeOpacity">
+                            <UFormField
+                                name="shapeOpacity"
+                                :description="$t('components.livemap.create_marker.opacity_description')"
+                            >
                                 <UInputNumber
                                     v-model="state.shapeOpacity"
                                     class="w-full"

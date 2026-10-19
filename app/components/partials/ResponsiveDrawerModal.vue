@@ -1,4 +1,5 @@
 <script lang="ts" setup>
+import type { ModalProps } from '@nuxt/ui';
 import { useMediaQuery } from '@vueuse/core';
 
 defineOptions({ inheritAttrs: false });
@@ -6,11 +7,11 @@ defineOptions({ inheritAttrs: false });
 withDefaults(
     defineProps<{
         title?: string;
-        close?: boolean;
+        close?: ModalProps['close'];
         dismissible?: boolean;
         modal?: boolean;
         overlay?: boolean;
-        ui?: Record<string, string>;
+        ui?: ModalProps['ui'] & { container?: string };
     }>(),
     {
         title: undefined,

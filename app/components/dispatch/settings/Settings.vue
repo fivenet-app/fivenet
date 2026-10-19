@@ -301,6 +301,7 @@ const formRef = useTemplateRef('formRef');
                                 class="grid grid-cols-2 items-center gap-2"
                                 name="enabled"
                                 :label="$t('common.enabled')"
+                                :description="$t('components.dispatch.settings.enabled_description')"
                             >
                                 <USwitch v-model="state.enabled" name="enabled" :disabled="!canSubmit" />
                             </UFormField>
@@ -319,7 +320,12 @@ const formRef = useTemplateRef('formRef');
                                 />
                             </UFormField>
 
-                            <UFormField class="grid grid-cols-2 items-center gap-2" name="mode" :label="$t('common.mode')">
+                            <UFormField
+                                class="grid grid-cols-2 items-center gap-2"
+                                name="mode"
+                                :label="$t('common.mode')"
+                                :description="$t('components.dispatch.settings.mode_description')"
+                            >
                                 <ClientOnly>
                                     <USelectMenu
                                         v-model="state.mode"
@@ -344,6 +350,7 @@ const formRef = useTemplateRef('formRef');
                                 class="grid grid-cols-2 items-center gap-2"
                                 name="fallbackMode"
                                 :label="$t('common.fallback_mode')"
+                                :description="$t('components.dispatch.settings.fallback_mode_description')"
                             >
                                 <ClientOnly>
                                     <USelectMenu
@@ -374,6 +381,7 @@ const formRef = useTemplateRef('formRef');
                                 class="grid grid-cols-2 items-center gap-2"
                                 name="configuration.deduplicationEnabled"
                                 :label="$t('common.enabled')"
+                                :description="$t('components.dispatch.settings.deduplication.enabled_description')"
                             >
                                 <USwitch v-model="state.configuration.deduplicationEnabled" :disabled="!canSubmit" />
                             </UFormField>
@@ -382,6 +390,9 @@ const formRef = useTemplateRef('formRef');
                                 class="grid grid-cols-2 items-center gap-2"
                                 name="configuration.deduplicationDuration"
                                 :label="$t('components.dispatch.settings.deduplication.deduplication_duration')"
+                                :description="
+                                    $t('components.dispatch.settings.deduplication.deduplication_duration_description')
+                                "
                             >
                                 <InputDurationPicker
                                     v-model="state.configuration.deduplicationDuration"
@@ -516,6 +527,7 @@ const formRef = useTemplateRef('formRef');
                                 class="grid grid-cols-2 items-center gap-2"
                                 name="timings.dispatchMaxWait"
                                 :label="$t('components.dispatch.settings.timings.dispatch_max_wait')"
+                                :description="$t('components.dispatch.settings.timings.dispatch_max_wait_description')"
                             >
                                 <UInputNumber
                                     v-model="state.timings.dispatchMaxWait"
@@ -532,6 +544,7 @@ const formRef = useTemplateRef('formRef');
                                 class="grid grid-cols-2 items-center gap-2"
                                 name="timings.requireUnit"
                                 :label="$t('components.dispatch.settings.timings.require_unit')"
+                                :description="$t('components.dispatch.settings.timings.require_unit_description')"
                             >
                                 <USwitch v-model="state.timings.requireUnit" :disabled="!canSubmit" />
                             </UFormField>
@@ -540,6 +553,9 @@ const formRef = useTemplateRef('formRef');
                                 class="grid grid-cols-2 items-center gap-2"
                                 name="timings.requireUnitReminderSeconds"
                                 :label="$t('components.dispatch.settings.timings.require_unit_reminder_seconds')"
+                                :description="
+                                    $t('components.dispatch.settings.timings.require_unit_reminder_seconds_description')
+                                "
                             >
                                 <UInputNumber
                                     v-model="state.timings.requireUnitReminderSeconds"

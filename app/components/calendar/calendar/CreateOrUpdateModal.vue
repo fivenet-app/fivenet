@@ -398,29 +398,46 @@ async function closeModal(): Promise<void> {
                             />
                         </UFormField>
 
-                        <div class="grid grid-cols-1 gap-4 sm:grid-cols-3">
-                            <UFormField
-                                class="flex-1"
-                                name="private"
-                                :label="$t('components.calendar.calendar.CreateOrUpdateModal.private')"
-                            >
-                                <USwitch
-                                    v-model="state.private"
-                                    :disabled="
-                                        !canDo.privateCalendar ||
-                                        calendarId !== undefined ||
-                                        (!props.calendarId && hasPrivateCalendar)
-                                    "
-                                />
-                            </UFormField>
+                        <div class="grid gap-4 md:grid-cols-2">
+                            <UPageCard>
+                                <UFormField
+                                    class="flex-1"
+                                    name="private"
+                                    :label="$t('components.calendar.calendar.CreateOrUpdateModal.private')"
+                                    :description="$t('components.calendar.calendar.CreateOrUpdateModal.private_description')"
+                                >
+                                    <USwitch
+                                        v-model="state.private"
+                                        :disabled="
+                                            !canDo.privateCalendar ||
+                                            calendarId !== undefined ||
+                                            (!props.calendarId && hasPrivateCalendar)
+                                        "
+                                    />
+                                </UFormField>
+                            </UPageCard>
 
-                            <UFormField v-if="canDo.publicCalendar" class="flex-1" name="public" :label="$t('common.public')">
-                                <USwitch v-model="state.public" />
-                            </UFormField>
+                            <UPageCard v-if="canDo.publicCalendar">
+                                <UFormField
+                                    class="flex-1"
+                                    name="public"
+                                    :label="$t('common.public')"
+                                    :description="$t('components.calendar.calendar.CreateOrUpdateModal.public_description')"
+                                >
+                                    <USwitch v-model="state.public" />
+                                </UFormField>
+                            </UPageCard>
 
-                            <UFormField class="flex-1" name="closed" :label="`${$t('common.close', 2)}?`">
-                                <USwitch v-model="state.closed" />
-                            </UFormField>
+                            <UPageCard>
+                                <UFormField
+                                    class="flex-1"
+                                    name="closed"
+                                    :label="$t('common.close', 2)"
+                                    :description="$t('components.calendar.calendar.CreateOrUpdateModal.closed_description')"
+                                >
+                                    <USwitch v-model="state.closed" />
+                                </UFormField>
+                            </UPageCard>
                         </div>
 
                         <UPageCard
@@ -432,6 +449,9 @@ async function closeModal(): Promise<void> {
                                 class="grid grid-cols-2 items-center gap-2"
                                 name="discordSettings.enabled"
                                 :label="$t('common.enabled')"
+                                :description="
+                                    $t('components.calendar.calendar.CreateOrUpdateModal.discord_settings.enabled_description')
+                                "
                             >
                                 <USwitch v-model="state.discordSettings.enabled" :disabled="!canEditDiscordReminderSettings" />
                             </UFormField>
@@ -440,6 +460,9 @@ async function closeModal(): Promise<void> {
                                 class="grid grid-cols-1 items-center gap-2"
                                 name="discordSettings.channelId"
                                 :label="$t('common.channel')"
+                                :description="
+                                    $t('components.calendar.calendar.CreateOrUpdateModal.discord_settings.channel_description')
+                                "
                                 required
                             >
                                 <SelectMenu
@@ -652,7 +675,12 @@ async function closeModal(): Promise<void> {
                             </UFormField>
                         </UPageCard>
 
-                        <UFormField class="flex-1" name="access" :label="$t('common.access')">
+                        <UFormField
+                            class="flex-1"
+                            name="access"
+                            :label="$t('common.access')"
+                            :description="$t('components.calendar.calendar.CreateOrUpdateModal.access_description')"
+                        >
                             <AccessManager
                                 v-model:jobs="state.access.jobs"
                                 v-model:users="state.access.users"

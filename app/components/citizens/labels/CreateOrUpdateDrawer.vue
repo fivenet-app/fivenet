@@ -14,6 +14,7 @@ import { getCitizensLabelsClient } from '~~/gen/ts/clients';
 import { AccessLevel } from '~~/gen/ts/resources/citizens/labels/access';
 import type { Label } from '~~/gen/ts/resources/citizens/labels/labels';
 import type { CreateOrUpdateLabelResponse, GetLabelResponse } from '~~/gen/ts/services/citizens/labels';
+import ResponsiveDrawerModal from '~/components/partials/ResponsiveDrawerModal.vue';
 
 const props = defineProps<{
     labelId?: number;
@@ -296,6 +297,7 @@ async function closeModal(): Promise<void> {
                     <UFormField
                         name="settings.requiresExpiration"
                         :label="$t('components.citizens.citizen_labels.settings.requires_expiration')"
+                        :description="$t('components.citizens.citizen_labels.settings.requires_expiration_description')"
                     >
                         <USwitch v-model="state.settings.requiresExpiration" name="settings.requiresExpiration" />
                     </UFormField>
@@ -303,6 +305,7 @@ async function closeModal(): Promise<void> {
                     <UFormField
                         :label="$t('components.citizens.citizen_labels.settings.min_duration')"
                         name="settings.minDuration"
+                        :description="$t('components.citizens.citizen_labels.settings.min_duration_description')"
                     >
                         <InputDurationPicker
                             v-model="state.settings.minDuration"
@@ -319,6 +322,7 @@ async function closeModal(): Promise<void> {
                     <UFormField
                         :label="$t('components.citizens.citizen_labels.settings.max_duration')"
                         name="settings.maxDuration"
+                        :description="$t('components.citizens.citizen_labels.settings.max_duration_description')"
                     >
                         <InputDurationPicker
                             v-model="state.settings.maxDuration"

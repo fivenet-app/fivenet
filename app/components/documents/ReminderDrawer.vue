@@ -8,6 +8,7 @@ import { NotificationType } from '~~/gen/ts/resources/notifications/notification
 import type { Timestamp } from '~~/gen/ts/resources/timestamp/timestamp';
 import type { SetDocumentReminderResponse } from '~~/gen/ts/services/documents/documents';
 import InputDatePicker from '../partials/InputDatePicker.vue';
+import ResponsiveDrawerModal from '~/components/partials/ResponsiveDrawerModal.vue';
 
 const props = defineProps<{
     documentId: number;
@@ -109,7 +110,12 @@ async function closeDrawer(): Promise<void> {
         <template #body>
             <div class="mx-auto w-full max-w-[80%] min-w-3/4">
                 <UForm ref="formRef" :schema="schema" :state="state" @submit="submit">
-                    <UFormField name="reminderTime" :label="$t('common.time')" required>
+                    <UFormField
+                        name="reminderTime"
+                        :label="$t('common.time')"
+                        :description="$t('components.documents.ReminderDrawer.reminder_time_description')"
+                        required
+                    >
                         <InputDatePicker
                             v-model="state.reminderTime"
                             time

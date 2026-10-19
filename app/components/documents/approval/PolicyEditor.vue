@@ -44,7 +44,11 @@ const onEditBehaviors = computed(() => [
 </script>
 
 <template>
-    <UFormField name="ruleKind" :label="$t('components.documents.approval.policy_form.rule_kind')">
+    <UFormField
+        name="ruleKind"
+        :label="$t('components.documents.approval.policy_form.rule_kind')"
+        :description="$t('components.documents.approval.policy_form.rule_kind_description')"
+    >
         <USelectMenu
             v-model="policy.ruleKind"
             class="w-full"
@@ -61,11 +65,16 @@ const onEditBehaviors = computed(() => [
         v-if="policy.ruleKind === ApprovalRuleKind.QUORUM_ANY"
         name="requiredCount"
         :label="$t('components.documents.approval.policy_form.required_approvals')"
+        :description="$t('components.documents.approval.policy_form.required_approvals_description')"
     >
         <UInputNumber v-model="policy.requiredCount" class="w-full" :min="0" :max="10" :disabled="disabled" />
     </UFormField>
 
-    <UFormField name="signatureRequired" :label="$t('components.documents.approval.signature_required')">
+    <UFormField
+        name="signatureRequired"
+        :label="$t('components.documents.approval.signature_required')"
+        :description="$t('components.documents.approval.signature_required_description')"
+    >
         <USwitch v-model="policy.signatureRequired" :disabled="disabled" />
     </UFormField>
 
@@ -77,7 +86,11 @@ const onEditBehaviors = computed(() => [
         <USwitch v-model="policy.selfApproveAllowed" :disabled="disabled" />
     </UFormField>
 
-    <UFormField name="onEditBehavior" :label="$t('components.documents.approval.policy_form.on_edit_behavior')">
+    <UFormField
+        name="onEditBehavior"
+        :label="$t('components.documents.approval.policy_form.on_edit_behavior')"
+        :description="$t('components.documents.approval.policy_form.on_edit_behavior_description')"
+    >
         <USelectMenu
             v-model="policy.onEditBehavior"
             class="w-full"

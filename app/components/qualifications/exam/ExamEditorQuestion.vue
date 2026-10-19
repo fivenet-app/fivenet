@@ -489,6 +489,7 @@ watch(
                                 class="flex-1"
                                 :name="`exam.questions.${index}.data.data.freeText.minLength`"
                                 :label="$t('common.min')"
+                                :description="$t('components.qualifications.exam_editor.min_length_description')"
                             >
                                 <UInputNumber
                                     v-model="question.data!.data.freeText.minLength"
@@ -503,6 +504,7 @@ watch(
                                 class="flex-1"
                                 :name="`exam.questions.${index}.data.data.freeText.maxLength`"
                                 :label="$t('common.max')"
+                                :description="$t('components.qualifications.exam_editor.max_length_description')"
                             >
                                 <UInputNumber
                                     v-model="question.data!.data.freeText.maxLength"
@@ -551,6 +553,7 @@ watch(
                         class="flex-1"
                         :name="`exam.questions.${index}.answer.answerKey`"
                         :label="$t('common.answer_key')"
+                        :description="$t('components.qualifications.exam_editor.answer_key_description')"
                     >
                         <UTextarea
                             v-model="question.answer!.answerKey"
@@ -562,7 +565,12 @@ watch(
                         />
                     </UFormField>
 
-                    <UFormField class="max-w-24" :name="`exam.questions.${index}.points`" :label="$t('common.points', 2)">
+                    <UFormField
+                        class="max-w-24"
+                        :name="`exam.questions.${index}.points`"
+                        :label="$t('common.points', 2)"
+                        :description="$t('components.qualifications.exam_editor.points_description')"
+                    >
                         <UInputNumber
                             v-model="question.points"
                             :min="0"

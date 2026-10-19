@@ -15,6 +15,7 @@ const templateSchema = defineModel<TemplateRequirements>({ required: true });
             v-if="templateSchema.users"
             class="pb-2"
             :label="$t('common.citizen', 2)"
+            :description="$t('components.documents.template_schema.users_description')"
             :ui="{ label: 'font-bold', container: 'flex flex-1 flex-row gap-1' }"
         >
             <UFormField class="flex-1" name="requirements.users.required" :label="$t('common.required')">
@@ -39,6 +40,7 @@ const templateSchema = defineModel<TemplateRequirements>({ required: true });
             v-if="templateSchema.documents"
             class="pb-2"
             :label="$t('common.document', 2)"
+            :description="$t('components.documents.template_schema.documents_description')"
             :ui="{ label: 'font-bold', container: 'flex flex-1 flex-row gap-1' }"
         >
             <UFormField class="flex-1" name="requirements.documents.required" :label="$t('common.required')">
@@ -63,6 +65,7 @@ const templateSchema = defineModel<TemplateRequirements>({ required: true });
             v-if="templateSchema.vehicles"
             class="pb-2"
             :label="$t('common.vehicle', 2)"
+            :description="$t('components.documents.template_schema.vehicles_description')"
             :ui="{ label: 'font-bold', container: 'flex flex-1 flex-row gap-1 justify-between' }"
         >
             <UFormField class="flex-1" name="requirements.vehicles.required" :label="$t('common.required')">
