@@ -2,9 +2,10 @@
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 
 const { t } = useI18n();
+const logger = useLogger('🗺️ FollowMarker');
 
 const livemapStore = useLivemapStore();
-const { gotoCoords } = livemapStore;
+const { gotoCoords, stopFollowingMarker } = livemapStore;
 const { followMarker, selectedMarker, showLocationMarker } = storeToRefs(livemapStore);
 
 const notifications = useNotificationsStore();
@@ -12,8 +13,6 @@ const notifications = useNotificationsStore();
 watch(followMarker, (val) => {
     if (val && selectedMarker.value) {
         showLocationMarker.value = false;
-
-        gotoCoords(selectedMarker.value, true);
 
         notifications.add({
             title: { key: 'notifications.livemap.follow_marker.title' },
@@ -41,17 +40,14 @@ watch(followMarker, (val) => {
     }
 });
 
-function stopFollowing(): void {
-    followMarker.value = false;
-    selectedMarker.value = undefined;
-}
-
 watch(
     selectedMarker,
-    async () => {
+    () => {
         if (!selectedMarker.value || !followMarker.value) return;
 
-        gotoCoords(selectedMarker.value, true);
+        void gotoCoords(selectedMarker.value, true).catch((error) => {
+            logger.warn('Failed to update followed marker waypoint', error);
+        });
     },
     { deep: true },
 );
@@ -65,7 +61,7 @@ watch(
                 icon="i-mdi-track-changes"
                 size="xs"
                 block
-                @click="stopFollowing"
+                @click="stopFollowingMarker"
             />
         </UTooltip>
     </LControl>

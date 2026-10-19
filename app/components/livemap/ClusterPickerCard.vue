@@ -25,7 +25,7 @@ type Hit = {
 const { t } = useI18n();
 
 const livemapStore = useLivemapStore();
-const { selectedMarker } = storeToRefs(livemapStore);
+const { selectMarker } = livemapStore;
 
 const groupedMarkers = computed(() =>
     [
@@ -38,7 +38,7 @@ const groupedMarkers = computed(() =>
 function clicked(h: Hit): void {
     h.openPopup();
 
-    if (h.userMarker) selectedMarker.value = h.userMarker;
+    if (h.userMarker) selectMarker(h.userMarker);
 }
 
 function getMarkerMarkerIconName(h: Hit): string | undefined {

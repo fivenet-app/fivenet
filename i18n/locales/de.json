@@ -1790,10 +1790,12 @@
         "livemap": {
             "starting_datastream": "Starte Karten-Datenstrom...",
             "failed_datastream": "Karten-Datenstrom fehlgeschlagen!",
-            "center_selected_marker": "Zentriere ausgewählten Marker",
             "paused_datastream": "Karten-Datenstrom pausiert (Fenster nicht im Fokus).",
+            "center_selected_marker": "Ausgewählte Markierung zentriert halten",
+            "center_selected_marker_description": "Zentriert die Karte neu, wenn sich der ausgewählte Benutzer bewegt. Dies aktiviert nicht die Verfolgung und setzt keinen GPS-Punkt im Spiel.",
             "settings": {
-                "marker_size": "Größe der Kartenmarkierung"
+                "marker_size": "Größe der Kartenmarkierung",
+                "marker_size_description": "Passt die Größe der Benutzer- und anderen Kartenmarkierungen an."
             },
             "create_marker": {
                 "title": "Markierung erstellen",
@@ -1804,18 +1806,24 @@
                 "subtitle": "Aktualisiere eine existierende Markierung."
             },
             "show_unit_names": "Zeige Einheiten Namen (gilt nur für Karten-Ansicht)",
+            "show_unit_names_description": "Zeigt verfügbare Einheitskürzel oder Namen über den Benutzermarkierungen an.",
             "show_unit_status": "Zeige Einheiten Status Farbe",
+            "show_unit_status_description": "Zeigt einen farbigen Statusindikator an Benutzermarkierungen an, sofern Statusinformationen verfügbar sind.",
             "show_all_dispatches": "Zeige alle Einsätze an (gilt nur für Karten-Ansicht)",
+            "show_all_dispatches_description": "Zeigt Einsätze aller Jobs auf der Karte an, nicht nur für dich relevante Einsätze.",
             "restarting_datastream": "Wiederherstellung des Datenstroms...",
             "tile_layers": {
                 "postal": "Postleitzahlen",
                 "satellite": "Satellitenansicht"
             },
             "show_grid": "Raster anzeigen",
+            "show_grid_description": "Zeigt das Koordinatenraster auf der Karte an.",
             "toggle_all_layers": "Alle Ebenen umschalten",
             "use_unit_color": "Einheitsfarbe für Icon verwenden",
+            "use_unit_color_description": "Verwendet die Farbe der Einheit anstelle der eigenen Job-Markierungsfarbe für Benutzermarkierungen.",
             "unfollow_marker": "Markierung nicht mehr verfolgen",
-            "enable_marker_dragging": "Drag'n'Drop für Markierungen"
+            "enable_marker_dragging": "Drag'n'Drop für Markierungen",
+            "enable_marker_dragging_description": "Erlaubt, bearbeitbare Kartenmarkierungen an eine neue Position zu ziehen."
         },
         "debug_info": {
             "title": "Debug-Informationen",

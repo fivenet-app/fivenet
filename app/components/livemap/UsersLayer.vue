@@ -7,13 +7,11 @@ import UsersJobLayer from './UsersJobLayer.vue';
 
 withDefaults(
     defineProps<{
-        centerSelectedMarker?: boolean;
         showUserFilter?: boolean;
         showUnitNames?: boolean;
         showUnitStatus?: boolean;
     }>(),
     {
-        centerSelectedMarker: true,
         showUserFilter: true,
         showUnitNames: false,
         showUnitStatus: false,

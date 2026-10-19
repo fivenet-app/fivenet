@@ -55,6 +55,7 @@ const settingsStore = useSettingsStore();
 const { livemapTileLayer, livemapLayers, livemap: livemapSettings } = storeToRefs(settingsStore);
 
 const livemapStore = useLivemapStore();
+const { clearSelectedMarker } = livemapStore;
 const { location, selectedMarker, zoom, markerCoordPickerActive, showLocationMarker, suppressMapPreclickUntil } =
     storeToRefs(livemapStore);
 
@@ -112,14 +113,18 @@ function onMapContextMenuCapture(event: MouseEvent): void {
 
 const currentLocationQuery = useRouteQuery<string>('loc', '');
 
-watch(selectedMarker, async () => {
-    if (map === undefined || selectedMarker.value === undefined) return;
+watch(
+    [selectedMarker, () => livemapSettings.value.centerSelectedMarker],
+    async () => {
+        if (!livemapSettings.value.centerSelectedMarker || map === undefined || selectedMarker.value === undefined) return;
 
-    map?.panTo([selectedMarker.value.y, selectedMarker.value.x + getZoomOffset(zoom.value)], {
-        animate: true,
-        duration: 0.75,
-    });
-});
+        map?.panTo([selectedMarker.value.y, selectedMarker.value.x + getZoomOffset(zoom.value)], {
+            animate: true,
+            duration: 0.75,
+        });
+    },
+    { deep: true },
+);
 
 watch(location, async () => {
     if (map === undefined || location.value === undefined) return;
@@ -406,7 +411,7 @@ onBeforeUnmount(() => (map = undefined));
             :show-cayo-perico="game.livemap?.enableCayoPerico"
             :cayo-tile-layer="livemapTileLayer"
             :cayo-bounds="overlayCayoPericoBounds"
-            @click="selectedMarker = undefined"
+            @click="clearSelectedMarker"
             @ready="onMapReady($event)"
             @movestart="isMoving = true"
             @moveend="isMoving = false"

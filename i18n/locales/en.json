@@ -1790,10 +1790,12 @@
         "livemap": {
             "starting_datastream": "Starting Map data stream...",
             "failed_datastream": "Unable to stream map data!",
-            "center_selected_marker": "Center selected Marker",
             "paused_datastream": "Map data stream paused (window not in focus).",
+            "center_selected_marker": "Keep selected marker centered",
+            "center_selected_marker_description": "Recenter the map when the selected user moves. This does not activate tracking or set an in-game waypoint.",
             "settings": {
-                "marker_size": "Marker Size"
+                "marker_size": "Marker Size",
+                "marker_size_description": "Adjust the size of user and other livemap markers."
             },
             "create_marker": {
                 "title": "Create Marker",
@@ -1804,18 +1806,24 @@
                 "subtitle": "Update existing Marker."
             },
             "show_unit_names": "Show Unit Names (only affects Map)",
+            "show_unit_names_description": "Show unit initials or names above user markers when available.",
             "show_unit_status": "Show Unit Status Color",
+            "show_unit_status_description": "Show a colored status indicator on user markers when status information is available.",
             "show_all_dispatches": "Show all Dispatches (only affects Map)",
+            "show_all_dispatches_description": "Show dispatches from all jobs on the map, not only dispatches relevant to you.",
             "restarting_datastream": "Reconnecting data stream...",
             "tile_layers": {
                 "postal": "Postal Codes",
                 "satellite": "Satellite"
             },
             "show_grid": "Show Grid",
+            "show_grid_description": "Show the coordinate grid overlay on the map.",
             "toggle_all_layers": "Toggle All Layers",
             "use_unit_color": "Use Unit Color for Icon",
+            "use_unit_color_description": "Use the unit's color instead of the job's own marker color for user markers.",
             "unfollow_marker": "Unfollow Marker",
-            "enable_marker_dragging": "Marker Drag'n'Drop"
+            "enable_marker_dragging": "Marker Drag'n'Drop",
+            "enable_marker_dragging_description": "Allow editable map markers to be dragged to a new position."
         },
         "debug_info": {
             "title": "Debug Info",

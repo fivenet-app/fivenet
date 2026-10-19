@@ -40,7 +40,7 @@ const { livemap } = useAppConfig();
 const overlay = useOverlay();
 
 const livemapStore = useLivemapStore();
-const { gotoCoords } = livemapStore;
+const { gotoCoords, toggleFollowMarker } = livemapStore;
 const { followMarker, selectedMarker } = storeToRefs(livemapStore);
 
 const centrumStore = useCentrumStore();
@@ -63,13 +63,7 @@ const icon = computed(() => (unit.value?.icon ? convertComponentIconNameToDynami
 const unitStatusColor = computed(() => unitStatusToBGColor(unit.value?.status?.status));
 
 function toggleFollow(): void {
-    if (!followMarker.value) {
-        followMarker.value = true;
-        selectedMarker.value = props.marker;
-    } else {
-        followMarker.value = false;
-        selectedMarker.value = undefined;
-    }
+    toggleFollowMarker(props.marker);
 }
 
 const unitDetailsSlideover = overlay.create(UnitDetailsSlideover);

@@ -33,8 +33,8 @@ const settingsStore = useSettingsStore();
 const { nuiEnabled } = storeToRefs(settingsStore);
 
 const livemapStore = useLivemapStore();
-const { startStream } = livemapStore;
-const { error, streamState: livemapStreamState, location, showLocationMarker, selectedMarker } = storeToRefs(livemapStore);
+const { startStream, selectMarker } = livemapStore;
+const { error, streamState: livemapStreamState, location, showLocationMarker } = storeToRefs(livemapStore);
 
 const centrumStore = useCentrumStore();
 const { streamState: centrumStreamState } = storeToRefs(centrumStore);
@@ -169,7 +169,7 @@ onBeforeUnmount(() => stopMarkerCreateOrUpdateOpenTimeout());
                     <UsersLayer
                         :show-unit-names="showUnitNames"
                         :show-unit-status="showUnitStatus"
-                        @user-selected="selectedMarker = $event"
+                        @user-selected="selectMarker"
                     />
 
                     <MarkersLayer />

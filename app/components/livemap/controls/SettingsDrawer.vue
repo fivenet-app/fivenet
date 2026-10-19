@@ -131,11 +131,19 @@ const schema = z.object({
         <template #body>
             <UContainer class="max-w-xl">
                 <UForm :schema="schema" :state="livemap">
-                    <UFormField name="centerSelectedMarker" :label="$t('components.livemap.center_selected_marker')">
+                    <UFormField
+                        name="centerSelectedMarker"
+                        :label="$t('components.livemap.center_selected_marker')"
+                        :description="$t('components.livemap.center_selected_marker_description')"
+                    >
                         <USwitch v-model="livemap.centerSelectedMarker" />
                     </UFormField>
 
-                    <UFormField name="markerSize" :label="$t('components.livemap.settings.marker_size')">
+                    <UFormField
+                        name="markerSize"
+                        :label="$t('components.livemap.settings.marker_size')"
+                        :description="$t('components.livemap.settings.marker_size_description')"
+                    >
                         <USlider
                             v-model="livemap.markerSize"
                             class="my-auto h-1.5 w-full cursor-grab rounded-full"
@@ -146,23 +154,43 @@ const schema = z.object({
                         <span class="text-sm">{{ livemap.markerSize }}</span>
                     </UFormField>
 
-                    <UFormField name="showUnitNames" :label="$t('components.livemap.show_unit_names')">
+                    <UFormField
+                        name="showUnitNames"
+                        :label="$t('components.livemap.show_unit_names')"
+                        :description="$t('components.livemap.show_unit_names_description')"
+                    >
                         <USwitch v-model="livemap.showUnitNames" />
                     </UFormField>
 
-                    <UFormField name="showUnitStatus" :label="$t('components.livemap.show_unit_status')">
+                    <UFormField
+                        name="showUnitStatus"
+                        :label="$t('components.livemap.show_unit_status')"
+                        :description="$t('components.livemap.show_unit_status_description')"
+                    >
                         <USwitch v-model="livemap.showUnitStatus" />
                     </UFormField>
 
-                    <UFormField name="showAllDispatches" :label="$t('components.livemap.show_all_dispatches')">
+                    <UFormField
+                        name="showAllDispatches"
+                        :label="$t('components.livemap.show_all_dispatches')"
+                        :description="$t('components.livemap.show_all_dispatches_description')"
+                    >
                         <USwitch v-model="livemap.showAllDispatches" />
                     </UFormField>
 
-                    <UFormField name="showGrid" :label="$t('components.livemap.show_grid')">
+                    <UFormField
+                        name="showGrid"
+                        :label="$t('components.livemap.show_grid')"
+                        :description="$t('components.livemap.show_grid_description')"
+                    >
                         <USwitch v-model="livemap.showGrid" />
                     </UFormField>
 
-                    <UFormField name="useUnitColor" :label="$t('components.livemap.use_unit_color')">
+                    <UFormField
+                        name="useUnitColor"
+                        :label="$t('components.livemap.use_unit_color')"
+                        :description="$t('components.livemap.use_unit_color_description')"
+                    >
                         <USwitch v-model="livemap.useUnitColor" />
                     </UFormField>
 
@@ -170,6 +198,7 @@ const schema = z.object({
                         v-if="can('livemap.LivemapService/CreateOrUpdateMarker').value"
                         name="markerDragEnabled"
                         :label="$t('components.livemap.enable_marker_dragging')"
+                        :description="$t('components.livemap.enable_marker_dragging_description')"
                     >
                         <USwitch v-model="markerDragEnabled" />
                     </UFormField>

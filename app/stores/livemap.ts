@@ -17,7 +17,6 @@ import type {
     UserDeletes,
     UserUpdates,
 } from '~~/gen/ts/services/livemap/livemap';
-import { useSettingsStore, type LivemapSettings } from './settings';
 
 const logger = useLogger('🗺️ Livemap');
 
@@ -57,6 +56,15 @@ export const useLivemapStore = defineStore(
 
         const selectedMarker = ref<UserMarker | undefined>(undefined);
         const followMarker = ref<boolean>(false);
+
+        const selectMarker = (marker: UserMarker): void => {
+            selectedMarker.value = marker;
+        };
+
+        const clearSelectedMarker = (): void => {
+            if (followMarker.value) return;
+            selectedMarker.value = undefined;
+        };
 
         // Marker Management
         /**
@@ -139,10 +147,12 @@ export const useLivemapStore = defineStore(
          *
          * @param {UserMarker} marker - The user marker object containing the data to add or update.
          */
-        const addOrUpdateUserMarker = (marker: UserMarker, activeUserId?: number): void => {
+        const addOrUpdateUserMarker = (marker: UserMarker, activeUserId?: number): UserMarker => {
             const m = markersUsers.value.get(marker.userId);
+            let cachedMarker: UserMarker;
             if (!m) {
                 markersUsers.value.set(marker.userId, marker);
+                cachedMarker = marker;
 
                 // Ensure the job of the user marker is in the users jobs list
                 if (!jobsUsers.value.find((j) => j.name === marker.job)) {
@@ -154,12 +164,15 @@ export const useLivemapStore = defineStore(
                 }
             } else {
                 updateUserMarker(m, marker);
+                cachedMarker = m;
             }
 
             // Update own marker if the active user ID matches the marker's user ID
             if (activeUserId && activeUserId === marker?.userId) {
-                ownMarker.value = marker;
+                ownMarker.value = cachedMarker;
             }
+
+            return cachedMarker;
         };
 
         /**
@@ -176,21 +189,16 @@ export const useLivemapStore = defineStore(
             if (dest.color !== src.color) dest.color = src.color;
             if (dest.job !== src.job) dest.job = src.job;
             if (dest.jobLabel !== src.jobLabel) dest.jobLabel = src.jobLabel;
-            if (dest.userId !== src.userId) {
-                dest.userId = src.userId;
-                if (src.user === undefined) {
-                    logger.warn('Livemap user marker update had no user details', {
-                        userId: src.userId,
-                    });
-                    dest.user = undefined;
-                } else if (dest.user === undefined) {
-                    logger.warn('Livemap user marker update had no cached user; replacing it', {
-                        userId: src.userId,
-                    });
-                    dest.user = src.user;
-                } else {
-                    updateUserInfo(dest.user, src.user);
-                }
+            if (dest.userId !== src.userId) dest.userId = src.userId;
+            if (src.user === undefined) {
+                if (dest.user !== undefined) dest.user = undefined;
+            } else if (dest.user === undefined) {
+                logger.warn('Livemap user marker update had no cached user; replacing it', {
+                    userId: src.userId,
+                });
+                dest.user = src.user;
+            } else {
+                updateUserInfo(dest.user, src.user);
             }
             if (dest.unitId !== src.unitId) {
                 dest.unitId = src.unitId;
@@ -223,13 +231,11 @@ export const useLivemapStore = defineStore(
          * @param {StreamResponse} resp - The stream response object containing the data to process.
          * @param {number[]} foundMarkers - An array to track found marker IDs.
          * @param {UserLike | null} activeChar - The currently active character, if any.
-         * @param {LivemapSettings} livemap - The livemap settings to use during processing.
          */
         const handleStreamResponse = async (
             resp: StreamResponse,
             foundMarkers: number[],
             activeChar: UserLike | null,
-            livemap: LivemapSettings,
         ): Promise<void> => {
             error.value = undefined;
             if (!resp || !resp.data) return;
@@ -244,13 +250,13 @@ export const useLivemapStore = defineStore(
                     handleMarkersUpdate(resp.data.markers, foundMarkers);
                     break;
                 case 'snapshot':
-                    handleSnapshotUpdate(resp.data.snapshot, activeChar);
+                    applyUserSnapshot(resp.data.snapshot, activeChar);
                     break;
                 case 'userDeletes':
                     handleUserDeletes(resp.data.userDeletes);
                     break;
                 case 'userUpdates':
-                    handleUserUpdates(resp.data.userUpdates, livemap, activeChar);
+                    handleUserUpdates(resp.data.userUpdates, activeChar);
                     break;
                 default:
                     logger.warn('Unknown data received - oneofKind:' + resp.data.oneofKind);
@@ -317,13 +323,21 @@ export const useLivemapStore = defineStore(
          *
          * @param {Snapshot} snapshot - The snapshot data containing the current state of markers.
          */
-        const handleSnapshotUpdate = (snapshot: Snapshot, activeChar: UserLike | null): void => {
+        const applyUserSnapshot = (snapshot: Snapshot, activeChar: UserLike | null): void => {
             markersUsers.value.clear();
             ownMarker.value = undefined;
             snapshot.markers.forEach((marker: UserMarker) => addOrUpdateUserMarker(marker, activeChar?.userId));
-            if (selectedMarker.value && !markersUsers.value.has(selectedMarker.value.userId)) {
-                followMarker.value = false;
-                selectedMarker.value = undefined;
+            if (selectedMarker.value) {
+                const refreshedSelectedMarker = markersUsers.value.get(selectedMarker.value.userId);
+                if (refreshedSelectedMarker) {
+                    // Snapshot handling replaces the cached marker objects.
+                    // Keep tracking attached to the fresh object so its later
+                    // position updates continue to drive the map.
+                    selectedMarker.value = refreshedSelectedMarker;
+                } else {
+                    followMarker.value = false;
+                    selectedMarker.value = undefined;
+                }
             }
             initiated.value = true;
         };
@@ -354,16 +368,28 @@ export const useLivemapStore = defineStore(
          * Handle user updates from stream response.
          *
          * @param {UserUpdates} updates - The user updates data.
-         * @param {LivemapSettings} livemap - The livemap settings to use during processing.
          * @param {UserLike | null} activeChar - The currently active character, if any.
          */
-        const handleUserUpdates = (updates: UserUpdates, livemap: LivemapSettings, activeChar: UserLike | null): void => {
+        const handleUserUpdates = (updates: UserUpdates, activeChar: UserLike | null): void => {
             for (const userUpdate of updates.updates) {
                 addOrUpdateUserMarker(userUpdate, activeChar?.userId);
-                if (livemap.centerSelectedMarker && userUpdate.userId === selectedMarker.value?.userId) {
-                    selectedMarker.value = userUpdate;
-                }
             }
+        };
+
+        const toggleFollowMarker = (marker: UserMarker): void => {
+            if (followMarker.value && selectedMarker.value?.userId === marker.userId) {
+                followMarker.value = false;
+                selectedMarker.value = undefined;
+                return;
+            }
+
+            followMarker.value = true;
+            selectedMarker.value = marker;
+        };
+
+        const stopFollowingMarker = (): void => {
+            followMarker.value = false;
+            selectedMarker.value = undefined;
         };
 
         /**
@@ -376,8 +402,6 @@ export const useLivemapStore = defineStore(
             logger.debug('Starting Stream');
 
             const { activeChar } = useAuth();
-            const settingsStore = useSettingsStore();
-            const { livemap } = storeToRefs(settingsStore);
 
             // Reserve the stream slot before awaiting client creation so concurrent
             // callers cannot start duplicate streams.
@@ -416,7 +440,7 @@ export const useLivemapStore = defineStore(
                     },
                 })) {
                     const resp = respRaw as StreamResponse;
-                    await handleStreamResponse(resp, foundMarkers, activeChar.value, livemap.value);
+                    await handleStreamResponse(resp, foundMarkers, activeChar.value);
                 }
             } catch (e) {
                 const err = e as RpcError;
@@ -521,6 +545,11 @@ export const useLivemapStore = defineStore(
             ownMarker,
             selectedMarker,
             followMarker,
+            selectMarker,
+            clearSelectedMarker,
+            toggleFollowMarker,
+            stopFollowingMarker,
+            applyUserSnapshot,
 
             startStream,
             stopStream,
