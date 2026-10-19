@@ -44,6 +44,10 @@ const getContextMenuItems = (item: CardElement): ContextMenuItem[][] => {
                 <template #leading>
                     <UDashboardSidebarCollapse />
                 </template>
+
+                <template #right>
+                    <PartialsHelpButton />
+                </template>
             </UDashboardNavbar>
         </template>
 
