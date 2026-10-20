@@ -61,6 +61,7 @@ export type DispatchCenterPaneLayout = {
 };
 
 export const defaultDispatchCenterOuterPaneLayout: DispatchCenterOuterPane[] = ['map', 'sidebar'];
+export const defaultDispatchCenterInnerPaneLayout: DispatchCenterInnerPane[] = ['dispatchList', 'unitList', 'feed'];
 export const defaultCentrumSidebarPlacement: CentrumSidebarPlacement = 'right';
 export const centrumSidebarPlacementOptions = {
     left: {
@@ -128,6 +129,7 @@ export const useSettingsStore = defineStore(
         const eventsShowSnowflakes = computed(() => now.getMonth() + 1 === 12 && now.getDate() >= 21 && now.getDate() <= 26);
 
         const overviewQuickAccess = ref<string[]>([]);
+        const showOverviewQuickAccessInSidebar = ref<boolean>(true);
 
         const livemap = ref<LivemapSettings>({
             markerSize: 22,
@@ -151,7 +153,7 @@ export const useSettingsStore = defineStore(
             },
             dispatchCenterPaneLayout: {
                 outer: [...defaultDispatchCenterOuterPaneLayout],
-                inner: ['dispatchList', 'unitList', 'feed'],
+                inner: [...defaultDispatchCenterInnerPaneLayout],
             },
             centrumSidebarPlacement: defaultCentrumSidebarPlacement,
         });
@@ -395,6 +397,7 @@ export const useSettingsStore = defineStore(
             eventsDisabled,
 
             overviewQuickAccess,
+            showOverviewQuickAccessInSidebar,
             livemap,
             livemapLayerCategories,
             livemapLayers,

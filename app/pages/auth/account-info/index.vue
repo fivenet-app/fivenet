@@ -23,11 +23,11 @@ const changePasswordModal = overlay.create(ChangePasswordModal);
 <template>
     <div class="space-y-4">
         <UPageCard
-            :description="$t('components.auth.AccountInfo.subtitle')"
+            :description="$t('components.auth.AccountInfo.details_subtitle')"
             :ui="{ body: 'w-full', wrapper: 'w-full', title: 'flex w-full flex-row' }"
         >
             <template #title>
-                <span class="flex-1">{{ $t('components.auth.AccountInfo.title') }}</span>
+                <span class="flex-1">{{ $t('components.auth.AccountInfo.details_title') }}</span>
 
                 <RefreshButton @click="$emit('refresh')" />
             </template>
@@ -63,8 +63,8 @@ const changePasswordModal = overlay.create(ChangePasswordModal);
         </UPageCard>
 
         <UPageCard
-            :title="$t('components.auth.AccountInfo.actions_title')"
-            :description="$t('components.auth.AccountInfo.actions_subtitle')"
+            :title="$t('components.auth.AccountInfo.security_title')"
+            :description="$t('components.auth.AccountInfo.security_subtitle')"
         >
             <UFormField
                 class="grid grid-cols-2 items-center gap-2"

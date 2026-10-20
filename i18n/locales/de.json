@@ -19,7 +19,7 @@
                 },
                 "quick_access": {
                     "title": "Angeheftete Funktionen finden",
-                    "body": "Angeheftete Funktionen erscheinen oben auf der Übersichtsseite im Bereich Schnellzugriff. Dort kannst du sie direkt öffnen und über Reihenfolge ändern neu anordnen."
+                    "body": "Angeheftete Funktionen erscheinen oben auf der Übersichtsseite im Bereich Schnellzugriff. Dort kannst du sie direkt öffnen und über Reihenfolge ändern neu anordnen. Unter Benutzereinstellungen → Schnellzugriff der Übersicht kannst du außerdem festlegen, ob deine angehefteten Elemente in der Seitenleiste angezeigt werden."
                 },
                 "finish": {
                     "title": "Schnellzugriff anpassen",
@@ -1866,6 +1866,8 @@
             "perms": "Aktuelle Berechtigungen",
             "active_char_id": "ID des aktiven Charakters",
             "access_token_expiration": "Ablauf des Zugangstokens",
+            "context_title": "Aktueller Charakter & Sitzung",
+            "tools_title": "Werkzeuge zur Fehlerbehebung",
             "reset_clipboard": "Zwischenablage zurücksetzen",
             "debug_functions": "Debug-Funktionen",
             "reset_local_storage": "Lokalen Browser-Speicher zurücksetzen",
@@ -1873,11 +1875,18 @@
             "version": "Version",
             "nui_info": "NUI-Info",
             "no_char_selected": "Kein Charakter ausgewählt, bitte wählen Sie einen Charakter aus und probieren Sie es erneut.",
+            "no_char_selected_title": "Kein Charakter ausgewählt",
+            "no_char_selected_description": "Wähle einen Charakter aus, damit charakterbezogene Informationen und Berechtigungen in den Debug-Informationen enthalten sind.",
+            "choose_character": "Charakter auswählen",
             "test_notifications": "Teste Benachrichtigungen",
             "trigger_error": "Fehlerseite auslösen",
             "toggle_log_level": "Log-Level zwischen Debug/Warn umschalten",
             "trigger_banner_message": "Banner auslösen",
-            "advanced_debug": "Erweiterte Debug-Informationen"
+            "advanced_debug": "Erweiterte Debug-Funktionen",
+            "client_errors": "Letzte Client-Fehler",
+            "no_client_errors": "Es wurden keine Client-Fehler gesammelt.",
+            "client_errors_count": "{count} Client-Fehler gesammelt",
+            "clear_client_errors": "Gesammelte Fehler löschen"
         },
         "penaltycalculator": {
             "title": "Strafenrechner"
@@ -2183,6 +2192,9 @@
             },
             "toggle_event_effect": {
                 "content": "Sie können \"Holiday\"-Effekte wie Schnee über Ihre Benutzereinstellungen ein- oder ausschalten."
+            },
+            "notification_sounds": {
+                "content": "In den Benutzereinstellungen können Sie die Lautstärke von Benachrichtigungen anpassen und unterschiedliche Töne für verschiedene Benachrichtigungsarten auswählen."
             }
         },
         "notifications": {
@@ -2372,9 +2384,16 @@
             "title": "Sprache wechseln"
         },
         "auth": {
+            "Debug": {
+                "title": "Debug"
+            },
             "AccountInfo": {
-                "title": "Konto-Informationen",
-                "subtitle": "Deine FiveNet Konto-Informationen.",
+                "title": "Konto & Sicherheit",
+                "subtitle": "Deine FiveNet Kontodaten und Sicherheitseinstellungen.",
+                "details_title": "Kontodaten",
+                "details_subtitle": "Kontoinformationen, die auf dem Server gespeichert sind.",
+                "security_title": "Sicherheit & Kontoaktionen",
+                "security_subtitle": "Verwalte Zugangsdaten und andere kontoübergreifende Aktionen.",
                 "license": "Identifier/ Lizenz",
                 "change_password": "Passwort ändern",
                 "change_password_button": "Konto-Passwort ändern",
@@ -2397,7 +2416,7 @@
                 "new_password": "Neues Passwort"
             },
             "SocialLogins": {
-                "title": "Social Login-Verbindungen",
+                "title": "Verknüpfte Konten",
                 "subtitle": "Ihr Social Login Login, für schnelleres Anmelden und coole zusätzliche Funktionen.",
                 "connection_website": "Website des Anbieters öffnen",
                 "external_id": "Externe ID"
@@ -2423,8 +2442,58 @@
             },
             "open_token_mgmt": "Registrierungstoken abrufen",
             "user_settings": {
-                "title": "Benutzer-Einstellungen",
+                "title": "Präferenzen",
+                "preferences": "Präferenzen",
                 "subtitle": "Passen Sie Ihre Benutzererfahrung an und verwalten Sie Ihre Einstellungen.",
+                "autosave": {
+                    "title": "Änderungen werden automatisch gespeichert",
+                    "description": "Die meisten Präferenzen werden in diesem Browser gespeichert. Konto- und Sicherheitseinstellungen werden separat verwaltet."
+                },
+                "appearance": {
+                    "title": "Darstellung",
+                    "description": "Passe das Aussehen von FiveNet und die Darstellung von Informationen an. Diese Einstellungen werden in diesem Browser gespeichert."
+                },
+                "startup": {
+                    "title": "Start & Navigation",
+                    "description": "Wähle, wo FiveNet nach der Charakterauswahl startet. Diese Einstellung wird in diesem Browser gespeichert."
+                },
+                "accessibility": {
+                    "title": "Barrierefreiheit & Leistung",
+                    "description": "Passe visuelle Effekte und weitere Optionen zur Verbesserung der Leistung an. Diese Einstellungen werden in diesem Browser gespeichert."
+                },
+                "quick_access": {
+                    "title": "Schnellzugriff der Übersicht",
+                    "description": "Ordne die Verknüpfungen auf der Übersichtsseite neu an. Diese Einstellung wird in diesem Browser gespeichert.",
+                    "sidebar": {
+                        "title": "Schnellzugriff in der Seitenleiste anzeigen",
+                        "description": "Zeige deine Schnellzugriffe der Übersicht oben in der Seitenleiste an."
+                    },
+                    "empty_title": "Noch keine Schnellzugriffe",
+                    "empty_description": "Öffne die Übersichtsseite und klicke mit der rechten Maustaste auf einen Eintrag, um ihn zum Schnellzugriff hinzuzufügen. Danach kannst du ihn hier neu anordnen.",
+                    "open_overview": "Übersicht öffnen"
+                },
+                "livemap_dispatch": {
+                    "title": "Livemap & Leitstelle",
+                    "livemap_title": "Livemap-Präferenzen",
+                    "livemap_description": "Passe Markerdarstellung und Kartenverhalten an. Diese Einstellungen werden in diesem Browser gespeichert.",
+                    "dispatch_title": "Layout der Leitstelle",
+                    "dispatch_description": "Passe die Position und Reihenfolge der Bereiche in der Leitstelle an. Diese Einstellungen werden in diesem Browser gespeichert."
+                },
+                "documents": {
+                    "title": "Dokumente",
+                    "description": "Passe die Darstellung von Dokumentlisten und die Darstellung von Genehmigungsunterschriften an."
+                },
+                "documents_view_collapsed_title": {
+                    "title": "Dokumenttitel einklappen",
+                    "description": "Begrenze Dokumenttitel in der Dokumentansicht auf eine Zeile."
+                },
+                "dispatch_list_card_style": {
+                    "description": "Zeige Einsätze in der Leitstelle als Karten statt als Tabelle an."
+                },
+                "approval_signature": {
+                    "title": "Genehmigungsunterschrift",
+                    "description": "Wähle die Stiftfarbe und Strichstärken für Unterschriften bei Dokumentgenehmigungen."
+                },
                 "set_startpage": {
                     "title": "Startseite nach Charakterauswahl",
                     "description": "Wähle die Seite aus, die nach der Charakterauswahl automatisch geöffnet wird.",

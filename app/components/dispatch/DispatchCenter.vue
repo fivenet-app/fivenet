@@ -7,7 +7,13 @@ import UnitList from '~/components/dispatch/units/UnitList.vue';
 import LivemapBase from '~/components/livemap/LivemapBase.vue';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import { useCentrumStore } from '~/stores/centrum';
-import { useSettingsStore, type DispatchCenterInnerPane, type DispatchCenterOuterPane } from '~/stores/settings';
+import {
+    defaultDispatchCenterInnerPaneLayout,
+    defaultDispatchCenterOuterPaneLayout,
+    useSettingsStore,
+    type DispatchCenterInnerPane,
+    type DispatchCenterOuterPane,
+} from '~/stores/settings';
 import DispatchCenterLayoutPopover from './DispatchCenterLayoutPopover.vue';
 import DispatcherInfo from './dispatchers/DispatcherInfo.vue';
 
@@ -28,11 +34,6 @@ const defaultDispatchCenterPaneSizes = {
     unitList: 26,
     feed: 8,
 };
-const defaultDispatchCenterPaneLayout = {
-    outer: ['map', 'sidebar'] as DispatchCenterOuterPane[],
-    inner: ['dispatchList', 'unitList', 'feed'] as DispatchCenterInnerPane[],
-};
-
 centrum.value.dispatchCenterPaneSizes = {
     map: centrum.value.dispatchCenterPaneSizes?.map ?? defaultDispatchCenterPaneSizes.map,
     sidebar: centrum.value.dispatchCenterPaneSizes?.sidebar ?? defaultDispatchCenterPaneSizes.sidebar,
@@ -44,11 +45,11 @@ centrum.value.dispatchCenterPaneLayout = {
     outer:
         centrum.value.dispatchCenterPaneLayout?.outer?.length === 2
             ? [...centrum.value.dispatchCenterPaneLayout.outer]
-            : [...defaultDispatchCenterPaneLayout.outer],
+            : [...defaultDispatchCenterOuterPaneLayout],
     inner:
         centrum.value.dispatchCenterPaneLayout?.inner?.length === 3
             ? [...centrum.value.dispatchCenterPaneLayout.inner]
-            : [...defaultDispatchCenterPaneLayout.inner],
+            : [...defaultDispatchCenterInnerPaneLayout],
 };
 
 const splitterUi = {

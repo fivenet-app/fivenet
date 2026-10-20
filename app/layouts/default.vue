@@ -24,7 +24,25 @@ const { website } = useAppConfig();
 const mailerStore = useMailerStore();
 const { unreadCount } = storeToRefs(mailerStore);
 
-const { navigationItems } = useAppFeatures();
+const { navigationItems, overviewItems } = useAppFeatures();
+const settingsStore = useSettingsStore();
+const { overviewQuickAccess, showOverviewQuickAccessInSidebar } = storeToRefs(settingsStore);
+
+const sidebarQuickAccessItems = computed<NavigationMenuItem[]>(() => {
+    if (!showOverviewQuickAccessInSidebar.value) return [];
+
+    const seen = new Set<string>();
+    return overviewQuickAccess.value
+        .map((path) => overviewItems.value.find((item) => item.to === path))
+        .filter((item): item is NonNullable<(typeof overviewItems.value)[number]> => item !== undefined)
+        .filter((item) => {
+            if (seen.has(item.to)) return false;
+            seen.add(item.to);
+            return true;
+        })
+        .map(({ label, icon, to }) => ({ label, icon, to }));
+});
+
 const items = computed(() =>
     navigationItems.value.map((item) =>
         item.to === '/mail'
@@ -179,6 +197,18 @@ defineShortcuts(extractShortcuts(quickAccessButtons.value, '-'));
                 <div v-if="collapsed" class="flex w-full justify-center">
                     <NotificationsNotificationPopover />
                 </div>
+
+                <template v-if="sidebarQuickAccessItems.length > 0">
+                    <UNavigationMenu
+                        orientation="vertical"
+                        tooltip
+                        popover
+                        :items="sidebarQuickAccessItems"
+                        :collapsed="collapsed"
+                    />
+
+                    <USeparator />
+                </template>
 
                 <UNavigationMenu orientation="vertical" tooltip popover :items="items" :collapsed="collapsed" />
 

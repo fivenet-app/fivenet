@@ -131,6 +131,8 @@ async function resetDeliveryPreference(category: NotificationCategory, kind = No
 <template>
     <UPageCard
         v-if="activeChar"
+        id="user-settings-notification-delivery"
+        class="scroll-mt-24 transition-shadow target:ring-2 target:ring-primary"
         :title="$t('components.auth.user_settings.notification_delivery.title')"
         :description="$t('components.auth.user_settings.notification_delivery.description')"
     >
@@ -145,8 +147,9 @@ async function resetDeliveryPreference(category: NotificationCategory, kind = No
                     <div class="grid gap-2 lg:grid-cols-[minmax(12rem,1fr)_auto_auto_auto_auto] lg:items-center">
                         <div class="flex h-5 items-center gap-1.5">
                             <UIcon :name="notificationCategoryToIcon(scope.category)" class="size-5 text-muted" />
+
                             <UButton
-                                class="group h-5 min-w-0 flex-1 justify-start px-0 py-0"
+                                class="group h-5 min-w-0 flex-1 justify-start px-0 py-0 text-base"
                                 color="neutral"
                                 variant="link"
                                 trailing-icon="i-mdi-chevron-down"

@@ -19,7 +19,7 @@
                 },
                 "quick_access": {
                     "title": "Find your pinned items",
-                    "body": "Pinned features appear in the Quick Access section at the top of the overview page. You can open them directly from there and use Change Order to rearrange them."
+                    "body": "Pinned features appear in the Quick Access section at the top of the overview page. You can open them directly from there and use Change Order to rearrange them. In User Settings → Overview quick access, you can also choose whether your pinned items appear in the sidebar."
                 },
                 "finish": {
                     "title": "Customize Quick Access",
@@ -1866,6 +1866,8 @@
             "perms": "Current Permissions",
             "active_char_id": "Active Character ID",
             "access_token_expiration": "Access Token Expiration",
+            "context_title": "Current character & session",
+            "tools_title": "Troubleshooting tools",
             "reset_clipboard": "Reset Clipboard",
             "debug_functions": "Debug Functions",
             "reset_local_storage": "Reset Local Storage",
@@ -1873,11 +1875,18 @@
             "version": "Version",
             "nui_info": "NUI Info",
             "no_char_selected": "No char active, please choose a character and check again.",
+            "no_char_selected_title": "No character selected",
+            "no_char_selected_description": "Select a character to include character-specific information and permissions in the debug report.",
+            "choose_character": "Choose character",
             "test_notifications": "Test Notifications",
             "trigger_error": "Trigger Error page",
             "toggle_log_level": "Toggle Log Level to debug/warn",
             "trigger_banner_message": "Trigger Banner Message",
-            "advanced_debug": "Advanced Debug"
+            "advanced_debug": "Advanced Debug Functions",
+            "client_errors": "Recent Client Errors",
+            "no_client_errors": "No client-side errors have been collected.",
+            "client_errors_count": "{count} client-side error(s) collected",
+            "clear_client_errors": "Clear collected errors"
         },
         "penaltycalculator": {
             "title": "Penalty Calculator"
@@ -2183,6 +2192,9 @@
             },
             "toggle_event_effect": {
                 "content": "You can toggle holiday effects like snow via your user settings."
+            },
+            "notification_sounds": {
+                "content": "You can adjust notification volume and choose separate sounds for different notification types in your user settings."
             }
         },
         "notifications": {
@@ -2372,9 +2384,16 @@
             "title": "Switch language"
         },
         "auth": {
+            "Debug": {
+                "title": "Debug"
+            },
             "AccountInfo": {
-                "title": "Account Info",
-                "subtitle": "Your FiveNet account details.",
+                "title": "Account & Security",
+                "subtitle": "Your FiveNet account details and security settings.",
+                "details_title": "Account details",
+                "details_subtitle": "Account information stored on the server.",
+                "security_title": "Security & account actions",
+                "security_subtitle": "Manage credentials and other account-level actions.",
                 "license": "Identifier/ License",
                 "change_password": "Change Password",
                 "change_password_button": "Change Account Password",
@@ -2397,7 +2416,7 @@
                 "new_password": "New Password"
             },
             "SocialLogins": {
-                "title": "Social Login Connections",
+                "title": "Connected Accounts",
                 "subtitle": "Your Social Login connections, for faster login and cool additional features.",
                 "connection_website": "Open provider's website",
                 "external_id": "External ID"
@@ -2423,8 +2442,58 @@
             },
             "open_token_mgmt": "Show Registration Token",
             "user_settings": {
-                "title": "User Settings",
+                "title": "Preferences",
+                "preferences": "Preferences",
                 "subtitle": "Customize your user experience and manage your settings.",
+                "autosave": {
+                    "title": "Changes are saved automatically",
+                    "description": "Most preferences are stored in this browser. Account and security settings are managed separately."
+                },
+                "appearance": {
+                    "title": "Appearance",
+                    "description": "Customize how FiveNet looks and how information is displayed. These preferences are stored in this browser."
+                },
+                "startup": {
+                    "title": "Startup & Navigation",
+                    "description": "Choose where FiveNet starts after selecting a character. This preference is stored in this browser."
+                },
+                "accessibility": {
+                    "title": "Accessibility & Performance",
+                    "description": "Adjust visual effects and other options that can improve performance. These preferences are stored in this browser."
+                },
+                "quick_access": {
+                    "title": "Overview quick access",
+                    "description": "Reorder the shortcuts shown on the Overview page. This preference is stored in this browser.",
+                    "sidebar": {
+                        "title": "Show quick access in sidebar",
+                        "description": "Show your Overview quick access items at the top of the sidebar."
+                    },
+                    "empty_title": "No quick access entries yet",
+                    "empty_description": "Open the Overview page and right-click an entry to add it to Quick Access. You can then reorder it here.",
+                    "open_overview": "Open Overview"
+                },
+                "livemap_dispatch": {
+                    "title": "Livemap & Dispatch",
+                    "livemap_title": "Livemap preferences",
+                    "livemap_description": "Customize marker display and map behavior. These preferences are stored in this browser.",
+                    "dispatch_title": "Dispatch center layout",
+                    "dispatch_description": "Customize the placement and order of the dispatch center panels. These preferences are stored in this browser."
+                },
+                "documents": {
+                    "title": "Documents",
+                    "description": "Customize document list layout and approval signature appearance."
+                },
+                "documents_view_collapsed_title": {
+                    "title": "Collapse document titles",
+                    "description": "Limit document titles to one line in the document viewer."
+                },
+                "dispatch_list_card_style": {
+                    "description": "Show dispatches as cards instead of a table in the dispatch center."
+                },
+                "approval_signature": {
+                    "title": "Approval signature",
+                    "description": "Choose the pen color and stroke widths used when signing document approvals."
+                },
                 "set_startpage": {
                     "title": "Start Page after character selection",
                     "description": "Choose the page that opens automatically after selecting a character.",

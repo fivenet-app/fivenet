@@ -62,11 +62,6 @@ const items = computed<NavigationMenuItem[]>(() =>
                   to: '/auth/account-info/oauth2',
               }
             : undefined,
-        {
-            label: t('components.debug_info.title'),
-            icon: 'i-mdi-connection',
-            to: '/auth/account-info/debug',
-        },
     ].flatMap((item) => (item !== undefined ? [item] : [])),
 );
 

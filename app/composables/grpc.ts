@@ -2,6 +2,7 @@ import type { RpcError } from '#imports';
 import { formatDebugContext, getDebugContext } from '~/composables/debug';
 import { useAuthStore } from '~/stores/auth';
 import type { Notification } from '~/types/notifications';
+import { recordClientError } from '~/utils/client-errors';
 import { formatErrorReport } from '~/utils/error-report';
 import { isTranslatedError, localizeTemplateErrorParameters, parseErrorMessage } from '~/utils/errors';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
@@ -113,6 +114,11 @@ export function handleGRPCError(err: unknown, options: { authScope?: GRPCAuthSco
 
     const error = toError(err);
     const rpcErr = isRpcError(err) ? err : undefined;
+    recordClientError(error, {
+        source: 'gRPC',
+        route: useRouter().currentRoute.value.fullPath,
+        dedupeWindowMs: 12_500,
+    });
 
     const notification: Notification = {
         id: 0,
