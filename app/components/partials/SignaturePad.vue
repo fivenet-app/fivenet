@@ -106,7 +106,6 @@ defineExpose({
                     block
                     trailing-icon="i-mdi-chevron-down"
                     :ui="{
-                        content: 'w-full',
                         trailingIcon: 'group-data-[state=open]:rotate-180 transition-transform duration-200',
                     }"
                 />
