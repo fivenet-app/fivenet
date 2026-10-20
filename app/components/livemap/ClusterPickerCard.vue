@@ -53,7 +53,7 @@ function getMarkerMarkerIconName(h: Hit): string | undefined {
 
 <template>
     <UCard
-        class="-my-[13px] -mr-[24px] -ml-[20px] flex max-h-[75dvh] min-w-[200px] flex-col overflow-y-auto"
+        class="-my-[13px] -mr-[24px] -ml-[20px] flex max-h-[65dvh] min-w-[200px] flex-col overflow-y-auto"
         :ui="{ header: 'mx-auto p-1 sm:px-2', body: 'p-1 sm:p-2 xl:mx-auto max-h-[50%]', footer: 'mx-auto p-1 sm:px-2' }"
     >
         <template #header>

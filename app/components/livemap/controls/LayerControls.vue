@@ -95,7 +95,7 @@ function toggleAllLayers(category: string, visible: boolean) {
             </UTooltip>
 
             <template #content>
-                <div class="w-full max-w-xl divide-y divide-default py-1">
+                <div class="w-full max-w-2xl divide-y divide-default py-1">
                     <div class="px-1 pb-0.5">
                         <p class="truncate text-base font-bold text-highlighted">
                             {{ $t('common.layer', 2) }}
@@ -128,13 +128,14 @@ function toggleAllLayers(category: string, visible: boolean) {
                             class="grid min-w-0 grid-flow-row auto-rows-min gap-1 overflow-y-hidden px-1 pb-1 md:pb-0"
                         >
                             <div class="flex items-center justify-between gap-1">
-                                <p class="truncate text-base font-bold text-highlighted">
+                                <p class="min-w-0 flex-1 truncate text-base font-bold text-highlighted">
                                     {{ category.category?.label ?? $t('common.na') }}
                                 </p>
 
                                 <USwitch
                                     :model-value="category.layers.every((l) => l.visible)"
                                     size="xs"
+                                    :ui="{ wrapper: 'min-w-0 flex-1', container: 'flex shrink-0 items-center justify-end' }"
                                     @update:model-value="(v) => toggleAllLayers(category.category?.key ?? '', v)"
                                 />
                             </div>
@@ -145,7 +146,11 @@ function toggleAllLayers(category: string, visible: boolean) {
                                 v-model="layer.visible"
                                 :label="layer.label"
                                 :disabled="!!layer.disabled"
-                                :ui="{ label: 'truncate text-sm hover:line-clamp-2' }"
+                                :ui="{
+                                    wrapper: 'min-w-0 flex-1',
+                                    container: 'flex shrink-0 items-center justify-end',
+                                    label: 'truncate text-sm hover:line-clamp-2',
+                                }"
                             />
                         </div>
                     </div>
