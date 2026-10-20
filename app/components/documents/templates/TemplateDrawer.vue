@@ -166,7 +166,7 @@ const query = useSearchForm('documents-templates', schema);
         </template>
 
         <template #body>
-            <div class="mx-auto w-full max-w-[80%] min-w-3/4">
+            <div class="mx-auto w-full max-w-[80%] min-w-3/4 space-y-4">
                 <template v-if="steps.selectTemplate">
                     <UButton
                         data-tour="documents-create-blank"
@@ -177,7 +177,7 @@ const query = useSearchForm('documents-templates', schema);
                         @click="clipboardDialog()"
                     />
 
-                    <USeparator class="my-4" />
+                    <USeparator />
 
                     <div data-tour="documents-create-template">
                         <List

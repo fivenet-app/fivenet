@@ -46,22 +46,27 @@ let updateGeneration = 0;
 async function handleProps(show: boolean): Promise<void> {
     const generation = ++updateGeneration;
 
-    if (show) {
-        // If we have no heatmap data, or it's still pending, refresh it
-        if (!heatmap.value || isRequestPending(status.value)) await refresh();
-
-        // The heat layer is created asynchronously by BaseMap. If this runs
-        // before that happens, the watcher will retry when the layer becomes ready.
-        if (generation !== updateGeneration || !heat?.value) return;
-
-        heat.value.setLatLngs(heatmap.value?.entries.map((e) => [e.y, e.x, e.w]) ?? []);
+    if (!show) {
+        heat?.value?.setLatLngs([]);
         return;
     }
 
-    heat?.value?.setLatLngs([]);
+    // Only start a request when none has started yet. Do not refresh while an
+    // existing request is pending, because dedupe: 'cancel' would abort it.
+    if (!heatmap.value && status.value === 'idle') await refresh();
+
+    // The request is still running; the heatmap watcher will retry when data
+    // becomes available.
+    if (status.value === 'pending') return;
+
+    // The heat layer is created asynchronously by BaseMap. If this runs before
+    // that happens, the watcher will retry when the layer becomes ready.
+    if (generation !== updateGeneration || !heat?.value) return;
+
+    heat.value.setLatLngs(heatmap.value?.entries.map((e) => [e.y, e.x, e.w]) ?? []);
 }
 
-watch([() => props.show, () => heat?.value], ([show]) => handleProps(show), { immediate: true });
+watch([() => props.show, () => heat?.value, heatmap], ([show]) => handleProps(show), { immediate: true });
 </script>
 
 <template>
