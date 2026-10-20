@@ -1,119 +1,56 @@
 <script lang="ts" setup>
-import ThemePickerButton from '~/components/partials/ThemePickerButton.vue';
-
-const { activeChar } = useAuth();
-
-const settingsStore = useSettingsStore();
-const { startpage, design, streamerMode, eventsDisabled } = storeToRefs(settingsStore);
-
-const { startpageItems } = useAppFeatures();
-
-const selectedHomepage = computed<(typeof startpageItems.value)[number] | undefined>({
-    get: () => startpageItems.value.find((item) => item.path === startpage.value),
-    set: (item) => {
-        startpage.value = item?.path ?? '/overview';
-    },
-});
-
-const designDocumentListStyle = ref(design.value.documents.listStyle === 'double');
-
-watch(designDocumentListStyle, async () => {
-    if (designDocumentListStyle.value) {
-        design.value.documents.listStyle = 'double';
-    } else {
-        design.value.documents.listStyle = 'single';
-    }
-});
+import AccessibilitySettings from '~/components/user-settings/preferences/AccessibilitySettings.vue';
+import AppearanceSettings from '~/components/user-settings/preferences/AppearanceSettings.vue';
+import DocumentsSettings from '~/components/user-settings/preferences/DocumentsSettings.vue';
+import OverviewQuickAccessSettings from '~/components/user-settings/preferences/OverviewQuickAccessSettings.vue';
+import StartupSettings from '~/components/user-settings/preferences/StartupSettings.vue';
 </script>
 
 <template>
-    <UPageCard :title="$t('common.theme')" :description="$t('components.auth.user_settings.customization')">
-        <UFormField
-            class="grid grid-cols-2 items-center gap-2"
-            name="darkMode"
-            :label="$t('components.auth.user_settings.color_mode')"
+    <div class="space-y-4">
+        <UPageCard
+            id="user-settings-appearance"
+            class="scroll-mt-24 transition-shadow target:ring-2 target:ring-primary"
+            :title="$t('components.auth.user_settings.appearance.title')"
+            :description="$t('components.auth.user_settings.appearance.description')"
         >
-            <UColorModeSelect class="w-full" color="neutral" variant="outline" />
-        </UFormField>
+            <AppearanceSettings />
+        </UPageCard>
 
-        <UFormField class="grid grid-cols-2 items-center gap-2" name="primaryColor" :label="$t('common.color', 1)">
-            <div class="grid grid-cols-2 gap-1 sm:grid-cols-3 lg:grid-cols-4">
-                <ThemePickerButton
-                    v-for="color in [...primaryColors, ...backgroundColors]"
-                    :key="color.label"
-                    :label="color.label"
-                    :chip="color.chip.color"
-                    :selected="design.ui.primary === color.label"
-                    @click="design.ui.primary = color.label"
-                />
-            </div>
-        </UFormField>
-
-        <UFormField
-            class="grid grid-cols-2 items-center gap-2"
-            name="grayColor"
-            :label="$t('components.auth.user_settings.background_color')"
+        <UPageCard
+            id="user-settings-startpage"
+            class="scroll-mt-24 transition-shadow target:ring-2 target:ring-primary"
+            :title="$t('components.auth.user_settings.startup.title')"
+            :description="$t('components.auth.user_settings.startup.description')"
         >
-            <div class="grid grid-cols-2 gap-1 sm:grid-cols-3 lg:grid-cols-4">
-                <ThemePickerButton
-                    v-for="color in [...primaryColors, ...backgroundColors]"
-                    :key="color.label"
-                    :label="color.label"
-                    :chip="color.chip.color"
-                    :selected="design.ui.gray === color.label"
-                    @click="design.ui.gray = color.label"
-                />
-            </div>
-        </UFormField>
+            <StartupSettings />
+        </UPageCard>
 
-        <UFormField
-            class="grid grid-cols-2 items-center gap-2"
-            name="streamerMode"
-            :label="$t('components.auth.user_settings.streamer_mode.title')"
-            :description="$t('components.auth.user_settings.streamer_mode.description')"
+        <UPageCard
+            id="user-settings-accessibility"
+            class="scroll-mt-24 transition-shadow target:ring-2 target:ring-primary"
+            :title="$t('components.auth.user_settings.accessibility.title')"
+            :description="$t('components.auth.user_settings.accessibility.description')"
         >
-            <USwitch v-model="streamerMode" name="streamerMode" />
-        </UFormField>
+            <AccessibilitySettings />
+        </UPageCard>
 
-        <UFormField
-            class="grid grid-cols-2 items-center gap-2"
-            name="designDocumentListStyle"
-            :label="$t('components.auth.user_settings.documents_lists_style.title')"
-            :description="$t('components.auth.user_settings.documents_lists_style.description')"
+        <UPageCard
+            id="user-settings-quick-access"
+            class="scroll-mt-24 transition-shadow target:ring-2 target:ring-primary"
+            :title="$t('components.auth.user_settings.quick_access.title')"
+            :description="$t('components.auth.user_settings.quick_access.description')"
         >
-            <div class="inline-flex items-center gap-2 text-sm">
-                <span>{{ $t('components.auth.user_settings.documents_lists_style.single') }}</span>
-                <USwitch v-model="designDocumentListStyle" />
-                <span>{{ $t('components.auth.user_settings.documents_lists_style.double') }}</span>
-            </div>
-        </UFormField>
+            <OverviewQuickAccessSettings />
+        </UPageCard>
 
-        <UFormField
-            class="grid grid-cols-2 items-center gap-2"
-            name="selectedHomepage"
-            :label="$t('components.auth.user_settings.set_startpage.title')"
-            :description="$t('components.auth.user_settings.set_startpage.description')"
+        <UPageCard
+            id="user-settings-documents"
+            class="scroll-mt-24 transition-shadow target:ring-2 target:ring-primary"
+            :title="$t('components.auth.user_settings.documents.title')"
+            :description="$t('components.auth.user_settings.documents.description')"
         >
-            <ClientOnly v-if="activeChar">
-                <USelectMenu
-                    v-model="selectedHomepage"
-                    class="w-full"
-                    :items="startpageItems"
-                    :search-input="{ placeholder: $t('common.search_field') }"
-                />
-            </ClientOnly>
-            <p v-else class="text-sm">
-                {{ $t('components.auth.user_settings.set_startpage.no_char_selected') }}
-            </p>
-        </UFormField>
-
-        <UFormField
-            class="grid grid-cols-2 items-center gap-2"
-            :label="$t('components.auth.user_settings.events_disabled.label')"
-            :description="$t('components.auth.user_settings.events_disabled.description')"
-            name="eventsDisabled"
-        >
-            <USwitch v-model="eventsDisabled" />
-        </UFormField>
-    </UPageCard>
+            <DocumentsSettings />
+        </UPageCard>
+    </div>
 </template>

@@ -135,6 +135,9 @@ export const useHelpGuides = () => {
                     id: 'quick-access',
                     title: t('help_guides.overview_quick_access.steps.quick_access.title'),
                     body: t('help_guides.overview_quick_access.steps.quick_access.body'),
+                    target: '[data-tour="overview-quick-access"]',
+                    side: 'bottom',
+                    showOverlay: false,
                 },
                 {
                     id: 'finish',

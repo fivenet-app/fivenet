@@ -33,9 +33,16 @@ const items = computed<DropdownMenuItem[][]>(() => [
         },
         !props.hideUserMenus
             ? {
-                  label: t('components.auth.user_settings.title'),
+                  label: t('components.auth.user_settings.preferences'),
                   icon: 'i-mdi-account-cog-outline',
                   to: '/user-settings',
+              }
+            : undefined,
+        !props.hideUserMenus
+            ? {
+                  label: t('components.auth.Debug.title'),
+                  icon: 'i-mdi-connection',
+                  to: '/debug',
               }
             : undefined,
         !props.hideUserMenus

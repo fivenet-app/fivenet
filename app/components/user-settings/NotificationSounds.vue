@@ -98,6 +98,8 @@ const sounds = computed<Array<Array<{ name: SoundKeys; label: string; items: Sel
 
 <template>
     <UPageCard
+        id="user-settings-notification-volume"
+        class="scroll-mt-24 transition-shadow target:ring-2 target:ring-primary"
         :description="$t('components.auth.user_settings.volumes.subtitle')"
         :ui="{ body: 'w-full', wrapper: 'w-full', title: 'flex w-full flex-row' }"
     >
@@ -120,6 +122,8 @@ const sounds = computed<Array<Array<{ name: SoundKeys; label: string; items: Sel
     </UPageCard>
 
     <UPageCard
+        id="user-settings-notification-sounds"
+        class="scroll-mt-24 transition-shadow target:ring-2 target:ring-primary"
         :title="$t('components.auth.user_settings.sounds.title')"
         :description="$t('components.auth.user_settings.sounds.description')"
     >

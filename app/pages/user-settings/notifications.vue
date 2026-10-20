@@ -23,6 +23,8 @@ const calendarReminderTimes = computed(() => [
         <NotificationPreferences />
 
         <UPageCard
+            id="user-settings-calendar-notifications"
+            class="scroll-mt-24 transition-shadow target:ring-2 target:ring-primary"
             :title="$t('components.auth.user_settings.calendar_notifications.title')"
             :description="$t('components.auth.user_settings.calendar_notifications.description')"
         >

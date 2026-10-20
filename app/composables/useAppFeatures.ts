@@ -331,6 +331,7 @@ export const useAppFeatures = () => {
             .filter((feature) => feature.startpage)
             .map((feature) => ({
                 label: translate(feature),
+                icon: feature.icon,
                 path: (feature.startpagePath ?? feature.to) as RoutePathSchema,
             })),
     );

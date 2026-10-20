@@ -7,7 +7,7 @@ const settingsStore = useSettingsStore();
 const { eventsShowSnowflakes } = storeToRefs(settingsStore);
 const { startGuide } = useHelpGuides();
 
-type Hint = { key: string; keyboard?: boolean; to?: RoutesNamedLocations; guide?: string; hide?: boolean };
+type Hint = { key: string; keyboard?: boolean; to?: RoutesNamedLocations | string; guide?: string; hide?: boolean };
 
 const hints = computed(() =>
     shuffleArray(
@@ -18,7 +18,7 @@ const hints = computed(() =>
             },
             {
                 key: 'startpage',
-                to: '/user-settings?tab=settings#',
+                to: '/user-settings#user-settings-startpage',
             },
             {
                 key: 'overview_quick_access',
@@ -26,13 +26,17 @@ const hints = computed(() =>
             },
             {
                 key: 'sociallogin_discord',
-                to: '/auth/account-info?tab=oauth2Connections#',
+                to: '/auth/account-info/oauth2',
                 hide: discord.botEnabled,
             },
             {
                 key: 'toggle_event_effect',
                 to: '/user-settings',
                 hide: !eventsShowSnowflakes.value,
+            },
+            {
+                key: 'notification_sounds',
+                to: '/user-settings/notifications#user-settings-notification-volume',
             },
         ].flatMap((h) => (!h.hide ? [h] : [])) as Hint[],
     ),
