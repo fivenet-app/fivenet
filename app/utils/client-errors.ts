@@ -3,6 +3,8 @@ import { normalizeError } from '~/utils/normalize-error';
 const STORAGE_KEY = 'fivenet.client-errors';
 export const MAX_CLIENT_ERRORS = 25;
 
+const IGNORED_CLIENT_ERROR_MESSAGES = new Set(['AsyncData request cancelled by deduplication']);
+
 export interface ClientError {
     timestamp: string;
     source: string;
@@ -45,6 +47,10 @@ function formatStack(stack: string): string {
         .join('\n');
 }
 
+export function shouldIgnoreClientError(error: unknown): boolean {
+    return IGNORED_CLIENT_ERROR_MESSAGES.has(normalizeError(error).message);
+}
+
 export function getClientErrors(): ClientError[] {
     if (!canUseStorage()) return [];
     try {
@@ -57,6 +63,7 @@ export function getClientErrors(): ClientError[] {
 
 export function recordClientError(error: unknown, options: { source: string; route?: string; dedupeWindowMs?: number }): void {
     if (!canUseStorage()) return;
+    if (shouldIgnoreClientError(error)) return;
     const normalized = normalizeError(error);
     const entry: ClientError = {
         timestamp: new Date().toISOString(),
