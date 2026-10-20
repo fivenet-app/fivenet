@@ -1,3 +1,4 @@
+import { formatClientErrors } from '~/utils/client-errors';
 import { useGRPCWebsocketTransport } from './grpcws';
 
 export interface DebugContext {
@@ -48,6 +49,7 @@ export function collectDebugInfo(): string {
 
     return `## Debug Info
 ${formatDebugContext(context)}
+${formatClientErrors()}
 `;
 }
 

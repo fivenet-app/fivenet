@@ -1,7 +1,3 @@
 <script lang="ts" setup>
-import DebugInfo from '~/components/auth/account/DebugInfo.vue';
+await navigateTo('/debug', { redirectCode: 301 });
 </script>
-
-<template>
-    <DebugInfo />
-</template>

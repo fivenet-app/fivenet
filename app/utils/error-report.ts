@@ -1,51 +1,15 @@
-export interface NormalizedError {
-    message: string;
-    statusCode: string;
-    stack: string;
+import { formatClientErrors } from '~/utils/client-errors';
+import { normalizeError } from '~/utils/normalize-error';
+
+function escapeInline(value: string): string {
+    return value.replaceAll('\\', '\\\\').replaceAll('`', '\\`');
 }
 
-export function normalizeError(error: unknown): NormalizedError {
-    if (error instanceof Error) {
-        return {
-            message: error.message || error.name || 'Unknown error',
-            statusCode: 'N/A',
-            stack: error.stack ?? 'N/A',
-        };
-    }
-
-    if (typeof error === 'object' && error !== null) {
-        const value = error as {
-            message?: unknown;
-            statusCode?: unknown;
-            statusMessage?: unknown;
-            stack?: unknown;
-        };
-
-        let fallback = 'Unknown error';
-        try {
-            fallback = JSON.stringify(error) || fallback;
-        } catch {
-            // Keep the fallback message when the error cannot be serialized.
-        }
-
-        return {
-            message:
-                typeof value.statusMessage === 'string'
-                    ? value.statusMessage
-                    : typeof value.message === 'string'
-                      ? value.message
-                      : fallback,
-            statusCode:
-                typeof value.statusCode === 'number' || typeof value.statusCode === 'string' ? String(value.statusCode) : 'N/A',
-            stack: typeof value.stack === 'string' ? value.stack : 'N/A',
-        };
-    }
-
-    return {
-        message: typeof error === 'string' ? error : 'Unknown error',
-        statusCode: 'N/A',
-        stack: 'N/A',
-    };
+function formatStack(stack: string): string {
+    return stack
+        .split('\n')
+        .map((line) => `    ${line}`)
+        .join('\n');
 }
 
 export function formatErrorReport(error: unknown, options: { context: string; source: string; statusCode?: string }): string {
@@ -55,17 +19,16 @@ export function formatErrorReport(error: unknown, options: { context: string; so
 
 ### Technical Information
 
-- Source: \`${options.source}\`
+- Source: \`${escapeInline(options.source)}\`
 - Timestamp: \`${new Date().toISOString()}\`
-- Error Message: \`${normalized.message}\`
-- Status Code: \`${options.statusCode ?? normalized.statusCode}\`
+- Error Message: \`${escapeInline(normalized.message)}\`
+- Status Code: \`${escapeInline(options.statusCode ?? normalized.statusCode)}\`
 ${options.context}
+${formatClientErrors()}
 
 ### Stack Trace
 
-\`\`\`text
-${normalized.stack}
-\`\`\``;
+${formatStack(normalized.stack)}`;
 }
 
 export function getSafeBrowserDebugContext(): string {

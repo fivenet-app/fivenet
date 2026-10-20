@@ -9,6 +9,7 @@ import { useAuthStore } from '~/stores/auth';
 import { useClipboardStore } from '~/stores/clipboard';
 import { useSettingsStore } from '~/stores/settings';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
+import { clearClientErrors, getClientErrors, type ClientError } from '~/utils/client-errors';
 
 const clipboardStore = useClipboardStore();
 
@@ -80,6 +81,14 @@ function toggleLogLevel(): void {
 const version = APP_VERSION;
 
 const { name: browserName, platform: browserPlatform } = getBrowserNameAndPlatform();
+
+// The session buffer is intentionally loaded once when this page mounts; users reach this page after an error and can reload it to refresh the list.
+const clientErrors = ref<ClientError[]>(getClientErrors());
+
+function clearCollectedErrors(): void {
+    clearClientErrors();
+    clientErrors.value = [];
+}
 </script>
 
 <template>
@@ -112,6 +121,24 @@ const { name: browserName, platform: browserPlatform } = getBrowserNameAndPlatfo
                 <CopyToClipboardButton :value="browserName" />
             </div>
         </UFormField>
+
+        <USeparator :label="$t('components.debug_info.context_title')" class="my-4" />
+
+        <UAlert
+            v-if="!activeChar"
+            color="info"
+            variant="subtle"
+            icon="i-mdi-account-question-outline"
+            :title="$t('components.debug_info.no_char_selected_title')"
+            :description="$t('components.debug_info.no_char_selected_description')"
+            :actions="[
+                {
+                    label: $t('components.debug_info.choose_character'),
+                    icon: 'i-mdi-account-switch-outline',
+                    to: '/auth/character-selector',
+                },
+            ]"
+        />
 
         <UFormField
             v-if="activeChar"
@@ -182,6 +209,57 @@ const { name: browserName, platform: browserPlatform } = getBrowserNameAndPlatfo
             <code>{{ settingsStore.nuiResourceName ?? $t('common.na') }}</code>
         </UFormField>
 
+        <USeparator :label="$t('components.debug_info.client_errors')" class="my-4" />
+
+        <UAlert
+            v-if="clientErrors.length === 0"
+            color="success"
+            variant="subtle"
+            icon="i-mdi-check-circle-outline"
+            :title="$t('components.debug_info.no_client_errors')"
+        />
+        <UCollapsible v-else class="w-full" :ui="{ content: 'mt-2' }">
+            <UButton
+                class="group"
+                block
+                color="warning"
+                variant="soft"
+                icon="i-mdi-alert-circle-outline"
+                :label="$t('components.debug_info.client_errors_count', { count: clientErrors.length })"
+                trailing-icon="i-mdi-chevron-down"
+                :ui="{ trailingIcon: 'group-data-[state=open]:rotate-180 transition-transform' }"
+            />
+
+            <template #content>
+                <UFieldGroup class="w-full" orientation="vertical">
+                    <UCard v-for="(clientError, index) in clientErrors" :key="index" class="text-sm">
+                        <div class="flex flex-col gap-1">
+                            <div class="flex justify-between gap-2 font-semibold">
+                                <span>{{ clientError.source }}</span>
+                                <GenericTime :value="new Date(clientError.timestamp)" type="long" />
+                            </div>
+                            <code class="break-words">{{ clientError.message }}</code>
+                            <span class="break-words text-muted">{{ clientError.route }}</span>
+                            <pre
+                                v-if="clientError.stack !== 'N/A'"
+                                class="max-h-32 overflow-auto text-xs whitespace-pre-wrap"
+                                >{{ clientError.stack }}</pre>
+                        </div>
+                    </UCard>
+
+                    <UButton
+                        color="neutral"
+                        variant="soft"
+                        icon="i-mdi-delete"
+                        :label="$t('components.debug_info.clear_client_errors')"
+                        @click="clearCollectedErrors()"
+                    />
+                </UFieldGroup>
+            </template>
+        </UCollapsible>
+
+        <USeparator :label="$t('components.debug_info.tools_title')" class="my-4" />
+
         <UFormField
             class="grid grid-cols-2 items-center gap-2"
             name="debugFunctions"
@@ -212,7 +290,7 @@ const { name: browserName, platform: browserPlatform } = getBrowserNameAndPlatfo
 
                 <UButton
                     block
-                    color="neutral"
+                    color="error"
                     :label="$t('components.debug_info.reset_local_storage')"
                     trailing-icon="i-mdi-delete"
                     variant="soft"
@@ -275,11 +353,13 @@ const { name: browserName, platform: browserPlatform } = getBrowserNameAndPlatfo
             </UCollapsible>
         </UFormField>
 
-        <UFormField class="grid grid-cols-2 items-center gap-2" name="permissions" :label="$t('components.debug_info.perms')">
-            <p v-if="!activeChar">
-                {{ $t('components.debug_info.no_char_selected') }}
-            </p>
-            <UCollapsible v-else>
+        <UFormField
+            v-if="activeChar"
+            class="grid grid-cols-2 items-center gap-2"
+            name="permissions"
+            :label="$t('components.debug_info.perms')"
+        >
+            <UCollapsible>
                 <UButton
                     class="group"
                     variant="soft"
