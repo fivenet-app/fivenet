@@ -301,7 +301,7 @@ function clearCollectedErrors(): void {
             <UCollapsible class="mt-2" :ui="{ content: 'mt-2' }">
                 <UButton
                     class="group"
-                    variant="ghost"
+                    variant="soft"
                     :label="$t('components.debug_info.advanced_debug')"
                     icon="i-mdi-bug-check-outline"
                     trailing-icon="i-mdi-chevron-down"
