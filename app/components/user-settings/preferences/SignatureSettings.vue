@@ -13,7 +13,7 @@ const { signature: signatureSettings } = storeToRefs(settingsStore);
                     <UButton
                         v-for="color in signatureColors"
                         :key="color.color"
-                        class="inline-flex w-8 items-center"
+                        class="inline-flex size-8 items-center"
                         :style="{ background: color.color }"
                         @click="signatureSettings.penColor = color.color"
                     >

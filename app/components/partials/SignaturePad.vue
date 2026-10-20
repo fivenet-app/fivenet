@@ -106,14 +106,13 @@ defineExpose({
                     block
                     trailing-icon="i-mdi-chevron-down"
                     :ui="{
+                        content: 'w-full',
                         trailingIcon: 'group-data-[state=open]:rotate-180 transition-transform duration-200',
                     }"
                 />
 
                 <template #content>
-                    <div class="flex w-full flex-col space-y-4">
-                        <SignatureSettings />
-                    </div>
+                    <SignatureSettings />
                 </template>
             </UPopover>
         </template>
