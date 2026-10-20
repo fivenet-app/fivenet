@@ -1,4 +1,5 @@
 <script lang="ts" setup>
+import type { ContextMenuItem } from '@nuxt/ui';
 import { useDraggable } from 'vue-draggable-plus';
 import { storeToRefs } from 'pinia';
 import DraggableHandle from '~/components/partials/DraggableHandle.vue';
@@ -18,7 +19,9 @@ const props = withDefaults(
 
 const settingsStore = useSettingsStore();
 const { overviewQuickAccess, showOverviewQuickAccessInSidebar } = storeToRefs(settingsStore);
-const { reorderOverviewQuickAccess } = settingsStore;
+const { reorderOverviewQuickAccess, unpinOverviewQuickAccess } = settingsStore;
+
+const { t } = useI18n();
 
 const { overviewItems: items } = useAppFeatures();
 
@@ -33,6 +36,16 @@ const quickAccessItems = computed(() => {
             return true;
         });
 });
+
+const getContextMenuItems = (path: string): ContextMenuItem[][] => [
+    [
+        {
+            label: t('common.unpin'),
+            icon: 'i-mdi-pin-off',
+            onSelect: () => unpinOverviewQuickAccess(path),
+        },
+    ],
+];
 
 const reorderMode = ref<boolean>(false);
 const sortableQuickAccessItems = ref<AppOverviewFeature[]>([]);
@@ -121,24 +134,28 @@ watch(
 
         <div class="rounded-2xl border border-default/60 bg-elevated/70 p-2 shadow-sm backdrop-blur-sm">
             <div ref="listRef" class="grid grid-cols-2 gap-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6">
-                <ULink
+                <UContextMenu
                     v-for="(item, idx) in sortableQuickAccessItems"
                     :key="item.to"
-                    :to="item.to"
-                    class="quick-access-item handle group relative flex min-h-20 flex-col items-center justify-center gap-2 rounded-2xl border border-transparent bg-default/70 px-2 py-3 text-center transition hover:-translate-y-0.5 hover:border-primary-500/30 hover:bg-primary-50/60 dark:bg-default/30 dark:hover:bg-primary-950/20"
+                    :items="getContextMenuItems(item.to)"
                 >
-                    <template v-if="reorderMode">
-                        <DraggableHandle class="absolute top-1 left-1" size="xs" orientation="vertical" />
-                        <div class="absolute top-1 right-1">
-                            <ReorderButtons :idx="idx" :move-up="moveUp" :move-down="moveDown" orientation="horizontal" />
-                        </div>
-                    </template>
+                    <ULink
+                        :to="item.to"
+                        class="quick-access-item handle group relative flex min-h-20 flex-col items-center justify-center gap-2 rounded-2xl border border-transparent bg-default/70 px-2 py-3 text-center transition hover:-translate-y-0.5 hover:border-primary-500/30 hover:bg-primary-50/60 dark:bg-default/30 dark:hover:bg-primary-950/20"
+                    >
+                        <template v-if="reorderMode">
+                            <DraggableHandle class="absolute top-1 left-1" size="xs" orientation="vertical" />
+                            <div class="absolute top-1 right-1">
+                                <ReorderButtons :idx="idx" :move-up="moveUp" :move-down="moveDown" orientation="horizontal" />
+                            </div>
+                        </template>
 
-                    <UIcon class="size-8 text-primary transition group-hover:scale-110" :name="item.icon ?? 'i-mdi-star'" />
-                    <span class="text-sm leading-tight font-medium text-highlighted">
-                        {{ item.label }}
-                    </span>
-                </ULink>
+                        <UIcon class="size-8 text-primary transition group-hover:scale-110" :name="item.icon ?? 'i-mdi-star'" />
+                        <span class="text-sm leading-tight font-medium text-highlighted">
+                            {{ item.label }}
+                        </span>
+                    </ULink>
+                </UContextMenu>
             </div>
         </div>
     </div>
