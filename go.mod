@@ -1,6 +1,6 @@
 module github.com/fivenet-app/fivenet/v2026
 
-go 1.27.2
+go 1.27.3
 
 ignore (
 	./app
