@@ -345,6 +345,7 @@ func (h *ExamHousekeeper) completeExpiredExam(
 	if err := tx.Commit(); err != nil {
 		return err
 	}
+	h.server.sendQualificationObjectEvent(ctx, attempt.GetQualificationId(), 0)
 	notifi.PublishAfterCommit(
 		ctx,
 		h.logger,

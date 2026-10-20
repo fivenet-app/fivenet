@@ -6393,6 +6393,7 @@ ExamSnapshot is immutable once an attempt has started. It ensures later edits to
 | `OBJECT_TYPE_WIKI_PAGE` | 3 |  |
 | `OBJECT_TYPE_JOBS_COLLEAGUE` | 4 |  |
 | `OBJECT_TYPE_JOBS_CONDUCT` | 5 |  |
+| `OBJECT_TYPE_QUALIFICATION` | 6 |  |
 
 
  <!-- end enums -->

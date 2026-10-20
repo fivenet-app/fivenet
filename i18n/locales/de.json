@@ -920,6 +920,12 @@
                 }
             }
         },
+        "qualifications": {
+            "clientview_update": {
+                "title": "Qualifikation wurde aktualisiert",
+                "content": "Die Qualifikation wurde von einem anderen Benutzer aktualisiert. Klicken Sie hier, um die Qualifikation neu zu laden."
+            }
+        },
         "wiki": {
             "id": {
                 "title": "Wiki Seite"

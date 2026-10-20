@@ -6,6 +6,7 @@ import (
 	"fmt"
 
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/notifications"
+	notificationsclientview "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/notifications/clientview"
 	pbqualifications "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/qualifications"
 	"github.com/fivenet-app/fivenet/v2026/pkg/access"
 	"github.com/fivenet-app/fivenet/v2026/pkg/filestore"
@@ -110,6 +111,7 @@ type Result struct {
 }
 
 func NewServer(p Params) Result {
+	access.RegisterAccess("qualifications", p.Access)
 	// 3 MiB limit
 	qualiFileHandler := filestore.NewHandler(
 		p.Storage,
@@ -146,6 +148,18 @@ func NewServer(p Params) Result {
 		Server:  s,
 		Service: s,
 	}
+}
+
+func (s *Server) sendQualificationObjectEvent(ctx context.Context, qualificationID int64, userID int32) {
+	if s.notif == nil {
+		return
+	}
+	s.notif.SendObjectEvent(ctx, &notificationsclientview.ObjectEvent{
+		Type:      notificationsclientview.ObjectType_OBJECT_TYPE_QUALIFICATION,
+		Id:        &qualificationID,
+		EventType: notificationsclientview.ObjectEventType_OBJECT_EVENT_TYPE_UPDATED,
+		UserId:    &userID,
+	})
 }
 
 func (s *Server) RegisterServer(srv *grpc.Server) {

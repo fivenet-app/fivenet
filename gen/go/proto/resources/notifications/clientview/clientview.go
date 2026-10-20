@@ -38,6 +38,11 @@ var objectTypeSpecs = map[ObjectType]TypeSpec{
 		NatsKey:    "jobs_conduct",
 		Visibility: VisibilityJobScoped,
 	},
+	ObjectType_OBJECT_TYPE_QUALIFICATION: {
+		NatsKey:           "qualification",
+		AccessRegistryKey: "qualifications",
+		Visibility:        VisibilityTargetAccess,
+	},
 }
 
 func (x ObjectType) Spec() (TypeSpec, bool) {

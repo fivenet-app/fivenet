@@ -58,6 +58,15 @@ func TestObjectTypeSpec(t *testing.T) {
 				Visibility: VisibilityJobScoped,
 			},
 		},
+		{
+			name:      "qualification",
+			typeValue: ObjectType_OBJECT_TYPE_QUALIFICATION,
+			spec: TypeSpec{
+				NatsKey:           "qualification",
+				AccessRegistryKey: "qualifications",
+				Visibility:        VisibilityTargetAccess,
+			},
+		},
 	}
 
 	got, want := len(objectTypeSpecs), len(tests)

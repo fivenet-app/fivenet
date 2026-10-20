@@ -10,6 +10,7 @@ type ObjectEvents = {
     [ObjectType.WIKI_PAGE]: ObjectEvent;
     [ObjectType.JOBS_COLLEAGUE]: ObjectEvent;
     [ObjectType.JOBS_CONDUCT]: ObjectEvent;
+    [ObjectType.QUALIFICATION]: ObjectEvent;
 };
 
 export const notificationsEvents = mitt<ObjectEvents>();

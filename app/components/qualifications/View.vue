@@ -13,6 +13,7 @@ import {
 import RequestUserModal from '~/components/qualifications/request/RequestUserModal.vue';
 import { getQualificationsExamClient, getQualificationsQualificationsClient } from '~~/gen/ts/clients';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
+import { ObjectType } from '~~/gen/ts/resources/notifications/clientview/clientview';
 import { AccessLevel } from '~~/gen/ts/resources/qualifications/access/access';
 import { QualificationExamMode } from '~~/gen/ts/resources/qualifications/exam/exam';
 import { RequestStatus, ResultStatus } from '~~/gen/ts/resources/qualifications/qualifications';
@@ -53,6 +54,17 @@ const { data, status, refresh, error } = useAuthedLazyAsyncData(
     'userState',
     `qualification-${props.qualificationId}`,
     ({ signal }) => getQualification(props.qualificationId, signal),
+);
+
+const tutorView = ref<InstanceType<typeof TutorView> | null>(null);
+const { sendClientView } = useClientUpdate(ObjectType.QUALIFICATION, () => {
+    void refresh();
+    tutorView.value?.refreshLists();
+});
+watch(
+    () => data.value?.qualification?.id,
+    (id) => id && sendClientView(id),
+    { immediate: true },
 );
 
 async function getQualification(qualificationId: number, signal: AbortSignal): Promise<GetQualificationResponse> {
@@ -673,7 +685,7 @@ const requestUserModal = overlay.create(RequestUserModal);
                     <template v-if="canDo.grade" #tutor>
                         <div class="flex min-h-0 w-full flex-1 flex-col overflow-hidden">
                             <div class="mx-auto flex h-full min-h-0 w-full max-w-(--breakpoint-xl) flex-1 flex-col">
-                                <TutorView :qualification="qualification" />
+                                <TutorView ref="tutorView" :qualification="qualification" />
                             </div>
                         </div>
                     </template>

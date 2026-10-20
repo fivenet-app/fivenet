@@ -44,6 +44,15 @@ const tabs = computed<TabsItem[]>(() => [
 ]);
 
 const activeTab = ref('requests');
+
+function refreshLists(): void {
+    void requests.value?.refresh();
+    void results.value?.refresh();
+}
+
+defineExpose({
+    refreshLists,
+});
 </script>
 
 <template>

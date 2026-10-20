@@ -920,6 +920,12 @@
                 }
             }
         },
+        "qualifications": {
+            "clientview_update": {
+                "title": "Qualification updated",
+                "content": "The qualification was updated by another user. Click here to reload the qualification."
+            }
+        },
         "wiki": {
             "id": {
                 "title": "Wiki Page"

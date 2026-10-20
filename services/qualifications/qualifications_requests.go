@@ -317,6 +317,7 @@ func (s *Server) CreateOrUpdateQualificationRequest(
 	if err := tx.Commit(); err != nil {
 		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 	}
+	s.sendQualificationObjectEvent(ctx, req.GetRequest().GetQualificationId(), userInfo.GetUserId())
 	notifi.PublishAfterCommit(ctx, s.logger, "qualification_request_updated", publishNotification)
 
 	request, err := s.getQualificationRequest(
@@ -461,6 +462,7 @@ func (s *Server) DeleteQualificationReq(
 		if err := tx.Commit(); err != nil {
 			return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 		}
+		s.sendQualificationObjectEvent(ctx, re.GetQualificationId(), userInfo.GetUserId())
 
 		grpc_audit.SetAction(ctx, audit.EventAction_EVENT_ACTION_RESTORED)
 		return &pbqualifications.DeleteQualificationReqResponse{}, nil
@@ -532,6 +534,7 @@ func (s *Server) DeleteQualificationReq(
 	if err := tx.Commit(); err != nil {
 		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 	}
+	s.sendQualificationObjectEvent(ctx, re.GetQualificationId(), userInfo.GetUserId())
 	notifi.PublishAfterCommit(ctx, s.logger, "qualification_request_deleted", publishNotification)
 
 	grpc_audit.SetAction(ctx, audit.EventAction_EVENT_ACTION_DELETED)

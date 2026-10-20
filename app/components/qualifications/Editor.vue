@@ -13,6 +13,7 @@ import { contentToTiptapValue, tiptapToContent } from '~/utils/content';
 import { getQualificationsQualificationsClient } from '~~/gen/ts/clients';
 import type { File } from '~~/gen/ts/resources/file/file';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
+import { ObjectType } from '~~/gen/ts/resources/notifications/clientview/clientview';
 import { AccessLevel } from '~~/gen/ts/resources/qualifications/access/access';
 import {
     type ExamQuestionSeparator,
@@ -357,6 +358,24 @@ const {
 } = useAuthedLazyAsyncData('userState', `qualification-${props.qualificationId}-editor`, ({ signal }) =>
     getQualification(props.qualificationId, signal),
 );
+
+const { sendClientView } = useClientUpdate(ObjectType.QUALIFICATION, () =>
+    notifications.add({
+        title: { key: 'notifications.qualifications.clientview_update.title', parameters: {} },
+        description: { key: 'notifications.qualifications.clientview_update.content', parameters: {} },
+        duration: 7500,
+        type: NotificationType.INFO,
+        actions: [
+            {
+                label: { key: 'common.refresh', parameters: {} },
+                icon: 'i-mdi-refresh',
+                onClick: () => refresh(),
+            },
+        ],
+    }),
+);
+
+onBeforeMount(() => sendClientView(props.qualificationId));
 
 async function getQualification(qualificationId: number, signal: AbortSignal): Promise<Qualification> {
     try {

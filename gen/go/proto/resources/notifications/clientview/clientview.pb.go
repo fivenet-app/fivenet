@@ -32,6 +32,7 @@ const (
 	ObjectType_OBJECT_TYPE_WIKI_PAGE      ObjectType = 3
 	ObjectType_OBJECT_TYPE_JOBS_COLLEAGUE ObjectType = 4
 	ObjectType_OBJECT_TYPE_JOBS_CONDUCT   ObjectType = 5
+	ObjectType_OBJECT_TYPE_QUALIFICATION  ObjectType = 6
 )
 
 // Enum value maps for ObjectType.
@@ -43,6 +44,7 @@ var (
 		3: "OBJECT_TYPE_WIKI_PAGE",
 		4: "OBJECT_TYPE_JOBS_COLLEAGUE",
 		5: "OBJECT_TYPE_JOBS_CONDUCT",
+		6: "OBJECT_TYPE_QUALIFICATION",
 	}
 	ObjectType_value = map[string]int32{
 		"OBJECT_TYPE_UNSPECIFIED":    0,
@@ -51,6 +53,7 @@ var (
 		"OBJECT_TYPE_WIKI_PAGE":      3,
 		"OBJECT_TYPE_JOBS_COLLEAGUE": 4,
 		"OBJECT_TYPE_JOBS_CONDUCT":   5,
+		"OBJECT_TYPE_QUALIFICATION":  6,
 	}
 )
 
@@ -395,7 +398,7 @@ const file_resources_notifications_clientview_clientview_proto_rawDesc = "" +
 	"\n" +
 	"\b_user_idB\x06\n" +
 	"\x04_jobB\a\n" +
-	"\x05_data*\xb5\x01\n" +
+	"\x05_data*\xd4\x01\n" +
 	"\n" +
 	"ObjectType\x12\x1b\n" +
 	"\x17OBJECT_TYPE_UNSPECIFIED\x10\x00\x12\x17\n" +
@@ -403,7 +406,8 @@ const file_resources_notifications_clientview_clientview_proto_rawDesc = "" +
 	"\x14OBJECT_TYPE_DOCUMENT\x10\x02\x12\x19\n" +
 	"\x15OBJECT_TYPE_WIKI_PAGE\x10\x03\x12\x1e\n" +
 	"\x1aOBJECT_TYPE_JOBS_COLLEAGUE\x10\x04\x12\x1c\n" +
-	"\x18OBJECT_TYPE_JOBS_CONDUCT\x10\x05*r\n" +
+	"\x18OBJECT_TYPE_JOBS_CONDUCT\x10\x05\x12\x1d\n" +
+	"\x19OBJECT_TYPE_QUALIFICATION\x10\x06*r\n" +
 	"\x0fObjectEventType\x12!\n" +
 	"\x1dOBJECT_EVENT_TYPE_UNSPECIFIED\x10\x00\x12\x1d\n" +
 	"\x19OBJECT_EVENT_TYPE_UPDATED\x10\x01\x12\x1d\n" +

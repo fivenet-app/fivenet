@@ -81,7 +81,11 @@ export enum ObjectType {
     /**
      * @generated from protobuf enum value: OBJECT_TYPE_JOBS_CONDUCT = 5;
      */
-    JOBS_CONDUCT = 5
+    JOBS_CONDUCT = 5,
+    /**
+     * @generated from protobuf enum value: OBJECT_TYPE_QUALIFICATION = 6;
+     */
+    QUALIFICATION = 6
 }
 /**
  * @generated from protobuf enum resources.notifications.clientview.ObjectEventType
