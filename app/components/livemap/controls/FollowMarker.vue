@@ -14,6 +14,10 @@ watch(followMarker, (val) => {
     if (val && selectedMarker.value) {
         showLocationMarker.value = false;
 
+        void gotoCoords(selectedMarker.value, true).catch((error) => {
+            logger.warn('Failed to set followed marker waypoint', error);
+        });
+
         notifications.add({
             title: { key: 'notifications.livemap.follow_marker.title' },
             description: {
