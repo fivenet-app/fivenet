@@ -199,6 +199,7 @@ func NewEngine(p EngineParams) (*gin.Engine, error) {
 	// CORS
 	e.Use(cors.New(cors.Config{
 		AllowOrigins:           p.Config.HTTP.Origins,
+		AllowWildcard:          true,
 		AllowMethods:           []string{"GET", "POST", "HEAD", "OPTIONS"},
 		AllowHeaders:           allowedHeaders,
 		ExposeHeaders:          []string{"Content-Length", "Content-Type", "Accept-Encoding"},

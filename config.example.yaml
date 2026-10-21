@@ -59,7 +59,10 @@ http:
     # Allow the default FiveM plugin NUI origin. If the resource is renamed, use
     # https://cfx-nui-<resource-name> instead.
     - "https://cfx-nui-fivenet"
-    #- "http://localhost:3000" # Only for development
+    # To allow all FiveM plugin NUI origins, use the wildcard pattern below.
+    #- "https://cfx-nui-*"
+    # Only for development
+    #- "http://localhost:3000"
   # TrustedProxies lists reverse-proxy IPs or CIDRs trusted to forward client IP and protocol headers.
   trustedProxies: []
     #- "10.0.0.0/8" # Common Kubernetes cluster IP range
