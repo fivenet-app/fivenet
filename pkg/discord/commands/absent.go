@@ -198,7 +198,7 @@ func (c *AbsentCommand) HandleCommand(
 
 	startDateValue := strings.ToLower(startDateOption.String())
 	if startDateValue != "today" {
-		dt, err := dateparser.Parse(nil, startDateValue)
+		dt, err := dateparser.Parse(c.l.GetDateParserConfig(), startDateValue)
 		if err != nil {
 			(*resp.Embeds)[0].Title = t(
 				"discord.commands.absent.results.invalid_date.title",

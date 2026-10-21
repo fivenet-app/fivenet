@@ -10,10 +10,14 @@ import (
 	"regexp"
 	"strconv"
 	"strings"
+
+	"github.com/markusmobius/go-dateparser"
 )
 
 type Ii18n interface {
 	Langs() []string
+
+	GetDateParserConfig() *dateparser.Configuration
 
 	GetFallbackLanguage() string
 	SetFallbackLanguage(lang string)
@@ -26,8 +30,10 @@ type TFunc func(string, map[string]any) string
 
 // I18n is a struct that holds translations for multiple languages and handles the translation.
 type I18n struct {
-	fallbackLang   string
-	availableLangs []string
+	fallbackLang     string
+	availableLangs   []string
+	dateParserConfig *dateparser.Configuration
+
 	// Lang -> Keys
 	translations map[string]map[string]any
 }
@@ -35,6 +41,11 @@ type I18n struct {
 // Langs returns the available languages as a string slice.
 func (i *I18n) Langs() []string {
 	return i.availableLangs
+}
+
+// GetDateParserConfig returns the dateparser configuration for parsing dates in translations.
+func (i *I18n) GetDateParserConfig() *dateparser.Configuration {
+	return i.dateParserConfig
 }
 
 // LoadFromJSON initializes I18n with a JSON string for a specific language.

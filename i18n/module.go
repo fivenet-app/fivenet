@@ -6,6 +6,7 @@ import (
 	"io/fs"
 	"strings"
 
+	"github.com/markusmobius/go-dateparser"
 	"go.uber.org/fx"
 )
 
@@ -48,6 +49,10 @@ func New() (Ii18n, error) {
 		return nil
 	}); err != nil {
 		return nil, fmt.Errorf("failed to walk locales dir. %w", err)
+	}
+
+	i.dateParserConfig = &dateparser.Configuration{
+		Languages: i.availableLangs,
 	}
 
 	return i, nil
