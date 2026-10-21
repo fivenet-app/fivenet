@@ -128,6 +128,7 @@ const state = reactive<Schema>({
 });
 
 const pendingJobLogo = ref<File | undefined>();
+const logoCacheBuster = ref(new Date().getTime());
 const isDeletingJobLogo = ref(false);
 const { hasUnsavedChanges, syncSnapshot } = useSnapshotChanges(state, {
     dirty: computed(() => pendingJobLogo.value !== undefined),
@@ -236,6 +237,7 @@ async function setJobProps(values: Schema): Promise<void> {
             authStore.setJobProps(jobProps.value);
             setSettingsValues();
             pendingJobLogo.value = undefined;
+            logoCacheBuster.value = new Date().getTime();
         }
     } catch (e) {
         handleGRPCError(e as RpcError);
@@ -388,7 +390,7 @@ async function deleteJobLogo(): Promise<void> {
     try {
         await removeJobLogo({
             deleteLogo: async () => settingsSettingsClient.deleteJobLogo({}),
-            jobProps: jobProps.value,
+            jobProps: jobProps.value ?? null,
             setAuthJobProps: authStore.setJobProps,
             clearPendingLogo: () => (pendingJobLogo.value = undefined),
             notifySuccess: () =>
@@ -484,7 +486,7 @@ const confirmModal = overlay.create(ConfirmModal);
                                     >
                                         <GenericImg
                                             class="mb-2 size-full max-h-50 min-h-50 max-w-50 min-w-50"
-                                            :src="`/api/filestore/${jobProps.logoFile.filePath}`"
+                                            :src="`/api/filestore/${jobProps.logoFile.filePath}?date=${logoCacheBuster}`"
                                             :alt="`${jobProps.jobLabel ?? jobProps.job} ${$t('common.logo')}`"
                                         />
                                     </div>

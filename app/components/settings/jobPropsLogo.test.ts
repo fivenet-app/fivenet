@@ -9,6 +9,9 @@ const jobProps = (): JobProps => ({
     logoFile: {
         id: 42,
         filePath: 'jobprops/logo.png',
+        byteSize: 0,
+        contentType: 'image/png',
+        isDir: false,
     },
 });
 

@@ -19,6 +19,7 @@ func (s *Store) SetJobProps(ctx context.Context, props *jobsprops.JobProps) erro
 			tJobProps.QuickButtons,
 			tJobProps.DiscordGuildID,
 			tJobProps.DiscordSyncSettings,
+			tJobProps.LogoFileID,
 			tJobProps.Settings,
 		).
 		VALUES(
@@ -28,6 +29,7 @@ func (s *Store) SetJobProps(ctx context.Context, props *jobsprops.JobProps) erro
 			props.GetQuickButtons(),
 			dbutils.StringEmpty(props.GetDiscordGuildId()),
 			props.GetDiscordSyncSettings(),
+			dbutils.Int64P(props.GetLogoFileId()),
 			props.GetSettings(),
 		).
 		ON_DUPLICATE_KEY_UPDATE(
@@ -36,6 +38,7 @@ func (s *Store) SetJobProps(ctx context.Context, props *jobsprops.JobProps) erro
 			tJobProps.QuickButtons.SET(mysql.RawString("VALUES(`quick_buttons`)")),
 			tJobProps.DiscordGuildID.SET(mysql.RawString("VALUES(`discord_guild_id`)")),
 			tJobProps.DiscordSyncSettings.SET(mysql.RawString("VALUES(`discord_sync_settings`)")),
+			tJobProps.LogoFileID.SET(mysql.RawInt("VALUES(`logo_file_id`)")),
 			tJobProps.Settings.SET(mysql.RawString("VALUES(`settings`)")),
 		)
 
