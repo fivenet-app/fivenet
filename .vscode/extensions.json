@@ -8,6 +8,7 @@
         "esbenp.prettier-vscode",
         "bufbuild.vscode-buf",
         "golang.go",
+        "vitest.explorer",
     ],
     "unwantedRecommendations": [
         "vscode.typescript-language-features"

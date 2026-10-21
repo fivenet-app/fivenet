@@ -12,6 +12,9 @@
         "fmt",
         "--stdin"
     ],
+    "gopls": {
+        "formatting.gofumpt": false
+    },
     "go.testTimeout": "240s",
     "i18n-ally.localesPaths": [
         "i18n/locales"
@@ -40,11 +43,6 @@
     "js/ts.preferences.importModuleSpecifierEnding": "minimal",
     "prettier.prettierPath": "./node_modules/prettier",
     "vitest.shellType": "terminal",
-    "tailwindCSS.classAttributes": [
-        "active-class",
-        "inactive-class"
-    ],
-    "tailwind-fold.foldStyle": "QUOTES",
     "editor.unicodeHighlight.allowedCharacters": {
         "ℹ": true
     }
