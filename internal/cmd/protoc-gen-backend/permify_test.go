@@ -11,6 +11,7 @@ package codegen.perms;
 
 import "google/protobuf/descriptor.proto";
 import "resources/permissions/attributes/attributes.proto";
+import "resources/properties/properties.proto";
 
 extend google.protobuf.MethodOptions {
   PermsOptions perms = 51002;
@@ -32,6 +33,7 @@ message Attr {
   string value = 2;
   resources.permissions.attributes.AttributeType type = 3;
   repeated string valid_string_list = 4;
+  optional resources.properties.PropertyScope property_scope = 5;
 }
 
 extend google.protobuf.ServiceOptions {
@@ -44,6 +46,21 @@ message ServiceOptions {
   optional string namespace = 3;
   optional string service = 4;
   repeated AdditionalServicePerm additional_perms = 5;
+  repeated SystemProperty system_properties = 6;
+  repeated resources.properties.PropertyGroup property_groups = 7;
+}
+
+message SystemProperty {
+  resources.properties.PropertyScope scope = 1;
+  string key = 2;
+  resources.properties.PropertyValueType value_type = 3;
+  bool enabled = 4;
+  string display_key = 5;
+  string label = 6;
+  optional string description = 7;
+  bool searchable = 8;
+  string group_key = 14;
+  int32 sort_order = 15;
 }
 
 message AdditionalServicePerm {
@@ -62,6 +79,31 @@ enum AttributeType {
   ATTRIBUTE_TYPE_STRING_LIST = 1;
   ATTRIBUTE_TYPE_JOB_LIST = 2;
   ATTRIBUTE_TYPE_JOB_GRADE_LIST = 3;
+  ATTRIBUTE_TYPE_PROPERTY_LIST = 4;
+}
+`
+
+const backendTestPropertiesProto = `syntax = "proto3";
+
+package resources.properties;
+
+enum PropertyScope {
+  PROPERTY_SCOPE_UNSPECIFIED = 0;
+  PROPERTY_SCOPE_VEHICLE = 1;
+  PROPERTY_SCOPE_USER = 2;
+}
+
+enum PropertyValueType {
+  PROPERTY_VALUE_TYPE_UNSPECIFIED = 0;
+  PROPERTY_VALUE_TYPE_STRING = 1;
+  PROPERTY_VALUE_TYPE_INTEGER = 2;
+}
+
+message PropertyGroup {
+  PropertyScope scope = 1;
+  string key = 2;
+  string display_key = 3;
+  int32 sort_order = 4;
 }
 `
 
@@ -77,9 +119,24 @@ service DocumentsService {
   option (codegen.perms.perms_svc) = {
     order: 5
     icon: "i-docs"
+    property_groups: {scope: PROPERTY_SCOPE_USER key: "personal" display_key: "common.personal" sort_order: 100}
+    system_properties: [{
+      scope: PROPERTY_SCOPE_USER
+      key: "user.name"
+      value_type: PROPERTY_VALUE_TYPE_STRING
+      enabled: true
+      display_key: "common.name"
+      group_key: "personal"
+      sort_order: 100
+    }]
     additional_perms: [
       {
         name: "ListDocuments"
+        attrs: [{
+          key: "Properties"
+          type: 4
+          property_scope: PROPERTY_SCOPE_USER
+        }]
       },
       {
         name: "ListDocuments"
@@ -117,6 +174,11 @@ service DocumentsService {
           valid_string_list: "Lower_Rank"
           valid_string_list: "Same_Rank"
           valid_string_list: "Any"
+        },
+        {
+          key: "Properties"
+          type: 4
+          property_scope: PROPERTY_SCOPE_USER
         }
       ]
     };
@@ -273,11 +335,34 @@ func TestPermifyModule_Execute_MergesDocumentAttrs(t *testing.T) {
 		serviceOut,
 		"ValidValues: []string{\"Own\", \"Lower_Rank\", \"Same_Rank\", \"Any\", },",
 	)
+	mustContainBackend(t, serviceOut, "propertyregistry.AddSystemPropertyDefinitions")
+	mustContainBackend(t, serviceOut, "propertyregistry.AddSystemPropertyGroups")
+	mustContainBackend(t, serviceOut, `GroupKey: "personal"`)
+	mustContainBackend(t, serviceOut, "ValidValues: []string{\"user.name\"")
+	mustContainBackend(t, serviceOut, "PropertyScope: propertypb.PropertyScope_PROPERTY_SCOPE_USER,")
+	mustContainBackend(t, constOut, "DocumentsServiceUpdateDocumentPropertiesPermValueUserName")
+	mustContainBackend(t, constOut, "PropertiesTyped perms.PropertyListAttrRef[DocumentsServiceUpdateDocumentPropertiesPermValue]")
 	mustContainBackend(
 		t,
 		constOut,
 		"DocumentsServiceUpdateDocumentPerm perms.Name = \"UpdateDocument\"",
 	)
+}
+
+func TestPermifyModule_ExecuteOmitsPropertyRegistrationWithoutSystemProperties(t *testing.T) {
+	ast, targets := loadBackendFixture(t)
+	out := renderBackendGeneratorOutputs(t, Permify(), ast, targets)
+
+	serviceOut, ok := out["services/qualifications/service_perms.go"]
+	if !ok {
+		t.Fatalf("missing qualifications service perms output: %v", mapsKeys(out))
+	}
+	if strings.Contains(serviceOut, "propertyregistry.AddSystemPropertyDefinitions") {
+		t.Fatalf("unexpected property registration in service without system properties")
+	}
+	if strings.Contains(serviceOut, "pkg/properties") {
+		t.Fatalf("unexpected property registry import in service without system properties")
+	}
 }
 
 func TestPermifyModule_Execute_MergesQualificationAttrs(t *testing.T) {

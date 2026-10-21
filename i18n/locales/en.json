@@ -792,6 +792,7 @@
         "settings": {
             "features": {
                 "properties": "Set your job properties (e.g., employee marker color).",
+                "property_definitions": "Manage dynamic property definitions for supported record types.",
                 "audit_log": "An audit trail of everything your colleagues have done.",
                 "limiter": "Limit what factions can see each other.",
                 "laws": "Set the law books and laws for the state.",
@@ -967,6 +968,7 @@
         "loading": "Loading {0}...",
         "unable_to_load": "Unable to load {0}!",
         "profile": "Profile",
+        "pinned_properties": "Pinned properties",
         "activity": "Activity",
         "home": "Home",
         "not_found": "No {0} found!",
@@ -1013,6 +1015,7 @@
         "access": "Access",
         "submit": "Submit",
         "save": "Save | Saving",
+        "set": "Set",
         "remove": "Remove",
         "add": "Add",
         "created": "Created",
@@ -1264,7 +1267,7 @@
         "question": "Question | Questions",
         "answer": "Answer | Answers",
         "chars": "Char | Chars",
-        "pinned": "Pinned",
+          "pinned": "Pinned",
         "pin": "Pin",
         "unpin": "Unpin",
         "pinned_document": "Pinned document | Pinned documents",
@@ -1526,6 +1529,13 @@
         "replace": "Replace"
     },
     "components": {
+        "properties": {
+            "activity": {
+                "set": "Set {property} to {new}",
+                "changed": "Changed {property} from {old} to {new}",
+                "cleared": "Cleared {property} (was {old})"
+            }
+        },
         "partials": {
             "sidebar": {
                 "change_character": "Change Character"
@@ -2852,6 +2862,78 @@
             "required_notice": "This access is required and can't be changed!"
         },
         "settings": {
+            "property_definitions": {
+                "title": "Property Definitions",
+                "add": "Add Property",
+                "add_group": "Add Group",
+                "reorder": "Reorder",
+                "finish_reordering": "Finish reordering",
+                "load_error": "Unable to load property definitions",
+                "system": "System",
+                "custom": "Custom",
+                "editor_title": "Property Definition",
+                "group_editor_title": "Property Group",
+                "key": "Key",
+                "group_key": "Group Key",
+                "label": "Label",
+                "group_label": "Group Label",
+                "description": "Description",
+                "group": "Group",
+                "value_type": "Value Type",
+                "value_format": "Value Format",
+                "renderer": "Renderer",
+                "renderer_default": "Default",
+                "renderer_label": "Renderer: {renderer}",
+                "renderer_string": "String",
+                "renderer_integer": "Integer",
+                "renderer_number": "Number",
+                "renderer_boolean": "Boolean",
+                "renderer_date": "Date",
+                "renderer_datetime": "Date and time",
+                "renderer_email": "Email",
+                "renderer_phone": "Phone",
+                "renderer_height": "Height",
+                "renderer_traffic_points": "Traffic points",
+                "renderer_sex": "Sex",
+                "renderer_money": "Money",
+                "renderer_prefix": "Prefix",
+                "renderer_suffix": "Suffix",
+                "renderer_unit": "Unit",
+                "renderer_decimal_places": "Renderer decimal places",
+                "renderer_truncate": "Truncate long values",
+                "currency": "Currency",
+                "unit": "Unit",
+                "decimal_places": "Decimal Places",
+                "enabled": "Enabled",
+                "disabled": "Disabled",
+                "searchable": "Allow Search",
+                "managed": "Managed",
+                "visibility_default": "Visible",
+                "visibility_hidden": "Hidden",
+                "visibility_profile_badge": "Profile badge",
+                "pinned": "Pinned",
+                "implicit": "Implicit",
+                "not_pinned": "Not pinned",
+                "pinned_warning": "{count} properties are pinned. Consider keeping this list to 6-8 properties for profile views.",
+                "show_deleted": "Show deleted",
+                "ungrouped": "Other",
+                "deleted": "Deleted",
+                "delete_group_title": "Delete property group",
+                "delete_group_description": "Properties in this group will be moved to Other. The group can be restored later.",
+                "groups": {
+                    "general": "General",
+                    "personal": "Personal",
+                    "contact": "Contact",
+                    "status": "Status",
+                    "labels": "Labels",
+                    "licenses": "Licenses"
+                },
+                "scope": "Scope",
+                "scopes": {
+                    "vehicle": "Vehicles",
+                    "user": "Citizens"
+                }
+            },
             "job_props": {
                 "job_properties": "Job Properties",
                 "your_job_properties": "Your job's FiveNet properties.",
@@ -4281,6 +4363,18 @@
                     "title": "Labels denied",
                     "content": "You are not allowed to set a citizen's labels!"
                 },
+                "ErrPropsPropertiesDenied": {
+                    "title": "Citizen properties denied",
+                    "content": "You are not allowed to view or update citizen properties."
+                },
+                "ErrInvalidProperty": {
+                    "title": "Invalid citizen property",
+                    "content": "The citizen property or its value is invalid."
+                },
+                "ErrSystemPropertyDisabled": {
+                    "title": "Citizen property disabled",
+                    "content": "This system citizen property is disabled for this FiveNet instance."
+                },
                 "ErrPropsMugshotDenied": {
                     "title": "Mugshot denied",
                     "content": "You are not allowed to set a citizen's mug shot!"
@@ -4300,9 +4394,25 @@
                     "title": "Vehicles service error",
                     "content": "Something went wrong while searching vehicle data. Please try again."
                 },
+                "ErrReasonRequired": {
+                    "title": "Reason required",
+                    "content": "A reason must be provided!"
+                },
                 "ErrPropsWantedDenied": {
                     "title": "Wanted status denied",
                     "content": "You are not allowed to set a vehicle's wanted status!"
+                },
+                "ErrPropsPropertiesDenied": {
+                    "title": "Vehicle properties denied",
+                    "content": "You are not allowed to view or update vehicle properties."
+                },
+                "ErrInvalidProperty": {
+                    "title": "Invalid vehicle property",
+                    "content": "The vehicle property or its value is invalid."
+                },
+                "ErrSystemPropertyDisabled": {
+                    "title": "Vehicle property disabled",
+                    "content": "This system vehicle property is disabled for this FiveNet instance."
                 }
             }
         },
@@ -4872,13 +4982,38 @@
                 "JOB": "Job",
                 "DOCUMENT": "Documents",
                 "JAIL": "Jail",
-                "FINE": "Fines"
+                "FINE": "Fines",
+                "FILE": "Files",
+                "PROPERTY": "Property"
             }
         },
         "vehicles": {
             "VehicleActivityType": {
                 "UNSPECIFIED": "Unspecified",
-                "WANTED": "Wanted"
+                "WANTED": "Wanted",
+                "FILE": "Files",
+                "PROPERTY": "Property"
+            }
+        },
+        "properties": {
+            "PropertyValueType": {
+                "UNSPECIFIED": "Unspecified",
+                "STRING": "Text",
+                "INTEGER": "Integer",
+                "NUMBER": "Number",
+                "BOOL": "Boolean",
+                "TIMESTAMP": "Timestamp",
+                "DATE": "Date"
+            },
+            "PropertyValueFormat": {
+                "UNSPECIFIED": "Unspecified",
+                "PLAIN": "Plain",
+                "MONEY": "Money",
+                "PERCENTAGE": "Percentage",
+                "DATETIME": "Date and time",
+                "DATE": "Date",
+                "DURATION": "Duration",
+                "DISTANCE": "Distance"
             }
         },
         "documents": {
@@ -5259,23 +5394,23 @@
                     "key": "List Citizens",
                     "description": "List and search through citizens.",
                     "attrs": {
-                        "PhoneNumber": "Phone Number",
-                        "Licenses": "Licenses",
-                        "UserProps_Wanted": "Wanted Status",
-                        "UserProps_Job": "Job",
-                        "UserProps_TrafficInfractionPoints": "Traffic Points",
-                        "UserProps_OpenFines": "Open Fines",
-                        "UserProps_BloodType": "Blood Type",
-                        "UserProps_Email": "E-Mail",
-                        "UserProps_Labels": "Labels",
-                        "UserProps_Mugshot": "Mugshot"
+                        "Property_user_phone_number": "Phone Number",
+                        "Property_user_licenses": "Licenses",
+                        "Property_user_wanted": "Wanted Status",
+                        "Property_user_job": "Job",
+                        "Property_user_traffic_infraction_points": "Traffic Points",
+                        "Property_user_open_fines": "Open Fines",
+                        "Property_user_blood_type": "Blood Type",
+                        "Property_user_mugshot": "Mugshot",
+                        "Property_user_labels": "Labels",
+                        "Property_user_email": "E-Mail"
                     },
                     "attrs_types": {
-                        "Fields": "Fields"
+                        "Properties": "Properties"
                     }
                 },
                 "ListUserActivity": {
-                    "key": "List User Activity",
+                    "key": "List Citizen Activity",
                     "description": "Citizen Info Activity Feed",
                     "attrs": {
                         "SourceUser": "Source User",
@@ -5286,22 +5421,27 @@
                     }
                 },
                 "SetUserProps": {
-                    "key": "Set User Properties",
+                    "key": "Set Citizen Properties",
                     "description": "Set Citizen Props (e.g., wanted status, suspected job).",
                     "attrs": {
-                        "Wanted": "Wanted Status",
-                        "Job": "Job",
-                        "TrafficInfractionPoints": "Traffic Points",
-                        "Labels": "Labels",
-                        "Mugshot": "Mugshot"
+                        "Property_user_phone_number": "Phone Number",
+                        "Property_user_licenses": "Licenses",
+                        "Property_user_wanted": "Wanted Status",
+                        "Property_user_job": "Job",
+                        "Property_user_traffic_infraction_points": "Traffic Points",
+                        "Property_user_open_fines": "Open Fines",
+                        "Property_user_blood_type": "Blood Type",
+                        "Property_user_mugshot": "Mugshot",
+                        "Property_user_labels": "Labels",
+                        "Property_user_email": "E-Mail"
                     },
                     "attrs_types": {
-                        "Fields": "User Properties Fields"
+                        "Properties": "Properties"
                     }
                 },
                 "GetUser": {
-                    "key": "Get User",
-                    "description": "View a citizen's.",
+                    "key": "Get Citizen",
+                    "description": "View a citizen's profile.",
                     "attrs_types": {
                         "Jobs": "Jobs"
                     }
@@ -5327,10 +5467,10 @@
                     "key": "Search Vehicles",
                     "description": "Search and find citizen's vehicles.",
                     "attrs": {
-                        "Wanted": "Wanted Status"
+                        "Property_vehicle_wanted": "Wanted Status"
                     },
                     "attrs_types": {
-                        "Fields": "Vehicle Properties Fields"
+                        "Properties": "Vehicle Properties"
                     }
                 },
                 "ListVehicleActivity": {
@@ -5348,10 +5488,10 @@
                     "key": "Set Vehicle Properties",
                     "description": "Set vehicle properties (e.g., wanted state).",
                     "attrs": {
-                        "Wanted": "Wanted Status"
+                        "Property_vehicle_wanted": "Wanted Status"
                     },
                     "attrs_types": {
-                        "Fields": "Vehicle Properties Fields"
+                        "Properties": "Vehicle Properties"
                     }
                 }
             }

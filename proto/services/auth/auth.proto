@@ -9,8 +9,7 @@ import "codegen/sanitizer/sanitizer.proto";
 import "resources/accounts/accounts.proto";
 import "resources/accounts/oauth2/oauth2.proto";
 import "resources/jobs/props/props.proto";
-import "resources/permissions/attributes/attributes.proto";
-import "resources/permissions/permissions/permissions.proto";
+import "resources/permissions/authorization/authorization.proto";
 import "resources/timestamp/timestamp.proto";
 import "resources/users/user.proto";
 import "tagger/tagger.proto";
@@ -166,6 +165,8 @@ message ChooseCharacterRequest {
 }
 
 message ChooseCharacterResponse {
+  reserved 6, 7;
+
   string token = 1;
   string username = 2;
 
@@ -173,8 +174,7 @@ message ChooseCharacterResponse {
   resources.jobs.props.JobProps job_props = 4;
   resources.users.User char = 5 [(tagger.tags) = "alias:\"user\""];
 
-  repeated resources.permissions.permissions.Permission permissions = 6;
-  repeated resources.permissions.attributes.RoleAttribute attributes = 7;
+  resources.permissions.authorization.AuthorizationState authorization = 8;
 }
 
 message ImpersonateJobRequest {
@@ -182,13 +182,14 @@ message ImpersonateJobRequest {
 }
 
 message ImpersonateJobResponse {
+  reserved 4, 5;
+
   string token = 1;
   resources.timestamp.Timestamp expires = 2;
 
   resources.users.User char = 3 [(tagger.tags) = "alias:\"user\""];
 
-  repeated resources.permissions.permissions.Permission permissions = 4;
-  repeated resources.permissions.attributes.RoleAttribute attributes = 5;
+  resources.permissions.authorization.AuthorizationState authorization = 7;
 
   bool state = 6;
 }
@@ -213,14 +214,15 @@ message SetSuperuserModeRequest {
 }
 
 message SetSuperuserModeResponse {
+  reserved 5, 6;
+
   string token = 1;
   resources.timestamp.Timestamp expires = 2;
 
   optional resources.jobs.props.JobProps job_props = 3;
   resources.users.User char = 4 [(tagger.tags) = "alias:\"user\""];
 
-  repeated resources.permissions.permissions.Permission permissions = 5;
-  repeated resources.permissions.attributes.RoleAttribute attributes = 6;
+  resources.permissions.authorization.AuthorizationState authorization = 7;
 }
 
 // Auth Service handles user authentication, character selection and oauth2 connections

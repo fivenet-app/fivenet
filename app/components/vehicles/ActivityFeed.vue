@@ -108,6 +108,7 @@ async function listVehicleActivity(values: Schema, signal: AbortSignal): Promise
                 types: values.types,
                 from: toTimestamp(values.dateRange?.start),
                 to: toTimestamp(values.dateRange?.end),
+                propertyKeys: [],
             },
             { abort: signal },
         );

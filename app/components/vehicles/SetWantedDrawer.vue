@@ -54,6 +54,7 @@ async function setWantedState(values: Schema): Promise<void> {
         const call = vehiclesVehiclesClient.setVehicleProps({
             props: vProps,
             reason: values.reason,
+            propertyChanges: [],
         });
         const { response } = await call;
 

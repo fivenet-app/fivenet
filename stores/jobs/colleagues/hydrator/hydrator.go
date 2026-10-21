@@ -287,6 +287,7 @@ func (h *Hydrator) loadFallbackByUserID(
 
 	tColleague := table.FivenetUser.AS("colleague")
 	tUserProps := table.FivenetUserProps.AS("colleague_user_props")
+	tAvatarFiles := table.FivenetUserFiles.AS("colleague_avatar_file")
 	tAvatar := table.FivenetFiles.AS("colleague_profile_picture")
 
 	userIdExprs := make([]mysql.Expression, 0, len(userIDs))
@@ -303,14 +304,18 @@ func (h *Hydrator) loadFallbackByUserID(
 			tColleague.Lastname,
 			tColleague.Dateofbirth,
 			tColleague.PhoneNumber,
-			tUserProps.AvatarFileID.AS("colleague.profile_picture_file_id"),
+			tAvatarFiles.FileID.AS("colleague.profile_picture_file_id"),
 			tAvatar.FilePath.AS("colleague.profile_picture"),
 			tUserProps.Email.AS("colleague.email"),
 		).
 		FROM(
 			tColleague.
 				LEFT_JOIN(tUserProps, tUserProps.UserID.EQ(tColleague.ID)).
-				LEFT_JOIN(tAvatar, tAvatar.ID.EQ(tUserProps.AvatarFileID)),
+				LEFT_JOIN(tAvatarFiles, mysql.AND(
+					tAvatarFiles.UserID.EQ(tColleague.ID),
+					tAvatarFiles.Kind.EQ(mysql.String("avatar")),
+				)).
+				LEFT_JOIN(tAvatar, tAvatar.ID.EQ(tAvatarFiles.FileID)),
 		).
 		WHERE(mysql.AND(
 			tColleague.ID.IN(userIdExprs...),

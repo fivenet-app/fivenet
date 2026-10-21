@@ -5,6 +5,7 @@ package codegen.perms;
 import "buf/validate/validate.proto";
 import "google/protobuf/descriptor.proto";
 import "resources/permissions/attributes/attributes.proto";
+import "resources/properties/properties.proto";
 
 option go_package = "github.com/fivenet-app/fivenet/v2026/gen/go/proto/codegen/perms;perms";
 
@@ -30,6 +31,14 @@ message Attr {
   resources.permissions.attributes.AttributeType type = 3 [(buf.validate.field).enum.defined_only = true];
 
   repeated string valid_string_list = 4;
+
+  // Required for PropertyList attributes so the backend can restrict the
+  // generated keys to the appropriate property scope.
+  optional resources.properties.PropertyScope property_scope = 5 [(buf.validate.field).enum = {
+    defined_only: true
+    not_in: [0]
+  }];
+
 }
 
 extend google.protobuf.ServiceOptions {
@@ -44,6 +53,34 @@ message ServiceOptions {
   optional string service = 4;
 
   repeated AdditionalServicePerm additional_perms = 5;
+  repeated SystemProperty system_properties = 6;
+  repeated resources.properties.PropertyGroup property_groups = 7;
+}
+
+// SystemProperty declares a property whose key and semantics are owned by
+// FiveNet code. The backend generator registers these definitions at startup;
+// only the enabled state may be overridden by an instance.
+message SystemProperty {
+  resources.properties.PropertyScope scope = 1;
+  string key = 2;
+  resources.properties.PropertyValueType value_type = 3;
+  bool enabled = 4;
+  string display_key = 5;
+  string label = 6;
+  optional string description = 7;
+  bool searchable = 8;
+  resources.properties.PropertyValueFormat value_format = 9;
+  resources.properties.PropertyBehavior behavior = 10;
+  resources.properties.PropertyRenderer renderer = 17;
+  resources.properties.PropertyRendererConfig renderer_config = 18;
+  resources.properties.PropertyDisplayMode display_mode = 19;
+  optional string unit = 11;
+  optional uint32 decimal_places = 12;
+  optional string currency = 13;
+  string group_key = 14;
+  int32 sort_order = 15;
+  bool pinned = 16;
+  bool implicit = 20;
 }
 
 message AdditionalServicePerm {

@@ -7,6 +7,7 @@ import (
 
 	permissionsattributes "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/permissions/attributes"
 	permissionspermissions "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/permissions/permissions"
+	propertypb "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/properties"
 	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
 	"github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
@@ -161,6 +162,7 @@ func (ps *Perms) loadAttributes(ctx context.Context) error {
 			Key(attr.GetKey()),
 			permissionsattributes.AttributeTypes(attr.GetType()),
 			attr.GetValidValues(),
+			propertypb.PropertyScope_PROPERTY_SCOPE_UNSPECIFIED,
 		); err != nil {
 			return fmt.Errorf("failed to add/update attribute in map. %w", err)
 		}

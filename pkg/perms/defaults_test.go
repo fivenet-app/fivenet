@@ -30,6 +30,6 @@ func TestDefaultPermGuardRejectsMalformedValues(t *testing.T) {
 		{category: "settings.ConfigService", name: ""},
 	} {
 		_, err := DefaultPermGuard(test.category, test.name)
-		assert.Error(t, err, "%q/%q should be rejected", test.category, test.name)
+		require.Error(t, err, "%q/%q should be rejected", test.category, test.name)
 	}
 }

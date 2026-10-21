@@ -46,8 +46,9 @@ func init() {
 			Name:      permkeys.CentrumServiceUpdateSettingsPerm,
 			Attrs: []perms.Attr{
 				{
-					Key:         permkeys.CentrumServiceUpdateSettingsAccessPermField,
-					Type:        permissionsattributes.StringListAttributeType,
+					Key:  permkeys.CentrumServiceUpdateSettingsAccessPermField,
+					Type: permissionsattributes.StringListAttributeType,
+
 					ValidValues: []string{"Shared", "Public"},
 				},
 			},

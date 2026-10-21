@@ -10,6 +10,7 @@ package users
 
 import (
 	licenses "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/citizens/licenses"
+	properties "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/properties"
 	timestamp "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/timestamp"
 	props "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/users/props"
 	_ "github.com/srikrsna/protoc-gen-gotag/tagger"
@@ -48,6 +49,7 @@ type User struct {
 	Licenses             []*licenses.License    `protobuf:"bytes,16,rep,name=licenses,proto3" json:"licenses,omitempty" alias:"user_licenses"`
 	ProfilePictureFileId *int64                 `protobuf:"varint,17,opt,name=profile_picture_file_id,json=profilePictureFileId,proto3,oneof" json:"profile_picture_file_id,omitempty"`
 	ProfilePicture       *string                `protobuf:"bytes,18,opt,name=profile_picture,json=profilePicture,proto3,oneof" json:"profile_picture,omitempty"`
+	Properties           *properties.Properties `protobuf:"bytes,21,opt,name=properties,proto3,oneof" json:"properties,omitempty"`
 	unknownFields        protoimpl.UnknownFields
 	sizeCache            protoimpl.SizeCache
 }
@@ -217,6 +219,13 @@ func (x *User) GetProfilePicture() string {
 	return ""
 }
 
+func (x *User) GetProperties() *properties.Properties {
+	if x != nil {
+		return x.Properties
+	}
+	return nil
+}
+
 func (x *User) SetUserId(v int32) {
 	x.UserId = v
 }
@@ -297,6 +306,10 @@ func (x *User) SetProfilePicture(v string) {
 	x.ProfilePicture = &v
 }
 
+func (x *User) SetProperties(v *properties.Properties) {
+	x.Properties = v
+}
+
 func (x *User) HasJobLabel() bool {
 	if x == nil {
 		return false
@@ -367,6 +380,13 @@ func (x *User) HasProfilePicture() bool {
 	return x.ProfilePicture != nil
 }
 
+func (x *User) HasProperties() bool {
+	if x == nil {
+		return false
+	}
+	return x.Properties != nil
+}
+
 func (x *User) ClearJobLabel() {
 	x.JobLabel = nil
 }
@@ -407,6 +427,10 @@ func (x *User) ClearProfilePicture() {
 	x.ProfilePicture = nil
 }
 
+func (x *User) ClearProperties() {
+	x.Properties = nil
+}
+
 type User_builder struct {
 	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
 
@@ -430,6 +454,7 @@ type User_builder struct {
 	Licenses             []*licenses.License
 	ProfilePictureFileId *int64
 	ProfilePicture       *string
+	Properties           *properties.Properties
 }
 
 func (b0 User_builder) Build() *User {
@@ -456,6 +481,7 @@ func (b0 User_builder) Build() *User {
 	x.Licenses = b.Licenses
 	x.ProfilePictureFileId = b.ProfilePictureFileId
 	x.ProfilePicture = b.ProfilePicture
+	x.Properties = b.Properties
 	return m0
 }
 
@@ -797,7 +823,7 @@ var File_resources_users_user_proto protoreflect.FileDescriptor
 
 const file_resources_users_user_proto_rawDesc = "" +
 	"\n" +
-	"\x1aresources/users/user.proto\x12\x0fresources.users\x1a*resources/citizens/licenses/licenses.proto\x1a#resources/timestamp/timestamp.proto\x1a!resources/users/props/props.proto\x1a\x13tagger/tagger.proto\"\xe1\a\n" +
+	"\x1aresources/users/user.proto\x12\x0fresources.users\x1a*resources/citizens/licenses/licenses.proto\x1a%resources/properties/properties.proto\x1a#resources/timestamp/timestamp.proto\x1a!resources/users/props/props.proto\x1a\x13tagger/tagger.proto\"\xb7\b\n" +
 	"\x04User\x12(\n" +
 	"\auser_id\x18\x01 \x01(\x05B\x0f\x9a\x84\x9e\x03\n" +
 	"alias:\"id\"R\x06userId\x12\x1e\n" +
@@ -822,7 +848,10 @@ const file_resources_users_user_proto_rawDesc = "" +
 	"\x05props\x18\x0f \x01(\v2 .resources.users.props.UserPropsB\x1f\x9a\x84\x9e\x03\x1aalias:\"fivenet_user_props\"R\x05props\x12\\\n" +
 	"\blicenses\x18\x10 \x03(\v2$.resources.citizens.licenses.LicenseB\x1a\x9a\x84\x9e\x03\x15alias:\"user_licenses\"R\blicenses\x12:\n" +
 	"\x17profile_picture_file_id\x18\x11 \x01(\x03H\aR\x14profilePictureFileId\x88\x01\x01\x12,\n" +
-	"\x0fprofile_picture\x18\x12 \x01(\tH\bR\x0eprofilePicture\x88\x01\x01B\f\n" +
+	"\x0fprofile_picture\x18\x12 \x01(\tH\bR\x0eprofilePicture\x88\x01\x01\x12E\n" +
+	"\n" +
+	"properties\x18\x15 \x01(\v2 .resources.properties.PropertiesH\tR\n" +
+	"properties\x88\x01\x01B\f\n" +
 	"\n" +
 	"_job_labelB\x12\n" +
 	"\x10_job_grade_labelB\x06\n" +
@@ -832,7 +861,8 @@ const file_resources_users_user_proto_rawDesc = "" +
 	"\x06_visumB\v\n" +
 	"\t_playtimeB\x1a\n" +
 	"\x18_profile_picture_file_idB\x12\n" +
-	"\x10_profile_picture\"\x8a\x02\n" +
+	"\x10_profile_pictureB\r\n" +
+	"\v_properties\"\x8a\x02\n" +
 	"\vPhoneNumber\x12\x17\n" +
 	"\auser_id\x18\x01 \x01(\x05R\x06userId\x121\n" +
 	"\x06number\x18\x02 \x01(\tB\x19\x9a\x84\x9e\x03\x14alias:\"phone_number\"R\x06number\x12\x1d\n" +
@@ -863,27 +893,29 @@ const file_resources_users_user_proto_rawDesc = "" +
 
 var file_resources_users_user_proto_msgTypes = make([]protoimpl.MessageInfo, 3)
 var file_resources_users_user_proto_goTypes = []any{
-	(*User)(nil),                // 0: resources.users.User
-	(*PhoneNumber)(nil),         // 1: resources.users.PhoneNumber
-	(*UserJob)(nil),             // 2: resources.users.UserJob
-	(*props.UserProps)(nil),     // 3: resources.users.props.UserProps
-	(*licenses.License)(nil),    // 4: resources.citizens.licenses.License
-	(*timestamp.Timestamp)(nil), // 5: resources.timestamp.Timestamp
+	(*User)(nil),                  // 0: resources.users.User
+	(*PhoneNumber)(nil),           // 1: resources.users.PhoneNumber
+	(*UserJob)(nil),               // 2: resources.users.UserJob
+	(*props.UserProps)(nil),       // 3: resources.users.props.UserProps
+	(*licenses.License)(nil),      // 4: resources.citizens.licenses.License
+	(*properties.Properties)(nil), // 5: resources.properties.Properties
+	(*timestamp.Timestamp)(nil),   // 6: resources.timestamp.Timestamp
 }
 var file_resources_users_user_proto_depIdxs = []int32{
 	2, // 0: resources.users.User.jobs:type_name -> resources.users.UserJob
 	1, // 1: resources.users.User.phone_numbers:type_name -> resources.users.PhoneNumber
 	3, // 2: resources.users.User.props:type_name -> resources.users.props.UserProps
 	4, // 3: resources.users.User.licenses:type_name -> resources.citizens.licenses.License
-	5, // 4: resources.users.PhoneNumber.created_at:type_name -> resources.timestamp.Timestamp
-	5, // 5: resources.users.PhoneNumber.updated_at:type_name -> resources.timestamp.Timestamp
-	5, // 6: resources.users.UserJob.created_at:type_name -> resources.timestamp.Timestamp
-	5, // 7: resources.users.UserJob.updated_at:type_name -> resources.timestamp.Timestamp
-	8, // [8:8] is the sub-list for method output_type
-	8, // [8:8] is the sub-list for method input_type
-	8, // [8:8] is the sub-list for extension type_name
-	8, // [8:8] is the sub-list for extension extendee
-	0, // [0:8] is the sub-list for field type_name
+	5, // 4: resources.users.User.properties:type_name -> resources.properties.Properties
+	6, // 5: resources.users.PhoneNumber.created_at:type_name -> resources.timestamp.Timestamp
+	6, // 6: resources.users.PhoneNumber.updated_at:type_name -> resources.timestamp.Timestamp
+	6, // 7: resources.users.UserJob.created_at:type_name -> resources.timestamp.Timestamp
+	6, // 8: resources.users.UserJob.updated_at:type_name -> resources.timestamp.Timestamp
+	9, // [9:9] is the sub-list for method output_type
+	9, // [9:9] is the sub-list for method input_type
+	9, // [9:9] is the sub-list for extension type_name
+	9, // [9:9] is the sub-list for extension extendee
+	0, // [0:9] is the sub-list for field type_name
 }
 
 func init() { file_resources_users_user_proto_init() }

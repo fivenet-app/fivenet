@@ -11,6 +11,7 @@ import { UnknownFieldHandler } from "@protobuf-ts/runtime";
 import type { PartialMessage } from "@protobuf-ts/runtime";
 import { reflectionMergePartial } from "@protobuf-ts/runtime";
 import { MessageType } from "@protobuf-ts/runtime";
+import { PropertyValue } from "../../properties/properties";
 import { DocRelation } from "../../documents/relations/relations";
 import { Label } from "../../citizens/labels/labels";
 import { License } from "../../citizens/licenses/licenses";
@@ -142,6 +143,12 @@ export interface UserActivityData {
          * @generated from protobuf field: resources.users.activity.FineChange fine_change = 10
          */
         fineChange: FineChange;
+    } | {
+        oneofKind: "propertyChange";
+        /**
+         * @generated from protobuf field: resources.users.activity.PropertyChange property_change = 11
+         */
+        propertyChange: PropertyChange;
     } | {
         oneofKind: undefined;
     };
@@ -322,6 +329,26 @@ export interface FineChange {
     amount: number;
 }
 /**
+ * PropertyChange is used only for custom, generic properties. Managed system
+ * properties retain their dedicated activity types and richer payloads.
+ *
+ * @generated from protobuf message resources.users.activity.PropertyChange
+ */
+export interface PropertyChange {
+    /**
+     * @generated from protobuf field: string key = 1
+     */
+    key: string;
+    /**
+     * @generated from protobuf field: optional resources.properties.PropertyValue old_value = 2
+     */
+    oldValue?: PropertyValue;
+    /**
+     * @generated from protobuf field: optional resources.properties.PropertyValue new_value = 3
+     */
+    newValue?: PropertyValue;
+}
+/**
  * @generated from protobuf enum resources.users.activity.UserActivityType
  */
 export enum UserActivityType {
@@ -374,7 +401,19 @@ export enum UserActivityType {
     /**
      * @generated from protobuf enum value: USER_ACTIVITY_TYPE_FINE = 13;
      */
-    FINE = 13
+    FINE = 13,
+    /**
+     * File-backed property value change.
+     *
+     * @generated from protobuf enum value: USER_ACTIVITY_TYPE_FILE = 14;
+     */
+    FILE = 14,
+    /**
+     * Generic custom property value change.
+     *
+     * @generated from protobuf enum value: USER_ACTIVITY_TYPE_PROPERTY = 15;
+     */
+    PROPERTY = 15
 }
 // @generated message type with reflection information, may provide speed optimized methods
 class UserActivity$Type extends MessageType<UserActivity> {
@@ -519,7 +558,8 @@ class UserActivityData$Type extends MessageType<UserActivityData> {
             { no: 7, name: "job_change", kind: "message", oneof: "data", T: () => JobChange },
             { no: 8, name: "document_relation", kind: "message", oneof: "data", T: () => CitizenDocumentRelation },
             { no: 9, name: "jail_change", kind: "message", oneof: "data", T: () => JailChange },
-            { no: 10, name: "fine_change", kind: "message", oneof: "data", T: () => FineChange }
+            { no: 10, name: "fine_change", kind: "message", oneof: "data", T: () => FineChange },
+            { no: 11, name: "property_change", kind: "message", oneof: "data", T: () => PropertyChange }
         ], { "codegen.dbscanner.dbscanner": { enabled: true } });
     }
     create(value?: PartialMessage<UserActivityData>): UserActivityData {
@@ -594,6 +634,12 @@ class UserActivityData$Type extends MessageType<UserActivityData> {
                         fineChange: FineChange.internalBinaryRead(reader, reader.uint32(), options, (message.data as any).fineChange)
                     };
                     break;
+                case /* resources.users.activity.PropertyChange property_change */ 11:
+                    message.data = {
+                        oneofKind: "propertyChange",
+                        propertyChange: PropertyChange.internalBinaryRead(reader, reader.uint32(), options, (message.data as any).propertyChange)
+                    };
+                    break;
                 default:
                     let u = options.readUnknownField;
                     if (u === "throw")
@@ -636,6 +682,9 @@ class UserActivityData$Type extends MessageType<UserActivityData> {
         /* resources.users.activity.FineChange fine_change = 10; */
         if (message.data.oneofKind === "fineChange")
             FineChange.internalBinaryWrite(message.data.fineChange, writer.tag(10, WireType.LengthDelimited).fork(), options).join();
+        /* resources.users.activity.PropertyChange property_change = 11; */
+        if (message.data.oneofKind === "propertyChange")
+            PropertyChange.internalBinaryWrite(message.data.propertyChange, writer.tag(11, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -1307,3 +1356,64 @@ class FineChange$Type extends MessageType<FineChange> {
  * @generated MessageType for protobuf message resources.users.activity.FineChange
  */
 export const FineChange = new FineChange$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class PropertyChange$Type extends MessageType<PropertyChange> {
+    constructor() {
+        super("resources.users.activity.PropertyChange", [
+            { no: 1, name: "key", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "64" } } } },
+            { no: 2, name: "old_value", kind: "message", T: () => PropertyValue },
+            { no: 3, name: "new_value", kind: "message", T: () => PropertyValue }
+        ]);
+    }
+    create(value?: PartialMessage<PropertyChange>): PropertyChange {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        message.key = "";
+        if (value !== undefined)
+            reflectionMergePartial<PropertyChange>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: PropertyChange): PropertyChange {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* string key */ 1:
+                    message.key = reader.string();
+                    break;
+                case /* optional resources.properties.PropertyValue old_value */ 2:
+                    message.oldValue = PropertyValue.internalBinaryRead(reader, reader.uint32(), options, message.oldValue);
+                    break;
+                case /* optional resources.properties.PropertyValue new_value */ 3:
+                    message.newValue = PropertyValue.internalBinaryRead(reader, reader.uint32(), options, message.newValue);
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: PropertyChange, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* string key = 1; */
+        if (message.key !== "")
+            writer.tag(1, WireType.LengthDelimited).string(message.key);
+        /* optional resources.properties.PropertyValue old_value = 2; */
+        if (message.oldValue)
+            PropertyValue.internalBinaryWrite(message.oldValue, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
+        /* optional resources.properties.PropertyValue new_value = 3; */
+        if (message.newValue)
+            PropertyValue.internalBinaryWrite(message.newValue, writer.tag(3, WireType.LengthDelimited).fork(), options).join();
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message resources.users.activity.PropertyChange
+ */
+export const PropertyChange = new PropertyChange$Type();

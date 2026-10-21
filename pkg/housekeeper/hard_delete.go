@@ -150,20 +150,27 @@ func (h *Housekeeper) deleteRows(
 
 	if parent != nil {
 		// If a parent is specified, only delete rows whose foreign key matches deleted/old rows in the parent.
-		condition = mysql.AND(
-			table.ForeignKey.IN(
-				parent.Table.
-					SELECT(
-						parent.IDColumn,
-					).
-					WHERE(mysql.AND(
-						parent.DeletedAtColumn.IS_NOT_NULL(),
-						parent.DeletedAtColumn.LT_EQ(
-							mysql.CURRENT_DATE().SUB(mysql.INTERVAL(minDays, mysql.DAY)),
-						),
-					)),
-			),
-		)
+		if table.ForeignKeyString != nil && parent.KeyColumnString != nil {
+			parentKeys := parent.Table.
+				SELECT(parent.KeyColumnString).
+				WHERE(mysql.AND(
+					parent.DeletedAtColumn.IS_NOT_NULL(),
+					parent.DeletedAtColumn.LT_EQ(
+						mysql.CURRENT_DATE().SUB(mysql.INTERVAL(minDays, mysql.DAY)),
+					),
+				))
+			condition = mysql.AND(table.ForeignKeyString.IN(parentKeys))
+		} else {
+			parentKeys := parent.Table.
+				SELECT(parent.IDColumn).
+				WHERE(mysql.AND(
+					parent.DeletedAtColumn.IS_NOT_NULL(),
+					parent.DeletedAtColumn.LT_EQ(
+						mysql.CURRENT_DATE().SUB(mysql.INTERVAL(minDays, mysql.DAY)),
+					),
+				))
+			condition = mysql.AND(table.ForeignKey.IN(parentKeys))
+		}
 	} else {
 		if table.DateColumn != nil {
 			// Use DateColumn if available for filtering.

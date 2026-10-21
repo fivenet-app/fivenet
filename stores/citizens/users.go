@@ -6,10 +6,10 @@ import (
 
 	citizenslicenses "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/citizens/licenses"
 	database "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/common/database"
+	properties "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/properties"
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/timestamp"
 	users "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/users"
 	usersactivity "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/users/activity"
-	usersprops "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/users/props"
 	pbcitizens "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/citizens"
 	"github.com/fivenet-app/fivenet/v2026/pkg/dbutils"
 	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
@@ -27,6 +27,8 @@ type ListCitizensOptions struct {
 	IncludeBloodType               bool
 	IncludeMugshot                 bool
 	IncludeEmail                   bool
+	PropertyFilters                []*properties.PropertyFilter
+	CanFilterProperties            bool
 }
 
 type GetUserOptions struct {
@@ -43,10 +45,13 @@ type GetUserOptions struct {
 }
 
 type UserActivityOptions struct {
-	UserID int32
-	Types  []usersactivity.UserActivityType
-	From   *timestamp.Timestamp
-	To     *timestamp.Timestamp
+	UserID               int32
+	Types                []usersactivity.UserActivityType
+	PropertyKeys         []string
+	VisiblePropertyKeys  []string
+	CanViewAllProperties bool
+	From                 *timestamp.Timestamp
+	To                   *timestamp.Timestamp
 }
 
 type ListUserActivityOptions struct {
@@ -67,8 +72,9 @@ func (s *Store) ListCitizens(
 	opts ListCitizensOptions,
 ) (*pbcitizens.ListCitizensResponse, error) {
 	tUser := table.FivenetUser.AS("user")
-	tUserProps := table.FivenetUserProps
-	tFiles := table.FivenetFiles.AS("mugshot")
+	tWanted := table.FivenetUserPropertyValues.AS("wanted_value")
+	tTrafficPoints := table.FivenetUserPropertyValues.AS("traffic_points_value")
+	tOpenFines := table.FivenetUserPropertyValues.AS("open_fines_value")
 
 	selectors := dbutils.Columns{
 		tUser.Firstname,
@@ -78,7 +84,6 @@ func (s *Store) ListCitizens(
 		tUser.Dateofbirth,
 		tUser.Sex,
 		tUser.Height,
-		tUserProps.UserID,
 		s.customDB.Columns.User.GetVisum(tUser.Alias()),
 	}
 	condition := s.customDB.Conditions.User.GetFilter(tUser.Alias())
@@ -98,40 +103,17 @@ func (s *Store) ListCitizens(
 			condition = condition.AND(tUser.PhoneNumber.LIKE(mysql.String(phoneNumber)))
 		}
 	}
-	if opts.IncludeWanted {
-		selectors = append(selectors, tUserProps.Wanted)
-		if req.Wanted != nil && req.GetWanted() {
-			condition = condition.AND(tUserProps.Wanted.IS_TRUE())
-			orderBys = append(orderBys, tUserProps.UpdatedAt.DESC())
+	if opts.CanFilterProperties {
+		for i, filter := range opts.PropertyFilters {
+			propertyCondition, err := userPropertyFilterCondition(filter, tUser.Alias(), i)
+			if err != nil {
+				return nil, err
+			}
+			condition = condition.AND(propertyCondition)
+			if filter.GetKey() == "user.wanted" && filter.GetValue().GetBoolValue() {
+				orderBys = append(orderBys, tWanted.UpdatedAt.DESC())
+			}
 		}
-	}
-	if opts.IncludeJob {
-		selectors = append(selectors, tUserProps.Job, tUserProps.JobGrade)
-	}
-	if opts.IncludeTrafficInfractionPoints {
-		selectors = append(selectors, tUserProps.TrafficInfractionPoints)
-		if req.TrafficInfractionPoints != nil && req.GetTrafficInfractionPoints() > 0 {
-			condition = condition.AND(
-				tUserProps.TrafficInfractionPoints.GT_EQ(
-					mysql.Uint32(req.GetTrafficInfractionPoints()),
-				),
-			)
-		}
-	}
-	if opts.IncludeOpenFines {
-		selectors = append(selectors, tUserProps.OpenFines)
-		if req.OpenFines != nil && req.GetOpenFines() > 0 {
-			condition = condition.AND(tUserProps.OpenFines.GT_EQ(mysql.Int64(req.GetOpenFines())))
-		}
-	}
-	if opts.IncludeBloodType {
-		selectors = append(selectors, tUserProps.BloodType)
-	}
-	if opts.IncludeMugshot {
-		selectors = append(selectors, tUserProps.MugshotFileID, tFiles.ID, tFiles.FilePath)
-	}
-	if opts.IncludeEmail {
-		selectors = append(selectors, tUserProps.Email)
 	}
 
 	if search := dbutils.PrepareForLikeSearch(req.GetSearch()); search != "" {
@@ -157,11 +139,7 @@ func (s *Store) ListCitizens(
 	countStmt := tUser.
 		SELECT(mysql.COUNT(tUser.ID).AS("data_count.total")).
 		OPTIMIZER_HINTS(mysql.OptimizerHint("idx_users_firstname_lastname_fulltext")).
-		FROM(tUser.
-			LEFT_JOIN(tUserProps,
-				tUserProps.UserID.EQ(tUser.ID),
-			),
-		).
+		FROM(tUser).
 		WHERE(condition)
 
 	var count database.DataCount
@@ -183,11 +161,11 @@ func (s *Store) ListCitizens(
 			switch sc.GetId() {
 			case "trafficInfractionPoints":
 				if opts.IncludeTrafficInfractionPoints {
-					column = tUserProps.TrafficInfractionPoints
+					column = tTrafficPoints.ValueInteger
 				}
 			case "openFines":
 				if opts.IncludeOpenFines {
-					column = tUserProps.OpenFines
+					column = tOpenFines.ValueInteger
 				}
 			case "name":
 				fallthrough
@@ -212,11 +190,21 @@ func (s *Store) ListCitizens(
 		SELECT(tUser.ID, selectors.Get()...).
 		OPTIMIZER_HINTS(mysql.OptimizerHint("idx_users_firstname_lastname_fulltext")).
 		FROM(tUser.
-			LEFT_JOIN(tUserProps,
-				tUserProps.UserID.EQ(tUser.ID),
-			).LEFT_JOIN(tFiles,
-			tFiles.ID.EQ(tUserProps.MugshotFileID),
-		),
+			LEFT_JOIN(tWanted, mysql.AND(
+				tWanted.UserID.EQ(tUser.ID),
+				tWanted.PropertyKey.EQ(mysql.String("user.wanted")),
+				tWanted.ValueType.EQ(mysql.Uint8(uint8(userPropertyValueTypeBool))),
+			)).
+			LEFT_JOIN(tTrafficPoints, mysql.AND(
+				tTrafficPoints.UserID.EQ(tUser.ID),
+				tTrafficPoints.PropertyKey.EQ(mysql.String("user.traffic_infraction_points")),
+				tTrafficPoints.ValueType.EQ(mysql.Uint8(uint8(userPropertyValueTypeInteger))),
+			)).
+			LEFT_JOIN(tOpenFines, mysql.AND(
+				tOpenFines.UserID.EQ(tUser.ID),
+				tOpenFines.PropertyKey.EQ(mysql.String("user.open_fines")),
+				tOpenFines.ValueType.EQ(mysql.Uint8(uint8(userPropertyValueTypeInteger))),
+			)),
 		).
 		WHERE(condition).
 		OFFSET(req.GetPagination().GetOffset()).
@@ -236,8 +224,6 @@ func (s *Store) GetUser(
 	opts GetUserOptions,
 ) (*pbcitizens.GetUserResponse, error) {
 	tUser := table.FivenetUser.AS("user")
-	tUserProps := table.FivenetUserProps
-	tFiles := table.FivenetFiles.AS("mugshot")
 
 	selectors := dbutils.Columns{
 		tUser.Firstname,
@@ -247,51 +233,16 @@ func (s *Store) GetUser(
 		tUser.Dateofbirth,
 		tUser.Sex,
 		tUser.Height,
-		tUserProps.UserID,
 		s.customDB.Columns.User.GetVisum(tUser.Alias()),
-	}
-	if opts.IncludePropsUpdated {
-		selectors = append(selectors, tUserProps.UpdatedAt)
 	}
 	if opts.IncludePhoneNumber {
 		selectors = append(selectors, tUser.PhoneNumber)
-	}
-	if opts.IncludeWanted {
-		selectors = append(selectors,
-			tUserProps.Wanted,
-			tUserProps.WantedAt,
-			tUserProps.WantedTill,
-		)
-	}
-	if opts.IncludeJob {
-		selectors = append(selectors, tUserProps.Job, tUserProps.JobGrade)
-	}
-	if opts.IncludeTrafficInfractionPoints {
-		selectors = append(selectors, tUserProps.TrafficInfractionPoints)
-	}
-	if opts.IncludeOpenFines {
-		selectors = append(selectors, tUserProps.OpenFines)
-	}
-	if opts.IncludeBloodType {
-		selectors = append(selectors, tUserProps.BloodType)
-	}
-	if opts.IncludeMugshot {
-		selectors = append(selectors, tUserProps.MugshotFileID, tFiles.ID, tFiles.FilePath)
-	}
-	if opts.IncludeEmail {
-		selectors = append(selectors, tUserProps.Email)
 	}
 
 	resp := &pbcitizens.GetUserResponse{User: &users.User{}}
 	stmt := tUser.
 		SELECT(tUser.ID, selectors.Get()...).
-		FROM(tUser.
-			LEFT_JOIN(tUserProps,
-				tUserProps.UserID.EQ(tUser.ID),
-			).LEFT_JOIN(tFiles,
-			tFiles.ID.EQ(tUserProps.MugshotFileID),
-		),
-		).
+		FROM(tUser).
 		WHERE(tUser.ID.EQ(mysql.Int32(req.GetUserId()))).
 		LIMIT(1)
 
@@ -304,10 +255,6 @@ func (s *Store) GetUser(
 
 	if resp.GetUser() == nil || resp.GetUser().GetUserId() <= 0 {
 		return nil, nil
-	}
-
-	if resp.GetUser().GetProps() == nil {
-		resp.User.Props = &usersprops.UserProps{UserId: resp.GetUser().GetUserId()}
 	}
 
 	if opts.IncludeLicenses {

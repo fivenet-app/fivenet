@@ -36,6 +36,7 @@
 // source: services/settings/cron.proto
 // source: services/settings/job_assets.proto
 // source: services/settings/laws.proto
+// source: services/settings/properties.proto
 // source: services/settings/settings.proto
 // source: services/settings/system.proto
 // source: services/stats/stats.proto
@@ -589,6 +590,47 @@ var PermsRemap = map[string][]perms.PermissionRef{
 	},
 	"settings.LawsService/ReorderLaws": {
 		permssettings.LawsService.CreateOrUpdateLawBook.Perm,
+	},
+
+	// Service: settings.PropertyService
+	"settings.PropertyService/CreatePropertyDefinition": {
+		perms.PermConfigAdminRef,
+	},
+	"settings.PropertyService/CreatePropertyGroup": {
+		perms.PermConfigAdminRef,
+	},
+	"settings.PropertyService/DeletePropertyDefinition": {
+		perms.PermConfigAdminRef,
+	},
+	"settings.PropertyService/DeletePropertyGroup": {
+		perms.PermConfigAdminRef,
+	},
+	"settings.PropertyService/ListPropertyDefinitions": {
+		perms.PermJobAdminRef, perms.PermConfigAdminRef,
+	},
+	"settings.PropertyService/ListPropertyScopes": {
+		perms.PermJobAdminRef, perms.PermConfigAdminRef,
+	},
+	"settings.PropertyService/ReorderPropertyDefinitions": {
+		permssettings.PropertyService.UpdatePropertyDefinition.Perm,
+	},
+	"settings.PropertyService/ReorderPropertyGroups": {
+		permssettings.PropertyService.UpdatePropertyDefinition.Perm,
+	},
+	"settings.PropertyService/RestorePropertyDefinition": {
+		perms.PermConfigAdminRef,
+	},
+	"settings.PropertyService/RestorePropertyGroup": {
+		perms.PermConfigAdminRef,
+	},
+	"settings.PropertyService/SetSystemPropertyEnabled": {
+		perms.PermConfigAdminRef,
+	},
+	"settings.PropertyService/UpdatePropertyDefinition": {
+		perms.PermConfigAdminRef,
+	},
+	"settings.PropertyService/UpdatePropertyGroup": {
+		perms.PermConfigAdminRef,
 	},
 
 	// Service: settings.SettingsService

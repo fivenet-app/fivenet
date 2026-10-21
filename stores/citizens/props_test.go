@@ -23,39 +23,61 @@ func TestStoreGetUserPropsLoadsScalarPropsOnly(t *testing.T) {
 
 	store := New(testParams(db))
 
-	mock.ExpectQuery(regexp.QuoteMeta(`FROM fivenet_user_props AS user_props`)+`(?s).*`+regexp.QuoteMeta(`LEFT JOIN fivenet_files AS mugshot ON`)).
-		WithArgs(int32(42), int64(1)).
+	mock.ExpectQuery(regexp.QuoteMeta(`FROM fivenet_user_property_values`)).
+		WithArgs(int32(42)).
 		WillReturnRows(sqlmock.NewRows([]string{
-			"user_props.user_id",
-			"user_props.updated_at",
-			"user_props.wanted",
-			"user_props.wanted_at",
-			"user_props.wanted_till",
-			"user_props.job",
-			"user_props.job_grade",
-			"user_props.traffic_infraction_points",
-			"user_props.traffic_infraction_points_updated_at",
-			"user_props.open_fines",
-			"user_props.avatar_file_id",
-			"user_props.mugshot_file_id",
-			"mugshot.mugshot_file_id",
-			"file_path",
+			"fivenet_user_property_values.user_id",
+			"fivenet_user_property_values.property_key",
+			"fivenet_user_property_values.value_type",
+			"fivenet_user_property_values.value_string",
+			"fivenet_user_property_values.value_integer",
+			"fivenet_user_property_values.value_number",
+			"fivenet_user_property_values.value_bool",
+			"fivenet_user_property_values.value_timestamp",
+			"fivenet_user_property_values.value_date",
+			"fivenet_user_property_values.updated_at",
 		}).AddRow(
 			int32(42),
-			nil,
-			true,
+			"user.wanted", userPropertyValueTypeBool, nil, nil, nil, true, nil, nil, time.Now(),
+		).AddRow(
+			int32(
+				42,
+			), "user.job", userPropertyValueTypeString, "police", nil, nil, nil, nil, nil, time.Now(),
+		).
+			AddRow(
+				int32(
+					42,
+				), "user.job_grade", userPropertyValueTypeInteger, nil, int64(2), nil, nil, nil, nil, time.Now(),
+			).
+			AddRow(
+				int32(
+					42,
+				), "user.traffic_infraction_points", userPropertyValueTypeInteger, nil, int64(7), nil, nil, nil, nil, time.Now(),
+			).
+			AddRow(
+				int32(
+					42,
+				), "user.open_fines", userPropertyValueTypeInteger, nil, int64(12), nil, nil, nil, nil, time.Now(),
+			),
+		)
+	mock.ExpectQuery(regexp.QuoteMeta(`FROM fivenet_user_property_state`)).
+		WithArgs(int32(42)).
+		WillReturnRows(sqlmock.NewRows([]string{
+			"fivenet_user_property_state.user_id",
+			"fivenet_user_property_state.property_key",
+			"fivenet_user_property_state.reason",
+			"fivenet_user_property_state.active_at",
+			"fivenet_user_property_state.expires_at",
+			"fivenet_user_property_state.updated_at",
+		}).AddRow(
+			int32(42), "user.wanted", nil,
 			time.Date(2026, 7, 22, 10, 0, 0, 0, time.UTC),
 			time.Date(2026, 7, 23, 10, 0, 0, 0, time.UTC),
-			"police",
-			int32(2),
-			uint32(7),
-			nil,
-			int64(12),
-			nil,
-			int64(100),
-			int64(100),
-			"/files/mugshot.jpg",
+			time.Now(),
 		))
+	mock.ExpectQuery(regexp.QuoteMeta(`FROM fivenet_user_files AS mugshot_file`)+`(?s).*`+regexp.QuoteMeta(`LEFT JOIN fivenet_files AS mugshot ON`)).
+		WithArgs(int32(42), "mugshot", int64(1)).
+		WillReturnRows(sqlmock.NewRows([]string{"mugshot_file_id", "mugshot.mugshot_file_id", "file_path"}).AddRow(int64(100), int64(100), "/files/mugshot.jpg"))
 
 	props, err := store.GetUserProps(t.Context(), db, 42)
 	require.NoError(t, err)
@@ -149,6 +171,11 @@ func TestStoreHandleUserPropsChangesUpdatesWanted(t *testing.T) {
 	in.SetWantedTill(wantedTill)
 
 	mock.ExpectExec(regexp.QuoteMeta(`INSERT INTO fivenet_user_props`) + `(?s).*` + regexp.QuoteMeta(`ON DUPLICATE KEY UPDATE`)).
+		WillReturnResult(sqlmock.NewResult(0, 1))
+	mock.ExpectExec(`(?s)INSERT INTO fivenet_user_property_values`).
+		WithArgs(int32(42), "user.wanted", uint8(userPropertyValueTypeBool), nil, nil, nil, true, nil, nil, uint8(userPropertyValueTypeBool)).
+		WillReturnResult(sqlmock.NewResult(0, 1))
+	mock.ExpectExec(`(?s)INSERT INTO fivenet_user_property_state`).
 		WillReturnResult(sqlmock.NewResult(0, 1))
 
 	activities, err := store.HandleUserPropsChanges(t.Context(), db, x, in, nil, "manual")

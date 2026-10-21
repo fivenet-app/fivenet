@@ -33,7 +33,7 @@ func TestParseUnitPingKey(t *testing.T) {
 				require.NoError(t, err)
 				assert.Equal(t, tt.id, id)
 			} else {
-				assert.Error(t, err)
+				require.Error(t, err)
 			}
 		})
 	}

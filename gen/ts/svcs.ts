@@ -156,6 +156,7 @@
 // source: services/settings/cron.proto
 // source: services/settings/job_assets.proto
 // source: services/settings/laws.proto
+// source: services/settings/properties.proto
 // source: services/settings/settings.proto
 // source: services/settings/system.proto
 // source: services/settings/accounts.proto
@@ -163,6 +164,7 @@
 // source: services/settings/cron.proto
 // source: services/settings/job_assets.proto
 // source: services/settings/laws.proto
+// source: services/settings/properties.proto
 // source: services/settings/settings.proto
 // source: services/settings/system.proto
 // source: services/settings/accounts.proto
@@ -170,6 +172,7 @@
 // source: services/settings/cron.proto
 // source: services/settings/job_assets.proto
 // source: services/settings/laws.proto
+// source: services/settings/properties.proto
 // source: services/settings/settings.proto
 // source: services/settings/system.proto
 // source: services/settings/accounts.proto
@@ -177,6 +180,7 @@
 // source: services/settings/cron.proto
 // source: services/settings/job_assets.proto
 // source: services/settings/laws.proto
+// source: services/settings/properties.proto
 // source: services/settings/settings.proto
 // source: services/settings/system.proto
 // source: services/settings/accounts.proto
@@ -184,6 +188,7 @@
 // source: services/settings/cron.proto
 // source: services/settings/job_assets.proto
 // source: services/settings/laws.proto
+// source: services/settings/properties.proto
 // source: services/settings/settings.proto
 // source: services/settings/system.proto
 // source: services/settings/accounts.proto
@@ -191,6 +196,7 @@
 // source: services/settings/cron.proto
 // source: services/settings/job_assets.proto
 // source: services/settings/laws.proto
+// source: services/settings/properties.proto
 // source: services/settings/settings.proto
 // source: services/settings/system.proto
 // source: services/settings/accounts.proto
@@ -198,6 +204,15 @@
 // source: services/settings/cron.proto
 // source: services/settings/job_assets.proto
 // source: services/settings/laws.proto
+// source: services/settings/properties.proto
+// source: services/settings/settings.proto
+// source: services/settings/system.proto
+// source: services/settings/accounts.proto
+// source: services/settings/config.proto
+// source: services/settings/cron.proto
+// source: services/settings/job_assets.proto
+// source: services/settings/laws.proto
+// source: services/settings/properties.proto
 // source: services/settings/settings.proto
 // source: services/settings/system.proto
 // source: services/stats/stats.proto
@@ -246,6 +261,7 @@ export const grpcServices = [
     'settings.CronService',
     'settings.JobsAssetsService',
     'settings.LawsService',
+    'settings.PropertyService',
     'settings.SettingsService',
     'settings.SystemService',
     'stats.StatsService',
@@ -499,6 +515,19 @@ export const grpcMethods = [
 	'settings.LawsService/CreateOrUpdateLaw',
 	'settings.LawsService/DeleteLaw',
 	'settings.LawsService/ReorderLaws',
+	'settings.PropertyService/ListPropertyScopes',
+	'settings.PropertyService/ListPropertyDefinitions',
+	'settings.PropertyService/ReorderPropertyGroups',
+	'settings.PropertyService/CreatePropertyGroup',
+	'settings.PropertyService/UpdatePropertyGroup',
+	'settings.PropertyService/DeletePropertyGroup',
+	'settings.PropertyService/RestorePropertyGroup',
+	'settings.PropertyService/ReorderPropertyDefinitions',
+	'settings.PropertyService/CreatePropertyDefinition',
+	'settings.PropertyService/UpdatePropertyDefinition',
+	'settings.PropertyService/DeletePropertyDefinition',
+	'settings.PropertyService/RestorePropertyDefinition',
+	'settings.PropertyService/SetSystemPropertyEnabled',
 	'settings.SettingsService/GetJobProps',
 	'settings.SettingsService/SetJobProps',
 	'settings.SettingsService/GetRoles',

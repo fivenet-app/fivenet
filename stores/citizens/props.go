@@ -5,6 +5,7 @@ import (
 	"errors"
 	"slices"
 	"strings"
+	"time"
 
 	citizenslabels "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/citizens/labels"
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/timestamp"
@@ -13,6 +14,7 @@ import (
 	usersprops "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/users/props"
 	"github.com/fivenet-app/fivenet/v2026/pkg/dbutils"
 	"github.com/fivenet-app/fivenet/v2026/pkg/utils"
+	"github.com/fivenet-app/fivenet/v2026/query/fivenet/model"
 	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
 	"github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
@@ -24,45 +26,88 @@ func (s *Store) GetUserProps(
 	tx qrm.DB,
 	userId int32,
 ) (*usersprops.UserProps, error) {
-	tUserProps := table.FivenetUserProps.AS("user_props")
-	tFiles := table.FivenetFiles.AS("mugshot")
-
-	stmt := tUserProps.
-		SELECT(
-			tUserProps.UserID,
-			tUserProps.UpdatedAt,
-			tUserProps.Wanted,
-			tUserProps.WantedAt,
-			tUserProps.WantedTill,
-			tUserProps.Job,
-			tUserProps.JobGrade,
-			tUserProps.TrafficInfractionPoints,
-			tUserProps.TrafficInfractionPointsUpdatedAt,
-			tUserProps.OpenFines,
-			tUserProps.AvatarFileID,
-			tUserProps.MugshotFileID,
-			tFiles.ID.AS("mugshot.mugshot_file_id"),
-			tFiles.FilePath,
-		).
-		FROM(
-			tUserProps.
-				LEFT_JOIN(tFiles,
-					tFiles.ID.EQ(tUserProps.MugshotFileID),
-				),
-		).
-		WHERE(
-			tUserProps.UserID.EQ(mysql.Int32(userId)),
-		).
-		LIMIT(1)
-
 	dest := &usersprops.UserProps{UserId: userId}
-	if err := stmt.QueryContext(ctx, tx, dest); err != nil {
-		if !errors.Is(err, qrm.ErrNoRows) {
-			return nil, err
+	tValues := table.FivenetUserPropertyValues
+	valuesStmt := tValues.SELECT(tValues.AllColumns).
+		FROM(tValues).
+		WHERE(tValues.UserID.EQ(mysql.Int32(userId)))
+	values := []model.FivenetUserPropertyValues{}
+	if err := valuesStmt.QueryContext(
+		ctx,
+		tx,
+		&values,
+	); err != nil &&
+		!errors.Is(err, qrm.ErrNoRows) {
+		return nil, err
+	}
+	for _, value := range values {
+		switch value.PropertyKey {
+		case "user.wanted":
+			dest.Wanted = value.ValueBool
+		case "user.job":
+			dest.JobName = value.ValueString
+		case "user.job_grade":
+			if value.ValueInteger != nil {
+				grade := int32(*value.ValueInteger)
+				dest.JobGradeNumber = &grade
+			}
+		case "user.traffic_infraction_points":
+			if value.ValueInteger != nil {
+				points := uint32(*value.ValueInteger)
+				dest.TrafficInfractionPoints = &points
+			}
+		case "user.open_fines":
+			dest.OpenFines = value.ValueInteger
+		case "user.blood_type":
+			dest.BloodType = value.ValueString
+		case "user.email":
+			dest.Email = value.ValueString
+		}
+		if dest.UpdatedAt == nil || value.UpdatedAt.After(dest.UpdatedAt.AsTime()) {
+			dest.UpdatedAt = timestamp.New(value.UpdatedAt)
 		}
 	}
 
-	dest.UserId = userId
+	tState := table.FivenetUserPropertyState
+	stateStmt := tState.SELECT(tState.AllColumns).
+		FROM(tState).
+		WHERE(tState.UserID.EQ(mysql.Int32(userId)))
+	states := []model.FivenetUserPropertyState{}
+	if err := stateStmt.QueryContext(
+		ctx,
+		tx,
+		&states,
+	); err != nil &&
+		!errors.Is(err, qrm.ErrNoRows) {
+		return nil, err
+	}
+	for _, state := range states {
+		switch state.PropertyKey {
+		case "user.wanted":
+			if state.ActiveAt != nil {
+				dest.WantedAt = timestamp.New(*state.ActiveAt)
+			}
+			if state.ExpiresAt != nil {
+				dest.WantedTill = timestamp.New(*state.ExpiresAt)
+			}
+		case "user.traffic_infraction_points":
+			dest.TrafficInfractionPointsUpdatedAt = timestamp.New(state.UpdatedAt)
+		}
+	}
+
+	tUserFiles := table.FivenetUserFiles.AS("mugshot_file")
+	tFiles := table.FivenetFiles.AS("mugshot")
+	fileStmt := tUserFiles.SELECT(
+		tUserFiles.FileID.AS("mugshot_file_id"),
+		tFiles.ID.AS("mugshot.mugshot_file_id"),
+		tFiles.FilePath,
+	).FROM(tUserFiles.LEFT_JOIN(tFiles, tFiles.ID.EQ(tUserFiles.FileID))).WHERE(mysql.AND(
+		tUserFiles.UserID.EQ(mysql.Int32(userId)),
+		tUserFiles.Kind.EQ(mysql.String("mugshot")),
+	)).LIMIT(1)
+	if err := fileStmt.QueryContext(ctx, tx, dest); err != nil && !errors.Is(err, qrm.ErrNoRows) {
+		return nil, err
+	}
 
 	return dest, nil
 }
@@ -152,7 +197,9 @@ func (s *Store) HandleUserPropsChanges(
 		in.JobGrade = x.GetJobGrade()
 	}
 
-	if in.TrafficInfractionPoints != nil {
+	if in.TrafficInfractionPoints != nil &&
+		(x.TrafficInfractionPoints == nil ||
+			x.GetTrafficInfractionPoints() != in.GetTrafficInfractionPoints()) {
 		updateSets = append(
 			updateSets,
 			tUserProps.TrafficInfractionPoints.SET(mysql.Uint32(in.GetTrafficInfractionPoints())),
@@ -168,7 +215,7 @@ func (s *Store) HandleUserPropsChanges(
 		in.TrafficInfractionPointsUpdatedAt = x.GetTrafficInfractionPointsUpdatedAt()
 	}
 
-	if in.OpenFines != nil {
+	if in.OpenFines != nil && in.GetOpenFines() != 0 {
 		updateSets = append(updateSets, tUserProps.OpenFines.SET(
 			mysql.IntExp(mysql.Raw(
 				"CASE WHEN COALESCE(`open_fines`, 0) + $amount < 0 THEN 0 ELSE COALESCE(`open_fines`, 0) + $amount END",
@@ -233,6 +280,118 @@ func (s *Store) HandleUserPropsChanges(
 			)
 
 		if _, err := stmt.ExecContext(ctx, tx); err != nil {
+			return nil, err
+		}
+	}
+
+	if in.Wanted != nil {
+		if err := upsertUserPropertyValue(
+			ctx,
+			tx,
+			in.GetUserId(),
+			"user.wanted",
+			userPropertyValueTypeBool,
+			nil,
+			nil,
+			nil,
+			in.GetWanted(),
+			nil,
+			nil,
+		); err != nil {
+			return nil, err
+		}
+
+		tState := table.FivenetUserPropertyState
+		if !in.GetWanted() {
+			if _, err := tState.DELETE().WHERE(mysql.AND(
+				tState.UserID.EQ(mysql.Int32(in.GetUserId())),
+				tState.PropertyKey.EQ(mysql.String("user.wanted")),
+			)).ExecContext(ctx, tx); err != nil {
+				return nil, err
+			}
+		} else if _, err := tState.
+			INSERT(tState.UserID, tState.PropertyKey, tState.ActiveAt, tState.ExpiresAt).
+			VALUES(in.GetUserId(), "user.wanted", propertyStateTime(in.GetWantedAt()), propertyStateTime(in.GetWantedTill())).
+			ON_DUPLICATE_KEY_UPDATE(
+				tState.ActiveAt.SET(mysql.TimestampExp(mysql.RawString("VALUES(`active_at`)"))),
+				tState.ExpiresAt.SET(mysql.TimestampExp(mysql.RawString("VALUES(`expires_at`)"))),
+			).
+			ExecContext(ctx, tx); err != nil {
+			return nil, err
+		}
+	}
+
+	if in.TrafficInfractionPoints != nil &&
+		(x.TrafficInfractionPoints == nil ||
+			x.GetTrafficInfractionPoints() != in.GetTrafficInfractionPoints()) {
+		if err := upsertUserPropertyValue(
+			ctx,
+			tx,
+			in.GetUserId(),
+			"user.traffic_infraction_points",
+			userPropertyValueTypeInteger,
+			nil,
+			int64(in.GetTrafficInfractionPoints()),
+			nil,
+			nil,
+			nil,
+			nil,
+		); err != nil {
+			return nil, err
+		}
+		tState := table.FivenetUserPropertyState
+		if _, err := tState.
+			INSERT(tState.UserID, tState.PropertyKey).
+			VALUES(in.GetUserId(), "user.traffic_infraction_points").
+			ON_DUPLICATE_KEY_UPDATE(tState.UpdatedAt.SET(mysql.CURRENT_TIMESTAMP())).
+			ExecContext(ctx, tx); err != nil {
+			return nil, err
+		}
+	}
+
+	if in.JobName != nil {
+		if err := upsertUserPropertyValue(
+			ctx,
+			tx,
+			in.GetUserId(),
+			"user.job",
+			userPropertyValueTypeString,
+			in.GetJobName(),
+			nil,
+			nil,
+			nil,
+			nil,
+			nil,
+		); err != nil {
+			return nil, err
+		}
+		if err := upsertUserPropertyValue(
+			ctx,
+			tx,
+			in.GetUserId(),
+			"user.job_grade",
+			userPropertyValueTypeInteger,
+			nil,
+			int64(in.GetJobGradeNumber()),
+			nil,
+			nil,
+			nil,
+			nil,
+		); err != nil {
+			return nil, err
+		}
+	}
+
+	if in.OpenFines != nil && in.GetOpenFines() != 0 {
+		tValues := table.FivenetUserPropertyValues
+		if _, err := tValues.
+			INSERT(tValues.UserID, tValues.PropertyKey, tValues.ValueType, tValues.ValueInteger).
+			VALUES(in.GetUserId(), "user.open_fines", uint8(userPropertyValueTypeInteger), in.GetOpenFines()).
+			ON_DUPLICATE_KEY_UPDATE(
+				tValues.ValueType.SET(mysql.Uint8(uint8(userPropertyValueTypeInteger))),
+				tValues.ValueInteger.SET(mysql.IntExp(mysql.RawString("GREATEST(0, COALESCE(value_integer, 0) + VALUES(value_integer))"))),
+			).
+			ExecContext(ctx, tx); err != nil {
 			return nil, err
 		}
 	}
@@ -366,6 +525,38 @@ func (s *Store) HandleUserPropsChanges(
 	}
 
 	return activities, nil
+}
+
+func propertyStateTime(value *timestamp.Timestamp) any {
+	if value == nil || value.GetTimestamp() == nil {
+		return nil
+	}
+	return value.AsTime().UTC().Truncate(time.Millisecond)
+}
+
+func upsertUserPropertyValue(
+	ctx context.Context,
+	db qrm.DB,
+	userID int32,
+	key string,
+	valueType userPropertyValueType,
+	stringVal, integerVal, numberVal, boolVal, timeVal, dateVal any,
+) error {
+	tValues := table.FivenetUserPropertyValues
+	_, err := tValues.
+		INSERT(tValues.UserID, tValues.PropertyKey, tValues.ValueType, tValues.ValueString, tValues.ValueInteger, tValues.ValueNumber, tValues.ValueBool, tValues.ValueTimestamp, tValues.ValueDate).
+		VALUES(userID, key, uint8(valueType), stringVal, integerVal, numberVal, boolVal, timeVal, dateVal).
+		ON_DUPLICATE_KEY_UPDATE(
+			tValues.ValueType.SET(mysql.Uint8(uint8(valueType))),
+			tValues.ValueString.SET(mysql.StringExp(mysql.RawString("VALUES(`value_string`)"))),
+			tValues.ValueInteger.SET(mysql.IntExp(mysql.RawString("VALUES(`value_integer`)"))),
+			tValues.ValueNumber.SET(mysql.FloatExp(mysql.RawString("VALUES(`value_number`)"))),
+			tValues.ValueBool.SET(mysql.BoolExp(mysql.RawString("VALUES(`value_bool`)"))),
+			tValues.ValueTimestamp.SET(mysql.TimestampExp(mysql.RawString("VALUES(`value_timestamp`)"))),
+			tValues.ValueDate.SET(mysql.DateExp(mysql.RawString("VALUES(`value_date`)"))),
+		).
+		ExecContext(ctx, db)
+	return err
 }
 
 // normalizeWantedChange keeps the wanted timestamps consistent with the wanted

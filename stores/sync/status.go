@@ -59,7 +59,7 @@ func (s *Store) CountUsers(ctx context.Context) (int64, error) {
 }
 
 func (s *Store) CountVehicles(ctx context.Context) (int64, error) {
-	tVehicles := table.FivenetOwnedVehicles
+	tVehicles := table.FivenetVehicle
 	stmt := tVehicles.
 		SELECT(mysql.COUNT(tVehicles.Plate)).
 		FROM(tVehicles)

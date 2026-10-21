@@ -792,6 +792,7 @@
         "settings": {
             "features": {
                 "properties": "Stelle deine Job Eigenschaften ein (e.g., Mitarbeiter-Marker-Farbe).",
+                "property_definitions": "Dynamische Eigenschaftsdefinitionen für unterstützte Datentypen verwalten.",
                 "audit_log": "Ein Protokoll der Aktionen, die von Ihren Kollegen durchgeführt wurden.",
                 "limiter": "Einschränken, welche Informationen Fraktionen sehen können (z. B. Mitarbeiterstandorte, Einsätze).",
                 "laws": "Erstellen und Aktualisieren der Gesetzbücher des Staates.",
@@ -967,6 +968,7 @@
         "loading": "Lade {0}...",
         "unable_to_load": "{0} konnte nicht geladen werden!",
         "profile": "Profil",
+        "pinned_properties": "Angeheftete Eigenschaften",
         "activity": "Aktivität",
         "home": "Startseite",
         "not_found": "Keine {0} gefunden!",
@@ -1013,6 +1015,7 @@
         "access": "Zugriff | Zugriffe",
         "submit": "Absenden",
         "save": "Speichern",
+        "set": "Festlegen",
         "remove": "Entfernen",
         "add": "Hinzufügen",
         "created": "Erstellt",
@@ -1264,7 +1267,7 @@
         "question": "Frage | Fragen",
         "answer": "Antwort | Antworten",
         "chars": "Zeichen",
-        "pinned": "Angeheftet",
+          "pinned": "Angeheftet",
         "pin": "Anheften",
         "unpin": "Lösen",
         "pinned_document": "Angehefteten Dokumente | Angeheftetes Dokument | Angeheftete Dokumente",
@@ -1526,6 +1529,13 @@
         "replace": "Ersetzen"
     },
     "components": {
+        "properties": {
+            "activity": {
+                "set": "{property} auf {new} gesetzt",
+                "changed": "{property} von {old} auf {new} geändert",
+                "cleared": "{property} zurückgesetzt (war {old})"
+            }
+        },
         "partials": {
             "sidebar": {
                 "change_character": "Charakter wechseln"
@@ -2852,6 +2862,78 @@
             "required_notice": "Dieser Zugriff ist erforderlich und kann nicht geändert werden."
         },
         "settings": {
+            "property_definitions": {
+                "title": "Eigenschaftsdefinitionen",
+                "add": "Eigenschaft hinzufügen",
+                "add_group": "Gruppe hinzufügen",
+                "reorder": "Reihenfolge ändern",
+                "finish_reordering": "Sortierung beenden",
+                "load_error": "Eigenschaftsdefinitionen konnten nicht geladen werden",
+                "system": "System",
+                "custom": "Benutzerdefiniert",
+                "editor_title": "Eigenschaftsdefinition",
+                "group_editor_title": "Eigenschaftsgruppe",
+                "key": "Schlüssel",
+                "group_key": "Gruppenschlüssel",
+                "label": "Bezeichnung",
+                "group_label": "Gruppenbezeichnung",
+                "description": "Beschreibung",
+                "group": "Gruppe",
+                "value_type": "Werttyp",
+                "value_format": "Wertformat",
+                "renderer": "Darstellung",
+                "renderer_default": "Standard",
+                "renderer_label": "Darstellung: {renderer}",
+                "renderer_string": "Text",
+                "renderer_integer": "Ganzzahl",
+                "renderer_number": "Zahl",
+                "renderer_boolean": "Boolean",
+                "renderer_date": "Datum",
+                "renderer_datetime": "Datum und Uhrzeit",
+                "renderer_email": "E-Mail",
+                "renderer_phone": "Telefon",
+                "renderer_height": "Körpergröße",
+                "renderer_traffic_points": "Verkehrspunkte",
+                "renderer_sex": "Geschlecht",
+                "renderer_money": "Geldbetrag",
+                "renderer_prefix": "Präfix",
+                "renderer_suffix": "Suffix",
+                "renderer_unit": "Einheit",
+                "renderer_decimal_places": "Dezimalstellen der Darstellung",
+                "renderer_truncate": "Lange Werte kürzen",
+                "currency": "Währung",
+                "unit": "Einheit",
+                "decimal_places": "Dezimalstellen",
+                "enabled": "Aktiviert",
+                "disabled": "Deaktiviert",
+                "searchable": "Suchbar",
+                "managed": "Verwaltet",
+                "visibility_default": "Sichtbar",
+                "visibility_hidden": "Ausgeblendet",
+                "visibility_profile_badge": "Profilabzeichen",
+                "pinned": "Angeheftet",
+                "implicit": "Implizit",
+                "not_pinned": "Nicht angeheftet",
+                "pinned_warning": "{count} Eigenschaften sind angeheftet. Für Profilansichten sollten es idealerweise 6-8 Eigenschaften sein.",
+                "show_deleted": "Gelöschte anzeigen",
+                "ungrouped": "Sonstige",
+                "deleted": "Gelöscht",
+                "delete_group_title": "Eigenschaftsgruppe löschen",
+                "delete_group_description": "Eigenschaften dieser Gruppe werden nach Sonstige verschoben. Die Gruppe kann später wiederhergestellt werden.",
+                "groups": {
+                    "general": "Allgemein",
+                    "personal": "Persönlich",
+                    "contact": "Kontakt",
+                    "status": "Status",
+                    "labels": "Labels",
+                    "licenses": "Lizenzen"
+                },
+                "scope": "Bereich",
+                "scopes": {
+                    "vehicle": "Fahrzeuge",
+                    "user": "Einwohner"
+                }
+            },
             "job_props": {
                 "job_properties": "Job Eigenschaften",
                 "your_job_properties": "Deine FiveNet Job Eigenschaften.",
@@ -4281,6 +4363,18 @@
                     "title": "Labels verweigert",
                     "content": "Sie dürfen nicht die Labels der Person ändern!"
                 },
+                "ErrPropsPropertiesDenied": {
+                    "title": "Bürgereigenschaften verweigert",
+                    "content": "Sie haben keine Berechtigung Bürgereigenschaften einzusehen oder zu bearbeiten."
+                },
+                "ErrInvalidProperty": {
+                    "title": "Ungültige Bürgereigenschaft",
+                    "content": "Die Bürgereigenschaft oder ihr Wert ist ungültig."
+                },
+                "ErrSystemPropertyDisabled": {
+                    "title": "Bürgereigenschaft deaktiviert",
+                    "content": "Diese System-Bürgereigenschaft ist für diese FiveNet-Instanz deaktiviert."
+                },
                 "ErrPropsMugshotDenied": {
                     "title": "Fahndungsfoto verweigert",
                     "content": "Sie dürfen nicht das Fahndungsfoto der Person ändern!"
@@ -4300,9 +4394,25 @@
                     "title": "Fahrzeugdienst-Fehler",
                     "content": "Beim Suchen der Fahrzeugdaten ist etwas schiefgelaufen. Bitte versuchen Sie es erneut."
                 },
+                "ErrReasonRequired": {
+                    "title": "Grund erforderlich",
+                    "content": "Ein Grund muss angegeben werden!"
+                },
                 "ErrPropsWantedDenied": {
                     "title": "Fahndungsstatus verweigert",
                     "content": "Sie haben keine Berechtigung das Fahrzeug zur Fahndung auszuschreiben!"
+                },
+                "ErrPropsPropertiesDenied": {
+                    "title": "Fahrzeugeigenschaften verweigert",
+                    "content": "Sie haben keine Berechtigung Fahrzeugattribute einzusehen oder zu bearbeiten."
+                },
+                "ErrInvalidProperty": {
+                    "title": "Ungültiges Fahrzeugattribut",
+                    "content": "Das Fahrzeugattribut oder sein Wert ist ungültig."
+                },
+                "ErrSystemPropertyDisabled": {
+                    "title": "Fahrzeugattribut deaktiviert",
+                    "content": "Dieses System-Fahrzeugattribut ist für diese FiveNet-Instanz deaktiviert."
                 }
             }
         },
@@ -4872,13 +4982,38 @@
                 "JOB": "Beruf",
                 "DOCUMENT": "Dokumente",
                 "JAIL": "Gefängnis",
-                "FINE": "Geldstrafen"
+                "FINE": "Geldstrafen",
+                "FILE": "Dateien",
+                "PROPERTY": "Eigenschaft"
             }
         },
         "vehicles": {
             "VehicleActivityType": {
                 "UNSPECIFIED": "Unbestimmt",
-                "WANTED": "Gesucht"
+                "WANTED": "Gesucht",
+                "FILE": "Dateien",
+                "PROPERTY": "Eigenschaft"
+            }
+        },
+        "properties": {
+            "PropertyValueType": {
+                "UNSPECIFIED": "Unbestimmt",
+                "STRING": "Text",
+                "INTEGER": "Ganzzahl",
+                "NUMBER": "Zahl",
+                "BOOL": "Boolean",
+                "TIMESTAMP": "Zeitstempel",
+                "DATE": "Datum"
+            },
+            "PropertyValueFormat": {
+                "UNSPECIFIED": "Unbestimmt",
+                "PLAIN": "Standard",
+                "MONEY": "Geldbetrag",
+                "PERCENTAGE": "Prozent",
+                "DATETIME": "Datum und Uhrzeit",
+                "DATE": "Datum",
+                "DURATION": "Dauer",
+                "DISTANCE": "Entfernung"
             }
         },
         "documents": {
@@ -5259,19 +5394,19 @@
                     "key": "Bürger auflisten",
                     "description": "Bürger auflisten und suchen.",
                     "attrs": {
-                        "PhoneNumber": "Telefonnummer",
-                        "Licenses": "Lizenzen",
-                        "UserProps_Wanted": "Gesuchten Status",
-                        "UserProps_Job": "Job",
-                        "UserProps_TrafficInfractionPoints": "Verkehrspunkte",
-                        "UserProps_OpenFines": "Offene Geldstrafen",
-                        "UserProps_BloodType": "Blutgruppe",
-                        "UserProps_Email": "E-Mail",
-                        "UserProps_Labels": "Labels",
-                        "UserProps_Mugshot": "Fahndungsfoto"
+                        "Property_user_phone_number": "Telefonnummer",
+                        "Property_user_licenses": "Lizenzen",
+                        "Property_user_wanted": "Gesuchten Status",
+                        "Property_user_job": "Job",
+                        "Property_user_traffic_infraction_points": "Verkehrspunkte",
+                        "Property_user_open_fines": "Offene Geldstrafen",
+                        "Property_user_blood_type": "Blutgruppe",
+                        "Property_user_mugshot": "Fahndungsfoto",
+                        "Property_user_labels": "Labels",
+                        "Property_user_email": "E-Mail"
                     },
                     "attrs_types": {
-                        "Fields": "Felder"
+                        "Properties": "Eigenschaften"
                     }
                 },
                 "ListUserActivity": {
@@ -5289,14 +5424,19 @@
                     "key": "Bürger-Eigenschaften festlegen",
                     "description": "Bürger-Eigenschaften festlegen (z.B. Fahndungsstatus).",
                     "attrs": {
-                        "Wanted": "Gesuchten Status",
-                        "Job": "Job",
-                        "TrafficInfractionPoints": "Verkehrspunkte",
-                        "Labels": "Labels",
-                        "Mugshot": "Fahndungsfoto"
+                        "Property_user_phone_number": "Telefonnummer",
+                        "Property_user_licenses": "Lizenzen",
+                        "Property_user_wanted": "Gesuchten Status",
+                        "Property_user_job": "Job",
+                        "Property_user_traffic_infraction_points": "Verkehrspunkte",
+                        "Property_user_open_fines": "Offene Geldstrafen",
+                        "Property_user_blood_type": "Blutgruppe",
+                        "Property_user_mugshot": "Fahndungsfoto",
+                        "Property_user_labels": "Labels",
+                        "Property_user_email": "E-Mail"
                     },
                     "attrs_types": {
-                        "Fields": "Bürger Eigenschaften"
+                        "Properties": "Eigenschaften"
                     }
                 },
                 "GetUser": {
@@ -5327,10 +5467,10 @@
                     "key": "Fahrzeuge suchen",
                     "description": "Suchen und Finden von Fahrzeugen von Bürgern.",
                     "attrs": {
-                        "Wanted": "Gesuchten Status"
+                        "Property_vehicle_wanted": "Gesuchten Status"
                     },
                     "attrs_types": {
-                        "Fields": "Felder für Fahrzeugeigenschaften"
+                        "Properties": "Eigenschaften"
                     }
                 },
                 "ListVehicleActivity": {
@@ -5348,10 +5488,10 @@
                     "key": "Fahrzeug-Eigenschaften festlegen",
                     "description": "Fahrzeug-Eigenschaften festlegen (z.B. Kennzeichen, Farbe).",
                     "attrs": {
-                        "Wanted": "Gesuchten Status"
+                        "Property_vehicle_wanted": "Gesuchten Status"
                     },
                     "attrs_types": {
-                        "Fields": "Fahrzeug Eigenschaften"
+                        "Properties": "Eigenschaften"
                     }
                 }
             }

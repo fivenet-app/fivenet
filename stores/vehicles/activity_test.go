@@ -23,17 +23,27 @@ func TestStoreCountVehicleActivityAppliesPlateAndTypeFilter(t *testing.T) {
 
 	store := New(db, &config.CustomDB{}, nil)
 
-	expectedQuery := regexp.QuoteMeta(`FROM fivenet_vehicles_activity AS vehicle_activity`) +
+	expectedQuery := regexp.QuoteMeta(`FROM fivenet_vehicle_activity AS vehicle_activity`) +
 		`(?s).*` + regexp.QuoteMeta(`vehicle_activity.plate = ?`) +
 		`(?s).*` + regexp.QuoteMeta(`vehicle_activity.type IN (?)`)
 	mock.ExpectQuery(expectedQuery).
-		WithArgs("ABC DEF1", int32(vehiclesactivity.VehicleActivityType_VEHICLE_ACTIVITY_TYPE_WANTED)).
+		WithArgs(
+			"ABC DEF1",
+			int32(vehiclesactivity.VehicleActivityType_VEHICLE_ACTIVITY_TYPE_WANTED),
+			int32(vehiclesactivity.VehicleActivityType_VEHICLE_ACTIVITY_TYPE_PROPERTY),
+			1,
+			"vehicle",
+			"vehicle.wanted",
+		).
 		WillReturnRows(sqlmock.NewRows([]string{"data_count.total"}).AddRow(int64(3)))
 
 	total, err := store.CountVehicleActivity(t.Context(), CountVehicleActivityOptions{
-		Plate: "ABC DEF1",
-		Types: []vehiclesactivity.VehicleActivityType{
-			vehiclesactivity.VehicleActivityType_VEHICLE_ACTIVITY_TYPE_WANTED,
+		VehicleActivityOptions: VehicleActivityOptions{
+			Plate:                "ABC DEF1",
+			CanViewAllProperties: true,
+			Types: []vehiclesactivity.VehicleActivityType{
+				vehiclesactivity.VehicleActivityType_VEHICLE_ACTIVITY_TYPE_WANTED,
+			},
 		},
 	})
 	require.NoError(t, err)
@@ -50,11 +60,19 @@ func TestStoreListVehicleActivityAppliesSortWithoutCreatorJoin(t *testing.T) {
 
 	store := New(db, &config.CustomDB{}, nil)
 
-	expectedQuery := regexp.QuoteMeta(`FROM fivenet_vehicles_activity AS vehicle_activity`) +
+	expectedQuery := regexp.QuoteMeta(`FROM fivenet_vehicle_activity AS vehicle_activity`) +
 		`(?s).*` + regexp.QuoteMeta(`vehicle_activity.plate = ?`) +
 		`(?s).*` + regexp.QuoteMeta(`ORDER BY vehicle_activity.created_at DESC, vehicle_activity.id DESC LIMIT ? OFFSET ?`)
 	mock.ExpectQuery(expectedQuery).
-		WithArgs("ABC DEF1", int64(20), int64(0)).
+		WithArgs(
+			"ABC DEF1",
+			int32(vehiclesactivity.VehicleActivityType_VEHICLE_ACTIVITY_TYPE_PROPERTY),
+			1,
+			"vehicle",
+			"vehicle.wanted",
+			int64(20),
+			int64(0),
+		).
 		WillReturnRows(sqlmock.NewRows([]string{
 			"vehicle_activity.id",
 			"vehicle_activity.created_at",
@@ -76,7 +94,10 @@ func TestStoreListVehicleActivityAppliesSortWithoutCreatorJoin(t *testing.T) {
 		))
 
 	activity, err := store.ListVehicleActivity(t.Context(), ListVehicleActivityOptions{
-		Plate:  "ABC DEF1",
+		VehicleActivityOptions: VehicleActivityOptions{
+			Plate:                "ABC DEF1",
+			CanViewAllProperties: true,
+		},
 		Offset: 0,
 		Limit:  20,
 	})
@@ -97,9 +118,9 @@ func TestStoreIsVehicleOwner(t *testing.T) {
 
 	store := New(db, &config.CustomDB{}, nil)
 
-	expectedQuery := regexp.QuoteMeta(`FROM fivenet_owned_vehicles`) +
-		`(?s).*` + regexp.QuoteMeta(`fivenet_owned_vehicles.plate = ?`) +
-		`(?s).*` + regexp.QuoteMeta(`fivenet_owned_vehicles.user_id = ?`)
+	expectedQuery := regexp.QuoteMeta(`FROM fivenet_vehicle`) +
+		`(?s).*` + regexp.QuoteMeta(`fivenet_vehicle.plate = ?`) +
+		`(?s).*` + regexp.QuoteMeta(`fivenet_vehicle.user_id = ?`)
 	mock.ExpectQuery(expectedQuery).
 		WithArgs("ABC DEF1", int32(7), int64(1)).
 		WillReturnRows(sqlmock.NewRows([]string{"plate"}).AddRow("ABC DEF1"))
@@ -119,9 +140,9 @@ func TestStoreIsVehicleOwnerReturnsFalseWhenNoPersonalOwner(t *testing.T) {
 
 	store := New(db, &config.CustomDB{}, nil)
 
-	expectedQuery := regexp.QuoteMeta(`FROM fivenet_owned_vehicles`) +
-		`(?s).*` + regexp.QuoteMeta(`fivenet_owned_vehicles.plate = ?`) +
-		`(?s).*` + regexp.QuoteMeta(`fivenet_owned_vehicles.user_id = ?`)
+	expectedQuery := regexp.QuoteMeta(`FROM fivenet_vehicle`) +
+		`(?s).*` + regexp.QuoteMeta(`fivenet_vehicle.plate = ?`) +
+		`(?s).*` + regexp.QuoteMeta(`fivenet_vehicle.user_id = ?`)
 	mock.ExpectQuery(expectedQuery).
 		WithArgs("JOB CAR1", int32(7), int64(1)).
 		WillReturnRows(sqlmock.NewRows([]string{"plate"}))
@@ -141,30 +162,38 @@ func TestStoreUpdatePropsWritesWantedActivity(t *testing.T) {
 
 	store := New(db, &config.CustomDB{}, nil)
 
-	mock.ExpectQuery(`(?s)FROM .*fivenet_vehicles_props.*WHERE .*plate.*LIMIT \?`).
-		WithArgs("ABC DEF1", sqlmock.AnyArg()).
-		WillReturnRows(sqlmock.NewRows([]string{"vehicle_props.plate", "vehicle_props.wanted", "vehicle_props.wanted_reason", "vehicle_props.wanted_at", "vehicle_props.wanted_till"}).
-			AddRow("ABC DEF1", false, nil, nil, nil))
+	mock.ExpectQuery(`(?s)FROM fivenet_vehicle_property_values value.*fivenet_vehicle_property_state`).
+		WithArgs(vehicleWantedPropertyKey, "ABC DEF1").
+		WillReturnRows(sqlmock.NewRows([]string{"plate", "updated_at", "value_bool", "reason", "active_at", "expires_at"}).
+			AddRow("ABC DEF1", time.Now(), false, nil, nil, nil))
 	mock.ExpectBegin()
-	mock.ExpectExec(`(?s)INSERT INTO .*fivenet_vehicles_props.*ON DUPLICATE KEY UPDATE.*wanted = \?.*wanted_till = .*`).
+	mock.ExpectExec(`(?s)INSERT INTO fivenet_vehicle_property_values`).
+		WithArgs("ABC DEF1", vehicleWantedPropertyKey, propertyValueTypeBool, true).
 		WillReturnResult(sqlmock.NewResult(0, 1))
-	mock.ExpectExec(`(?s)INSERT INTO fivenet_vehicles_activity.*`).
+	mock.ExpectExec(`(?s)INSERT INTO fivenet_vehicle_property_state`).
+		WillReturnResult(sqlmock.NewResult(0, 1))
+	mock.ExpectExec(`(?s)INSERT INTO fivenet_vehicle_activity.*`).
 		WithArgs(int32(7), "ABC DEF1", int32(vehiclesactivity.VehicleActivityType_VEHICLE_ACTIVITY_TYPE_WANTED), "police", "stolen", sqlmock.AnyArg()).
 		WillReturnResult(sqlmock.NewResult(1, 1))
 	mock.ExpectCommit()
-	mock.ExpectQuery(`(?s)FROM .*fivenet_vehicles_props.*WHERE .*plate.*LIMIT \?`).
-		WithArgs("ABC DEF1", sqlmock.AnyArg()).
-		WillReturnRows(sqlmock.NewRows([]string{"vehicle_props.plate", "vehicle_props.wanted", "vehicle_props.wanted_reason", "vehicle_props.wanted_at", "vehicle_props.wanted_till"}).
-			AddRow("ABC DEF1", true, "stolen", time.Now(), nil))
+	mock.ExpectQuery(`(?s)FROM fivenet_vehicle_property_values value.*fivenet_vehicle_property_state`).
+		WithArgs(vehicleWantedPropertyKey, "ABC DEF1").
+		WillReturnRows(sqlmock.NewRows([]string{"plate", "updated_at", "value_bool", "reason", "active_at", "expires_at"}).
+			AddRow("ABC DEF1", time.Now(), true, "stolen", time.Now(), nil))
 
 	creatorID := int32(7)
 	wanted := true
 	reason := "stolen"
-	props, err := store.UpdateProps(t.Context(), &vehiclesprops.VehicleProps{
-		Plate:        "ABC DEF1",
-		Wanted:       &wanted,
-		WantedReason: &reason,
-	}, &creatorID, "police", "stolen")
+	props, err := store.UpdateProps(t.Context(), PropsUpdate{
+		Props: &vehiclesprops.VehicleProps{
+			Plate:        "ABC DEF1",
+			Wanted:       &wanted,
+			WantedReason: &reason,
+		},
+		CreatorID:  &creatorID,
+		CreatorJob: "police",
+		Reason:     "stolen",
+	})
 	require.NoError(t, err)
 	assert.True(t, props.GetWanted())
 	require.NoError(t, mock.ExpectationsWereMet())
@@ -181,28 +210,36 @@ func TestStoreUpdatePropsNoOpDoesNotWriteWantedActivity(t *testing.T) {
 
 	wantedAt := time.Now().UTC()
 	wantedTill := time.Now().UTC().Add(time.Hour)
-	mock.ExpectQuery(`(?s)FROM .*fivenet_vehicles_props.*WHERE .*plate.*LIMIT \?`).
-		WithArgs("ABC DEF1", sqlmock.AnyArg()).
-		WillReturnRows(sqlmock.NewRows([]string{"vehicle_props.plate", "vehicle_props.wanted", "vehicle_props.wanted_reason", "vehicle_props.wanted_at", "vehicle_props.wanted_till"}).
-			AddRow("ABC DEF1", true, "stolen", wantedAt, wantedTill))
+	mock.ExpectQuery(`(?s)FROM fivenet_vehicle_property_values value.*fivenet_vehicle_property_state`).
+		WithArgs(vehicleWantedPropertyKey, "ABC DEF1").
+		WillReturnRows(sqlmock.NewRows([]string{"plate", "updated_at", "value_bool", "reason", "active_at", "expires_at"}).
+			AddRow("ABC DEF1", time.Now(), true, "stolen", wantedAt, wantedTill))
 	mock.ExpectBegin()
-	mock.ExpectExec(`(?s)INSERT INTO .*fivenet_vehicles_props.*ON DUPLICATE KEY UPDATE.*wanted = \?.*`).
+	mock.ExpectExec(`(?s)INSERT INTO fivenet_vehicle_property_values`).
+		WithArgs("ABC DEF1", vehicleWantedPropertyKey, propertyValueTypeBool, true).
+		WillReturnResult(sqlmock.NewResult(0, 1))
+	mock.ExpectExec(`(?s)INSERT INTO fivenet_vehicle_property_state`).
 		WillReturnResult(sqlmock.NewResult(0, 1))
 	mock.ExpectCommit()
-	mock.ExpectQuery(`(?s)FROM .*fivenet_vehicles_props.*WHERE .*plate.*LIMIT \?`).
-		WithArgs("ABC DEF1", sqlmock.AnyArg()).
-		WillReturnRows(sqlmock.NewRows([]string{"vehicle_props.plate", "vehicle_props.wanted", "vehicle_props.wanted_reason", "vehicle_props.wanted_at", "vehicle_props.wanted_till"}).
-			AddRow("ABC DEF1", true, "stolen", wantedAt, wantedTill))
+	mock.ExpectQuery(`(?s)FROM fivenet_vehicle_property_values value.*fivenet_vehicle_property_state`).
+		WithArgs(vehicleWantedPropertyKey, "ABC DEF1").
+		WillReturnRows(sqlmock.NewRows([]string{"plate", "updated_at", "value_bool", "reason", "active_at", "expires_at"}).
+			AddRow("ABC DEF1", time.Now(), true, "stolen", wantedAt, wantedTill))
 
 	wanted := true
 	reason := "stolen"
 	creatorID := int32(7)
-	_, err = store.UpdateProps(t.Context(), &vehiclesprops.VehicleProps{
-		Plate:        "ABC DEF1",
-		Wanted:       &wanted,
-		WantedReason: &reason,
-		WantedTill:   timestamp.New(wantedTill),
-	}, &creatorID, "police", "stolen")
+	_, err = store.UpdateProps(t.Context(), PropsUpdate{
+		Props: &vehiclesprops.VehicleProps{
+			Plate:        "ABC DEF1",
+			Wanted:       &wanted,
+			WantedReason: &reason,
+			WantedTill:   timestamp.New(wantedTill),
+		},
+		CreatorID:  &creatorID,
+		CreatorJob: "police",
+		Reason:     "stolen",
+	})
 	require.NoError(t, err)
 	require.NoError(t, mock.ExpectationsWereMet())
 }

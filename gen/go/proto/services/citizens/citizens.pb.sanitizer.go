@@ -65,6 +65,18 @@ func (m *ListCitizensRequest) Sanitize() error {
 		*m.PhoneNumber = htmlsanitizer.SanitizeAndUnescape(*m.PhoneNumber)
 	}
 
+	// Field: PropertyFilters
+	for idx, item := range m.PropertyFilters {
+		_, _ = idx, item
+
+		if v, ok := any(item).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+
+	}
+
 	// Field: Search
 	m.Search = htmlsanitizer.SanitizeAndUnescape(m.Search)
 
@@ -136,6 +148,14 @@ func (m *ListUserActivityRequest) Sanitize() error {
 		}
 	}
 
+	// Field: PropertyKeys
+	for idx, item := range m.PropertyKeys {
+		_, _ = idx, item
+
+		m.PropertyKeys[idx] = htmlsanitizer.SanitizeAndUnescape(m.PropertyKeys[idx])
+
+	}
+
 	// Field: Sort
 	if m.Sort != nil {
 		if v, ok := any(m.GetSort()).(interface{ Sanitize() error }); ok {
@@ -199,6 +219,18 @@ func (m *ListUserActivityResponse) Sanitize() error {
 func (m *SetUserPropsRequest) Sanitize() error {
 	if m == nil {
 		return nil
+	}
+
+	// Field: PropertyChanges
+	for idx, item := range m.PropertyChanges {
+		_, _ = idx, item
+
+		if v, ok := any(item).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+
 	}
 
 	// Field: Props

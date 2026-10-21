@@ -9,6 +9,7 @@ import (
 
 	permissionsattributes "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/permissions/attributes"
 	permissionspermissions "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/permissions/permissions"
+	propertypb "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/properties"
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/userinfo"
 	"github.com/fivenet-app/fivenet/v2026/pkg/config"
 	"github.com/fivenet-app/fivenet/v2026/pkg/config/appconfig"
@@ -149,6 +150,15 @@ type Permissions interface {
 		userInfo *userinfo.UserInfo,
 		attr AttrRef[StringListAttr],
 	) (*permissionsattributes.StringList, error)
+	AttrPropertyList(
+		userInfo *userinfo.UserInfo,
+		attr AttrRef[PropertyListAttr],
+	) (*permissionsattributes.PropertyList, error)
+	AttrPropertyListContext(
+		ctx context.Context,
+		userInfo *userinfo.UserInfo,
+		attr AttrRef[PropertyListAttr],
+	) (*permissionsattributes.PropertyList, error)
 	AttrJobList(
 		userInfo *userinfo.UserInfo,
 		attr AttrRef[JobListAttr],
@@ -291,14 +301,15 @@ type cachePerm struct {
 }
 
 type cacheAttr struct {
-	ID           int64
-	PermissionID int64
-	Namespace    Namespace
-	Service      Service
-	Name         Name
-	Key          Key
-	Type         permissionsattributes.AttributeTypes
-	ValidValues  *permissionsattributes.AttributeValues
+	ID            int64
+	PermissionID  int64
+	Namespace     Namespace
+	Service       Service
+	Name          Name
+	Key           Key
+	Type          permissionsattributes.AttributeTypes
+	PropertyScope propertypb.PropertyScope
+	ValidValues   *permissionsattributes.AttributeValues
 }
 
 type cacheRoleAttr struct {

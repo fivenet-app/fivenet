@@ -404,6 +404,18 @@ func (s *Store) UpdateUserEmailProperty(
 		)
 
 	_, err := upStmt.ExecContext(ctx, s.dbOr(q))
+	if err != nil {
+		return err
+	}
+	tValues := table.FivenetUserPropertyValues
+	_, err = tValues.
+		INSERT(tValues.UserID, tValues.PropertyKey, tValues.ValueType, tValues.ValueString).
+		VALUES(userID, "user.email", uint8(1), email).
+		ON_DUPLICATE_KEY_UPDATE(
+			tValues.ValueType.SET(mysql.Uint8(uint8(1))),
+			tValues.ValueString.SET(mysql.String(email)),
+		).
+		ExecContext(ctx, s.dbOr(q))
 	return err
 }
 

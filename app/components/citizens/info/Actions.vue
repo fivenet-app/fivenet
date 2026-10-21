@@ -4,8 +4,11 @@ import SetMugshotDrawer from '~/components/citizens/info/props/SetMugshotDrawer.
 import SetTrafficPointsDrawer from '~/components/citizens/info/props/SetTrafficPointsDrawer.vue';
 import SetWantedDrawer from '~/components/citizens/info/props/SetWantedDrawer.vue';
 import TemplateDrawer from '~/components/documents/templates/TemplateDrawer.vue';
+import SetDynamicPropertyDrawer from '~/components/partials/properties/SetDynamicPropertyDrawer.vue';
+import { canActOnDynamicProperty, dynamicPropertiesForAction } from '~/composables/useDynamicPropertyAction';
 import { checkIfCanAccessColleague } from '~/components/jobs/colleagues/helpers';
 import { useClipboardStore } from '~/stores/clipboard';
+import { PropertyScope, type Properties, type Property } from '~~/gen/ts/resources/properties/properties';
 import type { File } from '~~/gen/ts/resources/file/file';
 import type { Job, JobGrade } from '~~/gen/ts/resources/jobs/jobs';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
@@ -27,9 +30,11 @@ const emits = defineEmits<{
     (e: 'update:job', value: { job: Job; grade: JobGrade }): void;
     (e: 'update:trafficInfractionPoints', value: number): void;
     (e: 'update:mugshot', value?: File): void;
+    (e: 'update:properties', value: Properties | undefined): void;
 }>();
 
 const { attr, can, activeChar } = useAuth();
+const { propertyLabel } = usePropertyRenderer();
 
 const clipboardStore = useClipboardStore();
 const { open: openClipboardModal } = useClipboardModal();
@@ -43,12 +48,13 @@ const setWantedDrawer = overlay.create(SetWantedDrawer);
 const setJobDrawer = overlay.create(SetJobDrawer);
 const setTrafficPointsDrawer = overlay.create(SetTrafficPointsDrawer);
 const setMugshotDrawer = overlay.create(SetMugshotDrawer);
+const setDynamicPropertyDrawer = overlay.create(SetDynamicPropertyDrawer);
 
 const actionVisibility = computed(() => ({
-    wanted: attr('citizens.CitizensService/SetUserProps', 'Fields', 'Wanted').value,
-    job: attr('citizens.CitizensService/SetUserProps', 'Fields', 'Job').value,
-    trafficPoints: attr('citizens.CitizensService/SetUserProps', 'Fields', 'TrafficInfractionPoints').value,
-    mugshot: attr('citizens.CitizensService/SetUserProps', 'Fields', 'Mugshot').value,
+    wanted: attr('citizens.CitizensService/SetUserProps', 'Properties', 'user.wanted').value,
+    job: attr('citizens.CitizensService/SetUserProps', 'Properties', 'user.job').value,
+    trafficPoints: attr('citizens.CitizensService/SetUserProps', 'Properties', 'user.traffic_infraction_points').value,
+    mugshot: attr('citizens.CitizensService/SetUserProps', 'Properties', 'user.mugshot').value,
     document: can('documents.DocumentsService/UpdateDocument').value,
     colleague:
         activeChar.value?.job === props.user.job &&
@@ -57,6 +63,21 @@ const actionVisibility = computed(() => ({
 }));
 
 const hasVisibleAction = computed(() => Object.values(actionVisibility.value).some(Boolean));
+const dynamicProperties = computed(() =>
+    dynamicPropertiesForAction(
+        props.user.properties?.properties,
+        (property) => attr('citizens.CitizensService/SetUserProps', 'Properties', property.key).value,
+    ),
+);
+
+function openDynamicProperty(property: Property): void {
+    setDynamicPropertyDrawer.open({
+        property,
+        scope: PropertyScope.USER,
+        userId: props.user.userId,
+        'onUpdate:properties': (value) => emits('update:properties', value),
+    });
+}
 
 function openTemplates(): void {
     if (!props.user) return;
@@ -95,7 +116,7 @@ function copyLinkToClipboard(): void {
 
 defineShortcuts({
     'c-w': () => {
-        if (!attr('citizens.CitizensService/SetUserProps', 'Fields', 'Wanted').value) return;
+        if (!attr('citizens.CitizensService/SetUserProps', 'Properties', 'user.wanted').value) return;
 
         setWantedDrawer.open({
             user: props.user,
@@ -103,7 +124,7 @@ defineShortcuts({
         });
     },
     'c-j': () => {
-        if (!attr('citizens.CitizensService/SetUserProps', 'Fields', 'Job').value) return;
+        if (!attr('citizens.CitizensService/SetUserProps', 'Properties', 'user.job').value) return;
 
         setJobDrawer.open({
             user: props.user,
@@ -111,7 +132,7 @@ defineShortcuts({
         });
     },
     'c-p': () => {
-        if (!attr('citizens.CitizensService/SetUserProps', 'Fields', 'TrafficInfractionPoints').value) return;
+        if (!attr('citizens.CitizensService/SetUserProps', 'Properties', 'user.traffic_infraction_points').value) return;
 
         setTrafficPointsDrawer.open({
             user: props.user,
@@ -119,7 +140,7 @@ defineShortcuts({
         });
     },
     'c-m': () => {
-        if (!attr('citizens.CitizensService/SetUserProps', 'Fields', 'Mugshot').value) return;
+        if (!attr('citizens.CitizensService/SetUserProps', 'Properties', 'user.mugshot').value) return;
 
         setMugshotDrawer.open({
             user: props.user,
@@ -247,7 +268,22 @@ defineShortcuts({
             :label="$t('components.citizens.CitizenInfoProfile.go_to_colleague_info')"
         />
 
-        <USeparator v-if="hasVisibleAction" />
+        <template v-if="dynamicProperties.length">
+            <USeparator />
+
+            <UButton
+                v-for="property in dynamicProperties"
+                :key="property.key"
+                color="neutral"
+                variant="outline"
+                block
+                icon="i-mdi-pencil"
+                :label="`${$t(canActOnDynamicProperty(property) ? 'common.edit' : 'common.set')}: ${propertyLabel(property)}`"
+                @click="openDynamicProperty(property)"
+            />
+        </template>
+
+        <USeparator v-if="hasVisibleAction || dynamicProperties.length" />
 
         <UButton
             block

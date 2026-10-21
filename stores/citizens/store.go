@@ -6,6 +6,7 @@ import (
 
 	citizenslabels "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/citizens/labels"
 	database "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/common/database"
+	properties "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/properties"
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/timestamp"
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/userinfo"
 	users "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/users"
@@ -14,6 +15,7 @@ import (
 	pbcitizens "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/citizens"
 	"github.com/fivenet-app/fivenet/v2026/pkg/access"
 	"github.com/fivenet-app/fivenet/v2026/pkg/config"
+	propertyregistry "github.com/fivenet-app/fivenet/v2026/pkg/properties"
 	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
 	"github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
@@ -82,6 +84,36 @@ type IStore interface {
 	GetAvatarFileID(ctx context.Context, userId int32) (*int64, error)
 	GetMugshotFileID(ctx context.Context, userId int32) (*int64, error)
 	GetUserProps(ctx context.Context, tx qrm.DB, userId int32) (*usersprops.UserProps, error)
+	GetProperties(ctx context.Context, userId int32) ([]*properties.Property, error)
+	ListProperties(ctx context.Context, userIds []int32) (map[int32][]*properties.Property, error)
+	GetPropertiesTx(ctx context.Context, tx qrm.DB, userId int32) ([]*properties.Property, error)
+	ResolvePropertyDefinitions(
+		ctx context.Context,
+		keys []string,
+	) (map[string]*properties.PropertyDefinition, error)
+	ResolvePropertyGroups(
+		ctx context.Context,
+		definitions map[string]*properties.PropertyDefinition,
+	) ([]*properties.PropertyGroup, error)
+	ResolvePropertyCatalog(
+		ctx context.Context,
+		keys []string,
+	) (*propertyregistry.ResolvedCatalog, error)
+	ApplyPropertyChanges(
+		ctx context.Context,
+		db qrm.DB,
+		userId int32,
+		changes []PropertyChange,
+	) ([]*properties.Property, error)
+	ApplyPropertyChangesWithActivity(
+		ctx context.Context,
+		db qrm.DB,
+		userId int32,
+		changes []PropertyChange,
+		sourceUserId *int32,
+		reason string,
+	) ([]*usersactivity.UserActivity, error)
+	IsSystemPropertyEnabled(ctx context.Context, key string) (bool, error)
 	PrepareUserPropsLabelsForUpdate(
 		ctx context.Context,
 		q qrm.Queryable,
@@ -108,22 +140,25 @@ type Store struct {
 	db                 *sql.DB
 	customDB           *config.CustomDB
 	labelsAccess       *access.CitizenLabelsObjectAccess
+	propertyCache      *propertyregistry.DefinitionCache
 	userActivitySorter *database.SorterBuilder
 }
 
 type Params struct {
 	fx.In
 
-	DB           *sql.DB
-	CustomDB     *config.CustomDB
-	LabelsAccess *access.CitizenLabelsObjectAccess
+	DB            *sql.DB
+	CustomDB      *config.CustomDB
+	LabelsAccess  *access.CitizenLabelsObjectAccess
+	PropertyCache *propertyregistry.DefinitionCache
 }
 
 func New(p Params) IStore {
-	return &Store{
-		db:           p.DB,
-		customDB:     p.CustomDB,
-		labelsAccess: p.LabelsAccess,
+	store := &Store{
+		db:            p.DB,
+		customDB:      p.CustomDB,
+		labelsAccess:  p.LabelsAccess,
+		propertyCache: p.PropertyCache,
 		userActivitySorter: database.New(
 			database.SpecMap{
 				"createdAt": database.Column{
@@ -139,4 +174,8 @@ func New(p Params) IStore {
 			3,
 		),
 	}
+	if store.propertyCache == nil {
+		store.propertyCache = propertyregistry.NewDefinitionCache()
+	}
+	return store
 }

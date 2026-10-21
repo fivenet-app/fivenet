@@ -4,29 +4,18 @@ import ActivityFeed from '~/components/vehicles/ActivityFeed.vue';
 import type { Vehicle } from '~~/gen/ts/resources/vehicles/vehicles';
 import GenericTime from '../partials/elements/GenericTime.vue';
 import LicensePlate from '../partials/LicensePlate.vue';
-import SetWantedDrawer from './SetWantedDrawer.vue';
 import CitizenInfoPopover from '~/components/partials/citizens/CitizenInfoPopover.vue';
+import PinnedProperties from '~/components/partials/properties/PinnedProperties.vue';
 
 defineEmits<{
     (e: 'close', v: boolean): void;
 }>();
 
 const vehicle = defineModel<Vehicle>({ required: true });
-
-const overlay = useOverlay();
-const setWantedDrawer = overlay.create(SetWantedDrawer);
-
-const { attr, can } = useAuth();
-
 const activityFeed = useTemplateRef<InstanceType<typeof ActivityFeed>>('activityFeed');
-
-const canViewWanted = computed(() => attr('vehicles.VehiclesService/ListVehicles', 'Fields', 'Wanted').value);
-const canSetWanted = computed(
-    () =>
-        canViewWanted.value &&
-        can('vehicles.VehiclesService/SetVehicleProps').value &&
-        attr('vehicles.VehiclesService/SetVehicleProps', 'Fields', 'Wanted').value,
-);
+const { canViewWanted, canSetWanted, dynamicProperties, openWantedDrawer, openDynamicPropertyDrawer } =
+    useVehiclePropertyActions(vehicle, () => activityFeed.value?.refresh());
+const { propertyLabel } = usePropertyRenderer();
 </script>
 
 <template>
@@ -54,24 +43,25 @@ const canSetWanted = computed(
                                 </div>
                             </div>
 
-                            <div v-if="canSetWanted" class="space-y-1">
+                            <div v-if="canSetWanted || dynamicProperties.length" class="space-y-1">
                                 <p class="text-sm font-semibold">{{ $t('common.action', 2) }}</p>
-                                <div>
+                                <div class="flex flex-wrap gap-2">
                                     <UButton
+                                        v-if="canSetWanted"
                                         :color="vehicle.props?.wanted ? 'error' : 'primary'"
                                         :icon="vehicle.props?.wanted ? 'i-mdi-account-alert' : 'i-mdi-account-cancel'"
                                         :label="vehicle.props?.wanted ? $t('common.revoke_wanted') : $t('common.set_wanted')"
-                                        @click="
-                                            () =>
-                                                setWantedDrawer.open({
-                                                    vehicleProps: vehicle.props,
-                                                    plate: vehicle.plate,
-                                                    'onUpdate:vehicleProps': ($event) => {
-                                                        vehicle.props = $event;
-                                                        activityFeed?.refresh();
-                                                    },
-                                                })
-                                        "
+                                        @click="() => openWantedDrawer()"
+                                    />
+
+                                    <UButton
+                                        v-for="property in dynamicProperties"
+                                        :key="property.key"
+                                        color="neutral"
+                                        variant="outline"
+                                        icon="i-mdi-pencil"
+                                        :label="`${$t(canActOnDynamicProperty(property) ? 'common.edit' : 'common.set')}: ${propertyLabel(property)}`"
+                                        @click="openDynamicPropertyDrawer(property)"
                                     />
                                 </div>
                             </div>
@@ -119,6 +109,7 @@ const canSetWanted = computed(
                                 <dd><GenericTime :value="vehicle.props.wantedTill" /></dd>
                             </div>
                         </dl>
+                        <PinnedProperties :properties="vehicle.properties?.properties" />
                     </div>
                 </div>
 

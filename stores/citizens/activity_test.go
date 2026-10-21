@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/DATA-DOG/go-sqlmock"
+	usersactivity "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/users/activity"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
@@ -24,10 +25,41 @@ func TestStoreCountUserActivityAppliesTargetFilter(t *testing.T) {
 		WillReturnRows(sqlmock.NewRows([]string{"data_count.total"}).AddRow(int64(7)))
 
 	total, err := store.CountUserActivity(t.Context(), CountUserActivityOptions{
-		UserID: 42,
+		UserID:               42,
+		CanViewAllProperties: true,
 	})
 	require.NoError(t, err)
 	assert.Equal(t, int64(7), total)
+	require.NoError(t, mock.ExpectationsWereMet())
+}
+
+func TestStoreCountUserActivityHidesInaccessibleProperties(t *testing.T) {
+	t.Parallel()
+
+	db, mock, err := sqlmock.New()
+	require.NoError(t, err)
+	t.Cleanup(func() { _ = db.Close() })
+
+	store := New(testParams(db))
+	mock.ExpectQuery(regexp.QuoteMeta(`FROM fivenet_user_activity AS user_activity`)+`(?s).*`+
+		regexp.QuoteMeta(`user_activity.target_user_id = ?`)+`(?s).*`+
+		regexp.QuoteMeta(`user_activity.type != ?`)+`(?s).*`+
+		regexp.QuoteMeta("user_activity.`key` IN (?)")).
+		WithArgs(
+			int32(42),
+			int32(usersactivity.UserActivityType_USER_ACTIVITY_TYPE_PROPERTY),
+			"user.risk_level",
+		).
+		WillReturnRows(sqlmock.NewRows([]string{"data_count.total"}).AddRow(int64(2)))
+
+	total, err := store.CountUserActivity(t.Context(), CountUserActivityOptions{
+		UserActivityOptions: UserActivityOptions{
+			UserID:              42,
+			VisiblePropertyKeys: []string{"user.risk_level"},
+		},
+	})
+	require.NoError(t, err)
+	assert.Equal(t, int64(2), total)
 	require.NoError(t, mock.ExpectationsWereMet())
 }
 
@@ -65,9 +97,12 @@ func TestStoreListUserActivityAppliesSortAndIdsOnly(t *testing.T) {
 		))
 
 	activities, err := store.ListUserActivity(t.Context(), ListUserActivityOptions{
-		UserID: 42,
 		Offset: 0,
 		Limit:  20,
+		UserActivityOptions: UserActivityOptions{
+			UserID:               42,
+			CanViewAllProperties: true,
+		},
 	})
 	require.NoError(t, err)
 	require.Len(t, activities, 1)

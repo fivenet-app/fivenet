@@ -1,0 +1,240 @@
+syntax = "proto3";
+
+package services.settings;
+
+import "buf/validate/validate.proto";
+import "codegen/perms/perms.proto";
+import "resources/properties/properties.proto";
+
+option go_package = "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/settings;settings";
+
+message ListPropertyScopesRequest {}
+
+message ListPropertyScopesResponse {
+  repeated resources.properties.PropertyScope scopes = 1;
+}
+
+message ListPropertyDefinitionsRequest {
+  resources.properties.PropertyScope scope = 1 [(buf.validate.field).enum = {
+    defined_only: true
+    not_in: [0]
+  }];
+  bool include_deleted = 2;
+}
+
+message ListPropertyDefinitionsResponse {
+  repeated resources.properties.PropertyDefinition definitions = 1;
+  repeated resources.properties.PropertyGroup groups = 2;
+}
+
+message CreatePropertyGroupRequest {
+  resources.properties.PropertyGroup group = 1 [(buf.validate.field).required = true];
+}
+
+message CreatePropertyGroupResponse {
+  resources.properties.PropertyGroup group = 1;
+}
+
+message UpdatePropertyGroupRequest {
+  resources.properties.PropertyGroup group = 1 [(buf.validate.field).required = true];
+}
+
+message UpdatePropertyGroupResponse {
+  resources.properties.PropertyGroup group = 1;
+}
+
+message DeletePropertyGroupRequest {
+  resources.properties.PropertyScope scope = 1 [(buf.validate.field).enum = {
+    defined_only: true
+    not_in: [0]
+  }];
+  string key = 2 [(buf.validate.field).string = {
+    min_len: 1
+    max_len: 64
+    pattern: "^[a-z][a-z0-9_.-]*$"
+  }];
+}
+
+message DeletePropertyGroupResponse {}
+
+message RestorePropertyGroupRequest {
+  resources.properties.PropertyScope scope = 1 [(buf.validate.field).enum = {
+    defined_only: true
+    not_in: [0]
+  }];
+  string key = 2 [(buf.validate.field).string = {
+    min_len: 1
+    max_len: 64
+    pattern: "^[a-z][a-z0-9_.-]*$"
+  }];
+}
+
+message RestorePropertyGroupResponse {
+  resources.properties.PropertyGroup group = 1;
+}
+
+message ReorderPropertyGroupsRequest {
+  resources.properties.PropertyScope scope = 1 [(buf.validate.field).enum = {
+    defined_only: true
+    not_in: [0]
+  }];
+  repeated string group_keys = 2 [(buf.validate.field).repeated = {
+    items: { string: { min_len: 1 max_len: 64 } }
+    min_items: 1
+    max_items: 200
+  }];
+}
+
+message ReorderPropertyGroupsResponse {}
+
+message ReorderPropertyDefinitionsRequest {
+  resources.properties.PropertyScope scope = 1 [(buf.validate.field).enum = {
+    defined_only: true
+    not_in: [0]
+  }];
+  string group_key = 2 [(buf.validate.field).string.max_len = 64];
+  repeated string property_keys = 3 [(buf.validate.field).repeated = {
+    items: { string: { min_len: 1 max_len: 64 } }
+    min_items: 1
+    max_items: 200
+  }];
+}
+
+message ReorderPropertyDefinitionsResponse {}
+
+message CreatePropertyDefinitionRequest {
+  resources.properties.PropertyDefinition definition = 1 [(buf.validate.field).required = true];
+}
+
+message CreatePropertyDefinitionResponse {
+  resources.properties.PropertyDefinition definition = 1;
+}
+
+message UpdatePropertyDefinitionRequest {
+  resources.properties.PropertyDefinition definition = 1 [(buf.validate.field).required = true];
+}
+
+message UpdatePropertyDefinitionResponse {
+  resources.properties.PropertyDefinition definition = 1;
+}
+
+message DeletePropertyDefinitionRequest {
+  resources.properties.PropertyScope scope = 1 [(buf.validate.field).enum = {
+    defined_only: true
+    not_in: [0]
+  }];
+  string key = 2 [(buf.validate.field).string = {
+    min_len: 1
+    max_len: 64
+    pattern: "^[a-z][a-z0-9_.-]*$"
+  }];
+}
+
+message DeletePropertyDefinitionResponse {}
+
+message RestorePropertyDefinitionRequest {
+  resources.properties.PropertyScope scope = 1 [(buf.validate.field).enum = {
+    defined_only: true
+    not_in: [0]
+  }];
+  string key = 2 [(buf.validate.field).string = {
+    min_len: 1
+    max_len: 64
+    pattern: "^[a-z][a-z0-9_.-]*$"
+  }];
+}
+
+message RestorePropertyDefinitionResponse {
+  resources.properties.PropertyDefinition definition = 1;
+}
+
+message SetSystemPropertyEnabledRequest {
+  resources.properties.PropertyScope scope = 1 [(buf.validate.field).enum = {
+    defined_only: true
+    not_in: [0]
+  }];
+  string key = 2 [(buf.validate.field).string = {
+    min_len: 1
+    max_len: 64
+    pattern: "^[a-z][a-z0-9_.-]*$"
+  }];
+  bool enabled = 3;
+}
+
+message SetSystemPropertyEnabledResponse {
+  resources.properties.PropertyDefinition definition = 1;
+}
+
+service PropertyService {
+  option (codegen.perms.perms_svc) = {
+    order: 130
+    icon: "i-mdi-tune-variant"
+  };
+
+  rpc ListPropertyScopes(ListPropertyScopesRequest) returns (ListPropertyScopesResponse) {
+    option (codegen.perms.perms) = {
+      enabled: true
+      names: [
+        "JobAdmin",
+        "ConfigAdmin"
+      ]
+    };
+  }
+  rpc ListPropertyDefinitions(ListPropertyDefinitionsRequest) returns (ListPropertyDefinitionsResponse) {
+    option (codegen.perms.perms) = {
+      enabled: true
+      names: [
+        "JobAdmin",
+        "ConfigAdmin"
+      ]
+    };
+  }
+  rpc ReorderPropertyGroups(ReorderPropertyGroupsRequest) returns (ReorderPropertyGroupsResponse) {
+    option (codegen.perms.perms) = { enabled: true name: "UpdatePropertyDefinition" };
+  }
+  rpc CreatePropertyGroup(CreatePropertyGroupRequest) returns (CreatePropertyGroupResponse) {
+    option (codegen.perms.perms) = { enabled: true name: "ConfigAdmin" };
+  }
+  rpc UpdatePropertyGroup(UpdatePropertyGroupRequest) returns (UpdatePropertyGroupResponse) {
+    option (codegen.perms.perms) = { enabled: true name: "ConfigAdmin" };
+  }
+  rpc DeletePropertyGroup(DeletePropertyGroupRequest) returns (DeletePropertyGroupResponse) {
+    option (codegen.perms.perms) = { enabled: true name: "ConfigAdmin" };
+  }
+  rpc RestorePropertyGroup(RestorePropertyGroupRequest) returns (RestorePropertyGroupResponse) {
+    option (codegen.perms.perms) = { enabled: true name: "ConfigAdmin" };
+  }
+  rpc ReorderPropertyDefinitions(ReorderPropertyDefinitionsRequest) returns (ReorderPropertyDefinitionsResponse) {
+    option (codegen.perms.perms) = { enabled: true name: "UpdatePropertyDefinition" };
+  }
+  rpc CreatePropertyDefinition(CreatePropertyDefinitionRequest) returns (CreatePropertyDefinitionResponse) {
+    option (codegen.perms.perms) = {
+      enabled: true
+      name: "ConfigAdmin"
+    };
+  }
+  rpc UpdatePropertyDefinition(UpdatePropertyDefinitionRequest) returns (UpdatePropertyDefinitionResponse) {
+    option (codegen.perms.perms) = {
+      enabled: true
+      name: "ConfigAdmin"
+    };
+  }
+  rpc DeletePropertyDefinition(DeletePropertyDefinitionRequest) returns (DeletePropertyDefinitionResponse) {
+    option (codegen.perms.perms) = {
+      enabled: true
+      name: "ConfigAdmin"
+    };
+  }
+  rpc RestorePropertyDefinition(RestorePropertyDefinitionRequest) returns (RestorePropertyDefinitionResponse) {
+    option (codegen.perms.perms) = {
+      enabled: true
+      name: "ConfigAdmin"
+    };
+  }
+  rpc SetSystemPropertyEnabled(SetSystemPropertyEnabledRequest) returns (SetSystemPropertyEnabledResponse) {
+    option (codegen.perms.perms) = {
+      enabled: true
+      name: "ConfigAdmin"
+    };
+  }
+}

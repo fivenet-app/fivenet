@@ -14,12 +14,14 @@ import { UnknownFieldHandler } from "@protobuf-ts/runtime";
 import type { PartialMessage } from "@protobuf-ts/runtime";
 import { reflectionMergePartial } from "@protobuf-ts/runtime";
 import { MessageType } from "@protobuf-ts/runtime";
+import { PropertyChange } from "../../resources/properties/properties";
 import { UserProps } from "../../resources/users/props/props";
 import { UserActivity } from "../../resources/users/activity/activity";
 import { Timestamp } from "../../resources/timestamp/timestamp";
 import { UserActivityType } from "../../resources/users/activity/activity";
 import { User } from "../../resources/users/user";
 import { PaginationResponse } from "../../resources/common/database/database";
+import { PropertyFilter } from "../../resources/properties/properties";
 import { Sort } from "../../resources/common/database/database";
 import { PaginationRequest } from "../../resources/common/database/database";
 /**
@@ -70,6 +72,10 @@ export interface ListCitizensRequest {
      * @generated from protobuf field: optional float max_height = 10
      */
     maxHeight?: number;
+    /**
+     * @generated from protobuf field: repeated resources.properties.PropertyFilter property_filters = 11
+     */
+    propertyFilters: PropertyFilter[];
 }
 /**
  * @generated from protobuf message services.citizens.ListCitizensResponse
@@ -138,6 +144,12 @@ export interface ListUserActivityRequest {
      * @generated from protobuf field: optional resources.timestamp.Timestamp to = 6
      */
     to?: Timestamp;
+    /**
+     * Restricts generic PROPERTY activity entries to these custom property keys.
+     *
+     * @generated from protobuf field: repeated string property_keys = 7
+     */
+    propertyKeys: string[];
 }
 /**
  * @generated from protobuf message services.citizens.ListUserActivityResponse
@@ -164,6 +176,13 @@ export interface SetUserPropsRequest {
      * @generated from protobuf field: string reason = 2
      */
     reason: string;
+    /**
+     * Generic custom scalar properties. Managed system properties continue to
+     * use the dedicated fields above and produce their specialized activities.
+     *
+     * @generated from protobuf field: repeated resources.properties.PropertyChange property_changes = 3
+     */
+    propertyChanges: PropertyChange[];
 }
 /**
  * @generated from protobuf message services.citizens.SetUserPropsResponse
@@ -215,12 +234,14 @@ class ListCitizensRequest$Type extends MessageType<ListCitizensRequest> {
             { no: 7, name: "dateofbirth", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "10" } } } },
             { no: 8, name: "open_fines", kind: "scalar", opt: true, T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ },
             { no: 9, name: "min_height", kind: "scalar", opt: true, T: 2 /*ScalarType.FLOAT*/ },
-            { no: 10, name: "max_height", kind: "scalar", opt: true, T: 2 /*ScalarType.FLOAT*/ }
+            { no: 10, name: "max_height", kind: "scalar", opt: true, T: 2 /*ScalarType.FLOAT*/ },
+            { no: 11, name: "property_filters", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => PropertyFilter, options: { "buf.validate.field": { repeated: { maxItems: "8" } } } }
         ]);
     }
     create(value?: PartialMessage<ListCitizensRequest>): ListCitizensRequest {
         const message = globalThis.Object.create((this.messagePrototype!));
         message.search = "";
+        message.propertyFilters = [];
         if (value !== undefined)
             reflectionMergePartial<ListCitizensRequest>(this, message, value);
         return message;
@@ -259,6 +280,9 @@ class ListCitizensRequest$Type extends MessageType<ListCitizensRequest> {
                     break;
                 case /* optional float max_height */ 10:
                     message.maxHeight = reader.float();
+                    break;
+                case /* repeated resources.properties.PropertyFilter property_filters */ 11:
+                    message.propertyFilters.push(PropertyFilter.internalBinaryRead(reader, reader.uint32(), options));
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -302,6 +326,9 @@ class ListCitizensRequest$Type extends MessageType<ListCitizensRequest> {
         /* optional float max_height = 10; */
         if (message.maxHeight !== undefined)
             writer.tag(10, WireType.Bit32).float(message.maxHeight);
+        /* repeated resources.properties.PropertyFilter property_filters = 11; */
+        for (let i = 0; i < message.propertyFilters.length; i++)
+            PropertyFilter.internalBinaryWrite(message.propertyFilters[i], writer.tag(11, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -475,13 +502,15 @@ class ListUserActivityRequest$Type extends MessageType<ListUserActivityRequest> 
             { no: 3, name: "user_id", kind: "scalar", T: 5 /*ScalarType.INT32*/, options: { "buf.validate.field": { int32: { gt: 0 } } } },
             { no: 4, name: "types", kind: "enum", repeat: 1 /*RepeatType.PACKED*/, T: () => ["resources.users.activity.UserActivityType", UserActivityType, "USER_ACTIVITY_TYPE_"], options: { "buf.validate.field": { repeated: { maxItems: "20", items: { enum: { definedOnly: true } } } } } },
             { no: 5, name: "from", kind: "message", T: () => Timestamp },
-            { no: 6, name: "to", kind: "message", T: () => Timestamp }
+            { no: 6, name: "to", kind: "message", T: () => Timestamp },
+            { no: 7, name: "property_keys", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { repeated: { maxItems: "20", items: { string: { maxLen: "64" } } } } } }
         ]);
     }
     create(value?: PartialMessage<ListUserActivityRequest>): ListUserActivityRequest {
         const message = globalThis.Object.create((this.messagePrototype!));
         message.userId = 0;
         message.types = [];
+        message.propertyKeys = [];
         if (value !== undefined)
             reflectionMergePartial<ListUserActivityRequest>(this, message, value);
         return message;
@@ -512,6 +541,9 @@ class ListUserActivityRequest$Type extends MessageType<ListUserActivityRequest> 
                     break;
                 case /* optional resources.timestamp.Timestamp to */ 6:
                     message.to = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.to);
+                    break;
+                case /* repeated string property_keys */ 7:
+                    message.propertyKeys.push(reader.string());
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -547,6 +579,9 @@ class ListUserActivityRequest$Type extends MessageType<ListUserActivityRequest> 
         /* optional resources.timestamp.Timestamp to = 6; */
         if (message.to)
             Timestamp.internalBinaryWrite(message.to, writer.tag(6, WireType.LengthDelimited).fork(), options).join();
+        /* repeated string property_keys = 7; */
+        for (let i = 0; i < message.propertyKeys.length; i++)
+            writer.tag(7, WireType.LengthDelimited).string(message.propertyKeys[i]);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -616,12 +651,14 @@ class SetUserPropsRequest$Type extends MessageType<SetUserPropsRequest> {
     constructor() {
         super("services.citizens.SetUserPropsRequest", [
             { no: 1, name: "props", kind: "message", T: () => UserProps, options: { "buf.validate.field": { required: true } } },
-            { no: 2, name: "reason", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { ignore: "IGNORE_IF_ZERO_VALUE", string: { minLen: "3", maxLen: "255" } }, "codegen.sanitizer.sanitizer": { enabled: true } } }
+            { no: 2, name: "reason", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { ignore: "IGNORE_IF_ZERO_VALUE", string: { minLen: "3", maxLen: "255" } }, "codegen.sanitizer.sanitizer": { enabled: true } } },
+            { no: 3, name: "property_changes", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => PropertyChange, options: { "buf.validate.field": { repeated: { maxItems: "20" } } } }
         ]);
     }
     create(value?: PartialMessage<SetUserPropsRequest>): SetUserPropsRequest {
         const message = globalThis.Object.create((this.messagePrototype!));
         message.reason = "";
+        message.propertyChanges = [];
         if (value !== undefined)
             reflectionMergePartial<SetUserPropsRequest>(this, message, value);
         return message;
@@ -636,6 +673,9 @@ class SetUserPropsRequest$Type extends MessageType<SetUserPropsRequest> {
                     break;
                 case /* string reason */ 2:
                     message.reason = reader.string();
+                    break;
+                case /* repeated resources.properties.PropertyChange property_changes */ 3:
+                    message.propertyChanges.push(PropertyChange.internalBinaryRead(reader, reader.uint32(), options));
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -655,6 +695,9 @@ class SetUserPropsRequest$Type extends MessageType<SetUserPropsRequest> {
         /* string reason = 2; */
         if (message.reason !== "")
             writer.tag(2, WireType.LengthDelimited).string(message.reason);
+        /* repeated resources.properties.PropertyChange property_changes = 3; */
+        for (let i = 0; i < message.propertyChanges.length; i++)
+            PropertyChange.internalBinaryWrite(message.propertyChanges[i], writer.tag(3, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -884,12 +927,12 @@ export const DeleteMugshotResponse = new DeleteMugshotResponse$Type();
  * @generated ServiceType for protobuf service services.citizens.CitizensService
  */
 export const CitizensService = new ServiceType("services.citizens.CitizensService", [
-    { name: "ListCitizens", options: { "codegen.perms.perms": { enabled: true, attrs: [{ key: "Fields", type: "ATTRIBUTE_TYPE_STRING_LIST", validStringList: ["PhoneNumber", "Licenses", "UserProps.Wanted", "UserProps.Job", "UserProps.TrafficInfractionPoints", "UserProps.OpenFines", "UserProps.BloodType", "UserProps.Mugshot", "UserProps.Labels", "UserProps.Email"] }] } }, I: ListCitizensRequest, O: ListCitizensResponse },
+    { name: "ListCitizens", options: { "codegen.perms.perms": { enabled: true, attrs: [{ key: "Properties", type: "ATTRIBUTE_TYPE_PROPERTY_LIST", propertyScope: "PROPERTY_SCOPE_USER" }] } }, I: ListCitizensRequest, O: ListCitizensResponse },
     { name: "GetUser", options: { "codegen.perms.perms": { enabled: true, attrs: [{ key: "Jobs", type: "ATTRIBUTE_TYPE_JOB_GRADE_LIST" }] } }, I: GetUserRequest, O: GetUserResponse },
     { name: "ListUserActivity", options: { "codegen.perms.perms": { enabled: true, attrs: [{ key: "Fields", type: "ATTRIBUTE_TYPE_STRING_LIST", validStringList: ["SourceUser", "Own"] }] } }, I: ListUserActivityRequest, O: ListUserActivityResponse },
-    { name: "SetUserProps", options: { "codegen.perms.perms": { enabled: true, attrs: [{ key: "Fields", type: "ATTRIBUTE_TYPE_STRING_LIST", validStringList: ["Wanted", "Job", "TrafficInfractionPoints", "Mugshot", "Labels"] }] } }, I: SetUserPropsRequest, O: SetUserPropsResponse },
+    { name: "SetUserProps", options: { "codegen.perms.perms": { enabled: true, attrs: [{ key: "Properties", type: "ATTRIBUTE_TYPE_PROPERTY_LIST", propertyScope: "PROPERTY_SCOPE_USER" }] } }, I: SetUserPropsRequest, O: SetUserPropsResponse },
     { name: "UploadAvatar", clientStreaming: true, options: { "codegen.perms.perms": { enabled: true, name: "Any" } }, I: UploadFileRequest, O: UploadFileResponse },
     { name: "DeleteAvatar", options: { "codegen.perms.perms": { enabled: true, name: "Any" } }, I: DeleteAvatarRequest, O: DeleteAvatarResponse },
     { name: "UploadMugshot", clientStreaming: true, options: { "codegen.perms.perms": { enabled: true, name: "SetUserProps" } }, I: UploadFileRequest, O: UploadFileResponse },
     { name: "DeleteMugshot", options: { "codegen.perms.perms": { enabled: true, name: "SetUserProps" } }, I: DeleteMugshotRequest, O: DeleteMugshotResponse }
-], { "codegen.perms.perms_svc": { order: 30, icon: "i-mdi-account-multiple-outline" } });
+], { "codegen.perms.perms_svc": { order: 30, icon: "i-mdi-account-multiple-outline", systemProperties: [{ scope: "PROPERTY_SCOPE_USER", key: "user.phone_number", valueType: "PROPERTY_VALUE_TYPE_STRING", enabled: true, displayKey: "common.phone_number", searchable: true, renderer: "PROPERTY_RENDERER_PHONE", groupKey: "contact", sortOrder: 100 }, { scope: "PROPERTY_SCOPE_USER", key: "user.visum", valueType: "PROPERTY_VALUE_TYPE_INTEGER", enabled: true, displayKey: "common.visum", groupKey: "contact", sortOrder: 300, implicit: true }, { scope: "PROPERTY_SCOPE_USER", key: "user.licenses", valueType: "PROPERTY_VALUE_TYPE_STRING", enabled: true, displayKey: "common.license", groupKey: "licenses", sortOrder: 100 }, { scope: "PROPERTY_SCOPE_USER", key: "user.wanted", valueType: "PROPERTY_VALUE_TYPE_BOOL", enabled: true, displayKey: "common.wanted", searchable: true, valueFormat: "PROPERTY_VALUE_FORMAT_PLAIN", behavior: "PROPERTY_BEHAVIOR_MANAGED", displayMode: "PROPERTY_DISPLAY_MODE_PROFILE_BADGE", groupKey: "status", sortOrder: 100, pinned: true }, { scope: "PROPERTY_SCOPE_USER", key: "user.job", valueType: "PROPERTY_VALUE_TYPE_STRING", enabled: true, displayKey: "common.job", searchable: true, displayMode: "PROPERTY_DISPLAY_MODE_PROFILE_BADGE", groupKey: "status", sortOrder: 400, pinned: true }, { scope: "PROPERTY_SCOPE_USER", key: "user.traffic_infraction_points", valueType: "PROPERTY_VALUE_TYPE_INTEGER", enabled: true, displayKey: "common.traffic_infraction_points", searchable: true, renderer: "PROPERTY_RENDERER_TRAFFIC_POINTS", groupKey: "status", sortOrder: 200, pinned: true }, { scope: "PROPERTY_SCOPE_USER", key: "user.open_fines", valueType: "PROPERTY_VALUE_TYPE_INTEGER", enabled: true, displayKey: "common.fine", searchable: true, valueFormat: "PROPERTY_VALUE_FORMAT_MONEY", renderer: "PROPERTY_RENDERER_MONEY", groupKey: "status", sortOrder: 300, pinned: true }, { scope: "PROPERTY_SCOPE_USER", key: "user.blood_type", valueType: "PROPERTY_VALUE_TYPE_STRING", enabled: true, displayKey: "common.blood_type", searchable: true, groupKey: "personal", sortOrder: 400 }, { scope: "PROPERTY_SCOPE_USER", key: "user.mugshot", valueType: "PROPERTY_VALUE_TYPE_STRING", enabled: true, displayKey: "common.mugshot", groupKey: "personal", sortOrder: 500 }, { scope: "PROPERTY_SCOPE_USER", key: "user.labels", valueType: "PROPERTY_VALUE_TYPE_STRING", enabled: true, displayKey: "common.label", groupKey: "labels", sortOrder: 500 }, { scope: "PROPERTY_SCOPE_USER", key: "user.email", valueType: "PROPERTY_VALUE_TYPE_STRING", enabled: true, displayKey: "common.personal_email", searchable: true, renderer: "PROPERTY_RENDERER_EMAIL", groupKey: "contact", sortOrder: 200 }], propertyGroups: [{ scope: "PROPERTY_SCOPE_USER", key: "personal", displayKey: "components.settings.property_definitions.groups.personal", sortOrder: 100 }, { scope: "PROPERTY_SCOPE_USER", key: "contact", displayKey: "components.settings.property_definitions.groups.contact", sortOrder: 200 }, { scope: "PROPERTY_SCOPE_USER", key: "status", displayKey: "components.settings.property_definitions.groups.status", sortOrder: 300 }, { scope: "PROPERTY_SCOPE_USER", key: "labels", displayKey: "components.settings.property_definitions.groups.labels", sortOrder: 400 }, { scope: "PROPERTY_SCOPE_USER", key: "licenses", displayKey: "components.settings.property_definitions.groups.licenses", sortOrder: 500 }] } });

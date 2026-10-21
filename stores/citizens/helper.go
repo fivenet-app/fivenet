@@ -38,38 +38,44 @@ func (s *Store) ListExpiredWantedUserProps(
 	maxDays int64,
 	limit int64,
 ) ([]int32, error) {
-	tUserProps := table.FivenetUserProps
+	tValues := table.FivenetUserPropertyValues.AS("value")
+	tState := table.FivenetUserPropertyState.AS("state")
 
-	stmt := tUserProps.
-		SELECT(tUserProps.UserID).
-		FROM(tUserProps).
+	stmt := tValues.
+		SELECT(tValues.UserID).
+		FROM(tValues.INNER_JOIN(tState, mysql.AND(
+			tState.UserID.EQ(tValues.UserID),
+			tState.PropertyKey.EQ(tValues.PropertyKey),
+		))).
 		WHERE(mysql.AND(
-			tUserProps.Wanted.IS_TRUE(),
+			tValues.PropertyKey.EQ(mysql.String("user.wanted")),
+			tValues.ValueType.EQ(mysql.Uint8(uint8(userPropertyValueTypeBool))),
+			tValues.ValueBool.IS_TRUE(),
 			mysql.OR(
-				tUserProps.WantedAt.LT(
-					mysql.CURRENT_TIMESTAMP().SUB(mysql.INTERVAL(maxDays, "DAY")),
+				tState.ActiveAt.LT(
+					mysql.CURRENT_TIMESTAMP().SUB(mysql.INTERVAL(maxDays, mysql.DAY)),
 				),
-				tUserProps.WantedTill.LT(mysql.CURRENT_TIMESTAMP()),
+				tState.ExpiresAt.LT(mysql.CURRENT_TIMESTAMP()),
 			),
 		)).
 		LIMIT(limit)
 
-	var dest []int32
-	if err := stmt.QueryContext(ctx, s.db, &dest); err != nil {
-		if !errors.Is(err, qrm.ErrNoRows) {
-			return nil, err
-		}
+	dest := []int32{}
+	if err := stmt.QueryContext(ctx, s.db, &dest); err != nil && !errors.Is(err, qrm.ErrNoRows) {
+		return nil, err
 	}
-
 	return dest, nil
 }
 
 func (s *Store) GetAvatarFileID(ctx context.Context, userId int32) (*int64, error) {
-	tUserProps := table.FivenetUserProps
+	tUserFiles := table.FivenetUserFiles
 
-	stmt := tUserProps.
-		SELECT(tUserProps.AvatarFileID).
-		WHERE(tUserProps.UserID.EQ(mysql.Int32(userId))).
+	stmt := tUserFiles.
+		SELECT(tUserFiles.FileID.AS("avatar_file_id")).
+		WHERE(mysql.AND(
+			tUserFiles.UserID.EQ(mysql.Int32(userId)),
+			tUserFiles.Kind.EQ(mysql.String("avatar")),
+		)).
 		LIMIT(1)
 
 	var props struct {
@@ -85,11 +91,14 @@ func (s *Store) GetAvatarFileID(ctx context.Context, userId int32) (*int64, erro
 }
 
 func (s *Store) GetMugshotFileID(ctx context.Context, userId int32) (*int64, error) {
-	tUserProps := table.FivenetUserProps
+	tUserFiles := table.FivenetUserFiles
 
-	stmt := tUserProps.
-		SELECT(tUserProps.MugshotFileID).
-		WHERE(tUserProps.UserID.EQ(mysql.Int32(userId))).
+	stmt := tUserFiles.
+		SELECT(tUserFiles.FileID.AS("mugshot_file_id")).
+		WHERE(mysql.AND(
+			tUserFiles.UserID.EQ(mysql.Int32(userId)),
+			tUserFiles.Kind.EQ(mysql.String("mugshot")),
+		)).
 		LIMIT(1)
 
 	var props struct {

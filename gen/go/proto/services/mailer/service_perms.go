@@ -22,8 +22,9 @@ func init() {
 			Name:      permkeys.MailerServiceCreateOrUpdateEmailPerm,
 			Attrs: []perms.Attr{
 				{
-					Key:         permkeys.MailerServiceCreateOrUpdateEmailFieldsPermField,
-					Type:        permissionsattributes.StringListAttributeType,
+					Key:  permkeys.MailerServiceCreateOrUpdateEmailFieldsPermField,
+					Type: permissionsattributes.StringListAttributeType,
+
 					ValidValues: []string{"Job"},
 				},
 			},

@@ -47,6 +47,7 @@ message OneofContainer {
       enabled: true
       strip_html_tags: true
     }];
+    OneofPayload string = 3 [(codegen.sanitizer.sanitizer) = {enabled: true}];
   }
 }
 `
@@ -109,6 +110,8 @@ func TestSanitizerModule_Execute_SanitizesOneofPayloadValues(t *testing.T) {
 	mustContainBackend(t, got, "if err := s.Sanitize(); err != nil {")
 	mustContainBackend(t, got, "case *OneofContainer_Label:")
 	mustContainBackend(t, got, "v.Label = htmlsanitizer.StripHTMLTags(v.Label)")
+	mustContainBackend(t, got, "case *OneofContainer_String_:")
+	mustContainBackend(t, got, "if v.String_ != nil {")
 
 	if strings.Contains(got, "any(v).(interface{ Sanitize() error })") {
 		t.Fatalf("oneof wrapper should not be type asserted as sanitizable:\n%s", got)

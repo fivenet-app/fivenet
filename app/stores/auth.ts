@@ -11,6 +11,7 @@ import type { Job } from '~~/gen/ts/resources/jobs/jobs';
 import type { JobProps } from '~~/gen/ts/resources/jobs/props/props';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 import type { RoleAttribute } from '~~/gen/ts/resources/permissions/attributes/attributes';
+import type { AuthorizationState } from '~~/gen/ts/resources/permissions/authorization/authorization';
 import type { Permission } from '~~/gen/ts/resources/permissions/permissions/permissions';
 import type { User } from '~~/gen/ts/resources/users/user';
 import type { ImpersonateJobResponse, RefreshAccountSessionResponse } from '~~/gen/ts/services/auth/auth';
@@ -280,11 +281,12 @@ export const useAuthStore = defineStore(
         };
 
         /**
-         * Updates the user's permissions and role attributes.
-         * @param perms - The list of permissions to set.
-         * @param attrs - The list of role attributes to set.
+         * Replaces the user's effective authorization snapshot.
+         * @param authorization - The complete authorization state to apply.
          */
-        const setPermissions = (perms: Permission[], attrs: RoleAttribute[]): void => {
+        const setAuthorizationState = (authorization: AuthorizationState | undefined): void => {
+            const perms = authorization?.permissions ?? [];
+            const attrs = authorization?.attributes ?? [];
             permissions.value = [...perms].sort();
             attributes.value = [...attrs].sort();
             canBeSuperuser.value = perms.some((p) => p.guardName === superuserCanBePermGuard);
@@ -356,7 +358,7 @@ export const useAuthStore = defineStore(
                     logger.info('Received fast-tracked login response with char, id:', response.char.char?.userId);
 
                     setActiveChar(response.char.char ?? null);
-                    setPermissions(response.char.permissions, response.char.attributes);
+                    setAuthorizationState(response.char.authorization);
                     setJobProps(response.char.jobProps);
                     setUserToken(response.char.token);
                     phase.value = 'character-ready';
@@ -540,13 +542,13 @@ export const useAuthStore = defineStore(
                 setUsername(response.username);
                 setActiveChar(response.char);
                 setUserToken(response.token);
-                setPermissions(response.permissions, response.attributes);
+                setAuthorizationState(response.authorization);
                 setAccountCanBeConfigAdmin(false);
                 setJobProps(response.jobProps);
                 if (
                     superuserRestoreHint.value?.accountId === accountId.value &&
                     superuserRestoreHint.value?.charId === charId &&
-                    !response.permissions.some((p) => p.guardName === jobAdminPermGuard)
+                    !(response.authorization?.permissions ?? []).some((p) => p.guardName === jobAdminPermGuard)
                 ) {
                     superuserRestoreHint.value = null;
                     writeSuperuserRestoreHint(null);
@@ -619,7 +621,7 @@ export const useAuthStore = defineStore(
 
             beginQueryTransition();
             setActiveChar(response.char);
-            setPermissions(response.permissions, response.attributes);
+            setAuthorizationState(response.authorization);
             // Job props doesn't change on impersonation (user is part of the same job)
             setUserToken(response.token);
             commitQueryContext();
@@ -648,7 +650,7 @@ export const useAuthStore = defineStore(
                 beginQueryTransition();
                 setActiveChar(response.char!);
                 setUserToken(response.token);
-                setPermissions(response.permissions, response.attributes);
+                setAuthorizationState(response.authorization);
                 setJobProps(response.jobProps);
                 superuserRestoreHint.value = superuser
                     ? {
@@ -697,7 +699,7 @@ export const useAuthStore = defineStore(
         const clearCharacterSession = (kind?: 'character-expired' | 'temporary', batched = true): void => {
             if (batched) beginQueryTransition();
             setActiveChar(null);
-            setPermissions([], []);
+            setAuthorizationState(undefined);
             setCanBeSuperuser(false);
             setAccountCanBeConfigAdmin(false);
             setJobProps(undefined);

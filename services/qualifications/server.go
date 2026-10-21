@@ -150,7 +150,11 @@ func NewServer(p Params) Result {
 	}
 }
 
-func (s *Server) sendQualificationObjectEvent(ctx context.Context, qualificationID int64, userID int32) {
+func (s *Server) sendQualificationObjectEvent(
+	ctx context.Context,
+	qualificationID int64,
+	userID int32,
+) {
 	if s.notif == nil {
 		return
 	}

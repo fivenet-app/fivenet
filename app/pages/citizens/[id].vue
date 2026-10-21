@@ -253,6 +253,7 @@ const isOpen = ref<boolean>(false);
                 "
                 @update:traffic-infraction-points="user.props!.trafficInfractionPoints = $event"
                 @update:mug-shot="user.props!.mugshot = $event"
+                @update:properties="user.properties = $event"
             />
         </template>
     </UDashboardPanel>
@@ -293,6 +294,7 @@ const isOpen = ref<boolean>(false);
                             "
                             @update:traffic-infraction-points="user.props!.trafficInfractionPoints = $event"
                             @update:mug-shot="user.props!.mugshot = $event"
+                            @update:properties="user.properties = $event"
                         />
                     </template>
                 </UDashboardPanel>

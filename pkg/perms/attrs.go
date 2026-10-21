@@ -8,8 +8,10 @@ import (
 	database "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/common/database"
 	permissionsattributes "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/permissions/attributes"
 	permissionsevents "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/permissions/events"
+	propertypb "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/properties"
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/userinfo"
 	"github.com/fivenet-app/fivenet/v2026/pkg/dbutils"
+	propertyregistry "github.com/fivenet-app/fivenet/v2026/pkg/properties"
 	"github.com/fivenet-app/fivenet/v2026/pkg/utils/protoutils"
 	"github.com/fivenet-app/fivenet/v2026/query/fivenet/model"
 	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
@@ -109,6 +111,9 @@ func (ps *Perms) GetAttributeByIDs(
 		dest[i].Service = string(attr.Service)
 		dest[i].Name = string(attr.Name)
 	}
+	if err := ps.applyDynamicPropertyListOptions(ctx, dest); err != nil {
+		return nil, err
+	}
 
 	return dest, nil
 }
@@ -150,6 +155,7 @@ func (ps *Perms) createAttribute(
 	key Key,
 	aType permissionsattributes.AttributeTypes,
 	validValues *permissionsattributes.AttributeValues,
+	propertyScope propertypb.PropertyScope,
 ) (int64, error) {
 	stmt := tAttrs.
 		INSERT(
@@ -185,6 +191,7 @@ func (ps *Perms) createAttribute(
 			key,
 			aType,
 			validValues,
+			propertyScope,
 		); err != nil {
 			return 0, fmt.Errorf(
 				"failed to add or update attribute in map after duplicate error. %w",
@@ -200,7 +207,14 @@ func (ps *Perms) createAttribute(
 		return 0, fmt.Errorf("failed to retrieve last insert ID. %w", err)
 	}
 
-	if err := ps.addOrUpdateAttributeInMap(permId, lastId, key, aType, validValues); err != nil {
+	if err := ps.addOrUpdateAttributeInMap(
+		permId,
+		lastId,
+		key,
+		aType,
+		validValues,
+		propertyScope,
+	); err != nil {
 		return 0, fmt.Errorf("failed to add or update attribute in map. %w", err)
 	}
 
@@ -213,6 +227,7 @@ func (ps *Perms) addOrUpdateAttributeInMap(
 	key Key,
 	aType permissionsattributes.AttributeTypes,
 	validValues *permissionsattributes.AttributeValues,
+	propertyScope propertypb.PropertyScope,
 ) error {
 	perm, ok := ps.lookupPermByID(permId)
 	if !ok {
@@ -220,14 +235,15 @@ func (ps *Perms) addOrUpdateAttributeInMap(
 	}
 
 	attr := &cacheAttr{
-		ID:           attrId,
-		PermissionID: permId,
-		Namespace:    perm.Namespace,
-		Service:      perm.Service,
-		Name:         perm.Name,
-		Key:          key,
-		Type:         aType,
-		ValidValues:  validValues,
+		ID:            attrId,
+		PermissionID:  permId,
+		Namespace:     perm.Namespace,
+		Service:       perm.Service,
+		Name:          perm.Name,
+		Key:           key,
+		Type:          aType,
+		PropertyScope: propertyScope,
+		ValidValues:   validValues,
 	}
 
 	ps.attrsMap.Store(attrId, attr)
@@ -247,6 +263,7 @@ func (ps *Perms) updateAttribute(
 	key Key,
 	aType permissionsattributes.AttributeTypes,
 	validValues *permissionsattributes.AttributeValues,
+	propertyScope propertypb.PropertyScope,
 ) error {
 	stmt := tAttrs.
 		UPDATE(
@@ -270,7 +287,14 @@ func (ps *Perms) updateAttribute(
 		return fmt.Errorf("failed to execute update statement. %w", err)
 	}
 
-	if err := ps.addOrUpdateAttributeInMap(permId, attrId, key, aType, validValues); err != nil {
+	if err := ps.addOrUpdateAttributeInMap(
+		permId,
+		attrId,
+		key,
+		aType,
+		validValues,
+		propertyScope,
+	); err != nil {
 		return fmt.Errorf("failed to add or update attribute in map. %w", err)
 	}
 
@@ -371,8 +395,178 @@ func (ps *Perms) GetJobAttributes(
 			return nil, err
 		}
 	}
+	if err := ps.applyDynamicPropertyListOptions(ctx, dest); err != nil {
+		return nil, err
+	}
 
 	return dest, nil
+}
+
+// dynamicPropertyListValidValues overlays runtime custom property keys onto
+// the generated system-property options for one property-list attribute.
+func (ps *Perms) dynamicPropertyListValidValues(
+	ctx context.Context,
+	scope propertypb.PropertyScope,
+	base *permissionsattributes.AttributeValues,
+) (*permissionsattributes.AttributeValues, error) {
+	scopeName, ok := propertyregistry.ScopeName(scope)
+	if !ok {
+		return base, nil
+	}
+
+	values := &permissionsattributes.AttributeValues{}
+	if base != nil {
+		values = proto.Clone(base).(*permissionsattributes.AttributeValues)
+	}
+	keys := append([]string(nil), values.GetPropertyList().GetKeys()...)
+
+	tDefinitions := table.FivenetPropertyDefinitions
+	stmt := tDefinitions.SELECT(tDefinitions.PropertyKey, tDefinitions.Label, tDefinitions.Implicit).
+		FROM(tDefinitions).
+		WHERE(
+			tDefinitions.Scope.EQ(mysql.String(scopeName)).AND(tDefinitions.DeletedAt.IS_NULL()),
+		)
+	// Keep disabled keys selectable so existing grants remain editable; resource
+	// handlers independently reject disabled definitions for reads and writes.
+	var customDefinitions []model.FivenetPropertyDefinitions
+	if err := stmt.QueryContext(ctx, ps.db, &customDefinitions); err != nil {
+		return nil, fmt.Errorf("failed to load custom property-list options. %w", err)
+	}
+	customLabels := make(map[string]string, len(customDefinitions))
+	for _, definition := range customDefinitions {
+		if propertyregistry.IsCustomPropertyKey(scope, definition.PropertyKey) &&
+			!definition.Implicit {
+			keys = append(keys, definition.PropertyKey)
+			customLabels[definition.PropertyKey] = definition.Label
+		}
+	}
+	keys = slices.DeleteFunc(keys, func(key string) bool {
+		definition, ok := propertyregistry.SystemPropertyDefinition(scope, key)
+		return ok && definition.GetImplicit()
+	})
+	slices.Sort(keys)
+	keys = slices.Compact(keys)
+	propertyDefinitions := make([]*permissionsattributes.PropertyListEntry, 0, len(keys))
+	for _, key := range keys {
+		label := key
+		if definition, ok := propertyregistry.SystemPropertyDefinition(scope, key); ok {
+			label = definition.GetLabel()
+		} else if customLabel, ok := customLabels[key]; ok {
+			label = customLabel
+		}
+		propertyDefinitions = append(propertyDefinitions, &permissionsattributes.PropertyListEntry{
+			Key: key, Label: label,
+		})
+	}
+	values.ValidValues = &permissionsattributes.AttributeValues_PropertyList{
+		PropertyList: &permissionsattributes.PropertyList{
+			Keys:       keys,
+			Properties: propertyDefinitions,
+		},
+	}
+
+	return values, nil
+}
+
+func (ps *Perms) applyDynamicPropertyListOptions(
+	ctx context.Context,
+	attrs []*permissionsattributes.RoleAttribute,
+) error {
+	resolved := make(map[propertypb.PropertyScope]*permissionsattributes.AttributeValues)
+	for _, roleAttr := range attrs {
+		if roleAttr == nil {
+			continue
+		}
+		attr, ok := ps.lookupAttributeByID(roleAttr.GetAttrId())
+		if !ok || attr.Type != permissionsattributes.PropertyListAttributeType ||
+			attr.PropertyScope == propertypb.PropertyScope_PROPERTY_SCOPE_UNSPECIFIED {
+			continue
+		}
+		validValues, ok := resolved[attr.PropertyScope]
+		if !ok {
+			var err error
+			validValues, err = ps.dynamicPropertyListValidValues(
+				ctx,
+				attr.PropertyScope,
+				attr.ValidValues,
+			)
+			if err != nil {
+				return err
+			}
+			resolved[attr.PropertyScope] = validValues
+		}
+		roleAttr.ValidValues = validValues
+		roleAttr.MaxValues = propertyListWithDefinitions(roleAttr.MaxValues, validValues)
+		roleAttr.Value = filterPropertyListValue(roleAttr.Value, validValues)
+	}
+
+	return nil
+}
+
+// propertyListWithDefinitions attaches the available definition metadata to a
+// property-list value without changing the keys that constrain it.
+func propertyListWithDefinitions(
+	value *permissionsattributes.AttributeValues,
+	validValues *permissionsattributes.AttributeValues,
+) *permissionsattributes.AttributeValues {
+	if value == nil || value.GetPropertyList() == nil || validValues == nil {
+		return value
+	}
+
+	definitionsByKey := make(
+		map[string]*permissionsattributes.PropertyListEntry,
+		len(validValues.GetPropertyList().GetProperties()),
+	)
+	for _, definition := range validValues.GetPropertyList().GetProperties() {
+		if definition != nil {
+			definitionsByKey[definition.GetKey()] = definition
+		}
+	}
+
+	result := proto.Clone(value).(*permissionsattributes.AttributeValues)
+	definitions := make(
+		[]*permissionsattributes.PropertyListEntry,
+		0,
+		len(value.GetPropertyList().GetKeys()),
+	)
+	for _, key := range value.GetPropertyList().GetKeys() {
+		if definition, ok := definitionsByKey[key]; ok {
+			definitions = append(definitions, definition)
+		}
+	}
+	result.ValidValues = &permissionsattributes.AttributeValues_PropertyList{
+		PropertyList: &permissionsattributes.PropertyList{
+			Keys:       append([]string(nil), value.GetPropertyList().GetKeys()...),
+			Properties: definitions,
+		},
+	}
+	return result
+}
+
+func filterPropertyListValue(
+	value *permissionsattributes.AttributeValues,
+	validValues *permissionsattributes.AttributeValues,
+) *permissionsattributes.AttributeValues {
+	if value == nil || value.GetPropertyList() == nil || validValues == nil {
+		return value
+	}
+
+	allowed := make(map[string]struct{}, len(validValues.GetPropertyList().GetKeys()))
+	for _, key := range validValues.GetPropertyList().GetKeys() {
+		allowed[key] = struct{}{}
+	}
+
+	filtered := proto.Clone(value).(*permissionsattributes.AttributeValues)
+	keys := make([]string, 0, len(value.GetPropertyList().GetKeys()))
+	for _, key := range value.GetPropertyList().GetKeys() {
+		if _, ok := allowed[key]; ok {
+			keys = append(keys, key)
+		}
+	}
+	filtered.ValidValues = &permissionsattributes.AttributeValues_PropertyList{
+		PropertyList: &permissionsattributes.PropertyList{Keys: keys},
+	}
+	return filtered
 }
 
 func (ps *Perms) Attr(
@@ -489,6 +683,122 @@ func (ps *Perms) attrJobGradeListRaw(
 	}
 }
 
+func (ps *Perms) attrPropertyListRaw(
+	userInfo *userinfo.UserInfo,
+	namespace Namespace,
+	service Service,
+	name Name,
+	key Key,
+) (*permissionsattributes.PropertyList, error) {
+	attrValue, err := ps.Attr(userInfo, namespace, service, name, key)
+	if err != nil {
+		return &permissionsattributes.PropertyList{}, err
+	}
+
+	if attrValue == nil || attrValue.ValidValues == nil {
+		return &permissionsattributes.PropertyList{}, nil
+	}
+
+	switch v := attrValue.GetValidValues().(type) {
+	case *permissionsattributes.AttributeValues_PropertyList:
+		return proto.Clone(v.PropertyList).(*permissionsattributes.PropertyList), nil
+
+	default:
+		return &permissionsattributes.PropertyList{}, errors.New(
+			"unknown role attribute type for property list",
+		)
+	}
+}
+
+// AttrPropertyListContext resolves a property-list attribute and appends all
+// enabled implicit definitions for its property scope. The context is used
+// for the database lookup of custom definitions.
+func (ps *Perms) AttrPropertyListContext(
+	ctx context.Context,
+	userInfo *userinfo.UserInfo,
+	attr AttrRef[PropertyListAttr],
+) (*permissionsattributes.PropertyList, error) {
+	result, err := ps.attrPropertyListRaw(
+		userInfo,
+		attr.perm.namespace,
+		attr.perm.service,
+		attr.perm.name,
+		attr.key,
+	)
+	if err != nil {
+		return result, err
+	}
+	permID, ok := ps.lookupPermIDByGuard(
+		BuildGuard(attr.perm.namespace, attr.perm.service, attr.perm.name),
+	)
+	if !ok {
+		return result, nil
+	}
+	attribute, ok := ps.lookupAttributeByPermID(permID, attr.key)
+	if !ok || attribute.PropertyScope == propertypb.PropertyScope_PROPERTY_SCOPE_UNSPECIFIED {
+		return result, nil
+	}
+	keys, err := ps.implicitPropertyKeys(ctx, attribute.PropertyScope)
+	if err != nil {
+		return nil, err
+	}
+	for _, propertyKey := range keys {
+		if !slices.Contains(result.GetKeys(), propertyKey) {
+			result.Keys = append(result.Keys, propertyKey)
+		}
+	}
+	return result, nil
+}
+
+func (ps *Perms) implicitPropertyKeys(
+	ctx context.Context,
+	scope propertypb.PropertyScope,
+) ([]string, error) {
+	keys := make([]string, 0)
+	enabledOverrides := map[string]bool{}
+	name, ok := propertyregistry.ScopeName(scope)
+	if !ok {
+		return keys, nil
+	}
+	overrides := []model.FivenetPropertySystemOverrides{}
+	tOverrides := table.FivenetPropertySystemOverrides
+	if err := tOverrides.SELECT(tOverrides.PropertyKey, tOverrides.Enabled).FROM(tOverrides).
+		WHERE(tOverrides.Scope.EQ(mysql.String(name))).
+		QueryContext(ctx, ps.db, &overrides); err != nil {
+		return nil, err
+	}
+	for _, override := range overrides {
+		enabledOverrides[override.PropertyKey] = override.Enabled
+	}
+	for _, definition := range propertyregistry.SystemPropertyDefinitionsForScope(scope) {
+		enabled := definition.GetEnabled()
+		if override, ok := enabledOverrides[definition.GetKey()]; ok {
+			enabled = override
+		}
+		if enabled && definition.GetImplicit() {
+			keys = append(keys, definition.GetKey())
+		}
+	}
+	rows := []model.FivenetPropertyDefinitions{}
+	tDefinitions := table.FivenetPropertyDefinitions
+	if err := tDefinitions.SELECT(tDefinitions.PropertyKey).FROM(tDefinitions).WHERE(
+		tDefinitions.Scope.EQ(mysql.String(name)).AND(
+			tDefinitions.Implicit.IS_TRUE().
+				AND(tDefinitions.Enabled.IS_TRUE()).
+				AND(tDefinitions.DeletedAt.IS_NULL()),
+		),
+	).QueryContext(ctx, ps.db, &rows); err != nil {
+		return nil, err
+	}
+	for _, row := range rows {
+		if propertyregistry.IsCustomPropertyKey(scope, row.PropertyKey) {
+			keys = append(keys, row.PropertyKey)
+		}
+	}
+	slices.Sort(keys)
+	return slices.Compact(keys), nil
+}
+
 func (ps *Perms) convertRawValue(
 	targetVal *permissionsattributes.AttributeValues,
 	rawVal string,
@@ -543,6 +853,9 @@ func (ps *Perms) GetAllAttributes(
 		}
 
 		// MaxValues are not set because we don't know the job context here
+	}
+	if err := ps.applyDynamicPropertyListOptions(ctx, dest); err != nil {
+		return nil, err
 	}
 
 	return dest, nil
@@ -653,6 +966,9 @@ func (ps *Perms) GetRoleAttributes(
 	if err != nil {
 		return nil, fmt.Errorf("failed to range over attributes. %w", err)
 	}
+	if err := ps.applyDynamicPropertyListOptions(ctx, attrs); err != nil {
+		return nil, err
+	}
 
 	return attrs, nil
 }
@@ -737,6 +1053,9 @@ func (ps *Perms) GetEffectiveRoleAttributes(
 	if err != nil {
 		return nil, fmt.Errorf("failed to range over attributes. %w", err)
 	}
+	if err := ps.applyDynamicPropertyListOptions(ctx, attrs); err != nil {
+		return nil, err
+	}
 
 	return attrs, nil
 }
@@ -773,7 +1092,29 @@ func (ps *Perms) UpdateRoleAttributes(
 				)
 			}
 
-			valid, _ := attrs[i].GetValue().Check(a.Type, a.ValidValues, maxValues)
+			validValues := a.ValidValues
+			if a.Type == permissionsattributes.PropertyListAttributeType &&
+				a.PropertyScope != propertypb.PropertyScope_PROPERTY_SCOPE_UNSPECIFIED {
+				validValues, err = ps.dynamicPropertyListValidValues(
+					ctx,
+					a.PropertyScope,
+					a.ValidValues,
+				)
+				if err != nil {
+					return err
+				}
+				if roleAttrs, ok := ps.attrsRoleMap.Load(roleId); ok {
+					if existing, ok := roleAttrs.Load(a.ID); ok {
+						validValues = includeExistingPropertyListGrants(
+							validValues,
+							existing.Value,
+							a.PropertyScope,
+						)
+					}
+				}
+			}
+
+			valid, _ := attrs[i].GetValue().Check(a.Type, validValues, maxValues)
 			if !valid {
 				return errors.Wrapf(
 					ErrAttrInvalid,
@@ -796,6 +1137,30 @@ func (ps *Perms) UpdateRoleAttributes(
 	}
 
 	return nil
+}
+
+func includeExistingPropertyListGrants(
+	validValues *permissionsattributes.AttributeValues,
+	existingValue *permissionsattributes.AttributeValues,
+	scope propertypb.PropertyScope,
+) *permissionsattributes.AttributeValues {
+	if existingValue == nil || len(existingValue.GetPropertyList().GetKeys()) == 0 {
+		return validValues
+	}
+
+	result := proto.Clone(validValues).(*permissionsattributes.AttributeValues)
+	keys := append([]string(nil), result.GetPropertyList().GetKeys()...)
+	for _, key := range existingValue.GetPropertyList().GetKeys() {
+		if propertyregistry.IsCustomPropertyKey(scope, key) {
+			keys = append(keys, key)
+		}
+	}
+	slices.Sort(keys)
+	keys = slices.Compact(keys)
+	result.ValidValues = &permissionsattributes.AttributeValues_PropertyList{
+		PropertyList: &permissionsattributes.PropertyList{Keys: keys},
+	}
+	return result
 }
 
 func (ps *Perms) addOrUpdateAttributesToRole(

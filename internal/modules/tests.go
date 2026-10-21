@@ -13,6 +13,7 @@ import (
 	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/auth"
 	"github.com/fivenet-app/fivenet/v2026/pkg/mstlystcdata"
 	"github.com/fivenet-app/fivenet/v2026/pkg/perms"
+	propertyregistry "github.com/fivenet-app/fivenet/v2026/pkg/properties"
 	htmlsanitizer "github.com/fivenet-app/fivenet/v2026/pkg/sanitizer/html"
 	"github.com/fivenet-app/fivenet/v2026/pkg/storage"
 	"github.com/fivenet-app/fivenet/v2026/pkg/userinfo"
@@ -65,6 +66,7 @@ func GetFxTestOpts(opts ...fx.Option) []fx.Option {
 		),
 
 		fx.Provide(
+			propertyregistry.NewDefinitionCache,
 			authstore.New,
 			calendarstore.New,
 			citizensstore.New,
@@ -76,10 +78,10 @@ func GetFxTestOpts(opts ...fx.Option) []fx.Option {
 			mailerstore.New,
 			notificationsstore.New,
 			qualificationsstore.New,
-			settingsstore.New,
+			settingsstore.NewWithCache,
 			statsstore.New,
 			documentsstore.New,
-			vehiclesstore.New,
+			vehiclesstore.NewWithCache,
 			wikistore.New,
 		),
 

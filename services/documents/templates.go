@@ -15,6 +15,7 @@ import (
 	documentsaccess "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/documents/access"
 	documentstemplates "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/documents/templates"
 	jobscolleagues "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/jobs/colleagues"
+	permissionsattributes "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/permissions/attributes"
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/timestamp"
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/userinfo"
 	users "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/users"
@@ -29,7 +30,6 @@ import (
 	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/auth"
 	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/errswrap"
 	grpc_audit "github.com/fivenet-app/fivenet/v2026/pkg/grpc/interceptors/audit"
-	"github.com/fivenet-app/fivenet/v2026/pkg/perms"
 	errorsdocuments "github.com/fivenet-app/fivenet/v2026/services/documents/errors"
 	citizensstore "github.com/fivenet-app/fivenet/v2026/stores/citizens"
 	documentsstore "github.com/fivenet-app/fivenet/v2026/stores/documents"
@@ -367,11 +367,6 @@ func (s *Server) resolveTemplateData(
 		)
 	}
 
-	fields, err := permscitizens.CitizensService.ListCitizens.FieldsTyped.Get(s.perms, userInfo)
-	if err != nil {
-		return nil, errswrap.NewError(err, errorsdocuments.ErrTemplateRenderFailed)
-	}
-
 	data := &resolvedTemplateData{
 		ActiveChar: activeChar,
 	}
@@ -387,7 +382,14 @@ func (s *Server) resolveTemplateData(
 		citizensReq := &pbcitizens.ListCitizensRequest{Pagination: &database.PaginationRequest{}}
 		citizensReq.GetPagination().SetPageSize(pageSize)
 
-		listOptions := citizensListOptions(fields)
+		propertyList, err := s.perms.AttrPropertyListContext(ctx,
+			userInfo,
+			permscitizens.CitizensService.ListCitizens.Properties,
+		)
+		if err != nil {
+			return nil, errswrap.NewError(err, errorsdocuments.ErrTemplateRenderFailed)
+		}
+		listOptions := citizensListOptions(propertyList)
 		listOptions.UserIDs = selection.GetUserIds()
 
 		usersResp, err := s.citizensStore.ListCitizens(ctx, citizensReq, listOptions)
@@ -443,9 +445,9 @@ func (s *Server) resolveTemplateData(
 		}
 	}
 
-	vehicleFields, err := permsvehicles.VehiclesService.ListVehicles.FieldsTyped.Get(
-		s.perms,
+	vehicleProperties, err := s.perms.AttrPropertyListContext(ctx,
 		userInfo,
+		permsvehicles.VehiclesService.ListVehicles.Properties,
 	)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsdocuments.ErrTemplateRenderFailed)
@@ -455,10 +457,8 @@ func (s *Server) resolveTemplateData(
 			UserInfo:            userInfo,
 			Plates:              selection.GetPlates(),
 			Limit:               int64(len(selection.GetPlates())),
-			IncludePropsUpdated: vehicleFields.Len() > 0,
-			IncludeWantedFields: vehicleFields.Contains(
-				permsvehicles.VehiclesServiceListVehiclesFieldsPermValueWanted,
-			) ||
+			IncludePropsUpdated: vehicleProperties.Len() > 0,
+			IncludeWantedFields: vehicleProperties.Contains("vehicle.wanted") ||
 				userInfo.GetJobAdmin(),
 		})
 		if err != nil {
@@ -488,33 +488,17 @@ func (s *Server) resolveTemplateData(
 }
 
 func citizensListOptions(
-	fields *perms.TypedStringList[permscitizens.CitizensServiceListCitizensFieldsPermValue],
+	propertyList *permissionsattributes.PropertyList,
 ) citizensstore.ListCitizensOptions {
 	return citizensstore.ListCitizensOptions{
-		IncludePhoneNumber: fields.Contains(
-			permscitizens.CitizensServiceListCitizensFieldsPermValuePhoneNumber,
-		),
-		IncludeWanted: fields.Contains(
-			permscitizens.CitizensServiceListCitizensFieldsPermValueUserPropsWanted,
-		),
-		IncludeJob: fields.Contains(
-			permscitizens.CitizensServiceListCitizensFieldsPermValueUserPropsJob,
-		),
-		IncludeTrafficInfractionPoints: fields.Contains(
-			permscitizens.CitizensServiceListCitizensFieldsPermValueUserPropsTrafficInfractionPoints,
-		),
-		IncludeOpenFines: fields.Contains(
-			permscitizens.CitizensServiceListCitizensFieldsPermValueUserPropsOpenFines,
-		),
-		IncludeBloodType: fields.Contains(
-			permscitizens.CitizensServiceListCitizensFieldsPermValueUserPropsBloodType,
-		),
-		IncludeMugshot: fields.Contains(
-			permscitizens.CitizensServiceListCitizensFieldsPermValueUserPropsMugshot,
-		),
-		IncludeEmail: fields.Contains(
-			permscitizens.CitizensServiceListCitizensFieldsPermValueUserPropsEmail,
-		),
+		IncludePhoneNumber:             propertyList.Contains("user.phone_number"),
+		IncludeWanted:                  propertyList.Contains("user.wanted"),
+		IncludeJob:                     propertyList.Contains("user.job"),
+		IncludeTrafficInfractionPoints: propertyList.Contains("user.traffic_infraction_points"),
+		IncludeOpenFines:               propertyList.Contains("user.open_fines"),
+		IncludeBloodType:               propertyList.Contains("user.blood_type"),
+		IncludeMugshot:                 propertyList.Contains("user.mugshot"),
+		IncludeEmail:                   propertyList.Contains("user.email"),
 	}
 }
 

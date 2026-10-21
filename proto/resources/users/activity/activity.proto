@@ -8,6 +8,7 @@ import "codegen/sanitizer/sanitizer.proto";
 import "resources/citizens/labels/labels.proto";
 import "resources/citizens/licenses/licenses.proto";
 import "resources/documents/relations/relations.proto";
+import "resources/properties/properties.proto";
 import "resources/timestamp/timestamp.proto";
 import "resources/users/short/user.proto";
 import "tagger/tagger.proto";
@@ -33,6 +34,10 @@ enum UserActivityType {
   USER_ACTIVITY_TYPE_DOCUMENT = 11;
   USER_ACTIVITY_TYPE_JAIL = 12;
   USER_ACTIVITY_TYPE_FINE = 13;
+  // File-backed property value change.
+  USER_ACTIVITY_TYPE_FILE = 14;
+  // Generic custom property value change.
+  USER_ACTIVITY_TYPE_PROPERTY = 15;
 }
 
 message UserActivity {
@@ -92,6 +97,7 @@ message UserActivityData {
     // "Plugin" activities
     JailChange jail_change = 9;
     FineChange fine_change = 10;
+    PropertyChange property_change = 11;
   }
 }
 
@@ -157,4 +163,12 @@ message JailChange {
 message FineChange {
   bool removed = 1;
   int64 amount = 2;
+}
+
+// PropertyChange is used only for custom, generic properties. Managed system
+// properties retain their dedicated activity types and richer payloads.
+message PropertyChange {
+  string key = 1 [(buf.validate.field).string.max_len = 64];
+  optional resources.properties.PropertyValue old_value = 2;
+  optional resources.properties.PropertyValue new_value = 3;
 }

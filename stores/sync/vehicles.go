@@ -35,7 +35,7 @@ func (s *Store) DeleteVehicles(
 		plateExprs = append(plateExprs, mysql.String(plate))
 	}
 
-	tVehicles := table.FivenetOwnedVehicles
+	tVehicles := table.FivenetVehicle
 	delStmt := tVehicles.
 		DELETE().
 		WHERE(tVehicles.Plate.IN(plateExprs...)).
@@ -61,7 +61,7 @@ func (s *Store) handleVehiclesData(
 		return 0, nil
 	}
 
-	tVehicles := table.FivenetOwnedVehicles
+	tVehicles := table.FivenetVehicle
 	tUsers := table.FivenetUser
 
 	stmt := tVehicles.

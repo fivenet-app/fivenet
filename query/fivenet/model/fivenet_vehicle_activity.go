@@ -11,12 +11,13 @@ import (
 	"time"
 )
 
-type FivenetVehiclesActivity struct {
+type FivenetVehicleActivity struct {
 	ID         int64      `sql:"primary_key" json:"id"`
 	CreatedAt  *time.Time `json:"created_at"`
 	CreatorID  *int32     `json:"creator_id"`
 	Plate      string     `json:"plate"`
 	Type       int16      `json:"type"`
+	Key        *string    `json:"key"`
 	CreatorJob string     `json:"creator_job"`
 	Reason     *string    `json:"reason"`
 	Data       *string    `json:"data"`

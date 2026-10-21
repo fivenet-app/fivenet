@@ -2,12 +2,12 @@ package vehicles
 
 import (
 	"context"
-	"regexp"
 	"testing"
 	"time"
 
 	"github.com/DATA-DOG/go-sqlmock"
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/settings"
+	permsvehicles "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/vehicles/perms"
 	"github.com/fivenet-app/fivenet/v2026/pkg/config"
 	"github.com/fivenet-app/fivenet/v2026/pkg/config/appconfig"
 	vehiclesstore "github.com/fivenet-app/fivenet/v2026/stores/vehicles"
@@ -19,6 +19,37 @@ import (
 
 type mockAppConfig struct {
 	cfg *appconfig.Cfg
+}
+
+func expectExpiredWantedVehicles(
+	mock sqlmock.Sqlmock,
+	limit int64,
+	plates ...string,
+) {
+	rows := sqlmock.NewRows([]string{"plate"})
+	for _, plate := range plates {
+		rows.AddRow(plate)
+	}
+	mock.ExpectQuery(`(?s)FROM fivenet_vehicle_property_values AS value.*INNER JOIN fivenet_vehicle_property_state AS state.*value.property_key.*value.value_type.*value.value_bool.*state.active_at.*state.expires_at.*LIMIT`).
+		WithArgs("vehicle.wanted", 4, limit).
+		WillReturnRows(rows)
+}
+
+func expectClearVehicleWanted(mock sqlmock.Sqlmock, plate string) {
+	mock.ExpectQuery(`(?s)FROM fivenet_vehicle_property_values value.*LEFT JOIN fivenet_vehicle_property_state state.*value.property_key.*value.plate IN`).
+		WithArgs("vehicle.wanted", plate).
+		WillReturnRows(sqlmock.NewRows([]string{"plate", "updated_at", "value_bool", "reason", "active_at", "expires_at"}).
+			AddRow(plate, time.Now(), true, nil, nil, nil))
+	mock.ExpectBegin()
+	mock.ExpectExec(`(?s)INSERT INTO fivenet_vehicle_property_values`).
+		WithArgs(plate, "vehicle.wanted", 4, false).
+		WillReturnResult(sqlmock.NewResult(0, 1))
+	mock.ExpectExec(`(?s)DELETE FROM fivenet_vehicle_property_state`).
+		WithArgs(plate, "vehicle.wanted").
+		WillReturnResult(sqlmock.NewResult(0, 1))
+	mock.ExpectExec(`(?s)INSERT INTO fivenet_vehicle_activity`).
+		WillReturnResult(sqlmock.NewResult(1, 1))
+	mock.ExpectCommit()
 }
 
 func (m *mockAppConfig) Get() *appconfig.Cfg {
@@ -98,6 +129,36 @@ func TestHousekeeperMaxWantedDurationHandling_NoDuration(t *testing.T) {
 	require.NoError(t, mock.ExpectationsWereMet())
 }
 
+func TestHousekeeperMaxWantedDurationHandling_SystemPropertyDisabled(t *testing.T) {
+	t.Parallel()
+	db, mock, err := sqlmock.New()
+	require.NoError(t, err)
+	t.Cleanup(func() {
+		_ = db.Close()
+	})
+
+	cfg := &settings.AppConfig{}
+	cfg.Default()
+	cfg.Game = &settings.Game{
+		MaxWantedDurationVehicleEnabled: true,
+		MaxWantedDurationVehicle:        durationpb.New(24 * time.Hour),
+	}
+
+	s := &Housekeeper{
+		logger: zap.NewNop(),
+		store:  vehiclesstore.New(db, &config.CustomDB{}, nil),
+		appCfg: &mockAppConfig{cfg: cfg},
+	}
+	mock.ExpectQuery("SELECT .*enabled").
+		WithArgs("vehicle", string(permsvehicles.VehiclesServiceListVehiclesPropertiesPermValueVehicleWanted)).
+		WillReturnRows(sqlmock.NewRows([]string{"fivenet_property_system_overrides.enabled"}).AddRow(false))
+
+	changedRows, err := s.maxWantedDurationHandling(t.Context())
+	require.NoError(t, err)
+	assert.Equal(t, 0, changedRows)
+	require.NoError(t, mock.ExpectationsWereMet())
+}
+
 func TestHousekeeperMaxWantedDurationHandling_QueryCondition(t *testing.T) {
 	t.Parallel()
 	db, mock, err := sqlmock.New()
@@ -118,34 +179,13 @@ func TestHousekeeperMaxWantedDurationHandling_QueryCondition(t *testing.T) {
 		store:  vehiclesstore.New(db, &config.CustomDB{}, nil),
 		appCfg: &mockAppConfig{cfg: cfg},
 	}
+	mock.ExpectQuery("SELECT .*enabled").
+		WithArgs("vehicle", string(permsvehicles.VehiclesServiceListVehiclesPropertiesPermValueVehicleWanted)).
+		WillReturnRows(sqlmock.NewRows([]string{"fivenet_property_system_overrides.enabled"}))
 
-	// Assert the key eligibility condition:
-	// wanted IS TRUE AND (wanted_at < CURRENT_TIMESTAMP - INTERVAL maxDays DAY OR wanted_till < CURRENT_TIMESTAMP).
-	expectedQuery := regexp.QuoteMeta(
-		`SELECT fivenet_vehicles_props.plate AS "fivenet_vehicles_props.plate" FROM fivenet_vehicles_props ` +
-			`WHERE ( (fivenet_vehicles_props.wanted IS TRUE) AND ` +
-			`( (fivenet_vehicles_props.wanted_at < (CURRENT_TIMESTAMP - INTERVAL 3 DAY)) ` +
-			`OR (fivenet_vehicles_props.wanted_till < CURRENT_TIMESTAMP) ) ) LIMIT ?;`,
-	)
-	mock.ExpectQuery(expectedQuery).
-		WithArgs(sqlmock.AnyArg()).
-		WillReturnRows(sqlmock.NewRows([]string{"plate"}).AddRow("ABC DEF1"))
-
-	// Retrieve user props for matched user
-	mock.ExpectQuery(`(?s)FROM .*fivenet_vehicles_props.*WHERE .*plate.*LIMIT \?`).
-		WithArgs("ABC DEF1", sqlmock.AnyArg()).
-		WillReturnRows(
-			sqlmock.NewRows([]string{"vehicle_props.plate", "vehicle_props.wanted"}).
-				AddRow("ABC DEF1", true),
-		)
-
-	// Make sure the query flips wanted to false for matched user.
-	mock.ExpectBegin()
-	mock.ExpectExec(`(?s)INSERT INTO .*fivenet_vehicles_props.*ON DUPLICATE KEY UPDATE.*wanted = \\?.*`).
-		WillReturnResult(sqlmock.NewResult(0, 1))
-	mock.ExpectExec(`(?s)INSERT INTO fivenet_vehicles_activity`).
-		WillReturnResult(sqlmock.NewResult(1, 1))
-	mock.ExpectCommit()
+	// Canonical wanted values are eligible when their managed state is old or expired.
+	expectExpiredWantedVehicles(mock, 100, "ABC DEF1")
+	expectClearVehicleWanted(mock, "ABC DEF1")
 
 	changedRows, err := s.maxWantedDurationHandling(t.Context())
 	require.NoError(t, err)
@@ -173,35 +213,14 @@ func TestHousekeeperMaxWantedDurationHandling_ResetMultipleVehicles(t *testing.T
 		store:  vehiclesstore.New(db, &config.CustomDB{}, nil),
 		appCfg: &mockAppConfig{cfg: cfg},
 	}
+	mock.ExpectQuery("SELECT .*enabled").
+		WithArgs("vehicle", string(permsvehicles.VehiclesServiceListVehiclesPropertiesPermValueVehicleWanted)).
+		WillReturnRows(sqlmock.NewRows([]string{"fivenet_property_system_overrides.enabled"}))
 
-	// Two eligible users are returned by the selection query
-	mock.ExpectQuery(`(?s)FROM .*fivenet_vehicles_props.*WHERE .*wanted.*wanted_at.*wanted_till.*LIMIT \?`).
-		WithArgs(sqlmock.AnyArg()).
-		WillReturnRows(
-			sqlmock.NewRows([]string{"plate"}).
-				AddRow("ABC DEF1").
-				AddRow("ABC XYZ2"),
-		)
-
-	mock.ExpectQuery(`(?s)FROM .*fivenet_vehicles_props.*WHERE .*plate.*LIMIT \?`).
-		WithArgs("ABC DEF1", sqlmock.AnyArg()).
-		WillReturnRows(sqlmock.NewRows([]string{"vehicle_props.plate", "vehicle_props.wanted"}).AddRow("ABC DEF1", true))
-	mock.ExpectBegin()
-	mock.ExpectExec(`(?s)INSERT INTO .*fivenet_vehicles_props.*ON DUPLICATE KEY UPDATE.*wanted = \\?.*`).
-		WillReturnResult(sqlmock.NewResult(0, 1))
-	mock.ExpectExec(`(?s)INSERT INTO fivenet_vehicles_activity`).
-		WillReturnResult(sqlmock.NewResult(1, 1))
-	mock.ExpectCommit()
-
-	mock.ExpectQuery(`(?s)FROM .*fivenet_vehicles_props.*WHERE .*plate.*LIMIT \?`).
-		WithArgs("ABC XYZ2", sqlmock.AnyArg()).
-		WillReturnRows(sqlmock.NewRows([]string{"vehicle_props.plate", "vehicle_props.wanted"}).AddRow("ABC XYZ2", true))
-	mock.ExpectBegin()
-	mock.ExpectExec(`(?s)INSERT INTO .*fivenet_vehicles_props.*ON DUPLICATE KEY UPDATE.*wanted = \\?.*`).
-		WillReturnResult(sqlmock.NewResult(0, 1))
-	mock.ExpectExec(`(?s)INSERT INTO fivenet_vehicles_activity`).
-		WillReturnResult(sqlmock.NewResult(1, 1))
-	mock.ExpectCommit()
+	// Both vehicles take the same canonical value/state cleanup path.
+	expectExpiredWantedVehicles(mock, 100, "ABC DEF1", "ABC XYZ2")
+	expectClearVehicleWanted(mock, "ABC DEF1")
+	expectClearVehicleWanted(mock, "ABC XYZ2")
 
 	changedRows, err := s.maxWantedDurationHandling(t.Context())
 	require.NoError(t, err)

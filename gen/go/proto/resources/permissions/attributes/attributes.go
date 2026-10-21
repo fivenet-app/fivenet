@@ -11,6 +11,7 @@ const (
 	StringListAttributeType   AttributeTypes = "StringList"
 	JobListAttributeType      AttributeTypes = "JobList"
 	JobGradeListAttributeType AttributeTypes = "JobGradeList"
+	PropertyListAttributeType AttributeTypes = "PropertyList"
 )
 
 func (x *AttributeValues) Default(aType AttributeTypes) {
@@ -49,6 +50,13 @@ func (x *AttributeValues) Default(aType AttributeTypes) {
 		if x.GetJobGradeList().Grades == nil {
 			x.GetJobGradeList().Grades = map[string]*JobGrades{}
 		}
+
+	case PropertyListAttributeType:
+		if x.GetPropertyList() == nil || x.GetPropertyList().Keys == nil {
+			x.ValidValues = &AttributeValues_PropertyList{
+				PropertyList: &PropertyList{Keys: nil},
+			}
+		}
 	}
 }
 
@@ -73,6 +81,28 @@ func (x *StringList) Len() int {
 	}
 
 	return len(x.GetStrings())
+}
+
+func (x *PropertyList) Contains(items ...string) bool {
+	if x == nil || x.Keys == nil {
+		return false
+	}
+
+	for _, item := range items {
+		if !slices.Contains(x.GetKeys(), item) {
+			return false
+		}
+	}
+
+	return true
+}
+
+func (x *PropertyList) Len() int {
+	if x == nil || x.Keys == nil {
+		return 0
+	}
+
+	return len(x.GetKeys())
 }
 
 func (x *JobGradeList) HasJobGrade(job string, grade int32) bool {
@@ -193,6 +223,20 @@ func (x *AttributeValues) Check(
 
 		return ValidateJobGradeList(x.GetJobGradeList(), valid, maxV)
 
+	case PropertyListAttributeType:
+		var valid []string
+		if validVals != nil && validVals.GetPropertyList() != nil {
+			valid = validVals.GetPropertyList().GetKeys()
+		}
+
+		var maxV []string
+		hasMax := maxVals != nil && maxVals.GetPropertyList() != nil
+		if hasMax {
+			maxV = maxVals.GetPropertyList().GetKeys()
+		}
+
+		return ValidatePropertyList(x.GetPropertyList(), valid, maxV, hasMax)
+
 	default:
 		return false, false
 	}
@@ -226,6 +270,29 @@ func ValidateStringList(in *StringList, validVals []string, maxVals []string) (b
 
 func ValidateJobList(in *StringList, validVals []string, maxVals []string) (bool, bool) {
 	return ValidateStringList(in, validVals, maxVals)
+}
+
+func ValidatePropertyList(
+	in *PropertyList,
+	validVals []string,
+	maxVals []string,
+	hasMax bool,
+) (bool, bool) {
+	if in == nil {
+		return false, false
+	}
+
+	changed := false
+	for i := len(in.GetKeys()) - 1; i >= 0; i-- {
+		key := in.GetKeys()[i]
+		if (len(validVals) > 0 && !slices.Contains(validVals, key)) ||
+			(hasMax && !slices.Contains(maxVals, key)) {
+			in.Keys = slices.Delete(in.GetKeys(), i, i+1)
+			changed = true
+		}
+	}
+
+	return true, changed
 }
 
 func ValidateJobGradeList(

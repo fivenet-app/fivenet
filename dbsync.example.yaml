@@ -415,13 +415,13 @@ tableManager:
 
 # Per-query sync limits. Lower these if you hit performance issues or timeouts.
 limits:
-  # Jobs per request. Allowed range: 1–200.
+  # Jobs per request. Allowed range: 1-200.
   jobs: 200
-  # Licenses per request. Allowed range: 1–200.
+  # Licenses per request. Allowed range: 1-200.
   licenses: 200
-  # Accounts per request. Allowed range: 1–1000.
+  # Accounts per request. Allowed range: 1-1000.
   accounts: 200
-  # Users per request. Allowed range: 1–1000.
+  # Users per request. Allowed range: 1-1000.
   users: 150
-  # Vehicles per request. Allowed range: 1–1500.
+  # Vehicles per request. Allowed range: 1-1500.
   vehicles: 400

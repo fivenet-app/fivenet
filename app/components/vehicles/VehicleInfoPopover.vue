@@ -1,23 +1,12 @@
 <script lang="ts" setup>
 import type { Vehicle } from '~~/gen/ts/resources/vehicles/vehicles';
 import GenericTime from '../partials/elements/GenericTime.vue';
-import SetWantedDrawer from './SetWantedDrawer.vue';
 
 const vehicle = defineModel<Vehicle>({ required: true });
 
-const overlay = useOverlay();
-
-const setWantedDrawer = overlay.create(SetWantedDrawer);
-
-const { attr, can } = useAuth();
-
-const canViewWanted = computed(() => attr('vehicles.VehiclesService/ListVehicles', 'Fields', 'Wanted').value);
-const canSetWanted = computed(
-    () =>
-        canViewWanted.value &&
-        can('vehicles.VehiclesService/SetVehicleProps').value &&
-        attr('vehicles.VehiclesService/SetVehicleProps', 'Fields', 'Wanted').value,
-);
+const { canViewWanted, canSetWanted, dynamicProperties, openWantedDrawer, openDynamicPropertyDrawer } =
+    useVehiclePropertyActions(vehicle);
+const { propertyLabel } = usePropertyRenderer();
 </script>
 
 <template>
@@ -36,19 +25,23 @@ const canSetWanted = computed(
                             :color="vehicle?.props?.wanted ? 'error' : 'primary'"
                             :icon="vehicle?.props?.wanted ? 'i-mdi-account-alert' : 'i-mdi-account-cancel'"
                             :label="vehicle?.props?.wanted ? $t('common.revoke_wanted') : $t('common.set_wanted')"
-                            @click="
-                                setWantedDrawer.open({
-                                    vehicleProps: vehicle.props,
-                                    plate: vehicle.plate,
-                                    'onUpdate:vehicleProps': ($event) => {
-                                        vehicle.props = $event;
-                                    },
-                                })
-                            "
+                            @click="openWantedDrawer"
                         />
                     </UTooltip>
 
-                    <p v-else class="font-semibold">{{ $t('common.no_actions_available') }}</p>
+                    <UButton
+                        v-for="property in dynamicProperties"
+                        :key="property.key"
+                        variant="link"
+                        color="neutral"
+                        icon="i-mdi-pencil"
+                        :label="`${$t(canActOnDynamicProperty(property) ? 'common.edit' : 'common.set')}: ${propertyLabel(property)}`"
+                        @click="openDynamicPropertyDrawer(property)"
+                    />
+
+                    <p v-if="!canSetWanted && !dynamicProperties.length" class="font-semibold">
+                        {{ $t('common.no_actions_available') }}
+                    </p>
                 </div>
 
                 <ul class="mt-1" role="list">

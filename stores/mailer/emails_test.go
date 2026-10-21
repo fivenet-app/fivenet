@@ -305,6 +305,9 @@ func TestStoreUpdateUserEmailProperty(t *testing.T) {
 	mock.ExpectExec(expectedQuery).
 		WithArgs(int32(7), "user@example.com", "user@example.com").
 		WillReturnResult(sqlmock.NewResult(0, 1))
+	mock.ExpectExec(`(?s)INSERT INTO fivenet_user_property_values`).
+		WithArgs(int32(7), "user.email", uint8(1), "user@example.com", uint8(1), "user@example.com").
+		WillReturnResult(sqlmock.NewResult(0, 1))
 
 	require.NoError(t, store.UpdateUserEmailProperty(t.Context(), db, 7, "user@example.com"))
 	require.NoError(t, mock.ExpectationsWereMet())

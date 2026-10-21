@@ -43,12 +43,25 @@ func (s *Server) ListVehicleActivity(
 			return resp, nil
 		}
 	}
+	propertyList, err := s.perms.AttrPropertyListContext(ctx,
+		userInfo,
+		permsvehicles.VehiclesService.ListVehicles.Properties,
+	)
+	if err != nil {
+		return nil, errswrap.NewError(err, errorsvehicles.ErrFailedQuery)
+	}
+	canViewAllProperties := userInfo.GetJobAdmin()
 
 	queryOpts := vehiclesstore.CountVehicleActivityOptions{
-		Plate: req.GetPlate(),
-		Types: req.GetTypes(),
-		From:  req.GetFrom(),
-		To:    req.GetTo(),
+		VehicleActivityOptions: vehiclesstore.VehicleActivityOptions{
+			Plate:                req.GetPlate(),
+			Types:                req.GetTypes(),
+			PropertyKeys:         req.GetPropertyKeys(),
+			VisiblePropertyKeys:  propertyList.GetKeys(),
+			CanViewAllProperties: canViewAllProperties,
+			From:                 req.GetFrom(),
+			To:                   req.GetTo(),
+		},
 	}
 	count, err := s.store.CountVehicleActivity(ctx, queryOpts)
 	if err != nil {
@@ -62,13 +75,10 @@ func (s *Server) ListVehicleActivity(
 	}
 
 	activity, err := s.store.ListVehicleActivity(ctx, vehiclesstore.ListVehicleActivityOptions{
-		Plate:  req.GetPlate(),
-		Types:  req.GetTypes(),
-		From:   req.GetFrom(),
-		To:     req.GetTo(),
-		Sort:   req.GetSort(),
-		Offset: req.GetPagination().GetOffset(),
-		Limit:  limit,
+		VehicleActivityOptions: queryOpts.VehicleActivityOptions,
+		Sort:                   req.GetSort(),
+		Offset:                 req.GetPagination().GetOffset(),
+		Limit:                  limit,
 	})
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsvehicles.ErrFailedQuery)

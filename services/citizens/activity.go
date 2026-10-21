@@ -40,11 +40,24 @@ func (s *Server) ListUserActivity(
 			return resp, nil
 		}
 	}
+	propertyList, err := s.perms.AttrPropertyListContext(ctx,
+		userInfo,
+		permscitizens.CitizensService.ListCitizens.Properties,
+	)
+	if err != nil {
+		return nil, errswrap.NewError(err, errorscitizens.ErrFailedQuery)
+	}
+	canViewAllProperties := userInfo.GetJobAdmin()
 	queryOpts := citizensstore.CountUserActivityOptions{
-		UserID: req.GetUserId(),
-		Types:  req.GetTypes(),
-		From:   req.GetFrom(),
-		To:     req.GetTo(),
+		UserActivityOptions: citizensstore.UserActivityOptions{
+			UserID:               req.GetUserId(),
+			Types:                req.GetTypes(),
+			PropertyKeys:         req.GetPropertyKeys(),
+			VisiblePropertyKeys:  propertyList.GetKeys(),
+			CanViewAllProperties: canViewAllProperties,
+			From:                 req.GetFrom(),
+			To:                   req.GetTo(),
+		},
 	}
 	count, err := s.store.CountUserActivity(ctx, queryOpts)
 	if err != nil {
@@ -58,13 +71,10 @@ func (s *Server) ListUserActivity(
 	}
 
 	activities, err := s.store.ListUserActivity(ctx, citizensstore.ListUserActivityOptions{
-		UserID: req.GetUserId(),
-		Types:  req.GetTypes(),
-		From:   req.GetFrom(),
-		To:     req.GetTo(),
-		Sort:   req.GetSort(),
-		Offset: req.GetPagination().GetOffset(),
-		Limit:  limit,
+		UserActivityOptions: queryOpts.UserActivityOptions,
+		Sort:                req.GetSort(),
+		Offset:              req.GetPagination().GetOffset(),
+		Limit:               limit,
 	})
 	if err != nil {
 		return nil, errswrap.NewError(err, errorscitizens.ErrFailedQuery)

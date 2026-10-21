@@ -11,6 +11,7 @@ import (
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/accounts"
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/audit"
 	permissionsattributes "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/permissions/attributes"
+	permissionsauthorization "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/permissions/authorization"
 	permissionspermissions "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/permissions/permissions"
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/timestamp"
 	pbuserinfo "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/userinfo"
@@ -36,6 +37,16 @@ const (
 	usernameSetAuditFieldKey = "username_set"
 	passwordSetAuditFieldKey = "password_set"
 )
+
+func authorizationState(
+	ps []*permissionspermissions.Permission,
+	attrs []*permissionsattributes.RoleAttribute,
+) *permissionsauthorization.AuthorizationState {
+	return &permissionsauthorization.AuthorizationState{
+		Permissions: ps,
+		Attributes:  attrs,
+	}
+}
 
 func (s *Server) Login(
 	ctx context.Context,
@@ -773,13 +784,12 @@ func (s *Server) ChooseCharacter(
 	}
 
 	return &pbauth.ChooseCharacterResponse{
-		Token:       userToken,
-		Expires:     timestamp.New(currentAccClaims.ExpiresAt.Time),
-		Username:    account.GetUsername(),
-		JobProps:    jProps,
-		Char:        char,
-		Permissions: ps,
-		Attributes:  attrs,
+		Token:         userToken,
+		Expires:       timestamp.New(currentAccClaims.ExpiresAt.Time),
+		Username:      account.GetUsername(),
+		JobProps:      jProps,
+		Char:          char,
+		Authorization: authorizationState(ps, attrs),
 	}, nil
 }
 
@@ -971,12 +981,11 @@ func (s *Server) ImpersonateJob(
 	}
 
 	return &pbauth.ImpersonateJobResponse{
-		Token:       userToken,
-		Expires:     timestamp.New(userClaims.ExpiresAt.Time),
-		Char:        char,
-		Permissions: ps,
-		Attributes:  attrs,
-		State:       imp,
+		Token:         userToken,
+		Expires:       timestamp.New(userClaims.ExpiresAt.Time),
+		Char:          char,
+		Authorization: authorizationState(ps, attrs),
+		State:         imp,
 	}, nil
 }
 
@@ -1120,11 +1129,10 @@ func (s *Server) SetSuperuserMode(
 	}
 
 	return &pbauth.SetSuperuserModeResponse{
-		Token:       userToken,
-		Expires:     timestamp.New(accClaims.ExpiresAt.Time),
-		JobProps:    jobProps,
-		Char:        char,
-		Permissions: ps,
-		Attributes:  attrs,
+		Token:         userToken,
+		Expires:       timestamp.New(accClaims.ExpiresAt.Time),
+		JobProps:      jobProps,
+		Char:          char,
+		Authorization: authorizationState(ps, attrs),
 	}, nil
 }

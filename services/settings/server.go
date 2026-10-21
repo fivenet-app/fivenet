@@ -46,6 +46,23 @@ func init() {
 
 		MinDays: 7,
 	})
+
+	housekeeper.AddTable(&housekeeper.Table{
+		Table:           table.FivenetPropertyDefinitions,
+		DeletedAtColumn: table.FivenetPropertyDefinitions.DeletedAt,
+		KeyColumnString: table.FivenetPropertyDefinitions.PropertyKey,
+		MinDays:         30,
+		DependantTables: []*housekeeper.Table{
+			{
+				Table:            table.FivenetUserPropertyValues,
+				ForeignKeyString: table.FivenetUserPropertyValues.PropertyKey,
+			},
+			{
+				Table:            table.FivenetVehiclePropertyValues,
+				ForeignKeyString: table.FivenetVehiclePropertyValues.PropertyKey,
+			},
+		},
+	})
 }
 
 type Server struct {
@@ -55,6 +72,7 @@ type Server struct {
 	pbsettings.LawsServiceServer
 	pbsettings.AccountsServiceServer
 	pbsettings.SystemServiceServer
+	pbsettings.PropertyServiceServer
 
 	logger       *zap.Logger
 	db           *sql.DB
@@ -87,6 +105,8 @@ type Server struct {
 type Params struct {
 	fx.In
 
+	LC fx.Lifecycle
+
 	Logger       *zap.Logger
 	DB           *sql.DB
 	Auth         *grpcauth.GRPCAuth
@@ -112,6 +132,10 @@ type Params struct {
 }
 
 func NewServer(p Params) *Server {
+	p.LC.Append(fx.StartHook(func(ctx context.Context) error {
+		return p.Store.ReconcileSystemPropertyOverrides(ctx)
+	}))
+
 	tJobProps := table.FivenetJobProps
 
 	fHandler := filestore.NewHandler(
@@ -181,6 +205,7 @@ func (s *Server) RegisterServer(srv *grpc.Server) {
 	pbsettings.RegisterLawsServiceServer(srv, s)
 	pbsettings.RegisterAccountsServiceServer(srv, s)
 	pbsettings.RegisterSystemServiceServer(srv, s)
+	pbsettings.RegisterPropertyServiceServer(srv, s)
 }
 
 // AuthFuncOverride is called instead of the global auth func for settings services.
