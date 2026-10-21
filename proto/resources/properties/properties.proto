@@ -1,0 +1,274 @@
+syntax = "proto3";
+
+package resources.properties;
+
+import "buf/validate/validate.proto";
+import "codegen/dbscanner/dbscanner.proto";
+import "resources/timestamp/timestamp.proto";
+
+option go_package = "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/properties;properties";
+
+// PropertyValue is deliberately restricted to scalar values. Relations such as
+// files are modeled separately so they can retain their own access controls and
+// lifecycle.
+message PropertyValue {
+  oneof value {
+    string string_value = 1 [(buf.validate.field).string.max_len = 2048];
+    int64 integer_value = 2;
+    double number_value = 3;
+    bool bool_value = 4;
+    resources.timestamp.Timestamp timestamp_value = 5;
+    LocalDate date_value = 6;
+  }
+}
+
+// LocalDate deliberately has no timezone. Use it for calendar dates such as
+// an inspection due date; use timestamp_value for an instant in time.
+message LocalDate {
+  int32 year = 1 [(buf.validate.field).int32 = {
+    gte: 1
+    lte: 9999
+  }];
+  int32 month = 2 [(buf.validate.field).int32 = {
+    gte: 1
+    lte: 12
+  }];
+  int32 day = 3 [(buf.validate.field).int32 = {
+    gte: 1
+    lte: 31
+  }];
+}
+
+message Property {
+  // Keys are namespaced to avoid collisions between FiveNet and instance
+  // extensions, for example: "vehicle.inspection_due".
+  string key = 1 [(buf.validate.field).string = {
+    min_len: 1
+    max_len: 64
+    pattern: "^[a-z][a-z0-9_.-]*$"
+  }];
+  // Omitted for an available custom definition that does not yet have a
+  // value on this resource.
+  optional PropertyValue value = 2;
+  optional resources.timestamp.Timestamp updated_at = 3;
+  // Resolved definition metadata for detail/profile renderers.
+  optional PropertyDefinition definition = 4;
+}
+
+// PropertyChange updates a generic scalar property. An absent value clears it.
+message PropertyChange {
+  string key = 1 [(buf.validate.field).string = {
+    min_len: 1
+    max_len: 64
+    pattern: "^[a-z][a-z0-9_.-]*$"
+  }];
+  optional PropertyValue value = 2;
+}
+
+message Properties {
+  option (codegen.dbscanner.dbscanner) = {enabled: true};
+
+  repeated Property properties = 1;
+  // Effective groups available to the caller for rendering the properties.
+  repeated PropertyGroup groups = 2;
+}
+
+enum PropertyScope {
+  PROPERTY_SCOPE_UNSPECIFIED = 0;
+  PROPERTY_SCOPE_VEHICLE = 1;
+  PROPERTY_SCOPE_USER = 2;
+  PROPERTY_SCOPE_COLLEAGUE = 3;
+}
+
+enum PropertyValueType {
+  PROPERTY_VALUE_TYPE_UNSPECIFIED = 0;
+  PROPERTY_VALUE_TYPE_STRING = 1;
+  PROPERTY_VALUE_TYPE_INTEGER = 2;
+  PROPERTY_VALUE_TYPE_NUMBER = 3;
+  PROPERTY_VALUE_TYPE_BOOL = 4;
+  PROPERTY_VALUE_TYPE_TIMESTAMP = 5;
+  PROPERTY_VALUE_TYPE_DATE = 6;
+}
+
+// PropertyValueFormat describes the semantic rendering and input convention
+// for a stored scalar. It never changes the persisted representation.
+enum PropertyValueFormat {
+  PROPERTY_VALUE_FORMAT_UNSPECIFIED = 0;
+  PROPERTY_VALUE_FORMAT_PLAIN = 1;
+  // An integer value represents minor currency units. Currency comes from the
+  // definition or, when omitted, the instance game configuration.
+  PROPERTY_VALUE_FORMAT_MONEY = 2;
+  PROPERTY_VALUE_FORMAT_PERCENTAGE = 3;
+  PROPERTY_VALUE_FORMAT_DATETIME = 4;
+  PROPERTY_VALUE_FORMAT_DATE = 5;
+  PROPERTY_VALUE_FORMAT_DURATION = 6;
+  PROPERTY_VALUE_FORMAT_DISTANCE = 7;
+}
+
+// Managed properties are implemented by FiveNet handlers. They may have
+// lifecycle state, cleanup, and activity behavior beyond their scalar value.
+enum PropertyBehavior {
+  PROPERTY_BEHAVIOR_UNSPECIFIED = 0;
+  PROPERTY_BEHAVIOR_GENERIC = 1;
+  PROPERTY_BEHAVIOR_MANAGED = 2;
+}
+
+enum PropertyDefinitionSource {
+  PROPERTY_DEFINITION_SOURCE_UNSPECIFIED = 0;
+  // System definitions have a fixed key, type, and behavior. Instances may
+  // only override whether they are enabled.
+  PROPERTY_DEFINITION_SOURCE_SYSTEM = 1;
+  // Custom definitions are stored per FiveNet instance.
+  PROPERTY_DEFINITION_SOURCE_CUSTOM = 2;
+}
+
+message PropertyDefinition {
+  PropertyScope scope = 1;
+  string key = 2 [(buf.validate.field).string = {
+    min_len: 1
+    max_len: 64
+    pattern: "^[a-z][a-z0-9_.-]*$"
+  }];
+  PropertyValueType value_type = 3 [(buf.validate.field).enum.defined_only = true];
+  PropertyDefinitionSource source = 4 [(buf.validate.field).enum.defined_only = true];
+  bool enabled = 5;
+  // Used by the UI to select a context-specific translation and renderer.
+  string display_key = 6 [(buf.validate.field).string.max_len = 128];
+  // Instance-provided text for custom definitions. System definitions use
+  // display_key so FiveNet can translate them.
+  string label = 7 [(buf.validate.field).string.max_len = 128];
+  optional string description = 8 [(buf.validate.field).string.max_len = 512];
+  // Searchability is opt-in so an instance does not accidentally expose an
+  // arbitrary field in its public search surface.
+  bool searchable = 9;
+  PropertyValueFormat value_format = 10 [(buf.validate.field).enum.defined_only = true];
+  PropertyBehavior behavior = 11 [(buf.validate.field).enum.defined_only = true];
+  PropertyRenderer renderer = 19 [(buf.validate.field).enum.defined_only = true];
+  // Display unit for values such as distance. It is not appended to money or
+  // percentage values, whose units are implied by value_format.
+  optional string unit = 12 [(buf.validate.field).string.max_len = 32];
+  // Fractional digits presented and accepted by clients. Integer money values
+  // default to the configured currency's minor-unit precision when omitted.
+  optional uint32 decimal_places = 13 [(buf.validate.field).uint32.lte = 9];
+  // Optional ISO 4217 currency override for money values.
+  optional string currency = 14 [(buf.validate.field).string = {
+    len: 3
+    pattern: "^[A-Z]{3}$"
+  }];
+  optional resources.timestamp.Timestamp deleted_at = 15;
+  string group_key = 16 [(buf.validate.field).string = {
+    max_len: 64
+    pattern: "^[a-z][a-z0-9_.-]*$"
+  }];
+  int32 sort_order = 17;
+  // Effective presentation order of the containing group. This is resolved
+  // from the instance override and is separate from the property's order
+  // within that group.
+  int32 group_sort_order = 22;
+  // Pinned properties are eligible for prominent detail/profile views.
+  bool pinned = 18;
+  optional PropertyRendererConfig renderer_config = 20;
+  // Controls whether the property is shown in generic property lists or is
+  // reserved for a specialized profile presentation.
+  PropertyDisplayMode display_mode = 21 [(buf.validate.field).enum.defined_only = true];
+  // Implicit properties are available whenever the containing permission is
+  // granted, but are not selectable in role property lists.
+  bool implicit = 23;
+}
+
+// PropertyRenderer selects a predefined UI treatment for a property.
+// It is separate from PropertyValueFormat, which describes the value's
+// semantic formatting rather than its component-level presentation.
+enum PropertyRenderer {
+  PROPERTY_RENDERER_UNSPECIFIED = 0;
+  PROPERTY_RENDERER_DEFAULT = 1;
+  PROPERTY_RENDERER_EMAIL = 2;
+  PROPERTY_RENDERER_PHONE = 3;
+  PROPERTY_RENDERER_HEIGHT = 4;
+  PROPERTY_RENDERER_TRAFFIC_POINTS = 5;
+  PROPERTY_RENDERER_SEX = 6;
+  PROPERTY_RENDERER_STRING = 7;
+  PROPERTY_RENDERER_INTEGER = 8;
+  PROPERTY_RENDERER_NUMBER = 9;
+  PROPERTY_RENDERER_BOOLEAN = 10;
+  PROPERTY_RENDERER_DATE = 11;
+  PROPERTY_RENDERER_DATETIME = 12;
+  PROPERTY_RENDERER_MONEY = 13;
+}
+
+// PropertyDisplayMode controls placement independently from the value
+// renderer. Specialized views may consume hidden and profile-badge values.
+enum PropertyDisplayMode {
+  PROPERTY_DISPLAY_MODE_UNSPECIFIED = 0;
+  PROPERTY_DISPLAY_MODE_DEFAULT = 1;
+  PROPERTY_DISPLAY_MODE_HIDDEN = 2;
+  PROPERTY_DISPLAY_MODE_PROFILE_BADGE = 3;
+}
+
+message PropertyRendererConfig {
+  oneof config {
+    PropertyStringRendererConfig string = 1;
+    PropertyIntegerRendererConfig integer = 2;
+    PropertyNumberRendererConfig number = 3;
+  }
+}
+
+message PropertyStringRendererConfig {
+  string prefix = 1;
+  string suffix = 2;
+  bool truncate = 3;
+}
+
+message PropertyIntegerRendererConfig {
+  optional uint32 decimal_places = 1;
+  string prefix = 2;
+  string suffix = 3;
+  optional string unit = 4;
+}
+
+message PropertyNumberRendererConfig {
+  optional uint32 decimal_places = 1;
+  string prefix = 2;
+  string suffix = 3;
+  optional string unit = 4;
+}
+
+// PropertyGroup controls the presentation order of definitions within one
+// property scope. System groups are code-defined; custom groups are stored
+// per FiveNet instance and may be referenced by custom definitions.
+message PropertyGroup {
+  PropertyScope scope = 1 [(buf.validate.field).enum = {
+    defined_only: true
+    not_in: [0]
+  }];
+  string key = 2 [(buf.validate.field).string = {
+    min_len: 1
+    max_len: 64
+    pattern: "^[a-z][a-z0-9_.-]*$"
+  }];
+  string display_key = 3 [(buf.validate.field).string.max_len = 128];
+  string label = 5 [(buf.validate.field).string.max_len = 128];
+  int32 sort_order = 4;
+  optional resources.timestamp.Timestamp deleted_at = 6;
+}
+
+enum PropertyFilterOperation {
+  PROPERTY_FILTER_OPERATION_UNSPECIFIED = 0;
+  PROPERTY_FILTER_OPERATION_EQUALS = 1;
+  PROPERTY_FILTER_OPERATION_NOT_EQUALS = 2;
+  PROPERTY_FILTER_OPERATION_GREATER_THAN = 3;
+  PROPERTY_FILTER_OPERATION_GREATER_THAN_OR_EQUAL = 4;
+  PROPERTY_FILTER_OPERATION_LESS_THAN = 5;
+  PROPERTY_FILTER_OPERATION_LESS_THAN_OR_EQUAL = 6;
+  PROPERTY_FILTER_OPERATION_CONTAINS = 7;
+}
+
+message PropertyFilter {
+  string key = 1 [(buf.validate.field).string = {
+    min_len: 1
+    max_len: 64
+    pattern: "^[a-z][a-z0-9_.-]*$"
+  }];
+  PropertyFilterOperation operation = 2 [(buf.validate.field).enum.defined_only = true];
+  PropertyValue value = 3 [(buf.validate.field).required = true];
+}

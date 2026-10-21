@@ -16,6 +16,17 @@ var validMethods = []string{
 	"StripHTMLTags",
 }
 
+// generatedGoFieldName mirrors the protobuf Go generator for fields that
+// would otherwise collide with methods on every generated message.
+func generatedGoFieldName(name string) string {
+	switch name {
+	case "Reset", "String", "ProtoMessage", "ProtoReflect", "Descriptor":
+		return name + "_"
+	default:
+		return name
+	}
+}
+
 // SanitizerPlugin holds all state for this plugin.
 type SanitizerModule struct {
 	*pgs.ModuleBase
@@ -93,7 +104,7 @@ func (p *SanitizerModule) generate(f pgs.File) {
 			}
 
 			s := &Sanitize{
-				Name:   f.Name().UpperCamelCase().String(),
+				Name:   generatedGoFieldName(f.Name().UpperCamelCase().String()),
 				Method: "SanitizeAndUnescape",
 				F:      f,
 			}

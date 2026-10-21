@@ -15,8 +15,7 @@ import (
 	accounts "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/accounts"
 	oauth2 "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/accounts/oauth2"
 	props "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/jobs/props"
-	attributes "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/permissions/attributes"
-	permissions "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/permissions/permissions"
+	authorization "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/permissions/authorization"
 	timestamp "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/timestamp"
 	users "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/users"
 	_ "github.com/srikrsna/protoc-gen-gotag/tagger"
@@ -1309,14 +1308,13 @@ func (b0 ChooseCharacterRequest_builder) Build() *ChooseCharacterRequest {
 }
 
 type ChooseCharacterResponse struct {
-	state         protoimpl.MessageState      `protogen:"hybrid.v1"`
-	Token         string                      `protobuf:"bytes,1,opt,name=token,proto3" json:"token,omitempty"`
-	Username      string                      `protobuf:"bytes,2,opt,name=username,proto3" json:"username,omitempty"`
-	Expires       *timestamp.Timestamp        `protobuf:"bytes,3,opt,name=expires,proto3" json:"expires,omitempty"`
-	JobProps      *props.JobProps             `protobuf:"bytes,4,opt,name=job_props,json=jobProps,proto3" json:"job_props,omitempty"`
-	Char          *users.User                 `protobuf:"bytes,5,opt,name=char,proto3" json:"char,omitempty" alias:"user"`
-	Permissions   []*permissions.Permission   `protobuf:"bytes,6,rep,name=permissions,proto3" json:"permissions,omitempty"`
-	Attributes    []*attributes.RoleAttribute `protobuf:"bytes,7,rep,name=attributes,proto3" json:"attributes,omitempty"`
+	state         protoimpl.MessageState            `protogen:"hybrid.v1"`
+	Token         string                            `protobuf:"bytes,1,opt,name=token,proto3" json:"token,omitempty"`
+	Username      string                            `protobuf:"bytes,2,opt,name=username,proto3" json:"username,omitempty"`
+	Expires       *timestamp.Timestamp              `protobuf:"bytes,3,opt,name=expires,proto3" json:"expires,omitempty"`
+	JobProps      *props.JobProps                   `protobuf:"bytes,4,opt,name=job_props,json=jobProps,proto3" json:"job_props,omitempty"`
+	Char          *users.User                       `protobuf:"bytes,5,opt,name=char,proto3" json:"char,omitempty" alias:"user"`
+	Authorization *authorization.AuthorizationState `protobuf:"bytes,8,opt,name=authorization,proto3" json:"authorization,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1381,16 +1379,9 @@ func (x *ChooseCharacterResponse) GetChar() *users.User {
 	return nil
 }
 
-func (x *ChooseCharacterResponse) GetPermissions() []*permissions.Permission {
+func (x *ChooseCharacterResponse) GetAuthorization() *authorization.AuthorizationState {
 	if x != nil {
-		return x.Permissions
-	}
-	return nil
-}
-
-func (x *ChooseCharacterResponse) GetAttributes() []*attributes.RoleAttribute {
-	if x != nil {
-		return x.Attributes
+		return x.Authorization
 	}
 	return nil
 }
@@ -1415,12 +1406,8 @@ func (x *ChooseCharacterResponse) SetChar(v *users.User) {
 	x.Char = v
 }
 
-func (x *ChooseCharacterResponse) SetPermissions(v []*permissions.Permission) {
-	x.Permissions = v
-}
-
-func (x *ChooseCharacterResponse) SetAttributes(v []*attributes.RoleAttribute) {
-	x.Attributes = v
+func (x *ChooseCharacterResponse) SetAuthorization(v *authorization.AuthorizationState) {
+	x.Authorization = v
 }
 
 func (x *ChooseCharacterResponse) HasExpires() bool {
@@ -1444,6 +1431,13 @@ func (x *ChooseCharacterResponse) HasChar() bool {
 	return x.Char != nil
 }
 
+func (x *ChooseCharacterResponse) HasAuthorization() bool {
+	if x == nil {
+		return false
+	}
+	return x.Authorization != nil
+}
+
 func (x *ChooseCharacterResponse) ClearExpires() {
 	x.Expires = nil
 }
@@ -1456,16 +1450,19 @@ func (x *ChooseCharacterResponse) ClearChar() {
 	x.Char = nil
 }
 
+func (x *ChooseCharacterResponse) ClearAuthorization() {
+	x.Authorization = nil
+}
+
 type ChooseCharacterResponse_builder struct {
 	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
 
-	Token       string
-	Username    string
-	Expires     *timestamp.Timestamp
-	JobProps    *props.JobProps
-	Char        *users.User
-	Permissions []*permissions.Permission
-	Attributes  []*attributes.RoleAttribute
+	Token         string
+	Username      string
+	Expires       *timestamp.Timestamp
+	JobProps      *props.JobProps
+	Char          *users.User
+	Authorization *authorization.AuthorizationState
 }
 
 func (b0 ChooseCharacterResponse_builder) Build() *ChooseCharacterResponse {
@@ -1477,8 +1474,7 @@ func (b0 ChooseCharacterResponse_builder) Build() *ChooseCharacterResponse {
 	x.Expires = b.Expires
 	x.JobProps = b.JobProps
 	x.Char = b.Char
-	x.Permissions = b.Permissions
-	x.Attributes = b.Attributes
+	x.Authorization = b.Authorization
 	return m0
 }
 
@@ -1540,13 +1536,12 @@ func (b0 ImpersonateJobRequest_builder) Build() *ImpersonateJobRequest {
 }
 
 type ImpersonateJobResponse struct {
-	state         protoimpl.MessageState      `protogen:"hybrid.v1"`
-	Token         string                      `protobuf:"bytes,1,opt,name=token,proto3" json:"token,omitempty"`
-	Expires       *timestamp.Timestamp        `protobuf:"bytes,2,opt,name=expires,proto3" json:"expires,omitempty"`
-	Char          *users.User                 `protobuf:"bytes,3,opt,name=char,proto3" json:"char,omitempty" alias:"user"`
-	Permissions   []*permissions.Permission   `protobuf:"bytes,4,rep,name=permissions,proto3" json:"permissions,omitempty"`
-	Attributes    []*attributes.RoleAttribute `protobuf:"bytes,5,rep,name=attributes,proto3" json:"attributes,omitempty"`
-	State         bool                        `protobuf:"varint,6,opt,name=state,proto3" json:"state,omitempty"`
+	state         protoimpl.MessageState            `protogen:"hybrid.v1"`
+	Token         string                            `protobuf:"bytes,1,opt,name=token,proto3" json:"token,omitempty"`
+	Expires       *timestamp.Timestamp              `protobuf:"bytes,2,opt,name=expires,proto3" json:"expires,omitempty"`
+	Char          *users.User                       `protobuf:"bytes,3,opt,name=char,proto3" json:"char,omitempty" alias:"user"`
+	Authorization *authorization.AuthorizationState `protobuf:"bytes,7,opt,name=authorization,proto3" json:"authorization,omitempty"`
+	State         bool                              `protobuf:"varint,6,opt,name=state,proto3" json:"state,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1597,16 +1592,9 @@ func (x *ImpersonateJobResponse) GetChar() *users.User {
 	return nil
 }
 
-func (x *ImpersonateJobResponse) GetPermissions() []*permissions.Permission {
+func (x *ImpersonateJobResponse) GetAuthorization() *authorization.AuthorizationState {
 	if x != nil {
-		return x.Permissions
-	}
-	return nil
-}
-
-func (x *ImpersonateJobResponse) GetAttributes() []*attributes.RoleAttribute {
-	if x != nil {
-		return x.Attributes
+		return x.Authorization
 	}
 	return nil
 }
@@ -1630,12 +1618,8 @@ func (x *ImpersonateJobResponse) SetChar(v *users.User) {
 	x.Char = v
 }
 
-func (x *ImpersonateJobResponse) SetPermissions(v []*permissions.Permission) {
-	x.Permissions = v
-}
-
-func (x *ImpersonateJobResponse) SetAttributes(v []*attributes.RoleAttribute) {
-	x.Attributes = v
+func (x *ImpersonateJobResponse) SetAuthorization(v *authorization.AuthorizationState) {
+	x.Authorization = v
 }
 
 func (x *ImpersonateJobResponse) SetState(v bool) {
@@ -1656,6 +1640,13 @@ func (x *ImpersonateJobResponse) HasChar() bool {
 	return x.Char != nil
 }
 
+func (x *ImpersonateJobResponse) HasAuthorization() bool {
+	if x == nil {
+		return false
+	}
+	return x.Authorization != nil
+}
+
 func (x *ImpersonateJobResponse) ClearExpires() {
 	x.Expires = nil
 }
@@ -1664,15 +1655,18 @@ func (x *ImpersonateJobResponse) ClearChar() {
 	x.Char = nil
 }
 
+func (x *ImpersonateJobResponse) ClearAuthorization() {
+	x.Authorization = nil
+}
+
 type ImpersonateJobResponse_builder struct {
 	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
 
-	Token       string
-	Expires     *timestamp.Timestamp
-	Char        *users.User
-	Permissions []*permissions.Permission
-	Attributes  []*attributes.RoleAttribute
-	State       bool
+	Token         string
+	Expires       *timestamp.Timestamp
+	Char          *users.User
+	Authorization *authorization.AuthorizationState
+	State         bool
 }
 
 func (b0 ImpersonateJobResponse_builder) Build() *ImpersonateJobResponse {
@@ -1682,8 +1676,7 @@ func (b0 ImpersonateJobResponse_builder) Build() *ImpersonateJobResponse {
 	x.Token = b.Token
 	x.Expires = b.Expires
 	x.Char = b.Char
-	x.Permissions = b.Permissions
-	x.Attributes = b.Attributes
+	x.Authorization = b.Authorization
 	x.State = b.State
 	return m0
 }
@@ -1885,13 +1878,12 @@ func (b0 SetSuperuserModeRequest_builder) Build() *SetSuperuserModeRequest {
 }
 
 type SetSuperuserModeResponse struct {
-	state         protoimpl.MessageState      `protogen:"hybrid.v1"`
-	Token         string                      `protobuf:"bytes,1,opt,name=token,proto3" json:"token,omitempty"`
-	Expires       *timestamp.Timestamp        `protobuf:"bytes,2,opt,name=expires,proto3" json:"expires,omitempty"`
-	JobProps      *props.JobProps             `protobuf:"bytes,3,opt,name=job_props,json=jobProps,proto3,oneof" json:"job_props,omitempty"`
-	Char          *users.User                 `protobuf:"bytes,4,opt,name=char,proto3" json:"char,omitempty" alias:"user"`
-	Permissions   []*permissions.Permission   `protobuf:"bytes,5,rep,name=permissions,proto3" json:"permissions,omitempty"`
-	Attributes    []*attributes.RoleAttribute `protobuf:"bytes,6,rep,name=attributes,proto3" json:"attributes,omitempty"`
+	state         protoimpl.MessageState            `protogen:"hybrid.v1"`
+	Token         string                            `protobuf:"bytes,1,opt,name=token,proto3" json:"token,omitempty"`
+	Expires       *timestamp.Timestamp              `protobuf:"bytes,2,opt,name=expires,proto3" json:"expires,omitempty"`
+	JobProps      *props.JobProps                   `protobuf:"bytes,3,opt,name=job_props,json=jobProps,proto3,oneof" json:"job_props,omitempty"`
+	Char          *users.User                       `protobuf:"bytes,4,opt,name=char,proto3" json:"char,omitempty" alias:"user"`
+	Authorization *authorization.AuthorizationState `protobuf:"bytes,7,opt,name=authorization,proto3" json:"authorization,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1949,16 +1941,9 @@ func (x *SetSuperuserModeResponse) GetChar() *users.User {
 	return nil
 }
 
-func (x *SetSuperuserModeResponse) GetPermissions() []*permissions.Permission {
+func (x *SetSuperuserModeResponse) GetAuthorization() *authorization.AuthorizationState {
 	if x != nil {
-		return x.Permissions
-	}
-	return nil
-}
-
-func (x *SetSuperuserModeResponse) GetAttributes() []*attributes.RoleAttribute {
-	if x != nil {
-		return x.Attributes
+		return x.Authorization
 	}
 	return nil
 }
@@ -1979,12 +1964,8 @@ func (x *SetSuperuserModeResponse) SetChar(v *users.User) {
 	x.Char = v
 }
 
-func (x *SetSuperuserModeResponse) SetPermissions(v []*permissions.Permission) {
-	x.Permissions = v
-}
-
-func (x *SetSuperuserModeResponse) SetAttributes(v []*attributes.RoleAttribute) {
-	x.Attributes = v
+func (x *SetSuperuserModeResponse) SetAuthorization(v *authorization.AuthorizationState) {
+	x.Authorization = v
 }
 
 func (x *SetSuperuserModeResponse) HasExpires() bool {
@@ -2008,6 +1989,13 @@ func (x *SetSuperuserModeResponse) HasChar() bool {
 	return x.Char != nil
 }
 
+func (x *SetSuperuserModeResponse) HasAuthorization() bool {
+	if x == nil {
+		return false
+	}
+	return x.Authorization != nil
+}
+
 func (x *SetSuperuserModeResponse) ClearExpires() {
 	x.Expires = nil
 }
@@ -2020,15 +2008,18 @@ func (x *SetSuperuserModeResponse) ClearChar() {
 	x.Char = nil
 }
 
+func (x *SetSuperuserModeResponse) ClearAuthorization() {
+	x.Authorization = nil
+}
+
 type SetSuperuserModeResponse_builder struct {
 	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
 
-	Token       string
-	Expires     *timestamp.Timestamp
-	JobProps    *props.JobProps
-	Char        *users.User
-	Permissions []*permissions.Permission
-	Attributes  []*attributes.RoleAttribute
+	Token         string
+	Expires       *timestamp.Timestamp
+	JobProps      *props.JobProps
+	Char          *users.User
+	Authorization *authorization.AuthorizationState
 }
 
 func (b0 SetSuperuserModeResponse_builder) Build() *SetSuperuserModeResponse {
@@ -2039,8 +2030,7 @@ func (b0 SetSuperuserModeResponse_builder) Build() *SetSuperuserModeResponse {
 	x.Expires = b.Expires
 	x.JobProps = b.JobProps
 	x.Char = b.Char
-	x.Permissions = b.Permissions
-	x.Attributes = b.Attributes
+	x.Authorization = b.Authorization
 	return m0
 }
 
@@ -2048,7 +2038,7 @@ var File_services_auth_auth_proto protoreflect.FileDescriptor
 
 const file_services_auth_auth_proto_rawDesc = "" +
 	"\n" +
-	"\x18services/auth/auth.proto\x12\rservices.auth\x1a\x1ccodegen/audit/redacted.proto\x1a\x19codegen/perms/perms.proto\x1a!codegen/sanitizer/sanitizer.proto\x1a!resources/accounts/accounts.proto\x1a&resources/accounts/oauth2/oauth2.proto\x1a resources/jobs/props/props.proto\x1a1resources/permissions/attributes/attributes.proto\x1a3resources/permissions/permissions/permissions.proto\x1a#resources/timestamp/timestamp.proto\x1a\x1aresources/users/user.proto\x1a\x13tagger/tagger.proto\"L\n" +
+	"\x18services/auth/auth.proto\x12\rservices.auth\x1a\x1ccodegen/audit/redacted.proto\x1a\x19codegen/perms/perms.proto\x1a!codegen/sanitizer/sanitizer.proto\x1a!resources/accounts/accounts.proto\x1a&resources/accounts/oauth2/oauth2.proto\x1a resources/jobs/props/props.proto\x1a7resources/permissions/authorization/authorization.proto\x1a#resources/timestamp/timestamp.proto\x1a\x1aresources/users/user.proto\x1a\x13tagger/tagger.proto\"L\n" +
 	"\fLoginRequest\x12\x1a\n" +
 	"\busername\x18\x01 \x01(\tR\busername\x12 \n" +
 	"\bpassword\x18\x02 \x01(\tB\x04\xf0\xf3\x18\x01R\bpassword\"\xe1\x01\n" +
@@ -2101,28 +2091,22 @@ const file_services_auth_auth_proto_rawDesc = "" +
 	"\x11restore_superuser\x18\x02 \x01(\bH\x00R\x10restoreSuperuser\x88\x01\x01\x12(\n" +
 	"\rsuperuser_job\x18\x03 \x01(\tH\x01R\fsuperuserJob\x88\x01\x01B\x14\n" +
 	"\x12_restore_superuserB\x10\n" +
-	"\x0e_superuser_job\"\xa2\x03\n" +
+	"\x0e_superuser_job\"\xeb\x02\n" +
 	"\x17ChooseCharacterResponse\x12\x14\n" +
 	"\x05token\x18\x01 \x01(\tR\x05token\x12\x1a\n" +
 	"\busername\x18\x02 \x01(\tR\busername\x128\n" +
 	"\aexpires\x18\x03 \x01(\v2\x1e.resources.timestamp.TimestampR\aexpires\x12;\n" +
 	"\tjob_props\x18\x04 \x01(\v2\x1e.resources.jobs.props.JobPropsR\bjobProps\x12<\n" +
-	"\x04char\x18\x05 \x01(\v2\x15.resources.users.UserB\x11\x9a\x84\x9e\x03\falias:\"user\"R\x04char\x12O\n" +
-	"\vpermissions\x18\x06 \x03(\v2-.resources.permissions.permissions.PermissionR\vpermissions\x12O\n" +
-	"\n" +
-	"attributes\x18\a \x03(\v2/.resources.permissions.attributes.RoleAttributeR\n" +
-	"attributes\"4\n" +
+	"\x04char\x18\x05 \x01(\v2\x15.resources.users.UserB\x11\x9a\x84\x9e\x03\falias:\"user\"R\x04char\x12]\n" +
+	"\rauthorization\x18\b \x01(\v27.resources.permissions.authorization.AuthorizationStateR\rauthorizationJ\x04\b\x06\x10\aJ\x04\b\a\x10\b\"4\n" +
 	"\x15ImpersonateJobRequest\x12\x1b\n" +
-	"\tjob_grade\x18\x01 \x01(\x05R\bjobGrade\"\xde\x02\n" +
+	"\tjob_grade\x18\x01 \x01(\x05R\bjobGrade\"\xa7\x02\n" +
 	"\x16ImpersonateJobResponse\x12\x14\n" +
 	"\x05token\x18\x01 \x01(\tR\x05token\x128\n" +
 	"\aexpires\x18\x02 \x01(\v2\x1e.resources.timestamp.TimestampR\aexpires\x12<\n" +
-	"\x04char\x18\x03 \x01(\v2\x15.resources.users.UserB\x11\x9a\x84\x9e\x03\falias:\"user\"R\x04char\x12O\n" +
-	"\vpermissions\x18\x04 \x03(\v2-.resources.permissions.permissions.PermissionR\vpermissions\x12O\n" +
-	"\n" +
-	"attributes\x18\x05 \x03(\v2/.resources.permissions.attributes.RoleAttributeR\n" +
-	"attributes\x12\x14\n" +
-	"\x05state\x18\x06 \x01(\bR\x05state\"@\n" +
+	"\x04char\x18\x03 \x01(\v2\x15.resources.users.UserB\x11\x9a\x84\x9e\x03\falias:\"user\"R\x04char\x12]\n" +
+	"\rauthorization\x18\a \x01(\v27.resources.permissions.authorization.AuthorizationStateR\rauthorization\x12\x14\n" +
+	"\x05state\x18\x06 \x01(\bR\x05stateJ\x04\b\x04\x10\x05J\x04\b\x05\x10\x06\"@\n" +
 	"\x18DeleteSocialLoginRequest\x12$\n" +
 	"\bprovider\x18\x01 \x01(\tB\b\xda\xf3\x18\x04\b\x01\x18\x01R\bprovider\"5\n" +
 	"\x19DeleteSocialLoginResponse\x12\x18\n" +
@@ -2130,18 +2114,15 @@ const file_services_auth_auth_proto_rawDesc = "" +
 	"\x17SetSuperuserModeRequest\x12\x1c\n" +
 	"\tsuperuser\x18\x01 \x01(\bR\tsuperuser\x12\x15\n" +
 	"\x03job\x18\x02 \x01(\tH\x00R\x03job\x88\x01\x01B\x06\n" +
-	"\x04_job\"\x9a\x03\n" +
+	"\x04_job\"\xe3\x02\n" +
 	"\x18SetSuperuserModeResponse\x12\x14\n" +
 	"\x05token\x18\x01 \x01(\tR\x05token\x128\n" +
 	"\aexpires\x18\x02 \x01(\v2\x1e.resources.timestamp.TimestampR\aexpires\x12@\n" +
 	"\tjob_props\x18\x03 \x01(\v2\x1e.resources.jobs.props.JobPropsH\x00R\bjobProps\x88\x01\x01\x12<\n" +
-	"\x04char\x18\x04 \x01(\v2\x15.resources.users.UserB\x11\x9a\x84\x9e\x03\falias:\"user\"R\x04char\x12O\n" +
-	"\vpermissions\x18\x05 \x03(\v2-.resources.permissions.permissions.PermissionR\vpermissions\x12O\n" +
+	"\x04char\x18\x04 \x01(\v2\x15.resources.users.UserB\x11\x9a\x84\x9e\x03\falias:\"user\"R\x04char\x12]\n" +
+	"\rauthorization\x18\a \x01(\v27.resources.permissions.authorization.AuthorizationStateR\rauthorizationB\f\n" +
 	"\n" +
-	"attributes\x18\x06 \x03(\v2/.resources.permissions.attributes.RoleAttributeR\n" +
-	"attributesB\f\n" +
-	"\n" +
-	"_job_props2\xa4\n" +
+	"_job_propsJ\x04\b\x05\x10\x06J\x04\b\x06\x10\a2\xa4\n" +
 	"\n" +
 	"\vAuthService\x12B\n" +
 	"\x05Login\x12\x1b.services.auth.LoginRequest\x1a\x1c.services.auth.LoginResponse\x12E\n" +
@@ -2160,41 +2141,40 @@ const file_services_auth_auth_proto_rawDesc = "" +
 
 var file_services_auth_auth_proto_msgTypes = make([]protoimpl.MessageInfo, 26)
 var file_services_auth_auth_proto_goTypes = []any{
-	(*LoginRequest)(nil),                  // 0: services.auth.LoginRequest
-	(*LoginResponse)(nil),                 // 1: services.auth.LoginResponse
-	(*LogoutRequest)(nil),                 // 2: services.auth.LogoutRequest
-	(*LogoutResponse)(nil),                // 3: services.auth.LogoutResponse
-	(*CreateAccountRequest)(nil),          // 4: services.auth.CreateAccountRequest
-	(*CreateAccountResponse)(nil),         // 5: services.auth.CreateAccountResponse
-	(*ChangePasswordRequest)(nil),         // 6: services.auth.ChangePasswordRequest
-	(*ChangePasswordResponse)(nil),        // 7: services.auth.ChangePasswordResponse
-	(*ChangeUsernameRequest)(nil),         // 8: services.auth.ChangeUsernameRequest
-	(*ChangeUsernameResponse)(nil),        // 9: services.auth.ChangeUsernameResponse
-	(*ForgotPasswordRequest)(nil),         // 10: services.auth.ForgotPasswordRequest
-	(*ForgotPasswordResponse)(nil),        // 11: services.auth.ForgotPasswordResponse
-	(*GetAccountInfoRequest)(nil),         // 12: services.auth.GetAccountInfoRequest
-	(*GetAccountInfoResponse)(nil),        // 13: services.auth.GetAccountInfoResponse
-	(*RefreshAccountSessionRequest)(nil),  // 14: services.auth.RefreshAccountSessionRequest
-	(*RefreshAccountSessionResponse)(nil), // 15: services.auth.RefreshAccountSessionResponse
-	(*GetCharactersRequest)(nil),          // 16: services.auth.GetCharactersRequest
-	(*GetCharactersResponse)(nil),         // 17: services.auth.GetCharactersResponse
-	(*ChooseCharacterRequest)(nil),        // 18: services.auth.ChooseCharacterRequest
-	(*ChooseCharacterResponse)(nil),       // 19: services.auth.ChooseCharacterResponse
-	(*ImpersonateJobRequest)(nil),         // 20: services.auth.ImpersonateJobRequest
-	(*ImpersonateJobResponse)(nil),        // 21: services.auth.ImpersonateJobResponse
-	(*DeleteSocialLoginRequest)(nil),      // 22: services.auth.DeleteSocialLoginRequest
-	(*DeleteSocialLoginResponse)(nil),     // 23: services.auth.DeleteSocialLoginResponse
-	(*SetSuperuserModeRequest)(nil),       // 24: services.auth.SetSuperuserModeRequest
-	(*SetSuperuserModeResponse)(nil),      // 25: services.auth.SetSuperuserModeResponse
-	(*timestamp.Timestamp)(nil),           // 26: resources.timestamp.Timestamp
-	(*accounts.Account)(nil),              // 27: resources.accounts.Account
-	(*oauth2.OAuth2Provider)(nil),         // 28: resources.accounts.oauth2.OAuth2Provider
-	(*oauth2.OAuth2Account)(nil),          // 29: resources.accounts.oauth2.OAuth2Account
-	(*accounts.Character)(nil),            // 30: resources.accounts.Character
-	(*props.JobProps)(nil),                // 31: resources.jobs.props.JobProps
-	(*users.User)(nil),                    // 32: resources.users.User
-	(*permissions.Permission)(nil),        // 33: resources.permissions.permissions.Permission
-	(*attributes.RoleAttribute)(nil),      // 34: resources.permissions.attributes.RoleAttribute
+	(*LoginRequest)(nil),                     // 0: services.auth.LoginRequest
+	(*LoginResponse)(nil),                    // 1: services.auth.LoginResponse
+	(*LogoutRequest)(nil),                    // 2: services.auth.LogoutRequest
+	(*LogoutResponse)(nil),                   // 3: services.auth.LogoutResponse
+	(*CreateAccountRequest)(nil),             // 4: services.auth.CreateAccountRequest
+	(*CreateAccountResponse)(nil),            // 5: services.auth.CreateAccountResponse
+	(*ChangePasswordRequest)(nil),            // 6: services.auth.ChangePasswordRequest
+	(*ChangePasswordResponse)(nil),           // 7: services.auth.ChangePasswordResponse
+	(*ChangeUsernameRequest)(nil),            // 8: services.auth.ChangeUsernameRequest
+	(*ChangeUsernameResponse)(nil),           // 9: services.auth.ChangeUsernameResponse
+	(*ForgotPasswordRequest)(nil),            // 10: services.auth.ForgotPasswordRequest
+	(*ForgotPasswordResponse)(nil),           // 11: services.auth.ForgotPasswordResponse
+	(*GetAccountInfoRequest)(nil),            // 12: services.auth.GetAccountInfoRequest
+	(*GetAccountInfoResponse)(nil),           // 13: services.auth.GetAccountInfoResponse
+	(*RefreshAccountSessionRequest)(nil),     // 14: services.auth.RefreshAccountSessionRequest
+	(*RefreshAccountSessionResponse)(nil),    // 15: services.auth.RefreshAccountSessionResponse
+	(*GetCharactersRequest)(nil),             // 16: services.auth.GetCharactersRequest
+	(*GetCharactersResponse)(nil),            // 17: services.auth.GetCharactersResponse
+	(*ChooseCharacterRequest)(nil),           // 18: services.auth.ChooseCharacterRequest
+	(*ChooseCharacterResponse)(nil),          // 19: services.auth.ChooseCharacterResponse
+	(*ImpersonateJobRequest)(nil),            // 20: services.auth.ImpersonateJobRequest
+	(*ImpersonateJobResponse)(nil),           // 21: services.auth.ImpersonateJobResponse
+	(*DeleteSocialLoginRequest)(nil),         // 22: services.auth.DeleteSocialLoginRequest
+	(*DeleteSocialLoginResponse)(nil),        // 23: services.auth.DeleteSocialLoginResponse
+	(*SetSuperuserModeRequest)(nil),          // 24: services.auth.SetSuperuserModeRequest
+	(*SetSuperuserModeResponse)(nil),         // 25: services.auth.SetSuperuserModeResponse
+	(*timestamp.Timestamp)(nil),              // 26: resources.timestamp.Timestamp
+	(*accounts.Account)(nil),                 // 27: resources.accounts.Account
+	(*oauth2.OAuth2Provider)(nil),            // 28: resources.accounts.oauth2.OAuth2Provider
+	(*oauth2.OAuth2Account)(nil),             // 29: resources.accounts.oauth2.OAuth2Account
+	(*accounts.Character)(nil),               // 30: resources.accounts.Character
+	(*props.JobProps)(nil),                   // 31: resources.jobs.props.JobProps
+	(*users.User)(nil),                       // 32: resources.users.User
+	(*authorization.AuthorizationState)(nil), // 33: resources.permissions.authorization.AuthorizationState
 }
 var file_services_auth_auth_proto_depIdxs = []int32{
 	26, // 0: services.auth.LoginResponse.expires:type_name -> resources.timestamp.Timestamp
@@ -2207,48 +2187,45 @@ var file_services_auth_auth_proto_depIdxs = []int32{
 	26, // 7: services.auth.ChooseCharacterResponse.expires:type_name -> resources.timestamp.Timestamp
 	31, // 8: services.auth.ChooseCharacterResponse.job_props:type_name -> resources.jobs.props.JobProps
 	32, // 9: services.auth.ChooseCharacterResponse.char:type_name -> resources.users.User
-	33, // 10: services.auth.ChooseCharacterResponse.permissions:type_name -> resources.permissions.permissions.Permission
-	34, // 11: services.auth.ChooseCharacterResponse.attributes:type_name -> resources.permissions.attributes.RoleAttribute
-	26, // 12: services.auth.ImpersonateJobResponse.expires:type_name -> resources.timestamp.Timestamp
-	32, // 13: services.auth.ImpersonateJobResponse.char:type_name -> resources.users.User
-	33, // 14: services.auth.ImpersonateJobResponse.permissions:type_name -> resources.permissions.permissions.Permission
-	34, // 15: services.auth.ImpersonateJobResponse.attributes:type_name -> resources.permissions.attributes.RoleAttribute
-	26, // 16: services.auth.SetSuperuserModeResponse.expires:type_name -> resources.timestamp.Timestamp
-	31, // 17: services.auth.SetSuperuserModeResponse.job_props:type_name -> resources.jobs.props.JobProps
-	32, // 18: services.auth.SetSuperuserModeResponse.char:type_name -> resources.users.User
-	33, // 19: services.auth.SetSuperuserModeResponse.permissions:type_name -> resources.permissions.permissions.Permission
-	34, // 20: services.auth.SetSuperuserModeResponse.attributes:type_name -> resources.permissions.attributes.RoleAttribute
-	0,  // 21: services.auth.AuthService.Login:input_type -> services.auth.LoginRequest
-	2,  // 22: services.auth.AuthService.Logout:input_type -> services.auth.LogoutRequest
-	4,  // 23: services.auth.AuthService.CreateAccount:input_type -> services.auth.CreateAccountRequest
-	8,  // 24: services.auth.AuthService.ChangeUsername:input_type -> services.auth.ChangeUsernameRequest
-	6,  // 25: services.auth.AuthService.ChangePassword:input_type -> services.auth.ChangePasswordRequest
-	10, // 26: services.auth.AuthService.ForgotPassword:input_type -> services.auth.ForgotPasswordRequest
-	16, // 27: services.auth.AuthService.GetCharacters:input_type -> services.auth.GetCharactersRequest
-	18, // 28: services.auth.AuthService.ChooseCharacter:input_type -> services.auth.ChooseCharacterRequest
-	20, // 29: services.auth.AuthService.ImpersonateJob:input_type -> services.auth.ImpersonateJobRequest
-	12, // 30: services.auth.AuthService.GetAccountInfo:input_type -> services.auth.GetAccountInfoRequest
-	14, // 31: services.auth.AuthService.RefreshAccountSession:input_type -> services.auth.RefreshAccountSessionRequest
-	22, // 32: services.auth.AuthService.DeleteSocialLogin:input_type -> services.auth.DeleteSocialLoginRequest
-	24, // 33: services.auth.AuthService.SetSuperuserMode:input_type -> services.auth.SetSuperuserModeRequest
-	1,  // 34: services.auth.AuthService.Login:output_type -> services.auth.LoginResponse
-	3,  // 35: services.auth.AuthService.Logout:output_type -> services.auth.LogoutResponse
-	5,  // 36: services.auth.AuthService.CreateAccount:output_type -> services.auth.CreateAccountResponse
-	9,  // 37: services.auth.AuthService.ChangeUsername:output_type -> services.auth.ChangeUsernameResponse
-	7,  // 38: services.auth.AuthService.ChangePassword:output_type -> services.auth.ChangePasswordResponse
-	11, // 39: services.auth.AuthService.ForgotPassword:output_type -> services.auth.ForgotPasswordResponse
-	17, // 40: services.auth.AuthService.GetCharacters:output_type -> services.auth.GetCharactersResponse
-	19, // 41: services.auth.AuthService.ChooseCharacter:output_type -> services.auth.ChooseCharacterResponse
-	21, // 42: services.auth.AuthService.ImpersonateJob:output_type -> services.auth.ImpersonateJobResponse
-	13, // 43: services.auth.AuthService.GetAccountInfo:output_type -> services.auth.GetAccountInfoResponse
-	15, // 44: services.auth.AuthService.RefreshAccountSession:output_type -> services.auth.RefreshAccountSessionResponse
-	23, // 45: services.auth.AuthService.DeleteSocialLogin:output_type -> services.auth.DeleteSocialLoginResponse
-	25, // 46: services.auth.AuthService.SetSuperuserMode:output_type -> services.auth.SetSuperuserModeResponse
-	34, // [34:47] is the sub-list for method output_type
-	21, // [21:34] is the sub-list for method input_type
-	21, // [21:21] is the sub-list for extension type_name
-	21, // [21:21] is the sub-list for extension extendee
-	0,  // [0:21] is the sub-list for field type_name
+	33, // 10: services.auth.ChooseCharacterResponse.authorization:type_name -> resources.permissions.authorization.AuthorizationState
+	26, // 11: services.auth.ImpersonateJobResponse.expires:type_name -> resources.timestamp.Timestamp
+	32, // 12: services.auth.ImpersonateJobResponse.char:type_name -> resources.users.User
+	33, // 13: services.auth.ImpersonateJobResponse.authorization:type_name -> resources.permissions.authorization.AuthorizationState
+	26, // 14: services.auth.SetSuperuserModeResponse.expires:type_name -> resources.timestamp.Timestamp
+	31, // 15: services.auth.SetSuperuserModeResponse.job_props:type_name -> resources.jobs.props.JobProps
+	32, // 16: services.auth.SetSuperuserModeResponse.char:type_name -> resources.users.User
+	33, // 17: services.auth.SetSuperuserModeResponse.authorization:type_name -> resources.permissions.authorization.AuthorizationState
+	0,  // 18: services.auth.AuthService.Login:input_type -> services.auth.LoginRequest
+	2,  // 19: services.auth.AuthService.Logout:input_type -> services.auth.LogoutRequest
+	4,  // 20: services.auth.AuthService.CreateAccount:input_type -> services.auth.CreateAccountRequest
+	8,  // 21: services.auth.AuthService.ChangeUsername:input_type -> services.auth.ChangeUsernameRequest
+	6,  // 22: services.auth.AuthService.ChangePassword:input_type -> services.auth.ChangePasswordRequest
+	10, // 23: services.auth.AuthService.ForgotPassword:input_type -> services.auth.ForgotPasswordRequest
+	16, // 24: services.auth.AuthService.GetCharacters:input_type -> services.auth.GetCharactersRequest
+	18, // 25: services.auth.AuthService.ChooseCharacter:input_type -> services.auth.ChooseCharacterRequest
+	20, // 26: services.auth.AuthService.ImpersonateJob:input_type -> services.auth.ImpersonateJobRequest
+	12, // 27: services.auth.AuthService.GetAccountInfo:input_type -> services.auth.GetAccountInfoRequest
+	14, // 28: services.auth.AuthService.RefreshAccountSession:input_type -> services.auth.RefreshAccountSessionRequest
+	22, // 29: services.auth.AuthService.DeleteSocialLogin:input_type -> services.auth.DeleteSocialLoginRequest
+	24, // 30: services.auth.AuthService.SetSuperuserMode:input_type -> services.auth.SetSuperuserModeRequest
+	1,  // 31: services.auth.AuthService.Login:output_type -> services.auth.LoginResponse
+	3,  // 32: services.auth.AuthService.Logout:output_type -> services.auth.LogoutResponse
+	5,  // 33: services.auth.AuthService.CreateAccount:output_type -> services.auth.CreateAccountResponse
+	9,  // 34: services.auth.AuthService.ChangeUsername:output_type -> services.auth.ChangeUsernameResponse
+	7,  // 35: services.auth.AuthService.ChangePassword:output_type -> services.auth.ChangePasswordResponse
+	11, // 36: services.auth.AuthService.ForgotPassword:output_type -> services.auth.ForgotPasswordResponse
+	17, // 37: services.auth.AuthService.GetCharacters:output_type -> services.auth.GetCharactersResponse
+	19, // 38: services.auth.AuthService.ChooseCharacter:output_type -> services.auth.ChooseCharacterResponse
+	21, // 39: services.auth.AuthService.ImpersonateJob:output_type -> services.auth.ImpersonateJobResponse
+	13, // 40: services.auth.AuthService.GetAccountInfo:output_type -> services.auth.GetAccountInfoResponse
+	15, // 41: services.auth.AuthService.RefreshAccountSession:output_type -> services.auth.RefreshAccountSessionResponse
+	23, // 42: services.auth.AuthService.DeleteSocialLogin:output_type -> services.auth.DeleteSocialLoginResponse
+	25, // 43: services.auth.AuthService.SetSuperuserMode:output_type -> services.auth.SetSuperuserModeResponse
+	31, // [31:44] is the sub-list for method output_type
+	18, // [18:31] is the sub-list for method input_type
+	18, // [18:18] is the sub-list for extension type_name
+	18, // [18:18] is the sub-list for extension extendee
+	0,  // [0:18] is the sub-list for field type_name
 }
 
 func init() { file_services_auth_auth_proto_init() }

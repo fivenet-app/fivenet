@@ -61,23 +61,23 @@ func (d *Demo) seedFakeVehicles(ctx context.Context) error {
 		return err
 	}
 
-	insertVehicles := tOwnedVehicles.
+	insertVehicles := tVehicles.
 		INSERT(
-			tOwnedVehicles.UserID,
-			tOwnedVehicles.Plate,
-			tOwnedVehicles.Model,
-			tOwnedVehicles.Type,
-			tOwnedVehicles.Data,
+			tVehicles.UserID,
+			tVehicles.Plate,
+			tVehicles.Model,
+			tVehicles.Type,
+			tVehicles.Data,
 		)
 
-	insertProps := tVehicleProps.
-		INSERT(
-			tVehicleProps.Plate,
-			tVehicleProps.Wanted,
-			tVehicleProps.WantedAt,
-			tVehicleProps.WantedTill,
-			tVehicleProps.WantedReason,
-		)
+	type wantedState struct {
+		plate  string
+		wanted bool
+		at     any
+		till   any
+		reason any
+	}
+	wantedStates := make([]wantedState, 0)
 
 	count := 0
 	now := time.Now().UTC()
@@ -94,39 +94,46 @@ func (d *Demo) seedFakeVehicles(ctx context.Context) error {
 			)
 
 			wanted, wantedAt, wantedTill, wantedReason := d.demoVehicleWanted(now)
-			insertProps = insertProps.VALUES(
-				plate,
-				wanted,
-				wantedAt,
-				wantedTill,
-				wantedReason,
-			)
+			wantedStates = append(wantedStates, wantedState{
+				plate: plate, wanted: wanted, at: wantedAt, till: wantedTill, reason: wantedReason,
+			})
 			count++
 		}
 	}
 
 	insertVehicles = insertVehicles.
 		ON_DUPLICATE_KEY_UPDATE(
-			tOwnedVehicles.UserID.SET(mysql.RawInt("VALUES(`user_id`)")),
-			tOwnedVehicles.Model.SET(mysql.RawString("VALUES(`model`)")),
-			tOwnedVehicles.Type.SET(mysql.RawString("VALUES(`type`)")),
-			tOwnedVehicles.Data.SET(mysql.RawString("VALUES(`data`)")),
+			tVehicles.UserID.SET(mysql.RawInt("VALUES(`user_id`)")),
+			tVehicles.Model.SET(mysql.RawString("VALUES(`model`)")),
+			tVehicles.Type.SET(mysql.RawString("VALUES(`type`)")),
+			tVehicles.Data.SET(mysql.RawString("VALUES(`data`)")),
 		)
 
 	if _, err := insertVehicles.ExecContext(ctx, tx); err != nil {
 		return fmt.Errorf("failed to upsert demo vehicles. %w", err)
 	}
 
-	insertProps = insertProps.
-		ON_DUPLICATE_KEY_UPDATE(
-			tVehicleProps.Wanted.SET(mysql.RawBool("VALUES(`wanted`)")),
-			tVehicleProps.WantedAt.SET(mysql.RawTimestamp("VALUES(`wanted_at`)")),
-			tVehicleProps.WantedTill.SET(mysql.RawTimestamp("VALUES(`wanted_till`)")),
-			tVehicleProps.WantedReason.SET(mysql.RawString("VALUES(`wanted_reason`)")),
-		)
-
-	if _, err := insertProps.ExecContext(ctx, tx); err != nil {
-		return fmt.Errorf("failed to upsert demo vehicle props. %w", err)
+	for _, state := range wantedStates {
+		if _, err := tx.ExecContext(ctx, `
+INSERT INTO fivenet_vehicle_property_values (plate, property_key, value_type, value_bool)
+VALUES (?, 'vehicle.wanted', 4, ?)
+ON DUPLICATE KEY UPDATE value_type = VALUES(value_type), value_bool = VALUES(value_bool)`, state.plate, state.wanted); err != nil {
+			return fmt.Errorf("failed to upsert demo vehicle wanted property. %w", err)
+		}
+		if !state.wanted {
+			if _, err := tx.ExecContext(ctx, `
+DELETE FROM fivenet_vehicle_property_state
+WHERE plate = ? AND property_key = 'vehicle.wanted'`, state.plate); err != nil {
+				return fmt.Errorf("failed to clear demo vehicle wanted state. %w", err)
+			}
+			continue
+		}
+		if _, err := tx.ExecContext(ctx, `
+INSERT INTO fivenet_vehicle_property_state (plate, property_key, reason, active_at, expires_at)
+VALUES (?, 'vehicle.wanted', ?, ?, ?)
+ON DUPLICATE KEY UPDATE reason = VALUES(reason), active_at = VALUES(active_at), expires_at = VALUES(expires_at)`, state.plate, state.reason, state.at, state.till); err != nil {
+			return fmt.Errorf("failed to upsert demo vehicle wanted state. %w", err)
+		}
 	}
 
 	if err := tx.Commit(); err != nil {
@@ -163,35 +170,17 @@ func (d *Demo) lookupVehicleOwners(
 }
 
 func (d *Demo) clearDemoVehicles(ctx context.Context, tx *sql.Tx) error {
-	propsCondition := tVehicleProps.Plate.LIKE(mysql.String(demoVehiclePlatePrefix + "%"))
-	var propsCount database.DataCount
-	propsCountStmt := tVehicleProps.
-		SELECT(mysql.COUNT(tVehicleProps.Plate).AS("data_count.total")).
-		FROM(tVehicleProps).
-		WHERE(propsCondition)
-	if err := propsCountStmt.QueryContext(ctx, tx, &propsCount); err != nil {
-		return fmt.Errorf("failed to count demo vehicle props. %w", err)
-	}
-
-	propsStmt := tVehicleProps.
-		DELETE().
-		WHERE(propsCondition).
-		LIMIT(propsCount.Total)
-	if _, err := propsStmt.ExecContext(ctx, tx); err != nil {
-		return fmt.Errorf("failed to clear demo vehicle props. %w", err)
-	}
-
-	vehiclesCondition := tOwnedVehicles.Plate.LIKE(mysql.String(demoVehiclePlatePrefix + "%"))
+	vehiclesCondition := tVehicles.Plate.LIKE(mysql.String(demoVehiclePlatePrefix + "%"))
 	var vehiclesCount database.DataCount
-	vehiclesCountStmt := tOwnedVehicles.
-		SELECT(mysql.COUNT(tOwnedVehicles.Plate).AS("data_count.total")).
-		FROM(tOwnedVehicles).
+	vehiclesCountStmt := tVehicles.
+		SELECT(mysql.COUNT(tVehicles.Plate).AS("data_count.total")).
+		FROM(tVehicles).
 		WHERE(vehiclesCondition)
 	if err := vehiclesCountStmt.QueryContext(ctx, tx, &vehiclesCount); err != nil {
 		return fmt.Errorf("failed to count demo vehicles. %w", err)
 	}
 
-	vehiclesStmt := tOwnedVehicles.
+	vehiclesStmt := tVehicles.
 		DELETE().
 		WHERE(vehiclesCondition).
 		LIMIT(vehiclesCount.Total)

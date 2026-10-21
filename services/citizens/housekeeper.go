@@ -175,6 +175,13 @@ func (s *Housekeeper) maxWantedDurationHandling(ctx context.Context) (int, error
 	if !game.GetMaxWantedDurationUserEnabled() || game.GetMaxWantedDurationUser() == nil {
 		return 0, nil
 	}
+	wantedEnabled, err := s.store.IsSystemPropertyEnabled(ctx, "user.wanted")
+	if err != nil {
+		return 0, err
+	}
+	if !wantedEnabled {
+		return 0, nil
+	}
 
 	maxDays := game.GetMaxWantedDurationUser().GetSeconds() / 24 / 3600
 

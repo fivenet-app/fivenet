@@ -18,7 +18,10 @@ import (
 )
 
 func init() {
-	filestore.RegisterFileReference(table.FivenetMailerMessagesFiles, table.FivenetMailerMessagesFiles.FileID)
+	filestore.RegisterFileReference(
+		table.FivenetMailerMessagesFiles,
+		table.FivenetMailerMessagesFiles.FileID,
+	)
 
 	housekeeper.AddTable(&housekeeper.Table{
 		Table:           table.FivenetMailerEmails,

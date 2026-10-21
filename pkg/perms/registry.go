@@ -12,6 +12,7 @@ import (
 	permissionsattributes "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/permissions/attributes"
 	permissionsevents "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/permissions/events"
 	permissionspermissions "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/permissions/permissions"
+	propertypb "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/properties"
 	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
 	"github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
@@ -42,6 +43,7 @@ type Attr struct {
 	ID            int64
 	Key           Key
 	Type          permissionsattributes.AttributeTypes
+	PropertyScope propertypb.PropertyScope
 	ValidValues   any
 	DefaultValues any
 }
@@ -102,12 +104,14 @@ func (ps *Perms) register(ctx context.Context, defaultRolePerms []string) error 
 		ps.permsGuardToIDMap.Store(BuildGuard(perm.Namespace, perm.Service, perm.Name), permId)
 
 		for _, attr := range perm.Attrs {
+			validValues := attr.ValidValues
 			if _, err := ps.registerOrUpdateAttribute(
 				ctx,
 				permId,
 				attr.Key,
 				attr.Type,
-				attr.ValidValues,
+				validValues,
+				attr.PropertyScope,
 			); err != nil {
 				return fmt.Errorf(
 					"failed to register/update attribute (perm id: %d, attr: %s). %w",
@@ -319,6 +323,7 @@ func (ps *Perms) registerOrUpdateAttribute(
 	key Key,
 	aType permissionsattributes.AttributeTypes,
 	validValues any,
+	propertyScope propertypb.PropertyScope,
 ) (int64, error) {
 	attr, err := ps.getAttributeFromDatabase(ctx, permId, key)
 	if err != nil {
@@ -344,12 +349,22 @@ func (ps *Perms) registerOrUpdateAttribute(
 			}
 
 		default:
-			if aType == permissionsattributes.StringListAttributeType {
+			switch aType {
+			case permissionsattributes.StringListAttributeType:
 				marshaled, err := json.Marshal(v)
 				if err != nil {
 					return 0, fmt.Errorf("failed to marshal valid values to string. %w", err)
 				}
 				validValsOut = "{\"stringList\":{\"strings\":" + string(marshaled) + "}}"
+			case permissionsattributes.PropertyListAttributeType:
+				marshaled, err := json.Marshal(v)
+				if err != nil {
+					return 0, fmt.Errorf(
+						"failed to marshal property valid values to string. %w",
+						err,
+					)
+				}
+				validValsOut = "{\"propertyList\":{\"keys\":" + string(marshaled) + "}}"
 			}
 		}
 	}
@@ -361,14 +376,28 @@ func (ps *Perms) registerOrUpdateAttribute(
 	if err := ps.convertRawValue(validVals, validValsOut, aType); err != nil {
 		return 0, fmt.Errorf("failed to convert raw value for valid values. %w", err)
 	}
-
 	if attr != nil && attr.ID > 0 {
-		if err := ps.addOrUpdateAttributeInMap(permId, attr.ID, key, aType, validVals); err != nil {
+		if err := ps.addOrUpdateAttributeInMap(
+			permId,
+			attr.ID,
+			key,
+			aType,
+			validVals,
+			propertyScope,
+		); err != nil {
 			return 0, fmt.Errorf("failed to add or update attribute in map. %w", err)
 		}
 
 		if attr.Type != string(aType) || (attr.ValidValues == nil || validVals != attrValidValues) {
-			if err := ps.updateAttribute(ctx, attr.ID, permId, key, aType, validVals); err != nil {
+			if err := ps.updateAttribute(
+				ctx,
+				attr.ID,
+				permId,
+				key,
+				aType,
+				validVals,
+				propertyScope,
+			); err != nil {
 				return attr.ID, fmt.Errorf("failed to update attribute. %w", err)
 			}
 			return attr.ID, nil
@@ -377,12 +406,19 @@ func (ps *Perms) registerOrUpdateAttribute(
 		return attr.ID, nil
 	}
 
-	attrId, err := ps.createAttribute(ctx, permId, key, aType, validVals)
+	attrId, err := ps.createAttribute(ctx, permId, key, aType, validVals, propertyScope)
 	if err != nil {
 		return 0, fmt.Errorf("failed to create attribute. %w", err)
 	}
 
-	if err := ps.addOrUpdateAttributeInMap(permId, attrId, key, aType, validVals); err != nil {
+	if err := ps.addOrUpdateAttributeInMap(
+		permId,
+		attrId,
+		key,
+		aType,
+		validVals,
+		propertyScope,
+	); err != nil {
 		return 0, fmt.Errorf("failed to add or update attribute in map after creation. %w", err)
 	}
 

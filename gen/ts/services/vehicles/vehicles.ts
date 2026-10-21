@@ -15,9 +15,11 @@ import { MessageType } from "@protobuf-ts/runtime";
 import { VehicleActivity } from "../../resources/vehicles/activity/activity";
 import { Timestamp } from "../../resources/timestamp/timestamp";
 import { VehicleActivityType } from "../../resources/vehicles/activity/activity";
+import { PropertyChange } from "../../resources/properties/properties";
 import { VehicleProps } from "../../resources/vehicles/props/props";
 import { Vehicle } from "../../resources/vehicles/vehicles";
 import { PaginationResponse } from "../../resources/common/database/database";
+import { PropertyFilter } from "../../resources/properties/properties";
 import { Sort } from "../../resources/common/database/database";
 import { PaginationRequest } from "../../resources/common/database/database";
 /**
@@ -54,6 +56,10 @@ export interface ListVehiclesRequest {
      * @generated from protobuf field: optional bool wanted = 7
      */
     wanted?: boolean;
+    /**
+     * @generated from protobuf field: repeated resources.properties.PropertyFilter property_filters = 8
+     */
+    propertyFilters: PropertyFilter[];
 }
 /**
  * @generated from protobuf message services.vehicles.ListVehiclesResponse
@@ -80,6 +86,13 @@ export interface SetVehiclePropsRequest {
      * @generated from protobuf field: string reason = 2
      */
     reason: string;
+    /**
+     * Generic custom scalar properties. Managed system properties continue to
+     * use the dedicated fields above and produce their specialized activities.
+     *
+     * @generated from protobuf field: repeated resources.properties.PropertyChange property_changes = 3
+     */
+    propertyChanges: PropertyChange[];
 }
 /**
  * @generated from protobuf message services.vehicles.SetVehiclePropsResponse
@@ -122,6 +135,12 @@ export interface ListVehicleActivityRequest {
      * @generated from protobuf field: optional resources.timestamp.Timestamp to = 6
      */
     to?: Timestamp;
+    /**
+     * Restricts generic PROPERTY activity entries to these custom property keys.
+     *
+     * @generated from protobuf field: repeated string property_keys = 7
+     */
+    propertyKeys: string[];
 }
 /**
  * @generated from protobuf message services.vehicles.ListVehicleActivityResponse
@@ -146,12 +165,14 @@ class ListVehiclesRequest$Type extends MessageType<ListVehiclesRequest> {
             { no: 4, name: "model", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "32" } } } },
             { no: 5, name: "user_ids", kind: "scalar", repeat: 1 /*RepeatType.PACKED*/, T: 5 /*ScalarType.INT32*/, options: { "buf.validate.field": { repeated: { maxItems: "10", items: { int32: { gte: 0 } } } } } },
             { no: 6, name: "job", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "20" } } } },
-            { no: 7, name: "wanted", kind: "scalar", opt: true, T: 8 /*ScalarType.BOOL*/ }
+            { no: 7, name: "wanted", kind: "scalar", opt: true, T: 8 /*ScalarType.BOOL*/ },
+            { no: 8, name: "property_filters", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => PropertyFilter, options: { "buf.validate.field": { repeated: { maxItems: "8" } } } }
         ]);
     }
     create(value?: PartialMessage<ListVehiclesRequest>): ListVehiclesRequest {
         const message = globalThis.Object.create((this.messagePrototype!));
         message.userIds = [];
+        message.propertyFilters = [];
         if (value !== undefined)
             reflectionMergePartial<ListVehiclesRequest>(this, message, value);
         return message;
@@ -185,6 +206,9 @@ class ListVehiclesRequest$Type extends MessageType<ListVehiclesRequest> {
                     break;
                 case /* optional bool wanted */ 7:
                     message.wanted = reader.bool();
+                    break;
+                case /* repeated resources.properties.PropertyFilter property_filters */ 8:
+                    message.propertyFilters.push(PropertyFilter.internalBinaryRead(reader, reader.uint32(), options));
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -223,6 +247,9 @@ class ListVehiclesRequest$Type extends MessageType<ListVehiclesRequest> {
         /* optional bool wanted = 7; */
         if (message.wanted !== undefined)
             writer.tag(7, WireType.Varint).bool(message.wanted);
+        /* repeated resources.properties.PropertyFilter property_filters = 8; */
+        for (let i = 0; i < message.propertyFilters.length; i++)
+            PropertyFilter.internalBinaryWrite(message.propertyFilters[i], writer.tag(8, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -292,12 +319,14 @@ class SetVehiclePropsRequest$Type extends MessageType<SetVehiclePropsRequest> {
     constructor() {
         super("services.vehicles.SetVehiclePropsRequest", [
             { no: 1, name: "props", kind: "message", T: () => VehicleProps, options: { "buf.validate.field": { required: true } } },
-            { no: 2, name: "reason", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { ignore: "IGNORE_IF_ZERO_VALUE", string: { minLen: "3", maxLen: "255" } }, "codegen.sanitizer.sanitizer": { enabled: true } } }
+            { no: 2, name: "reason", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { ignore: "IGNORE_IF_ZERO_VALUE", string: { minLen: "3", maxLen: "255" } }, "codegen.sanitizer.sanitizer": { enabled: true } } },
+            { no: 3, name: "property_changes", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => PropertyChange, options: { "buf.validate.field": { repeated: { maxItems: "20" } } } }
         ]);
     }
     create(value?: PartialMessage<SetVehiclePropsRequest>): SetVehiclePropsRequest {
         const message = globalThis.Object.create((this.messagePrototype!));
         message.reason = "";
+        message.propertyChanges = [];
         if (value !== undefined)
             reflectionMergePartial<SetVehiclePropsRequest>(this, message, value);
         return message;
@@ -312,6 +341,9 @@ class SetVehiclePropsRequest$Type extends MessageType<SetVehiclePropsRequest> {
                     break;
                 case /* string reason */ 2:
                     message.reason = reader.string();
+                    break;
+                case /* repeated resources.properties.PropertyChange property_changes */ 3:
+                    message.propertyChanges.push(PropertyChange.internalBinaryRead(reader, reader.uint32(), options));
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -331,6 +363,9 @@ class SetVehiclePropsRequest$Type extends MessageType<SetVehiclePropsRequest> {
         /* string reason = 2; */
         if (message.reason !== "")
             writer.tag(2, WireType.LengthDelimited).string(message.reason);
+        /* repeated resources.properties.PropertyChange property_changes = 3; */
+        for (let i = 0; i < message.propertyChanges.length; i++)
+            PropertyChange.internalBinaryWrite(message.propertyChanges[i], writer.tag(3, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -396,13 +431,15 @@ class ListVehicleActivityRequest$Type extends MessageType<ListVehicleActivityReq
             { no: 3, name: "plate", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { minLen: "1", maxLen: "32" } } } },
             { no: 4, name: "types", kind: "enum", repeat: 1 /*RepeatType.PACKED*/, T: () => ["resources.vehicles.activity.VehicleActivityType", VehicleActivityType, "VEHICLE_ACTIVITY_TYPE_"], options: { "buf.validate.field": { repeated: { maxItems: "10", items: { enum: { definedOnly: true } } } } } },
             { no: 5, name: "from", kind: "message", T: () => Timestamp },
-            { no: 6, name: "to", kind: "message", T: () => Timestamp }
+            { no: 6, name: "to", kind: "message", T: () => Timestamp },
+            { no: 7, name: "property_keys", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { repeated: { maxItems: "20", items: { string: { maxLen: "64" } } } } } }
         ]);
     }
     create(value?: PartialMessage<ListVehicleActivityRequest>): ListVehicleActivityRequest {
         const message = globalThis.Object.create((this.messagePrototype!));
         message.plate = "";
         message.types = [];
+        message.propertyKeys = [];
         if (value !== undefined)
             reflectionMergePartial<ListVehicleActivityRequest>(this, message, value);
         return message;
@@ -433,6 +470,9 @@ class ListVehicleActivityRequest$Type extends MessageType<ListVehicleActivityReq
                     break;
                 case /* optional resources.timestamp.Timestamp to */ 6:
                     message.to = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.to);
+                    break;
+                case /* repeated string property_keys */ 7:
+                    message.propertyKeys.push(reader.string());
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -468,6 +508,9 @@ class ListVehicleActivityRequest$Type extends MessageType<ListVehicleActivityReq
         /* optional resources.timestamp.Timestamp to = 6; */
         if (message.to)
             Timestamp.internalBinaryWrite(message.to, writer.tag(6, WireType.LengthDelimited).fork(), options).join();
+        /* repeated string property_keys = 7; */
+        for (let i = 0; i < message.propertyKeys.length; i++)
+            writer.tag(7, WireType.LengthDelimited).string(message.propertyKeys[i]);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -536,7 +579,7 @@ export const ListVehicleActivityResponse = new ListVehicleActivityResponse$Type(
  * @generated ServiceType for protobuf service services.vehicles.VehiclesService
  */
 export const VehiclesService = new ServiceType("services.vehicles.VehiclesService", [
-    { name: "ListVehicles", options: { "codegen.perms.perms": { enabled: true, attrs: [{ key: "Fields", type: "ATTRIBUTE_TYPE_STRING_LIST", validStringList: ["Wanted"] }] } }, I: ListVehiclesRequest, O: ListVehiclesResponse },
-    { name: "SetVehicleProps", options: { "codegen.perms.perms": { enabled: true, attrs: [{ key: "Fields", type: "ATTRIBUTE_TYPE_STRING_LIST", validStringList: ["Wanted"] }] } }, I: SetVehiclePropsRequest, O: SetVehiclePropsResponse },
+    { name: "ListVehicles", options: { "codegen.perms.perms": { enabled: true, attrs: [{ key: "Properties", type: "ATTRIBUTE_TYPE_PROPERTY_LIST", propertyScope: "PROPERTY_SCOPE_VEHICLE" }] } }, I: ListVehiclesRequest, O: ListVehiclesResponse },
+    { name: "SetVehicleProps", options: { "codegen.perms.perms": { enabled: true, attrs: [{ key: "Properties", type: "ATTRIBUTE_TYPE_PROPERTY_LIST", propertyScope: "PROPERTY_SCOPE_VEHICLE" }] } }, I: SetVehiclePropsRequest, O: SetVehiclePropsResponse },
     { name: "ListVehicleActivity", options: { "codegen.perms.perms": { enabled: true, attrs: [{ key: "Fields", type: "ATTRIBUTE_TYPE_STRING_LIST", validStringList: ["Creator", "Own"] }] } }, I: ListVehicleActivityRequest, O: ListVehicleActivityResponse }
-], { "codegen.perms.perms_svc": { order: 40, icon: "i-mdi-car-outline" } });
+], { "codegen.perms.perms_svc": { order: 40, icon: "i-mdi-car-outline", systemProperties: [{ scope: "PROPERTY_SCOPE_VEHICLE", key: "vehicle.wanted", valueType: "PROPERTY_VALUE_TYPE_BOOL", enabled: true, displayKey: "common.wanted", searchable: true, valueFormat: "PROPERTY_VALUE_FORMAT_PLAIN", behavior: "PROPERTY_BEHAVIOR_MANAGED", displayMode: "PROPERTY_DISPLAY_MODE_PROFILE_BADGE", groupKey: "status", sortOrder: 100, pinned: true }], propertyGroups: [{ scope: "PROPERTY_SCOPE_VEHICLE", key: "status", displayKey: "components.settings.property_definitions.groups.status", sortOrder: 100 }] } });

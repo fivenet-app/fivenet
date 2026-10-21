@@ -61,16 +61,13 @@ func (m *ChooseCharacterResponse) Sanitize() error {
 		return nil
 	}
 
-	// Field: Attributes
-	for idx, item := range m.Attributes {
-		_, _ = idx, item
-
-		if v, ok := any(item).(interface{ Sanitize() error }); ok {
+	// Field: Authorization
+	if m.Authorization != nil {
+		if v, ok := any(m.GetAuthorization()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
 		}
-
 	}
 
 	// Field: Char
@@ -98,18 +95,6 @@ func (m *ChooseCharacterResponse) Sanitize() error {
 				return err
 			}
 		}
-	}
-
-	// Field: Permissions
-	for idx, item := range m.Permissions {
-		_, _ = idx, item
-
-		if v, ok := any(item).(interface{ Sanitize() error }); ok {
-			if err := v.Sanitize(); err != nil {
-				return err
-			}
-		}
-
 	}
 
 	// Field: Token
@@ -241,16 +226,13 @@ func (m *ImpersonateJobResponse) Sanitize() error {
 		return nil
 	}
 
-	// Field: Attributes
-	for idx, item := range m.Attributes {
-		_, _ = idx, item
-
-		if v, ok := any(item).(interface{ Sanitize() error }); ok {
+	// Field: Authorization
+	if m.Authorization != nil {
+		if v, ok := any(m.GetAuthorization()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
 		}
-
 	}
 
 	// Field: Char
@@ -269,18 +251,6 @@ func (m *ImpersonateJobResponse) Sanitize() error {
 				return err
 			}
 		}
-	}
-
-	// Field: Permissions
-	for idx, item := range m.Permissions {
-		_, _ = idx, item
-
-		if v, ok := any(item).(interface{ Sanitize() error }); ok {
-			if err := v.Sanitize(); err != nil {
-				return err
-			}
-		}
-
 	}
 
 	// Field: Token
@@ -377,16 +347,13 @@ func (m *SetSuperuserModeResponse) Sanitize() error {
 		return nil
 	}
 
-	// Field: Attributes
-	for idx, item := range m.Attributes {
-		_, _ = idx, item
-
-		if v, ok := any(item).(interface{ Sanitize() error }); ok {
+	// Field: Authorization
+	if m.Authorization != nil {
+		if v, ok := any(m.GetAuthorization()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
 		}
-
 	}
 
 	// Field: Char
@@ -414,18 +381,6 @@ func (m *SetSuperuserModeResponse) Sanitize() error {
 				return err
 			}
 		}
-	}
-
-	// Field: Permissions
-	for idx, item := range m.Permissions {
-		_, _ = idx, item
-
-		if v, ok := any(item).(interface{ Sanitize() error }); ok {
-			if err := v.Sanitize(); err != nil {
-				return err
-			}
-		}
-
 	}
 
 	// Field: Token

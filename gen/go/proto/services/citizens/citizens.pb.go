@@ -14,6 +14,7 @@ import (
 	_ "github.com/fivenet-app/fivenet/v2026/gen/go/proto/codegen/sanitizer"
 	database "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/common/database"
 	file "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/file"
+	properties "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/properties"
 	timestamp "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/timestamp"
 	users "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/users"
 	activity "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/users/activity"
@@ -43,10 +44,11 @@ type ListCitizensRequest struct {
 	Dateofbirth             *string `protobuf:"bytes,7,opt,name=dateofbirth,proto3,oneof" json:"dateofbirth,omitempty"`
 	OpenFines               *int64  `protobuf:"varint,8,opt,name=open_fines,json=openFines,proto3,oneof" json:"open_fines,omitempty"`
 	// Height range search (in cm)
-	MinHeight     *float32 `protobuf:"fixed32,9,opt,name=min_height,json=minHeight,proto3,oneof" json:"min_height,omitempty"`
-	MaxHeight     *float32 `protobuf:"fixed32,10,opt,name=max_height,json=maxHeight,proto3,oneof" json:"max_height,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
+	MinHeight       *float32                     `protobuf:"fixed32,9,opt,name=min_height,json=minHeight,proto3,oneof" json:"min_height,omitempty"`
+	MaxHeight       *float32                     `protobuf:"fixed32,10,opt,name=max_height,json=maxHeight,proto3,oneof" json:"max_height,omitempty"`
+	PropertyFilters []*properties.PropertyFilter `protobuf:"bytes,11,rep,name=property_filters,json=propertyFilters,proto3" json:"property_filters,omitempty"`
+	unknownFields   protoimpl.UnknownFields
+	sizeCache       protoimpl.SizeCache
 }
 
 func (x *ListCitizensRequest) Reset() {
@@ -144,6 +146,13 @@ func (x *ListCitizensRequest) GetMaxHeight() float32 {
 	return 0
 }
 
+func (x *ListCitizensRequest) GetPropertyFilters() []*properties.PropertyFilter {
+	if x != nil {
+		return x.PropertyFilters
+	}
+	return nil
+}
+
 func (x *ListCitizensRequest) SetPagination(v *database.PaginationRequest) {
 	x.Pagination = v
 }
@@ -182,6 +191,10 @@ func (x *ListCitizensRequest) SetMinHeight(v float32) {
 
 func (x *ListCitizensRequest) SetMaxHeight(v float32) {
 	x.MaxHeight = &v
+}
+
+func (x *ListCitizensRequest) SetPropertyFilters(v []*properties.PropertyFilter) {
+	x.PropertyFilters = v
 }
 
 func (x *ListCitizensRequest) HasPagination() bool {
@@ -296,8 +309,9 @@ type ListCitizensRequest_builder struct {
 	Dateofbirth             *string
 	OpenFines               *int64
 	// Height range search (in cm)
-	MinHeight *float32
-	MaxHeight *float32
+	MinHeight       *float32
+	MaxHeight       *float32
+	PropertyFilters []*properties.PropertyFilter
 }
 
 func (b0 ListCitizensRequest_builder) Build() *ListCitizensRequest {
@@ -314,6 +328,7 @@ func (b0 ListCitizensRequest_builder) Build() *ListCitizensRequest {
 	x.OpenFines = b.OpenFines
 	x.MinHeight = b.MinHeight
 	x.MaxHeight = b.MaxHeight
+	x.PropertyFilters = b.PropertyFilters
 	return m0
 }
 
@@ -556,9 +571,11 @@ type ListUserActivityRequest struct {
 	// Search params
 	UserId int32 `protobuf:"varint,3,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
 	// Activity types to filter by. If empty, all activity types will be returned.
-	Types         []activity.UserActivityType `protobuf:"varint,4,rep,packed,name=types,proto3,enum=resources.users.activity.UserActivityType" json:"types,omitempty"`
-	From          *timestamp.Timestamp        `protobuf:"bytes,5,opt,name=from,proto3,oneof" json:"from,omitempty"`
-	To            *timestamp.Timestamp        `protobuf:"bytes,6,opt,name=to,proto3,oneof" json:"to,omitempty"`
+	Types []activity.UserActivityType `protobuf:"varint,4,rep,packed,name=types,proto3,enum=resources.users.activity.UserActivityType" json:"types,omitempty"`
+	From  *timestamp.Timestamp        `protobuf:"bytes,5,opt,name=from,proto3,oneof" json:"from,omitempty"`
+	To    *timestamp.Timestamp        `protobuf:"bytes,6,opt,name=to,proto3,oneof" json:"to,omitempty"`
+	// Restricts generic PROPERTY activity entries to these custom property keys.
+	PropertyKeys  []string `protobuf:"bytes,7,rep,name=property_keys,json=propertyKeys,proto3" json:"property_keys,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -630,6 +647,13 @@ func (x *ListUserActivityRequest) GetTo() *timestamp.Timestamp {
 	return nil
 }
 
+func (x *ListUserActivityRequest) GetPropertyKeys() []string {
+	if x != nil {
+		return x.PropertyKeys
+	}
+	return nil
+}
+
 func (x *ListUserActivityRequest) SetPagination(v *database.PaginationRequest) {
 	x.Pagination = v
 }
@@ -652,6 +676,10 @@ func (x *ListUserActivityRequest) SetFrom(v *timestamp.Timestamp) {
 
 func (x *ListUserActivityRequest) SetTo(v *timestamp.Timestamp) {
 	x.To = v
+}
+
+func (x *ListUserActivityRequest) SetPropertyKeys(v []string) {
+	x.PropertyKeys = v
 }
 
 func (x *ListUserActivityRequest) HasPagination() bool {
@@ -709,6 +737,8 @@ type ListUserActivityRequest_builder struct {
 	Types []activity.UserActivityType
 	From  *timestamp.Timestamp
 	To    *timestamp.Timestamp
+	// Restricts generic PROPERTY activity entries to these custom property keys.
+	PropertyKeys []string
 }
 
 func (b0 ListUserActivityRequest_builder) Build() *ListUserActivityRequest {
@@ -721,6 +751,7 @@ func (b0 ListUserActivityRequest_builder) Build() *ListUserActivityRequest {
 	x.Types = b.Types
 	x.From = b.From
 	x.To = b.To
+	x.PropertyKeys = b.PropertyKeys
 	return m0
 }
 
@@ -807,11 +838,14 @@ func (b0 ListUserActivityResponse_builder) Build() *ListUserActivityResponse {
 }
 
 type SetUserPropsRequest struct {
-	state         protoimpl.MessageState `protogen:"hybrid.v1"`
-	Props         *props.UserProps       `protobuf:"bytes,1,opt,name=props,proto3" json:"props,omitempty"`
-	Reason        string                 `protobuf:"bytes,2,opt,name=reason,proto3" json:"reason,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
+	state  protoimpl.MessageState `protogen:"hybrid.v1"`
+	Props  *props.UserProps       `protobuf:"bytes,1,opt,name=props,proto3" json:"props,omitempty"`
+	Reason string                 `protobuf:"bytes,2,opt,name=reason,proto3" json:"reason,omitempty"`
+	// Generic custom scalar properties. Managed system properties continue to
+	// use the dedicated fields above and produce their specialized activities.
+	PropertyChanges []*properties.PropertyChange `protobuf:"bytes,3,rep,name=property_changes,json=propertyChanges,proto3" json:"property_changes,omitempty"`
+	unknownFields   protoimpl.UnknownFields
+	sizeCache       protoimpl.SizeCache
 }
 
 func (x *SetUserPropsRequest) Reset() {
@@ -853,12 +887,23 @@ func (x *SetUserPropsRequest) GetReason() string {
 	return ""
 }
 
+func (x *SetUserPropsRequest) GetPropertyChanges() []*properties.PropertyChange {
+	if x != nil {
+		return x.PropertyChanges
+	}
+	return nil
+}
+
 func (x *SetUserPropsRequest) SetProps(v *props.UserProps) {
 	x.Props = v
 }
 
 func (x *SetUserPropsRequest) SetReason(v string) {
 	x.Reason = v
+}
+
+func (x *SetUserPropsRequest) SetPropertyChanges(v []*properties.PropertyChange) {
+	x.PropertyChanges = v
 }
 
 func (x *SetUserPropsRequest) HasProps() bool {
@@ -877,6 +922,9 @@ type SetUserPropsRequest_builder struct {
 
 	Props  *props.UserProps
 	Reason string
+	// Generic custom scalar properties. Managed system properties continue to
+	// use the dedicated fields above and produce their specialized activities.
+	PropertyChanges []*properties.PropertyChange
 }
 
 func (b0 SetUserPropsRequest_builder) Build() *SetUserPropsRequest {
@@ -885,6 +933,7 @@ func (b0 SetUserPropsRequest_builder) Build() *SetUserPropsRequest {
 	_, _ = b, x
 	x.Props = b.Props
 	x.Reason = b.Reason
+	x.PropertyChanges = b.PropertyChanges
 	return m0
 }
 
@@ -1160,7 +1209,7 @@ var File_services_citizens_citizens_proto protoreflect.FileDescriptor
 
 const file_services_citizens_citizens_proto_rawDesc = "" +
 	"\n" +
-	" services/citizens/citizens.proto\x12\x11services.citizens\x1a\x1fcodegen/itemslen/itemslen.proto\x1a\x19codegen/perms/perms.proto\x1a!codegen/sanitizer/sanitizer.proto\x1a(resources/common/database/database.proto\x1a\x1eresources/file/filestore.proto\x1a#resources/timestamp/timestamp.proto\x1a'resources/users/activity/activity.proto\x1a!resources/users/props/props.proto\x1a\x1aresources/users/user.proto\"\xce\x04\n" +
+	" services/citizens/citizens.proto\x12\x11services.citizens\x1a\x1fcodegen/itemslen/itemslen.proto\x1a\x19codegen/perms/perms.proto\x1a!codegen/sanitizer/sanitizer.proto\x1a(resources/common/database/database.proto\x1a\x1eresources/file/filestore.proto\x1a%resources/properties/properties.proto\x1a#resources/timestamp/timestamp.proto\x1a'resources/users/activity/activity.proto\x1a!resources/users/props/props.proto\x1a\x1aresources/users/user.proto\"\x9f\x05\n" +
 	"\x13ListCitizensRequest\x12L\n" +
 	"\n" +
 	"pagination\x18\x01 \x01(\v2,.resources.common.database.PaginationRequestR\n" +
@@ -1177,7 +1226,8 @@ const file_services_citizens_citizens_proto_rawDesc = "" +
 	"min_height\x18\t \x01(\x02H\x06R\tminHeight\x88\x01\x01\x12\"\n" +
 	"\n" +
 	"max_height\x18\n" +
-	" \x01(\x02H\aR\tmaxHeight\x88\x01\x01B\a\n" +
+	" \x01(\x02H\aR\tmaxHeight\x88\x01\x01\x12O\n" +
+	"\x10property_filters\x18\v \x03(\v2$.resources.properties.PropertyFilterR\x0fpropertyFiltersB\a\n" +
 	"\x05_sortB\t\n" +
 	"\a_wantedB\x0f\n" +
 	"\r_phone_numberB\x1c\n" +
@@ -1197,7 +1247,7 @@ const file_services_citizens_citizens_proto_rawDesc = "" +
 	"\n" +
 	"_info_only\"<\n" +
 	"\x0fGetUserResponse\x12)\n" +
-	"\x04user\x18\x01 \x01(\v2\x15.resources.users.UserR\x04user\"\x83\x03\n" +
+	"\x04user\x18\x01 \x01(\v2\x15.resources.users.UserR\x04user\"\xa8\x03\n" +
 	"\x17ListUserActivityRequest\x12L\n" +
 	"\n" +
 	"pagination\x18\x01 \x01(\v2,.resources.common.database.PaginationRequestR\n" +
@@ -1206,7 +1256,8 @@ const file_services_citizens_citizens_proto_rawDesc = "" +
 	"\auser_id\x18\x03 \x01(\x05R\x06userId\x12@\n" +
 	"\x05types\x18\x04 \x03(\x0e2*.resources.users.activity.UserActivityTypeR\x05types\x127\n" +
 	"\x04from\x18\x05 \x01(\v2\x1e.resources.timestamp.TimestampH\x01R\x04from\x88\x01\x01\x123\n" +
-	"\x02to\x18\x06 \x01(\v2\x1e.resources.timestamp.TimestampH\x02R\x02to\x88\x01\x01B\a\n" +
+	"\x02to\x18\x06 \x01(\v2\x1e.resources.timestamp.TimestampH\x02R\x02to\x88\x01\x01\x12#\n" +
+	"\rproperty_keys\x18\a \x03(\tR\fpropertyKeysB\a\n" +
 	"\x05_sortB\a\n" +
 	"\x05_fromB\x05\n" +
 	"\x03_to\"\xb3\x01\n" +
@@ -1214,10 +1265,11 @@ const file_services_citizens_citizens_proto_rawDesc = "" +
 	"\n" +
 	"pagination\x18\x01 \x01(\v2-.resources.common.database.PaginationResponseR\n" +
 	"pagination\x12H\n" +
-	"\bactivity\x18\x02 \x03(\v2&.resources.users.activity.UserActivityB\x04\xc8\xf3\x18\x01R\bactivity\"m\n" +
+	"\bactivity\x18\x02 \x03(\v2&.resources.users.activity.UserActivityB\x04\xc8\xf3\x18\x01R\bactivity\"\xbe\x01\n" +
 	"\x13SetUserPropsRequest\x126\n" +
 	"\x05props\x18\x01 \x01(\v2 .resources.users.props.UserPropsR\x05props\x12\x1e\n" +
-	"\x06reason\x18\x02 \x01(\tB\x06\xda\xf3\x18\x02\b\x01R\x06reason\"N\n" +
+	"\x06reason\x18\x02 \x01(\tB\x06\xda\xf3\x18\x02\b\x01R\x06reason\x12O\n" +
+	"\x10property_changes\x18\x03 \x03(\v2$.resources.properties.PropertyChangeR\x0fpropertyChanges\"N\n" +
 	"\x14SetUserPropsResponse\x126\n" +
 	"\x05props\x18\x01 \x01(\v2 .resources.users.props.UserPropsR\x05props\"\x15\n" +
 	"\x13DeleteAvatarRequest\"\x16\n" +
@@ -1225,21 +1277,27 @@ const file_services_citizens_citizens_proto_rawDesc = "" +
 	"\x14DeleteMugshotRequest\x12\x17\n" +
 	"\auser_id\x18\x01 \x01(\x05R\x06userId\x12\x1e\n" +
 	"\x06reason\x18\x02 \x01(\tB\x06\xda\xf3\x18\x02\b\x01R\x06reason\"\x17\n" +
-	"\x15DeleteMugshotResponse2\xcf\t\n" +
-	"\x0fCitizensService\x12\xb1\x02\n" +
-	"\fListCitizens\x12&.services.citizens.ListCitizensRequest\x1a'.services.citizens.ListCitizensResponse\"\xcf\x01\xd2\xf3\x18\xca\x01\b\x01:\xc5\x01\n" +
-	"\x06Fields\x18\x01\"\vPhoneNumber\"\bLicenses\"\x10UserProps.Wanted\"\rUserProps.Job\"!UserProps.TrafficInfractionPoints\"\x13UserProps.OpenFines\"\x13UserProps.BloodType\"\x11UserProps.Mugshot\"\x10UserProps.Labels\"\x0fUserProps.Email\x12b\n" +
+	"\x15DeleteMugshotResponse2\xeb\x10\n" +
+	"\x0fCitizensService\x12y\n" +
+	"\fListCitizens\x12&.services.citizens.ListCitizensRequest\x1a'.services.citizens.ListCitizensResponse\"\x18\xd2\xf3\x18\x14\b\x01:\x10\n" +
+	"\n" +
+	"Properties\x18\x04(\x02\x12b\n" +
 	"\aGetUser\x12!.services.citizens.GetUserRequest\x1a\".services.citizens.GetUserResponse\"\x10\xd2\xf3\x18\f\b\x01:\b\n" +
 	"\x04Jobs\x18\x03\x12\x90\x01\n" +
 	"\x10ListUserActivity\x12*.services.citizens.ListUserActivityRequest\x1a+.services.citizens.ListUserActivityResponse\"#\xd2\xf3\x18\x1f\b\x01:\x1b\n" +
 	"\x06Fields\x18\x01\"\n" +
-	"SourceUser\"\x03Own\x12\xaa\x01\n" +
-	"\fSetUserProps\x12&.services.citizens.SetUserPropsRequest\x1a'.services.citizens.SetUserPropsResponse\"I\xd2\xf3\x18E\b\x01:A\n" +
-	"\x06Fields\x18\x01\"\x06Wanted\"\x03Job\"\x17TrafficInfractionPoints\"\aMugshot\"\x06Labels\x12d\n" +
+	"SourceUser\"\x03Own\x12y\n" +
+	"\fSetUserProps\x12&.services.citizens.SetUserPropsRequest\x1a'.services.citizens.SetUserPropsResponse\"\x18\xd2\xf3\x18\x14\b\x01:\x10\n" +
+	"\n" +
+	"Properties\x18\x04(\x02\x12d\n" +
 	"\fUploadAvatar\x12!.resources.file.UploadFileRequest\x1a\".resources.file.UploadFileResponse\"\v\xd2\xf3\x18\a\b\x01\"\x03Any(\x01\x12l\n" +
 	"\fDeleteAvatar\x12&.services.citizens.DeleteAvatarRequest\x1a'.services.citizens.DeleteAvatarResponse\"\v\xd2\xf3\x18\a\b\x01\"\x03Any\x12n\n" +
 	"\rUploadMugshot\x12!.resources.file.UploadFileRequest\x1a\".resources.file.UploadFileResponse\"\x14\xd2\xf3\x18\x10\b\x01\"\fSetUserProps(\x01\x12x\n" +
-	"\rDeleteMugshot\x12'.services.citizens.DeleteMugshotRequest\x1a(.services.citizens.DeleteMugshotResponse\"\x14\xd2\xf3\x18\x10\b\x01\"\fSetUserProps\x1a&\xea\xf3\x18\"\b\x1e\x12\x1ei-mdi-account-multiple-outlineBNZLgithub.com/fivenet-app/fivenet/v2026/gen/go/proto/services/citizens;citizensb\x06proto3"
+	"\rDeleteMugshot\x12'.services.citizens.DeleteMugshotRequest\x1a(.services.citizens.DeleteMugshotResponse\"\x14\xd2\xf3\x18\x10\b\x01\"\fSetUserProps\x1a\xac\t\xea\xf3\x18\xa7\t\b\x1e\x12\x1ei-mdi-account-multiple-outline2=\b\x02\x12\x10user.dateofbirth\x18\x01 \x01*\x14common.date_of_birthr\bpersonalxd\xa0\x01\x012,\b\x02\x12\buser.sex\x18\x01 \x01*\n" +
+	"common.sexr\bpersonalx\xc8\x01\xa0\x01\x0125\b\x02\x12\vuser.height\x18\x03 \x01*\rcommon.heightr\bpersonalx\xac\x02\x88\x01\x04\xa0\x01\x012>\b\x02\x12\x11user.phone_number\x18\x01 \x01*\x13common.phone_number@\x01r\acontactxd\x88\x01\x032/\b\x02\x12\n" +
+	"user.visum\x18\x02 \x01*\fcommon.visumr\acontactx\xac\x02\xa0\x01\x0121\b\x02\x12\ruser.licenses\x18\x01 \x01*\x0ecommon.licenser\blicensesxd28\b\x02\x12\vuser.wanted\x18\x04 \x01*\rcommon.wanted@\x01H\x01P\x02r\x06statusxd\x80\x01\x01\x98\x01\x032/\b\x02\x12\buser.job\x18\x01 \x01*\n" +
+	"common.job@\x01r\x06statusx\x90\x03\x80\x01\x01\x98\x01\x032[\b\x02\x12\x1euser.traffic_infraction_points\x18\x02 \x01* common.traffic_infraction_points@\x01r\x06statusx\xc8\x01\x80\x01\x01\x88\x01\x0529\b\x02\x12\x0fuser.open_fines\x18\x02 \x01*\vcommon.fine@\x01H\x02r\x06statusx\xac\x02\x80\x01\x01\x88\x01\r29\b\x02\x12\x0fuser.blood_type\x18\x01 \x01*\x11common.blood_type@\x01r\bpersonalx\x90\x0321\b\x02\x12\fuser.mugshot\x18\x01 \x01*\x0ecommon.mugshotr\bpersonalx\xf4\x032,\b\x02\x12\vuser.labels\x18\x01 \x01*\fcommon.labelr\x06labelsx\xf4\x0320\b\x02\x12\n" +
+	"user.email\x18\x01 \x01*\vcommon.mail@\x01r\acontactx\xc8\x01\x88\x01\x02:H\b\x02\x12\bpersonal\x1a8components.settings.property_definitions.groups.personal d:G\b\x02\x12\acontact\x1a7components.settings.property_definitions.groups.contact \xc8\x01:E\b\x02\x12\x06status\x1a6components.settings.property_definitions.groups.status \xac\x02:E\b\x02\x12\x06labels\x1a6components.settings.property_definitions.groups.labels \x90\x03:I\b\x02\x12\blicenses\x1a8components.settings.property_definitions.groups.licenses \xf4\x03BNZLgithub.com/fivenet-app/fivenet/v2026/gen/go/proto/services/citizens;citizensb\x06proto3"
 
 var file_services_citizens_citizens_proto_msgTypes = make([]protoimpl.MessageInfo, 12)
 var file_services_citizens_citizens_proto_goTypes = []any{
@@ -1257,51 +1315,55 @@ var file_services_citizens_citizens_proto_goTypes = []any{
 	(*DeleteMugshotResponse)(nil),       // 11: services.citizens.DeleteMugshotResponse
 	(*database.PaginationRequest)(nil),  // 12: resources.common.database.PaginationRequest
 	(*database.Sort)(nil),               // 13: resources.common.database.Sort
-	(*database.PaginationResponse)(nil), // 14: resources.common.database.PaginationResponse
-	(*users.User)(nil),                  // 15: resources.users.User
-	(activity.UserActivityType)(0),      // 16: resources.users.activity.UserActivityType
-	(*timestamp.Timestamp)(nil),         // 17: resources.timestamp.Timestamp
-	(*activity.UserActivity)(nil),       // 18: resources.users.activity.UserActivity
-	(*props.UserProps)(nil),             // 19: resources.users.props.UserProps
-	(*file.UploadFileRequest)(nil),      // 20: resources.file.UploadFileRequest
-	(*file.UploadFileResponse)(nil),     // 21: resources.file.UploadFileResponse
+	(*properties.PropertyFilter)(nil),   // 14: resources.properties.PropertyFilter
+	(*database.PaginationResponse)(nil), // 15: resources.common.database.PaginationResponse
+	(*users.User)(nil),                  // 16: resources.users.User
+	(activity.UserActivityType)(0),      // 17: resources.users.activity.UserActivityType
+	(*timestamp.Timestamp)(nil),         // 18: resources.timestamp.Timestamp
+	(*activity.UserActivity)(nil),       // 19: resources.users.activity.UserActivity
+	(*props.UserProps)(nil),             // 20: resources.users.props.UserProps
+	(*properties.PropertyChange)(nil),   // 21: resources.properties.PropertyChange
+	(*file.UploadFileRequest)(nil),      // 22: resources.file.UploadFileRequest
+	(*file.UploadFileResponse)(nil),     // 23: resources.file.UploadFileResponse
 }
 var file_services_citizens_citizens_proto_depIdxs = []int32{
 	12, // 0: services.citizens.ListCitizensRequest.pagination:type_name -> resources.common.database.PaginationRequest
 	13, // 1: services.citizens.ListCitizensRequest.sort:type_name -> resources.common.database.Sort
-	14, // 2: services.citizens.ListCitizensResponse.pagination:type_name -> resources.common.database.PaginationResponse
-	15, // 3: services.citizens.ListCitizensResponse.users:type_name -> resources.users.User
-	15, // 4: services.citizens.GetUserResponse.user:type_name -> resources.users.User
-	12, // 5: services.citizens.ListUserActivityRequest.pagination:type_name -> resources.common.database.PaginationRequest
-	13, // 6: services.citizens.ListUserActivityRequest.sort:type_name -> resources.common.database.Sort
-	16, // 7: services.citizens.ListUserActivityRequest.types:type_name -> resources.users.activity.UserActivityType
-	17, // 8: services.citizens.ListUserActivityRequest.from:type_name -> resources.timestamp.Timestamp
-	17, // 9: services.citizens.ListUserActivityRequest.to:type_name -> resources.timestamp.Timestamp
-	14, // 10: services.citizens.ListUserActivityResponse.pagination:type_name -> resources.common.database.PaginationResponse
-	18, // 11: services.citizens.ListUserActivityResponse.activity:type_name -> resources.users.activity.UserActivity
-	19, // 12: services.citizens.SetUserPropsRequest.props:type_name -> resources.users.props.UserProps
-	19, // 13: services.citizens.SetUserPropsResponse.props:type_name -> resources.users.props.UserProps
-	0,  // 14: services.citizens.CitizensService.ListCitizens:input_type -> services.citizens.ListCitizensRequest
-	2,  // 15: services.citizens.CitizensService.GetUser:input_type -> services.citizens.GetUserRequest
-	4,  // 16: services.citizens.CitizensService.ListUserActivity:input_type -> services.citizens.ListUserActivityRequest
-	6,  // 17: services.citizens.CitizensService.SetUserProps:input_type -> services.citizens.SetUserPropsRequest
-	20, // 18: services.citizens.CitizensService.UploadAvatar:input_type -> resources.file.UploadFileRequest
-	8,  // 19: services.citizens.CitizensService.DeleteAvatar:input_type -> services.citizens.DeleteAvatarRequest
-	20, // 20: services.citizens.CitizensService.UploadMugshot:input_type -> resources.file.UploadFileRequest
-	10, // 21: services.citizens.CitizensService.DeleteMugshot:input_type -> services.citizens.DeleteMugshotRequest
-	1,  // 22: services.citizens.CitizensService.ListCitizens:output_type -> services.citizens.ListCitizensResponse
-	3,  // 23: services.citizens.CitizensService.GetUser:output_type -> services.citizens.GetUserResponse
-	5,  // 24: services.citizens.CitizensService.ListUserActivity:output_type -> services.citizens.ListUserActivityResponse
-	7,  // 25: services.citizens.CitizensService.SetUserProps:output_type -> services.citizens.SetUserPropsResponse
-	21, // 26: services.citizens.CitizensService.UploadAvatar:output_type -> resources.file.UploadFileResponse
-	9,  // 27: services.citizens.CitizensService.DeleteAvatar:output_type -> services.citizens.DeleteAvatarResponse
-	21, // 28: services.citizens.CitizensService.UploadMugshot:output_type -> resources.file.UploadFileResponse
-	11, // 29: services.citizens.CitizensService.DeleteMugshot:output_type -> services.citizens.DeleteMugshotResponse
-	22, // [22:30] is the sub-list for method output_type
-	14, // [14:22] is the sub-list for method input_type
-	14, // [14:14] is the sub-list for extension type_name
-	14, // [14:14] is the sub-list for extension extendee
-	0,  // [0:14] is the sub-list for field type_name
+	14, // 2: services.citizens.ListCitizensRequest.property_filters:type_name -> resources.properties.PropertyFilter
+	15, // 3: services.citizens.ListCitizensResponse.pagination:type_name -> resources.common.database.PaginationResponse
+	16, // 4: services.citizens.ListCitizensResponse.users:type_name -> resources.users.User
+	16, // 5: services.citizens.GetUserResponse.user:type_name -> resources.users.User
+	12, // 6: services.citizens.ListUserActivityRequest.pagination:type_name -> resources.common.database.PaginationRequest
+	13, // 7: services.citizens.ListUserActivityRequest.sort:type_name -> resources.common.database.Sort
+	17, // 8: services.citizens.ListUserActivityRequest.types:type_name -> resources.users.activity.UserActivityType
+	18, // 9: services.citizens.ListUserActivityRequest.from:type_name -> resources.timestamp.Timestamp
+	18, // 10: services.citizens.ListUserActivityRequest.to:type_name -> resources.timestamp.Timestamp
+	15, // 11: services.citizens.ListUserActivityResponse.pagination:type_name -> resources.common.database.PaginationResponse
+	19, // 12: services.citizens.ListUserActivityResponse.activity:type_name -> resources.users.activity.UserActivity
+	20, // 13: services.citizens.SetUserPropsRequest.props:type_name -> resources.users.props.UserProps
+	21, // 14: services.citizens.SetUserPropsRequest.property_changes:type_name -> resources.properties.PropertyChange
+	20, // 15: services.citizens.SetUserPropsResponse.props:type_name -> resources.users.props.UserProps
+	0,  // 16: services.citizens.CitizensService.ListCitizens:input_type -> services.citizens.ListCitizensRequest
+	2,  // 17: services.citizens.CitizensService.GetUser:input_type -> services.citizens.GetUserRequest
+	4,  // 18: services.citizens.CitizensService.ListUserActivity:input_type -> services.citizens.ListUserActivityRequest
+	6,  // 19: services.citizens.CitizensService.SetUserProps:input_type -> services.citizens.SetUserPropsRequest
+	22, // 20: services.citizens.CitizensService.UploadAvatar:input_type -> resources.file.UploadFileRequest
+	8,  // 21: services.citizens.CitizensService.DeleteAvatar:input_type -> services.citizens.DeleteAvatarRequest
+	22, // 22: services.citizens.CitizensService.UploadMugshot:input_type -> resources.file.UploadFileRequest
+	10, // 23: services.citizens.CitizensService.DeleteMugshot:input_type -> services.citizens.DeleteMugshotRequest
+	1,  // 24: services.citizens.CitizensService.ListCitizens:output_type -> services.citizens.ListCitizensResponse
+	3,  // 25: services.citizens.CitizensService.GetUser:output_type -> services.citizens.GetUserResponse
+	5,  // 26: services.citizens.CitizensService.ListUserActivity:output_type -> services.citizens.ListUserActivityResponse
+	7,  // 27: services.citizens.CitizensService.SetUserProps:output_type -> services.citizens.SetUserPropsResponse
+	23, // 28: services.citizens.CitizensService.UploadAvatar:output_type -> resources.file.UploadFileResponse
+	9,  // 29: services.citizens.CitizensService.DeleteAvatar:output_type -> services.citizens.DeleteAvatarResponse
+	23, // 30: services.citizens.CitizensService.UploadMugshot:output_type -> resources.file.UploadFileResponse
+	11, // 31: services.citizens.CitizensService.DeleteMugshot:output_type -> services.citizens.DeleteMugshotResponse
+	24, // [24:32] is the sub-list for method output_type
+	16, // [16:24] is the sub-list for method input_type
+	16, // [16:16] is the sub-list for extension type_name
+	16, // [16:16] is the sub-list for extension extendee
+	0,  // [0:16] is the sub-list for field type_name
 }
 
 func init() { file_services_citizens_citizens_proto_init() }

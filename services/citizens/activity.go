@@ -2,13 +2,16 @@ package citizens
 
 import (
 	context "context"
+	"slices"
 
+	properties "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/properties"
 	usersactivity "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/users/activity"
 	usershort "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/users/short"
 	pbcitizens "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/citizens"
 	permscitizens "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/citizens/perms"
 	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/auth"
 	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/errswrap"
+	propertyregistry "github.com/fivenet-app/fivenet/v2026/pkg/properties"
 	errorscitizens "github.com/fivenet-app/fivenet/v2026/services/citizens/errors"
 	citizensstore "github.com/fivenet-app/fivenet/v2026/stores/citizens"
 	citizenshydrator "github.com/fivenet-app/fivenet/v2026/stores/citizens/hydrator"
@@ -40,11 +43,30 @@ func (s *Server) ListUserActivity(
 			return resp, nil
 		}
 	}
+	propertyList, err := s.perms.AttrPropertyListContext(ctx,
+		userInfo,
+		permscitizens.CitizensService.ListCitizens.Properties,
+	)
+	if err != nil {
+		return nil, errswrap.NewError(err, errorscitizens.ErrFailedQuery)
+	}
+	visiblePropertyKeys, err := s.effectiveActivityPropertyKeys(
+		ctx,
+		propertyList.GetKeys(),
+		userInfo.GetJobAdmin(),
+	)
+	if err != nil {
+		return nil, errswrap.NewError(err, errorscitizens.ErrFailedQuery)
+	}
 	queryOpts := citizensstore.CountUserActivityOptions{
-		UserID: req.GetUserId(),
-		Types:  req.GetTypes(),
-		From:   req.GetFrom(),
-		To:     req.GetTo(),
+		UserActivityOptions: citizensstore.UserActivityOptions{
+			UserID:              req.GetUserId(),
+			Types:               req.GetTypes(),
+			PropertyKeys:        req.GetPropertyKeys(),
+			VisiblePropertyKeys: visiblePropertyKeys,
+			From:                req.GetFrom(),
+			To:                  req.GetTo(),
+		},
 	}
 	count, err := s.store.CountUserActivity(ctx, queryOpts)
 	if err != nil {
@@ -58,13 +80,10 @@ func (s *Server) ListUserActivity(
 	}
 
 	activities, err := s.store.ListUserActivity(ctx, citizensstore.ListUserActivityOptions{
-		UserID: req.GetUserId(),
-		Types:  req.GetTypes(),
-		From:   req.GetFrom(),
-		To:     req.GetTo(),
-		Sort:   req.GetSort(),
-		Offset: req.GetPagination().GetOffset(),
-		Limit:  limit,
+		UserActivityOptions: queryOpts.UserActivityOptions,
+		Sort:                req.GetSort(),
+		Offset:              req.GetPagination().GetOffset(),
+		Limit:               limit,
 	})
 	if err != nil {
 		return nil, errswrap.NewError(err, errorscitizens.ErrFailedQuery)
@@ -98,4 +117,32 @@ func (s *Server) ListUserActivity(
 	}
 
 	return resp, nil
+}
+
+func (s *Server) effectiveActivityPropertyKeys(
+	ctx context.Context,
+	allowedKeys []string,
+	propertyAdmin bool,
+) ([]string, error) {
+	keys := append([]string(nil), allowedKeys...)
+	if propertyAdmin {
+		for _, definition := range propertyregistry.SystemPropertyDefinitionsForScope(
+			properties.PropertyScope_PROPERTY_SCOPE_USER,
+		) {
+			keys = append(keys, definition.GetKey())
+		}
+		customKeys, err := s.store.ListCustomPropertyKeys(ctx)
+		if err != nil {
+			return nil, err
+		}
+		keys = append(keys, customKeys...)
+	}
+	slices.Sort(keys)
+	keys = slices.Compact(keys)
+
+	definitions, err := s.store.ResolvePropertyDefinitions(ctx, keys)
+	if err != nil {
+		return nil, err
+	}
+	return propertyregistry.EnabledPropertyKeys(keys, definitions), nil
 }

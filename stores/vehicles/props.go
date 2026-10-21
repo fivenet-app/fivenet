@@ -2,14 +2,16 @@ package vehiclesstore
 
 import (
 	"context"
+	"time"
 
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/timestamp"
 	vehiclesprops "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/vehicles/props"
-	"github.com/fivenet-app/fivenet/v2026/pkg/dbutils"
 	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
 	"github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
 )
+
+const vehicleWantedPropertyKey = "vehicle.wanted"
 
 func handlePropsChanges(
 	ctx context.Context,
@@ -17,49 +19,57 @@ func handlePropsChanges(
 	current *vehiclesprops.VehicleProps,
 	in *vehiclesprops.VehicleProps,
 ) error {
-	tVehicleProps := table.FivenetVehiclesProps
-	updateSets := []mysql.ColumnAssigment{}
-
-	if in.Wanted != nil {
-		normalizeWantedChange(current, in, "")
-		updateSets = append(updateSets,
-			tVehicleProps.Wanted.SET(mysql.Bool(in.GetWanted())),
-			tVehicleProps.WantedReason.SET(dbutils.StringPP(in.WantedReason)),
-			tVehicleProps.WantedAt.SET(dbutils.TimestampToMySQL(in.GetWantedAt())),
-			tVehicleProps.WantedTill.SET(dbutils.TimestampToMySQL(in.GetWantedTill())),
-		)
-	} else {
+	if in.Wanted == nil {
 		in.Wanted = current.Wanted
 		in.WantedReason = current.WantedReason
 		in.SetWantedAt(current.GetWantedAt())
 		in.SetWantedTill(current.GetWantedTill())
-	}
-
-	if len(updateSets) == 0 {
 		return nil
 	}
 
-	stmt := tVehicleProps.
-		INSERT(
-			tVehicleProps.Plate,
-			tVehicleProps.UpdatedAt,
-			tVehicleProps.Wanted,
-			tVehicleProps.WantedReason,
-			tVehicleProps.WantedAt,
-			tVehicleProps.WantedTill,
+	normalizeWantedChange(current, in, "")
+	tValues := table.FivenetVehiclePropertyValues
+	if _, err := tValues.
+		INSERT(tValues.Plate, tValues.PropertyKey, tValues.ValueType, tValues.ValueBool).
+		VALUES(in.GetPlate(), vehicleWantedPropertyKey, propertyValueTypeBool, in.GetWanted()).
+		ON_DUPLICATE_KEY_UPDATE(
+			tValues.ValueType.SET(mysql.IntExp(mysql.RawString("VALUES(`value_type`)"))),
+			tValues.ValueBool.SET(mysql.BoolExp(mysql.RawString("VALUES(`value_bool`)"))),
 		).
-		VALUES(
-			in.GetPlate(),
-			mysql.CURRENT_TIMESTAMP(),
-			in.Wanted,
-			dbutils.StringEmpty(in.GetWantedReason()),
-			in.GetWantedAt(),
-			in.GetWantedTill(),
-		).
-		ON_DUPLICATE_KEY_UPDATE(updateSets...)
+		ExecContext(ctx, tx); err != nil {
+		return err
+	}
 
-	_, err := stmt.ExecContext(ctx, tx)
+	tState := table.FivenetVehiclePropertyState
+	if !in.GetWanted() {
+		_, err := tState.DELETE().WHERE(
+			tState.Plate.EQ(mysql.String(in.GetPlate())).AND(
+				tState.PropertyKey.EQ(mysql.String(vehicleWantedPropertyKey)),
+			),
+		).ExecContext(ctx, tx)
+		return err
+	}
+
+	_, err := tState.
+		INSERT(tState.Plate, tState.PropertyKey, tState.Reason, tState.ActiveAt, tState.ExpiresAt).
+		VALUES(
+			in.GetPlate(), vehicleWantedPropertyKey, in.WantedReason,
+			timestampTime(in.GetWantedAt()), timestampTime(in.GetWantedTill()),
+		).
+		ON_DUPLICATE_KEY_UPDATE(
+			tState.Reason.SET(mysql.RawString("VALUES(`reason`)")),
+			tState.ActiveAt.SET(mysql.TimestampExp(mysql.RawString("VALUES(`active_at`)"))),
+			tState.ExpiresAt.SET(mysql.TimestampExp(mysql.RawString("VALUES(`expires_at`)"))),
+		).
+		ExecContext(ctx, tx)
 	return err
+}
+
+func timestampTime(value *timestamp.Timestamp) any {
+	if value == nil || value.GetTimestamp() == nil {
+		return nil
+	}
+	return value.AsTime().UTC().Truncate(time.Millisecond)
 }
 
 func normalizeWantedChange(

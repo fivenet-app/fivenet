@@ -10,6 +10,7 @@ package perms
 
 import (
 	attributes "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/permissions/attributes"
+	properties "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/properties"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	descriptorpb "google.golang.org/protobuf/types/descriptorpb"
@@ -218,8 +219,11 @@ type Attr struct {
 	Value           string                   `protobuf:"bytes,2,opt,name=value,proto3" json:"value,omitempty"`
 	Type            attributes.AttributeType `protobuf:"varint,3,opt,name=type,proto3,enum=resources.permissions.attributes.AttributeType" json:"type,omitempty"`
 	ValidStringList []string                 `protobuf:"bytes,4,rep,name=valid_string_list,json=validStringList,proto3" json:"valid_string_list,omitempty"`
-	unknownFields   protoimpl.UnknownFields
-	sizeCache       protoimpl.SizeCache
+	// Required for PropertyList attributes so the backend can restrict the
+	// generated keys to the appropriate property scope.
+	PropertyScope *properties.PropertyScope `protobuf:"varint,5,opt,name=property_scope,json=propertyScope,proto3,enum=resources.properties.PropertyScope,oneof" json:"property_scope,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
 }
 
 func (x *Attr) Reset() {
@@ -275,6 +279,13 @@ func (x *Attr) GetValidStringList() []string {
 	return nil
 }
 
+func (x *Attr) GetPropertyScope() properties.PropertyScope {
+	if x != nil && x.PropertyScope != nil {
+		return *x.PropertyScope
+	}
+	return properties.PropertyScope(0)
+}
+
 func (x *Attr) SetKey(v string) {
 	x.Key = v
 }
@@ -291,6 +302,21 @@ func (x *Attr) SetValidStringList(v []string) {
 	x.ValidStringList = v
 }
 
+func (x *Attr) SetPropertyScope(v properties.PropertyScope) {
+	x.PropertyScope = &v
+}
+
+func (x *Attr) HasPropertyScope() bool {
+	if x == nil {
+		return false
+	}
+	return x.PropertyScope != nil
+}
+
+func (x *Attr) ClearPropertyScope() {
+	x.PropertyScope = nil
+}
+
 type Attr_builder struct {
 	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
 
@@ -298,6 +324,9 @@ type Attr_builder struct {
 	Value           string
 	Type            attributes.AttributeType
 	ValidStringList []string
+	// Required for PropertyList attributes so the backend can restrict the
+	// generated keys to the appropriate property scope.
+	PropertyScope *properties.PropertyScope
 }
 
 func (b0 Attr_builder) Build() *Attr {
@@ -308,18 +337,21 @@ func (b0 Attr_builder) Build() *Attr {
 	x.Value = b.Value
 	x.Type = b.Type
 	x.ValidStringList = b.ValidStringList
+	x.PropertyScope = b.PropertyScope
 	return m0
 }
 
 type ServiceOptions struct {
-	state           protoimpl.MessageState   `protogen:"hybrid.v1"`
-	Order           int32                    `protobuf:"varint,1,opt,name=order,proto3" json:"order,omitempty"`
-	Icon            *string                  `protobuf:"bytes,2,opt,name=icon,proto3,oneof" json:"icon,omitempty"`
-	Namespace       *string                  `protobuf:"bytes,3,opt,name=namespace,proto3,oneof" json:"namespace,omitempty"`
-	Service         *string                  `protobuf:"bytes,4,opt,name=service,proto3,oneof" json:"service,omitempty"`
-	AdditionalPerms []*AdditionalServicePerm `protobuf:"bytes,5,rep,name=additional_perms,json=additionalPerms,proto3" json:"additional_perms,omitempty"`
-	unknownFields   protoimpl.UnknownFields
-	sizeCache       protoimpl.SizeCache
+	state            protoimpl.MessageState      `protogen:"hybrid.v1"`
+	Order            int32                       `protobuf:"varint,1,opt,name=order,proto3" json:"order,omitempty"`
+	Icon             *string                     `protobuf:"bytes,2,opt,name=icon,proto3,oneof" json:"icon,omitempty"`
+	Namespace        *string                     `protobuf:"bytes,3,opt,name=namespace,proto3,oneof" json:"namespace,omitempty"`
+	Service          *string                     `protobuf:"bytes,4,opt,name=service,proto3,oneof" json:"service,omitempty"`
+	AdditionalPerms  []*AdditionalServicePerm    `protobuf:"bytes,5,rep,name=additional_perms,json=additionalPerms,proto3" json:"additional_perms,omitempty"`
+	SystemProperties []*SystemProperty           `protobuf:"bytes,6,rep,name=system_properties,json=systemProperties,proto3" json:"system_properties,omitempty"`
+	PropertyGroups   []*properties.PropertyGroup `protobuf:"bytes,7,rep,name=property_groups,json=propertyGroups,proto3" json:"property_groups,omitempty"`
+	unknownFields    protoimpl.UnknownFields
+	sizeCache        protoimpl.SizeCache
 }
 
 func (x *ServiceOptions) Reset() {
@@ -382,6 +414,20 @@ func (x *ServiceOptions) GetAdditionalPerms() []*AdditionalServicePerm {
 	return nil
 }
 
+func (x *ServiceOptions) GetSystemProperties() []*SystemProperty {
+	if x != nil {
+		return x.SystemProperties
+	}
+	return nil
+}
+
+func (x *ServiceOptions) GetPropertyGroups() []*properties.PropertyGroup {
+	if x != nil {
+		return x.PropertyGroups
+	}
+	return nil
+}
+
 func (x *ServiceOptions) SetOrder(v int32) {
 	x.Order = v
 }
@@ -400,6 +446,14 @@ func (x *ServiceOptions) SetService(v string) {
 
 func (x *ServiceOptions) SetAdditionalPerms(v []*AdditionalServicePerm) {
 	x.AdditionalPerms = v
+}
+
+func (x *ServiceOptions) SetSystemProperties(v []*SystemProperty) {
+	x.SystemProperties = v
+}
+
+func (x *ServiceOptions) SetPropertyGroups(v []*properties.PropertyGroup) {
+	x.PropertyGroups = v
 }
 
 func (x *ServiceOptions) HasIcon() bool {
@@ -438,11 +492,13 @@ func (x *ServiceOptions) ClearService() {
 type ServiceOptions_builder struct {
 	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
 
-	Order           int32
-	Icon            *string
-	Namespace       *string
-	Service         *string
-	AdditionalPerms []*AdditionalServicePerm
+	Order            int32
+	Icon             *string
+	Namespace        *string
+	Service          *string
+	AdditionalPerms  []*AdditionalServicePerm
+	SystemProperties []*SystemProperty
+	PropertyGroups   []*properties.PropertyGroup
 }
 
 func (b0 ServiceOptions_builder) Build() *ServiceOptions {
@@ -454,6 +510,389 @@ func (b0 ServiceOptions_builder) Build() *ServiceOptions {
 	x.Namespace = b.Namespace
 	x.Service = b.Service
 	x.AdditionalPerms = b.AdditionalPerms
+	x.SystemProperties = b.SystemProperties
+	x.PropertyGroups = b.PropertyGroups
+	return m0
+}
+
+// SystemProperty declares a property whose key and semantics are owned by
+// FiveNet code. The backend generator registers these definitions at startup;
+// only the enabled state may be overridden by an instance.
+type SystemProperty struct {
+	state          protoimpl.MessageState             `protogen:"hybrid.v1"`
+	Scope          properties.PropertyScope           `protobuf:"varint,1,opt,name=scope,proto3,enum=resources.properties.PropertyScope" json:"scope,omitempty"`
+	Key            string                             `protobuf:"bytes,2,opt,name=key,proto3" json:"key,omitempty"`
+	ValueType      properties.PropertyValueType       `protobuf:"varint,3,opt,name=value_type,json=valueType,proto3,enum=resources.properties.PropertyValueType" json:"value_type,omitempty"`
+	Enabled        bool                               `protobuf:"varint,4,opt,name=enabled,proto3" json:"enabled,omitempty"`
+	DisplayKey     string                             `protobuf:"bytes,5,opt,name=display_key,json=displayKey,proto3" json:"display_key,omitempty"`
+	Label          string                             `protobuf:"bytes,6,opt,name=label,proto3" json:"label,omitempty"`
+	Description    *string                            `protobuf:"bytes,7,opt,name=description,proto3,oneof" json:"description,omitempty"`
+	Searchable     bool                               `protobuf:"varint,8,opt,name=searchable,proto3" json:"searchable,omitempty"`
+	ValueFormat    properties.PropertyValueFormat     `protobuf:"varint,9,opt,name=value_format,json=valueFormat,proto3,enum=resources.properties.PropertyValueFormat" json:"value_format,omitempty"`
+	Behavior       properties.PropertyBehavior        `protobuf:"varint,10,opt,name=behavior,proto3,enum=resources.properties.PropertyBehavior" json:"behavior,omitempty"`
+	Renderer       properties.PropertyRenderer        `protobuf:"varint,17,opt,name=renderer,proto3,enum=resources.properties.PropertyRenderer" json:"renderer,omitempty"`
+	RendererConfig *properties.PropertyRendererConfig `protobuf:"bytes,18,opt,name=renderer_config,json=rendererConfig,proto3" json:"renderer_config,omitempty"`
+	DisplayMode    properties.PropertyDisplayMode     `protobuf:"varint,19,opt,name=display_mode,json=displayMode,proto3,enum=resources.properties.PropertyDisplayMode" json:"display_mode,omitempty"`
+	Unit           *string                            `protobuf:"bytes,11,opt,name=unit,proto3,oneof" json:"unit,omitempty"`
+	DecimalPlaces  *uint32                            `protobuf:"varint,12,opt,name=decimal_places,json=decimalPlaces,proto3,oneof" json:"decimal_places,omitempty"`
+	Currency       *string                            `protobuf:"bytes,13,opt,name=currency,proto3,oneof" json:"currency,omitempty"`
+	GroupKey       string                             `protobuf:"bytes,14,opt,name=group_key,json=groupKey,proto3" json:"group_key,omitempty"`
+	SortOrder      int32                              `protobuf:"varint,15,opt,name=sort_order,json=sortOrder,proto3" json:"sort_order,omitempty"`
+	Pinned         bool                               `protobuf:"varint,16,opt,name=pinned,proto3" json:"pinned,omitempty"`
+	Implicit       bool                               `protobuf:"varint,20,opt,name=implicit,proto3" json:"implicit,omitempty"`
+	unknownFields  protoimpl.UnknownFields
+	sizeCache      protoimpl.SizeCache
+}
+
+func (x *SystemProperty) Reset() {
+	*x = SystemProperty{}
+	mi := &file_codegen_perms_perms_proto_msgTypes[3]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *SystemProperty) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*SystemProperty) ProtoMessage() {}
+
+func (x *SystemProperty) ProtoReflect() protoreflect.Message {
+	mi := &file_codegen_perms_perms_proto_msgTypes[3]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+func (x *SystemProperty) GetScope() properties.PropertyScope {
+	if x != nil {
+		return x.Scope
+	}
+	return properties.PropertyScope(0)
+}
+
+func (x *SystemProperty) GetKey() string {
+	if x != nil {
+		return x.Key
+	}
+	return ""
+}
+
+func (x *SystemProperty) GetValueType() properties.PropertyValueType {
+	if x != nil {
+		return x.ValueType
+	}
+	return properties.PropertyValueType(0)
+}
+
+func (x *SystemProperty) GetEnabled() bool {
+	if x != nil {
+		return x.Enabled
+	}
+	return false
+}
+
+func (x *SystemProperty) GetDisplayKey() string {
+	if x != nil {
+		return x.DisplayKey
+	}
+	return ""
+}
+
+func (x *SystemProperty) GetLabel() string {
+	if x != nil {
+		return x.Label
+	}
+	return ""
+}
+
+func (x *SystemProperty) GetDescription() string {
+	if x != nil && x.Description != nil {
+		return *x.Description
+	}
+	return ""
+}
+
+func (x *SystemProperty) GetSearchable() bool {
+	if x != nil {
+		return x.Searchable
+	}
+	return false
+}
+
+func (x *SystemProperty) GetValueFormat() properties.PropertyValueFormat {
+	if x != nil {
+		return x.ValueFormat
+	}
+	return properties.PropertyValueFormat(0)
+}
+
+func (x *SystemProperty) GetBehavior() properties.PropertyBehavior {
+	if x != nil {
+		return x.Behavior
+	}
+	return properties.PropertyBehavior(0)
+}
+
+func (x *SystemProperty) GetRenderer() properties.PropertyRenderer {
+	if x != nil {
+		return x.Renderer
+	}
+	return properties.PropertyRenderer(0)
+}
+
+func (x *SystemProperty) GetRendererConfig() *properties.PropertyRendererConfig {
+	if x != nil {
+		return x.RendererConfig
+	}
+	return nil
+}
+
+func (x *SystemProperty) GetDisplayMode() properties.PropertyDisplayMode {
+	if x != nil {
+		return x.DisplayMode
+	}
+	return properties.PropertyDisplayMode(0)
+}
+
+func (x *SystemProperty) GetUnit() string {
+	if x != nil && x.Unit != nil {
+		return *x.Unit
+	}
+	return ""
+}
+
+func (x *SystemProperty) GetDecimalPlaces() uint32 {
+	if x != nil && x.DecimalPlaces != nil {
+		return *x.DecimalPlaces
+	}
+	return 0
+}
+
+func (x *SystemProperty) GetCurrency() string {
+	if x != nil && x.Currency != nil {
+		return *x.Currency
+	}
+	return ""
+}
+
+func (x *SystemProperty) GetGroupKey() string {
+	if x != nil {
+		return x.GroupKey
+	}
+	return ""
+}
+
+func (x *SystemProperty) GetSortOrder() int32 {
+	if x != nil {
+		return x.SortOrder
+	}
+	return 0
+}
+
+func (x *SystemProperty) GetPinned() bool {
+	if x != nil {
+		return x.Pinned
+	}
+	return false
+}
+
+func (x *SystemProperty) GetImplicit() bool {
+	if x != nil {
+		return x.Implicit
+	}
+	return false
+}
+
+func (x *SystemProperty) SetScope(v properties.PropertyScope) {
+	x.Scope = v
+}
+
+func (x *SystemProperty) SetKey(v string) {
+	x.Key = v
+}
+
+func (x *SystemProperty) SetValueType(v properties.PropertyValueType) {
+	x.ValueType = v
+}
+
+func (x *SystemProperty) SetEnabled(v bool) {
+	x.Enabled = v
+}
+
+func (x *SystemProperty) SetDisplayKey(v string) {
+	x.DisplayKey = v
+}
+
+func (x *SystemProperty) SetLabel(v string) {
+	x.Label = v
+}
+
+func (x *SystemProperty) SetDescription(v string) {
+	x.Description = &v
+}
+
+func (x *SystemProperty) SetSearchable(v bool) {
+	x.Searchable = v
+}
+
+func (x *SystemProperty) SetValueFormat(v properties.PropertyValueFormat) {
+	x.ValueFormat = v
+}
+
+func (x *SystemProperty) SetBehavior(v properties.PropertyBehavior) {
+	x.Behavior = v
+}
+
+func (x *SystemProperty) SetRenderer(v properties.PropertyRenderer) {
+	x.Renderer = v
+}
+
+func (x *SystemProperty) SetRendererConfig(v *properties.PropertyRendererConfig) {
+	x.RendererConfig = v
+}
+
+func (x *SystemProperty) SetDisplayMode(v properties.PropertyDisplayMode) {
+	x.DisplayMode = v
+}
+
+func (x *SystemProperty) SetUnit(v string) {
+	x.Unit = &v
+}
+
+func (x *SystemProperty) SetDecimalPlaces(v uint32) {
+	x.DecimalPlaces = &v
+}
+
+func (x *SystemProperty) SetCurrency(v string) {
+	x.Currency = &v
+}
+
+func (x *SystemProperty) SetGroupKey(v string) {
+	x.GroupKey = v
+}
+
+func (x *SystemProperty) SetSortOrder(v int32) {
+	x.SortOrder = v
+}
+
+func (x *SystemProperty) SetPinned(v bool) {
+	x.Pinned = v
+}
+
+func (x *SystemProperty) SetImplicit(v bool) {
+	x.Implicit = v
+}
+
+func (x *SystemProperty) HasDescription() bool {
+	if x == nil {
+		return false
+	}
+	return x.Description != nil
+}
+
+func (x *SystemProperty) HasRendererConfig() bool {
+	if x == nil {
+		return false
+	}
+	return x.RendererConfig != nil
+}
+
+func (x *SystemProperty) HasUnit() bool {
+	if x == nil {
+		return false
+	}
+	return x.Unit != nil
+}
+
+func (x *SystemProperty) HasDecimalPlaces() bool {
+	if x == nil {
+		return false
+	}
+	return x.DecimalPlaces != nil
+}
+
+func (x *SystemProperty) HasCurrency() bool {
+	if x == nil {
+		return false
+	}
+	return x.Currency != nil
+}
+
+func (x *SystemProperty) ClearDescription() {
+	x.Description = nil
+}
+
+func (x *SystemProperty) ClearRendererConfig() {
+	x.RendererConfig = nil
+}
+
+func (x *SystemProperty) ClearUnit() {
+	x.Unit = nil
+}
+
+func (x *SystemProperty) ClearDecimalPlaces() {
+	x.DecimalPlaces = nil
+}
+
+func (x *SystemProperty) ClearCurrency() {
+	x.Currency = nil
+}
+
+type SystemProperty_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Scope          properties.PropertyScope
+	Key            string
+	ValueType      properties.PropertyValueType
+	Enabled        bool
+	DisplayKey     string
+	Label          string
+	Description    *string
+	Searchable     bool
+	ValueFormat    properties.PropertyValueFormat
+	Behavior       properties.PropertyBehavior
+	Renderer       properties.PropertyRenderer
+	RendererConfig *properties.PropertyRendererConfig
+	DisplayMode    properties.PropertyDisplayMode
+	Unit           *string
+	DecimalPlaces  *uint32
+	Currency       *string
+	GroupKey       string
+	SortOrder      int32
+	Pinned         bool
+	Implicit       bool
+}
+
+func (b0 SystemProperty_builder) Build() *SystemProperty {
+	m0 := &SystemProperty{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Scope = b.Scope
+	x.Key = b.Key
+	x.ValueType = b.ValueType
+	x.Enabled = b.Enabled
+	x.DisplayKey = b.DisplayKey
+	x.Label = b.Label
+	x.Description = b.Description
+	x.Searchable = b.Searchable
+	x.ValueFormat = b.ValueFormat
+	x.Behavior = b.Behavior
+	x.Renderer = b.Renderer
+	x.RendererConfig = b.RendererConfig
+	x.DisplayMode = b.DisplayMode
+	x.Unit = b.Unit
+	x.DecimalPlaces = b.DecimalPlaces
+	x.Currency = b.Currency
+	x.GroupKey = b.GroupKey
+	x.SortOrder = b.SortOrder
+	x.Pinned = b.Pinned
+	x.Implicit = b.Implicit
 	return m0
 }
 
@@ -468,7 +907,7 @@ type AdditionalServicePerm struct {
 
 func (x *AdditionalServicePerm) Reset() {
 	*x = AdditionalServicePerm{}
-	mi := &file_codegen_perms_perms_proto_msgTypes[3]
+	mi := &file_codegen_perms_perms_proto_msgTypes[4]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -480,7 +919,7 @@ func (x *AdditionalServicePerm) String() string {
 func (*AdditionalServicePerm) ProtoMessage() {}
 
 func (x *AdditionalServicePerm) ProtoReflect() protoreflect.Message {
-	mi := &file_codegen_perms_perms_proto_msgTypes[3]
+	mi := &file_codegen_perms_perms_proto_msgTypes[4]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -577,7 +1016,7 @@ var File_codegen_perms_perms_proto protoreflect.FileDescriptor
 
 const file_codegen_perms_perms_proto_rawDesc = "" +
 	"\n" +
-	"\x19codegen/perms/perms.proto\x12\rcodegen.perms\x1a google/protobuf/descriptor.proto\x1a1resources/permissions/attributes/attributes.proto\"\x99\x02\n" +
+	"\x19codegen/perms/perms.proto\x12\rcodegen.perms\x1a google/protobuf/descriptor.proto\x1a1resources/permissions/attributes/attributes.proto\x1a%resources/properties/properties.proto\"\x99\x02\n" +
 	"\fPermsOptions\x12\x18\n" +
 	"\aenabled\x18\x01 \x01(\bR\aenabled\x12!\n" +
 	"\tnamespace\x18\x02 \x01(\tH\x00R\tnamespace\x88\x01\x01\x12\x1d\n" +
@@ -591,23 +1030,58 @@ const file_codegen_perms_perms_proto_rawDesc = "" +
 	"_namespaceB\n" +
 	"\n" +
 	"\b_serviceB\a\n" +
-	"\x05_name\"\x9f\x01\n" +
+	"\x05_name\"\x83\x02\n" +
 	"\x04Attr\x12\x10\n" +
 	"\x03key\x18\x01 \x01(\tR\x03key\x12\x14\n" +
 	"\x05value\x18\x02 \x01(\tR\x05value\x12C\n" +
 	"\x04type\x18\x03 \x01(\x0e2/.resources.permissions.attributes.AttributeTypeR\x04type\x12*\n" +
-	"\x11valid_string_list\x18\x04 \x03(\tR\x0fvalidStringList\"\xf5\x01\n" +
+	"\x11valid_string_list\x18\x04 \x03(\tR\x0fvalidStringList\x12O\n" +
+	"\x0eproperty_scope\x18\x05 \x01(\x0e2#.resources.properties.PropertyScopeH\x00R\rpropertyScope\x88\x01\x01B\x11\n" +
+	"\x0f_property_scope\"\x8f\x03\n" +
 	"\x0eServiceOptions\x12\x14\n" +
 	"\x05order\x18\x01 \x01(\x05R\x05order\x12\x17\n" +
 	"\x04icon\x18\x02 \x01(\tH\x00R\x04icon\x88\x01\x01\x12!\n" +
 	"\tnamespace\x18\x03 \x01(\tH\x01R\tnamespace\x88\x01\x01\x12\x1d\n" +
 	"\aservice\x18\x04 \x01(\tH\x02R\aservice\x88\x01\x01\x12O\n" +
-	"\x10additional_perms\x18\x05 \x03(\v2$.codegen.perms.AdditionalServicePermR\x0fadditionalPermsB\a\n" +
+	"\x10additional_perms\x18\x05 \x03(\v2$.codegen.perms.AdditionalServicePermR\x0fadditionalPerms\x12J\n" +
+	"\x11system_properties\x18\x06 \x03(\v2\x1d.codegen.perms.SystemPropertyR\x10systemProperties\x12L\n" +
+	"\x0fproperty_groups\x18\a \x03(\v2#.resources.properties.PropertyGroupR\x0epropertyGroupsB\a\n" +
 	"\x05_iconB\f\n" +
 	"\n" +
 	"_namespaceB\n" +
 	"\n" +
-	"\b_service\"l\n" +
+	"\b_service\"\xc7\a\n" +
+	"\x0eSystemProperty\x129\n" +
+	"\x05scope\x18\x01 \x01(\x0e2#.resources.properties.PropertyScopeR\x05scope\x12\x10\n" +
+	"\x03key\x18\x02 \x01(\tR\x03key\x12F\n" +
+	"\n" +
+	"value_type\x18\x03 \x01(\x0e2'.resources.properties.PropertyValueTypeR\tvalueType\x12\x18\n" +
+	"\aenabled\x18\x04 \x01(\bR\aenabled\x12\x1f\n" +
+	"\vdisplay_key\x18\x05 \x01(\tR\n" +
+	"displayKey\x12\x14\n" +
+	"\x05label\x18\x06 \x01(\tR\x05label\x12%\n" +
+	"\vdescription\x18\a \x01(\tH\x00R\vdescription\x88\x01\x01\x12\x1e\n" +
+	"\n" +
+	"searchable\x18\b \x01(\bR\n" +
+	"searchable\x12L\n" +
+	"\fvalue_format\x18\t \x01(\x0e2).resources.properties.PropertyValueFormatR\vvalueFormat\x12B\n" +
+	"\bbehavior\x18\n" +
+	" \x01(\x0e2&.resources.properties.PropertyBehaviorR\bbehavior\x12B\n" +
+	"\brenderer\x18\x11 \x01(\x0e2&.resources.properties.PropertyRendererR\brenderer\x12U\n" +
+	"\x0frenderer_config\x18\x12 \x01(\v2,.resources.properties.PropertyRendererConfigR\x0erendererConfig\x12L\n" +
+	"\fdisplay_mode\x18\x13 \x01(\x0e2).resources.properties.PropertyDisplayModeR\vdisplayMode\x12\x17\n" +
+	"\x04unit\x18\v \x01(\tH\x01R\x04unit\x88\x01\x01\x12*\n" +
+	"\x0edecimal_places\x18\f \x01(\rH\x02R\rdecimalPlaces\x88\x01\x01\x12\x1f\n" +
+	"\bcurrency\x18\r \x01(\tH\x03R\bcurrency\x88\x01\x01\x12\x1b\n" +
+	"\tgroup_key\x18\x0e \x01(\tR\bgroupKey\x12\x1d\n" +
+	"\n" +
+	"sort_order\x18\x0f \x01(\x05R\tsortOrder\x12\x16\n" +
+	"\x06pinned\x18\x10 \x01(\bR\x06pinned\x12\x1a\n" +
+	"\bimplicit\x18\x14 \x01(\bR\bimplicitB\x0e\n" +
+	"\f_descriptionB\a\n" +
+	"\x05_unitB\x11\n" +
+	"\x0f_decimal_placesB\v\n" +
+	"\t_currency\"l\n" +
 	"\x15AdditionalServicePerm\x12\x12\n" +
 	"\x04name\x18\x03 \x01(\tR\x04name\x12\x14\n" +
 	"\x05order\x18\x04 \x01(\x05R\x05order\x12)\n" +
@@ -615,30 +1089,49 @@ const file_codegen_perms_perms_proto_rawDesc = "" +
 	"\x05perms\x12\x1e.google.protobuf.MethodOptions\x18\xba\x8e\x03 \x01(\v2\x1b.codegen.perms.PermsOptionsR\x05perms:]\n" +
 	"\tperms_svc\x12\x1f.google.protobuf.ServiceOptions\x18\xbd\x8e\x03 \x01(\v2\x1d.codegen.perms.ServiceOptionsR\bpermsSvcBGZEgithub.com/fivenet-app/fivenet/v2026/gen/go/proto/codegen/perms;permsb\x06proto3"
 
-var file_codegen_perms_perms_proto_msgTypes = make([]protoimpl.MessageInfo, 4)
+var file_codegen_perms_perms_proto_msgTypes = make([]protoimpl.MessageInfo, 5)
 var file_codegen_perms_perms_proto_goTypes = []any{
-	(*PermsOptions)(nil),                // 0: codegen.perms.PermsOptions
-	(*Attr)(nil),                        // 1: codegen.perms.Attr
-	(*ServiceOptions)(nil),              // 2: codegen.perms.ServiceOptions
-	(*AdditionalServicePerm)(nil),       // 3: codegen.perms.AdditionalServicePerm
-	(attributes.AttributeType)(0),       // 4: resources.permissions.attributes.AttributeType
-	(*descriptorpb.MethodOptions)(nil),  // 5: google.protobuf.MethodOptions
-	(*descriptorpb.ServiceOptions)(nil), // 6: google.protobuf.ServiceOptions
+	(*PermsOptions)(nil),                      // 0: codegen.perms.PermsOptions
+	(*Attr)(nil),                              // 1: codegen.perms.Attr
+	(*ServiceOptions)(nil),                    // 2: codegen.perms.ServiceOptions
+	(*SystemProperty)(nil),                    // 3: codegen.perms.SystemProperty
+	(*AdditionalServicePerm)(nil),             // 4: codegen.perms.AdditionalServicePerm
+	(attributes.AttributeType)(0),             // 5: resources.permissions.attributes.AttributeType
+	(properties.PropertyScope)(0),             // 6: resources.properties.PropertyScope
+	(*properties.PropertyGroup)(nil),          // 7: resources.properties.PropertyGroup
+	(properties.PropertyValueType)(0),         // 8: resources.properties.PropertyValueType
+	(properties.PropertyValueFormat)(0),       // 9: resources.properties.PropertyValueFormat
+	(properties.PropertyBehavior)(0),          // 10: resources.properties.PropertyBehavior
+	(properties.PropertyRenderer)(0),          // 11: resources.properties.PropertyRenderer
+	(*properties.PropertyRendererConfig)(nil), // 12: resources.properties.PropertyRendererConfig
+	(properties.PropertyDisplayMode)(0),       // 13: resources.properties.PropertyDisplayMode
+	(*descriptorpb.MethodOptions)(nil),        // 14: google.protobuf.MethodOptions
+	(*descriptorpb.ServiceOptions)(nil),       // 15: google.protobuf.ServiceOptions
 }
 var file_codegen_perms_perms_proto_depIdxs = []int32{
-	1, // 0: codegen.perms.PermsOptions.attrs:type_name -> codegen.perms.Attr
-	4, // 1: codegen.perms.Attr.type:type_name -> resources.permissions.attributes.AttributeType
-	3, // 2: codegen.perms.ServiceOptions.additional_perms:type_name -> codegen.perms.AdditionalServicePerm
-	1, // 3: codegen.perms.AdditionalServicePerm.attrs:type_name -> codegen.perms.Attr
-	5, // 4: codegen.perms.perms:extendee -> google.protobuf.MethodOptions
-	6, // 5: codegen.perms.perms_svc:extendee -> google.protobuf.ServiceOptions
-	0, // 6: codegen.perms.perms:type_name -> codegen.perms.PermsOptions
-	2, // 7: codegen.perms.perms_svc:type_name -> codegen.perms.ServiceOptions
-	8, // [8:8] is the sub-list for method output_type
-	8, // [8:8] is the sub-list for method input_type
-	6, // [6:8] is the sub-list for extension type_name
-	4, // [4:6] is the sub-list for extension extendee
-	0, // [0:4] is the sub-list for field type_name
+	1,  // 0: codegen.perms.PermsOptions.attrs:type_name -> codegen.perms.Attr
+	5,  // 1: codegen.perms.Attr.type:type_name -> resources.permissions.attributes.AttributeType
+	6,  // 2: codegen.perms.Attr.property_scope:type_name -> resources.properties.PropertyScope
+	4,  // 3: codegen.perms.ServiceOptions.additional_perms:type_name -> codegen.perms.AdditionalServicePerm
+	3,  // 4: codegen.perms.ServiceOptions.system_properties:type_name -> codegen.perms.SystemProperty
+	7,  // 5: codegen.perms.ServiceOptions.property_groups:type_name -> resources.properties.PropertyGroup
+	6,  // 6: codegen.perms.SystemProperty.scope:type_name -> resources.properties.PropertyScope
+	8,  // 7: codegen.perms.SystemProperty.value_type:type_name -> resources.properties.PropertyValueType
+	9,  // 8: codegen.perms.SystemProperty.value_format:type_name -> resources.properties.PropertyValueFormat
+	10, // 9: codegen.perms.SystemProperty.behavior:type_name -> resources.properties.PropertyBehavior
+	11, // 10: codegen.perms.SystemProperty.renderer:type_name -> resources.properties.PropertyRenderer
+	12, // 11: codegen.perms.SystemProperty.renderer_config:type_name -> resources.properties.PropertyRendererConfig
+	13, // 12: codegen.perms.SystemProperty.display_mode:type_name -> resources.properties.PropertyDisplayMode
+	1,  // 13: codegen.perms.AdditionalServicePerm.attrs:type_name -> codegen.perms.Attr
+	14, // 14: codegen.perms.perms:extendee -> google.protobuf.MethodOptions
+	15, // 15: codegen.perms.perms_svc:extendee -> google.protobuf.ServiceOptions
+	0,  // 16: codegen.perms.perms:type_name -> codegen.perms.PermsOptions
+	2,  // 17: codegen.perms.perms_svc:type_name -> codegen.perms.ServiceOptions
+	18, // [18:18] is the sub-list for method output_type
+	18, // [18:18] is the sub-list for method input_type
+	16, // [16:18] is the sub-list for extension type_name
+	14, // [14:16] is the sub-list for extension extendee
+	0,  // [0:14] is the sub-list for field type_name
 }
 
 func init() { file_codegen_perms_perms_proto_init() }
@@ -647,14 +1140,16 @@ func file_codegen_perms_perms_proto_init() {
 		return
 	}
 	file_codegen_perms_perms_proto_msgTypes[0].OneofWrappers = []any{}
+	file_codegen_perms_perms_proto_msgTypes[1].OneofWrappers = []any{}
 	file_codegen_perms_perms_proto_msgTypes[2].OneofWrappers = []any{}
+	file_codegen_perms_perms_proto_msgTypes[3].OneofWrappers = []any{}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_codegen_perms_perms_proto_rawDesc), len(file_codegen_perms_perms_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   4,
+			NumMessages:   5,
 			NumExtensions: 2,
 			NumServices:   0,
 		},

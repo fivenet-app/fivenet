@@ -54,6 +54,15 @@ func Int32P(v int32) mysql.IntegerExpression {
 	return mysql.Int32(v)
 }
 
+// Uint32PP converts an optional uint32 to a nullable SQL integer. Unlike
+// Int32P, zero is meaningful for values such as property decimal places.
+func Uint32PP(v *uint32) mysql.IntegerExpression {
+	if v == nil {
+		return mysql.IntExp(mysql.NULL)
+	}
+	return mysql.Uint32(*v)
+}
+
 // StringPP helper for nullable string pointers. Nil pointers are treated as NULL, non-nil pointers are dereferenced.
 func StringPP(s *string) mysql.StringExpression {
 	if s == nil {

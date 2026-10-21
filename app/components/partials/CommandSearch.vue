@@ -37,6 +37,7 @@ async function searchCitiznes(q: string, signal: AbortSignal): Promise<CommandPa
                     pageSize: 10,
                 },
                 search: q.trim().substring(1, 64).trim(),
+                propertyFilters: [],
             },
             { abort: signal },
         );

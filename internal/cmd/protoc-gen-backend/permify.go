@@ -5,6 +5,7 @@ import (
 	"maps"
 	"path"
 	"path/filepath"
+	"regexp"
 	"slices"
 	"strconv"
 	"strings"
@@ -13,6 +14,7 @@ import (
 
 	permspb "github.com/fivenet-app/fivenet/v2026/gen/go/proto/codegen/perms"
 	permissionsattributes "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/permissions/attributes"
+	propertypb "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/properties"
 	"github.com/go-sprout/sprout"
 	"github.com/go-sprout/sprout/group/all"
 	pgs "github.com/lyft/protoc-gen-star/v2"
@@ -58,6 +60,7 @@ func (p *PermifyModule) InitContext(c pgs.BuildContext) {
 	templateFns["remapRef"] = remapRef
 	templateFns["attrValueTypeName"] = attrValueTypeName
 	templateFns["attrValueConstName"] = attrValueConstName
+	templateFns["rendererConfigLiteral"] = rendererConfigLiteral
 	funcs := templateHandler.Build()
 
 	tpl := template.New("permify").Funcs(funcs)
@@ -68,6 +71,36 @@ func (p *PermifyModule) InitContext(c pgs.BuildContext) {
 
 	remapTpl := template.New("permify_remap").Funcs(funcs)
 	p.remapTpl = template.Must(remapTpl.Parse(permifyRemapTpl))
+}
+
+func rendererConfigLiteral(config *propertypb.PropertyRendererConfig) string {
+	if config == nil {
+		return ""
+	}
+	switch {
+	case config.GetString() != nil:
+		value := config.GetString()
+		return fmt.Sprintf("&propertypb.PropertyRendererConfig{Config: &propertypb.PropertyRendererConfig_String_{String_: &propertypb.PropertyStringRendererConfig{Prefix: %q, Suffix: %q, Truncate: %t}}}", value.GetPrefix(), value.GetSuffix(), value.GetTruncate())
+	case config.GetInteger() != nil:
+		return rendererNumberConfigLiteral("Integer", config.GetInteger().GetDecimalPlaces(), config.GetInteger().DecimalPlaces != nil, config.GetInteger().GetPrefix(), config.GetInteger().GetSuffix(), config.GetInteger().GetUnit())
+	case config.GetNumber() != nil:
+		return rendererNumberConfigLiteral("Number", config.GetNumber().GetDecimalPlaces(), config.GetNumber().DecimalPlaces != nil, config.GetNumber().GetPrefix(), config.GetNumber().GetSuffix(), config.GetNumber().GetUnit())
+	default:
+		return ""
+	}
+}
+
+func rendererNumberConfigLiteral(kind string, decimalPlaces uint32, hasDecimalPlaces bool, prefix string, suffix string, unit string) string {
+	fields := []string{fmt.Sprintf("Prefix: %q", prefix), fmt.Sprintf("Suffix: %q", suffix)}
+	if hasDecimalPlaces {
+		fields = append(fields, fmt.Sprintf("DecimalPlaces: proto.Uint32(%d)", decimalPlaces))
+	}
+	if unit != "" {
+		fields = append(fields, fmt.Sprintf("Unit: proto.String(%q)", unit))
+	}
+	configType := "Property" + kind + "RendererConfig"
+	wrapperType := "PropertyRendererConfig_" + kind
+	return fmt.Sprintf("&propertypb.PropertyRendererConfig{Config: &propertypb.%s{%s: &propertypb.%s{%s}}}", wrapperType, kind, configType, strings.Join(fields, ", "))
 }
 
 // Name satisfies the generator.Plugin interface.
@@ -202,6 +235,38 @@ type RemapImport struct {
 	Path  string
 }
 
+type SystemProperty struct {
+	Scope          propertypb.PropertyScope
+	Key            string
+	ValueType      propertypb.PropertyValueType
+	Enabled        bool
+	DisplayKey     string
+	Label          string
+	Description    *string
+	Searchable     bool
+	ValueFormat    propertypb.PropertyValueFormat
+	Renderer       propertypb.PropertyRenderer
+	RendererConfig *propertypb.PropertyRendererConfig
+	DisplayMode    propertypb.PropertyDisplayMode
+	Behavior       propertypb.PropertyBehavior
+	Unit           *string
+	DecimalPlaces  *uint32
+	Currency       *string
+	GroupKey       string
+	SortOrder      int32
+	Pinned         bool
+	Implicit       bool
+}
+
+type SystemPropertyGroup struct {
+	Scope      propertypb.PropertyScope
+	Key        string
+	DisplayKey string
+	SortOrder  int32
+}
+
+var systemPropertyKeyPattern = regexp.MustCompile(`^[a-z][a-z0-9_.-]*$`)
+
 func collectRemapImports(remaps map[string]map[string]map[string][]*Perm) []RemapImport {
 	namespaces := map[string]struct{}{}
 	for namespace, remapNs := range remaps {
@@ -297,6 +362,9 @@ func (p *PermifyModule) generate(fs []pgs.File) map[string]map[string]map[string
 		Permissions           map[string]map[string]map[string]*Perm
 		PermissionRemap       map[string]map[string]map[string][]*Perm
 		Attributes            map[string]map[string]*Attr
+		SystemProperties      []*SystemProperty
+		SystemPropertyGroups  []*SystemPropertyGroup
+		HasPropertyListAttrs  bool
 	}{
 		FS: fs,
 		F:  f,
@@ -308,6 +376,8 @@ func (p *PermifyModule) generate(fs []pgs.File) map[string]map[string]map[string
 		Permissions:           map[string]map[string]map[string]*Perm{},
 		PermissionRemap:       map[string]map[string]map[string][]*Perm{},
 		Attributes:            map[string]map[string]*Attr{},
+		SystemProperties:      []*SystemProperty{},
+		SystemPropertyGroups:  []*SystemPropertyGroup{},
 	}
 
 	slices.SortFunc(fs, func(a, b pgs.File) int {
@@ -355,6 +425,84 @@ func (p *PermifyModule) generate(fs []pgs.File) map[string]map[string]map[string
 				order = serviceOpts.GetOrder()
 			}
 
+			for _, group := range serviceOpts.GetPropertyGroups() {
+				if group.GetScope() == propertypb.PropertyScope_PROPERTY_SCOPE_UNSPECIFIED ||
+					!systemPropertyKeyPattern.MatchString(group.GetKey()) {
+					p.Fail("invalid property group declaration:", group.GetKey())
+				}
+				for _, existing := range data.SystemPropertyGroups {
+					if existing.Scope == group.GetScope() && existing.Key == group.GetKey() {
+						p.Fail("duplicate property group declaration:", group.GetKey())
+					}
+				}
+				data.SystemPropertyGroups = append(data.SystemPropertyGroups, &SystemPropertyGroup{
+					Scope: group.GetScope(), Key: group.GetKey(), DisplayKey: group.GetDisplayKey(), SortOrder: group.GetSortOrder(),
+				})
+			}
+
+			for _, property := range serviceOpts.SystemProperties {
+				if property.GetScope() == propertypb.PropertyScope_PROPERTY_SCOPE_UNSPECIFIED ||
+					property.GetValueType() == propertypb.PropertyValueType_PROPERTY_VALUE_TYPE_UNSPECIFIED ||
+					!systemPropertyKeyPattern.MatchString(property.GetKey()) {
+					p.Fail("invalid system property declaration:", property.GetKey())
+				}
+				for _, existing := range data.SystemProperties {
+					if existing.Scope == property.GetScope() && existing.Key == property.GetKey() {
+						p.Fail("duplicate system property declaration:", property.GetKey())
+					}
+				}
+				if property.GetGroupKey() != "" {
+					found := false
+					for _, group := range data.SystemPropertyGroups {
+						if group.Scope == property.GetScope() && group.Key == property.GetGroupKey() {
+							found = true
+							break
+						}
+					}
+					if !found {
+						p.Fail("system property references unknown group:", property.GetKey(), property.GetGroupKey())
+					}
+				}
+				valueFormat := property.GetValueFormat()
+				if valueFormat == propertypb.PropertyValueFormat_PROPERTY_VALUE_FORMAT_UNSPECIFIED {
+					valueFormat = propertypb.PropertyValueFormat_PROPERTY_VALUE_FORMAT_PLAIN
+				}
+				behavior := property.GetBehavior()
+				if behavior == propertypb.PropertyBehavior_PROPERTY_BEHAVIOR_UNSPECIFIED {
+					behavior = propertypb.PropertyBehavior_PROPERTY_BEHAVIOR_GENERIC
+				}
+				renderer := property.GetRenderer()
+				if renderer == propertypb.PropertyRenderer_PROPERTY_RENDERER_UNSPECIFIED {
+					renderer = propertypb.PropertyRenderer_PROPERTY_RENDERER_DEFAULT
+				}
+				displayMode := property.GetDisplayMode()
+				if displayMode == propertypb.PropertyDisplayMode_PROPERTY_DISPLAY_MODE_UNSPECIFIED {
+					displayMode = propertypb.PropertyDisplayMode_PROPERTY_DISPLAY_MODE_DEFAULT
+				}
+				data.SystemProperties = append(data.SystemProperties, &SystemProperty{
+					Scope:          property.Scope,
+					Key:            property.Key,
+					ValueType:      property.ValueType,
+					Enabled:        property.Enabled,
+					DisplayKey:     property.DisplayKey,
+					Label:          property.Label,
+					Description:    property.Description,
+					Searchable:     property.Searchable,
+					ValueFormat:    valueFormat,
+					Renderer:       renderer,
+					RendererConfig: property.GetRendererConfig(),
+					DisplayMode:    displayMode,
+					Behavior:       behavior,
+					Unit:           property.Unit,
+					DecimalPlaces:  property.DecimalPlaces,
+					Currency:       property.Currency,
+					GroupKey:       property.GetGroupKey(),
+					SortOrder:      property.GetSortOrder(),
+					Pinned:         property.GetPinned(),
+					Implicit:       property.GetImplicit(),
+				})
+			}
+
 			if len(serviceOpts.AdditionalPerms) > 0 {
 				for _, v := range serviceOpts.AdditionalPerms {
 					if _, ok := data.Permissions[permNamespace]; !ok {
@@ -385,12 +533,15 @@ func (p *PermifyModule) generate(fs []pgs.File) map[string]map[string]map[string
 							atype = "JobList"
 						case permissionsattributes.AttributeType_ATTRIBUTE_TYPE_JOB_GRADE_LIST:
 							atype = "JobGradeList"
+						case permissionsattributes.AttributeType_ATTRIBUTE_TYPE_PROPERTY_LIST:
+							atype = "PropertyList"
 						}
 
 						perm.Attrs[i] = Attr{
-							Key:         a.Key,
-							Type:        atype,
-							ValidValues: slices.Clone(a.ValidStringList),
+							Key:           a.Key,
+							Type:          atype,
+							ValidValues:   slices.Clone(a.ValidStringList),
+							PropertyScope: a.PropertyScope,
 						}
 						if a.ValidStringList != nil {
 							perm.Attrs[i].Valid += "[]string{"
@@ -464,12 +615,15 @@ func (p *PermifyModule) generate(fs []pgs.File) map[string]map[string]map[string
 						atype = "JobList"
 					case permissionsattributes.AttributeType_ATTRIBUTE_TYPE_JOB_GRADE_LIST:
 						atype = "JobGradeList"
+					case permissionsattributes.AttributeType_ATTRIBUTE_TYPE_PROPERTY_LIST:
+						atype = "PropertyList"
 					}
 
 					perm.Attrs[i] = Attr{
-						Key:         a.Key,
-						Type:        atype,
-						ValidValues: slices.Clone(a.ValidStringList),
+						Key:           a.Key,
+						Type:          atype,
+						ValidValues:   slices.Clone(a.ValidStringList),
+						PropertyScope: a.PropertyScope,
 					}
 					if a.ValidStringList != nil {
 						perm.Attrs[i].Valid += "[]string{"
@@ -553,11 +707,73 @@ func (p *PermifyModule) generate(fs []pgs.File) map[string]map[string]map[string
 		}
 	}
 
-	if len(data.Permissions) == 0 && len(data.PermissionRemap) == 0 {
+	propertyKeysByScope := map[propertypb.PropertyScope][]string{}
+	for _, property := range data.SystemProperties {
+		propertyKeysByScope[property.Scope] = append(propertyKeysByScope[property.Scope], property.Key)
+	}
+	propertyKeysCodeByScope := map[propertypb.PropertyScope]string{}
+	for scope, keys := range propertyKeysByScope {
+		quoted := ""
+		for _, key := range keys {
+			quoted += strconv.Quote(key) + ", "
+		}
+		propertyKeysCodeByScope[scope] = "[]string{" + quoted + "}"
+	}
+	for _, services := range data.Permissions {
+		for _, permissions := range services {
+			for _, permission := range permissions {
+				for i := range permission.Attrs {
+					if permission.Attrs[i].Type == "PropertyList" {
+						if permission.Attrs[i].PropertyScope == nil ||
+							*permission.Attrs[i].PropertyScope == propertypb.PropertyScope_PROPERTY_SCOPE_UNSPECIFIED {
+							p.Fail("PropertyList attribute is missing property_scope:", permission.Attrs[i].Key)
+							continue
+						}
+						permission.Attrs[i].ValidValues = slices.Clone(propertyKeysByScope[*permission.Attrs[i].PropertyScope])
+						permission.Attrs[i].Valid = propertyKeysCodeByScope[*permission.Attrs[i].PropertyScope]
+						if permission.Attrs[i].Valid == "" {
+							permission.Attrs[i].Valid = "[]string{}"
+						}
+					}
+				}
+			}
+		}
+	}
+
+	if len(data.Permissions) == 0 && len(data.PermissionRemap) == 0 && len(data.SystemProperties) == 0 && len(data.SystemPropertyGroups) == 0 {
 		return nil
 	}
 
 	slices.Sort(data.PermissionServiceKeys)
+	slices.SortFunc(data.SystemProperties, func(a, b *SystemProperty) int {
+		if a.Scope != b.Scope {
+			return strings.Compare(a.Scope.String(), b.Scope.String())
+		}
+		if a.SortOrder != b.SortOrder {
+			return int(a.SortOrder - b.SortOrder)
+		}
+		return strings.Compare(a.Key, b.Key)
+	})
+	slices.SortFunc(data.SystemPropertyGroups, func(a, b *SystemPropertyGroup) int {
+		if a.Scope != b.Scope {
+			return strings.Compare(a.Scope.String(), b.Scope.String())
+		}
+		if a.SortOrder != b.SortOrder {
+			return int(a.SortOrder - b.SortOrder)
+		}
+		return strings.Compare(a.Key, b.Key)
+	})
+	for _, services := range data.Permissions {
+		for _, permissions := range services {
+			for _, permission := range permissions {
+				for _, attr := range permission.Attrs {
+					if attr.Type == "PropertyList" {
+						data.HasPropertyListAttrs = true
+					}
+				}
+			}
+		}
+	}
 
 	name := p.ctx.OutputPath(f)
 	p.AddGeneratorTemplateFile(
@@ -582,9 +798,55 @@ package {{ package .F }}
 import (
     "github.com/fivenet-app/fivenet/v2026/pkg/config"
     "github.com/fivenet-app/fivenet/v2026/pkg/perms"
+    {{- if .SystemProperties }}
+    propertyregistry "github.com/fivenet-app/fivenet/v2026/pkg/properties"
+    {{- end }}
     permissionsattributes "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/permissions/attributes"
+    {{- if or .SystemProperties .HasPropertyListAttrs }}
+    propertypb "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/properties"
+    {{- end }}
     permkeys "{{ .GoPath }}"
+    {{- if .SystemProperties }}
+    "google.golang.org/protobuf/proto"
+    {{- end }}
 )
+
+{{- if .SystemProperties }}
+func init() {
+	propertyregistry.AddSystemPropertyGroups([]*propertypb.PropertyGroup{
+	{{- range $group := .SystemPropertyGroups }}
+		{Scope: propertypb.PropertyScope_{{ $group.Scope }}, Key: "{{ $group.Key }}", DisplayKey: "{{ $group.DisplayKey }}", SortOrder: {{ $group.SortOrder }}},
+	{{- end }}
+	})
+	propertyregistry.AddSystemPropertyDefinitions([]*propertypb.PropertyDefinition{
+	{{- range $property := .SystemProperties }}
+		{
+			Scope: propertypb.PropertyScope_{{ $property.Scope }},
+			Key: "{{ $property.Key }}",
+			ValueType: propertypb.PropertyValueType_{{ $property.ValueType }},
+			Source: propertypb.PropertyDefinitionSource_PROPERTY_DEFINITION_SOURCE_SYSTEM,
+			Enabled: {{ $property.Enabled }},
+			DisplayKey: "{{ $property.DisplayKey }}",
+			{{- with $property.Label }}Label: "{{ . }}",{{ end }}
+			{{- with $property.Description }}Description: proto.String("{{ . }}"),{{ end }}
+			Searchable: {{ $property.Searchable }},
+			ValueFormat: propertypb.PropertyValueFormat_{{ $property.ValueFormat }},
+			Renderer: propertypb.PropertyRenderer_{{ $property.Renderer }},
+			{{- with rendererConfigLiteral $property.RendererConfig }}RendererConfig: {{ . }},{{ end }}
+			DisplayMode: propertypb.PropertyDisplayMode_{{ $property.DisplayMode }},
+			Behavior: propertypb.PropertyBehavior_{{ $property.Behavior }},
+			{{- with $property.Unit }}Unit: proto.String("{{ . }}"),{{ end }}
+			{{- with $property.DecimalPlaces }}DecimalPlaces: proto.Uint32({{ . }}),{{ end }}
+			{{- with $property.Currency }}Currency: proto.String("{{ . }}"),{{ end }}
+				GroupKey: "{{ $property.GroupKey }}",
+				SortOrder: {{ $property.SortOrder }},
+				Pinned: {{ $property.Pinned }},
+				Implicit: {{ $property.Implicit }},
+		},
+	{{- end }}
+	})
+}
+{{- end }}
 
 func init() {
 	perms.AddPermsToList([]*perms.Perm{
@@ -604,6 +866,7 @@ func init() {
                 {
                     Key: permkeys.{{ serviceName $svcName }}{{ $perm.Name }}{{ $attr.Key }}PermField,
                     Type: permissionsattributes.{{ $attr.Type }}AttributeType,
+                    {{ with $attr.PropertyScope }}PropertyScope: propertypb.PropertyScope_{{ . }},{{ end }}
                     {{ with $attr.Valid -}}ValidValues: {{ $attr.Valid }},{{ end }}
                 },
             {{- end }}
@@ -656,7 +919,7 @@ const (
     {{- range $svcName, $service := $services }}
         {{- range $perm := $service }}
             {{- range $attr := $perm.Attrs }}
-                {{- if eq $attr.Type "StringList" }}
+                {{- if or (eq $attr.Type "StringList") (eq $attr.Type "PropertyList") }}
 type {{ attrValueTypeName $svcName $perm $attr }} string
 
                     {{- if gt (len $attr.ValidValues) 0 }}
@@ -688,6 +951,8 @@ type {{ serviceName $svcName }}{{ $perm.Name }}PermRef struct {
     {{ $attr.Key }} perms.AttrRef[perms.{{ $attr.Type }}Attr]
                 {{- if eq $attr.Type "StringList" }}
     {{ $attr.Key }}Typed perms.StringListAttrRef[{{ attrValueTypeName $svcName $perm $attr }}]
+                {{- else if eq $attr.Type "PropertyList" }}
+    {{ $attr.Key }}Typed perms.PropertyListAttrRef[{{ attrValueTypeName $svcName $perm $attr }}]
                 {{- end }}
             {{- end }}
 }
@@ -704,6 +969,11 @@ var {{ serviceName $svcName }} = {{ serviceName $svcName }}Perms{
         ),
                 {{- if eq $attr.Type "StringList" }}
         {{ $attr.Key }}Typed: perms.NewTypedStringListAttrRef[{{ attrValueTypeName $svcName $perm $attr }}](
+            perms.NewPermissionRef(Namespace, {{ serviceName $svcName }}Perm, {{ serviceName $svcName }}{{ $perm.Name }}Perm),
+            {{ serviceName $svcName }}{{ $perm.Name }}{{ $attr.Key }}PermField,
+        ),
+                {{- else if eq $attr.Type "PropertyList" }}
+        {{ $attr.Key }}Typed: perms.NewTypedPropertyListAttrRef[{{ attrValueTypeName $svcName $perm $attr }}](
             perms.NewPermissionRef(Namespace, {{ serviceName $svcName }}Perm, {{ serviceName $svcName }}{{ $perm.Name }}Perm),
             {{ serviceName $svcName }}{{ $perm.Name }}{{ $attr.Key }}PermField,
         ),
@@ -757,8 +1027,9 @@ type Perm struct {
 }
 
 type Attr struct {
-	Key         string
-	Type        string
-	Valid       string
-	ValidValues []string
+	Key           string
+	Type          string
+	Valid         string
+	ValidValues   []string
+	PropertyScope *propertypb.PropertyScope
 }

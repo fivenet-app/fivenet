@@ -7,6 +7,7 @@ import "codegen/sanitizer/sanitizer.proto";
 import "resources/citizens/labels/labels.proto";
 import "resources/file/file.proto";
 import "resources/jobs/jobs.proto";
+import "resources/properties/properties.proto";
 import "resources/timestamp/timestamp.proto";
 import "tagger/tagger.proto";
 
@@ -40,4 +41,5 @@ message UserProps {
       strip_html_tags: true
     }
   ];
+  optional resources.properties.Properties properties = 18;
 }

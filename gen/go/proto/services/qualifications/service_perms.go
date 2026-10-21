@@ -21,8 +21,9 @@ func init() {
 			Name:      permkeys.QualificationsServiceDeleteQualificationPerm,
 			Attrs: []perms.Attr{
 				{
-					Key:         permkeys.QualificationsServiceDeleteQualificationAccessPermField,
-					Type:        permissionsattributes.StringListAttributeType,
+					Key:  permkeys.QualificationsServiceDeleteQualificationAccessPermField,
+					Type: permissionsattributes.StringListAttributeType,
+
 					ValidValues: []string{"Own", "Lower_Rank", "Same_Rank", "Any"},
 				},
 			},
@@ -43,13 +44,15 @@ func init() {
 			Name:      permkeys.QualificationsServiceUpdateQualificationPerm,
 			Attrs: []perms.Attr{
 				{
-					Key:         permkeys.QualificationsServiceUpdateQualificationAccessPermField,
-					Type:        permissionsattributes.StringListAttributeType,
+					Key:  permkeys.QualificationsServiceUpdateQualificationAccessPermField,
+					Type: permissionsattributes.StringListAttributeType,
+
 					ValidValues: []string{"Own", "Lower_Rank", "Same_Rank", "Any"},
 				},
 				{
-					Key:         permkeys.QualificationsServiceUpdateQualificationFieldsPermField,
-					Type:        permissionsattributes.StringListAttributeType,
+					Key:  permkeys.QualificationsServiceUpdateQualificationFieldsPermField,
+					Type: permissionsattributes.StringListAttributeType,
+
 					ValidValues: []string{"Public"},
 				},
 			},

@@ -24,7 +24,7 @@ func (s *UnitDB) GetStatusByID(
 	tUnitStatus := table.FivenetCentrumUnitsStatus.AS("unit_status")
 	tColleagueProps := table.FivenetJobColleagueProps.AS("colleague_props")
 	tColleague := table.FivenetUser.AS("colleague")
-	tUserProps := table.FivenetUserProps.AS("user_props")
+	tAvatarFiles := table.FivenetUserFiles.AS("avatar_file")
 	tAvatar := table.FivenetFiles.AS("profile_picture")
 
 	stmt := tUnitStatus.
@@ -53,7 +53,7 @@ func (s *UnitDB) GetStatusByID(
 			tColleagueProps.Job,
 			tColleagueProps.NamePrefix,
 			tColleagueProps.NameSuffix,
-			tUserProps.AvatarFileID.AS("colleague.profile_picture_file_id"),
+			tAvatarFiles.FileID.AS("colleague.profile_picture_file_id"),
 			tAvatar.FilePath.AS("colleague.profile_picture"),
 		).
 		FROM(
@@ -61,8 +61,11 @@ func (s *UnitDB) GetStatusByID(
 				LEFT_JOIN(tColleague,
 					tColleague.ID.EQ(tUnitStatus.UserID),
 				).
-				LEFT_JOIN(tUserProps,
-					tUserProps.UserID.EQ(tUnitStatus.UserID),
+				LEFT_JOIN(tAvatarFiles,
+					mysql.AND(
+						tAvatarFiles.UserID.EQ(tUnitStatus.UserID),
+						tAvatarFiles.Kind.EQ(mysql.String("avatar")),
+					),
 				).
 				LEFT_JOIN(tColleagueProps,
 					mysql.AND(
@@ -71,7 +74,7 @@ func (s *UnitDB) GetStatusByID(
 					),
 				).
 				LEFT_JOIN(tAvatar,
-					tAvatar.ID.EQ(tUserProps.AvatarFileID),
+					tAvatar.ID.EQ(tAvatarFiles.FileID),
 				),
 		).
 		WHERE(
@@ -128,7 +131,7 @@ func (s *UnitDB) GetLastStatus(
 	tUnitStatus := table.FivenetCentrumUnitsStatus.AS("unit_status")
 	tColleagueProps := table.FivenetJobColleagueProps.AS("colleague_props")
 	tColleague := table.FivenetUser.AS("colleague")
-	tUserProps := table.FivenetUserProps.AS("user_props")
+	tAvatarFiles := table.FivenetUserFiles.AS("avatar_file")
 	tAvatar := table.FivenetFiles.AS("profile_picture")
 
 	stmt := tUnitStatus.
@@ -157,7 +160,7 @@ func (s *UnitDB) GetLastStatus(
 			tColleagueProps.Job,
 			tColleagueProps.NamePrefix,
 			tColleagueProps.NameSuffix,
-			tUserProps.AvatarFileID.AS("colleague.profile_picture_file_id"),
+			tAvatarFiles.FileID.AS("colleague.profile_picture_file_id"),
 			tAvatar.FilePath.AS("colleague.profile_picture"),
 		).
 		FROM(
@@ -165,8 +168,11 @@ func (s *UnitDB) GetLastStatus(
 				LEFT_JOIN(tColleague,
 					tColleague.ID.EQ(tUnitStatus.UserID),
 				).
-				LEFT_JOIN(tUserProps,
-					tUserProps.UserID.EQ(tUnitStatus.UserID),
+				LEFT_JOIN(tAvatarFiles,
+					mysql.AND(
+						tAvatarFiles.UserID.EQ(tUnitStatus.UserID),
+						tAvatarFiles.Kind.EQ(mysql.String("avatar")),
+					),
 				).
 				LEFT_JOIN(tColleagueProps,
 					mysql.AND(
@@ -175,7 +181,7 @@ func (s *UnitDB) GetLastStatus(
 					),
 				).
 				LEFT_JOIN(tAvatar,
-					tAvatar.ID.EQ(tUserProps.AvatarFileID),
+					tAvatar.ID.EQ(tAvatarFiles.FileID),
 				),
 		).
 		WHERE(mysql.AND(

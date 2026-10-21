@@ -422,6 +422,20 @@ func (d *Demo) buildDemoRoleAttrValueJSON(
 			valid.GetStringList().GetStrings()...,
 		)
 
+	case permissionsattributes.PropertyListAttributeType:
+		valid := &permissionsattributes.AttributeValues{}
+		if validValuesRaw != nil && strings.TrimSpace(*validValuesRaw) != "" {
+			if err := protoutils.UnmarshalPartialJSON([]byte(*validValuesRaw), valid); err != nil {
+				return "", fmt.Errorf("failed to parse rbac attr valid values. %w", err)
+			}
+		}
+		valid.Default(attrType)
+		value.Default(attrType)
+		value.GetPropertyList().Keys = append(
+			value.GetPropertyList().Keys,
+			valid.GetPropertyList().GetKeys()...,
+		)
+
 	case permissionsattributes.JobListAttributeType:
 		value.Default(attrType)
 		value.GetJobList().Strings = []string{targetJob}

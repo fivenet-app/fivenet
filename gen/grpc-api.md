@@ -145,6 +145,7 @@ Timestamp for storage messages. We've defined a new local type wrapper of google
 | `string_list` | [StringList](#resourcespermissionsattributesStringList) |  |  |
 | `job_list` | [StringList](#resourcespermissionsattributesStringList) |  |  |
 | `job_grade_list` | [JobGradeList](#resourcespermissionsattributesJobGradeList) |  |  |
+| `property_list` | [PropertyList](#resourcespermissionsattributesPropertyList) |  |  |
 
 
 
@@ -198,6 +199,30 @@ Timestamp for storage messages. We've defined a new local type wrapper of google
 
 
 
+### resources.permissions.attributes.PropertyList
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `keys` | [string](#string) | repeated |  |
+| `properties` | [PropertyListEntry](#resourcespermissionsattributesPropertyListEntry) | repeated | Display metadata for the keys above. This is response metadata only; role attribute values continue to persist and authorize by key. |
+
+
+
+
+
+### resources.permissions.attributes.PropertyListEntry
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `key` | [string](#string) |  |  |
+| `label` | [string](#string) |  |  |
+
+
+
+
+
 ### resources.permissions.attributes.RoleAttribute
 
 
@@ -241,6 +266,325 @@ Timestamp for storage messages. We've defined a new local type wrapper of google
 | `ATTRIBUTE_TYPE_STRING_LIST` | 1 |  |
 | `ATTRIBUTE_TYPE_JOB_LIST` | 2 |  |
 | `ATTRIBUTE_TYPE_JOB_GRADE_LIST` | 3 |  |
+| `ATTRIBUTE_TYPE_PROPERTY_LIST` | 4 | Property lists select runtime-defined property keys. The RPC permission controls the operation; this attribute only controls which properties. |
+
+
+ <!-- end enums -->
+
+ <!-- end HasExtensions -->
+
+ <!-- end services -->
+
+
+
+## resources/properties/properties.proto
+
+
+### resources.properties.LocalDate
+LocalDate deliberately has no timezone. Use it for calendar dates such as an inspection due date; use timestamp_value for an instant in time.
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `year` | [int32](#int32) |  |  |
+| `month` | [int32](#int32) |  |  |
+| `day` | [int32](#int32) |  |  |
+
+
+
+
+
+### resources.properties.Properties
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `properties` | [Property](#resourcespropertiesProperty) | repeated |  |
+| `groups` | [PropertyGroup](#resourcespropertiesPropertyGroup) | repeated | Effective groups available to the caller for rendering the properties. |
+
+
+
+
+
+### resources.properties.Property
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `key` | [string](#string) |  | Keys are namespaced to avoid collisions between FiveNet and instance extensions, for example: "vehicle.inspection_due". |
+| `value` | [PropertyValue](#resourcespropertiesPropertyValue) | optional | Omitted for an available custom definition that does not yet have a value on this resource. |
+| `updated_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
+| `definition` | [PropertyDefinition](#resourcespropertiesPropertyDefinition) | optional | Resolved definition metadata for detail/profile renderers. |
+
+
+
+
+
+### resources.properties.PropertyChange
+PropertyChange updates a generic scalar property. An absent value clears it.
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `key` | [string](#string) |  |  |
+| `value` | [PropertyValue](#resourcespropertiesPropertyValue) | optional |  |
+
+
+
+
+
+### resources.properties.PropertyDefinition
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `scope` | [PropertyScope](#resourcespropertiesPropertyScope) |  |  |
+| `key` | [string](#string) |  |  |
+| `value_type` | [PropertyValueType](#resourcespropertiesPropertyValueType) |  |  |
+| `source` | [PropertyDefinitionSource](#resourcespropertiesPropertyDefinitionSource) |  |  |
+| `enabled` | [bool](#bool) |  |  |
+| `display_key` | [string](#string) |  | Used by the UI to select a context-specific translation and renderer. |
+| `label` | [string](#string) |  | Instance-provided text for custom definitions. System definitions use display_key so FiveNet can translate them. |
+| `description` | [string](#string) | optional |  |
+| `searchable` | [bool](#bool) |  | Searchability is opt-in so an instance does not accidentally expose an arbitrary field in its public search surface. |
+| `value_format` | [PropertyValueFormat](#resourcespropertiesPropertyValueFormat) |  |  |
+| `behavior` | [PropertyBehavior](#resourcespropertiesPropertyBehavior) |  |  |
+| `renderer` | [PropertyRenderer](#resourcespropertiesPropertyRenderer) |  |  |
+| `unit` | [string](#string) | optional | Display unit for values such as distance. It is not appended to money or percentage values, whose units are implied by value_format. |
+| `decimal_places` | [uint32](#uint32) | optional | Fractional digits presented and accepted by clients. Integer money values default to the configured currency's minor-unit precision when omitted. |
+| `currency` | [string](#string) | optional | Optional ISO 4217 currency override for money values. |
+| `deleted_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
+| `group_key` | [string](#string) |  |  |
+| `sort_order` | [int32](#int32) |  |  |
+| `group_sort_order` | [int32](#int32) |  | Effective presentation order of the containing group. This is resolved from the instance override and is separate from the property's order within that group. |
+| `pinned` | [bool](#bool) |  | Pinned properties are eligible for prominent detail/profile views. |
+| `renderer_config` | [PropertyRendererConfig](#resourcespropertiesPropertyRendererConfig) | optional |  |
+| `display_mode` | [PropertyDisplayMode](#resourcespropertiesPropertyDisplayMode) |  | Controls whether the property is shown in generic property lists or is reserved for a specialized profile presentation. |
+| `implicit` | [bool](#bool) |  | Implicit properties are available whenever the containing permission is granted, but are not selectable in role property lists. |
+
+
+
+
+
+### resources.properties.PropertyFilter
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `key` | [string](#string) |  |  |
+| `operation` | [PropertyFilterOperation](#resourcespropertiesPropertyFilterOperation) |  |  |
+| `value` | [PropertyValue](#resourcespropertiesPropertyValue) |  |  |
+
+
+
+
+
+### resources.properties.PropertyGroup
+PropertyGroup controls the presentation order of definitions within one property scope. System groups are code-defined; custom groups are stored per FiveNet instance and may be referenced by custom definitions.
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `scope` | [PropertyScope](#resourcespropertiesPropertyScope) |  |  |
+| `key` | [string](#string) |  |  |
+| `display_key` | [string](#string) |  |  |
+| `label` | [string](#string) |  |  |
+| `sort_order` | [int32](#int32) |  |  |
+| `deleted_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
+
+
+
+
+
+### resources.properties.PropertyIntegerRendererConfig
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `decimal_places` | [uint32](#uint32) | optional |  |
+| `prefix` | [string](#string) |  |  |
+| `suffix` | [string](#string) |  |  |
+| `unit` | [string](#string) | optional |  |
+
+
+
+
+
+### resources.properties.PropertyNumberRendererConfig
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `decimal_places` | [uint32](#uint32) | optional |  |
+| `prefix` | [string](#string) |  |  |
+| `suffix` | [string](#string) |  |  |
+| `unit` | [string](#string) | optional |  |
+
+
+
+
+
+### resources.properties.PropertyRendererConfig
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `string` | [PropertyStringRendererConfig](#resourcespropertiesPropertyStringRendererConfig) |  |  |
+| `integer` | [PropertyIntegerRendererConfig](#resourcespropertiesPropertyIntegerRendererConfig) |  |  |
+| `number` | [PropertyNumberRendererConfig](#resourcespropertiesPropertyNumberRendererConfig) |  |  |
+
+
+
+
+
+### resources.properties.PropertyStringRendererConfig
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `prefix` | [string](#string) |  |  |
+| `suffix` | [string](#string) |  |  |
+| `truncate` | [bool](#bool) |  |  |
+
+
+
+
+
+### resources.properties.PropertyValue
+PropertyValue is deliberately restricted to scalar values. Relations such as files are modeled separately so they can retain their own access controls and lifecycle.
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `string_value` | [string](#string) |  |  |
+| `integer_value` | [int64](#int64) |  |  |
+| `number_value` | [double](#double) |  |  |
+| `bool_value` | [bool](#bool) |  |  |
+| `timestamp_value` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) |  |  |
+| `date_value` | [LocalDate](#resourcespropertiesLocalDate) |  |  |
+
+
+
+
+ <!-- end messages -->
+
+
+### resources.properties.PropertyBehavior
+Managed properties are implemented by FiveNet handlers. They may have lifecycle state, cleanup, and activity behavior beyond their scalar value.
+
+
+| Name | Number | Description |
+| ---- | ------ | ----------- |
+| `PROPERTY_BEHAVIOR_UNSPECIFIED` | 0 |  |
+| `PROPERTY_BEHAVIOR_GENERIC` | 1 |  |
+| `PROPERTY_BEHAVIOR_MANAGED` | 2 |  |
+
+
+
+### resources.properties.PropertyDefinitionSource
+
+| Name | Number | Description |
+| ---- | ------ | ----------- |
+| `PROPERTY_DEFINITION_SOURCE_UNSPECIFIED` | 0 |  |
+| `PROPERTY_DEFINITION_SOURCE_SYSTEM` | 1 | System definitions have a fixed key, type, and behavior. Instances may only override whether they are enabled. |
+| `PROPERTY_DEFINITION_SOURCE_CUSTOM` | 2 | Custom definitions are stored per FiveNet instance. |
+
+
+
+### resources.properties.PropertyDisplayMode
+PropertyDisplayMode controls placement independently from the value renderer. Specialized views may consume hidden and profile-badge values.
+
+
+| Name | Number | Description |
+| ---- | ------ | ----------- |
+| `PROPERTY_DISPLAY_MODE_UNSPECIFIED` | 0 |  |
+| `PROPERTY_DISPLAY_MODE_DEFAULT` | 1 |  |
+| `PROPERTY_DISPLAY_MODE_HIDDEN` | 2 |  |
+| `PROPERTY_DISPLAY_MODE_PROFILE_BADGE` | 3 |  |
+
+
+
+### resources.properties.PropertyFilterOperation
+
+| Name | Number | Description |
+| ---- | ------ | ----------- |
+| `PROPERTY_FILTER_OPERATION_UNSPECIFIED` | 0 |  |
+| `PROPERTY_FILTER_OPERATION_EQUALS` | 1 |  |
+| `PROPERTY_FILTER_OPERATION_NOT_EQUALS` | 2 |  |
+| `PROPERTY_FILTER_OPERATION_GREATER_THAN` | 3 |  |
+| `PROPERTY_FILTER_OPERATION_GREATER_THAN_OR_EQUAL` | 4 |  |
+| `PROPERTY_FILTER_OPERATION_LESS_THAN` | 5 |  |
+| `PROPERTY_FILTER_OPERATION_LESS_THAN_OR_EQUAL` | 6 |  |
+| `PROPERTY_FILTER_OPERATION_CONTAINS` | 7 |  |
+
+
+
+### resources.properties.PropertyRenderer
+PropertyRenderer selects a predefined UI treatment for a property. It is separate from PropertyValueFormat, which describes the value's semantic formatting rather than its component-level presentation.
+
+
+| Name | Number | Description |
+| ---- | ------ | ----------- |
+| `PROPERTY_RENDERER_UNSPECIFIED` | 0 |  |
+| `PROPERTY_RENDERER_DEFAULT` | 1 |  |
+| `PROPERTY_RENDERER_EMAIL` | 2 |  |
+| `PROPERTY_RENDERER_PHONE` | 3 |  |
+| `PROPERTY_RENDERER_HEIGHT` | 4 |  |
+| `PROPERTY_RENDERER_TRAFFIC_POINTS` | 5 |  |
+| `PROPERTY_RENDERER_SEX` | 6 |  |
+| `PROPERTY_RENDERER_STRING` | 7 |  |
+| `PROPERTY_RENDERER_INTEGER` | 8 |  |
+| `PROPERTY_RENDERER_NUMBER` | 9 |  |
+| `PROPERTY_RENDERER_BOOLEAN` | 10 |  |
+| `PROPERTY_RENDERER_DATE` | 11 |  |
+| `PROPERTY_RENDERER_DATETIME` | 12 |  |
+| `PROPERTY_RENDERER_MONEY` | 13 |  |
+
+
+
+### resources.properties.PropertyScope
+
+| Name | Number | Description |
+| ---- | ------ | ----------- |
+| `PROPERTY_SCOPE_UNSPECIFIED` | 0 |  |
+| `PROPERTY_SCOPE_VEHICLE` | 1 |  |
+| `PROPERTY_SCOPE_USER` | 2 |  |
+| `PROPERTY_SCOPE_COLLEAGUE` | 3 |  |
+
+
+
+### resources.properties.PropertyValueFormat
+PropertyValueFormat describes the semantic rendering and input convention for a stored scalar. It never changes the persisted representation.
+
+
+| Name | Number | Description |
+| ---- | ------ | ----------- |
+| `PROPERTY_VALUE_FORMAT_UNSPECIFIED` | 0 |  |
+| `PROPERTY_VALUE_FORMAT_PLAIN` | 1 |  |
+| `PROPERTY_VALUE_FORMAT_MONEY` | 2 | An integer value represents minor currency units. Currency comes from the definition or, when omitted, the instance game configuration. |
+| `PROPERTY_VALUE_FORMAT_PERCENTAGE` | 3 |  |
+| `PROPERTY_VALUE_FORMAT_DATETIME` | 4 |  |
+| `PROPERTY_VALUE_FORMAT_DATE` | 5 |  |
+| `PROPERTY_VALUE_FORMAT_DURATION` | 6 |  |
+| `PROPERTY_VALUE_FORMAT_DISTANCE` | 7 |  |
+
+
+
+### resources.properties.PropertyValueType
+
+| Name | Number | Description |
+| ---- | ------ | ----------- |
+| `PROPERTY_VALUE_TYPE_UNSPECIFIED` | 0 |  |
+| `PROPERTY_VALUE_TYPE_STRING` | 1 |  |
+| `PROPERTY_VALUE_TYPE_INTEGER` | 2 |  |
+| `PROPERTY_VALUE_TYPE_NUMBER` | 3 |  |
+| `PROPERTY_VALUE_TYPE_BOOL` | 4 |  |
+| `PROPERTY_VALUE_TYPE_TIMESTAMP` | 5 |  |
+| `PROPERTY_VALUE_TYPE_DATE` | 6 |  |
 
 
  <!-- end enums -->
@@ -276,6 +620,7 @@ Timestamp for storage messages. We've defined a new local type wrapper of google
 | `value` | [string](#string) |  |  |
 | `type` | [resources.permissions.attributes.AttributeType](#resourcespermissionsattributesAttributeType) |  |  |
 | `valid_string_list` | [string](#string) | repeated |  |
+| `property_scope` | [resources.properties.PropertyScope](#resourcespropertiesPropertyScope) | optional | Required for PropertyList attributes so the backend can restrict the generated keys to the appropriate property scope. |
 
 
 
@@ -309,6 +654,40 @@ Timestamp for storage messages. We've defined a new local type wrapper of google
 | `namespace` | [string](#string) | optional |  |
 | `service` | [string](#string) | optional |  |
 | `additional_perms` | [AdditionalServicePerm](#codegenpermsAdditionalServicePerm) | repeated |  |
+| `system_properties` | [SystemProperty](#codegenpermsSystemProperty) | repeated |  |
+| `property_groups` | [resources.properties.PropertyGroup](#resourcespropertiesPropertyGroup) | repeated |  |
+
+
+
+
+
+### codegen.perms.SystemProperty
+SystemProperty declares a property whose key and semantics are owned by FiveNet code. The backend generator registers these definitions at startup; only the enabled state may be overridden by an instance.
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `scope` | [resources.properties.PropertyScope](#resourcespropertiesPropertyScope) |  |  |
+| `key` | [string](#string) |  |  |
+| `value_type` | [resources.properties.PropertyValueType](#resourcespropertiesPropertyValueType) |  |  |
+| `enabled` | [bool](#bool) |  |  |
+| `display_key` | [string](#string) |  |  |
+| `label` | [string](#string) |  |  |
+| `description` | [string](#string) | optional |  |
+| `searchable` | [bool](#bool) |  |  |
+| `value_format` | [resources.properties.PropertyValueFormat](#resourcespropertiesPropertyValueFormat) |  |  |
+| `behavior` | [resources.properties.PropertyBehavior](#resourcespropertiesPropertyBehavior) |  |  |
+| `renderer` | [resources.properties.PropertyRenderer](#resourcespropertiesPropertyRenderer) |  |  |
+| `renderer_config` | [resources.properties.PropertyRendererConfig](#resourcespropertiesPropertyRendererConfig) |  |  |
+| `display_mode` | [resources.properties.PropertyDisplayMode](#resourcespropertiesPropertyDisplayMode) |  |  |
+| `unit` | [string](#string) | optional |  |
+| `decimal_places` | [uint32](#uint32) | optional |  |
+| `currency` | [string](#string) | optional |  |
+| `group_key` | [string](#string) |  |  |
+| `sort_order` | [int32](#int32) |  |  |
+| `pinned` | [bool](#bool) |  |  |
+| `implicit` | [bool](#bool) |  |  |
 
 
 
@@ -706,6 +1085,7 @@ Timestamp for storage messages. We've defined a new local type wrapper of google
 | `mugshot` | [resources.file.File](#resourcesfileFile) | optional |  |
 | `labels` | [resources.citizens.labels.Labels](#resourcescitizenslabelsLabels) | optional |  |
 | `email` | [string](#string) | optional |  |
+| `properties` | [resources.properties.Properties](#resourcespropertiesProperties) | optional |  |
 
 
 
@@ -763,6 +1143,7 @@ Timestamp for storage messages. We've defined a new local type wrapper of google
 | `licenses` | [resources.citizens.licenses.License](#resourcescitizenslicensesLicense) | repeated |  |
 | `profile_picture_file_id` | [int64](#int64) | optional |  |
 | `profile_picture` | [string](#string) | optional |  |
+| `properties` | [resources.properties.Properties](#resourcespropertiesProperties) | optional |  |
 
 
 
@@ -6727,42 +7108,6 @@ User related events
 
 
 
-## resources/permissions/events/events.proto
-
-
-### resources.permissions.events.JobLimitsUpdatedEvent
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `job` | [string](#string) |  |  |
-
-
-
-
-
-### resources.permissions.events.RoleIDEvent
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `role_id` | [int64](#int64) |  |  |
-| `job` | [string](#string) |  |  |
-| `grade` | [int32](#int32) |  |  |
-
-
-
-
- <!-- end messages -->
-
- <!-- end enums -->
-
- <!-- end HasExtensions -->
-
- <!-- end services -->
-
-
-
 ## resources/permissions/permissions/permissions.proto
 
 
@@ -6811,6 +7156,68 @@ User related events
 | `job_grade_label` | [string](#string) | optional |  |
 | `permissions` | [Permission](#resourcespermissionspermissionsPermission) | repeated |  |
 | `attributes` | [resources.permissions.attributes.RoleAttribute](#resourcespermissionsattributesRoleAttribute) | repeated |  |
+
+
+
+
+ <!-- end messages -->
+
+ <!-- end enums -->
+
+ <!-- end HasExtensions -->
+
+ <!-- end services -->
+
+
+
+## resources/permissions/authorization/authorization.proto
+
+
+### resources.permissions.authorization.AuthorizationState
+AuthorizationState is the effective authorization of the currently selected character. It is a complete replacement snapshot, not a delta.
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `permissions` | [resources.permissions.permissions.Permission](#resourcespermissionspermissionsPermission) | repeated |  |
+| `attributes` | [resources.permissions.attributes.RoleAttribute](#resourcespermissionsattributesRoleAttribute) | repeated |  |
+
+
+
+
+ <!-- end messages -->
+
+ <!-- end enums -->
+
+ <!-- end HasExtensions -->
+
+ <!-- end services -->
+
+
+
+## resources/permissions/events/events.proto
+
+
+### resources.permissions.events.JobLimitsUpdatedEvent
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `job` | [string](#string) |  |  |
+
+
+
+
+
+### resources.permissions.events.RoleIDEvent
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `role_id` | [int64](#int64) |  |  |
+| `job` | [string](#string) |  |  |
+| `grade` | [int32](#int32) |  |  |
 
 
 
@@ -7273,6 +7680,7 @@ Connect an identifier/license to the provider with the specified external id (e.
 | `wanted_reason` | [string](#string) | optional |  |
 | `wanted_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
 | `wanted_till` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
+| `properties` | [resources.properties.Properties](#resourcespropertiesProperties) | optional |  |
 
 
 
@@ -7305,6 +7713,7 @@ Connect an identifier/license to the provider with the specified external id (e.
 | `job` | [string](#string) | optional |  |
 | `job_label` | [string](#string) | optional |  |
 | `props` | [props.VehicleProps](#resourcesvehiclespropsVehicleProps) | optional |  |
+| `properties` | [resources.properties.Properties](#resourcespropertiesProperties) | optional |  |
 
 
 
@@ -7636,6 +8045,21 @@ Detailed user information for sync purposes Should be kept inline with `resource
 
 
 
+### resources.users.activity.PropertyChange
+PropertyChange is used only for custom, generic properties. Managed system properties retain their dedicated activity types and richer payloads.
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `key` | [string](#string) |  |  |
+| `old_value` | [resources.properties.PropertyValue](#resourcespropertiesPropertyValue) | optional |  |
+| `new_value` | [resources.properties.PropertyValue](#resourcespropertiesPropertyValue) | optional |  |
+
+
+
+
+
 ### resources.users.activity.TrafficInfractionPointsChange
 
 
@@ -7685,6 +8109,7 @@ Detailed user information for sync purposes Should be kept inline with `resource
 | `document_relation` | [CitizenDocumentRelation](#resourcesusersactivityCitizenDocumentRelation) |  | Docstore related |
 | `jail_change` | [JailChange](#resourcesusersactivityJailChange) |  | "Plugin" activities |
 | `fine_change` | [FineChange](#resourcesusersactivityFineChange) |  |  |
+| `property_change` | [PropertyChange](#resourcesusersactivityPropertyChange) |  |  |
 
 
 
@@ -7720,6 +8145,8 @@ Detailed user information for sync purposes Should be kept inline with `resource
 | `USER_ACTIVITY_TYPE_DOCUMENT` | 11 |  |
 | `USER_ACTIVITY_TYPE_JAIL` | 12 |  |
 | `USER_ACTIVITY_TYPE_FINE` | 13 |  |
+| `USER_ACTIVITY_TYPE_FILE` | 14 | File-backed property value change. |
+| `USER_ACTIVITY_TYPE_PROPERTY` | 15 | Generic custom property value change. |
 
 
  <!-- end enums -->
@@ -7731,6 +8158,21 @@ Detailed user information for sync purposes Should be kept inline with `resource
 
 
 ## resources/vehicles/activity/activity.proto
+
+
+### resources.vehicles.activity.PropertyChange
+PropertyChange is used only for custom, generic properties. Managed system properties retain their dedicated activity types and richer payloads.
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `key` | [string](#string) |  |  |
+| `old_value` | [resources.properties.PropertyValue](#resourcespropertiesPropertyValue) | optional |  |
+| `new_value` | [resources.properties.PropertyValue](#resourcespropertiesPropertyValue) | optional |  |
+
+
+
 
 
 ### resources.vehicles.activity.VehicleActivity
@@ -7748,6 +8190,7 @@ Detailed user information for sync purposes Should be kept inline with `resource
 | `creator_job_label` | [string](#string) | optional |  |
 | `reason` | [string](#string) | optional |  |
 | `data` | [VehicleActivityData](#resourcesvehiclesactivityVehicleActivityData) | optional |  |
+| `key` | [string](#string) | optional | Set for generic property activities so filtering does not depend on JSON. |
 
 
 
@@ -7759,6 +8202,7 @@ Detailed user information for sync purposes Should be kept inline with `resource
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | `wanted_change` | [WantedChange](#resourcesvehiclesactivityWantedChange) |  |  |
+| `property_change` | [PropertyChange](#resourcesvehiclesactivityPropertyChange) |  |  |
 
 
 
@@ -7788,6 +8232,8 @@ Detailed user information for sync purposes Should be kept inline with `resource
 | ---- | ------ | ----------- |
 | `VEHICLE_ACTIVITY_TYPE_UNSPECIFIED` | 0 |  |
 | `VEHICLE_ACTIVITY_TYPE_WANTED` | 1 | Types for `VehicleActivityData` |
+| `VEHICLE_ACTIVITY_TYPE_FILE` | 2 | File-backed property value change. |
+| `VEHICLE_ACTIVITY_TYPE_PROPERTY` | 3 | Generic custom property value change. |
 
 
  <!-- end enums -->
@@ -8098,8 +8544,7 @@ Detailed user information for sync purposes Should be kept inline with `resource
 | `expires` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) |  |  |
 | `job_props` | [resources.jobs.props.JobProps](#resourcesjobspropsJobProps) |  |  |
 | `char` | [resources.users.User](#resourcesusersUser) |  |  |
-| `permissions` | [resources.permissions.permissions.Permission](#resourcespermissionspermissionsPermission) | repeated |  |
-| `attributes` | [resources.permissions.attributes.RoleAttribute](#resourcespermissionsattributesRoleAttribute) | repeated |  |
+| `authorization` | [resources.permissions.authorization.AuthorizationState](#resourcespermissionsauthorizationAuthorizationState) |  |  |
 
 
 
@@ -8224,8 +8669,7 @@ Detailed user information for sync purposes Should be kept inline with `resource
 | `token` | [string](#string) |  |  |
 | `expires` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) |  |  |
 | `char` | [resources.users.User](#resourcesusersUser) |  |  |
-| `permissions` | [resources.permissions.permissions.Permission](#resourcespermissionspermissionsPermission) | repeated |  |
-| `attributes` | [resources.permissions.attributes.RoleAttribute](#resourcespermissionsattributesRoleAttribute) | repeated |  |
+| `authorization` | [resources.permissions.authorization.AuthorizationState](#resourcespermissionsauthorizationAuthorizationState) |  |  |
 | `state` | [bool](#bool) |  |  |
 
 
@@ -8316,8 +8760,7 @@ Detailed user information for sync purposes Should be kept inline with `resource
 | `expires` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) |  |  |
 | `job_props` | [resources.jobs.props.JobProps](#resourcesjobspropsJobProps) | optional |  |
 | `char` | [resources.users.User](#resourcesusersUser) |  |  |
-| `permissions` | [resources.permissions.permissions.Permission](#resourcespermissionspermissionsPermission) | repeated |  |
-| `attributes` | [resources.permissions.attributes.RoleAttribute](#resourcespermissionsattributesRoleAttribute) | repeated |  |
+| `authorization` | [resources.permissions.authorization.AuthorizationState](#resourcespermissionsauthorizationAuthorizationState) |  |  |
 
 
 
@@ -9425,6 +9868,7 @@ Auth Service handles user authentication, character selection and oauth2 connect
 | `open_fines` | [int64](#int64) | optional |  |
 | `min_height` | [float](#float) | optional | Height range search (in cm) |
 | `max_height` | [float](#float) | optional |  |
+| `property_filters` | [resources.properties.PropertyFilter](#resourcespropertiesPropertyFilter) | repeated |  |
 
 
 
@@ -9453,6 +9897,7 @@ Auth Service handles user authentication, character selection and oauth2 connect
 | `types` | [resources.users.activity.UserActivityType](#resourcesusersactivityUserActivityType) | repeated | Activity types to filter by. If empty, all activity types will be returned. |
 | `from` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
 | `to` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
+| `property_keys` | [string](#string) | repeated | Restricts generic PROPERTY activity entries to these custom property keys. |
 
 
 
@@ -9477,6 +9922,7 @@ Auth Service handles user authentication, character selection and oauth2 connect
 | ----- | ---- | ----- | ----------- |
 | `props` | [resources.users.props.UserProps](#resourcesuserspropsUserProps) |  |  |
 | `reason` | [string](#string) |  |  |
+| `property_changes` | [resources.properties.PropertyChange](#resourcespropertiesPropertyChange) | repeated | Generic custom scalar properties. Managed system properties continue to use the dedicated fields above and produce their specialized activities. |
 
 
 
@@ -14402,6 +14848,309 @@ Updates one preference scope. Fields omitted from preference inherit from a less
 
 
 
+## services/settings/properties.proto
+
+
+### services.settings.CreatePropertyDefinitionRequest
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `definition` | [resources.properties.PropertyDefinition](#resourcespropertiesPropertyDefinition) |  |  |
+
+
+
+
+
+### services.settings.CreatePropertyDefinitionResponse
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `definition` | [resources.properties.PropertyDefinition](#resourcespropertiesPropertyDefinition) |  |  |
+
+
+
+
+
+### services.settings.CreatePropertyGroupRequest
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `group` | [resources.properties.PropertyGroup](#resourcespropertiesPropertyGroup) |  |  |
+
+
+
+
+
+### services.settings.CreatePropertyGroupResponse
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `group` | [resources.properties.PropertyGroup](#resourcespropertiesPropertyGroup) |  |  |
+
+
+
+
+
+### services.settings.DeletePropertyDefinitionRequest
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `scope` | [resources.properties.PropertyScope](#resourcespropertiesPropertyScope) |  |  |
+| `key` | [string](#string) |  |  |
+
+
+
+
+
+### services.settings.DeletePropertyDefinitionResponse
+
+
+
+
+
+### services.settings.DeletePropertyGroupRequest
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `scope` | [resources.properties.PropertyScope](#resourcespropertiesPropertyScope) |  |  |
+| `key` | [string](#string) |  |  |
+
+
+
+
+
+### services.settings.DeletePropertyGroupResponse
+
+
+
+
+
+### services.settings.ListPropertyDefinitionsRequest
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `scope` | [resources.properties.PropertyScope](#resourcespropertiesPropertyScope) |  |  |
+| `include_deleted` | [bool](#bool) |  |  |
+
+
+
+
+
+### services.settings.ListPropertyDefinitionsResponse
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `definitions` | [resources.properties.PropertyDefinition](#resourcespropertiesPropertyDefinition) | repeated |  |
+| `groups` | [resources.properties.PropertyGroup](#resourcespropertiesPropertyGroup) | repeated |  |
+
+
+
+
+
+### services.settings.ListPropertyScopesRequest
+
+
+
+
+
+### services.settings.ListPropertyScopesResponse
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `scopes` | [resources.properties.PropertyScope](#resourcespropertiesPropertyScope) | repeated |  |
+
+
+
+
+
+### services.settings.ReorderPropertyDefinitionsRequest
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `scope` | [resources.properties.PropertyScope](#resourcespropertiesPropertyScope) |  |  |
+| `group_key` | [string](#string) |  |  |
+| `property_keys` | [string](#string) | repeated |  |
+
+
+
+
+
+### services.settings.ReorderPropertyDefinitionsResponse
+
+
+
+
+
+### services.settings.ReorderPropertyGroupsRequest
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `scope` | [resources.properties.PropertyScope](#resourcespropertiesPropertyScope) |  |  |
+| `group_keys` | [string](#string) | repeated |  |
+
+
+
+
+
+### services.settings.ReorderPropertyGroupsResponse
+
+
+
+
+
+### services.settings.RestorePropertyDefinitionRequest
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `scope` | [resources.properties.PropertyScope](#resourcespropertiesPropertyScope) |  |  |
+| `key` | [string](#string) |  |  |
+
+
+
+
+
+### services.settings.RestorePropertyDefinitionResponse
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `definition` | [resources.properties.PropertyDefinition](#resourcespropertiesPropertyDefinition) |  |  |
+
+
+
+
+
+### services.settings.RestorePropertyGroupRequest
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `scope` | [resources.properties.PropertyScope](#resourcespropertiesPropertyScope) |  |  |
+| `key` | [string](#string) |  |  |
+
+
+
+
+
+### services.settings.RestorePropertyGroupResponse
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `group` | [resources.properties.PropertyGroup](#resourcespropertiesPropertyGroup) |  |  |
+
+
+
+
+
+### services.settings.SetSystemPropertyEnabledRequest
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `scope` | [resources.properties.PropertyScope](#resourcespropertiesPropertyScope) |  |  |
+| `key` | [string](#string) |  |  |
+| `enabled` | [bool](#bool) |  |  |
+
+
+
+
+
+### services.settings.SetSystemPropertyEnabledResponse
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `definition` | [resources.properties.PropertyDefinition](#resourcespropertiesPropertyDefinition) |  |  |
+
+
+
+
+
+### services.settings.UpdatePropertyDefinitionRequest
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `definition` | [resources.properties.PropertyDefinition](#resourcespropertiesPropertyDefinition) |  |  |
+
+
+
+
+
+### services.settings.UpdatePropertyDefinitionResponse
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `definition` | [resources.properties.PropertyDefinition](#resourcespropertiesPropertyDefinition) |  |  |
+
+
+
+
+
+### services.settings.UpdatePropertyGroupRequest
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `group` | [resources.properties.PropertyGroup](#resourcespropertiesPropertyGroup) |  |  |
+
+
+
+
+
+### services.settings.UpdatePropertyGroupResponse
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `group` | [resources.properties.PropertyGroup](#resourcespropertiesPropertyGroup) |  |  |
+
+
+
+
+ <!-- end messages -->
+
+ <!-- end enums -->
+
+ <!-- end HasExtensions -->
+
+
+### services.settings.PropertyService
+
+| Method Name | Request Type | Response Type | Description |
+| ----------- | ------------ | ------------- | ------------|
+| `ListPropertyScopes` | [ListPropertyScopesRequest](#servicessettingsListPropertyScopesRequest) | [ListPropertyScopesResponse](#servicessettingsListPropertyScopesResponse) | |
+| `ListPropertyDefinitions` | [ListPropertyDefinitionsRequest](#servicessettingsListPropertyDefinitionsRequest) | [ListPropertyDefinitionsResponse](#servicessettingsListPropertyDefinitionsResponse) | |
+| `ReorderPropertyGroups` | [ReorderPropertyGroupsRequest](#servicessettingsReorderPropertyGroupsRequest) | [ReorderPropertyGroupsResponse](#servicessettingsReorderPropertyGroupsResponse) | |
+| `CreatePropertyGroup` | [CreatePropertyGroupRequest](#servicessettingsCreatePropertyGroupRequest) | [CreatePropertyGroupResponse](#servicessettingsCreatePropertyGroupResponse) | |
+| `UpdatePropertyGroup` | [UpdatePropertyGroupRequest](#servicessettingsUpdatePropertyGroupRequest) | [UpdatePropertyGroupResponse](#servicessettingsUpdatePropertyGroupResponse) | |
+| `DeletePropertyGroup` | [DeletePropertyGroupRequest](#servicessettingsDeletePropertyGroupRequest) | [DeletePropertyGroupResponse](#servicessettingsDeletePropertyGroupResponse) | |
+| `RestorePropertyGroup` | [RestorePropertyGroupRequest](#servicessettingsRestorePropertyGroupRequest) | [RestorePropertyGroupResponse](#servicessettingsRestorePropertyGroupResponse) | |
+| `ReorderPropertyDefinitions` | [ReorderPropertyDefinitionsRequest](#servicessettingsReorderPropertyDefinitionsRequest) | [ReorderPropertyDefinitionsResponse](#servicessettingsReorderPropertyDefinitionsResponse) | |
+| `CreatePropertyDefinition` | [CreatePropertyDefinitionRequest](#servicessettingsCreatePropertyDefinitionRequest) | [CreatePropertyDefinitionResponse](#servicessettingsCreatePropertyDefinitionResponse) | |
+| `UpdatePropertyDefinition` | [UpdatePropertyDefinitionRequest](#servicessettingsUpdatePropertyDefinitionRequest) | [UpdatePropertyDefinitionResponse](#servicessettingsUpdatePropertyDefinitionResponse) | |
+| `DeletePropertyDefinition` | [DeletePropertyDefinitionRequest](#servicessettingsDeletePropertyDefinitionRequest) | [DeletePropertyDefinitionResponse](#servicessettingsDeletePropertyDefinitionResponse) | |
+| `RestorePropertyDefinition` | [RestorePropertyDefinitionRequest](#servicessettingsRestorePropertyDefinitionRequest) | [RestorePropertyDefinitionResponse](#servicessettingsRestorePropertyDefinitionResponse) | |
+| `SetSystemPropertyEnabled` | [SetSystemPropertyEnabledRequest](#servicessettingsSetSystemPropertyEnabledRequest) | [SetSystemPropertyEnabledResponse](#servicessettingsSetSystemPropertyEnabledResponse) | |
+
+ <!-- end services -->
+
+
+
 ## services/settings/settings.proto
 
 
@@ -15507,6 +16256,7 @@ Sync Service handles the sync of data (e.g., users, jobs) to this FiveNet instan
 | `types` | [resources.vehicles.activity.VehicleActivityType](#resourcesvehiclesactivityVehicleActivityType) | repeated | Activity types to filter by. If empty, all activity types will be returned. |
 | `from` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
 | `to` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
+| `property_keys` | [string](#string) | repeated | Restricts generic PROPERTY activity entries to these custom property keys. |
 
 
 
@@ -15536,6 +16286,7 @@ Sync Service handles the sync of data (e.g., users, jobs) to this FiveNet instan
 | `user_ids` | [int32](#int32) | repeated |  |
 | `job` | [string](#string) | optional |  |
 | `wanted` | [bool](#bool) | optional |  |
+| `property_filters` | [resources.properties.PropertyFilter](#resourcespropertiesPropertyFilter) | repeated |  |
 
 
 
@@ -15560,6 +16311,7 @@ Sync Service handles the sync of data (e.g., users, jobs) to this FiveNet instan
 | ----- | ---- | ----- | ----------- |
 | `props` | [resources.vehicles.props.VehicleProps](#resourcesvehiclespropsVehicleProps) |  |  |
 | `reason` | [string](#string) |  |  |
+| `property_changes` | [resources.properties.PropertyChange](#resourcespropertiesPropertyChange) | repeated | Generic custom scalar properties. Managed system properties continue to use the dedicated fields above and produce their specialized activities. |
 
 
 

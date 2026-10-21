@@ -91,6 +91,12 @@ export interface AttributeValues {
          */
         jobGradeList: JobGradeList;
     } | {
+        oneofKind: "propertyList";
+        /**
+         * @generated from protobuf field: resources.permissions.attributes.PropertyList property_list = 4
+         */
+        propertyList: PropertyList;
+    } | {
         oneofKind: undefined;
     };
 }
@@ -102,6 +108,35 @@ export interface StringList {
      * @generated from protobuf field: repeated string strings = 1
      */
     strings: string[];
+}
+/**
+ * @generated from protobuf message resources.permissions.attributes.PropertyList
+ */
+export interface PropertyList {
+    /**
+     * @generated from protobuf field: repeated string keys = 1
+     */
+    keys: string[];
+    /**
+     * Display metadata for the keys above. This is response metadata only; role
+     * attribute values continue to persist and authorize by key.
+     *
+     * @generated from protobuf field: repeated resources.permissions.attributes.PropertyListEntry properties = 2
+     */
+    properties: PropertyListEntry[];
+}
+/**
+ * @generated from protobuf message resources.permissions.attributes.PropertyListEntry
+ */
+export interface PropertyListEntry {
+    /**
+     * @generated from protobuf field: string key = 1
+     */
+    key: string;
+    /**
+     * @generated from protobuf field: string label = 2
+     */
+    label: string;
 }
 /**
  * @generated from protobuf message resources.permissions.attributes.JobGradeList
@@ -152,7 +187,14 @@ export enum AttributeType {
     /**
      * @generated from protobuf enum value: ATTRIBUTE_TYPE_JOB_GRADE_LIST = 3;
      */
-    JOB_GRADE_LIST = 3
+    JOB_GRADE_LIST = 3,
+    /**
+     * Property lists select runtime-defined property keys. The RPC permission
+     * controls the operation; this attribute only controls which properties.
+     *
+     * @generated from protobuf enum value: ATTRIBUTE_TYPE_PROPERTY_LIST = 4;
+     */
+    PROPERTY_LIST = 4
 }
 // @generated message type with reflection information, may provide speed optimized methods
 class RoleAttribute$Type extends MessageType<RoleAttribute> {
@@ -291,7 +333,8 @@ class AttributeValues$Type extends MessageType<AttributeValues> {
         super("resources.permissions.attributes.AttributeValues", [
             { no: 1, name: "string_list", kind: "message", oneof: "validValues", T: () => StringList },
             { no: 2, name: "job_list", kind: "message", oneof: "validValues", T: () => StringList },
-            { no: 3, name: "job_grade_list", kind: "message", oneof: "validValues", T: () => JobGradeList }
+            { no: 3, name: "job_grade_list", kind: "message", oneof: "validValues", T: () => JobGradeList },
+            { no: 4, name: "property_list", kind: "message", oneof: "validValues", T: () => PropertyList }
         ], { "codegen.dbscanner.dbscanner": { enabled: true } });
     }
     create(value?: PartialMessage<AttributeValues>): AttributeValues {
@@ -324,6 +367,12 @@ class AttributeValues$Type extends MessageType<AttributeValues> {
                         jobGradeList: JobGradeList.internalBinaryRead(reader, reader.uint32(), options, (message.validValues as any).jobGradeList)
                     };
                     break;
+                case /* resources.permissions.attributes.PropertyList property_list */ 4:
+                    message.validValues = {
+                        oneofKind: "propertyList",
+                        propertyList: PropertyList.internalBinaryRead(reader, reader.uint32(), options, (message.validValues as any).propertyList)
+                    };
+                    break;
                 default:
                     let u = options.readUnknownField;
                     if (u === "throw")
@@ -345,6 +394,9 @@ class AttributeValues$Type extends MessageType<AttributeValues> {
         /* resources.permissions.attributes.JobGradeList job_grade_list = 3; */
         if (message.validValues.oneofKind === "jobGradeList")
             JobGradeList.internalBinaryWrite(message.validValues.jobGradeList, writer.tag(3, WireType.LengthDelimited).fork(), options).join();
+        /* resources.permissions.attributes.PropertyList property_list = 4; */
+        if (message.validValues.oneofKind === "propertyList")
+            PropertyList.internalBinaryWrite(message.validValues.propertyList, writer.tag(4, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -402,6 +454,116 @@ class StringList$Type extends MessageType<StringList> {
  * @generated MessageType for protobuf message resources.permissions.attributes.StringList
  */
 export const StringList = new StringList$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class PropertyList$Type extends MessageType<PropertyList> {
+    constructor() {
+        super("resources.permissions.attributes.PropertyList", [
+            { no: 1, name: "keys", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { repeated: { items: { string: { minLen: "1", maxLen: "64", pattern: "^[a-z][a-z0-9_.-]*$" } } } } } },
+            { no: 2, name: "properties", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => PropertyListEntry }
+        ]);
+    }
+    create(value?: PartialMessage<PropertyList>): PropertyList {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        message.keys = [];
+        message.properties = [];
+        if (value !== undefined)
+            reflectionMergePartial<PropertyList>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: PropertyList): PropertyList {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* repeated string keys */ 1:
+                    message.keys.push(reader.string());
+                    break;
+                case /* repeated resources.permissions.attributes.PropertyListEntry properties */ 2:
+                    message.properties.push(PropertyListEntry.internalBinaryRead(reader, reader.uint32(), options));
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: PropertyList, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* repeated string keys = 1; */
+        for (let i = 0; i < message.keys.length; i++)
+            writer.tag(1, WireType.LengthDelimited).string(message.keys[i]);
+        /* repeated resources.permissions.attributes.PropertyListEntry properties = 2; */
+        for (let i = 0; i < message.properties.length; i++)
+            PropertyListEntry.internalBinaryWrite(message.properties[i], writer.tag(2, WireType.LengthDelimited).fork(), options).join();
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message resources.permissions.attributes.PropertyList
+ */
+export const PropertyList = new PropertyList$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class PropertyListEntry$Type extends MessageType<PropertyListEntry> {
+    constructor() {
+        super("resources.permissions.attributes.PropertyListEntry", [
+            { no: 1, name: "key", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
+            { no: 2, name: "label", kind: "scalar", T: 9 /*ScalarType.STRING*/ }
+        ]);
+    }
+    create(value?: PartialMessage<PropertyListEntry>): PropertyListEntry {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        message.key = "";
+        message.label = "";
+        if (value !== undefined)
+            reflectionMergePartial<PropertyListEntry>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: PropertyListEntry): PropertyListEntry {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* string key */ 1:
+                    message.key = reader.string();
+                    break;
+                case /* string label */ 2:
+                    message.label = reader.string();
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: PropertyListEntry, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* string key = 1; */
+        if (message.key !== "")
+            writer.tag(1, WireType.LengthDelimited).string(message.key);
+        /* string label = 2; */
+        if (message.label !== "")
+            writer.tag(2, WireType.LengthDelimited).string(message.label);
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message resources.permissions.attributes.PropertyListEntry
+ */
+export const PropertyListEntry = new PropertyListEntry$Type();
 // @generated message type with reflection information, may provide speed optimized methods
 class JobGradeList$Type extends MessageType<JobGradeList> {
     constructor() {

@@ -22,6 +22,10 @@ export function citizenUserActivityTypeBGColor(activityType: UserActivityType | 
             return 'text-base-600!';
         case UserActivityType.FINE:
             return 'text-red-400!';
+        case UserActivityType.FILE:
+            return 'text-primary-500!';
+        case UserActivityType.PROPERTY:
+            return 'text-secondary-500!';
         case UserActivityType.UNSPECIFIED:
         default:
             return '!text-info-500';
@@ -50,6 +54,10 @@ export function citizenUserActivityTypeIcon(activityType: UserActivityType | und
             return 'i-mdi-handcuffs';
         case UserActivityType.FINE:
             return 'i-mdi-receipt-text-remove';
+        case UserActivityType.FILE:
+            return 'i-mdi-file-outline';
+        case UserActivityType.PROPERTY:
+            return 'i-mdi-form-textbox';
         case UserActivityType.UNSPECIFIED:
         default:
             return 'i-mdi-help';
@@ -101,6 +109,10 @@ export function citizenUserActivityIconColor(activity: UserActivity): string {
                 return activity.data.data.fineChange.amount < 0 ? 'text-success-400' : 'text-info-400';
             }
             break;
+        case UserActivityType.FILE:
+            return 'text-primary-500';
+        case UserActivityType.PROPERTY:
+            return 'text-secondary-500';
         case UserActivityType.JAIL:
         case UserActivityType.UNSPECIFIED:
         default:

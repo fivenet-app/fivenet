@@ -18,30 +18,34 @@ const (
 	CitizensServiceGetUserPerm                     perms.Name = "GetUser"
 	CitizensServiceGetUserJobsPermField            perms.Key  = "Jobs"
 	CitizensServiceListCitizensPerm                perms.Name = "ListCitizens"
-	CitizensServiceListCitizensFieldsPermField     perms.Key  = "Fields"
+	CitizensServiceListCitizensPropertiesPermField perms.Key  = "Properties"
 	CitizensServiceListUserActivityPerm            perms.Name = "ListUserActivity"
 	CitizensServiceListUserActivityFieldsPermField perms.Key  = "Fields"
 	CitizensServiceSetUserPropsPerm                perms.Name = "SetUserProps"
-	CitizensServiceSetUserPropsFieldsPermField     perms.Key  = "Fields"
+	CitizensServiceSetUserPropsPropertiesPermField perms.Key  = "Properties"
 
 	// Service: citizens.LabelsService
 	LabelsServiceCreateOrUpdateLabelPerm perms.Name = "CreateOrUpdateLabel"
 	LabelsServiceDeleteLabelPerm         perms.Name = "DeleteLabel"
 )
 
-type CitizensServiceListCitizensFieldsPermValue string
+type CitizensServiceListCitizensPropertiesPermValue string
 
 const (
-	CitizensServiceListCitizensFieldsPermValuePhoneNumber                      CitizensServiceListCitizensFieldsPermValue = "PhoneNumber"
-	CitizensServiceListCitizensFieldsPermValueLicenses                         CitizensServiceListCitizensFieldsPermValue = "Licenses"
-	CitizensServiceListCitizensFieldsPermValueUserPropsWanted                  CitizensServiceListCitizensFieldsPermValue = "UserProps.Wanted"
-	CitizensServiceListCitizensFieldsPermValueUserPropsJob                     CitizensServiceListCitizensFieldsPermValue = "UserProps.Job"
-	CitizensServiceListCitizensFieldsPermValueUserPropsTrafficInfractionPoints CitizensServiceListCitizensFieldsPermValue = "UserProps.TrafficInfractionPoints"
-	CitizensServiceListCitizensFieldsPermValueUserPropsOpenFines               CitizensServiceListCitizensFieldsPermValue = "UserProps.OpenFines"
-	CitizensServiceListCitizensFieldsPermValueUserPropsBloodType               CitizensServiceListCitizensFieldsPermValue = "UserProps.BloodType"
-	CitizensServiceListCitizensFieldsPermValueUserPropsMugshot                 CitizensServiceListCitizensFieldsPermValue = "UserProps.Mugshot"
-	CitizensServiceListCitizensFieldsPermValueUserPropsLabels                  CitizensServiceListCitizensFieldsPermValue = "UserProps.Labels"
-	CitizensServiceListCitizensFieldsPermValueUserPropsEmail                   CitizensServiceListCitizensFieldsPermValue = "UserProps.Email"
+	CitizensServiceListCitizensPropertiesPermValueUserDateofbirth             CitizensServiceListCitizensPropertiesPermValue = "user.dateofbirth"
+	CitizensServiceListCitizensPropertiesPermValueUserSex                     CitizensServiceListCitizensPropertiesPermValue = "user.sex"
+	CitizensServiceListCitizensPropertiesPermValueUserHeight                  CitizensServiceListCitizensPropertiesPermValue = "user.height"
+	CitizensServiceListCitizensPropertiesPermValueUserPhoneNumber             CitizensServiceListCitizensPropertiesPermValue = "user.phone_number"
+	CitizensServiceListCitizensPropertiesPermValueUserVisum                   CitizensServiceListCitizensPropertiesPermValue = "user.visum"
+	CitizensServiceListCitizensPropertiesPermValueUserLicenses                CitizensServiceListCitizensPropertiesPermValue = "user.licenses"
+	CitizensServiceListCitizensPropertiesPermValueUserWanted                  CitizensServiceListCitizensPropertiesPermValue = "user.wanted"
+	CitizensServiceListCitizensPropertiesPermValueUserJob                     CitizensServiceListCitizensPropertiesPermValue = "user.job"
+	CitizensServiceListCitizensPropertiesPermValueUserTrafficInfractionPoints CitizensServiceListCitizensPropertiesPermValue = "user.traffic_infraction_points"
+	CitizensServiceListCitizensPropertiesPermValueUserOpenFines               CitizensServiceListCitizensPropertiesPermValue = "user.open_fines"
+	CitizensServiceListCitizensPropertiesPermValueUserBloodType               CitizensServiceListCitizensPropertiesPermValue = "user.blood_type"
+	CitizensServiceListCitizensPropertiesPermValueUserMugshot                 CitizensServiceListCitizensPropertiesPermValue = "user.mugshot"
+	CitizensServiceListCitizensPropertiesPermValueUserLabels                  CitizensServiceListCitizensPropertiesPermValue = "user.labels"
+	CitizensServiceListCitizensPropertiesPermValueUserEmail                   CitizensServiceListCitizensPropertiesPermValue = "user.email"
 )
 
 type CitizensServiceListUserActivityFieldsPermValue string
@@ -51,14 +55,23 @@ const (
 	CitizensServiceListUserActivityFieldsPermValueOwn        CitizensServiceListUserActivityFieldsPermValue = "Own"
 )
 
-type CitizensServiceSetUserPropsFieldsPermValue string
+type CitizensServiceSetUserPropsPropertiesPermValue string
 
 const (
-	CitizensServiceSetUserPropsFieldsPermValueWanted                  CitizensServiceSetUserPropsFieldsPermValue = "Wanted"
-	CitizensServiceSetUserPropsFieldsPermValueJob                     CitizensServiceSetUserPropsFieldsPermValue = "Job"
-	CitizensServiceSetUserPropsFieldsPermValueTrafficInfractionPoints CitizensServiceSetUserPropsFieldsPermValue = "TrafficInfractionPoints"
-	CitizensServiceSetUserPropsFieldsPermValueMugshot                 CitizensServiceSetUserPropsFieldsPermValue = "Mugshot"
-	CitizensServiceSetUserPropsFieldsPermValueLabels                  CitizensServiceSetUserPropsFieldsPermValue = "Labels"
+	CitizensServiceSetUserPropsPropertiesPermValueUserDateofbirth             CitizensServiceSetUserPropsPropertiesPermValue = "user.dateofbirth"
+	CitizensServiceSetUserPropsPropertiesPermValueUserSex                     CitizensServiceSetUserPropsPropertiesPermValue = "user.sex"
+	CitizensServiceSetUserPropsPropertiesPermValueUserHeight                  CitizensServiceSetUserPropsPropertiesPermValue = "user.height"
+	CitizensServiceSetUserPropsPropertiesPermValueUserPhoneNumber             CitizensServiceSetUserPropsPropertiesPermValue = "user.phone_number"
+	CitizensServiceSetUserPropsPropertiesPermValueUserVisum                   CitizensServiceSetUserPropsPropertiesPermValue = "user.visum"
+	CitizensServiceSetUserPropsPropertiesPermValueUserLicenses                CitizensServiceSetUserPropsPropertiesPermValue = "user.licenses"
+	CitizensServiceSetUserPropsPropertiesPermValueUserWanted                  CitizensServiceSetUserPropsPropertiesPermValue = "user.wanted"
+	CitizensServiceSetUserPropsPropertiesPermValueUserJob                     CitizensServiceSetUserPropsPropertiesPermValue = "user.job"
+	CitizensServiceSetUserPropsPropertiesPermValueUserTrafficInfractionPoints CitizensServiceSetUserPropsPropertiesPermValue = "user.traffic_infraction_points"
+	CitizensServiceSetUserPropsPropertiesPermValueUserOpenFines               CitizensServiceSetUserPropsPropertiesPermValue = "user.open_fines"
+	CitizensServiceSetUserPropsPropertiesPermValueUserBloodType               CitizensServiceSetUserPropsPropertiesPermValue = "user.blood_type"
+	CitizensServiceSetUserPropsPropertiesPermValueUserMugshot                 CitizensServiceSetUserPropsPropertiesPermValue = "user.mugshot"
+	CitizensServiceSetUserPropsPropertiesPermValueUserLabels                  CitizensServiceSetUserPropsPropertiesPermValue = "user.labels"
+	CitizensServiceSetUserPropsPropertiesPermValueUserEmail                   CitizensServiceSetUserPropsPropertiesPermValue = "user.email"
 )
 
 type CitizensServicePerms struct {
@@ -72,9 +85,9 @@ type CitizensServiceGetUserPermRef struct {
 	Jobs perms.AttrRef[perms.JobGradeListAttr]
 }
 type CitizensServiceListCitizensPermRef struct {
-	Perm        perms.PermissionRef
-	Fields      perms.AttrRef[perms.StringListAttr]
-	FieldsTyped perms.StringListAttrRef[CitizensServiceListCitizensFieldsPermValue]
+	Perm            perms.PermissionRef
+	Properties      perms.AttrRef[perms.PropertyListAttr]
+	PropertiesTyped perms.PropertyListAttrRef[CitizensServiceListCitizensPropertiesPermValue]
 }
 type CitizensServiceListUserActivityPermRef struct {
 	Perm        perms.PermissionRef
@@ -82,9 +95,9 @@ type CitizensServiceListUserActivityPermRef struct {
 	FieldsTyped perms.StringListAttrRef[CitizensServiceListUserActivityFieldsPermValue]
 }
 type CitizensServiceSetUserPropsPermRef struct {
-	Perm        perms.PermissionRef
-	Fields      perms.AttrRef[perms.StringListAttr]
-	FieldsTyped perms.StringListAttrRef[CitizensServiceSetUserPropsFieldsPermValue]
+	Perm            perms.PermissionRef
+	Properties      perms.AttrRef[perms.PropertyListAttr]
+	PropertiesTyped perms.PropertyListAttrRef[CitizensServiceSetUserPropsPropertiesPermValue]
 }
 
 var CitizensService = CitizensServicePerms{
@@ -97,13 +110,13 @@ var CitizensService = CitizensServicePerms{
 	},
 	ListCitizens: CitizensServiceListCitizensPermRef{
 		Perm: perms.NewPermissionRef(Namespace, CitizensServicePerm, CitizensServiceListCitizensPerm),
-		Fields: perms.NewStringListAttrRef(
+		Properties: perms.NewPropertyListAttrRef(
 			perms.NewPermissionRef(Namespace, CitizensServicePerm, CitizensServiceListCitizensPerm),
-			CitizensServiceListCitizensFieldsPermField,
+			CitizensServiceListCitizensPropertiesPermField,
 		),
-		FieldsTyped: perms.NewTypedStringListAttrRef[CitizensServiceListCitizensFieldsPermValue](
+		PropertiesTyped: perms.NewTypedPropertyListAttrRef[CitizensServiceListCitizensPropertiesPermValue](
 			perms.NewPermissionRef(Namespace, CitizensServicePerm, CitizensServiceListCitizensPerm),
-			CitizensServiceListCitizensFieldsPermField,
+			CitizensServiceListCitizensPropertiesPermField,
 		),
 	},
 	ListUserActivity: CitizensServiceListUserActivityPermRef{
@@ -119,13 +132,13 @@ var CitizensService = CitizensServicePerms{
 	},
 	SetUserProps: CitizensServiceSetUserPropsPermRef{
 		Perm: perms.NewPermissionRef(Namespace, CitizensServicePerm, CitizensServiceSetUserPropsPerm),
-		Fields: perms.NewStringListAttrRef(
+		Properties: perms.NewPropertyListAttrRef(
 			perms.NewPermissionRef(Namespace, CitizensServicePerm, CitizensServiceSetUserPropsPerm),
-			CitizensServiceSetUserPropsFieldsPermField,
+			CitizensServiceSetUserPropsPropertiesPermField,
 		),
-		FieldsTyped: perms.NewTypedStringListAttrRef[CitizensServiceSetUserPropsFieldsPermValue](
+		PropertiesTyped: perms.NewTypedPropertyListAttrRef[CitizensServiceSetUserPropsPropertiesPermValue](
 			perms.NewPermissionRef(Namespace, CitizensServicePerm, CitizensServiceSetUserPropsPerm),
-			CitizensServiceSetUserPropsFieldsPermField,
+			CitizensServiceSetUserPropsPropertiesPermField,
 		),
 	},
 }

@@ -98,7 +98,7 @@ func TestHousekeeperRunRollsBackOnDatabaseDeleteFailure(t *testing.T) {
 	deleted, err := h.Run(t.Context())
 	require.Error(t, err)
 	assert.Zero(t, deleted)
-	assert.ErrorContains(t, err, databaseErr.Error())
+	require.ErrorContains(t, err, databaseErr.Error())
 }
 
 func TestHousekeeperRunIncludesJoinTableOrphanChecks(t *testing.T) {

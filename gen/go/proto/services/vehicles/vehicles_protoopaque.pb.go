@@ -13,6 +13,7 @@ import (
 	_ "github.com/fivenet-app/fivenet/v2026/gen/go/proto/codegen/perms"
 	_ "github.com/fivenet-app/fivenet/v2026/gen/go/proto/codegen/sanitizer"
 	database "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/common/database"
+	properties "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/properties"
 	timestamp "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/timestamp"
 	vehicles "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/vehicles"
 	activity "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/vehicles/activity"
@@ -31,18 +32,19 @@ const (
 )
 
 type ListVehiclesRequest struct {
-	state                   protoimpl.MessageState      `protogen:"opaque.v1"`
-	xxx_hidden_Pagination   *database.PaginationRequest `protobuf:"bytes,1,opt,name=pagination,proto3"`
-	xxx_hidden_Sort         *database.Sort              `protobuf:"bytes,2,opt,name=sort,proto3,oneof"`
-	xxx_hidden_LicensePlate *string                     `protobuf:"bytes,3,opt,name=license_plate,json=licensePlate,proto3,oneof"`
-	xxx_hidden_Model        *string                     `protobuf:"bytes,4,opt,name=model,proto3,oneof"`
-	xxx_hidden_UserIds      []int32                     `protobuf:"varint,5,rep,packed,name=user_ids,json=userIds,proto3"`
-	xxx_hidden_Job          *string                     `protobuf:"bytes,6,opt,name=job,proto3,oneof"`
-	xxx_hidden_Wanted       bool                        `protobuf:"varint,7,opt,name=wanted,proto3,oneof"`
-	XXX_raceDetectHookData  protoimpl.RaceDetectHookData
-	XXX_presence            [1]uint32
-	unknownFields           protoimpl.UnknownFields
-	sizeCache               protoimpl.SizeCache
+	state                      protoimpl.MessageState        `protogen:"opaque.v1"`
+	xxx_hidden_Pagination      *database.PaginationRequest   `protobuf:"bytes,1,opt,name=pagination,proto3"`
+	xxx_hidden_Sort            *database.Sort                `protobuf:"bytes,2,opt,name=sort,proto3,oneof"`
+	xxx_hidden_LicensePlate    *string                       `protobuf:"bytes,3,opt,name=license_plate,json=licensePlate,proto3,oneof"`
+	xxx_hidden_Model           *string                       `protobuf:"bytes,4,opt,name=model,proto3,oneof"`
+	xxx_hidden_UserIds         []int32                       `protobuf:"varint,5,rep,packed,name=user_ids,json=userIds,proto3"`
+	xxx_hidden_Job             *string                       `protobuf:"bytes,6,opt,name=job,proto3,oneof"`
+	xxx_hidden_Wanted          bool                          `protobuf:"varint,7,opt,name=wanted,proto3,oneof"`
+	xxx_hidden_PropertyFilters *[]*properties.PropertyFilter `protobuf:"bytes,8,rep,name=property_filters,json=propertyFilters,proto3"`
+	XXX_raceDetectHookData     protoimpl.RaceDetectHookData
+	XXX_presence               [1]uint32
+	unknownFields              protoimpl.UnknownFields
+	sizeCache                  protoimpl.SizeCache
 }
 
 func (x *ListVehiclesRequest) Reset() {
@@ -128,6 +130,15 @@ func (x *ListVehiclesRequest) GetWanted() bool {
 	return false
 }
 
+func (x *ListVehiclesRequest) GetPropertyFilters() []*properties.PropertyFilter {
+	if x != nil {
+		if x.xxx_hidden_PropertyFilters != nil {
+			return *x.xxx_hidden_PropertyFilters
+		}
+	}
+	return nil
+}
+
 func (x *ListVehiclesRequest) SetPagination(v *database.PaginationRequest) {
 	x.xxx_hidden_Pagination = v
 }
@@ -138,12 +149,12 @@ func (x *ListVehiclesRequest) SetSort(v *database.Sort) {
 
 func (x *ListVehiclesRequest) SetLicensePlate(v string) {
 	x.xxx_hidden_LicensePlate = &v
-	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 2, 7)
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 2, 8)
 }
 
 func (x *ListVehiclesRequest) SetModel(v string) {
 	x.xxx_hidden_Model = &v
-	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 3, 7)
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 3, 8)
 }
 
 func (x *ListVehiclesRequest) SetUserIds(v []int32) {
@@ -152,12 +163,16 @@ func (x *ListVehiclesRequest) SetUserIds(v []int32) {
 
 func (x *ListVehiclesRequest) SetJob(v string) {
 	x.xxx_hidden_Job = &v
-	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 5, 7)
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 5, 8)
 }
 
 func (x *ListVehiclesRequest) SetWanted(v bool) {
 	x.xxx_hidden_Wanted = v
-	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 6, 7)
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 6, 8)
+}
+
+func (x *ListVehiclesRequest) SetPropertyFilters(v []*properties.PropertyFilter) {
+	x.xxx_hidden_PropertyFilters = &v
 }
 
 func (x *ListVehiclesRequest) HasPagination() bool {
@@ -236,11 +251,12 @@ type ListVehiclesRequest_builder struct {
 	Pagination *database.PaginationRequest
 	Sort       *database.Sort
 	// Search params
-	LicensePlate *string
-	Model        *string
-	UserIds      []int32
-	Job          *string
-	Wanted       *bool
+	LicensePlate    *string
+	Model           *string
+	UserIds         []int32
+	Job             *string
+	Wanted          *bool
+	PropertyFilters []*properties.PropertyFilter
 }
 
 func (b0 ListVehiclesRequest_builder) Build() *ListVehiclesRequest {
@@ -250,22 +266,23 @@ func (b0 ListVehiclesRequest_builder) Build() *ListVehiclesRequest {
 	x.xxx_hidden_Pagination = b.Pagination
 	x.xxx_hidden_Sort = b.Sort
 	if b.LicensePlate != nil {
-		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 2, 7)
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 2, 8)
 		x.xxx_hidden_LicensePlate = b.LicensePlate
 	}
 	if b.Model != nil {
-		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 3, 7)
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 3, 8)
 		x.xxx_hidden_Model = b.Model
 	}
 	x.xxx_hidden_UserIds = b.UserIds
 	if b.Job != nil {
-		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 5, 7)
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 5, 8)
 		x.xxx_hidden_Job = b.Job
 	}
 	if b.Wanted != nil {
-		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 6, 7)
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 6, 8)
 		x.xxx_hidden_Wanted = *b.Wanted
 	}
+	x.xxx_hidden_PropertyFilters = &b.PropertyFilters
 	return m0
 }
 
@@ -354,11 +371,12 @@ func (b0 ListVehiclesResponse_builder) Build() *ListVehiclesResponse {
 }
 
 type SetVehiclePropsRequest struct {
-	state             protoimpl.MessageState `protogen:"opaque.v1"`
-	xxx_hidden_Props  *props.VehicleProps    `protobuf:"bytes,1,opt,name=props,proto3"`
-	xxx_hidden_Reason string                 `protobuf:"bytes,2,opt,name=reason,proto3"`
-	unknownFields     protoimpl.UnknownFields
-	sizeCache         protoimpl.SizeCache
+	state                      protoimpl.MessageState        `protogen:"opaque.v1"`
+	xxx_hidden_Props           *props.VehicleProps           `protobuf:"bytes,1,opt,name=props,proto3"`
+	xxx_hidden_Reason          string                        `protobuf:"bytes,2,opt,name=reason,proto3"`
+	xxx_hidden_PropertyChanges *[]*properties.PropertyChange `protobuf:"bytes,3,rep,name=property_changes,json=propertyChanges,proto3"`
+	unknownFields              protoimpl.UnknownFields
+	sizeCache                  protoimpl.SizeCache
 }
 
 func (x *SetVehiclePropsRequest) Reset() {
@@ -400,12 +418,25 @@ func (x *SetVehiclePropsRequest) GetReason() string {
 	return ""
 }
 
+func (x *SetVehiclePropsRequest) GetPropertyChanges() []*properties.PropertyChange {
+	if x != nil {
+		if x.xxx_hidden_PropertyChanges != nil {
+			return *x.xxx_hidden_PropertyChanges
+		}
+	}
+	return nil
+}
+
 func (x *SetVehiclePropsRequest) SetProps(v *props.VehicleProps) {
 	x.xxx_hidden_Props = v
 }
 
 func (x *SetVehiclePropsRequest) SetReason(v string) {
 	x.xxx_hidden_Reason = v
+}
+
+func (x *SetVehiclePropsRequest) SetPropertyChanges(v []*properties.PropertyChange) {
+	x.xxx_hidden_PropertyChanges = &v
 }
 
 func (x *SetVehiclePropsRequest) HasProps() bool {
@@ -424,6 +455,9 @@ type SetVehiclePropsRequest_builder struct {
 
 	Props  *props.VehicleProps
 	Reason string
+	// Generic custom scalar properties. Managed system properties continue to
+	// use the dedicated fields above and produce their specialized activities.
+	PropertyChanges []*properties.PropertyChange
 }
 
 func (b0 SetVehiclePropsRequest_builder) Build() *SetVehiclePropsRequest {
@@ -432,6 +466,7 @@ func (b0 SetVehiclePropsRequest_builder) Build() *SetVehiclePropsRequest {
 	_, _ = b, x
 	x.xxx_hidden_Props = b.Props
 	x.xxx_hidden_Reason = b.Reason
+	x.xxx_hidden_PropertyChanges = &b.PropertyChanges
 	return m0
 }
 
@@ -504,15 +539,16 @@ func (b0 SetVehiclePropsResponse_builder) Build() *SetVehiclePropsResponse {
 }
 
 type ListVehicleActivityRequest struct {
-	state                 protoimpl.MessageState         `protogen:"opaque.v1"`
-	xxx_hidden_Pagination *database.PaginationRequest    `protobuf:"bytes,1,opt,name=pagination,proto3"`
-	xxx_hidden_Sort       *database.Sort                 `protobuf:"bytes,2,opt,name=sort,proto3,oneof"`
-	xxx_hidden_Plate      string                         `protobuf:"bytes,3,opt,name=plate,proto3"`
-	xxx_hidden_Types      []activity.VehicleActivityType `protobuf:"varint,4,rep,packed,name=types,proto3,enum=resources.vehicles.activity.VehicleActivityType"`
-	xxx_hidden_From       *timestamp.Timestamp           `protobuf:"bytes,5,opt,name=from,proto3,oneof"`
-	xxx_hidden_To         *timestamp.Timestamp           `protobuf:"bytes,6,opt,name=to,proto3,oneof"`
-	unknownFields         protoimpl.UnknownFields
-	sizeCache             protoimpl.SizeCache
+	state                   protoimpl.MessageState         `protogen:"opaque.v1"`
+	xxx_hidden_Pagination   *database.PaginationRequest    `protobuf:"bytes,1,opt,name=pagination,proto3"`
+	xxx_hidden_Sort         *database.Sort                 `protobuf:"bytes,2,opt,name=sort,proto3,oneof"`
+	xxx_hidden_Plate        string                         `protobuf:"bytes,3,opt,name=plate,proto3"`
+	xxx_hidden_Types        []activity.VehicleActivityType `protobuf:"varint,4,rep,packed,name=types,proto3,enum=resources.vehicles.activity.VehicleActivityType"`
+	xxx_hidden_From         *timestamp.Timestamp           `protobuf:"bytes,5,opt,name=from,proto3,oneof"`
+	xxx_hidden_To           *timestamp.Timestamp           `protobuf:"bytes,6,opt,name=to,proto3,oneof"`
+	xxx_hidden_PropertyKeys []string                       `protobuf:"bytes,7,rep,name=property_keys,json=propertyKeys,proto3"`
+	unknownFields           protoimpl.UnknownFields
+	sizeCache               protoimpl.SizeCache
 }
 
 func (x *ListVehicleActivityRequest) Reset() {
@@ -582,6 +618,13 @@ func (x *ListVehicleActivityRequest) GetTo() *timestamp.Timestamp {
 	return nil
 }
 
+func (x *ListVehicleActivityRequest) GetPropertyKeys() []string {
+	if x != nil {
+		return x.xxx_hidden_PropertyKeys
+	}
+	return nil
+}
+
 func (x *ListVehicleActivityRequest) SetPagination(v *database.PaginationRequest) {
 	x.xxx_hidden_Pagination = v
 }
@@ -604,6 +647,10 @@ func (x *ListVehicleActivityRequest) SetFrom(v *timestamp.Timestamp) {
 
 func (x *ListVehicleActivityRequest) SetTo(v *timestamp.Timestamp) {
 	x.xxx_hidden_To = v
+}
+
+func (x *ListVehicleActivityRequest) SetPropertyKeys(v []string) {
+	x.xxx_hidden_PropertyKeys = v
 }
 
 func (x *ListVehicleActivityRequest) HasPagination() bool {
@@ -661,6 +708,8 @@ type ListVehicleActivityRequest_builder struct {
 	Types []activity.VehicleActivityType
 	From  *timestamp.Timestamp
 	To    *timestamp.Timestamp
+	// Restricts generic PROPERTY activity entries to these custom property keys.
+	PropertyKeys []string
 }
 
 func (b0 ListVehicleActivityRequest_builder) Build() *ListVehicleActivityRequest {
@@ -673,6 +722,7 @@ func (b0 ListVehicleActivityRequest_builder) Build() *ListVehicleActivityRequest
 	x.xxx_hidden_Types = b.Types
 	x.xxx_hidden_From = b.From
 	x.xxx_hidden_To = b.To
+	x.xxx_hidden_PropertyKeys = b.PropertyKeys
 	return m0
 }
 
@@ -764,7 +814,7 @@ var File_services_vehicles_vehicles_proto protoreflect.FileDescriptor
 
 const file_services_vehicles_vehicles_proto_rawDesc = "" +
 	"\n" +
-	" services/vehicles/vehicles.proto\x12\x11services.vehicles\x1a\x1fcodegen/itemslen/itemslen.proto\x1a\x19codegen/perms/perms.proto\x1a!codegen/sanitizer/sanitizer.proto\x1a(resources/common/database/database.proto\x1a#resources/timestamp/timestamp.proto\x1a*resources/vehicles/activity/activity.proto\x1a$resources/vehicles/props/props.proto\x1a!resources/vehicles/vehicles.proto\"\xe9\x02\n" +
+	" services/vehicles/vehicles.proto\x12\x11services.vehicles\x1a\x1fcodegen/itemslen/itemslen.proto\x1a\x19codegen/perms/perms.proto\x1a!codegen/sanitizer/sanitizer.proto\x1a(resources/common/database/database.proto\x1a%resources/properties/properties.proto\x1a#resources/timestamp/timestamp.proto\x1a*resources/vehicles/activity/activity.proto\x1a$resources/vehicles/props/props.proto\x1a!resources/vehicles/vehicles.proto\"\xba\x03\n" +
 	"\x13ListVehiclesRequest\x12L\n" +
 	"\n" +
 	"pagination\x18\x01 \x01(\v2,.resources.common.database.PaginationRequestR\n" +
@@ -774,7 +824,8 @@ const file_services_vehicles_vehicles_proto_rawDesc = "" +
 	"\x05model\x18\x04 \x01(\tH\x02R\x05model\x88\x01\x01\x12\x19\n" +
 	"\buser_ids\x18\x05 \x03(\x05R\auserIds\x12\x15\n" +
 	"\x03job\x18\x06 \x01(\tH\x03R\x03job\x88\x01\x01\x12\x1b\n" +
-	"\x06wanted\x18\a \x01(\bH\x04R\x06wanted\x88\x01\x01B\a\n" +
+	"\x06wanted\x18\a \x01(\bH\x04R\x06wanted\x88\x01\x01\x12O\n" +
+	"\x10property_filters\x18\b \x03(\v2$.resources.properties.PropertyFilterR\x0fpropertyFiltersB\a\n" +
 	"\x05_sortB\x10\n" +
 	"\x0e_license_plateB\b\n" +
 	"\x06_modelB\x06\n" +
@@ -784,12 +835,13 @@ const file_services_vehicles_vehicles_proto_rawDesc = "" +
 	"\n" +
 	"pagination\x18\x01 \x01(\v2-.resources.common.database.PaginationResponseR\n" +
 	"pagination\x12=\n" +
-	"\bvehicles\x18\x02 \x03(\v2\x1b.resources.vehicles.VehicleB\x04\xc8\xf3\x18\x01R\bvehicles\"v\n" +
+	"\bvehicles\x18\x02 \x03(\v2\x1b.resources.vehicles.VehicleB\x04\xc8\xf3\x18\x01R\bvehicles\"\xc7\x01\n" +
 	"\x16SetVehiclePropsRequest\x12<\n" +
 	"\x05props\x18\x01 \x01(\v2&.resources.vehicles.props.VehiclePropsR\x05props\x12\x1e\n" +
-	"\x06reason\x18\x02 \x01(\tB\x06\xda\xf3\x18\x02\b\x01R\x06reason\"W\n" +
+	"\x06reason\x18\x02 \x01(\tB\x06\xda\xf3\x18\x02\b\x01R\x06reason\x12O\n" +
+	"\x10property_changes\x18\x03 \x03(\v2$.resources.properties.PropertyChangeR\x0fpropertyChanges\"W\n" +
 	"\x17SetVehiclePropsResponse\x12<\n" +
-	"\x05props\x18\x01 \x01(\v2&.resources.vehicles.props.VehiclePropsR\x05props\"\x89\x03\n" +
+	"\x05props\x18\x01 \x01(\v2&.resources.vehicles.props.VehiclePropsR\x05props\"\xae\x03\n" +
 	"\x1aListVehicleActivityRequest\x12L\n" +
 	"\n" +
 	"pagination\x18\x01 \x01(\v2,.resources.common.database.PaginationRequestR\n" +
@@ -798,7 +850,8 @@ const file_services_vehicles_vehicles_proto_rawDesc = "" +
 	"\x05plate\x18\x03 \x01(\tR\x05plate\x12F\n" +
 	"\x05types\x18\x04 \x03(\x0e20.resources.vehicles.activity.VehicleActivityTypeR\x05types\x127\n" +
 	"\x04from\x18\x05 \x01(\v2\x1e.resources.timestamp.TimestampH\x01R\x04from\x88\x01\x01\x123\n" +
-	"\x02to\x18\x06 \x01(\v2\x1e.resources.timestamp.TimestampH\x02R\x02to\x88\x01\x01B\a\n" +
+	"\x02to\x18\x06 \x01(\v2\x1e.resources.timestamp.TimestampH\x02R\x02to\x88\x01\x01\x12#\n" +
+	"\rproperty_keys\x18\a \x03(\tR\fpropertyKeysB\a\n" +
 	"\x05_sortB\a\n" +
 	"\x05_fromB\x05\n" +
 	"\x03_to\"\xbc\x01\n" +
@@ -806,14 +859,16 @@ const file_services_vehicles_vehicles_proto_rawDesc = "" +
 	"\n" +
 	"pagination\x18\x01 \x01(\v2-.resources.common.database.PaginationResponseR\n" +
 	"pagination\x12N\n" +
-	"\bactivity\x18\x02 \x03(\v2,.resources.vehicles.activity.VehicleActivityB\x04\xc8\xf3\x18\x01R\bactivity2\xc9\x03\n" +
-	"\x0fVehiclesService\x12{\n" +
-	"\fListVehicles\x12&.services.vehicles.ListVehiclesRequest\x1a'.services.vehicles.ListVehiclesResponse\"\x1a\xd2\xf3\x18\x16\b\x01:\x12\n" +
-	"\x06Fields\x18\x01\"\x06Wanted\x12\x84\x01\n" +
-	"\x0fSetVehicleProps\x12).services.vehicles.SetVehiclePropsRequest\x1a*.services.vehicles.SetVehiclePropsResponse\"\x1a\xd2\xf3\x18\x16\b\x01:\x12\n" +
-	"\x06Fields\x18\x01\"\x06Wanted\x12\x96\x01\n" +
+	"\bactivity\x18\x02 \x03(\v2,.resources.vehicles.activity.VehicleActivityB\x04\xc8\xf3\x18\x01R\bactivity2\xca\x04\n" +
+	"\x0fVehiclesService\x12y\n" +
+	"\fListVehicles\x12&.services.vehicles.ListVehiclesRequest\x1a'.services.vehicles.ListVehiclesResponse\"\x18\xd2\xf3\x18\x14\b\x01:\x10\n" +
+	"\n" +
+	"Properties\x18\x04(\x01\x12\x82\x01\n" +
+	"\x0fSetVehicleProps\x12).services.vehicles.SetVehiclePropsRequest\x1a*.services.vehicles.SetVehiclePropsResponse\"\x18\xd2\xf3\x18\x14\b\x01:\x10\n" +
+	"\n" +
+	"Properties\x18\x04(\x01\x12\x96\x01\n" +
 	"\x13ListVehicleActivity\x12-.services.vehicles.ListVehicleActivityRequest\x1a..services.vehicles.ListVehicleActivityResponse\" \xd2\xf3\x18\x1c\b\x01:\x18\n" +
-	"\x06Fields\x18\x01\"\aCreator\"\x03Own\x1a\x19\xea\xf3\x18\x15\b(\x12\x11i-mdi-car-outlineBNZLgithub.com/fivenet-app/fivenet/v2026/gen/go/proto/services/vehicles;vehiclesb\x06proto3"
+	"\x06Fields\x18\x01\"\aCreator\"\x03Own\x1a\x9d\x01\xea\xf3\x18\x98\x01\b(\x12\x11i-mdi-car-outline2;\b\x01\x12\x0evehicle.wanted\x18\x04 \x01*\rcommon.wanted@\x01H\x01P\x02r\x06statusxd\x80\x01\x01\x98\x01\x03:D\b\x01\x12\x06status\x1a6components.settings.property_definitions.groups.status dBNZLgithub.com/fivenet-app/fivenet/v2026/gen/go/proto/services/vehicles;vehiclesb\x06proto3"
 
 var file_services_vehicles_vehicles_proto_msgTypes = make([]protoimpl.MessageInfo, 6)
 var file_services_vehicles_vehicles_proto_goTypes = []any{
@@ -825,38 +880,42 @@ var file_services_vehicles_vehicles_proto_goTypes = []any{
 	(*ListVehicleActivityResponse)(nil), // 5: services.vehicles.ListVehicleActivityResponse
 	(*database.PaginationRequest)(nil),  // 6: resources.common.database.PaginationRequest
 	(*database.Sort)(nil),               // 7: resources.common.database.Sort
-	(*database.PaginationResponse)(nil), // 8: resources.common.database.PaginationResponse
-	(*vehicles.Vehicle)(nil),            // 9: resources.vehicles.Vehicle
-	(*props.VehicleProps)(nil),          // 10: resources.vehicles.props.VehicleProps
-	(activity.VehicleActivityType)(0),   // 11: resources.vehicles.activity.VehicleActivityType
-	(*timestamp.Timestamp)(nil),         // 12: resources.timestamp.Timestamp
-	(*activity.VehicleActivity)(nil),    // 13: resources.vehicles.activity.VehicleActivity
+	(*properties.PropertyFilter)(nil),   // 8: resources.properties.PropertyFilter
+	(*database.PaginationResponse)(nil), // 9: resources.common.database.PaginationResponse
+	(*vehicles.Vehicle)(nil),            // 10: resources.vehicles.Vehicle
+	(*props.VehicleProps)(nil),          // 11: resources.vehicles.props.VehicleProps
+	(*properties.PropertyChange)(nil),   // 12: resources.properties.PropertyChange
+	(activity.VehicleActivityType)(0),   // 13: resources.vehicles.activity.VehicleActivityType
+	(*timestamp.Timestamp)(nil),         // 14: resources.timestamp.Timestamp
+	(*activity.VehicleActivity)(nil),    // 15: resources.vehicles.activity.VehicleActivity
 }
 var file_services_vehicles_vehicles_proto_depIdxs = []int32{
 	6,  // 0: services.vehicles.ListVehiclesRequest.pagination:type_name -> resources.common.database.PaginationRequest
 	7,  // 1: services.vehicles.ListVehiclesRequest.sort:type_name -> resources.common.database.Sort
-	8,  // 2: services.vehicles.ListVehiclesResponse.pagination:type_name -> resources.common.database.PaginationResponse
-	9,  // 3: services.vehicles.ListVehiclesResponse.vehicles:type_name -> resources.vehicles.Vehicle
-	10, // 4: services.vehicles.SetVehiclePropsRequest.props:type_name -> resources.vehicles.props.VehicleProps
-	10, // 5: services.vehicles.SetVehiclePropsResponse.props:type_name -> resources.vehicles.props.VehicleProps
-	6,  // 6: services.vehicles.ListVehicleActivityRequest.pagination:type_name -> resources.common.database.PaginationRequest
-	7,  // 7: services.vehicles.ListVehicleActivityRequest.sort:type_name -> resources.common.database.Sort
-	11, // 8: services.vehicles.ListVehicleActivityRequest.types:type_name -> resources.vehicles.activity.VehicleActivityType
-	12, // 9: services.vehicles.ListVehicleActivityRequest.from:type_name -> resources.timestamp.Timestamp
-	12, // 10: services.vehicles.ListVehicleActivityRequest.to:type_name -> resources.timestamp.Timestamp
-	8,  // 11: services.vehicles.ListVehicleActivityResponse.pagination:type_name -> resources.common.database.PaginationResponse
-	13, // 12: services.vehicles.ListVehicleActivityResponse.activity:type_name -> resources.vehicles.activity.VehicleActivity
-	0,  // 13: services.vehicles.VehiclesService.ListVehicles:input_type -> services.vehicles.ListVehiclesRequest
-	2,  // 14: services.vehicles.VehiclesService.SetVehicleProps:input_type -> services.vehicles.SetVehiclePropsRequest
-	4,  // 15: services.vehicles.VehiclesService.ListVehicleActivity:input_type -> services.vehicles.ListVehicleActivityRequest
-	1,  // 16: services.vehicles.VehiclesService.ListVehicles:output_type -> services.vehicles.ListVehiclesResponse
-	3,  // 17: services.vehicles.VehiclesService.SetVehicleProps:output_type -> services.vehicles.SetVehiclePropsResponse
-	5,  // 18: services.vehicles.VehiclesService.ListVehicleActivity:output_type -> services.vehicles.ListVehicleActivityResponse
-	16, // [16:19] is the sub-list for method output_type
-	13, // [13:16] is the sub-list for method input_type
-	13, // [13:13] is the sub-list for extension type_name
-	13, // [13:13] is the sub-list for extension extendee
-	0,  // [0:13] is the sub-list for field type_name
+	8,  // 2: services.vehicles.ListVehiclesRequest.property_filters:type_name -> resources.properties.PropertyFilter
+	9,  // 3: services.vehicles.ListVehiclesResponse.pagination:type_name -> resources.common.database.PaginationResponse
+	10, // 4: services.vehicles.ListVehiclesResponse.vehicles:type_name -> resources.vehicles.Vehicle
+	11, // 5: services.vehicles.SetVehiclePropsRequest.props:type_name -> resources.vehicles.props.VehicleProps
+	12, // 6: services.vehicles.SetVehiclePropsRequest.property_changes:type_name -> resources.properties.PropertyChange
+	11, // 7: services.vehicles.SetVehiclePropsResponse.props:type_name -> resources.vehicles.props.VehicleProps
+	6,  // 8: services.vehicles.ListVehicleActivityRequest.pagination:type_name -> resources.common.database.PaginationRequest
+	7,  // 9: services.vehicles.ListVehicleActivityRequest.sort:type_name -> resources.common.database.Sort
+	13, // 10: services.vehicles.ListVehicleActivityRequest.types:type_name -> resources.vehicles.activity.VehicleActivityType
+	14, // 11: services.vehicles.ListVehicleActivityRequest.from:type_name -> resources.timestamp.Timestamp
+	14, // 12: services.vehicles.ListVehicleActivityRequest.to:type_name -> resources.timestamp.Timestamp
+	9,  // 13: services.vehicles.ListVehicleActivityResponse.pagination:type_name -> resources.common.database.PaginationResponse
+	15, // 14: services.vehicles.ListVehicleActivityResponse.activity:type_name -> resources.vehicles.activity.VehicleActivity
+	0,  // 15: services.vehicles.VehiclesService.ListVehicles:input_type -> services.vehicles.ListVehiclesRequest
+	2,  // 16: services.vehicles.VehiclesService.SetVehicleProps:input_type -> services.vehicles.SetVehiclePropsRequest
+	4,  // 17: services.vehicles.VehiclesService.ListVehicleActivity:input_type -> services.vehicles.ListVehicleActivityRequest
+	1,  // 18: services.vehicles.VehiclesService.ListVehicles:output_type -> services.vehicles.ListVehiclesResponse
+	3,  // 19: services.vehicles.VehiclesService.SetVehicleProps:output_type -> services.vehicles.SetVehiclePropsResponse
+	5,  // 20: services.vehicles.VehiclesService.ListVehicleActivity:output_type -> services.vehicles.ListVehicleActivityResponse
+	18, // [18:21] is the sub-list for method output_type
+	15, // [15:18] is the sub-list for method input_type
+	15, // [15:15] is the sub-list for extension type_name
+	15, // [15:15] is the sub-list for extension extendee
+	0,  // [0:15] is the sub-list for field type_name
 }
 
 func init() { file_services_vehicles_vehicles_proto_init() }

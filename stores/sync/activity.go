@@ -17,6 +17,7 @@ import (
 	"github.com/fivenet-app/fivenet/v2026/pkg/dbutils"
 	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
 	citizensstore "github.com/fivenet-app/fivenet/v2026/stores/citizens"
+	vehiclesstore "github.com/fivenet-app/fivenet/v2026/stores/vehicles"
 	"github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
 )
@@ -169,13 +170,12 @@ func (s *Store) SetVehicleProps(
 		sourceJob = sourceUser.GetUser().GetJob()
 	}
 
-	props, err := s.vehiclesStore.UpdateProps(
-		ctx,
-		req.GetVehicleProps(),
-		creatorID,
-		sourceJob,
-		req.GetReason(),
-	)
+	props, err := s.vehiclesStore.UpdateProps(ctx, vehiclesstore.PropsUpdate{
+		Props:      req.GetVehicleProps(),
+		CreatorID:  creatorID,
+		CreatorJob: sourceJob,
+		Reason:     req.GetReason(),
+	})
 	if err != nil {
 		return nil, fmt.Errorf("failed to set vehicle props. %w", err)
 	}

@@ -98,8 +98,7 @@ describe('useAuthStore', () => {
                 username: 'tester',
                 token: 'char-token',
                 char: { userId: 123 } as never,
-                permissions: [],
-                attributes: [],
+                authorization: { permissions: [], attributes: [] },
                 jobProps: undefined,
             },
         });
@@ -131,8 +130,7 @@ describe('useAuthStore', () => {
                 username: 'tester',
                 token: 'fresh-token',
                 char: { userId: 123 } as never,
-                permissions: [],
-                attributes: [],
+                authorization: { permissions: [], attributes: [] },
                 jobProps: undefined,
             },
         });
@@ -155,8 +153,7 @@ describe('useAuthStore', () => {
                 username: 'tester',
                 token: 'char-token',
                 char: { userId: 123 } as never,
-                permissions: [],
-                attributes: [],
+                authorization: { permissions: [], attributes: [] },
                 jobProps: undefined,
             },
         });
@@ -200,8 +197,7 @@ describe('useAuthStore', () => {
                 username: 'tester',
                 token: 'char-token',
                 char: { userId: 123 } as never,
-                permissions: [],
-                attributes: [],
+                authorization: { permissions: [], attributes: [] },
                 jobProps: undefined,
             },
         });
@@ -430,8 +426,7 @@ describe('useAuthStore', () => {
                 username: 'tester',
                 token: 'char-token',
                 char: { userId: 123 } as never,
-                permissions: [],
-                attributes: [],
+                authorization: { permissions: [], attributes: [] },
                 jobProps: undefined,
             },
         });

@@ -12,6 +12,7 @@ import (
 )
 
 type PhoneServicesMessages struct {
+	ID        uint32    `sql:"primary_key" json:"id"`
 	ChannelID uint32    `json:"channel_id"`
 	Message   string    `json:"message"`
 	XPos      *int32    `json:"x_pos"`

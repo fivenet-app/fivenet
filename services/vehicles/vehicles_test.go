@@ -5,6 +5,8 @@ import (
 	"testing"
 
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/common/database"
+	permissionsattributes "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/permissions/attributes"
+	properties "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/properties"
 	pbuserinfo "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/userinfo"
 	pbvehicles "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/vehicles"
 	"github.com/fivenet-app/fivenet/v2026/internal/modules"
@@ -24,6 +26,39 @@ import (
 func TestMain(m *testing.M) {
 	code := m.Run()
 	os.Exit(code)
+}
+
+func TestVehiclePropertyCanBeChangedRequiresReadAndWriteAccess(t *testing.T) {
+	t.Parallel()
+
+	settable := &permissionsattributes.PropertyList{Keys: []string{"vehicle.secret"}}
+	visible := &permissionsattributes.PropertyList{}
+	assert.False(t, vehiclePropertyCanBeChanged("vehicle.secret", settable, visible, false))
+	assert.True(t, vehiclePropertyCanBeChanged("vehicle.secret", settable, settable, false))
+	assert.True(t, vehiclePropertyCanBeChanged("vehicle.secret", nil, nil, true))
+}
+
+func TestRequireVehiclePropertyKeysRequiresEnabledSearchableDefinition(t *testing.T) {
+	t.Parallel()
+
+	allowed := &permissionsattributes.PropertyList{Keys: []string{"vehicle.secret"}}
+	userInfo := &pbuserinfo.UserInfo{}
+	value := &properties.PropertyValue{}
+	value.SetStringValue("classified")
+	filters := []*properties.PropertyFilter{{
+		Key:       "vehicle.secret",
+		Operation: properties.PropertyFilterOperation_PROPERTY_FILTER_OPERATION_EQUALS,
+		Value:     value,
+	}}
+	definitions := map[string]*properties.PropertyDefinition{
+		"vehicle.secret": {Enabled: false, Searchable: true},
+	}
+
+	require.Error(t, requireVehiclePropertyKeys(userInfo, allowed, definitions, filters))
+	definitions["vehicle.secret"].Enabled = true
+	require.NoError(t, requireVehiclePropertyKeys(userInfo, allowed, definitions, filters))
+	definitions["vehicle.secret"].Searchable = false
+	require.Error(t, requireVehiclePropertyKeys(userInfo, allowed, definitions, filters))
 }
 
 func TestListVehicles(t *testing.T) {

@@ -4,6 +4,7 @@
 // source: services/settings/cron.proto
 // source: services/settings/job_assets.proto
 // source: services/settings/laws.proto
+// source: services/settings/properties.proto
 // source: services/settings/settings.proto
 // source: services/settings/system.proto
 
@@ -21,6 +22,7 @@ const (
 	CronServicePerm       perms.Service = "CronService"
 	JobsAssetsServicePerm perms.Service = "JobsAssetsService"
 	LawsServicePerm       perms.Service = "LawsService"
+	PropertyServicePerm   perms.Service = "PropertyService"
 	SettingsServicePerm   perms.Service = "SettingsService"
 	SystemServicePerm     perms.Service = "SystemService"
 
@@ -33,6 +35,9 @@ const (
 	// Service: settings.LawsService
 	LawsServiceCreateOrUpdateLawBookPerm perms.Name = "CreateOrUpdateLawBook"
 	LawsServiceDeleteLawBookPerm         perms.Name = "DeleteLawBook"
+
+	// Service: settings.PropertyService
+	PropertyServiceUpdatePropertyDefinitionPerm perms.Name = "UpdatePropertyDefinition"
 
 	// Service: settings.SettingsService
 	SettingsServiceCreateRolePerm      perms.Name = "CreateRole"
@@ -95,6 +100,19 @@ var LawsService = LawsServicePerms{
 	},
 	DeleteLawBook: LawsServiceDeleteLawBookPermRef{
 		Perm: perms.NewPermissionRef(Namespace, LawsServicePerm, LawsServiceDeleteLawBookPerm),
+	},
+}
+
+type PropertyServicePerms struct {
+	UpdatePropertyDefinition PropertyServiceUpdatePropertyDefinitionPermRef
+}
+type PropertyServiceUpdatePropertyDefinitionPermRef struct {
+	Perm perms.PermissionRef
+}
+
+var PropertyService = PropertyServicePerms{
+	UpdatePropertyDefinition: PropertyServiceUpdatePropertyDefinitionPermRef{
+		Perm: perms.NewPermissionRef(Namespace, PropertyServicePerm, PropertyServiceUpdatePropertyDefinitionPerm),
 	},
 }
 

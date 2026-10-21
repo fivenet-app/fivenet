@@ -71,35 +71,41 @@ type Params struct {
 }
 
 func NewServer(p Params) *Server {
-	tUserProps := table.FivenetUserProps
+	tUserFiles := table.FivenetUserFiles
 
 	profilePictureHandler := filestore.NewHandler(
 		p.Storage,
 		p.DB,
-		tUserProps,
-		tUserProps.UserID,
-		tUserProps.AvatarFileID,
+		tUserFiles,
+		tUserFiles.UserID,
+		tUserFiles.FileID,
 		3<<20,
-		1,
+		0,
 		func(parentId int32) mysql.BoolExpression {
-			return tUserProps.UserID.EQ(mysql.Int32(parentId))
+			return mysql.AND(
+				tUserFiles.UserID.EQ(mysql.Int32(parentId)),
+				tUserFiles.Kind.EQ(mysql.String("avatar")),
+			)
 		},
-		filestore.UpdateJoinRow,
-		true,
+		userFileJoinInserter("avatar"),
+		false,
 	).WithUploadFilter(filestore.NewImageUploadFilter())
 	mugshotHandler := filestore.NewHandler(
 		p.Storage,
 		p.DB,
-		tUserProps,
-		tUserProps.UserID,
-		tUserProps.MugshotFileID,
+		tUserFiles,
+		tUserFiles.UserID,
+		tUserFiles.FileID,
 		3<<20,
-		1,
+		0,
 		func(parentId int32) mysql.BoolExpression {
-			return tUserProps.UserID.EQ(mysql.Int32(parentId))
+			return mysql.AND(
+				tUserFiles.UserID.EQ(mysql.Int32(parentId)),
+				tUserFiles.Kind.EQ(mysql.String("mugshot")),
+			)
 		},
-		filestore.UpdateJoinRow,
-		true,
+		userFileJoinInserter("mugshot"),
+		false,
 	).WithUploadFilter(filestore.NewImageUploadFilter())
 
 	s := &Server{
@@ -168,6 +174,27 @@ func NewServer(p Params) *Server {
 	})
 
 	return s
+}
+
+func userFileJoinInserter(kind string) filestore.JoinRowInserterFn[int32] {
+	return func(
+		ctx context.Context,
+		tx *sql.Tx,
+		_ mysql.Table,
+		_ mysql.Column,
+		_ mysql.ColumnInteger,
+		userID int32,
+		_ mysql.BoolExpression,
+		fileID int64,
+	) error {
+		tUserFiles := table.FivenetUserFiles
+		_, err := tUserFiles.
+			INSERT(tUserFiles.UserID, tUserFiles.FileID, tUserFiles.Kind).
+			VALUES(userID, fileID, kind).
+			ON_DUPLICATE_KEY_UPDATE(tUserFiles.FileID.SET(mysql.Int64(fileID))).
+			ExecContext(ctx, tx)
+		return err
+	}
 }
 
 func (s *Server) RegisterServer(srv *grpc.Server) {

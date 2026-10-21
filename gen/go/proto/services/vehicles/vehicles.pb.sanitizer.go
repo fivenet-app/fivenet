@@ -35,6 +35,14 @@ func (m *ListVehicleActivityRequest) Sanitize() error {
 	// Field: Plate
 	m.Plate = htmlsanitizer.SanitizeAndUnescape(m.Plate)
 
+	// Field: PropertyKeys
+	for idx, item := range m.PropertyKeys {
+		_, _ = idx, item
+
+		m.PropertyKeys[idx] = htmlsanitizer.SanitizeAndUnescape(m.PropertyKeys[idx])
+
+	}
+
 	// Field: Sort
 	if m.Sort != nil {
 		if v, ok := any(m.GetSort()).(interface{ Sanitize() error }); ok {
@@ -124,6 +132,18 @@ func (m *ListVehiclesRequest) Sanitize() error {
 		}
 	}
 
+	// Field: PropertyFilters
+	for idx, item := range m.PropertyFilters {
+		_, _ = idx, item
+
+		if v, ok := any(item).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+
+	}
+
 	// Field: Sort
 	if m.Sort != nil {
 		if v, ok := any(m.GetSort()).(interface{ Sanitize() error }); ok {
@@ -172,6 +192,18 @@ func (m *ListVehiclesResponse) Sanitize() error {
 func (m *SetVehiclePropsRequest) Sanitize() error {
 	if m == nil {
 		return nil
+	}
+
+	// Field: PropertyChanges
+	for idx, item := range m.PropertyChanges {
+		_, _ = idx, item
+
+		if v, ok := any(item).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+
 	}
 
 	// Field: Props

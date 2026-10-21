@@ -9,6 +9,7 @@
 package vehicles
 
 import (
+	properties "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/properties"
 	timestamp "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/timestamp"
 	short "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/users/short"
 	props "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/vehicles/props"
@@ -37,6 +38,7 @@ type Vehicle struct {
 	Job             *string                `protobuf:"bytes,7,opt,name=job,proto3,oneof" json:"job,omitempty"`
 	JobLabel        *string                `protobuf:"bytes,8,opt,name=job_label,json=jobLabel,proto3,oneof" json:"job_label,omitempty"`
 	Props           *props.VehicleProps    `protobuf:"bytes,9,opt,name=props,proto3,oneof" json:"props,omitempty"`
+	Properties      *properties.Properties `protobuf:"bytes,11,opt,name=properties,proto3,oneof" json:"properties,omitempty"`
 	unknownFields   protoimpl.UnknownFields
 	sizeCache       protoimpl.SizeCache
 }
@@ -136,6 +138,13 @@ func (x *Vehicle) GetProps() *props.VehicleProps {
 	return nil
 }
 
+func (x *Vehicle) GetProperties() *properties.Properties {
+	if x != nil {
+		return x.Properties
+	}
+	return nil
+}
+
 func (x *Vehicle) SetPlate(v string) {
 	x.Plate = v
 }
@@ -174,6 +183,10 @@ func (x *Vehicle) SetJobLabel(v string) {
 
 func (x *Vehicle) SetProps(v *props.VehicleProps) {
 	x.Props = v
+}
+
+func (x *Vehicle) SetProperties(v *properties.Properties) {
+	x.Properties = v
 }
 
 func (x *Vehicle) HasUpdatedAt() bool {
@@ -232,6 +245,13 @@ func (x *Vehicle) HasProps() bool {
 	return x.Props != nil
 }
 
+func (x *Vehicle) HasProperties() bool {
+	if x == nil {
+		return false
+	}
+	return x.Properties != nil
+}
+
 func (x *Vehicle) ClearUpdatedAt() {
 	x.UpdatedAt = nil
 }
@@ -264,6 +284,10 @@ func (x *Vehicle) ClearProps() {
 	x.Props = nil
 }
 
+func (x *Vehicle) ClearProperties() {
+	x.Properties = nil
+}
+
 type Vehicle_builder struct {
 	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
 
@@ -277,6 +301,7 @@ type Vehicle_builder struct {
 	Job             *string
 	JobLabel        *string
 	Props           *props.VehicleProps
+	Properties      *properties.Properties
 }
 
 func (b0 Vehicle_builder) Build() *Vehicle {
@@ -293,6 +318,7 @@ func (b0 Vehicle_builder) Build() *Vehicle {
 	x.Job = b.Job
 	x.JobLabel = b.JobLabel
 	x.Props = b.Props
+	x.Properties = b.Properties
 	return m0
 }
 
@@ -300,7 +326,7 @@ var File_resources_vehicles_vehicles_proto protoreflect.FileDescriptor
 
 const file_resources_vehicles_vehicles_proto_rawDesc = "" +
 	"\n" +
-	"!resources/vehicles/vehicles.proto\x12\x12resources.vehicles\x1a#resources/timestamp/timestamp.proto\x1a resources/users/short/user.proto\x1a$resources/vehicles/props/props.proto\"\x80\x04\n" +
+	"!resources/vehicles/vehicles.proto\x12\x12resources.vehicles\x1a%resources/properties/properties.proto\x1a#resources/timestamp/timestamp.proto\x1a resources/users/short/user.proto\x1a$resources/vehicles/props/props.proto\"\xd6\x04\n" +
 	"\aVehicle\x12\x14\n" +
 	"\x05plate\x18\x01 \x01(\tR\x05plate\x12B\n" +
 	"\n" +
@@ -313,7 +339,10 @@ const file_resources_vehicles_vehicles_proto_rawDesc = "" +
 	"\x05owner\x18\x05 \x01(\v2 .resources.users.short.UserShortH\x04R\x05owner\x88\x01\x01\x12\x15\n" +
 	"\x03job\x18\a \x01(\tH\x05R\x03job\x88\x01\x01\x12 \n" +
 	"\tjob_label\x18\b \x01(\tH\x06R\bjobLabel\x88\x01\x01\x12A\n" +
-	"\x05props\x18\t \x01(\v2&.resources.vehicles.props.VehiclePropsH\aR\x05props\x88\x01\x01B\r\n" +
+	"\x05props\x18\t \x01(\v2&.resources.vehicles.props.VehiclePropsH\aR\x05props\x88\x01\x01\x12E\n" +
+	"\n" +
+	"properties\x18\v \x01(\v2 .resources.properties.PropertiesH\bR\n" +
+	"properties\x88\x01\x01B\r\n" +
 	"\v_updated_atB\b\n" +
 	"\x06_modelB\v\n" +
 	"\t_owner_idB\x13\n" +
@@ -322,24 +351,27 @@ const file_resources_vehicles_vehicles_proto_rawDesc = "" +
 	"\x04_jobB\f\n" +
 	"\n" +
 	"_job_labelB\b\n" +
-	"\x06_propsBOZMgithub.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/vehicles;vehiclesb\x06proto3"
+	"\x06_propsB\r\n" +
+	"\v_propertiesBOZMgithub.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/vehicles;vehiclesb\x06proto3"
 
 var file_resources_vehicles_vehicles_proto_msgTypes = make([]protoimpl.MessageInfo, 1)
 var file_resources_vehicles_vehicles_proto_goTypes = []any{
-	(*Vehicle)(nil),             // 0: resources.vehicles.Vehicle
-	(*timestamp.Timestamp)(nil), // 1: resources.timestamp.Timestamp
-	(*short.UserShort)(nil),     // 2: resources.users.short.UserShort
-	(*props.VehicleProps)(nil),  // 3: resources.vehicles.props.VehicleProps
+	(*Vehicle)(nil),               // 0: resources.vehicles.Vehicle
+	(*timestamp.Timestamp)(nil),   // 1: resources.timestamp.Timestamp
+	(*short.UserShort)(nil),       // 2: resources.users.short.UserShort
+	(*props.VehicleProps)(nil),    // 3: resources.vehicles.props.VehicleProps
+	(*properties.Properties)(nil), // 4: resources.properties.Properties
 }
 var file_resources_vehicles_vehicles_proto_depIdxs = []int32{
 	1, // 0: resources.vehicles.Vehicle.updated_at:type_name -> resources.timestamp.Timestamp
 	2, // 1: resources.vehicles.Vehicle.owner:type_name -> resources.users.short.UserShort
 	3, // 2: resources.vehicles.Vehicle.props:type_name -> resources.vehicles.props.VehicleProps
-	3, // [3:3] is the sub-list for method output_type
-	3, // [3:3] is the sub-list for method input_type
-	3, // [3:3] is the sub-list for extension type_name
-	3, // [3:3] is the sub-list for extension extendee
-	0, // [0:3] is the sub-list for field type_name
+	4, // 3: resources.vehicles.Vehicle.properties:type_name -> resources.properties.Properties
+	4, // [4:4] is the sub-list for method output_type
+	4, // [4:4] is the sub-list for method input_type
+	4, // [4:4] is the sub-list for extension type_name
+	4, // [4:4] is the sub-list for extension extendee
+	0, // [0:4] is the sub-list for field type_name
 }
 
 func init() { file_resources_vehicles_vehicles_proto_init() }

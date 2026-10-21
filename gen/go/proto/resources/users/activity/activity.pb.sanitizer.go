@@ -167,6 +167,37 @@ func (m *NameChange) Sanitize() error {
 
 // Sanitize sanitizes the message's fields, in case of complex types it calls
 // their Sanitize() method recursively.
+func (m *PropertyChange) Sanitize() error {
+	if m == nil {
+		return nil
+	}
+
+	// Field: Key
+	m.Key = htmlsanitizer.SanitizeAndUnescape(m.Key)
+
+	// Field: NewValue
+	if m.NewValue != nil {
+		if v, ok := any(m.GetNewValue()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+	}
+
+	// Field: OldValue
+	if m.OldValue != nil {
+		if v, ok := any(m.GetOldValue()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+	}
+
+	return nil
+}
+
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *UserActivity) Sanitize() error {
 	if m == nil {
 		return nil
@@ -314,6 +345,17 @@ func (m *UserActivityData) Sanitize() error {
 
 		if v.NameChange != nil {
 			if s, ok := any(v.NameChange).(interface{ Sanitize() error }); ok {
+				if err := s.Sanitize(); err != nil {
+					return err
+				}
+			}
+		}
+
+		// Field: PropertyChange
+	case *UserActivityData_PropertyChange:
+
+		if v.PropertyChange != nil {
+			if s, ok := any(v.PropertyChange).(interface{ Sanitize() error }); ok {
 				if err := s.Sanitize(); err != nil {
 					return err
 				}

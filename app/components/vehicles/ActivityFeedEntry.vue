@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 import CitizenInfoPopover from '~/components/partials/citizens/CitizenInfoPopover.vue';
 import ActivityFeedItem from '~/components/partials/data/ActivityFeedItem.vue';
+import PropertyActivityChange from '~/components/partials/properties/PropertyActivityChange.vue';
 import GenericTime from '~/components/partials/elements/GenericTime.vue';
 import { VehicleActivityType, type VehicleActivity } from '~~/gen/ts/resources/vehicles/activity/activity';
 import { vehicleActivityIconColor, vehicleActivityTypeIcon } from './helpers';
@@ -67,9 +68,23 @@ const reasonHtml = computed(() => {
     </template>
 
     <template v-else>
-        <ActivityFeedItem :icon="vehicleActivityTypeIcon(activity.activityType)">
+        <ActivityFeedItem
+            :icon="vehicleActivityTypeIcon(activity.activityType)"
+            :icon-class="vehicleActivityIconColor(activity)"
+        >
             <template #title>
-                {{ $t(`enums.vehicles.VehicleActivityType.${VehicleActivityType[activity.activityType]}`) }}
+                <PropertyActivityChange
+                    v-if="
+                        activity.activityType === VehicleActivityType.PROPERTY &&
+                        activity.data?.data.oneofKind === 'propertyChange'
+                    "
+                    :property-key="activity.data.data.propertyChange.key"
+                    :old-value="activity.data.data.propertyChange.oldValue"
+                    :new-value="activity.data.data.propertyChange.newValue"
+                />
+                <template v-else>{{
+                    $t(`enums.vehicles.VehicleActivityType.${VehicleActivityType[activity.activityType]}`)
+                }}</template>
             </template>
 
             <template #timestamp>

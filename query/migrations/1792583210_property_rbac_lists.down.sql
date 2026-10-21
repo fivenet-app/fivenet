@@ -1,0 +1,2 @@
+-- No safe rollback: the removed permission and its old string-list grants
+-- cannot be reconstructed without instance-specific data.

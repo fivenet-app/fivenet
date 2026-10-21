@@ -116,6 +116,15 @@ func (m *User) Sanitize() error {
 		*m.ProfilePicture = htmlsanitizer.SanitizeAndUnescape(*m.ProfilePicture)
 	}
 
+	// Field: Properties
+	if m.Properties != nil {
+		if v, ok := any(m.GetProperties()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+	}
+
 	// Field: Props
 	if m.Props != nil {
 		if v, ok := any(m.GetProps()).(interface{ Sanitize() error }); ok {

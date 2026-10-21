@@ -32,7 +32,10 @@ const (
 )
 
 func init() {
-	filestore.RegisterFileReference(table.FivenetQualificationsFiles, table.FivenetQualificationsFiles.FileID)
+	filestore.RegisterFileReference(
+		table.FivenetQualificationsFiles,
+		table.FivenetQualificationsFiles.FileID,
+	)
 
 	housekeeper.AddTable(&housekeeper.Table{
 		Table:           table.FivenetQualifications,
@@ -157,7 +160,11 @@ func NewServer(p Params) Result {
 	}
 }
 
-func (s *Server) sendQualificationObjectEvent(ctx context.Context, qualificationID int64, userID int32) {
+func (s *Server) sendQualificationObjectEvent(
+	ctx context.Context,
+	qualificationID int64,
+	userID int32,
+) {
 	if s.notif == nil {
 		return
 	}

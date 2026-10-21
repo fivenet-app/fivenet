@@ -14,6 +14,9 @@ enum AttributeType {
   ATTRIBUTE_TYPE_STRING_LIST = 1;
   ATTRIBUTE_TYPE_JOB_LIST = 2;
   ATTRIBUTE_TYPE_JOB_GRADE_LIST = 3;
+  // Property lists select runtime-defined property keys. The RPC permission
+  // controls the operation; this attribute only controls which properties.
+  ATTRIBUTE_TYPE_PROPERTY_LIST = 4;
 }
 
 message RoleAttribute {
@@ -40,6 +43,7 @@ message AttributeValues {
     StringList string_list = 1;
     StringList job_list = 2;
     JobGradeList job_grade_list = 3;
+    PropertyList property_list = 4;
   }
 }
 
@@ -48,6 +52,22 @@ message StringList {
     enabled: true
     strip_html_tags: true
   }];
+}
+
+message PropertyList {
+  repeated string keys = 1 [(buf.validate.field).repeated.items.string = {
+    min_len: 1
+    max_len: 64
+    pattern: "^[a-z][a-z0-9_.-]*$"
+  }];
+  // Display metadata for the keys above. This is response metadata only; role
+  // attribute values continue to persist and authorize by key.
+  repeated PropertyListEntry properties = 2;
+}
+
+message PropertyListEntry {
+  string key = 1;
+  string label = 2;
 }
 
 message JobGradeList {

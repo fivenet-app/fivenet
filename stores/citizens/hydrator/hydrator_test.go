@@ -1,6 +1,7 @@
 package citizenshydrator
 
 import (
+	"context"
 	"testing"
 
 	"github.com/DATA-DOG/go-sqlmock"
@@ -17,7 +18,23 @@ import (
 type testPermissions struct {
 	permsstub.Permissions
 
-	fields []string
+	fields     []string
+	properties []string
+}
+
+func (p *testPermissions) AttrPropertyList(
+	_ *userinfo.UserInfo,
+	_ perms.AttrRef[perms.PropertyListAttr],
+) (*permissionsattributes.PropertyList, error) {
+	return &permissionsattributes.PropertyList{Keys: p.properties}, nil
+}
+
+func (p *testPermissions) AttrPropertyListContext(
+	context.Context,
+	*userinfo.UserInfo,
+	perms.AttrRef[perms.PropertyListAttr],
+) (*permissionsattributes.PropertyList, error) {
+	return &permissionsattributes.PropertyList{Keys: p.properties}, nil
 }
 
 func (p *testPermissions) AttrStringList(
@@ -94,13 +111,15 @@ func TestEnrichShortsSafeRedactsJobInfo(t *testing.T) {
 func TestResolveFieldsUsesCitizenPermissions(t *testing.T) {
 	t.Parallel()
 
-	h := &Hydrator{perms: &testPermissions{fields: []string{
-		string(permscitizens.CitizensServiceListCitizensFieldsPermValuePhoneNumber),
-		string(permscitizens.CitizensServiceListCitizensFieldsPermValueUserPropsBloodType),
-		string(permscitizens.CitizensServiceListCitizensFieldsPermValueUserPropsMugshot),
-	}}}
+	h := &Hydrator{perms: &testPermissions{
+		properties: []string{
+			string(permscitizens.CitizensServiceListCitizensPropertiesPermValueUserPhoneNumber),
+			string(permscitizens.CitizensServiceListCitizensPropertiesPermValueUserBloodType),
+			string(permscitizens.CitizensServiceListCitizensPropertiesPermValueUserMugshot),
+		},
+	}}
 
-	fields, err := h.resolveFields(&userinfo.UserInfo{})
+	fields, err := h.resolveFields(t.Context(), &userinfo.UserInfo{})
 	if err != nil {
 		t.Fatalf("resolveFields returned error: %v", err)
 	}
@@ -109,6 +128,37 @@ func TestResolveFieldsUsesCitizenPermissions(t *testing.T) {
 	}
 	if fields.email || fields.openFines || fields.licenses || fields.labels {
 		t.Fatalf("unexpected fields resolved: %#v", fields)
+	}
+}
+
+func TestResolvedFieldsHonorsDisabledProperties(t *testing.T) {
+	t.Parallel()
+
+	propertyList := &permissionsattributes.PropertyList{Keys: []string{
+		"user.dateofbirth",
+		"user.sex",
+		"user.height",
+		"user.phone_number",
+		"user.visum",
+		"user.blood_type",
+		"user.mugshot",
+	}}
+	fields := resolvedFieldsForProperties(propertyList, map[string]bool{
+		"user.dateofbirth":  true,
+		"user.sex":          true,
+		"user.height":       true,
+		"user.phone_number": true,
+		"user.visum":        false,
+		"user.blood_type":   false,
+		"user.mugshot":      true,
+	})
+
+	if !fields.dateOfBirth || !fields.sex || !fields.height || !fields.phoneNumber ||
+		!fields.mugshot {
+		t.Fatalf("expected enabled permitted fields: %#v", fields)
+	}
+	if fields.visum || fields.bloodType {
+		t.Fatalf("expected disabled fields to be excluded: %#v", fields)
 	}
 }
 
@@ -124,8 +174,8 @@ func TestListBasicByUserIDOnlySelectsPermittedPhoneNumber(t *testing.T) {
 	h := &Hydrator{
 		db: db,
 		perms: &testPermissions{
-			fields: []string{
-				string(permscitizens.CitizensServiceListCitizensFieldsPermValuePhoneNumber),
+			properties: []string{
+				string(permscitizens.CitizensServiceListCitizensPropertiesPermValueUserPhoneNumber),
 			},
 		},
 		enricher: mstlystcdata.NewDummyUserAwareEnricher(),

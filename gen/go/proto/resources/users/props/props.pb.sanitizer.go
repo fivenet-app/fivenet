@@ -65,6 +65,15 @@ func (m *UserProps) Sanitize() error {
 		}
 	}
 
+	// Field: Properties
+	if m.Properties != nil {
+		if v, ok := any(m.GetProperties()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+	}
+
 	// Field: TrafficInfractionPointsUpdatedAt
 	if m.TrafficInfractionPointsUpdatedAt != nil {
 		if v, ok := any(m.GetTrafficInfractionPointsUpdatedAt()).(interface{ Sanitize() error }); ok {

@@ -11,7 +11,7 @@ import (
 	"time"
 )
 
-type FivenetOwnedVehicles struct {
+type FivenetVehicle struct {
 	UserID    *int32     `json:"user_id"`
 	Job       *string    `json:"job"`
 	Plate     string     `sql:"primary_key" json:"plate"`

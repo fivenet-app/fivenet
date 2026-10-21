@@ -24,6 +24,31 @@ func buildUserActivityCondition(
 		}
 		condition = condition.AND(tUserActivity.Type.IN(types...))
 	}
+	if len(opts.PropertyKeys) > 0 {
+		keys := make([]mysql.Expression, 0, len(opts.PropertyKeys))
+		for _, key := range opts.PropertyKeys {
+			keys = append(keys, mysql.String(key))
+		}
+		condition = condition.AND(
+			tUserActivity.Type.EQ(mysql.Int32(int32(usersactivity.UserActivityType_USER_ACTIVITY_TYPE_PROPERTY))).
+				AND(tUserActivity.Key.IN(keys...)),
+		)
+	}
+	propertyActivityType := mysql.Int32(int32(
+		usersactivity.UserActivityType_USER_ACTIVITY_TYPE_PROPERTY,
+	))
+	if len(opts.VisiblePropertyKeys) == 0 {
+		condition = condition.AND(tUserActivity.Type.NOT_EQ(propertyActivityType))
+	} else {
+		keys := make([]mysql.Expression, 0, len(opts.VisiblePropertyKeys))
+		for _, key := range opts.VisiblePropertyKeys {
+			keys = append(keys, mysql.String(key))
+		}
+		condition = condition.AND(mysql.OR(
+			tUserActivity.Type.NOT_EQ(propertyActivityType),
+			tUserActivity.Key.IN(keys...),
+		))
+	}
 	if opts.From != nil {
 		condition = condition.AND(
 			tUserActivity.CreatedAt.GT_EQ(dbutils.TimestampToMySQL(opts.From)),
@@ -53,6 +78,7 @@ func (s *Store) ListUserActivity(
 			tUserActivity.SourceUserID,
 			tUserActivity.TargetUserID,
 			tUserActivity.Type,
+			tUserActivity.Key,
 			tUserActivity.Reason,
 			tUserActivity.Data,
 		).

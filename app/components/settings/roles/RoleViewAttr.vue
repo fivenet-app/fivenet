@@ -11,6 +11,8 @@ const props = defineProps<{
     hideFineGrained?: boolean;
 }>();
 
+const { t, te } = useI18n();
+
 const emit = defineEmits<{
     (e: 'changed', value: boolean): void;
 }>();
@@ -60,6 +62,16 @@ if (attribute.value?.validValues === undefined) {
             };
             break;
         }
+
+        case 'propertyList': {
+            attribute.value.validValues = {
+                validValues: {
+                    oneofKind: 'propertyList',
+                    propertyList: { keys: [], properties: [] },
+                },
+            };
+            break;
+        }
     }
 }
 
@@ -102,6 +114,16 @@ if (attribute.value?.value === undefined) {
             };
             break;
         }
+
+        case 'propertyList': {
+            attribute.value.value = {
+                validValues: {
+                    oneofKind: 'propertyList',
+                    propertyList: { keys: [], properties: [] },
+                },
+            };
+            break;
+        }
     }
 }
 
@@ -140,6 +162,15 @@ if (attribute.value.maxValues === undefined) {
                         fineGrained: false,
                         grades: {},
                     },
+                },
+            };
+            break;
+
+        case 'propertyList':
+            attribute.value.maxValues = {
+                validValues: {
+                    oneofKind: 'propertyList',
+                    propertyList: { keys: [], properties: [] },
                 },
             };
             break;
@@ -194,6 +225,40 @@ async function toggleStringListAll(): Promise<void> {
     } else {
         attrValues.value.validValues.stringList.strings = [...(maxValues?.validValues.stringList.strings ?? [])];
     }
+}
+
+async function togglePropertyListValue(value: string): Promise<void> {
+    if (attrValues.value.validValues.oneofKind !== 'propertyList') return;
+
+    const idx = attrValues.value.validValues.propertyList.keys.findIndex((v) => v === value);
+    if (idx === -1) {
+        attrValues.value.validValues.propertyList.keys.push(value);
+    } else {
+        attrValues.value.validValues.propertyList.keys.splice(idx, 1);
+    }
+}
+
+async function togglePropertyListAll(): Promise<void> {
+    if (attrValues.value.validValues.oneofKind !== 'propertyList') return;
+    if (maxValues?.validValues.oneofKind !== 'propertyList') return;
+
+    if (attrValues.value.validValues.propertyList.keys.length === maxValues.validValues.propertyList.keys.length) {
+        attrValues.value.validValues.propertyList.keys = [];
+    } else {
+        attrValues.value.validValues.propertyList.keys = [...maxValues.validValues.propertyList.keys];
+    }
+}
+
+function optionLabel(value: string, prefix = ''): string {
+    const key = `perms.${props.permission.namespace}.${props.permission.service}.${props.permission.name}.attrs.${prefix}${value.replaceAll('.', '_')}`;
+    return te(key) ? t(key) : value;
+}
+
+function propertyLabel(key: string): string {
+    if (maxValues?.validValues.oneofKind !== 'propertyList') return key;
+
+    const property = maxValues.validValues.propertyList.properties.find((property) => property.key === key);
+    return property?.label && property.label !== key ? property.label : optionLabel(key, 'Property_');
 }
 
 async function toggleJobListValue(value: string): Promise<void> {
@@ -283,6 +348,55 @@ const isOpen = ref(props.defaultOpen ?? false);
                 <div class="flex flex-col gap-2 p-1 text-sm">
                     <div
                         v-if="
+                            attrValues.validValues.oneofKind === 'propertyList' &&
+                            maxValues?.validValues.oneofKind === 'propertyList'
+                        "
+                        class="flex flex-col gap-2"
+                    >
+                        <span v-if="maxValues.validValues.propertyList.keys.length === 0">
+                            {{ $t('common.not_found', [$t('common.attributes', 2)]) }}
+                        </span>
+
+                        <template v-else>
+                            <div class="flex flex-row flex-wrap gap-2">
+                                <div
+                                    v-for="value in maxValues.validValues.propertyList.keys"
+                                    :key="value"
+                                    class="flex flex-initial flex-row flex-nowrap gap-1"
+                                >
+                                    <USwitch
+                                        :name="value"
+                                        :model-value="attrValues.validValues.propertyList.keys.includes(value)"
+                                        :disabled="disabled"
+                                        @update:model-value="togglePropertyListValue(value)"
+                                    />
+                                    <span>{{ propertyLabel(value) }}</span>
+                                </div>
+                            </div>
+
+                            <UButton
+                                v-if="!disabled"
+                                class="self-end"
+                                size="xs"
+                                color="neutral"
+                                :icon="
+                                    attrValues.validValues.propertyList.keys.length !==
+                                    maxValues.validValues.propertyList.keys.length
+                                        ? 'i-mdi-check-all'
+                                        : 'i-mdi-close'
+                                "
+                                :label="
+                                    attrValues.validValues.propertyList.keys.length !==
+                                    maxValues.validValues.propertyList.keys.length
+                                        ? $t('common.check_all')
+                                        : $t('common.uncheck_all')
+                                "
+                                @click="togglePropertyListAll()"
+                            />
+                        </template>
+                    </div>
+                    <div
+                        v-else-if="
                             attrValues.validValues.oneofKind === 'stringList' &&
                             maxValues?.validValues.oneofKind === 'stringList'
                         "
@@ -305,11 +419,7 @@ const isOpen = ref(props.defaultOpen ?? false);
                                         :disabled="disabled"
                                         @update:model-value="toggleStringListValue(value)"
                                     />
-                                    <span>{{
-                                        $t(
-                                            `perms.${permission.namespace}.${permission.service}.${permission.name}.attrs.${value.replaceAll('.', '_')}`,
-                                        )
-                                    }}</span>
+                                    <span>{{ optionLabel(value) }}</span>
                                 </div>
                             </div>
 

@@ -11,6 +11,14 @@ import { UnknownFieldHandler } from "@protobuf-ts/runtime";
 import type { PartialMessage } from "@protobuf-ts/runtime";
 import { reflectionMergePartial } from "@protobuf-ts/runtime";
 import { MessageType } from "@protobuf-ts/runtime";
+import { PropertyDisplayMode } from "../../resources/properties/properties";
+import { PropertyRendererConfig } from "../../resources/properties/properties";
+import { PropertyRenderer } from "../../resources/properties/properties";
+import { PropertyBehavior } from "../../resources/properties/properties";
+import { PropertyValueFormat } from "../../resources/properties/properties";
+import { PropertyValueType } from "../../resources/properties/properties";
+import { PropertyGroup } from "../../resources/properties/properties";
+import { PropertyScope } from "../../resources/properties/properties";
 import { AttributeType } from "../../resources/permissions/attributes/attributes";
 /**
  * @generated from protobuf message codegen.perms.PermsOptions
@@ -69,6 +77,13 @@ export interface Attr {
      * @generated from protobuf field: repeated string valid_string_list = 4
      */
     validStringList: string[];
+    /**
+     * Required for PropertyList attributes so the backend can restrict the
+     * generated keys to the appropriate property scope.
+     *
+     * @generated from protobuf field: optional resources.properties.PropertyScope property_scope = 5
+     */
+    propertyScope?: PropertyScope;
 }
 /**
  * @generated from protobuf message codegen.perms.ServiceOptions
@@ -94,6 +109,103 @@ export interface ServiceOptions {
      * @generated from protobuf field: repeated codegen.perms.AdditionalServicePerm additional_perms = 5
      */
     additionalPerms: AdditionalServicePerm[];
+    /**
+     * @generated from protobuf field: repeated codegen.perms.SystemProperty system_properties = 6
+     */
+    systemProperties: SystemProperty[];
+    /**
+     * @generated from protobuf field: repeated resources.properties.PropertyGroup property_groups = 7
+     */
+    propertyGroups: PropertyGroup[];
+}
+/**
+ * SystemProperty declares a property whose key and semantics are owned by
+ * FiveNet code. The backend generator registers these definitions at startup;
+ * only the enabled state may be overridden by an instance.
+ *
+ * @generated from protobuf message codegen.perms.SystemProperty
+ */
+export interface SystemProperty {
+    /**
+     * @generated from protobuf field: resources.properties.PropertyScope scope = 1
+     */
+    scope: PropertyScope;
+    /**
+     * @generated from protobuf field: string key = 2
+     */
+    key: string;
+    /**
+     * @generated from protobuf field: resources.properties.PropertyValueType value_type = 3
+     */
+    valueType: PropertyValueType;
+    /**
+     * @generated from protobuf field: bool enabled = 4
+     */
+    enabled: boolean;
+    /**
+     * @generated from protobuf field: string display_key = 5
+     */
+    displayKey: string;
+    /**
+     * @generated from protobuf field: string label = 6
+     */
+    label: string;
+    /**
+     * @generated from protobuf field: optional string description = 7
+     */
+    description?: string;
+    /**
+     * @generated from protobuf field: bool searchable = 8
+     */
+    searchable: boolean;
+    /**
+     * @generated from protobuf field: resources.properties.PropertyValueFormat value_format = 9
+     */
+    valueFormat: PropertyValueFormat;
+    /**
+     * @generated from protobuf field: resources.properties.PropertyBehavior behavior = 10
+     */
+    behavior: PropertyBehavior;
+    /**
+     * @generated from protobuf field: resources.properties.PropertyRenderer renderer = 17
+     */
+    renderer: PropertyRenderer;
+    /**
+     * @generated from protobuf field: resources.properties.PropertyRendererConfig renderer_config = 18
+     */
+    rendererConfig?: PropertyRendererConfig;
+    /**
+     * @generated from protobuf field: resources.properties.PropertyDisplayMode display_mode = 19
+     */
+    displayMode: PropertyDisplayMode;
+    /**
+     * @generated from protobuf field: optional string unit = 11
+     */
+    unit?: string;
+    /**
+     * @generated from protobuf field: optional uint32 decimal_places = 12
+     */
+    decimalPlaces?: number;
+    /**
+     * @generated from protobuf field: optional string currency = 13
+     */
+    currency?: string;
+    /**
+     * @generated from protobuf field: string group_key = 14
+     */
+    groupKey: string;
+    /**
+     * @generated from protobuf field: int32 sort_order = 15
+     */
+    sortOrder: number;
+    /**
+     * @generated from protobuf field: bool pinned = 16
+     */
+    pinned: boolean;
+    /**
+     * @generated from protobuf field: bool implicit = 20
+     */
+    implicit: boolean;
 }
 /**
  * @generated from protobuf message codegen.perms.AdditionalServicePerm
@@ -219,7 +331,8 @@ class Attr$Type extends MessageType<Attr> {
             { no: 1, name: "key", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
             { no: 2, name: "value", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
             { no: 3, name: "type", kind: "enum", T: () => ["resources.permissions.attributes.AttributeType", AttributeType, "ATTRIBUTE_TYPE_"], options: { "buf.validate.field": { enum: { definedOnly: true } } } },
-            { no: 4, name: "valid_string_list", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 9 /*ScalarType.STRING*/ }
+            { no: 4, name: "valid_string_list", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 9 /*ScalarType.STRING*/ },
+            { no: 5, name: "property_scope", kind: "enum", opt: true, T: () => ["resources.properties.PropertyScope", PropertyScope, "PROPERTY_SCOPE_"], options: { "buf.validate.field": { enum: { definedOnly: true, notIn: [0] } } } }
         ]);
     }
     create(value?: PartialMessage<Attr>): Attr {
@@ -249,6 +362,9 @@ class Attr$Type extends MessageType<Attr> {
                 case /* repeated string valid_string_list */ 4:
                     message.validStringList.push(reader.string());
                     break;
+                case /* optional resources.properties.PropertyScope property_scope */ 5:
+                    message.propertyScope = reader.int32();
+                    break;
                 default:
                     let u = options.readUnknownField;
                     if (u === "throw")
@@ -273,6 +389,9 @@ class Attr$Type extends MessageType<Attr> {
         /* repeated string valid_string_list = 4; */
         for (let i = 0; i < message.validStringList.length; i++)
             writer.tag(4, WireType.LengthDelimited).string(message.validStringList[i]);
+        /* optional resources.properties.PropertyScope property_scope = 5; */
+        if (message.propertyScope !== undefined)
+            writer.tag(5, WireType.Varint).int32(message.propertyScope);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -291,13 +410,17 @@ class ServiceOptions$Type extends MessageType<ServiceOptions> {
             { no: 2, name: "icon", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/ },
             { no: 3, name: "namespace", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/ },
             { no: 4, name: "service", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/ },
-            { no: 5, name: "additional_perms", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => AdditionalServicePerm }
+            { no: 5, name: "additional_perms", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => AdditionalServicePerm },
+            { no: 6, name: "system_properties", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => SystemProperty },
+            { no: 7, name: "property_groups", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => PropertyGroup }
         ]);
     }
     create(value?: PartialMessage<ServiceOptions>): ServiceOptions {
         const message = globalThis.Object.create((this.messagePrototype!));
         message.order = 0;
         message.additionalPerms = [];
+        message.systemProperties = [];
+        message.propertyGroups = [];
         if (value !== undefined)
             reflectionMergePartial<ServiceOptions>(this, message, value);
         return message;
@@ -321,6 +444,12 @@ class ServiceOptions$Type extends MessageType<ServiceOptions> {
                     break;
                 case /* repeated codegen.perms.AdditionalServicePerm additional_perms */ 5:
                     message.additionalPerms.push(AdditionalServicePerm.internalBinaryRead(reader, reader.uint32(), options));
+                    break;
+                case /* repeated codegen.perms.SystemProperty system_properties */ 6:
+                    message.systemProperties.push(SystemProperty.internalBinaryRead(reader, reader.uint32(), options));
+                    break;
+                case /* repeated resources.properties.PropertyGroup property_groups */ 7:
+                    message.propertyGroups.push(PropertyGroup.internalBinaryRead(reader, reader.uint32(), options));
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -349,6 +478,12 @@ class ServiceOptions$Type extends MessageType<ServiceOptions> {
         /* repeated codegen.perms.AdditionalServicePerm additional_perms = 5; */
         for (let i = 0; i < message.additionalPerms.length; i++)
             AdditionalServicePerm.internalBinaryWrite(message.additionalPerms[i], writer.tag(5, WireType.LengthDelimited).fork(), options).join();
+        /* repeated codegen.perms.SystemProperty system_properties = 6; */
+        for (let i = 0; i < message.systemProperties.length; i++)
+            SystemProperty.internalBinaryWrite(message.systemProperties[i], writer.tag(6, WireType.LengthDelimited).fork(), options).join();
+        /* repeated resources.properties.PropertyGroup property_groups = 7; */
+        for (let i = 0; i < message.propertyGroups.length; i++)
+            PropertyGroup.internalBinaryWrite(message.propertyGroups[i], writer.tag(7, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -359,6 +494,200 @@ class ServiceOptions$Type extends MessageType<ServiceOptions> {
  * @generated MessageType for protobuf message codegen.perms.ServiceOptions
  */
 export const ServiceOptions = new ServiceOptions$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class SystemProperty$Type extends MessageType<SystemProperty> {
+    constructor() {
+        super("codegen.perms.SystemProperty", [
+            { no: 1, name: "scope", kind: "enum", T: () => ["resources.properties.PropertyScope", PropertyScope, "PROPERTY_SCOPE_"] },
+            { no: 2, name: "key", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
+            { no: 3, name: "value_type", kind: "enum", T: () => ["resources.properties.PropertyValueType", PropertyValueType, "PROPERTY_VALUE_TYPE_"] },
+            { no: 4, name: "enabled", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
+            { no: 5, name: "display_key", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
+            { no: 6, name: "label", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
+            { no: 7, name: "description", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/ },
+            { no: 8, name: "searchable", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
+            { no: 9, name: "value_format", kind: "enum", T: () => ["resources.properties.PropertyValueFormat", PropertyValueFormat, "PROPERTY_VALUE_FORMAT_"] },
+            { no: 10, name: "behavior", kind: "enum", T: () => ["resources.properties.PropertyBehavior", PropertyBehavior, "PROPERTY_BEHAVIOR_"] },
+            { no: 17, name: "renderer", kind: "enum", T: () => ["resources.properties.PropertyRenderer", PropertyRenderer, "PROPERTY_RENDERER_"] },
+            { no: 18, name: "renderer_config", kind: "message", T: () => PropertyRendererConfig },
+            { no: 19, name: "display_mode", kind: "enum", T: () => ["resources.properties.PropertyDisplayMode", PropertyDisplayMode, "PROPERTY_DISPLAY_MODE_"] },
+            { no: 11, name: "unit", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/ },
+            { no: 12, name: "decimal_places", kind: "scalar", opt: true, T: 13 /*ScalarType.UINT32*/ },
+            { no: 13, name: "currency", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/ },
+            { no: 14, name: "group_key", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
+            { no: 15, name: "sort_order", kind: "scalar", T: 5 /*ScalarType.INT32*/ },
+            { no: 16, name: "pinned", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
+            { no: 20, name: "implicit", kind: "scalar", T: 8 /*ScalarType.BOOL*/ }
+        ]);
+    }
+    create(value?: PartialMessage<SystemProperty>): SystemProperty {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        message.scope = 0;
+        message.key = "";
+        message.valueType = 0;
+        message.enabled = false;
+        message.displayKey = "";
+        message.label = "";
+        message.searchable = false;
+        message.valueFormat = 0;
+        message.behavior = 0;
+        message.renderer = 0;
+        message.displayMode = 0;
+        message.groupKey = "";
+        message.sortOrder = 0;
+        message.pinned = false;
+        message.implicit = false;
+        if (value !== undefined)
+            reflectionMergePartial<SystemProperty>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: SystemProperty): SystemProperty {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* resources.properties.PropertyScope scope */ 1:
+                    message.scope = reader.int32();
+                    break;
+                case /* string key */ 2:
+                    message.key = reader.string();
+                    break;
+                case /* resources.properties.PropertyValueType value_type */ 3:
+                    message.valueType = reader.int32();
+                    break;
+                case /* bool enabled */ 4:
+                    message.enabled = reader.bool();
+                    break;
+                case /* string display_key */ 5:
+                    message.displayKey = reader.string();
+                    break;
+                case /* string label */ 6:
+                    message.label = reader.string();
+                    break;
+                case /* optional string description */ 7:
+                    message.description = reader.string();
+                    break;
+                case /* bool searchable */ 8:
+                    message.searchable = reader.bool();
+                    break;
+                case /* resources.properties.PropertyValueFormat value_format */ 9:
+                    message.valueFormat = reader.int32();
+                    break;
+                case /* resources.properties.PropertyBehavior behavior */ 10:
+                    message.behavior = reader.int32();
+                    break;
+                case /* resources.properties.PropertyRenderer renderer */ 17:
+                    message.renderer = reader.int32();
+                    break;
+                case /* resources.properties.PropertyRendererConfig renderer_config */ 18:
+                    message.rendererConfig = PropertyRendererConfig.internalBinaryRead(reader, reader.uint32(), options, message.rendererConfig);
+                    break;
+                case /* resources.properties.PropertyDisplayMode display_mode */ 19:
+                    message.displayMode = reader.int32();
+                    break;
+                case /* optional string unit */ 11:
+                    message.unit = reader.string();
+                    break;
+                case /* optional uint32 decimal_places */ 12:
+                    message.decimalPlaces = reader.uint32();
+                    break;
+                case /* optional string currency */ 13:
+                    message.currency = reader.string();
+                    break;
+                case /* string group_key */ 14:
+                    message.groupKey = reader.string();
+                    break;
+                case /* int32 sort_order */ 15:
+                    message.sortOrder = reader.int32();
+                    break;
+                case /* bool pinned */ 16:
+                    message.pinned = reader.bool();
+                    break;
+                case /* bool implicit */ 20:
+                    message.implicit = reader.bool();
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: SystemProperty, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* resources.properties.PropertyScope scope = 1; */
+        if (message.scope !== 0)
+            writer.tag(1, WireType.Varint).int32(message.scope);
+        /* string key = 2; */
+        if (message.key !== "")
+            writer.tag(2, WireType.LengthDelimited).string(message.key);
+        /* resources.properties.PropertyValueType value_type = 3; */
+        if (message.valueType !== 0)
+            writer.tag(3, WireType.Varint).int32(message.valueType);
+        /* bool enabled = 4; */
+        if (message.enabled !== false)
+            writer.tag(4, WireType.Varint).bool(message.enabled);
+        /* string display_key = 5; */
+        if (message.displayKey !== "")
+            writer.tag(5, WireType.LengthDelimited).string(message.displayKey);
+        /* string label = 6; */
+        if (message.label !== "")
+            writer.tag(6, WireType.LengthDelimited).string(message.label);
+        /* optional string description = 7; */
+        if (message.description !== undefined)
+            writer.tag(7, WireType.LengthDelimited).string(message.description);
+        /* bool searchable = 8; */
+        if (message.searchable !== false)
+            writer.tag(8, WireType.Varint).bool(message.searchable);
+        /* resources.properties.PropertyValueFormat value_format = 9; */
+        if (message.valueFormat !== 0)
+            writer.tag(9, WireType.Varint).int32(message.valueFormat);
+        /* resources.properties.PropertyBehavior behavior = 10; */
+        if (message.behavior !== 0)
+            writer.tag(10, WireType.Varint).int32(message.behavior);
+        /* optional string unit = 11; */
+        if (message.unit !== undefined)
+            writer.tag(11, WireType.LengthDelimited).string(message.unit);
+        /* optional uint32 decimal_places = 12; */
+        if (message.decimalPlaces !== undefined)
+            writer.tag(12, WireType.Varint).uint32(message.decimalPlaces);
+        /* optional string currency = 13; */
+        if (message.currency !== undefined)
+            writer.tag(13, WireType.LengthDelimited).string(message.currency);
+        /* string group_key = 14; */
+        if (message.groupKey !== "")
+            writer.tag(14, WireType.LengthDelimited).string(message.groupKey);
+        /* int32 sort_order = 15; */
+        if (message.sortOrder !== 0)
+            writer.tag(15, WireType.Varint).int32(message.sortOrder);
+        /* bool pinned = 16; */
+        if (message.pinned !== false)
+            writer.tag(16, WireType.Varint).bool(message.pinned);
+        /* resources.properties.PropertyRenderer renderer = 17; */
+        if (message.renderer !== 0)
+            writer.tag(17, WireType.Varint).int32(message.renderer);
+        /* resources.properties.PropertyRendererConfig renderer_config = 18; */
+        if (message.rendererConfig)
+            PropertyRendererConfig.internalBinaryWrite(message.rendererConfig, writer.tag(18, WireType.LengthDelimited).fork(), options).join();
+        /* resources.properties.PropertyDisplayMode display_mode = 19; */
+        if (message.displayMode !== 0)
+            writer.tag(19, WireType.Varint).int32(message.displayMode);
+        /* bool implicit = 20; */
+        if (message.implicit !== false)
+            writer.tag(20, WireType.Varint).bool(message.implicit);
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message codegen.perms.SystemProperty
+ */
+export const SystemProperty = new SystemProperty$Type();
 // @generated message type with reflection information, may provide speed optimized methods
 class AdditionalServicePerm$Type extends MessageType<AdditionalServicePerm> {
     constructor() {

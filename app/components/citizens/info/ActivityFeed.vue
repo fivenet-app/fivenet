@@ -18,6 +18,7 @@ import DocumentInfoPopover from '~/components/partials/documents/DocumentInfoPop
 import GenericTime from '~/components/partials/elements/GenericTime.vue';
 import IDCopyBadge from '~/components/partials/IDCopyBadge.vue';
 import LabelBadge from '~/components/citizens/labels/LabelBadge.vue';
+import PropertyActivityChange from '~/components/partials/properties/PropertyActivityChange.vue';
 import { DocRelation } from '~~/gen/ts/resources/documents/relations/relations';
 import { citizenUserActivityIconColor, citizenUserActivityTypeBGColor, citizenUserActivityTypeIcon } from './helpers';
 
@@ -97,6 +98,7 @@ async function listUserActivity(values: Schema, signal: AbortSignal): Promise<Li
                 types: values.types,
                 from: toTimestamp(values.dateRange?.start),
                 to: toTimestamp(values.dateRange?.end),
+                propertyKeys: [],
             },
             { abort: signal },
         );
@@ -359,6 +361,16 @@ const denyView = computed(
                                 </template>
                                 {{ numberFormatter.format(Math.abs(activity.data.data.fineChange.amount)) }}
                             </template>
+
+                            <PropertyActivityChange
+                                v-else-if="
+                                    activity.type === UserActivityType.PROPERTY &&
+                                    activity.data?.data.oneofKind === 'propertyChange'
+                                "
+                                :property-key="activity.data.data.propertyChange.key"
+                                :old-value="activity.data.data.propertyChange.oldValue"
+                                :new-value="activity.data.data.propertyChange.newValue"
+                            />
 
                             <template v-else>{{ UserActivityType[activity.type] }}</template>
                         </template>

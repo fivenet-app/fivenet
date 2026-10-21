@@ -4,6 +4,7 @@
 // source: services/settings/cron.proto
 // source: services/settings/job_assets.proto
 // source: services/settings/laws.proto
+// source: services/settings/properties.proto
 // source: services/settings/settings.proto
 // source: services/settings/system.proto
 
@@ -68,6 +69,16 @@ func init() {
 			Attrs:     []perms.Attr{},
 			Order:     12200,
 			Icon:      "i-mdi-scale-balance",
+		},
+
+		// Service: settings.PropertyService
+		{
+			Namespace: permkeys.Namespace,
+			Service:   permkeys.PropertyServicePerm,
+			Name:      permkeys.PropertyServiceUpdatePropertyDefinitionPerm,
+			Attrs:     []perms.Attr{},
+			Order:     13000,
+			Icon:      "i-mdi-tune-variant",
 		},
 
 		// Service: settings.SettingsService

@@ -180,9 +180,9 @@ const gangPermissions = [...commonPermissions, ...documentPermissions] as const 
 
 const policeAttributes = [
     templateAttribute('citizens.CitizensService/GetUser', 'Jobs'),
-    templateAttribute('citizens.CitizensService/ListCitizens', 'Fields'),
+    templateAttribute('citizens.CitizensService/ListCitizens', 'Properties'),
     templateAttribute('citizens.CitizensService/ListUserActivity', 'Fields'),
-    templateAttribute('citizens.CitizensService/SetUserProps', 'Fields'),
+    templateAttribute('citizens.CitizensService/SetUserProps', 'Properties'),
     templateAttribute('livemap.LivemapService/Stream', 'Players'),
     templateAttribute('livemap.LivemapService/Stream', 'Markers'),
     templateAttribute('documents.DocumentsService/DeleteDocument', 'Access'),
@@ -215,9 +215,9 @@ const policeAttributes = [
     templateAttribute('documents.DocumentsService/ToggleDocumentPin', 'Types'),
     templateAttribute('qualifications.QualificationsService/UpdateQualification', 'Fields'),
     templateAttribute('centrum.CentrumService/UpdateSettings', 'Access'),
-    templateAttribute('vehicles.VehiclesService/ListVehicles', 'Fields'),
+    templateAttribute('vehicles.VehiclesService/ListVehicles', 'Properties'),
     templateAttribute('vehicles.VehiclesService/ListVehicleActivity', 'Fields'),
-    templateAttribute('vehicles.VehiclesService/SetVehicleProps', 'Fields'),
+    templateAttribute('vehicles.VehiclesService/SetVehicleProps', 'Properties'),
 ] as const satisfies readonly TemplateAttribute[];
 
 const neutralAttributes = [

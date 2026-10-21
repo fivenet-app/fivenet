@@ -328,7 +328,9 @@ func TestChooseCharacterConfigAdminEligibility(t *testing.T) {
 	require.NotNil(chooseCharRes.GetChar())
 	assert.Equal(int32(1), chooseCharRes.GetChar().GetUserId())
 	assert.Equal("user-1", chooseCharRes.GetUsername())
-	assert.True(hasPermission(chooseCharRes.GetPermissions(), perms.PermCanBeSuperuser))
+	assert.True(
+		hasPermission(chooseCharRes.GetAuthorization().GetPermissions(), perms.PermCanBeSuperuser),
+	)
 
 	updatedAccountToken := accountToken
 	for _, cookieHeader := range chooseHeaders.Get("set-cookie") {
@@ -361,7 +363,9 @@ func TestChooseCharacterConfigAdminEligibility(t *testing.T) {
 	require.NoError(err)
 	require.NotNil(impersonateRes)
 	assert.True(impersonateRes.GetState())
-	assert.True(hasPermission(impersonateRes.GetPermissions(), perms.PermCanBeSuperuser))
+	assert.True(
+		hasPermission(impersonateRes.GetAuthorization().GetPermissions(), perms.PermCanBeSuperuser),
+	)
 }
 
 func TestChooseCharacterFallsBackToAccountSessionWhenUserTokenIsMissingOrInvalid(t *testing.T) {
@@ -429,7 +433,7 @@ func TestChooseCharacterFallsBackToAccountSessionWhenUserTokenIsMissingOrInvalid
 	}, grpc.Header(&baseHeaders))
 	require.NoError(err)
 	require.NotNil(baseRes)
-	assert.False(hasPermission(baseRes.GetPermissions(), perms.PermJobAdmin))
+	assert.False(hasPermission(baseRes.GetAuthorization().GetPermissions(), perms.PermJobAdmin))
 
 	updatedAccountToken := accountToken
 	for _, cookieHeader := range baseHeaders.Get("set-cookie") {
@@ -453,7 +457,9 @@ func TestChooseCharacterFallsBackToAccountSessionWhenUserTokenIsMissingOrInvalid
 	})
 	require.NoError(err)
 	require.NotNil(superuserRes)
-	assert.True(hasPermission(superuserRes.GetPermissions(), perms.PermCanBeSuperuser))
+	assert.True(
+		hasPermission(superuserRes.GetAuthorization().GetPermissions(), perms.PermCanBeSuperuser),
+	)
 
 	parsedSuperuserClaims, err := srv.tm.ParseUserToken(superuserRes.GetToken())
 	require.NoError(err)
@@ -478,7 +484,9 @@ func TestChooseCharacterFallsBackToAccountSessionWhenUserTokenIsMissingOrInvalid
 	)
 	require.NoError(err)
 	require.NotNil(reloadedRestoreRes)
-	assert.True(hasPermission(reloadedRestoreRes.GetPermissions(), perms.PermJobAdmin))
+	assert.True(
+		hasPermission(reloadedRestoreRes.GetAuthorization().GetPermissions(), perms.PermJobAdmin),
+	)
 
 	parsedReloadedRestoreClaims, err := srv.tm.ParseUserToken(reloadedRestoreRes.GetToken())
 	require.NoError(err)
@@ -498,7 +506,9 @@ func TestChooseCharacterFallsBackToAccountSessionWhenUserTokenIsMissingOrInvalid
 	}, grpc.Header(&validRestoreHeaders))
 	require.NoError(err)
 	require.NotNil(validRestoreRes)
-	assert.True(hasPermission(validRestoreRes.GetPermissions(), perms.PermJobAdmin))
+	assert.True(
+		hasPermission(validRestoreRes.GetAuthorization().GetPermissions(), perms.PermJobAdmin),
+	)
 
 	parsedValidRestoreClaims, err := srv.tm.ParseUserToken(validRestoreRes.GetToken())
 	require.NoError(err)
@@ -521,7 +531,9 @@ func TestChooseCharacterFallsBackToAccountSessionWhenUserTokenIsMissingOrInvalid
 	)
 	require.NoError(err)
 	require.NotNil(mismatchedRestoreRes)
-	assert.False(hasPermission(mismatchedRestoreRes.GetPermissions(), perms.PermJobAdmin))
+	assert.False(
+		hasPermission(mismatchedRestoreRes.GetAuthorization().GetPermissions(), perms.PermJobAdmin),
+	)
 
 	parsedMismatchedRestoreClaims, err := srv.tm.ParseUserToken(mismatchedRestoreRes.GetToken())
 	require.NoError(err)
@@ -545,7 +557,9 @@ func TestChooseCharacterFallsBackToAccountSessionWhenUserTokenIsMissingOrInvalid
 	)
 	require.NoError(err)
 	require.NotNil(invalidRestoreRes)
-	assert.False(hasPermission(invalidRestoreRes.GetPermissions(), perms.PermJobAdmin))
+	assert.False(
+		hasPermission(invalidRestoreRes.GetAuthorization().GetPermissions(), perms.PermJobAdmin),
+	)
 }
 
 func loginAndGetAccountToken(

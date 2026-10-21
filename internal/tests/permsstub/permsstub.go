@@ -265,6 +265,21 @@ func (p *Permissions) AttrStringList(
 	return nil, nil
 }
 
+func (p *Permissions) AttrPropertyList(
+	*pbuserinfo.UserInfo,
+	perms.AttrRef[perms.PropertyListAttr],
+) (*permissionsattributes.PropertyList, error) {
+	return nil, nil
+}
+
+func (p *Permissions) AttrPropertyListContext(
+	context.Context,
+	*pbuserinfo.UserInfo,
+	perms.AttrRef[perms.PropertyListAttr],
+) (*permissionsattributes.PropertyList, error) {
+	return nil, nil
+}
+
 func (p *Permissions) AttrJobList(
 	*pbuserinfo.UserInfo,
 	perms.AttrRef[perms.JobListAttr],

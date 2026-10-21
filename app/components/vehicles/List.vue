@@ -48,7 +48,7 @@ const { open: openClipboardModal } = useClipboardModal();
 
 const notifications = useNotificationsStore();
 
-const { attr, attrStringList, can, isSuperuser } = useAuth();
+const { attr, attrPropertyList, can, isSuperuser } = useAuth();
 const overlay = useOverlay();
 const vehicleInfoSlideover = overlay.create(VehicleInfoSlideover);
 
@@ -88,7 +88,7 @@ const { validatedQuery, commitValidatedQuery } = useFormSearchValidation<typeof 
 const { data, status, refresh, error } = useAuthedLazyAsyncData(
     'userState',
     () =>
-        `vehicles-${validatedQuery.value.licensePlate}-${JSON.stringify(validatedQuery.value.userIds)}-${JSON.stringify(validatedQuery.value.sorting)}-${validatedQuery.value.page}`,
+        `vehicles-${validatedQuery.value.licensePlate}:${validatedQuery.value.wanted}-${JSON.stringify(validatedQuery.value.userIds)}-${JSON.stringify(validatedQuery.value.sorting)}-${validatedQuery.value.page}`,
     ({ signal }) => listVehicles(validatedQuery.value, signal),
 );
 
@@ -104,6 +104,7 @@ async function listVehicles(values: Schema, signal: AbortSignal): Promise<ListVe
                 model: values.model,
                 userIds: values.userIds,
                 wanted: values.wanted,
+                propertyFilters: [],
             },
             { abort: signal },
         );
@@ -173,7 +174,7 @@ const columns = computed(() =>
                         h(LicensePlate, { plate: row.original.plate, class: 'sm:min-w-40 md:min-w-48' }),
                     ]),
             },
-            attr('vehicles.VehiclesService/ListVehicles', 'Fields', 'Wanted').value
+            attr('vehicles.VehiclesService/ListVehicles', 'Properties', 'vehicle.wanted').value
                 ? {
                       accessorKey: 'wanted',
                       header: t('common.wanted'),
@@ -230,7 +231,7 @@ const columns = computed(() =>
                                   )
                                 : null,
                             !can('vehicles.VehiclesService/ListVehicleActivity').value &&
-                            (attrStringList('vehicles.VehiclesService/ListVehicles', 'Fields').value.length > 0 ||
+                            (attrPropertyList('vehicles.VehiclesService/ListVehicles', 'Properties').value.length > 0 ||
                                 isSuperuser.value)
                                 ? h(
                                       UTooltip,
@@ -353,7 +354,7 @@ defineShortcuts({
                 </UFormField>
 
                 <UFormField
-                    v-if="attr('vehicles.VehiclesService/ListVehicles', 'Fields', 'Wanted').value"
+                    v-if="attr('vehicles.VehiclesService/ListVehicles', 'Properties', 'vehicle.wanted').value"
                     class="flex flex-initial flex-col"
                     name="wanted"
                     :label="$t('common.only_wanted')"

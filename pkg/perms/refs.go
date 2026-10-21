@@ -16,11 +16,13 @@ type (
 	StringListAttr   struct{}
 	JobListAttr      struct{}
 	JobGradeListAttr struct{}
+	PropertyListAttr struct{}
 )
 
 func (StringListAttr) attrKind()   {}
 func (JobListAttr) attrKind()      {}
 func (JobGradeListAttr) attrKind() {}
+func (PropertyListAttr) attrKind() {}
 
 type PermissionRef struct {
 	namespace Namespace
@@ -88,12 +90,22 @@ type AttrRef[T AttrKind] struct {
 	key  Key
 }
 
+//nolint:iface // Separate from property list, but similar in structure.
 type StringListValue interface {
 	~string
 }
 
 type StringListAttrRef[T StringListValue] struct {
 	attr AttrRef[StringListAttr]
+}
+
+//nolint:iface // Separate from string list, but similar in structure.
+type PropertyListValue interface {
+	~string
+}
+
+type PropertyListAttrRef[T PropertyListValue] struct {
+	attr AttrRef[PropertyListAttr]
 }
 
 type TypedStringList[T StringListValue] struct {
@@ -119,12 +131,25 @@ func NewTypedStringListAttrRef[T StringListValue](
 	}
 }
 
+func NewTypedPropertyListAttrRef[T PropertyListValue](
+	perm PermissionRef,
+	key Key,
+) PropertyListAttrRef[T] {
+	return PropertyListAttrRef[T]{
+		attr: NewPropertyListAttrRef(perm, key),
+	}
+}
+
 func NewJobListAttrRef(perm PermissionRef, key Key) AttrRef[JobListAttr] {
 	return AttrRef[JobListAttr]{perm: perm, key: key}
 }
 
 func NewJobGradeListAttrRef(perm PermissionRef, key Key) AttrRef[JobGradeListAttr] {
 	return AttrRef[JobGradeListAttr]{perm: perm, key: key}
+}
+
+func NewPropertyListAttrRef(perm PermissionRef, key Key) AttrRef[PropertyListAttr] {
+	return AttrRef[PropertyListAttr]{perm: perm, key: key}
 }
 
 func (a AttrRef[T]) Permission() PermissionRef {
@@ -144,6 +169,18 @@ func (a StringListAttrRef[T]) Permission() PermissionRef {
 }
 
 func (a StringListAttrRef[T]) Key() Key {
+	return a.attr.Key()
+}
+
+func (a PropertyListAttrRef[T]) Untyped() AttrRef[PropertyListAttr] {
+	return a.attr
+}
+
+func (a PropertyListAttrRef[T]) Permission() PermissionRef {
+	return a.attr.Permission()
+}
+
+func (a PropertyListAttrRef[T]) Key() Key {
 	return a.attr.Key()
 }
 
@@ -240,6 +277,100 @@ func (s *TypedStringList[T]) Len() int {
 	return len(s.values)
 }
 
+type TypedPropertyList[T PropertyListValue] struct {
+	values []T
+}
+
+func NewTypedPropertyList[T PropertyListValue](values ...T) *TypedPropertyList[T] {
+	return &TypedPropertyList[T]{
+		values: append([]T(nil), values...),
+	}
+}
+
+func (a PropertyListAttrRef[T]) Get(
+	ps Permissions,
+	userInfo *userinfo.UserInfo,
+) (*TypedPropertyList[T], error) {
+	raw, err := ps.AttrPropertyList(userInfo, a.attr)
+	if err != nil {
+		return nil, err
+	}
+
+	vals := make([]T, len(raw.GetKeys()))
+	for i := range raw.GetKeys() {
+		vals[i] = T(raw.GetKeys()[i])
+	}
+
+	return &TypedPropertyList[T]{values: vals}, nil
+}
+
+func (s *TypedPropertyList[T]) Set(values ...T) {
+	if s == nil {
+		return
+	}
+	s.values = append(s.values[:0], values...)
+}
+
+func (s *TypedPropertyList[T]) Append(values ...T) {
+	if s == nil {
+		return
+	}
+	s.values = append(s.values, values...)
+}
+
+func (s *TypedPropertyList[T]) Values() []T {
+	if s == nil {
+		return nil
+	}
+	out := make([]T, len(s.values))
+	copy(out, s.values)
+	return out
+}
+
+func (s *TypedPropertyList[T]) Keys() []string {
+	if s == nil {
+		return nil
+	}
+	out := make([]string, len(s.values))
+	for i := range s.values {
+		out[i] = string(s.values[i])
+	}
+	return out
+}
+
+func (s *TypedPropertyList[T]) PropertyList() *permissionsattributes.PropertyList {
+	if s == nil {
+		return nil
+	}
+	return &permissionsattributes.PropertyList{Keys: s.Keys()}
+}
+
+func (s *TypedPropertyList[T]) Contains(items ...T) bool {
+	if s == nil || len(items) == 0 {
+		return false
+	}
+	for _, item := range items {
+		found := false
+		for _, value := range s.values {
+			if value == item {
+				found = true
+				break
+			}
+		}
+		if !found {
+			return false
+		}
+	}
+	return true
+}
+
+func (s *TypedPropertyList[T]) Len() int {
+	if s == nil {
+		return 0
+	}
+	return len(s.values)
+}
+
 func (ps *Perms) Can(userInfo *userinfo.UserInfo, perm PermissionRef) bool {
 	return ps.can(userInfo, perm.namespace, perm.service, perm.name)
 }
@@ -305,6 +436,19 @@ func (ps *Perms) AttrJobGradeList(
 	attr AttrRef[JobGradeListAttr],
 ) (*permissionsattributes.JobGradeList, error) {
 	return ps.attrJobGradeListRaw(
+		userInfo,
+		attr.perm.namespace,
+		attr.perm.service,
+		attr.perm.name,
+		attr.key,
+	)
+}
+
+func (ps *Perms) AttrPropertyList(
+	userInfo *userinfo.UserInfo,
+	attr AttrRef[PropertyListAttr],
+) (*permissionsattributes.PropertyList, error) {
+	return ps.attrPropertyListRaw(
 		userInfo,
 		attr.perm.namespace,
 		attr.perm.service,

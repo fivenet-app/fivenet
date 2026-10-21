@@ -7,6 +7,7 @@ import "codegen/itemslen/itemslen.proto";
 import "codegen/perms/perms.proto";
 import "codegen/sanitizer/sanitizer.proto";
 import "resources/common/database/database.proto";
+import "resources/properties/properties.proto";
 import "resources/timestamp/timestamp.proto";
 import "resources/vehicles/activity/activity.proto";
 import "resources/vehicles/props/props.proto";
@@ -28,6 +29,7 @@ message ListVehiclesRequest {
   }];
   optional string job = 6 [(buf.validate.field).string.max_len = 20];
   optional bool wanted = 7;
+  repeated resources.properties.PropertyFilter property_filters = 8 [(buf.validate.field).repeated.max_items = 8];
 }
 
 message ListVehiclesResponse {
@@ -45,6 +47,9 @@ message SetVehiclePropsRequest {
     (buf.validate.field).ignore = IGNORE_IF_ZERO_VALUE,
     (codegen.sanitizer.sanitizer) = {enabled: true}
   ];
+  // Generic custom scalar properties. Managed system properties continue to
+  // use the dedicated fields above and produce their specialized activities.
+  repeated resources.properties.PropertyChange property_changes = 3 [(buf.validate.field).repeated.max_items = 20];
 }
 
 message SetVehiclePropsResponse {
@@ -68,6 +73,13 @@ message ListVehicleActivityRequest {
   }];
   optional resources.timestamp.Timestamp from = 5;
   optional resources.timestamp.Timestamp to = 6;
+  // Restricts generic PROPERTY activity entries to these custom property keys.
+  repeated string property_keys = 7 [(buf.validate.field).repeated = {
+    max_items: 20
+    items: {
+      string: {max_len: 64}
+    }
+  }];
 }
 
 message ListVehicleActivityResponse {
@@ -79,6 +91,28 @@ service VehiclesService {
   option (codegen.perms.perms_svc) = {
     order: 40
     icon: "i-mdi-car-outline"
+    property_groups: {
+      scope: PROPERTY_SCOPE_VEHICLE
+      key: "status"
+      display_key: "components.settings.property_definitions.groups.status"
+      sort_order: 100
+    }
+    system_properties: [
+      {
+        scope: PROPERTY_SCOPE_VEHICLE
+        key: "vehicle.wanted"
+        value_type: PROPERTY_VALUE_TYPE_BOOL
+        value_format: PROPERTY_VALUE_FORMAT_PLAIN
+        behavior: PROPERTY_BEHAVIOR_MANAGED
+        enabled: true
+        pinned: true
+        display_mode: PROPERTY_DISPLAY_MODE_PROFILE_BADGE
+        display_key: "common.wanted"
+        searchable: true
+        group_key: "status"
+        sort_order: 100
+      }
+    ]
   };
 
   rpc ListVehicles(ListVehiclesRequest) returns (ListVehiclesResponse) {
@@ -86,9 +120,9 @@ service VehiclesService {
       enabled: true
       attrs: [
         {
-          key: "Fields"
-          type: ATTRIBUTE_TYPE_STRING_LIST
-          valid_string_list: ["Wanted"]
+          key: "Properties"
+          type: ATTRIBUTE_TYPE_PROPERTY_LIST
+          property_scope: PROPERTY_SCOPE_VEHICLE
         }
       ]
     };
@@ -99,9 +133,9 @@ service VehiclesService {
       enabled: true
       attrs: [
         {
-          key: "Fields"
-          type: ATTRIBUTE_TYPE_STRING_LIST
-          valid_string_list: ["Wanted"]
+          key: "Properties"
+          type: ATTRIBUTE_TYPE_PROPERTY_LIST
+          property_scope: PROPERTY_SCOPE_VEHICLE
         }
       ]
     };

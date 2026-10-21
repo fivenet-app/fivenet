@@ -4,6 +4,10 @@ export function vehicleActivityTypeBGColor(activityType: VehicleActivityType | u
     switch (activityType) {
         case VehicleActivityType.WANTED:
             return 'text-error-400!';
+        case VehicleActivityType.FILE:
+            return 'text-primary-500!';
+        case VehicleActivityType.PROPERTY:
+            return 'text-secondary-500!';
         case VehicleActivityType.UNSPECIFIED:
         default:
             return '!text-info-500';
@@ -14,6 +18,10 @@ export function vehicleActivityTypeIcon(activityType: VehicleActivityType | unde
     switch (activityType) {
         case VehicleActivityType.WANTED:
             return 'i-mdi-bell-alert';
+        case VehicleActivityType.FILE:
+            return 'i-mdi-file-outline';
+        case VehicleActivityType.PROPERTY:
+            return 'i-mdi-form-textbox';
         case VehicleActivityType.UNSPECIFIED:
         default:
             return 'i-mdi-help';
@@ -27,6 +35,10 @@ export function vehicleActivityIconColor(activity: VehicleActivity): string {
                 return activity.data.data.wantedChange.wanted ? 'text-error-400' : 'text-success-400';
             }
             break;
+        case VehicleActivityType.FILE:
+            return 'text-primary-500';
+        case VehicleActivityType.PROPERTY:
+            return 'text-secondary-500';
         case VehicleActivityType.UNSPECIFIED:
         default:
             return '';

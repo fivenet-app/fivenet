@@ -609,6 +609,18 @@ func (s *Store) setUserBloodType(ctx context.Context, tx *sql.Tx, userId int32) 
 		}
 	}
 
+	tValues := table.FivenetUserPropertyValues
+	if _, err := tValues.
+		INSERT(tValues.UserID, tValues.PropertyKey, tValues.ValueType, tValues.ValueString).
+		VALUES(userId, "user.blood_type", uint8(1), bloodType).
+		ON_DUPLICATE_KEY_UPDATE(
+			tValues.ValueType.SET(mysql.Uint8(uint8(1))),
+			tValues.ValueString.SET(mysql.String(bloodType)),
+		).
+		ExecContext(ctx, tx); err != nil {
+		return fmt.Errorf("failed to persist user blood type property. %w", err)
+	}
+
 	return nil
 }
 

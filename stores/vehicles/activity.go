@@ -5,19 +5,23 @@ import (
 	"errors"
 
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/common/database"
+	properties "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/properties"
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/timestamp"
 	vehiclesactivity "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/vehicles/activity"
 	"github.com/fivenet-app/fivenet/v2026/pkg/dbutils"
+	propertyregistry "github.com/fivenet-app/fivenet/v2026/pkg/properties"
 	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
 	"github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
 )
 
 type VehicleActivityOptions struct {
-	Plate string
-	Types []vehiclesactivity.VehicleActivityType
-	From  *timestamp.Timestamp
-	To    *timestamp.Timestamp
+	Plate               string
+	Types               []vehiclesactivity.VehicleActivityType
+	PropertyKeys        []string
+	VisiblePropertyKeys []string
+	From                *timestamp.Timestamp
+	To                  *timestamp.Timestamp
 }
 
 type CountVehicleActivityOptions struct {
@@ -33,7 +37,7 @@ type ListVehicleActivityOptions struct {
 }
 
 func buildVehicleActivityCondition(
-	tVehicleActivity *table.FivenetVehiclesActivityTable,
+	tVehicleActivity *table.FivenetVehicleActivityTable,
 	opts VehicleActivityOptions,
 ) mysql.BoolExpression {
 	condition := tVehicleActivity.Plate.EQ(mysql.String(opts.Plate))
@@ -44,6 +48,51 @@ func buildVehicleActivityCondition(
 		}
 		condition = condition.AND(tVehicleActivity.Type.IN(types...))
 	}
+	if len(opts.PropertyKeys) > 0 {
+		keys := make([]mysql.Expression, 0, len(opts.PropertyKeys))
+		for _, key := range opts.PropertyKeys {
+			keys = append(keys, mysql.String(key))
+		}
+		condition = condition.AND(
+			tVehicleActivity.Type.EQ(mysql.Int32(int32(vehiclesactivity.VehicleActivityType_VEHICLE_ACTIVITY_TYPE_PROPERTY))).
+				AND(tVehicleActivity.Key.IN(keys...)),
+		)
+	}
+	propertyActivityType := mysql.Int32(int32(
+		vehiclesactivity.VehicleActivityType_VEHICLE_ACTIVITY_TYPE_PROPERTY,
+	))
+	if len(opts.VisiblePropertyKeys) == 0 {
+		condition = condition.AND(tVehicleActivity.Type.NOT_EQ(propertyActivityType))
+	} else {
+		keys := make([]mysql.Expression, 0, len(opts.VisiblePropertyKeys))
+		for _, key := range opts.VisiblePropertyKeys {
+			keys = append(keys, mysql.String(key))
+		}
+		condition = condition.AND(mysql.OR(
+			tVehicleActivity.Type.NOT_EQ(propertyActivityType),
+			tVehicleActivity.Key.IN(keys...),
+		))
+	}
+	activeDefinitionExists := mysql.EXISTS(
+		mysql.SELECT(mysql.Int(1)).
+			FROM(table.FivenetPropertyDefinitions).
+			WHERE(mysql.AND(
+				table.FivenetPropertyDefinitions.Scope.EQ(mysql.String("vehicle")),
+				table.FivenetPropertyDefinitions.PropertyKey.EQ(tVehicleActivity.Key),
+				table.FivenetPropertyDefinitions.DeletedAt.IS_NULL(),
+			)),
+	)
+	customPropertyActivity := tVehicleActivity.Type.EQ(mysql.Int32(int32(
+		vehiclesactivity.VehicleActivityType_VEHICLE_ACTIVITY_TYPE_PROPERTY,
+	))).AND(tVehicleActivity.Key.IS_NOT_NULL()).AND(mysql.NOT(activeDefinitionExists))
+	for _, definition := range propertyregistry.SystemPropertyDefinitionsForScope(
+		properties.PropertyScope_PROPERTY_SCOPE_VEHICLE,
+	) {
+		customPropertyActivity = customPropertyActivity.AND(
+			tVehicleActivity.Key.NOT_EQ(mysql.String(definition.GetKey())),
+		)
+	}
+	condition = condition.AND(mysql.NOT(customPropertyActivity))
 	if opts.From != nil {
 		condition = condition.AND(
 			tVehicleActivity.CreatedAt.GT_EQ(dbutils.TimestampToMySQL(opts.From)),
@@ -62,7 +111,7 @@ func (s *Store) CountVehicleActivity(
 	ctx context.Context,
 	opts CountVehicleActivityOptions,
 ) (int64, error) {
-	tVehicleActivity := table.FivenetVehiclesActivity.AS("vehicle_activity")
+	tVehicleActivity := table.FivenetVehicleActivity.AS("vehicle_activity")
 
 	countStmt := tVehicleActivity.
 		SELECT(
@@ -85,7 +134,7 @@ func (s *Store) ListVehicleActivity(
 	ctx context.Context,
 	opts ListVehicleActivityOptions,
 ) ([]*vehiclesactivity.VehicleActivity, error) {
-	tVehicleActivity := table.FivenetVehiclesActivity.AS("vehicle_activity")
+	tVehicleActivity := table.FivenetVehicleActivity.AS("vehicle_activity")
 
 	orderBys := s.vehicleActivitySorter.Build(opts.Sort)
 
@@ -95,6 +144,7 @@ func (s *Store) ListVehicleActivity(
 			tVehicleActivity.CreatedAt,
 			tVehicleActivity.Plate,
 			tVehicleActivity.Type,
+			tVehicleActivity.Key,
 			tVehicleActivity.CreatorID,
 			tVehicleActivity.CreatorJob,
 			tVehicleActivity.Reason,
@@ -121,30 +171,37 @@ func (s *Store) addVehicleActivity(
 	tx qrm.DB,
 	activity *vehiclesactivity.VehicleActivity,
 ) (int64, error) {
-	tVehicleActivity := table.FivenetVehiclesActivity
-	stmt := tVehicleActivity.
-		INSERT(
+	tVehicleActivity := table.FivenetVehicleActivity
+	stmt := tVehicleActivity.INSERT(
+		tVehicleActivity.CreatorID, tVehicleActivity.Plate, tVehicleActivity.Type,
+		tVehicleActivity.CreatorJob, tVehicleActivity.Reason, tVehicleActivity.Data,
+	)
+	if activity.Key != nil {
+		stmt = tVehicleActivity.INSERT(
 			tVehicleActivity.CreatorID,
 			tVehicleActivity.Plate,
 			tVehicleActivity.Type,
+			tVehicleActivity.Key,
 			tVehicleActivity.CreatorJob,
 			tVehicleActivity.Reason,
 			tVehicleActivity.Data,
-		).
-		VALUES(
-			activity.CreatorId,
-			activity.GetPlate(),
-			activity.GetActivityType(),
-			activity.GetCreatorJob(),
-			activity.Reason,
-			activity.GetData(),
+		).VALUES(
+			activity.CreatorId, activity.GetPlate(), activity.GetActivityType(), activity.Key,
+			activity.GetCreatorJob(), activity.Reason, activity.GetData(),
 		)
+	} else {
+		stmt = stmt.VALUES(
+			activity.CreatorId, activity.GetPlate(), activity.GetActivityType(),
+			activity.GetCreatorJob(), activity.Reason, activity.GetData(),
+		)
+	}
 
 	res, err := stmt.ExecContext(ctx, tx)
 	if err != nil {
-		if !dbutils.IsDuplicateError(err) {
-			return 0, err
+		if dbutils.IsDuplicateError(err) {
+			return 0, nil
 		}
+		return 0, err
 	}
 
 	lastID, err := res.LastInsertId()

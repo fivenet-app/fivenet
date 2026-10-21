@@ -8,6 +8,7 @@ import "codegen/perms/perms.proto";
 import "codegen/sanitizer/sanitizer.proto";
 import "resources/common/database/database.proto";
 import "resources/file/filestore.proto";
+import "resources/properties/properties.proto";
 import "resources/timestamp/timestamp.proto";
 import "resources/users/activity/activity.proto";
 import "resources/users/props/props.proto";
@@ -29,6 +30,7 @@ message ListCitizensRequest {
   // Height range search (in cm)
   optional float min_height = 9;
   optional float max_height = 10;
+  repeated resources.properties.PropertyFilter property_filters = 11 [(buf.validate.field).repeated.max_items = 8];
 }
 
 message ListCitizensResponse {
@@ -59,6 +61,13 @@ message ListUserActivityRequest {
   }];
   optional resources.timestamp.Timestamp from = 5;
   optional resources.timestamp.Timestamp to = 6;
+  // Restricts generic PROPERTY activity entries to these custom property keys.
+  repeated string property_keys = 7 [(buf.validate.field).repeated = {
+    max_items: 20
+    items: {
+      string: {max_len: 64}
+    }
+  }];
 }
 
 message ListUserActivityResponse {
@@ -76,6 +85,9 @@ message SetUserPropsRequest {
     (buf.validate.field).ignore = IGNORE_IF_ZERO_VALUE,
     (codegen.sanitizer.sanitizer) = {enabled: true}
   ];
+  // Generic custom scalar properties. Managed system properties continue to
+  // use the dedicated fields above and produce their specialized activities.
+  repeated resources.properties.PropertyChange property_changes = 3 [(buf.validate.field).repeated.max_items = 20];
 }
 
 message SetUserPropsResponse {
@@ -104,6 +116,189 @@ service CitizensService {
   option (codegen.perms.perms_svc) = {
     order: 30
     icon: "i-mdi-account-multiple-outline"
+    property_groups: {
+      scope: PROPERTY_SCOPE_USER
+      key: "personal"
+      display_key: "components.settings.property_definitions.groups.personal"
+      sort_order: 100
+    }
+    property_groups: {
+      scope: PROPERTY_SCOPE_USER
+      key: "contact"
+      display_key: "components.settings.property_definitions.groups.contact"
+      sort_order: 200
+    }
+    property_groups: {
+      scope: PROPERTY_SCOPE_USER
+      key: "status"
+      display_key: "components.settings.property_definitions.groups.status"
+      sort_order: 300
+    }
+    property_groups: {
+      scope: PROPERTY_SCOPE_USER
+      key: "labels"
+      display_key: "components.settings.property_definitions.groups.labels"
+      sort_order: 400
+    }
+    property_groups: {
+      scope: PROPERTY_SCOPE_USER
+      key: "licenses"
+      display_key: "components.settings.property_definitions.groups.licenses"
+      sort_order: 500
+    }
+    system_properties: [
+      {
+        scope: PROPERTY_SCOPE_USER
+        key: "user.dateofbirth"
+        value_type: PROPERTY_VALUE_TYPE_STRING
+        enabled: true
+        implicit: true
+        display_key: "common.date_of_birth"
+        group_key: "personal"
+        sort_order: 100
+      },
+      {
+        scope: PROPERTY_SCOPE_USER
+        key: "user.sex"
+        value_type: PROPERTY_VALUE_TYPE_STRING
+        enabled: true
+        implicit: true
+        display_key: "common.sex"
+        group_key: "personal"
+        sort_order: 200
+      },
+      {
+        scope: PROPERTY_SCOPE_USER
+        key: "user.height"
+        value_type: PROPERTY_VALUE_TYPE_NUMBER
+        renderer: PROPERTY_RENDERER_HEIGHT
+        enabled: true
+        implicit: true
+        display_key: "common.height"
+        group_key: "personal"
+        sort_order: 300
+      },
+      {
+        scope: PROPERTY_SCOPE_USER
+        key: "user.phone_number"
+        value_type: PROPERTY_VALUE_TYPE_STRING
+        renderer: PROPERTY_RENDERER_PHONE
+        enabled: true
+        display_key: "common.phone_number"
+        searchable: true
+        group_key: "contact"
+        sort_order: 100
+      },
+      {
+        scope: PROPERTY_SCOPE_USER
+        key: "user.visum"
+        value_type: PROPERTY_VALUE_TYPE_INTEGER
+        enabled: true
+        implicit: true
+        display_key: "common.visum"
+        group_key: "contact"
+        sort_order: 300
+      },
+      {
+        scope: PROPERTY_SCOPE_USER
+        key: "user.licenses"
+        value_type: PROPERTY_VALUE_TYPE_STRING
+        enabled: true
+        display_key: "common.license"
+        group_key: "licenses"
+        sort_order: 100
+      },
+      {
+        scope: PROPERTY_SCOPE_USER
+        key: "user.wanted"
+        value_type: PROPERTY_VALUE_TYPE_BOOL
+        value_format: PROPERTY_VALUE_FORMAT_PLAIN
+        behavior: PROPERTY_BEHAVIOR_MANAGED
+        enabled: true
+        pinned: true
+        display_mode: PROPERTY_DISPLAY_MODE_PROFILE_BADGE
+        display_key: "common.wanted"
+        searchable: true
+        group_key: "status"
+        sort_order: 100
+      },
+      {
+        scope: PROPERTY_SCOPE_USER
+        key: "user.job"
+        value_type: PROPERTY_VALUE_TYPE_STRING
+        enabled: true
+        pinned: true
+        display_mode: PROPERTY_DISPLAY_MODE_PROFILE_BADGE
+        display_key: "common.job"
+        searchable: true
+        group_key: "status"
+        sort_order: 400
+      },
+      {
+        scope: PROPERTY_SCOPE_USER
+        key: "user.traffic_infraction_points"
+        value_type: PROPERTY_VALUE_TYPE_INTEGER
+        renderer: PROPERTY_RENDERER_TRAFFIC_POINTS
+        enabled: true
+        pinned: true
+        display_key: "common.traffic_infraction_points"
+        searchable: true
+        group_key: "status"
+        sort_order: 200
+      },
+      {
+        scope: PROPERTY_SCOPE_USER
+        key: "user.open_fines"
+        value_type: PROPERTY_VALUE_TYPE_INTEGER
+        value_format: PROPERTY_VALUE_FORMAT_MONEY
+        renderer: PROPERTY_RENDERER_MONEY
+        enabled: true
+        pinned: true
+        display_key: "common.fine"
+        searchable: true
+        group_key: "status"
+        sort_order: 300
+      },
+      {
+        scope: PROPERTY_SCOPE_USER
+        key: "user.blood_type"
+        value_type: PROPERTY_VALUE_TYPE_STRING
+        enabled: true
+        display_key: "common.blood_type"
+        searchable: true
+        group_key: "personal"
+        sort_order: 400
+      },
+      {
+        scope: PROPERTY_SCOPE_USER
+        key: "user.mugshot"
+        value_type: PROPERTY_VALUE_TYPE_STRING
+        enabled: true
+        display_key: "common.mugshot"
+        group_key: "personal"
+        sort_order: 500
+      },
+      {
+        scope: PROPERTY_SCOPE_USER
+        key: "user.labels"
+        value_type: PROPERTY_VALUE_TYPE_STRING
+        enabled: true
+        display_key: "common.label"
+        group_key: "labels"
+        sort_order: 500
+      },
+      {
+        scope: PROPERTY_SCOPE_USER
+        key: "user.email"
+        value_type: PROPERTY_VALUE_TYPE_STRING
+        renderer: PROPERTY_RENDERER_EMAIL
+        enabled: true
+        display_key: "common.mail"
+        searchable: true
+        group_key: "contact"
+        sort_order: 200
+      }
+    ]
   };
 
   rpc ListCitizens(ListCitizensRequest) returns (ListCitizensResponse) {
@@ -111,20 +306,9 @@ service CitizensService {
       enabled: true
       attrs: [
         {
-          key: "Fields"
-          type: ATTRIBUTE_TYPE_STRING_LIST
-          valid_string_list: [
-            "PhoneNumber",
-            "Licenses",
-            "UserProps.Wanted",
-            "UserProps.Job",
-            "UserProps.TrafficInfractionPoints",
-            "UserProps.OpenFines",
-            "UserProps.BloodType",
-            "UserProps.Mugshot",
-            "UserProps.Labels",
-            "UserProps.Email"
-          ]
+          key: "Properties"
+          type: ATTRIBUTE_TYPE_PROPERTY_LIST
+          property_scope: PROPERTY_SCOPE_USER
         }
       ]
     };
@@ -162,15 +346,9 @@ service CitizensService {
       enabled: true
       attrs: [
         {
-          key: "Fields"
-          type: ATTRIBUTE_TYPE_STRING_LIST
-          valid_string_list: [
-            "Wanted",
-            "Job",
-            "TrafficInfractionPoints",
-            "Mugshot",
-            "Labels"
-          ]
+          key: "Properties"
+          type: ATTRIBUTE_TYPE_PROPERTY_LIST
+          property_scope: PROPERTY_SCOPE_USER
         }
       ]
     };

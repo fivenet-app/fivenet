@@ -12,8 +12,7 @@ import { UnknownFieldHandler } from "@protobuf-ts/runtime";
 import type { PartialMessage } from "@protobuf-ts/runtime";
 import { reflectionMergePartial } from "@protobuf-ts/runtime";
 import { MessageType } from "@protobuf-ts/runtime";
-import { RoleAttribute } from "../../resources/permissions/attributes/attributes";
-import { Permission } from "../../resources/permissions/permissions/permissions";
+import { AuthorizationState } from "../../resources/permissions/authorization/authorization";
 import { User } from "../../resources/users/user";
 import { JobProps } from "../../resources/jobs/props/props";
 import { Character } from "../../resources/accounts/accounts";
@@ -253,13 +252,9 @@ export interface ChooseCharacterResponse {
      */
     char?: User;
     /**
-     * @generated from protobuf field: repeated resources.permissions.permissions.Permission permissions = 6
+     * @generated from protobuf field: resources.permissions.authorization.AuthorizationState authorization = 8
      */
-    permissions: Permission[];
-    /**
-     * @generated from protobuf field: repeated resources.permissions.attributes.RoleAttribute attributes = 7
-     */
-    attributes: RoleAttribute[];
+    authorization?: AuthorizationState;
 }
 /**
  * @generated from protobuf message services.auth.ImpersonateJobRequest
@@ -287,13 +282,9 @@ export interface ImpersonateJobResponse {
      */
     char?: User;
     /**
-     * @generated from protobuf field: repeated resources.permissions.permissions.Permission permissions = 4
+     * @generated from protobuf field: resources.permissions.authorization.AuthorizationState authorization = 7
      */
-    permissions: Permission[];
-    /**
-     * @generated from protobuf field: repeated resources.permissions.attributes.RoleAttribute attributes = 5
-     */
-    attributes: RoleAttribute[];
+    authorization?: AuthorizationState;
     /**
      * @generated from protobuf field: bool state = 6
      */
@@ -351,13 +342,9 @@ export interface SetSuperuserModeResponse {
      */
     char?: User;
     /**
-     * @generated from protobuf field: repeated resources.permissions.permissions.Permission permissions = 5
+     * @generated from protobuf field: resources.permissions.authorization.AuthorizationState authorization = 7
      */
-    permissions: Permission[];
-    /**
-     * @generated from protobuf field: repeated resources.permissions.attributes.RoleAttribute attributes = 6
-     */
-    attributes: RoleAttribute[];
+    authorization?: AuthorizationState;
 }
 // @generated message type with reflection information, may provide speed optimized methods
 class LoginRequest$Type extends MessageType<LoginRequest> {
@@ -1320,16 +1307,13 @@ class ChooseCharacterResponse$Type extends MessageType<ChooseCharacterResponse> 
             { no: 3, name: "expires", kind: "message", T: () => Timestamp },
             { no: 4, name: "job_props", kind: "message", T: () => JobProps },
             { no: 5, name: "char", kind: "message", T: () => User, options: { "tagger.tags": "alias:\"user\"" } },
-            { no: 6, name: "permissions", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => Permission },
-            { no: 7, name: "attributes", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => RoleAttribute }
+            { no: 8, name: "authorization", kind: "message", T: () => AuthorizationState }
         ]);
     }
     create(value?: PartialMessage<ChooseCharacterResponse>): ChooseCharacterResponse {
         const message = globalThis.Object.create((this.messagePrototype!));
         message.token = "";
         message.username = "";
-        message.permissions = [];
-        message.attributes = [];
         if (value !== undefined)
             reflectionMergePartial<ChooseCharacterResponse>(this, message, value);
         return message;
@@ -1354,11 +1338,8 @@ class ChooseCharacterResponse$Type extends MessageType<ChooseCharacterResponse> 
                 case /* resources.users.User char */ 5:
                     message.char = User.internalBinaryRead(reader, reader.uint32(), options, message.char);
                     break;
-                case /* repeated resources.permissions.permissions.Permission permissions */ 6:
-                    message.permissions.push(Permission.internalBinaryRead(reader, reader.uint32(), options));
-                    break;
-                case /* repeated resources.permissions.attributes.RoleAttribute attributes */ 7:
-                    message.attributes.push(RoleAttribute.internalBinaryRead(reader, reader.uint32(), options));
+                case /* resources.permissions.authorization.AuthorizationState authorization */ 8:
+                    message.authorization = AuthorizationState.internalBinaryRead(reader, reader.uint32(), options, message.authorization);
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -1387,12 +1368,9 @@ class ChooseCharacterResponse$Type extends MessageType<ChooseCharacterResponse> 
         /* resources.users.User char = 5; */
         if (message.char)
             User.internalBinaryWrite(message.char, writer.tag(5, WireType.LengthDelimited).fork(), options).join();
-        /* repeated resources.permissions.permissions.Permission permissions = 6; */
-        for (let i = 0; i < message.permissions.length; i++)
-            Permission.internalBinaryWrite(message.permissions[i], writer.tag(6, WireType.LengthDelimited).fork(), options).join();
-        /* repeated resources.permissions.attributes.RoleAttribute attributes = 7; */
-        for (let i = 0; i < message.attributes.length; i++)
-            RoleAttribute.internalBinaryWrite(message.attributes[i], writer.tag(7, WireType.LengthDelimited).fork(), options).join();
+        /* resources.permissions.authorization.AuthorizationState authorization = 8; */
+        if (message.authorization)
+            AuthorizationState.internalBinaryWrite(message.authorization, writer.tag(8, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -1457,16 +1435,13 @@ class ImpersonateJobResponse$Type extends MessageType<ImpersonateJobResponse> {
             { no: 1, name: "token", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
             { no: 2, name: "expires", kind: "message", T: () => Timestamp },
             { no: 3, name: "char", kind: "message", T: () => User, options: { "tagger.tags": "alias:\"user\"" } },
-            { no: 4, name: "permissions", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => Permission },
-            { no: 5, name: "attributes", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => RoleAttribute },
+            { no: 7, name: "authorization", kind: "message", T: () => AuthorizationState },
             { no: 6, name: "state", kind: "scalar", T: 8 /*ScalarType.BOOL*/ }
         ]);
     }
     create(value?: PartialMessage<ImpersonateJobResponse>): ImpersonateJobResponse {
         const message = globalThis.Object.create((this.messagePrototype!));
         message.token = "";
-        message.permissions = [];
-        message.attributes = [];
         message.state = false;
         if (value !== undefined)
             reflectionMergePartial<ImpersonateJobResponse>(this, message, value);
@@ -1486,11 +1461,8 @@ class ImpersonateJobResponse$Type extends MessageType<ImpersonateJobResponse> {
                 case /* resources.users.User char */ 3:
                     message.char = User.internalBinaryRead(reader, reader.uint32(), options, message.char);
                     break;
-                case /* repeated resources.permissions.permissions.Permission permissions */ 4:
-                    message.permissions.push(Permission.internalBinaryRead(reader, reader.uint32(), options));
-                    break;
-                case /* repeated resources.permissions.attributes.RoleAttribute attributes */ 5:
-                    message.attributes.push(RoleAttribute.internalBinaryRead(reader, reader.uint32(), options));
+                case /* resources.permissions.authorization.AuthorizationState authorization */ 7:
+                    message.authorization = AuthorizationState.internalBinaryRead(reader, reader.uint32(), options, message.authorization);
                     break;
                 case /* bool state */ 6:
                     message.state = reader.bool();
@@ -1516,15 +1488,12 @@ class ImpersonateJobResponse$Type extends MessageType<ImpersonateJobResponse> {
         /* resources.users.User char = 3; */
         if (message.char)
             User.internalBinaryWrite(message.char, writer.tag(3, WireType.LengthDelimited).fork(), options).join();
-        /* repeated resources.permissions.permissions.Permission permissions = 4; */
-        for (let i = 0; i < message.permissions.length; i++)
-            Permission.internalBinaryWrite(message.permissions[i], writer.tag(4, WireType.LengthDelimited).fork(), options).join();
-        /* repeated resources.permissions.attributes.RoleAttribute attributes = 5; */
-        for (let i = 0; i < message.attributes.length; i++)
-            RoleAttribute.internalBinaryWrite(message.attributes[i], writer.tag(5, WireType.LengthDelimited).fork(), options).join();
         /* bool state = 6; */
         if (message.state !== false)
             writer.tag(6, WireType.Varint).bool(message.state);
+        /* resources.permissions.authorization.AuthorizationState authorization = 7; */
+        if (message.authorization)
+            AuthorizationState.internalBinaryWrite(message.authorization, writer.tag(7, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -1691,15 +1660,12 @@ class SetSuperuserModeResponse$Type extends MessageType<SetSuperuserModeResponse
             { no: 2, name: "expires", kind: "message", T: () => Timestamp },
             { no: 3, name: "job_props", kind: "message", T: () => JobProps },
             { no: 4, name: "char", kind: "message", T: () => User, options: { "tagger.tags": "alias:\"user\"" } },
-            { no: 5, name: "permissions", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => Permission },
-            { no: 6, name: "attributes", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => RoleAttribute }
+            { no: 7, name: "authorization", kind: "message", T: () => AuthorizationState }
         ]);
     }
     create(value?: PartialMessage<SetSuperuserModeResponse>): SetSuperuserModeResponse {
         const message = globalThis.Object.create((this.messagePrototype!));
         message.token = "";
-        message.permissions = [];
-        message.attributes = [];
         if (value !== undefined)
             reflectionMergePartial<SetSuperuserModeResponse>(this, message, value);
         return message;
@@ -1721,11 +1687,8 @@ class SetSuperuserModeResponse$Type extends MessageType<SetSuperuserModeResponse
                 case /* resources.users.User char */ 4:
                     message.char = User.internalBinaryRead(reader, reader.uint32(), options, message.char);
                     break;
-                case /* repeated resources.permissions.permissions.Permission permissions */ 5:
-                    message.permissions.push(Permission.internalBinaryRead(reader, reader.uint32(), options));
-                    break;
-                case /* repeated resources.permissions.attributes.RoleAttribute attributes */ 6:
-                    message.attributes.push(RoleAttribute.internalBinaryRead(reader, reader.uint32(), options));
+                case /* resources.permissions.authorization.AuthorizationState authorization */ 7:
+                    message.authorization = AuthorizationState.internalBinaryRead(reader, reader.uint32(), options, message.authorization);
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -1751,12 +1714,9 @@ class SetSuperuserModeResponse$Type extends MessageType<SetSuperuserModeResponse
         /* resources.users.User char = 4; */
         if (message.char)
             User.internalBinaryWrite(message.char, writer.tag(4, WireType.LengthDelimited).fork(), options).join();
-        /* repeated resources.permissions.permissions.Permission permissions = 5; */
-        for (let i = 0; i < message.permissions.length; i++)
-            Permission.internalBinaryWrite(message.permissions[i], writer.tag(5, WireType.LengthDelimited).fork(), options).join();
-        /* repeated resources.permissions.attributes.RoleAttribute attributes = 6; */
-        for (let i = 0; i < message.attributes.length; i++)
-            RoleAttribute.internalBinaryWrite(message.attributes[i], writer.tag(6, WireType.LengthDelimited).fork(), options).join();
+        /* resources.permissions.authorization.AuthorizationState authorization = 7; */
+        if (message.authorization)
+            AuthorizationState.internalBinaryWrite(message.authorization, writer.tag(7, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);

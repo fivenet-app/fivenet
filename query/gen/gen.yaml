@@ -23,6 +23,7 @@ includeTables:
     - company
     - timestamp
   "phone_services_messages":
+    - id
     - channel_id
     - message
     - x_pos

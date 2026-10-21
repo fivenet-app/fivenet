@@ -77,6 +77,7 @@ async function listCitizens(values: Schema, signal: AbortSignal): Promise<ListCi
                 offset: calculateOffset(values.page, data.value?.pagination),
             },
             sort: values.sorting,
+            propertyFilters: [],
             search: values.name ?? '',
         };
         if (values.wanted) {
@@ -192,7 +193,7 @@ const columns = computed(() =>
                         row.original.sex?.toUpperCase() ?? t('common.na'),
                     ),
             },
-            attr('citizens.CitizensService/ListCitizens', 'Fields', 'PhoneNumber').value
+            attr('citizens.CitizensService/ListCitizens', 'Properties', 'user.phone_number').value
                 ? {
                       accessorKey: 'phoneNumber',
                       header: t('common.phone_number'),
@@ -210,7 +211,7 @@ const columns = computed(() =>
                 },
                 cell: ({ row }) => row.original.dateofbirth,
             },
-            attr('citizens.CitizensService/ListCitizens', 'Fields', 'UserProps.TrafficInfractionPoints').value
+            attr('citizens.CitizensService/ListCitizens', 'Properties', 'user.traffic_infraction_points').value
                 ? {
                       accessorKey: 'trafficInfractionPoints',
                       header: ({ column }) => {
@@ -222,7 +223,7 @@ const columns = computed(() =>
                       cell: ({ row }) => row.original.props?.trafficInfractionPoints,
                   }
                 : undefined,
-            attr('citizens.CitizensService/ListCitizens', 'Fields', 'UserProps.OpenFines').value
+            attr('citizens.CitizensService/ListCitizens', 'Properties', 'user.open_fines').value
                 ? {
                       accessorKey: 'openFines',
                       header: ({ column }) => {
@@ -372,7 +373,7 @@ defineShortcuts({
                         </UFormField>
 
                         <UFormField
-                            v-if="attr('citizens.CitizensService/ListCitizens', 'Fields', 'UserProps.Wanted').value"
+                            v-if="attr('citizens.CitizensService/ListCitizens', 'Properties', 'user.wanted').value"
                             class="flex flex-initial flex-col"
                             name="wanted"
                             :label="$t('common.only_wanted')"
@@ -402,7 +403,10 @@ defineShortcuts({
                             <div class="flex flex-col gap-1">
                                 <div class="flex flex-row gap-2">
                                     <UFormField
-                                        v-if="attr('citizens.CitizensService/ListCitizens', 'Fields', 'PhoneNumber').value"
+                                        v-if="
+                                            attr('citizens.CitizensService/ListCitizens', 'Properties', 'user.phone_number')
+                                                .value
+                                        "
                                         class="flex-1"
                                         name="phoneNumber"
                                         :label="$t('common.phone_number')"
@@ -439,8 +443,11 @@ defineShortcuts({
                                 <div class="flex flex-row gap-2">
                                     <UFormField
                                         v-if="
-                                            attr('citizens.CitizensService/ListCitizens', 'Fields', 'TrafficInfractionPoints')
-                                                .value
+                                            attr(
+                                                'citizens.CitizensService/ListCitizens',
+                                                'Properties',
+                                                'user.traffic_infraction_points',
+                                            ).value
                                         "
                                         class="flex-1"
                                         name="trafficInfractionPoints"
@@ -457,7 +464,7 @@ defineShortcuts({
 
                                     <UFormField
                                         v-if="
-                                            attr('citizens.CitizensService/ListCitizens', 'Fields', 'UserProps.OpenFines').value
+                                            attr('citizens.CitizensService/ListCitizens', 'Properties', 'user.open_fines').value
                                         "
                                         class="flex-1"
                                         name="openFines"

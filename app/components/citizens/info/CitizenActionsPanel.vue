@@ -3,6 +3,7 @@ import Actions from '~/components/citizens/info/Actions.vue';
 import SetLabels from '~/components/citizens/info/props/SetLabels.vue';
 import type { File } from '~~/gen/ts/resources/file/file';
 import type { Job, JobGrade } from '~~/gen/ts/resources/jobs/jobs';
+import type { Properties } from '~~/gen/ts/resources/properties/properties';
 import type { UserProps } from '~~/gen/ts/resources/users/props/props';
 import type { User } from '~~/gen/ts/resources/users/user';
 
@@ -16,6 +17,7 @@ const emit = defineEmits<{
     (e: 'update:job', value: { job: Job; grade: JobGrade }): void;
     (e: 'update:trafficInfractionPoints', value: number): void;
     (e: 'update:mugshot', value?: File): void;
+    (e: 'update:properties', value: Properties | undefined): void;
 }>();
 
 const { attr } = useAuth();
@@ -30,9 +32,10 @@ const { attr } = useAuth();
             @update:job="emit('update:job', $event)"
             @update:traffic-infraction-points="emit('update:trafficInfractionPoints', $event)"
             @update:mug-shot="emit('update:mugshot', $event)"
+            @update:properties="emit('update:properties', $event)"
         />
 
-        <template v-if="attr('citizens.CitizensService/ListCitizens', 'Fields', 'UserProps.Labels').value">
+        <template v-if="attr('citizens.CitizensService/ListCitizens', 'Properties', 'user.labels').value">
             <USeparator />
 
             <div class="flex flex-col gap-2">

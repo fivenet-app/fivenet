@@ -12,6 +12,7 @@ import type { PartialMessage } from "@protobuf-ts/runtime";
 import { reflectionMergePartial } from "@protobuf-ts/runtime";
 import { MessageType } from "@protobuf-ts/runtime";
 import { Timestamp } from "../timestamp/timestamp";
+import { Properties } from "../properties/properties";
 import { License } from "../citizens/licenses/licenses";
 import { UserProps } from "./props/props";
 /**
@@ -98,6 +99,10 @@ export interface User {
      * @generated from protobuf field: optional string profile_picture = 18
      */
     profilePicture?: string;
+    /**
+     * @generated from protobuf field: optional resources.properties.Properties properties = 21
+     */
+    properties?: Properties;
 }
 /**
  * @generated from protobuf message resources.users.PhoneNumber
@@ -184,7 +189,8 @@ class User$Type extends MessageType<User> {
             { no: 15, name: "props", kind: "message", T: () => UserProps, options: { "tagger.tags": "alias:\"fivenet_user_props\"" } },
             { no: 16, name: "licenses", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => License, options: { "tagger.tags": "alias:\"user_licenses\"" } },
             { no: 17, name: "profile_picture_file_id", kind: "scalar", opt: true, T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ },
-            { no: 18, name: "profile_picture", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/ }
+            { no: 18, name: "profile_picture", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/ },
+            { no: 21, name: "properties", kind: "message", T: () => Properties }
         ]);
     }
     create(value?: PartialMessage<User>): User {
@@ -268,6 +274,9 @@ class User$Type extends MessageType<User> {
                 case /* optional string profile_picture */ 18:
                     message.profilePicture = reader.string();
                     break;
+                case /* optional resources.properties.Properties properties */ 21:
+                    message.properties = Properties.internalBinaryRead(reader, reader.uint32(), options, message.properties);
+                    break;
                 default:
                     let u = options.readUnknownField;
                     if (u === "throw")
@@ -340,6 +349,9 @@ class User$Type extends MessageType<User> {
         /* repeated resources.users.UserJob jobs = 20; */
         for (let i = 0; i < message.jobs.length; i++)
             UserJob.internalBinaryWrite(message.jobs[i], writer.tag(20, WireType.LengthDelimited).fork(), options).join();
+        /* optional resources.properties.Properties properties = 21; */
+        if (message.properties)
+            Properties.internalBinaryWrite(message.properties, writer.tag(21, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
