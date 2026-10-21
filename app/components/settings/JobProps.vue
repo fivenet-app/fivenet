@@ -20,6 +20,7 @@ import GenericImg from '../partials/elements/GenericImg.vue';
 import FormatBuilder from '../partials/FormatBuilder.vue';
 import NotSupportedTabletBlock from '../partials/NotSupportedTabletBlock.vue';
 import SelectMenu from '../partials/SelectMenu.vue';
+import { removeJobLogo } from './jobPropsLogo';
 
 const { t } = useI18n();
 
@@ -127,6 +128,7 @@ const state = reactive<Schema>({
 });
 
 const pendingJobLogo = ref<File | undefined>();
+const isDeletingJobLogo = ref(false);
 const { hasUnsavedChanges, syncSnapshot } = useSnapshotChanges(state, {
     dirty: computed(() => pendingJobLogo.value !== undefined),
 });
@@ -379,6 +381,28 @@ function handleJobLogoUpload(file: File | null | undefined): void {
     pendingJobLogo.value = file ?? undefined;
 }
 
+async function deleteJobLogo(): Promise<void> {
+    if (isDeletingJobLogo.value) return;
+
+    isDeletingJobLogo.value = true;
+    try {
+        await removeJobLogo({
+            deleteLogo: async () => settingsSettingsClient.deleteJobLogo({}),
+            jobProps: jobProps.value,
+            setAuthJobProps: authStore.setJobProps,
+            clearPendingLogo: () => (pendingJobLogo.value = undefined),
+            notifySuccess: () =>
+                notifications.add({
+                    title: { key: 'notifications.action_successful.title', parameters: {} },
+                    description: { key: 'notifications.action_successful.content', parameters: {} },
+                    type: NotificationType.SUCCESS,
+                }),
+        });
+    } finally {
+        isDeletingJobLogo.value = false;
+    }
+}
+
 const selectedChange = ref<DiscordSyncChange | undefined>();
 
 const formRef = useTemplateRef('formRef');
@@ -471,6 +495,7 @@ const confirmModal = overlay.create(ConfirmModal);
                                             <UFileUpload
                                                 class="w-full flex-1 grow"
                                                 position="inside"
+                                                :model-value="pendingJobLogo"
                                                 :disabled="!canSubmit || !canEdit"
                                                 :accept="appConfig.fileUpload.types.images.join(',')"
                                                 :placeholder="$t('common.image')"
@@ -491,11 +516,13 @@ const confirmModal = overlay.create(ConfirmModal);
                                                 variant="outline"
                                                 color="error"
                                                 trailing-icon="i-mdi-clear"
+                                                :disabled="isDeletingJobLogo"
+                                                :loading="isDeletingJobLogo"
                                                 :label="$t('common.remove')"
                                                 @click="
                                                     () => {
                                                         confirmModal.open({
-                                                            confirm: () => settingsSettingsClient.deleteJobLogo({}),
+                                                            confirm: deleteJobLogo,
                                                         });
                                                     }
                                                 "
