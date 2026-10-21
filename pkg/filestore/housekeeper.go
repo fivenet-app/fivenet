@@ -82,14 +82,17 @@ type HousekeeperParams struct {
 	TP *tracesdk.TracerProvider
 	// DB is the SQL database connection.
 	DB *sql.DB
+	// Storage is the backend used for deleting file objects.
+	Storage storage.IStorage
 }
 
 // NewHousekeeper constructs a new Housekeeper and registers it for cron jobs.
 func NewHousekeeper(p HousekeeperParams) Result {
 	h := &Housekeeper{
-		logger: p.Logger.Named("housekeeper"),
-		tracer: p.TP.Tracer("filestore-housekeeper"),
-		db:     p.DB,
+		logger:  p.Logger.Named("housekeeper"),
+		tracer:  p.TP.Tracer("filestore-housekeeper"),
+		db:      p.DB,
+		storage: p.Storage,
 
 		getTablesListFn: func() []joinInfo {
 			tableListsMu.Lock()
