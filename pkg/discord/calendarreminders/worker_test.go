@@ -254,6 +254,24 @@ func TestExpandReminderOccurrencesFastForwardsRecurringEntries(t *testing.T) {
 	)
 }
 
+func TestReminderMaxStepMinutesAllowsStartTimeReminders(t *testing.T) {
+	t.Parallel()
+
+	calendars := []*reminderCalendar{
+		{
+			Calendar: &calendarresource.Calendar{
+				DiscordSettings: &calendarresource.CalendarDiscordSettings{
+					ReminderSteps: []*calendarresource.CalendarDiscordReminderStep{
+						{AtMinute: 0, Message: new("at start")},
+					},
+				},
+			},
+		},
+	}
+
+	assert.Equal(t, int32(0), reminderMaxStepMinutes(calendars))
+}
+
 func TestExpandReminderOccurrencesReturnsManualOccurrenceForNonRecurringEntry(t *testing.T) {
 	t.Parallel()
 

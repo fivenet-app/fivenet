@@ -115,16 +115,13 @@ func NewWorker(p Params) *Worker {
 func (w *Worker) run(ctx context.Context) error {
 	calendars, err := w.loadReminderCalendars(ctx)
 	if err != nil {
-		return err
+		return fmt.Errorf("failed to load reminder calendars. %w", err)
 	}
 	if len(calendars) == 0 {
 		return nil
 	}
 
 	maxStepMinutes := reminderMaxStepMinutes(calendars)
-	if maxStepMinutes <= 0 {
-		return nil
-	}
 
 	now := w.nowFn().UTC()
 	rangeEnd := now.Add(time.Duration(maxStepMinutes) * time.Minute)
