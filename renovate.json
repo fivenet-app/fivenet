@@ -50,6 +50,11 @@
         }
     ],
     "postUpdateOptions": ["gomodTidy", "pnpmDedupe"],
+    "postUpgradeTasks": {
+        "commands": ["go work sync"],
+        "fileMatch": ["go.work"],
+        "executionMode": "update"
+    },
     "dependencyDashboard": true,
     "nix": {
         "enabled": true
