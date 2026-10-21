@@ -30,8 +30,8 @@ const (
 	UserAgentPrefix = "FiveNet Image Proxy "
 
 	proxyTimeout = 15 * time.Second
-	maxImageSize = 10 << 20
-	maxRedirects = 10
+	maxImageSize = 5 << 20 // 5 MiB
+	maxRedirects = 5
 )
 
 var nonPublicIPPrefixes = []netip.Prefix{

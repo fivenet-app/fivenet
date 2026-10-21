@@ -265,7 +265,7 @@ func NewEngine(p EngineParams) (*gin.Engine, error) {
 	// GRPC-web and websocket handling
 	wrapperGrpc := grpcws.WrapServer(p.GRPCSrv,
 		grpcws.WithAllowedRequestHeaders(allowedHeaders),
-		grpcws.WithWebsocketsMessageReadLimit(1*1024*1024), // 1 MB
+		grpcws.WithWebsocketsMessageReadLimit(1*1024*1024), // 1 MiB
 		grpcws.WithValidateTokenFunc(func(token string) (bool, error) {
 			claims, err := p.TokenMgr.ParseUserToken(token)
 			return claims != nil && claims.UserID > 0, err

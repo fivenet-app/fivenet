@@ -19,7 +19,7 @@ log:
     # Contains the configuration for log rotation.
     rotation:
       # MaxSize is the maximum size in megabytes of the log file before it gets rotated.
-      maxSize: 100 # MB
+      maxSize: 100 # MiB
       # MaxBackups is the maximum number of old log files to retain.
       maxBackups: 7
       # MaxAge is the maximum number of days to retain old log files based on the timestamp.
