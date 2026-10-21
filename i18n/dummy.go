@@ -1,6 +1,10 @@
 package i18n
 
-import "fmt"
+import (
+	"fmt"
+
+	"github.com/markusmobius/go-dateparser"
+)
 
 type Dummy struct{}
 
@@ -10,6 +14,12 @@ func NewDummy() Ii18n {
 
 func (d *Dummy) Langs() []string {
 	return []string{"en", "de"}
+}
+
+func (d *Dummy) GetDateParserConfig() *dateparser.Configuration {
+	return &dateparser.Configuration{
+		Languages: []string{"en", "de"},
+	}
 }
 
 func (d *Dummy) GetFallbackLanguage() string {
