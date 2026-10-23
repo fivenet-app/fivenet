@@ -666,12 +666,14 @@ func (s *UnitDB) Update(
 	if err := s.LoadFromDB(ctx, unit.GetId()); err != nil {
 		return nil, err
 	}
-
-	if err := s.updateInKV(ctx, unit.GetId(), unit); err != nil {
+	if err := s.refreshProjectionSideEffects(ctx, unit.GetId()); err != nil {
 		return nil, err
 	}
-
-	return unit, nil
+	loaded, err := s.Get(ctx, unit.GetId())
+	if err != nil {
+		return nil, err
+	}
+	return loaded, nil
 }
 
 func (s *UnitDB) Delete(ctx context.Context, id int64) error {

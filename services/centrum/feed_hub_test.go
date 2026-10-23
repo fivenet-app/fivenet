@@ -60,6 +60,23 @@ func newFeedHubTestServer(t *testing.T) (*Server, context.CancelFunc) {
 	return srv, cancel
 }
 
+func TestKVFeedConsumerNamesAreUniquePerProjection(t *testing.T) {
+	t.Parallel()
+
+	names := make(map[string]string, len(feeds))
+	for _, feed := range feeds {
+		name := kvFeedConsumerName(feed)
+		if previous, ok := names[name]; ok {
+			t.Fatalf("feeds %q and %q share consumer name %q", previous, feed.KeyPrefix, name)
+		}
+		names[name] = feed.KeyPrefix
+	}
+
+	assert.Equal(t, "KV_centrum_settings", kvFeedConsumerName(feeds[0]))
+	assert.Equal(t, "KV_centrum_units_spec", kvFeedConsumerName(feeds[3]))
+	assert.Equal(t, "KV_centrum_dispatches_assignments", kvFeedConsumerName(feeds[8]))
+}
+
 func TestFeedHubPublishesResyncEvent(t *testing.T) {
 	t.Parallel()
 
@@ -111,7 +128,7 @@ func TestFeedHubCoalescesDispatchMappingEvents(t *testing.T) {
 	defer srv.feedBroker.Unsubscribe(feed)
 
 	for _, job := range []string{"ambulance", "fire", "police"} {
-		srv.queueDispatchFeedEvent(job, &pbcentrum.StreamResponse{
+		srv.queueDispatchFeedEventContext(ctx, job, &pbcentrum.StreamResponse{
 			Change: &pbcentrum.StreamResponse_DispatchUpdated{
 				DispatchUpdated: &centrumdispatches.Dispatch{Id: 42},
 			},
@@ -123,6 +140,54 @@ func TestFeedHubCoalescesDispatchMappingEvents(t *testing.T) {
 	})
 	assert.Equal(t, []string{"ambulance", "fire", "police"}, event.Jobs)
 	assert.Equal(t, uint64(7), event.Response.GetKvRevision())
+}
+
+func TestFeedHubDoesNotReuseSpecRevisionForComposedDispatchComponents(t *testing.T) {
+	t.Parallel()
+
+	ctx, cancel := context.WithCancel(t.Context())
+	defer cancel()
+	srv := &Server{
+		feedBroker: broker.NewWithResyncOnSlowSubscriber[*feedEvent](10),
+		metrics:    centrummetrics.Get(),
+	}
+	go srv.feedBroker.Start(ctx)
+
+	feed := srv.feedBroker.Subscribe()
+	defer srv.feedBroker.Unsubscribe(feed)
+
+	srv.queueDispatchFeedEventContext(ctx, "police", &pbcentrum.StreamResponse{
+		Change: &pbcentrum.StreamResponse_DispatchUpdated{
+			DispatchUpdated: &centrumdispatches.Dispatch{
+				Id:     42,
+				Status: &centrumdispatches.DispatchStatus{DispatchId: 42},
+			},
+		},
+	}, 101)
+
+	seen := map[string]uint64{}
+	deadline := time.NewTimer(time.Second)
+	defer deadline.Stop()
+	for len(seen) < 3 {
+		select {
+		case event := <-feed:
+			response := event.Response
+			switch {
+			case response.GetDispatchSpecUpdated() != nil:
+				seen["spec"] = response.GetKvRevision()
+			case response.GetDispatchAssignmentsUpdated() != nil:
+				seen["assignments"] = response.GetKvRevision()
+			case response.GetDispatchStatus() != nil:
+				seen["status"] = response.GetKvRevision()
+			}
+		case <-deadline.C:
+			require.FailNow(t, "timed out waiting for composed dispatch components")
+		}
+	}
+
+	require.Equal(t, uint64(101), seen["spec"])
+	require.Zero(t, seen["assignments"])
+	require.Zero(t, seen["status"])
 }
 
 func TestFeedHubPublishesDispatchComponentToEveryJob(t *testing.T) {
@@ -154,7 +219,7 @@ func TestFeedHubPublishesDispatchComponentToEveryJob(t *testing.T) {
 		Change: &pbcentrum.StreamResponse_DispatchSpecUpdated{DispatchSpecUpdated: spec},
 	}
 	for _, job := range jobs {
-		srv.queueDispatchFeedEvent(job, response, 7)
+		srv.queueDispatchFeedEventContext(ctx, job, response, 7)
 	}
 
 	event := waitForFeedEvent(t, feed, func(event *feedEvent) bool {
@@ -208,12 +273,12 @@ func TestFeedHubPreservesDispatchUpdateBeforeDeletion(t *testing.T) {
 	feed := srv.feedBroker.Subscribe()
 	defer srv.feedBroker.Unsubscribe(feed)
 
-	srv.queueDispatchFeedEvent("ambulance", &pbcentrum.StreamResponse{
+	srv.queueDispatchFeedEventContext(ctx, "ambulance", &pbcentrum.StreamResponse{
 		Change: &pbcentrum.StreamResponse_DispatchUpdated{
 			DispatchUpdated: &centrumdispatches.Dispatch{Id: 42},
 		},
 	}, 7)
-	srv.queueDispatchFeedEvent("ambulance", &pbcentrum.StreamResponse{
+	srv.queueDispatchFeedEventContext(ctx, "ambulance", &pbcentrum.StreamResponse{
 		Change: &pbcentrum.StreamResponse_DispatchDeleted{DispatchDeleted: 42},
 	}, 8)
 

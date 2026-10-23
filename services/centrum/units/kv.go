@@ -80,7 +80,7 @@ func (s *UnitDB) RangeMembers(fn func(string, *centrumunits.UnitAssignments) boo
 	s.membersStore.Range(fn)
 }
 
-func (s *UnitDB) updateInKV(ctx context.Context, id int64, unit *centrumunits.Unit) error {
+func (s *UnitDB) updateSpecInKV(ctx context.Context, id int64, unit *centrumunits.Unit) error {
 	if unit == nil {
 		return s.deleteInKV(ctx, id)
 	}
@@ -88,17 +88,6 @@ func (s *UnitDB) updateInKV(ctx context.Context, id int64, unit *centrumunits.Un
 	key := centrumutils.IdKey(id)
 	oldSpec, _ := s.specStore.Get(key)
 	if _, err := s.specStore.PutIfChanged(ctx, key, unitSpecFromUnit(unit)); err != nil {
-		return err
-	}
-	if unit.Status != nil {
-		if _, err := s.statusStore.PutIfChanged(ctx, key, unit.Status); err != nil {
-			return err
-		}
-	} else if err := s.statusStore.Delete(ctx, key); err != nil && !errors.Is(err, jetstream.ErrKeyNotFound) {
-		return err
-	}
-	members := &centrumunits.UnitAssignments{UnitId: id, Job: unit.GetJob(), Users: unit.GetUsers()}
-	if _, err := s.membersStore.PutIfChanged(ctx, key, members); err != nil {
 		return err
 	}
 	if oldSpec != nil && oldSpec.GetJob() != "" && oldSpec.GetJob() != unit.GetJob() {
@@ -109,6 +98,24 @@ func (s *UnitDB) updateInKV(ctx context.Context, id int64, unit *centrumunits.Un
 			!errors.Is(err, jetstream.ErrKeyNotFound) {
 			return err
 		}
+	}
+	return nil
+}
+
+func (s *UnitDB) updateInKV(ctx context.Context, id int64, unit *centrumunits.Unit) error {
+	if err := s.updateSpecInKV(ctx, id, unit); err != nil {
+		return err
+	}
+	if unit == nil {
+		return nil
+	}
+	key := centrumutils.IdKey(id)
+	if err := s.putStatusIfNewer(ctx, key, unit.Status); err != nil {
+		return err
+	}
+	members := &centrumunits.UnitAssignments{UnitId: id, Job: unit.GetJob(), Users: unit.GetUsers()}
+	if _, err := s.membersStore.PutIfChanged(ctx, key, members); err != nil {
+		return err
 	}
 
 	return s.refreshProjectionSideEffects(ctx, id)
@@ -239,10 +246,34 @@ func (s *UnitDB) updateStatusInKV(
 	if status == nil {
 		return nil
 	}
-	if _, err := s.statusStore.PutIfChanged(ctx, centrumutils.IdKey(id), status); err != nil {
+	if err := s.putStatusIfNewer(ctx, centrumutils.IdKey(id), status); err != nil {
 		return err
 	}
 	return s.refreshProjectionSideEffects(ctx, id)
+}
+
+// putStatusIfNewer applies a database snapshot without regressing a status
+// written by a concurrent runtime update. The comparison must happen inside
+// ComputeUpdate so it is repeated after a KV revision conflict.
+func (s *UnitDB) putStatusIfNewer(
+	ctx context.Context,
+	key string,
+	status *centrumunits.UnitStatus,
+) error {
+	_, err := s.statusStore.ComputeUpdate(
+		ctx,
+		key,
+		func(_ string, existing *centrumunits.UnitStatus) (*centrumunits.UnitStatus, bool, error) {
+			if status == nil {
+				return existing, false, nil
+			}
+			if existing != nil && existing.GetId() >= status.GetId() {
+				return existing, false, nil
+			}
+			return status, true, nil
+		},
+	)
+	return err
 }
 
 func (s *UnitDB) refreshProjectionSideEffects(ctx context.Context, id int64) error {
