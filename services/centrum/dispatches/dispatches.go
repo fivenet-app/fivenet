@@ -794,6 +794,9 @@ func (s *DispatchDB) Create(
 			return nil, errorscentrum.ErrDispatchNoJobs
 		}
 	}
+	if dsp.GetCreatedAt() == nil {
+		dsp.CreatedAt = timestamp.Now()
+	}
 	s.EnrichJobLabels(dsp)
 
 	if dsp.Postal == nil || dsp.GetPostal() == "" {
@@ -841,7 +844,7 @@ func (s *DispatchDB) Create(
 			tDispatch.CreatorID,
 		).
 		VALUES(
-			mysql.CURRENT_TIMESTAMP(),
+			dsp.GetCreatedAt(),
 			dsp.GetJobs(),
 			dsp.GetMessage(),
 			dsp.Description,
