@@ -31,7 +31,7 @@
         "@iconify-json/simple-icons": "1.2.100",
         "@internationalized/date": "3.12.4",
         "@nuxt/content": "3.16.2",
-        "@nuxt/fonts": "1.0.1",
+        "@nuxt/fonts": "1.1.0",
         "@nuxt/image": "2.2.0",
         "@nuxt/ui": "4.12.0",
         "@nuxtjs/robots": "7.0.2",
@@ -146,7 +146,7 @@
         "eslint": "10.13.0",
         "eslint-config-prettier": "10.1.8",
         "eslint-plugin-prettier": "5.5.7",
-        "h3-next": "npm:h3@2.0.7",
+        "h3-next": "npm:h3@2.0.8",
         "happy-dom": "21.0.4",
         "nuxt": "4.6.2",
         "nuxt-tiptap-editor": "3.4.0",
@@ -159,10 +159,10 @@
         "prettier-plugin-organize-imports": "4.3.0",
         "prettier-plugin-tailwindcss": "0.8.1",
         "release-it": "21.1.1",
-        "sass": "1.106.0",
+        "sass": "1.106.1",
         "tailwindcss": "4.3.3",
         "typescript": "catalog:",
-        "vite": "8.3.4",
+        "vite": "8.3.5",
         "vitest": "5.0.5",
         "vue-router": "5.4.0",
         "vue-tsc": "3.3.13",
@@ -175,5 +175,5 @@
         "@tiptap/pm": "3.32.0",
         "@tiptap/vue-3": "3.32.0"
     },
-    "packageManager": "pnpm@12.14.0"
+    "packageManager": "pnpm@12.15.0"
 }
