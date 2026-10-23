@@ -99,6 +99,9 @@ func (s *DispatchDB) updateAssignments(
 	expiresAt time.Time,
 	expiredOnly bool,
 ) (int, error) {
+	unlock := s.lockProjection(dspId)
+	defer unlock()
+
 	s.logger.Debug(
 		"updating dispatch assignments",
 		zap.Int32p("user_id", creatorId),
@@ -453,6 +456,9 @@ func (s *DispatchDB) updateAssignments(
 		Job:        job,
 		Units:      finalAssignments,
 	}); err != nil {
+		return 0, err
+	}
+	if err := s.TouchActivity(ctx, dspId); err != nil {
 		return 0, err
 	}
 	if currentStatusID > 0 {
@@ -837,6 +843,20 @@ func (s *DispatchDB) TakeDispatch(
 
 	tDispatchUnit := table.FivenetCentrumDispatchesAsgmts
 
+	// Hold all dispatch projection locks in a stable order for the complete
+	// multi-dispatch operation. This keeps deletion from interleaving with the
+	// SQL mutation and its component writes, without allowing duplicate IDs or
+	// differing request orders to deadlock.
+	projectionIDs := slices.Clone(dispatchIds)
+	slices.Sort(projectionIDs)
+	for i, dspId := range projectionIDs {
+		if i > 0 && projectionIDs[i-1] == dspId {
+			continue
+		}
+		unlock := s.lockProjection(dspId)
+		defer unlock()
+	}
+
 	for _, dspId := range dispatchIds {
 		var statusToPublish *centrumdispatches.DispatchStatus
 		var publishJobs []string
@@ -975,7 +995,9 @@ func (s *DispatchDB) TakeDispatch(
 
 			if !preserveOperationalStatus {
 				if statusToPublish != nil {
-					if _, err := s.statusStore.PutIfChanged(ctx, key, statusToPublish); err != nil {
+					if err := s.putStatusIfActive(ctx, key, statusToPublish, statusWriteGuard{
+						resp: resp, remainingAssignments: len(dsp.GetUnits()),
+					}); err != nil {
 						return errswrap.NewError(err, errorscentrum.ErrFailedQuery)
 					}
 				}

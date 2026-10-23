@@ -6,6 +6,7 @@ import (
 	"slices"
 	"strconv"
 	"strings"
+	"sync"
 	"time"
 
 	centrumdispatches "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/centrum/dispatches"
@@ -47,7 +48,7 @@ func (s *DispatchDB) SpecStore() *store.Store[centrumdispatches.DispatchSpec, *c
 	return s.specStore
 }
 
-func (s *DispatchDB) syncComponents(
+func (s *DispatchDB) syncSpec(
 	ctx context.Context,
 	dispatch *centrumdispatches.Dispatch,
 ) error {
@@ -74,10 +75,6 @@ func (s *DispatchDB) syncComponents(
 		CreatorId:   dispatch.CreatorId,
 		Creator:     dispatch.Creator,
 		References:  dispatch.GetReferences(),
-	}
-	job := ""
-	if jobs := dispatch.GetJobs().GetJobStrings(); len(jobs) > 0 {
-		job = jobs[0]
 	}
 	if _, err := s.specStore.PutIfChanged(ctx, key, spec); err != nil {
 		return err
@@ -113,6 +110,21 @@ func (s *DispatchDB) syncComponents(
 			}
 		}
 	}
+	if err := s.TouchActivity(ctx, dispatch.GetId()); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (s *DispatchDB) syncComponents(
+	ctx context.Context,
+	dispatch *centrumdispatches.Dispatch,
+) error {
+	key := centrumutils.IdKey(dispatch.GetId())
+	job := ""
+	if jobs := dispatch.GetJobs().GetJobStrings(); len(jobs) > 0 {
+		job = jobs[0]
+	}
 	if _, err := s.assignmentsStore.PutIfChanged(
 		ctx,
 		key,
@@ -124,35 +136,52 @@ func (s *DispatchDB) syncComponents(
 	); err != nil {
 		return err
 	}
-	if dispatch.GetStatus() != nil {
-		if _, err := s.statusStore.PutIfChanged(ctx, key, dispatch.GetStatus()); err != nil {
-			return err
-		}
-	} else if err := s.statusStore.Delete(ctx, key); err != nil && !errors.Is(err, jetstream.ErrKeyNotFound) {
+	if err := s.putStatusIfNewer(ctx, key, dispatch.GetStatus()); err != nil {
+		return err
+	}
+	// Expose the spec only after all runtime components are initialized.
+	if err := s.syncSpec(ctx, dispatch); err != nil {
 		return err
 	}
 	return nil
 }
 
+func (s *DispatchDB) lockProjection(id int64) func() {
+	s.projectionLocksMu.Lock()
+	if s.projectionLocks == nil {
+		s.projectionLocks = make(map[int64]*sync.Mutex)
+	}
+	lock, ok := s.projectionLocks[id]
+	if !ok {
+		lock = &sync.Mutex{}
+		s.projectionLocks[id] = lock
+	}
+	s.projectionLocksMu.Unlock()
+
+	lock.Lock()
+	return lock.Unlock
+}
+
 func (s *DispatchDB) deleteComponents(ctx context.Context, id int64) error {
 	key := centrumutils.IdKey(id)
 	var errs error
+	// Delete components before the job index. The index is the delete-feed
+	// source, so clients must not observe the tombstone while a component write
+	// can still publish a later revision. Callers hold the per-dispatch lock so
+	// component writes cannot get between these deletes.
+	for _, deleteFn := range []func(context.Context, string) error{s.specStore.Delete, s.assignmentsStore.Delete, s.statusStore.Delete} {
+		if err := deleteFn(ctx, key); err != nil && !errors.Is(err, jetstream.ErrKeyNotFound) {
+			errs = errors.Join(errs, err)
+		}
+	}
 	// The job index is also the delete-feed source. Delete every mapping for
 	// this ID, including stale mappings left behind by an interrupted update.
 	for _, jobKey := range s.jobMapping.KeysFiltered("", func(jobKey string) bool {
 		mappedID, err := centrumutils.ExtractID(jobKey)
 		return err == nil && mappedID == id
 	}) {
-		if err := s.jobMapping.Delete(
-			ctx,
-			jobKey,
-		); err != nil &&
+		if err := s.jobMapping.Delete(ctx, jobKey); err != nil &&
 			!errors.Is(err, jetstream.ErrKeyNotFound) {
-			errs = errors.Join(errs, err)
-		}
-	}
-	for _, deleteFn := range []func(context.Context, string) error{s.specStore.Delete, s.assignmentsStore.Delete, s.statusStore.Delete} {
-		if err := deleteFn(ctx, key); err != nil && !errors.Is(err, jetstream.ErrKeyNotFound) {
 			errs = errors.Join(errs, err)
 		}
 	}
@@ -165,6 +194,8 @@ func (s *DispatchDB) updateTakeDispatchProjection(
 	unit *centrumunits.Unit,
 	resp centrumdispatches.TakeDispatchResp,
 ) (*centrumdispatches.Dispatch, bool, bool, error) {
+	// TakeDispatch holds the projection lock for the complete operation,
+	// including this helper. Do not acquire the same non-reentrant mutex here.
 	dsp, err := s.Get(ctx, dispatchID)
 	if err != nil {
 		return nil, false, false, err
@@ -173,55 +204,172 @@ func (s *DispatchDB) updateTakeDispatchProjection(
 		(dsp.GetStatus() != nil && centrumutils.IsStatusDispatchComplete(dsp.GetStatus().GetStatus())) {
 		return nil, false, false, errorscentrum.ErrDispatchAlreadyCompleted
 	}
-	var preserveOperationalStatus bool
-	if resp == centrumdispatches.TakeDispatchResp_TAKE_DISPATCH_RESP_ACCEPTED {
-		found := false
-		for _, assignment := range dsp.GetUnits() {
-			if assignment.GetUnitId() != unit.GetId() {
-				continue
-			}
-			found = true
-			if assignment.GetExpiresAt() == nil {
-				return dsp, false, false, nil
-			}
-			assignment.ExpiresAt = nil
-			break
-		}
-		if !found {
-			dsp.Units = append(dsp.Units, &centrumdispatches.DispatchAssignment{
-				DispatchId: dsp.GetId(),
-				UnitId:     unit.GetId(),
-				Unit:       unit,
-				CreatedAt:  timestamp.Now(),
-			})
-		}
-		preserveOperationalStatus = centrumutils.IsStatusDispatchOperational(
-			dsp.GetStatus().GetStatus(),
-		)
-	} else {
-		dsp.Units = slices.DeleteFunc(
-			dsp.GetUnits(),
-			func(in *centrumdispatches.DispatchAssignment) bool {
-				return in.GetUnitId() == unit.GetId()
-			},
-		)
-		preserveOperationalStatus = len(dsp.GetUnits()) > 0 &&
-			centrumutils.IsStatusDispatchOperational(dsp.GetStatus().GetStatus())
-	}
+	key := centrumutils.IdKey(dispatchID)
 	job := ""
 	if jobs := dsp.GetJobs().GetJobStrings(); len(jobs) > 0 {
 		job = jobs[0]
 	}
-	if _, err := s.assignmentsStore.PutIfChanged(
+	projectionChanged := false
+	projection, err := s.assignmentsStore.ComputeUpdate(
 		ctx,
-		centrumutils.IdKey(dispatchID),
-		&centrumdispatches.DispatchAssignments{
-			DispatchId: dispatchID, Job: job, Units: dsp.GetUnits(),
+		key,
+		func(_ string, existing *centrumdispatches.DispatchAssignments) (*centrumdispatches.DispatchAssignments, bool, error) {
+			projectionChanged = false
+			changed := false
+			if existing == nil {
+				existing = &centrumdispatches.DispatchAssignments{DispatchId: dispatchID, Job: job}
+			}
+
+			if resp == centrumdispatches.TakeDispatchResp_TAKE_DISPATCH_RESP_ACCEPTED {
+				found := false
+				for i := range existing.GetUnits() {
+					if existing.GetUnits()[i].GetUnitId() != unit.GetId() {
+						continue
+					}
+					found = true
+					if existing.GetUnits()[i].GetExpiresAt() != nil {
+						existing.GetUnits()[i].ExpiresAt = nil
+						changed = true
+					}
+					break
+				}
+				if !found {
+					existing.Units = append(
+						existing.GetUnits(),
+						&centrumdispatches.DispatchAssignment{
+							DispatchId: dispatchID,
+							UnitId:     unit.GetId(),
+							Unit:       unit,
+							CreatedAt:  timestamp.Now(),
+						},
+					)
+					changed = true
+				}
+			} else {
+				before := len(existing.GetUnits())
+				existing.Units = slices.DeleteFunc(
+					existing.GetUnits(),
+					func(in *centrumdispatches.DispatchAssignment) bool {
+						return in.GetUnitId() == unit.GetId()
+					},
+				)
+				changed = len(existing.GetUnits()) != before
+			}
+
+			if !changed {
+				return existing, false, nil
+			}
+			projectionChanged = true
+			return existing, true, nil
 		},
-	); err != nil {
+	)
+	if err != nil {
+		return nil, false, false, err
+	}
+	if !projectionChanged {
+		return dsp, false, false, nil
+	}
+	if projection != nil {
+		dsp.Units = projection.GetUnits()
+	}
+	preserveOperationalStatus := centrumutils.IsStatusDispatchOperational(
+		dsp.GetStatus().GetStatus(),
+	) &&
+		(resp == centrumdispatches.TakeDispatchResp_TAKE_DISPATCH_RESP_ACCEPTED || len(dsp.GetUnits()) > 0)
+	if err := s.TouchActivity(ctx, dispatchID); err != nil {
 		return nil, false, false, err
 	}
 	return dsp, true, preserveOperationalStatus, nil
+}
+
+// putStatusIfActive writes a unit response only while the dispatch is still
+// active. The terminal-status check must run inside ComputeUpdate so a
+// concurrent completion is rechecked after a KV revision conflict.
+type statusWriteGuard struct {
+	resp                 centrumdispatches.TakeDispatchResp
+	remainingAssignments int
+}
+
+func (s *DispatchDB) putStatusIfActive(
+	ctx context.Context,
+	key string,
+	status *centrumdispatches.DispatchStatus,
+	guards ...statusWriteGuard,
+) error {
+	var guard statusWriteGuard
+	if len(guards) > 0 {
+		guard = guards[0]
+	}
+	_, err := s.statusStore.ComputeUpdate(
+		ctx,
+		key,
+		func(_ string, existing *centrumdispatches.DispatchStatus) (*centrumdispatches.DispatchStatus, bool, error) {
+			if existing != nil && centrumutils.IsStatusDispatchComplete(existing.GetStatus()) {
+				return existing, false, nil
+			}
+			if existing != nil && centrumutils.IsStatusDispatchOperational(existing.GetStatus()) &&
+				(guard.resp == centrumdispatches.TakeDispatchResp_TAKE_DISPATCH_RESP_ACCEPTED || guard.remainingAssignments > 0) {
+				return existing, false, nil
+			}
+			return status, true, nil
+		},
+	)
+	return err
+}
+
+// ComponentRevision returns the current KV revision for a dispatch component.
+func (s *DispatchDB) ComponentRevision(ctx context.Context, id int64, component string) (uint64, error) {
+	if s == nil {
+		return 0, errors.New("dispatch projection store is not initialized")
+	}
+	key := centrumutils.IdKey(id)
+	var kv jetstream.KeyValue
+	switch component {
+	case "assignments":
+		if s.assignmentsStore == nil {
+			return 0, errors.New("dispatch assignment projection is not initialized")
+		}
+		kv = s.assignmentsStore.KV()
+	case "status":
+		if s.statusStore == nil {
+			return 0, errors.New("dispatch status projection is not initialized")
+		}
+		kv = s.statusStore.KV()
+	default:
+		if s.specStore == nil {
+			return 0, errors.New("dispatch specification projection is not initialized")
+		}
+		kv = s.specStore.KV()
+	}
+	entry, err := kv.Get(ctx, key)
+	if err != nil {
+		return 0, err
+	}
+	return entry.Revision(), nil
+}
+
+// putStatusIfNewer applies a database snapshot without regressing a status
+// written by a concurrent runtime update. The comparison must happen inside
+// ComputeUpdate so it is repeated after a KV revision conflict.
+func (s *DispatchDB) putStatusIfNewer(
+	ctx context.Context,
+	key string,
+	status *centrumdispatches.DispatchStatus,
+) error {
+	_, err := s.statusStore.ComputeUpdate(
+		ctx,
+		key,
+		func(_ string, existing *centrumdispatches.DispatchStatus) (*centrumdispatches.DispatchStatus, bool, error) {
+			if status == nil {
+				return existing, false, nil
+			}
+			if existing != nil && existing.GetId() >= status.GetId() {
+				return existing, false, nil
+			}
+			return status, true, nil
+		},
+	)
+	return err
 }
 
 func (s *DispatchDB) IdleStore() jetstream.KeyValue {
@@ -233,7 +381,13 @@ func (s *DispatchDB) updateInKV(
 	id int64,
 	dsp *centrumdispatches.Dispatch,
 ) error {
+	unlock := s.lockProjection(id)
+	defer unlock()
+
 	if err := s.syncComponents(ctx, dsp); err != nil {
+		return err
+	}
+	if err := s.UpdateDispatchLocation(dsp); err != nil {
 		return err
 	}
 	if err := s.ScheduleProjectionCleanup(ctx, id, dsp.GetCreatedAt()); err != nil {
@@ -250,7 +404,21 @@ func (s *DispatchDB) updateInKV(
 }
 
 func (s *DispatchDB) deleteInKV(ctx context.Context, id int64) error {
-	return s.deleteComponents(ctx, id)
+	unlock := s.lockProjection(id)
+	defer unlock()
+
+	err := s.deleteComponents(ctx, id)
+	s.RemoveDispatchLocation(id)
+	if s.idleKV != nil {
+		if deleteErr := s.idleKV.Delete(
+			ctx,
+			"idle."+centrumutils.IdKey(id),
+		); deleteErr != nil &&
+			!errors.Is(deleteErr, jetstream.ErrKeyNotFound) {
+			err = errors.Join(err, deleteErr)
+		}
+	}
+	return err
 }
 
 func (s *DispatchDB) Get(ctx context.Context, id int64) (*centrumdispatches.Dispatch, error) {
@@ -397,8 +565,13 @@ func (s *DispatchDB) updateStatusInKV(
 	if status == nil || s.statusStore == nil {
 		return nil
 	}
-	_, err := s.statusStore.PutIfChanged(ctx, centrumutils.IdKey(id), status)
-	return err
+	unlock := s.lockProjection(id)
+	defer unlock()
+
+	if _, err := s.statusStore.PutIfChanged(ctx, centrumutils.IdKey(id), status); err != nil {
+		return err
+	}
+	return s.TouchActivity(ctx, id)
 }
 
 const (

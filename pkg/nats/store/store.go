@@ -581,7 +581,8 @@ func (s *Store[T, U]) updateFromType(key string, incoming U, _ bool) U {
 		// so callers holding it see the current state without retaining fields
 		// which are absent from the incoming snapshot.
 		if !proto.Equal(current, incoming) {
-			current.Merge(incoming)
+			proto.Reset(current)
+			proto.Merge(current, incoming)
 		}
 
 		// Note: onUpdate must be triggered externally after this call if needed
@@ -1187,6 +1188,11 @@ func (k *KeyValueEntry[T, U]) Key() string {
 // Operation is the operation that was performed on the key.
 func (k *KeyValueEntry[T, U]) Operation() jetstream.KeyValueOp {
 	return k.operation
+}
+
+// Revision is the JetStream KV revision associated with this update.
+func (k *KeyValueEntry[T, U]) Revision() uint64 {
+	return k.revision
 }
 
 // Value is the value of the key that was retrieved.

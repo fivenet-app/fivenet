@@ -175,6 +175,28 @@ export const useCentrumStore = defineStore(
             }
         };
 
+        const pruneComponentRevisionTombstones = <T extends string>(
+            revisionsByResource: Map<number, Map<T, ProjectionRevision>>,
+        ): void => {
+            const now = Date.now();
+            const tombstones: [number, T, ProjectionRevision][] = [];
+            for (const [id, revisions] of revisionsByResource) {
+                for (const [component, revision] of revisions) {
+                    if (revision.deletedAt === undefined) continue;
+                    if (now - revision.deletedAt >= revisionTombstoneLifetime) {
+                        revisions.delete(component);
+                        continue;
+                    }
+                    tombstones.push([id, component, revision]);
+                }
+                if (revisions.size === 0) revisionsByResource.delete(id);
+            }
+            tombstones.sort(([, a], [, b]) => a.deletedAt! - b.deletedAt!);
+            for (const [id, component] of tombstones.slice(0, Math.max(0, tombstones.length - maxRevisionTombstones))) {
+                revisionsByResource.get(id)?.delete(component);
+            }
+        };
+
         /**
          * Removes a dispatch from the pending dispatches.
          * @param {number} id - The ID of the dispatch to remove.
@@ -410,6 +432,8 @@ export const useCentrumStore = defineStore(
             const current = revisions.get(component);
             if (current && revision <= current.revision) return false;
             revisions.set(component, { revision });
+            const aggregate = unitRevisions.get(id)?.revision ?? 0;
+            if (revision > aggregate) unitRevisions.set(id, { revision });
             return true;
         };
 
@@ -588,6 +612,8 @@ export const useCentrumStore = defineStore(
             const current = revisions.get(component);
             if (current && revision <= current.revision) return false;
             revisions.set(component, { revision });
+            const aggregate = dispatchRevisions.get(id)?.revision ?? 0;
+            if (revision > aggregate) dispatchRevisions.set(id, { revision });
             return true;
         };
 
@@ -1238,6 +1264,8 @@ export const useCentrumStore = defineStore(
                         ) {
                             continue;
                         }
+                        const existing = units.value.get(resp.change.unitStatus.unitId);
+                        if (!existing && resp.kvRevision <= 0) continue;
                         ensureUnitProjection(resp.change.unitStatus.unitId);
                         updateUnitStatus(resp.change.unitStatus);
 
@@ -1318,10 +1346,13 @@ export const useCentrumStore = defineStore(
                             continue;
                         }
 
-                        ensureDispatchProjection(ds.dispatchId);
+                        const existing = dispatches.value.get(ds.dispatchId);
+                        if (!existing && resp.kvRevision <= 0) continue;
+                        const dispatch = ensureDispatchProjection(ds.dispatchId);
                         if (isCenter.value) addFeedItem(ds);
 
                         const statusApplied = updateDispatchStatus(ds);
+                        if (statusApplied) handleDispatchAssignment(dispatch);
 
                         if (ds.status === StatusDispatch.COMPLETED) {
                             // Play sound if one of the user's own dispatches got completed
@@ -1564,7 +1595,9 @@ export const useCentrumStore = defineStore(
             const now = new Date().getTime() - timeCorrection.value;
 
             pruneRevisionTombstones(unitRevisions);
+            pruneComponentRevisionTombstones(unitComponentRevisions);
             pruneRevisionTombstones(dispatchRevisions);
+            pruneComponentRevisionTombstones(dispatchComponentRevisions);
 
             // Cleanup pending dispatches
             for (const pd of [...pendingDispatches.value]) {

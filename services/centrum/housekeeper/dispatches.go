@@ -531,22 +531,7 @@ func (s *Housekeeper) deleteOldDispatchesFromKV(ctx context.Context) (int, int, 
 			continue
 		}
 
-		dispatchIDString, err := centrumutils.ExtractIDString(strings.TrimPrefix(key, "spec."))
-		if err != nil {
-			s.logger.Error(
-				"failed to extract dispatch ID from key",
-				zap.String("key", key),
-				zap.Error(err),
-			)
-			errs = multierr.Append(
-				errs,
-				fmt.Errorf("failed to extract dispatch ID from key %q. %w", key, err),
-			)
-			invalid++
-			continue
-		}
-
-		dispatchID, err := strconv.ParseInt(dispatchIDString, 10, 64)
+		dispatchID, err := strconv.ParseInt(strings.TrimPrefix(key, "spec."), 10, 64)
 		if err != nil {
 			invalid++
 			continue
@@ -576,7 +561,7 @@ func (s *Housekeeper) deleteOldDispatchesFromKV(ctx context.Context) (int, int, 
 		completed := dispatch.GetStatus() != nil &&
 			centrumutils.IsStatusDispatchComplete(dispatch.GetStatus().GetStatus()) &&
 			time.Since(dispatch.GetStatus().GetCreatedAt().AsTime()) > 15*time.Minute
-		if old || dispatch.GetStatus() == nil || completed {
+		if old || completed {
 			s.logger.Debug(
 				"old dispatch deleted from kv",
 				zap.Int64("dispatch_id", dispatch.GetId()),

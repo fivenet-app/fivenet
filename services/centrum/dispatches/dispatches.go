@@ -32,7 +32,6 @@ import (
 	"github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
 	"github.com/nats-io/nats.go/jetstream"
-	"github.com/paulmach/orb"
 	"github.com/prometheus/client_golang/prometheus"
 	"go.uber.org/fx"
 	"go.uber.org/zap"
@@ -80,8 +79,11 @@ type DispatchDB struct {
 	settings *settings.SettingsDB
 	units    *units.UnitDB
 
-	dispatchLocationsMutex *sync.Mutex
-	dispatchLocations      map[string]*coords.Coords[*centrumdispatches.Dispatch]
+	dispatchLocationsMutex  *sync.Mutex
+	dispatchLocations       map[string]*coords.Coords[*centrumdispatches.Dispatch]
+	dispatchLocationEntries map[int64]map[string]*centrumdispatches.Dispatch
+	projectionLocksMu       sync.Mutex
+	projectionLocks         map[int64]*sync.Mutex
 
 	specStore        *store.Store[centrumdispatches.DispatchSpec, *centrumdispatches.DispatchSpec]
 	assignmentsStore *store.Store[centrumdispatches.DispatchAssignments, *centrumdispatches.DispatchAssignments]
@@ -131,9 +133,11 @@ func New(p Params) *DispatchDB {
 		settings: p.Settings,
 		units:    p.Units,
 
-		dispatchLocationsMutex: &sync.Mutex{},
-		dispatchLocations:      map[string]*coords.Coords[*centrumdispatches.Dispatch]{},
-		metrics:                getDispatchMetrics(),
+		dispatchLocationsMutex:  &sync.Mutex{},
+		dispatchLocations:       map[string]*coords.Coords[*centrumdispatches.Dispatch]{},
+		dispatchLocationEntries: map[int64]map[string]*centrumdispatches.Dispatch{},
+		projectionLocks:         make(map[int64]*sync.Mutex),
+		metrics:                 getDispatchMetrics(),
 	}
 
 	p.LC.Append(fx.StartHook(func(ctxStartup context.Context) error {
@@ -383,31 +387,12 @@ func (s *DispatchDB) LoadFromDB(ctx context.Context, cond mysql.BoolExpression) 
 		if _, err := s.Update(ctx, nil, dsp); err != nil {
 			return 0, err
 		}
+		if err := s.syncComponents(ctx, dsp); err != nil {
+			return 0, err
+		}
 
-		for _, job := range dsp.GetJobs().GetJobStrings() {
-			locs := s.GetLocations(job)
-			if locs == nil {
-				continue
-			}
-
-			if !locs.Has(dsp, centrumdispatches.DispatchPointMatchFn(dsp.GetId())) {
-				locs.Add(dsp)
-			} else {
-				err := locs.Replace(
-					dsp,
-					centrumdispatches.DispatchPointMatchFn(dsp.GetId()),
-					func(p1, p2 orb.Pointer) bool {
-						return p1.Point().Equal(p2.Point())
-					},
-				)
-				if err != nil {
-					s.logger.Error(
-						"failed to replace dispatch in locations",
-						zap.Int64("dispatch_id", dsp.GetId()),
-						zap.Error(err),
-					)
-				}
-			}
+		if err := s.UpdateDispatchLocation(dsp); err != nil {
+			return 0, err
 		}
 	}
 
@@ -461,8 +446,10 @@ func (s *DispatchDB) removeOrphanedProjections(ctx context.Context) error {
 			return fmt.Errorf("failed to check dispatch projection %d: %w", dispatch.GetId(), err)
 		}
 
+		unlock := s.lockProjection(dispatch.GetId())
 		if err := s.deleteComponents(ctx, dispatch.GetId()); err != nil &&
 			!errors.Is(err, jetstream.ErrKeyNotFound) {
+			unlock()
 			return fmt.Errorf(
 				"failed to remove orphaned dispatch projection %d: %w",
 				dispatch.GetId(),
@@ -479,6 +466,7 @@ func (s *DispatchDB) removeOrphanedProjections(ctx context.Context) error {
 				centrumutils.JobIdKey(job, dispatch.GetId()),
 			); err != nil &&
 				!errors.Is(err, jetstream.ErrKeyNotFound) {
+				unlock()
 				return fmt.Errorf(
 					"failed to remove orphaned dispatch job mapping %d: %w",
 					dispatch.GetId(),
@@ -486,6 +474,7 @@ func (s *DispatchDB) removeOrphanedProjections(ctx context.Context) error {
 				)
 			}
 		}
+		unlock()
 	}
 
 	return nil
@@ -666,7 +655,14 @@ func (s *DispatchDB) Update(
 		return nil, err
 	}
 
-	if err := s.updateInKV(ctx, dsp.GetId(), dsp); err != nil {
+	if err := s.syncSpec(ctx, dsp); err != nil {
+		return nil, err
+	}
+	current, err := s.Get(ctx, dsp.GetId())
+	if err != nil {
+		return nil, err
+	}
+	if err := s.UpdateDispatchLocation(current); err != nil {
 		return nil, err
 	}
 

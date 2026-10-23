@@ -9,6 +9,8 @@ import (
 	"time"
 
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/common/tests"
+	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/cron"
+	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/timestamp"
 	"github.com/fivenet-app/fivenet/v2026/internal/tests/nats"
 	"github.com/nats-io/nats.go/jetstream"
 	"github.com/stretchr/testify/assert"
@@ -321,6 +323,36 @@ func TestBasicStoreCreateAndUse(t *testing.T) {
 
 	list = store.List()
 	assert.Empty(t, list)
+}
+
+func TestUpdateFromTypeReplacesCompleteSnapshot(t *testing.T) {
+	t.Parallel()
+
+	ctx := t.Context()
+	js := nats.NewServer(t, nats.ServerOptions{InProcess: true}).GetJS()
+	store, err := New[cron.Cronjob, *cron.Cronjob](
+		ctx,
+		zaptest.NewLogger(t),
+		js,
+		"snapshot_replacement",
+	)
+	require.NoError(t, err)
+
+	existing := &cron.Cronjob{
+		Name:            "job",
+		RunId:           "old-run",
+		StartedTime:     timestamp.New(time.Now()),
+		LastAttemptTime: timestamp.New(time.Now()),
+	}
+	store.data.Store("job", existing)
+
+	incoming := &cron.Cronjob{Name: "job"}
+	actual := store.updateFromType("job", incoming, false)
+
+	assert.Same(t, existing, actual)
+	assert.Empty(t, actual.GetRunId())
+	assert.Nil(t, actual.GetStartedTime())
+	assert.Nil(t, actual.GetLastAttemptTime())
 }
 
 func TestStorePurgeMarkerTTL(t *testing.T) {
