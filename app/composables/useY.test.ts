@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { nextTick, ref } from 'vue';
 import * as Y from 'yjs';
-import { useYArrayFiltered } from './useY';
+import { useYArray, useYArrayFiltered, useYMap, useYObject, useYStructure } from './useY';
 import type { YjsSyncOptions } from './useYPrimitives';
 
 function authoritativeProvider(): YjsSyncOptions['provider'] {
@@ -57,5 +57,117 @@ describe('useYArrayFiltered', () => {
             { id: 10, job: 'police', access: 2 },
             { id: 11, job: 'ambulance', access: 3 },
         ]);
+    });
+});
+
+describe('useYArray', () => {
+    it('hydrates primitive arrays from Yjs and writes local changes back', async () => {
+        const doc = new Y.Doc();
+        const values = doc.getArray('values');
+        values.push(['remote']);
+
+        const items = ref(['local']);
+        const result = useYArray(values, items);
+
+        expect(result).toBe(items);
+        expect(items.value).toEqual(['remote']);
+
+        items.value.push('added');
+        await nextTick();
+
+        expect(values.toJSON()).toEqual(['remote', 'added']);
+    });
+
+    it('seeds an empty authoritative primitive array', () => {
+        const doc = new Y.Doc();
+        const values = doc.getArray('values');
+        const items = ref(['local', 'values']);
+
+        useYArray(values, items, { provider: authoritativeProvider() });
+
+        expect(values.toJSON()).toEqual(['local', 'values']);
+    });
+
+    it('hydrates nested object arrays and syncs nested local changes', async () => {
+        const doc = new Y.Doc();
+        const records = doc.getArray('records');
+        const record = new Y.Map<unknown>();
+        record.set('name', 'remote');
+        records.push([record]);
+
+        const items = ref([{ name: 'local' }]);
+        useYArray(records, items);
+
+        expect(items.value).toEqual([{ name: 'remote' }]);
+
+        items.value[0]!.name = 'updated';
+        await nextTick();
+        await nextTick();
+
+        expect(records.toJSON()).toEqual([{ name: 'updated' }]);
+    });
+});
+
+describe('useYMap', () => {
+    it('syncs only filtered keys in both directions', async () => {
+        const doc = new Y.Doc();
+        const map = doc.getMap<unknown>('state');
+        map.set('name', 'remote');
+        map.set('count', 4);
+
+        const state = ref({ name: 'local', count: 1, ignored: true });
+        const result = useYMap(map, state, { only: ['name', 'count'] });
+
+        expect(result).toBe(state.value);
+        expect(state.value).toEqual({ name: 'remote', count: 4, ignored: true });
+
+        await nextTick();
+        state.value.name = 'updated';
+        await nextTick();
+
+        expect(map.toJSON()).toEqual({ name: 'updated', count: 4 });
+        expect(map.get('ignored')).toBeUndefined();
+    });
+});
+
+describe('useYStructure and useYObject', () => {
+    it('binds nested structures and respects an omitted field', async () => {
+        const doc = new Y.Doc();
+        const map = doc.getMap<unknown>('state');
+        const remoteProfile = new Y.Map<unknown>();
+        remoteProfile.set('displayName', 'Remote User');
+        map.set('profile', remoteProfile);
+
+        const state = ref({
+            profile: { displayName: 'Local User' },
+            hidden: 'local-only',
+            enabled: false,
+        });
+        useYStructure(map, state, { omit: ['hidden'] }, { provider: authoritativeProvider() });
+
+        expect(state.value).toEqual({ profile: { displayName: 'Remote User' }, hidden: 'local-only', enabled: false });
+
+        await nextTick();
+        state.value.profile.displayName = 'Updated User';
+        await nextTick();
+
+        expect((map.get('profile') as Y.Map<unknown>).toJSON()).toEqual({ displayName: 'Updated User' });
+        expect(map.toJSON()).toEqual({ profile: { displayName: 'Updated User' }, enabled: false });
+    });
+
+    it('returns the same object ref and binds its fields', async () => {
+        const doc = new Y.Doc();
+        const map = doc.getMap<unknown>('state');
+        const state = ref({ title: 'initial' });
+
+        const result = useYObject(map, state, undefined, { provider: authoritativeProvider() });
+
+        expect(result).toBe(state);
+        expect(map.toJSON()).toEqual({ title: 'initial' });
+
+        map.set('title', 'remote');
+        await nextTick();
+
+        expect(state.value.title).toBe('remote');
     });
 });

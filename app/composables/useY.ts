@@ -6,7 +6,7 @@
 //  `YjsSyncOptions` (authoritative client + provider with `synced` event).
 // ---------------------------------------------------------------------------
 
-import { computed, getCurrentInstance, onUnmounted, ref, watch, type Ref, type WatchStopHandle } from 'vue';
+import { computed, getCurrentInstance, nextTick, onUnmounted, ref, watch, type Ref, type WatchStopHandle } from 'vue';
 import * as Y from 'yjs';
 import { LOCAL_ORIGIN, useYBoolean, useYNumber, useYString, useYText, type YjsSyncOptions } from './useYPrimitives';
 
@@ -49,7 +49,10 @@ export function useYArray<T extends object | Primitive>(
 
     const isPrimitiveMode = () => {
         const first = yArray.length ? yArray.get(0) : undefined;
-        return typeof first === 'string' || typeof first === 'number' || typeof first === 'boolean';
+        if (typeof first === 'string' || typeof first === 'number' || typeof first === 'boolean') return true;
+
+        const firstLocal = items.value[0];
+        return typeof firstLocal === 'string' || typeof firstLocal === 'number' || typeof firstLocal === 'boolean';
     };
 
     const syncFromY = () => {

@@ -8,6 +8,11 @@ export type StreamConnectFn = (options?: RpcOptions) => DuplexStreamingCall<Clie
 
 const logger = useLogger('📞 yjs:grpc');
 
+// A browser can wake up with the WebSocket open while its replacement RPC
+// stream is still waiting for auth or its initial headers. Do not let that
+// leave the editor permanently "connecting".
+const handshakeTimeoutMs = 15_000;
+
 interface GrpcProviderOpts {
     /** Target id (e.g., document id, page id) */
     targetId: number;
@@ -35,6 +40,8 @@ export default class GrpcProvider extends ObservableV2<Events> {
     private destroyed = false;
     private connecting = false;
     private reconnectTimer: ReturnType<typeof setTimeout> | undefined;
+    private handshakeTimer: ReturnType<typeof setTimeout> | undefined;
+    private streamAbort: AbortController | undefined;
 
     constructor(doc: Y.Doc, streamProvider: StreamConnectFn, opts: GrpcProviderOpts) {
         super();
@@ -71,6 +78,9 @@ export default class GrpcProvider extends ObservableV2<Events> {
                 clearTimeout(this.reconnectTimer);
                 this.reconnectTimer = undefined;
             }
+            this.clearHandshakeTimer();
+            this.streamAbort?.abort();
+            this.streamAbort = undefined;
             this.stream?.requests.complete();
             this.ydoc.off('update', this.handleDocUpdate);
             this.awareness.off('update', this.handleAwarenessUpdate);
@@ -87,10 +97,12 @@ export default class GrpcProvider extends ObservableV2<Events> {
         this.connecting = true;
         logger.info('Connecting to collab gRPC stream');
 
+        const abort = new AbortController();
         let stream: DuplexStreamingCall<ClientPacket, ServerPacket>;
         try {
-            stream = this.streamConnect({});
+            stream = this.streamConnect({ abort: abort.signal });
             this.stream = stream;
+            this.streamAbort = abort;
         } catch (err) {
             this.connecting = false;
             logger.error('Failed to connect to collab gRPC stream', err);
@@ -110,13 +122,7 @@ export default class GrpcProvider extends ObservableV2<Events> {
             // A delayed callback from an older stream must not tear down a newer one.
             if (this.stream !== stream) return;
 
-            this.connecting = false;
-            this.connected = false;
-            this.clientId = undefined;
-            this.synced = false;
-            this.authoritative = false;
-
-            this.stream = undefined;
+            this.clearConnection(stream);
             this.scheduleReconnect();
         });
 
@@ -126,6 +132,7 @@ export default class GrpcProvider extends ObservableV2<Events> {
                 this.clientId = msg.msg.handshake.clientId;
                 this.connected = true;
                 this.connecting = false;
+                this.clearHandshakeTimer();
 
                 const sv = Y.encodeStateVector(this.ydoc);
                 this.send(
@@ -226,8 +233,49 @@ export default class GrpcProvider extends ObservableV2<Events> {
         });
 
         this.sendHello();
+        this.scheduleHandshakeTimeout(stream, abort);
 
         logger.debug('Connect call completed, waiting for handshake');
+    }
+
+    private scheduleHandshakeTimeout(stream: DuplexStreamingCall<ClientPacket, ServerPacket>, abort: AbortController) {
+        this.clearHandshakeTimer();
+        if (this.destroyed || this.connected || this.stream !== stream) return;
+
+        this.handshakeTimer = setTimeout(() => {
+            this.handshakeTimer = undefined;
+            if (this.destroyed || this.connected || this.stream !== stream) return;
+
+            logger.warn('Collab gRPC stream did not complete its handshake in time; reconnecting', {
+                timeout: handshakeTimeoutMs,
+            });
+
+            // Clear our state before aborting: some transports do not surface an
+            // error for a stream that never finished starting.
+            this.clearConnection(stream);
+            abort.abort();
+            this.scheduleReconnect();
+        }, handshakeTimeoutMs);
+    }
+
+    private clearHandshakeTimer() {
+        if (this.handshakeTimer === undefined) return;
+
+        clearTimeout(this.handshakeTimer);
+        this.handshakeTimer = undefined;
+    }
+
+    private clearConnection(stream: DuplexStreamingCall<ClientPacket, ServerPacket>) {
+        if (this.stream !== stream) return;
+
+        this.clearHandshakeTimer();
+        this.connecting = false;
+        this.connected = false;
+        this.clientId = undefined;
+        this.synced = false;
+        this.authoritative = false;
+        this.stream = undefined;
+        this.streamAbort = undefined;
     }
 
     private scheduleReconnect() {
