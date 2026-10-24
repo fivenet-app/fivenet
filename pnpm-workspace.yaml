@@ -1,7 +1,7 @@
 catalog:
   '@protobuf-ts/plugin': 2.11.1
   google-protobuf: 4.0.3
-  typescript: npm:typescript-native-bridge@6.0.3-bridge.18.tsgo.7.0.2
+  typescript: npm:typescript-native-bridge@6.0.3-bridge.19.tsgo.7.0.2
 
 overrides:
   "@internationalized/date": "3.12.4"
@@ -9,7 +9,7 @@ overrides:
   "@tiptap/core": "3.32.0"
   "@tiptap/pm": "3.32.0"
   "@tiptap/vue-3": "3.32.0"
-  typescript: npm:typescript-native-bridge@6.0.3-bridge.18.tsgo.7.0.2
+  typescript: npm:typescript-native-bridge@6.0.3-bridge.19.tsgo.7.0.2
   "@unhead/vue": "3.4.3"
   "fontless>esbuild": "0.28.2"
   "nuxt-typed-router>defu": "6.1.7"
