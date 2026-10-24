@@ -35,18 +35,82 @@ func (s *Housekeeper) runDispatchWatch(ctx context.Context) {
 }
 
 func (s *Housekeeper) watchDispatches(ctx context.Context) error {
-	watch, err := s.dispatches.Store().WatchAll(ctx)
+	specWatch, err := s.dispatches.WatchSpecs(ctx)
 	if err != nil {
 		return err
 	}
-	defer watch.Stop()
+	defer specWatch.Stop()
+	statusWatch, err := s.dispatches.WatchStatuses(ctx)
+	if err != nil {
+		return err
+	}
+	defer statusWatch.Stop()
+
+	// Watchers are subscribed before rebuilding, so updates arriving during the
+	// sweep remain buffered and are processed after the index is populated.
+	if err := s.dispatches.RebuildDispatchLocations(ctx); err != nil {
+		return err
+	}
+
+	process := func(
+		dispatchID int64,
+		triggeringSpec *centrumdispatches.DispatchSpec,
+		triggeringStatus *centrumdispatches.DispatchStatus,
+	) {
+		dsp, err := s.dispatches.Get(ctx, dispatchID)
+		if err != nil || dsp == nil {
+			s.logger.Warn(
+				"cannot compose dispatch from projection update",
+				zap.Int64("dispatch_id", dispatchID),
+				zap.Error(err),
+			)
+			return
+		}
+		if triggeringSpec != nil {
+			applyDispatchSpec(dsp, triggeringSpec)
+		}
+		if triggeringStatus != nil {
+			if dsp.GetStatus() == nil || triggeringStatus.GetId() >= dsp.GetStatus().GetId() {
+				dsp.Status = triggeringStatus
+			}
+		}
+		if err := s.dispatches.UpdateDispatchLocation(dsp); err != nil {
+			s.logger.Warn(
+				"cannot update dispatch spatial index",
+				zap.Int64("dispatch_id", dispatchID),
+				zap.Error(err),
+			)
+			return
+		}
+
+		if err := s.tryDispatchDeduplicate(ctx, dsp); err != nil {
+			if errors.Is(err, errorscentrum.ErrDispatchNotFound) {
+				if deleteErr := s.deleteStaleDispatchProjection(
+					ctx,
+					dsp.GetId(),
+				); deleteErr != nil {
+					s.logger.Warn(
+						"failed to delete stale dispatch projection after deduplication race",
+						zap.Int64("dispatch_id", dsp.GetId()),
+						zap.Error(deleteErr),
+					)
+				}
+				return
+			}
+			s.logger.Error(
+				"dispatch deduplication failed",
+				zap.Int64("dispatch_id", dsp.GetId()),
+				zap.Error(err),
+			)
+		}
+	}
 
 	for {
 		select {
 		case <-ctx.Done():
 			return nil
 
-		case e, ok := <-watch.Updates():
+		case e, ok := <-specWatch.Updates():
 			if !ok {
 				return watcherUpdatesClosedError(ctx)
 			}
@@ -54,38 +118,72 @@ func (s *Housekeeper) watchDispatches(ctx context.Context) error {
 				continue
 			}
 
+			if e.Operation() == jetstream.KeyValueDelete ||
+				e.Operation() == jetstream.KeyValuePurge {
+				if dispatchID, err := centrumutils.ExtractID(e.Key()); err == nil {
+					s.dispatches.RemoveDispatchLocation(dispatchID)
+				}
+				continue
+			}
 			if e.Operation() != jetstream.KeyValuePut {
 				continue
 			}
 
-			dsp, err := e.Value()
+			spec, err := e.Value()
 			if err != nil {
-				s.logger.Warn("cannot read dispatch value", zap.Error(err))
+				s.logger.Warn("cannot read dispatch specification value", zap.Error(err))
 				continue
 			}
+			process(spec.GetId(), spec, nil)
 
-			if err := s.tryDispatchDeduplicate(ctx, dsp); err != nil {
-				if errors.Is(err, errorscentrum.ErrDispatchNotFound) {
-					if deleteErr := s.deleteStaleDispatchProjection(
-						ctx,
-						dsp.GetId(),
-					); deleteErr != nil {
-						s.logger.Warn(
-							"failed to delete stale dispatch projection after deduplication race",
-							zap.Int64("dispatch_id", dsp.GetId()),
-							zap.Error(deleteErr),
-						)
-					}
-					continue
-				}
-				s.logger.Error(
-					"dispatch deduplication failed",
-					zap.Int64("dispatch_id", dsp.GetId()),
-					zap.Error(err),
-				)
+		case e, ok := <-statusWatch.Updates():
+			if !ok {
+				return watcherUpdatesClosedError(ctx)
 			}
+			if e == nil {
+				continue
+			}
+			if e.Operation() == jetstream.KeyValueDelete ||
+				e.Operation() == jetstream.KeyValuePurge {
+				if dispatchID, err := centrumutils.ExtractID(e.Key()); err == nil {
+					s.dispatches.RemoveDispatchLocation(dispatchID)
+				}
+				continue
+			}
+			if e.Operation() != jetstream.KeyValuePut {
+				continue
+			}
+			status, err := e.Value()
+			if err != nil {
+				s.logger.Warn("cannot read dispatch status value", zap.Error(err))
+				continue
+			}
+			process(status.GetDispatchId(), nil, status)
 		}
 	}
+}
+
+// applyDispatchSpec overlays the watcher payload onto the composed dispatch.
+// The payload is authoritative for the triggering revision; relying only on
+// DispatchDB.Get can reindex a dispatch with its previous coordinates while
+// the component cache watcher is still catching up.
+func applyDispatchSpec(dispatch *centrumdispatches.Dispatch, spec *centrumdispatches.DispatchSpec) {
+	if dispatch == nil || spec == nil {
+		return
+	}
+	dispatch.CreatedAt = spec.CreatedAt
+	dispatch.UpdatedAt = spec.UpdatedAt
+	dispatch.Jobs = spec.Jobs
+	dispatch.Message = spec.Message
+	dispatch.Description = spec.Description
+	dispatch.Attributes = spec.Attributes
+	dispatch.X = spec.X
+	dispatch.Y = spec.Y
+	dispatch.Postal = spec.Postal
+	dispatch.Anon = spec.Anon
+	dispatch.CreatorId = spec.CreatorId
+	dispatch.Creator = spec.Creator
+	dispatch.References = spec.References
 }
 
 // tryDispatchDeduplicate single-dispatch dedup logic.

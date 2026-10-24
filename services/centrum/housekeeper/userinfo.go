@@ -297,7 +297,7 @@ func (s *Housekeeper) reconcileUserInfoState(ctx context.Context) (int, int, err
 	userIDs := map[int32]struct{}{}
 	dispatcherJobsByUser := map[int32]map[string]struct{}{}
 
-	s.unitUserState.Range(func(_ string, unit *centrumunits.Unit) bool {
+	s.unitUserState.Range(ctx, func(_ string, unit *centrumunits.Unit) bool {
 		if unit == nil {
 			return true
 		}

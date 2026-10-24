@@ -656,6 +656,369 @@ func (b0 Dispatch_builder) Build() *Dispatch {
 	return m0
 }
 
+// DispatchSpec contains the independently reconciled, non-status portion of
+// a dispatch projection.
+type DispatchSpec struct {
+	state                  protoimpl.MessageState `protogen:"opaque.v1"`
+	xxx_hidden_Id          int64                  `protobuf:"varint,1,opt,name=id,proto3"`
+	xxx_hidden_CreatedAt   *timestamp.Timestamp   `protobuf:"bytes,2,opt,name=created_at,json=createdAt,proto3,oneof"`
+	xxx_hidden_UpdatedAt   *timestamp.Timestamp   `protobuf:"bytes,3,opt,name=updated_at,json=updatedAt,proto3,oneof"`
+	xxx_hidden_Jobs        *centrum.JobList       `protobuf:"bytes,18,opt,name=jobs,proto3"`
+	xxx_hidden_Message     string                 `protobuf:"bytes,7,opt,name=message,proto3"`
+	xxx_hidden_Description *string                `protobuf:"bytes,8,opt,name=description,proto3,oneof"`
+	xxx_hidden_Attributes  *DispatchAttributes    `protobuf:"bytes,9,opt,name=attributes,proto3,oneof"`
+	xxx_hidden_X           float64                `protobuf:"fixed64,10,opt,name=x,proto3"`
+	xxx_hidden_Y           float64                `protobuf:"fixed64,11,opt,name=y,proto3"`
+	xxx_hidden_Postal      *string                `protobuf:"bytes,12,opt,name=postal,proto3,oneof"`
+	xxx_hidden_Anon        bool                   `protobuf:"varint,13,opt,name=anon,proto3"`
+	xxx_hidden_CreatorId   int32                  `protobuf:"varint,14,opt,name=creator_id,json=creatorId,proto3,oneof"`
+	xxx_hidden_Creator     *short.UserShort       `protobuf:"bytes,15,opt,name=creator,proto3,oneof"`
+	xxx_hidden_References  *DispatchReferences    `protobuf:"bytes,17,opt,name=references,proto3,oneof"`
+	XXX_raceDetectHookData protoimpl.RaceDetectHookData
+	XXX_presence           [1]uint32
+	unknownFields          protoimpl.UnknownFields
+	sizeCache              protoimpl.SizeCache
+}
+
+func (x *DispatchSpec) Reset() {
+	*x = DispatchSpec{}
+	mi := &file_resources_centrum_dispatches_dispatches_proto_msgTypes[1]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *DispatchSpec) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*DispatchSpec) ProtoMessage() {}
+
+func (x *DispatchSpec) ProtoReflect() protoreflect.Message {
+	mi := &file_resources_centrum_dispatches_dispatches_proto_msgTypes[1]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+func (x *DispatchSpec) GetId() int64 {
+	if x != nil {
+		return x.xxx_hidden_Id
+	}
+	return 0
+}
+
+func (x *DispatchSpec) GetCreatedAt() *timestamp.Timestamp {
+	if x != nil {
+		return x.xxx_hidden_CreatedAt
+	}
+	return nil
+}
+
+func (x *DispatchSpec) GetUpdatedAt() *timestamp.Timestamp {
+	if x != nil {
+		return x.xxx_hidden_UpdatedAt
+	}
+	return nil
+}
+
+func (x *DispatchSpec) GetJobs() *centrum.JobList {
+	if x != nil {
+		return x.xxx_hidden_Jobs
+	}
+	return nil
+}
+
+func (x *DispatchSpec) GetMessage() string {
+	if x != nil {
+		return x.xxx_hidden_Message
+	}
+	return ""
+}
+
+func (x *DispatchSpec) GetDescription() string {
+	if x != nil {
+		if x.xxx_hidden_Description != nil {
+			return *x.xxx_hidden_Description
+		}
+		return ""
+	}
+	return ""
+}
+
+func (x *DispatchSpec) GetAttributes() *DispatchAttributes {
+	if x != nil {
+		return x.xxx_hidden_Attributes
+	}
+	return nil
+}
+
+func (x *DispatchSpec) GetX() float64 {
+	if x != nil {
+		return x.xxx_hidden_X
+	}
+	return 0
+}
+
+func (x *DispatchSpec) GetY() float64 {
+	if x != nil {
+		return x.xxx_hidden_Y
+	}
+	return 0
+}
+
+func (x *DispatchSpec) GetPostal() string {
+	if x != nil {
+		if x.xxx_hidden_Postal != nil {
+			return *x.xxx_hidden_Postal
+		}
+		return ""
+	}
+	return ""
+}
+
+func (x *DispatchSpec) GetAnon() bool {
+	if x != nil {
+		return x.xxx_hidden_Anon
+	}
+	return false
+}
+
+func (x *DispatchSpec) GetCreatorId() int32 {
+	if x != nil {
+		return x.xxx_hidden_CreatorId
+	}
+	return 0
+}
+
+func (x *DispatchSpec) GetCreator() *short.UserShort {
+	if x != nil {
+		return x.xxx_hidden_Creator
+	}
+	return nil
+}
+
+func (x *DispatchSpec) GetReferences() *DispatchReferences {
+	if x != nil {
+		return x.xxx_hidden_References
+	}
+	return nil
+}
+
+func (x *DispatchSpec) SetId(v int64) {
+	x.xxx_hidden_Id = v
+}
+
+func (x *DispatchSpec) SetCreatedAt(v *timestamp.Timestamp) {
+	x.xxx_hidden_CreatedAt = v
+}
+
+func (x *DispatchSpec) SetUpdatedAt(v *timestamp.Timestamp) {
+	x.xxx_hidden_UpdatedAt = v
+}
+
+func (x *DispatchSpec) SetJobs(v *centrum.JobList) {
+	x.xxx_hidden_Jobs = v
+}
+
+func (x *DispatchSpec) SetMessage(v string) {
+	x.xxx_hidden_Message = v
+}
+
+func (x *DispatchSpec) SetDescription(v string) {
+	x.xxx_hidden_Description = &v
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 5, 14)
+}
+
+func (x *DispatchSpec) SetAttributes(v *DispatchAttributes) {
+	x.xxx_hidden_Attributes = v
+}
+
+func (x *DispatchSpec) SetX(v float64) {
+	x.xxx_hidden_X = v
+}
+
+func (x *DispatchSpec) SetY(v float64) {
+	x.xxx_hidden_Y = v
+}
+
+func (x *DispatchSpec) SetPostal(v string) {
+	x.xxx_hidden_Postal = &v
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 9, 14)
+}
+
+func (x *DispatchSpec) SetAnon(v bool) {
+	x.xxx_hidden_Anon = v
+}
+
+func (x *DispatchSpec) SetCreatorId(v int32) {
+	x.xxx_hidden_CreatorId = v
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 11, 14)
+}
+
+func (x *DispatchSpec) SetCreator(v *short.UserShort) {
+	x.xxx_hidden_Creator = v
+}
+
+func (x *DispatchSpec) SetReferences(v *DispatchReferences) {
+	x.xxx_hidden_References = v
+}
+
+func (x *DispatchSpec) HasCreatedAt() bool {
+	if x == nil {
+		return false
+	}
+	return x.xxx_hidden_CreatedAt != nil
+}
+
+func (x *DispatchSpec) HasUpdatedAt() bool {
+	if x == nil {
+		return false
+	}
+	return x.xxx_hidden_UpdatedAt != nil
+}
+
+func (x *DispatchSpec) HasJobs() bool {
+	if x == nil {
+		return false
+	}
+	return x.xxx_hidden_Jobs != nil
+}
+
+func (x *DispatchSpec) HasDescription() bool {
+	if x == nil {
+		return false
+	}
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 5)
+}
+
+func (x *DispatchSpec) HasAttributes() bool {
+	if x == nil {
+		return false
+	}
+	return x.xxx_hidden_Attributes != nil
+}
+
+func (x *DispatchSpec) HasPostal() bool {
+	if x == nil {
+		return false
+	}
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 9)
+}
+
+func (x *DispatchSpec) HasCreatorId() bool {
+	if x == nil {
+		return false
+	}
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 11)
+}
+
+func (x *DispatchSpec) HasCreator() bool {
+	if x == nil {
+		return false
+	}
+	return x.xxx_hidden_Creator != nil
+}
+
+func (x *DispatchSpec) HasReferences() bool {
+	if x == nil {
+		return false
+	}
+	return x.xxx_hidden_References != nil
+}
+
+func (x *DispatchSpec) ClearCreatedAt() {
+	x.xxx_hidden_CreatedAt = nil
+}
+
+func (x *DispatchSpec) ClearUpdatedAt() {
+	x.xxx_hidden_UpdatedAt = nil
+}
+
+func (x *DispatchSpec) ClearJobs() {
+	x.xxx_hidden_Jobs = nil
+}
+
+func (x *DispatchSpec) ClearDescription() {
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 5)
+	x.xxx_hidden_Description = nil
+}
+
+func (x *DispatchSpec) ClearAttributes() {
+	x.xxx_hidden_Attributes = nil
+}
+
+func (x *DispatchSpec) ClearPostal() {
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 9)
+	x.xxx_hidden_Postal = nil
+}
+
+func (x *DispatchSpec) ClearCreatorId() {
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 11)
+	x.xxx_hidden_CreatorId = 0
+}
+
+func (x *DispatchSpec) ClearCreator() {
+	x.xxx_hidden_Creator = nil
+}
+
+func (x *DispatchSpec) ClearReferences() {
+	x.xxx_hidden_References = nil
+}
+
+type DispatchSpec_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Id          int64
+	CreatedAt   *timestamp.Timestamp
+	UpdatedAt   *timestamp.Timestamp
+	Jobs        *centrum.JobList
+	Message     string
+	Description *string
+	Attributes  *DispatchAttributes
+	X           float64
+	Y           float64
+	Postal      *string
+	Anon        bool
+	CreatorId   *int32
+	Creator     *short.UserShort
+	References  *DispatchReferences
+}
+
+func (b0 DispatchSpec_builder) Build() *DispatchSpec {
+	m0 := &DispatchSpec{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.xxx_hidden_Id = b.Id
+	x.xxx_hidden_CreatedAt = b.CreatedAt
+	x.xxx_hidden_UpdatedAt = b.UpdatedAt
+	x.xxx_hidden_Jobs = b.Jobs
+	x.xxx_hidden_Message = b.Message
+	if b.Description != nil {
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 5, 14)
+		x.xxx_hidden_Description = b.Description
+	}
+	x.xxx_hidden_Attributes = b.Attributes
+	x.xxx_hidden_X = b.X
+	x.xxx_hidden_Y = b.Y
+	if b.Postal != nil {
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 9, 14)
+		x.xxx_hidden_Postal = b.Postal
+	}
+	x.xxx_hidden_Anon = b.Anon
+	if b.CreatorId != nil {
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 11, 14)
+		x.xxx_hidden_CreatorId = *b.CreatorId
+	}
+	x.xxx_hidden_Creator = b.Creator
+	x.xxx_hidden_References = b.References
+	return m0
+}
+
 type DispatchAssignments struct {
 	state                 protoimpl.MessageState `protogen:"opaque.v1"`
 	xxx_hidden_DispatchId int64                  `protobuf:"varint,1,opt,name=dispatch_id,json=dispatchId,proto3"`
@@ -667,7 +1030,7 @@ type DispatchAssignments struct {
 
 func (x *DispatchAssignments) Reset() {
 	*x = DispatchAssignments{}
-	mi := &file_resources_centrum_dispatches_dispatches_proto_msgTypes[1]
+	mi := &file_resources_centrum_dispatches_dispatches_proto_msgTypes[2]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -679,7 +1042,7 @@ func (x *DispatchAssignments) String() string {
 func (*DispatchAssignments) ProtoMessage() {}
 
 func (x *DispatchAssignments) ProtoReflect() protoreflect.Message {
-	mi := &file_resources_centrum_dispatches_dispatches_proto_msgTypes[1]
+	mi := &file_resources_centrum_dispatches_dispatches_proto_msgTypes[2]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -756,7 +1119,7 @@ type DispatchAssignment struct {
 
 func (x *DispatchAssignment) Reset() {
 	*x = DispatchAssignment{}
-	mi := &file_resources_centrum_dispatches_dispatches_proto_msgTypes[2]
+	mi := &file_resources_centrum_dispatches_dispatches_proto_msgTypes[3]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -768,7 +1131,7 @@ func (x *DispatchAssignment) String() string {
 func (*DispatchAssignment) ProtoMessage() {}
 
 func (x *DispatchAssignment) ProtoReflect() protoreflect.Message {
-	mi := &file_resources_centrum_dispatches_dispatches_proto_msgTypes[2]
+	mi := &file_resources_centrum_dispatches_dispatches_proto_msgTypes[3]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -913,7 +1276,7 @@ type DispatchStatus struct {
 
 func (x *DispatchStatus) Reset() {
 	*x = DispatchStatus{}
-	mi := &file_resources_centrum_dispatches_dispatches_proto_msgTypes[3]
+	mi := &file_resources_centrum_dispatches_dispatches_proto_msgTypes[4]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -925,7 +1288,7 @@ func (x *DispatchStatus) String() string {
 func (*DispatchStatus) ProtoMessage() {}
 
 func (x *DispatchStatus) ProtoReflect() protoreflect.Message {
-	mi := &file_resources_centrum_dispatches_dispatches_proto_msgTypes[3]
+	mi := &file_resources_centrum_dispatches_dispatches_proto_msgTypes[4]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1312,7 +1675,7 @@ type DispatchReferences struct {
 
 func (x *DispatchReferences) Reset() {
 	*x = DispatchReferences{}
-	mi := &file_resources_centrum_dispatches_dispatches_proto_msgTypes[4]
+	mi := &file_resources_centrum_dispatches_dispatches_proto_msgTypes[5]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1324,7 +1687,7 @@ func (x *DispatchReferences) String() string {
 func (*DispatchReferences) ProtoMessage() {}
 
 func (x *DispatchReferences) ProtoReflect() protoreflect.Message {
-	mi := &file_resources_centrum_dispatches_dispatches_proto_msgTypes[4]
+	mi := &file_resources_centrum_dispatches_dispatches_proto_msgTypes[5]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1372,7 +1735,7 @@ type DispatchReference struct {
 
 func (x *DispatchReference) Reset() {
 	*x = DispatchReference{}
-	mi := &file_resources_centrum_dispatches_dispatches_proto_msgTypes[5]
+	mi := &file_resources_centrum_dispatches_dispatches_proto_msgTypes[6]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1384,7 +1747,7 @@ func (x *DispatchReference) String() string {
 func (*DispatchReference) ProtoMessage() {}
 
 func (x *DispatchReference) ProtoReflect() protoreflect.Message {
-	mi := &file_resources_centrum_dispatches_dispatches_proto_msgTypes[5]
+	mi := &file_resources_centrum_dispatches_dispatches_proto_msgTypes[6]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1442,7 +1805,7 @@ type DispatchAttributes struct {
 
 func (x *DispatchAttributes) Reset() {
 	*x = DispatchAttributes{}
-	mi := &file_resources_centrum_dispatches_dispatches_proto_msgTypes[6]
+	mi := &file_resources_centrum_dispatches_dispatches_proto_msgTypes[7]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1454,7 +1817,7 @@ func (x *DispatchAttributes) String() string {
 func (*DispatchAttributes) ProtoMessage() {}
 
 func (x *DispatchAttributes) ProtoReflect() protoreflect.Message {
-	mi := &file_resources_centrum_dispatches_dispatches_proto_msgTypes[6]
+	mi := &file_resources_centrum_dispatches_dispatches_proto_msgTypes[7]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1529,7 +1892,39 @@ const file_resources_centrum_dispatches_dispatches_proto_rawDesc = "" +
 	"\v_creator_idB\n" +
 	"\n" +
 	"\b_creatorB\r\n" +
-	"\v_referencesJ\x04\b\x04\x10\x05R\x03job\"\x90\x01\n" +
+	"\v_referencesJ\x04\b\x04\x10\x05R\x03job\"\xe9\x05\n" +
+	"\fDispatchSpec\x12\x0e\n" +
+	"\x02id\x18\x01 \x01(\x03R\x02id\x12B\n" +
+	"\n" +
+	"created_at\x18\x02 \x01(\v2\x1e.resources.timestamp.TimestampH\x00R\tcreatedAt\x88\x01\x01\x12B\n" +
+	"\n" +
+	"updated_at\x18\x03 \x01(\v2\x1e.resources.timestamp.TimestampH\x01R\tupdatedAt\x88\x01\x01\x12.\n" +
+	"\x04jobs\x18\x12 \x01(\v2\x1a.resources.centrum.JobListR\x04jobs\x12\x18\n" +
+	"\amessage\x18\a \x01(\tR\amessage\x12%\n" +
+	"\vdescription\x18\b \x01(\tH\x02R\vdescription\x88\x01\x01\x12U\n" +
+	"\n" +
+	"attributes\x18\t \x01(\v20.resources.centrum.dispatches.DispatchAttributesH\x03R\n" +
+	"attributes\x88\x01\x01\x12\f\n" +
+	"\x01x\x18\n" +
+	" \x01(\x01R\x01x\x12\f\n" +
+	"\x01y\x18\v \x01(\x01R\x01y\x12\x1b\n" +
+	"\x06postal\x18\f \x01(\tH\x04R\x06postal\x88\x01\x01\x12\x12\n" +
+	"\x04anon\x18\r \x01(\bR\x04anon\x12\"\n" +
+	"\n" +
+	"creator_id\x18\x0e \x01(\x05H\x05R\tcreatorId\x88\x01\x01\x12?\n" +
+	"\acreator\x18\x0f \x01(\v2 .resources.users.short.UserShortH\x06R\acreator\x88\x01\x01\x12U\n" +
+	"\n" +
+	"references\x18\x11 \x01(\v20.resources.centrum.dispatches.DispatchReferencesH\aR\n" +
+	"references\x88\x01\x01B\r\n" +
+	"\v_created_atB\r\n" +
+	"\v_updated_atB\x0e\n" +
+	"\f_descriptionB\r\n" +
+	"\v_attributesB\t\n" +
+	"\a_postalB\r\n" +
+	"\v_creator_idB\n" +
+	"\n" +
+	"\b_creatorB\r\n" +
+	"\v_references\"\x90\x01\n" +
 	"\x13DispatchAssignments\x12\x1f\n" +
 	"\vdispatch_id\x18\x01 \x01(\x03R\n" +
 	"dispatchId\x12\x10\n" +
@@ -1624,50 +2019,57 @@ const file_resources_centrum_dispatches_dispatches_proto_rawDesc = "" +
 	"\x1cDISPATCH_ATTRIBUTE_AUTOMATIC\x10\x04BbZ`github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/centrum/dispatches;centrumdispatchesb\x06proto3"
 
 var file_resources_centrum_dispatches_dispatches_proto_enumTypes = make([]protoimpl.EnumInfo, 4)
-var file_resources_centrum_dispatches_dispatches_proto_msgTypes = make([]protoimpl.MessageInfo, 7)
+var file_resources_centrum_dispatches_dispatches_proto_msgTypes = make([]protoimpl.MessageInfo, 8)
 var file_resources_centrum_dispatches_dispatches_proto_goTypes = []any{
 	(StatusDispatch)(0),          // 0: resources.centrum.dispatches.StatusDispatch
 	(TakeDispatchResp)(0),        // 1: resources.centrum.dispatches.TakeDispatchResp
 	(DispatchReferenceType)(0),   // 2: resources.centrum.dispatches.DispatchReferenceType
 	(DispatchAttribute)(0),       // 3: resources.centrum.dispatches.DispatchAttribute
 	(*Dispatch)(nil),             // 4: resources.centrum.dispatches.Dispatch
-	(*DispatchAssignments)(nil),  // 5: resources.centrum.dispatches.DispatchAssignments
-	(*DispatchAssignment)(nil),   // 6: resources.centrum.dispatches.DispatchAssignment
-	(*DispatchStatus)(nil),       // 7: resources.centrum.dispatches.DispatchStatus
-	(*DispatchReferences)(nil),   // 8: resources.centrum.dispatches.DispatchReferences
-	(*DispatchReference)(nil),    // 9: resources.centrum.dispatches.DispatchReference
-	(*DispatchAttributes)(nil),   // 10: resources.centrum.dispatches.DispatchAttributes
-	(*timestamp.Timestamp)(nil),  // 11: resources.timestamp.Timestamp
-	(*centrum.JobList)(nil),      // 12: resources.centrum.JobList
-	(*short.UserShort)(nil),      // 13: resources.users.short.UserShort
-	(*units.Unit)(nil),           // 14: resources.centrum.units.Unit
-	(*colleagues.Colleague)(nil), // 15: resources.jobs.colleagues.Colleague
+	(*DispatchSpec)(nil),         // 5: resources.centrum.dispatches.DispatchSpec
+	(*DispatchAssignments)(nil),  // 6: resources.centrum.dispatches.DispatchAssignments
+	(*DispatchAssignment)(nil),   // 7: resources.centrum.dispatches.DispatchAssignment
+	(*DispatchStatus)(nil),       // 8: resources.centrum.dispatches.DispatchStatus
+	(*DispatchReferences)(nil),   // 9: resources.centrum.dispatches.DispatchReferences
+	(*DispatchReference)(nil),    // 10: resources.centrum.dispatches.DispatchReference
+	(*DispatchAttributes)(nil),   // 11: resources.centrum.dispatches.DispatchAttributes
+	(*timestamp.Timestamp)(nil),  // 12: resources.timestamp.Timestamp
+	(*centrum.JobList)(nil),      // 13: resources.centrum.JobList
+	(*short.UserShort)(nil),      // 14: resources.users.short.UserShort
+	(*units.Unit)(nil),           // 15: resources.centrum.units.Unit
+	(*colleagues.Colleague)(nil), // 16: resources.jobs.colleagues.Colleague
 }
 var file_resources_centrum_dispatches_dispatches_proto_depIdxs = []int32{
-	11, // 0: resources.centrum.dispatches.Dispatch.created_at:type_name -> resources.timestamp.Timestamp
-	11, // 1: resources.centrum.dispatches.Dispatch.updated_at:type_name -> resources.timestamp.Timestamp
-	12, // 2: resources.centrum.dispatches.Dispatch.jobs:type_name -> resources.centrum.JobList
-	7,  // 3: resources.centrum.dispatches.Dispatch.status:type_name -> resources.centrum.dispatches.DispatchStatus
-	10, // 4: resources.centrum.dispatches.Dispatch.attributes:type_name -> resources.centrum.dispatches.DispatchAttributes
-	13, // 5: resources.centrum.dispatches.Dispatch.creator:type_name -> resources.users.short.UserShort
-	6,  // 6: resources.centrum.dispatches.Dispatch.units:type_name -> resources.centrum.dispatches.DispatchAssignment
-	8,  // 7: resources.centrum.dispatches.Dispatch.references:type_name -> resources.centrum.dispatches.DispatchReferences
-	6,  // 8: resources.centrum.dispatches.DispatchAssignments.units:type_name -> resources.centrum.dispatches.DispatchAssignment
-	14, // 9: resources.centrum.dispatches.DispatchAssignment.unit:type_name -> resources.centrum.units.Unit
-	11, // 10: resources.centrum.dispatches.DispatchAssignment.created_at:type_name -> resources.timestamp.Timestamp
-	11, // 11: resources.centrum.dispatches.DispatchAssignment.expires_at:type_name -> resources.timestamp.Timestamp
-	11, // 12: resources.centrum.dispatches.DispatchStatus.created_at:type_name -> resources.timestamp.Timestamp
-	14, // 13: resources.centrum.dispatches.DispatchStatus.unit:type_name -> resources.centrum.units.Unit
-	0,  // 14: resources.centrum.dispatches.DispatchStatus.status:type_name -> resources.centrum.dispatches.StatusDispatch
-	15, // 15: resources.centrum.dispatches.DispatchStatus.user:type_name -> resources.jobs.colleagues.Colleague
-	9,  // 16: resources.centrum.dispatches.DispatchReferences.references:type_name -> resources.centrum.dispatches.DispatchReference
-	2,  // 17: resources.centrum.dispatches.DispatchReference.reference_type:type_name -> resources.centrum.dispatches.DispatchReferenceType
-	3,  // 18: resources.centrum.dispatches.DispatchAttributes.list:type_name -> resources.centrum.dispatches.DispatchAttribute
-	19, // [19:19] is the sub-list for method output_type
-	19, // [19:19] is the sub-list for method input_type
-	19, // [19:19] is the sub-list for extension type_name
-	19, // [19:19] is the sub-list for extension extendee
-	0,  // [0:19] is the sub-list for field type_name
+	12, // 0: resources.centrum.dispatches.Dispatch.created_at:type_name -> resources.timestamp.Timestamp
+	12, // 1: resources.centrum.dispatches.Dispatch.updated_at:type_name -> resources.timestamp.Timestamp
+	13, // 2: resources.centrum.dispatches.Dispatch.jobs:type_name -> resources.centrum.JobList
+	8,  // 3: resources.centrum.dispatches.Dispatch.status:type_name -> resources.centrum.dispatches.DispatchStatus
+	11, // 4: resources.centrum.dispatches.Dispatch.attributes:type_name -> resources.centrum.dispatches.DispatchAttributes
+	14, // 5: resources.centrum.dispatches.Dispatch.creator:type_name -> resources.users.short.UserShort
+	7,  // 6: resources.centrum.dispatches.Dispatch.units:type_name -> resources.centrum.dispatches.DispatchAssignment
+	9,  // 7: resources.centrum.dispatches.Dispatch.references:type_name -> resources.centrum.dispatches.DispatchReferences
+	12, // 8: resources.centrum.dispatches.DispatchSpec.created_at:type_name -> resources.timestamp.Timestamp
+	12, // 9: resources.centrum.dispatches.DispatchSpec.updated_at:type_name -> resources.timestamp.Timestamp
+	13, // 10: resources.centrum.dispatches.DispatchSpec.jobs:type_name -> resources.centrum.JobList
+	11, // 11: resources.centrum.dispatches.DispatchSpec.attributes:type_name -> resources.centrum.dispatches.DispatchAttributes
+	14, // 12: resources.centrum.dispatches.DispatchSpec.creator:type_name -> resources.users.short.UserShort
+	9,  // 13: resources.centrum.dispatches.DispatchSpec.references:type_name -> resources.centrum.dispatches.DispatchReferences
+	7,  // 14: resources.centrum.dispatches.DispatchAssignments.units:type_name -> resources.centrum.dispatches.DispatchAssignment
+	15, // 15: resources.centrum.dispatches.DispatchAssignment.unit:type_name -> resources.centrum.units.Unit
+	12, // 16: resources.centrum.dispatches.DispatchAssignment.created_at:type_name -> resources.timestamp.Timestamp
+	12, // 17: resources.centrum.dispatches.DispatchAssignment.expires_at:type_name -> resources.timestamp.Timestamp
+	12, // 18: resources.centrum.dispatches.DispatchStatus.created_at:type_name -> resources.timestamp.Timestamp
+	15, // 19: resources.centrum.dispatches.DispatchStatus.unit:type_name -> resources.centrum.units.Unit
+	0,  // 20: resources.centrum.dispatches.DispatchStatus.status:type_name -> resources.centrum.dispatches.StatusDispatch
+	16, // 21: resources.centrum.dispatches.DispatchStatus.user:type_name -> resources.jobs.colleagues.Colleague
+	10, // 22: resources.centrum.dispatches.DispatchReferences.references:type_name -> resources.centrum.dispatches.DispatchReference
+	2,  // 23: resources.centrum.dispatches.DispatchReference.reference_type:type_name -> resources.centrum.dispatches.DispatchReferenceType
+	3,  // 24: resources.centrum.dispatches.DispatchAttributes.list:type_name -> resources.centrum.dispatches.DispatchAttribute
+	25, // [25:25] is the sub-list for method output_type
+	25, // [25:25] is the sub-list for method input_type
+	25, // [25:25] is the sub-list for extension type_name
+	25, // [25:25] is the sub-list for extension extendee
+	0,  // [0:25] is the sub-list for field type_name
 }
 
 func init() { file_resources_centrum_dispatches_dispatches_proto_init() }
@@ -1676,15 +2078,16 @@ func file_resources_centrum_dispatches_dispatches_proto_init() {
 		return
 	}
 	file_resources_centrum_dispatches_dispatches_proto_msgTypes[0].OneofWrappers = []any{}
-	file_resources_centrum_dispatches_dispatches_proto_msgTypes[2].OneofWrappers = []any{}
+	file_resources_centrum_dispatches_dispatches_proto_msgTypes[1].OneofWrappers = []any{}
 	file_resources_centrum_dispatches_dispatches_proto_msgTypes[3].OneofWrappers = []any{}
+	file_resources_centrum_dispatches_dispatches_proto_msgTypes[4].OneofWrappers = []any{}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_resources_centrum_dispatches_dispatches_proto_rawDesc), len(file_resources_centrum_dispatches_dispatches_proto_rawDesc)),
 			NumEnums:      4,
-			NumMessages:   7,
+			NumMessages:   8,
 			NumExtensions: 0,
 			NumServices:   0,
 		},

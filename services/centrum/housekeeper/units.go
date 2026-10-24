@@ -30,9 +30,14 @@ func (s *Housekeeper) checkUnitUsers(ctx context.Context) (int, int, error) {
 	foundUserIds := map[int32]struct{}{}
 	offDutyRemoved := 0
 
-	s.units.Range(func(_ string, unit *centrumunits.Unit) bool {
-		if unit == nil || len(unit.GetUsers()) == 0 {
+	s.units.RangeMembers(func(_ string, members *centrumunits.UnitAssignments) bool {
+		if members == nil || len(members.GetUsers()) == 0 {
 			return true
+		}
+		unit := &centrumunits.Unit{
+			Id:    members.GetUnitId(),
+			Job:   members.GetJob(),
+			Users: members.GetUsers(),
 		}
 
 		foundUids, removed, err := s.checkAndUpdateUnitUsers(ctx, unit)

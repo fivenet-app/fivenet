@@ -1,4 +1,4 @@
-package events
+package eventsmigrations
 
 import (
 	"context"
@@ -12,7 +12,7 @@ func init() {
 	registerMigration(Migration{ID: "005_recreate_cron_storage", Fn: migrate005})
 }
 
-func migrate005(ctx context.Context, js *JSWrapper) error {
+func migrate005(ctx context.Context, js JetStream) error {
 	// Cron storage changed from file-backed to memory-backed for the schedule
 	// stream, while the cron job KV changed in the opposite direction. NATS
 	// does not allow changing storage type in place, so remove both resources

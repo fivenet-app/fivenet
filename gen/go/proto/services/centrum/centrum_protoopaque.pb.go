@@ -1084,6 +1084,42 @@ func (x *StreamResponse) GetSettingsDeleted() string {
 	return ""
 }
 
+func (x *StreamResponse) GetUnitSpecUpdated() *units.UnitSpec {
+	if x != nil {
+		if x, ok := x.xxx_hidden_Change.(*streamResponse_UnitSpecUpdated); ok {
+			return x.UnitSpecUpdated
+		}
+	}
+	return nil
+}
+
+func (x *StreamResponse) GetUnitMembersUpdated() *units.UnitAssignments {
+	if x != nil {
+		if x, ok := x.xxx_hidden_Change.(*streamResponse_UnitMembersUpdated); ok {
+			return x.UnitMembersUpdated
+		}
+	}
+	return nil
+}
+
+func (x *StreamResponse) GetDispatchSpecUpdated() *dispatches.DispatchSpec {
+	if x != nil {
+		if x, ok := x.xxx_hidden_Change.(*streamResponse_DispatchSpecUpdated); ok {
+			return x.DispatchSpecUpdated
+		}
+	}
+	return nil
+}
+
+func (x *StreamResponse) GetDispatchAssignmentsUpdated() *dispatches.DispatchAssignments {
+	if x != nil {
+		if x, ok := x.xxx_hidden_Change.(*streamResponse_DispatchAssignmentsUpdated); ok {
+			return x.DispatchAssignmentsUpdated
+		}
+	}
+	return nil
+}
+
 func (x *StreamResponse) SetKvRevision(v uint64) {
 	x.xxx_hidden_KvRevision = v
 }
@@ -1170,6 +1206,38 @@ func (x *StreamResponse) SetDispatchStatus(v *dispatches.DispatchStatus) {
 
 func (x *StreamResponse) SetSettingsDeleted(v string) {
 	x.xxx_hidden_Change = &streamResponse_SettingsDeleted{v}
+}
+
+func (x *StreamResponse) SetUnitSpecUpdated(v *units.UnitSpec) {
+	if v == nil {
+		x.xxx_hidden_Change = nil
+		return
+	}
+	x.xxx_hidden_Change = &streamResponse_UnitSpecUpdated{v}
+}
+
+func (x *StreamResponse) SetUnitMembersUpdated(v *units.UnitAssignments) {
+	if v == nil {
+		x.xxx_hidden_Change = nil
+		return
+	}
+	x.xxx_hidden_Change = &streamResponse_UnitMembersUpdated{v}
+}
+
+func (x *StreamResponse) SetDispatchSpecUpdated(v *dispatches.DispatchSpec) {
+	if v == nil {
+		x.xxx_hidden_Change = nil
+		return
+	}
+	x.xxx_hidden_Change = &streamResponse_DispatchSpecUpdated{v}
+}
+
+func (x *StreamResponse) SetDispatchAssignmentsUpdated(v *dispatches.DispatchAssignments) {
+	if v == nil {
+		x.xxx_hidden_Change = nil
+		return
+	}
+	x.xxx_hidden_Change = &streamResponse_DispatchAssignmentsUpdated{v}
 }
 
 func (x *StreamResponse) HasChange() bool {
@@ -1275,6 +1343,38 @@ func (x *StreamResponse) HasSettingsDeleted() bool {
 	return ok
 }
 
+func (x *StreamResponse) HasUnitSpecUpdated() bool {
+	if x == nil {
+		return false
+	}
+	_, ok := x.xxx_hidden_Change.(*streamResponse_UnitSpecUpdated)
+	return ok
+}
+
+func (x *StreamResponse) HasUnitMembersUpdated() bool {
+	if x == nil {
+		return false
+	}
+	_, ok := x.xxx_hidden_Change.(*streamResponse_UnitMembersUpdated)
+	return ok
+}
+
+func (x *StreamResponse) HasDispatchSpecUpdated() bool {
+	if x == nil {
+		return false
+	}
+	_, ok := x.xxx_hidden_Change.(*streamResponse_DispatchSpecUpdated)
+	return ok
+}
+
+func (x *StreamResponse) HasDispatchAssignmentsUpdated() bool {
+	if x == nil {
+		return false
+	}
+	_, ok := x.xxx_hidden_Change.(*streamResponse_DispatchAssignmentsUpdated)
+	return ok
+}
+
 func (x *StreamResponse) ClearChange() {
 	x.xxx_hidden_Change = nil
 }
@@ -1351,6 +1451,30 @@ func (x *StreamResponse) ClearSettingsDeleted() {
 	}
 }
 
+func (x *StreamResponse) ClearUnitSpecUpdated() {
+	if _, ok := x.xxx_hidden_Change.(*streamResponse_UnitSpecUpdated); ok {
+		x.xxx_hidden_Change = nil
+	}
+}
+
+func (x *StreamResponse) ClearUnitMembersUpdated() {
+	if _, ok := x.xxx_hidden_Change.(*streamResponse_UnitMembersUpdated); ok {
+		x.xxx_hidden_Change = nil
+	}
+}
+
+func (x *StreamResponse) ClearDispatchSpecUpdated() {
+	if _, ok := x.xxx_hidden_Change.(*streamResponse_DispatchSpecUpdated); ok {
+		x.xxx_hidden_Change = nil
+	}
+}
+
+func (x *StreamResponse) ClearDispatchAssignmentsUpdated() {
+	if _, ok := x.xxx_hidden_Change.(*streamResponse_DispatchAssignmentsUpdated); ok {
+		x.xxx_hidden_Change = nil
+	}
+}
+
 const StreamResponse_Change_not_set_case case_StreamResponse_Change = 0
 const StreamResponse_Handshake_case case_StreamResponse_Change = 1
 const StreamResponse_LatestState_case case_StreamResponse_Change = 2
@@ -1364,6 +1488,10 @@ const StreamResponse_DispatchDeleted_case case_StreamResponse_Change = 9
 const StreamResponse_DispatchUpdated_case case_StreamResponse_Change = 10
 const StreamResponse_DispatchStatus_case case_StreamResponse_Change = 11
 const StreamResponse_SettingsDeleted_case case_StreamResponse_Change = 12
+const StreamResponse_UnitSpecUpdated_case case_StreamResponse_Change = 14
+const StreamResponse_UnitMembersUpdated_case case_StreamResponse_Change = 15
+const StreamResponse_DispatchSpecUpdated_case case_StreamResponse_Change = 16
+const StreamResponse_DispatchAssignmentsUpdated_case case_StreamResponse_Change = 17
 
 func (x *StreamResponse) WhichChange() case_StreamResponse_Change {
 	if x == nil {
@@ -1394,6 +1522,14 @@ func (x *StreamResponse) WhichChange() case_StreamResponse_Change {
 		return StreamResponse_DispatchStatus_case
 	case *streamResponse_SettingsDeleted:
 		return StreamResponse_SettingsDeleted_case
+	case *streamResponse_UnitSpecUpdated:
+		return StreamResponse_UnitSpecUpdated_case
+	case *streamResponse_UnitMembersUpdated:
+		return StreamResponse_UnitMembersUpdated_case
+	case *streamResponse_DispatchSpecUpdated:
+		return StreamResponse_DispatchSpecUpdated_case
+	case *streamResponse_DispatchAssignmentsUpdated:
+		return StreamResponse_DispatchAssignmentsUpdated_case
 	default:
 		return StreamResponse_Change_not_set_case
 	}
@@ -1418,6 +1554,12 @@ type StreamResponse_builder struct {
 	DispatchUpdated *dispatches.Dispatch
 	DispatchStatus  *dispatches.DispatchStatus
 	SettingsDeleted *string
+	// Independent unit projection updates. These replace the corresponding
+	// portion of a unit without requiring the full composed resource.
+	UnitSpecUpdated            *units.UnitSpec
+	UnitMembersUpdated         *units.UnitAssignments
+	DispatchSpecUpdated        *dispatches.DispatchSpec
+	DispatchAssignmentsUpdated *dispatches.DispatchAssignments
 	// -- end of xxx_hidden_Change
 }
 
@@ -1461,6 +1603,18 @@ func (b0 StreamResponse_builder) Build() *StreamResponse {
 	}
 	if b.SettingsDeleted != nil {
 		x.xxx_hidden_Change = &streamResponse_SettingsDeleted{*b.SettingsDeleted}
+	}
+	if b.UnitSpecUpdated != nil {
+		x.xxx_hidden_Change = &streamResponse_UnitSpecUpdated{b.UnitSpecUpdated}
+	}
+	if b.UnitMembersUpdated != nil {
+		x.xxx_hidden_Change = &streamResponse_UnitMembersUpdated{b.UnitMembersUpdated}
+	}
+	if b.DispatchSpecUpdated != nil {
+		x.xxx_hidden_Change = &streamResponse_DispatchSpecUpdated{b.DispatchSpecUpdated}
+	}
+	if b.DispatchAssignmentsUpdated != nil {
+		x.xxx_hidden_Change = &streamResponse_DispatchAssignmentsUpdated{b.DispatchAssignmentsUpdated}
 	}
 	return m0
 }
@@ -1527,6 +1681,24 @@ type streamResponse_SettingsDeleted struct {
 	SettingsDeleted string `protobuf:"bytes,12,opt,name=settings_deleted,json=settingsDeleted,proto3,oneof"`
 }
 
+type streamResponse_UnitSpecUpdated struct {
+	// Independent unit projection updates. These replace the corresponding
+	// portion of a unit without requiring the full composed resource.
+	UnitSpecUpdated *units.UnitSpec `protobuf:"bytes,14,opt,name=unit_spec_updated,json=unitSpecUpdated,proto3,oneof"`
+}
+
+type streamResponse_UnitMembersUpdated struct {
+	UnitMembersUpdated *units.UnitAssignments `protobuf:"bytes,15,opt,name=unit_members_updated,json=unitMembersUpdated,proto3,oneof"`
+}
+
+type streamResponse_DispatchSpecUpdated struct {
+	DispatchSpecUpdated *dispatches.DispatchSpec `protobuf:"bytes,16,opt,name=dispatch_spec_updated,json=dispatchSpecUpdated,proto3,oneof"`
+}
+
+type streamResponse_DispatchAssignmentsUpdated struct {
+	DispatchAssignmentsUpdated *dispatches.DispatchAssignments `protobuf:"bytes,17,opt,name=dispatch_assignments_updated,json=dispatchAssignmentsUpdated,proto3,oneof"`
+}
+
 func (*streamResponse_Handshake) isStreamResponse_Change() {}
 
 func (*streamResponse_LatestState) isStreamResponse_Change() {}
@@ -1550,6 +1722,14 @@ func (*streamResponse_DispatchUpdated) isStreamResponse_Change() {}
 func (*streamResponse_DispatchStatus) isStreamResponse_Change() {}
 
 func (*streamResponse_SettingsDeleted) isStreamResponse_Change() {}
+
+func (*streamResponse_UnitSpecUpdated) isStreamResponse_Change() {}
+
+func (*streamResponse_UnitMembersUpdated) isStreamResponse_Change() {}
+
+func (*streamResponse_DispatchSpecUpdated) isStreamResponse_Change() {}
+
+func (*streamResponse_DispatchAssignmentsUpdated) isStreamResponse_Change() {}
 
 var File_services_centrum_centrum_proto protoreflect.FileDescriptor
 
@@ -1589,7 +1769,7 @@ const file_services_centrum_centrum_proto_rawDesc = "" +
 	"dispatches\x18\x04 \x03(\v2&.resources.centrum.dispatches.DispatchR\n" +
 	"dispatchesB\x0e\n" +
 	"\f_own_unit_id\"\x0f\n" +
-	"\rStreamRequest\"\xd6\x06\n" +
+	"\rStreamRequest\"\xde\t\n" +
 	"\x0eStreamResponse\x12\x1f\n" +
 	"\vkv_revision\x18\r \x01(\x04R\n" +
 	"kvRevision\x12A\n" +
@@ -1606,7 +1786,11 @@ const file_services_centrum_centrum_proto_rawDesc = "" +
 	"\x10dispatch_updated\x18\n" +
 	" \x01(\v2&.resources.centrum.dispatches.DispatchH\x00R\x0fdispatchUpdated\x12W\n" +
 	"\x0fdispatch_status\x18\v \x01(\v2,.resources.centrum.dispatches.DispatchStatusH\x00R\x0edispatchStatus\x12+\n" +
-	"\x10settings_deleted\x18\f \x01(\tH\x00R\x0fsettingsDeletedB\b\n" +
+	"\x10settings_deleted\x18\f \x01(\tH\x00R\x0fsettingsDeleted\x12O\n" +
+	"\x11unit_spec_updated\x18\x0e \x01(\v2!.resources.centrum.units.UnitSpecH\x00R\x0funitSpecUpdated\x12\\\n" +
+	"\x14unit_members_updated\x18\x0f \x01(\v2(.resources.centrum.units.UnitAssignmentsH\x00R\x12unitMembersUpdated\x12`\n" +
+	"\x15dispatch_spec_updated\x18\x10 \x01(\v2*.resources.centrum.dispatches.DispatchSpecH\x00R\x13dispatchSpecUpdated\x12u\n" +
+	"\x1cdispatch_assignments_updated\x18\x11 \x01(\v21.resources.centrum.dispatches.DispatchAssignmentsH\x00R\x1adispatchAssignmentsUpdatedB\b\n" +
 	"\x06change2\xdb\x05\n" +
 	"\x0eCentrumService\x12j\n" +
 	"\vGetSettings\x12$.services.centrum.GetSettingsRequest\x1a%.services.centrum.GetSettingsResponse\"\x0e\xd2\xf3\x18\n" +
@@ -1620,30 +1804,34 @@ const file_services_centrum_centrum_proto_rawDesc = "" +
 
 var file_services_centrum_centrum_proto_msgTypes = make([]protoimpl.MessageInfo, 14)
 var file_services_centrum_centrum_proto_goTypes = []any{
-	(*GetSettingsRequest)(nil),         // 0: services.centrum.GetSettingsRequest
-	(*GetSettingsResponse)(nil),        // 1: services.centrum.GetSettingsResponse
-	(*UpdateSettingsRequest)(nil),      // 2: services.centrum.UpdateSettingsRequest
-	(*UpdateSettingsResponse)(nil),     // 3: services.centrum.UpdateSettingsResponse
-	(*GetDispatchHeatmapRequest)(nil),  // 4: services.centrum.GetDispatchHeatmapRequest
-	(*GetDispatchHeatmapResponse)(nil), // 5: services.centrum.GetDispatchHeatmapResponse
-	(*TakeControlRequest)(nil),         // 6: services.centrum.TakeControlRequest
-	(*TakeControlResponse)(nil),        // 7: services.centrum.TakeControlResponse
-	(*UpdateDispatchersRequest)(nil),   // 8: services.centrum.UpdateDispatchersRequest
-	(*UpdateDispatchersResponse)(nil),  // 9: services.centrum.UpdateDispatchersResponse
-	(*StreamHandshake)(nil),            // 10: services.centrum.StreamHandshake
-	(*LatestState)(nil),                // 11: services.centrum.LatestState
-	(*StreamRequest)(nil),              // 12: services.centrum.StreamRequest
-	(*StreamResponse)(nil),             // 13: services.centrum.StreamResponse
-	(*settings.Settings)(nil),          // 14: resources.centrum.settings.Settings
-	(*settings.EffectiveAccess)(nil),   // 15: resources.centrum.settings.EffectiveAccess
-	(*heatmap.HeatmapEntry)(nil),       // 16: resources.livemap.heatmap.HeatmapEntry
-	(*dispatchers.Dispatchers)(nil),    // 17: resources.centrum.dispatchers.Dispatchers
-	(*timestamp.Timestamp)(nil),        // 18: resources.timestamp.Timestamp
-	(*dispatchers.JobDispatchers)(nil), // 19: resources.centrum.dispatchers.JobDispatchers
-	(*units.Unit)(nil),                 // 20: resources.centrum.units.Unit
-	(*dispatches.Dispatch)(nil),        // 21: resources.centrum.dispatches.Dispatch
-	(*units.UnitStatus)(nil),           // 22: resources.centrum.units.UnitStatus
-	(*dispatches.DispatchStatus)(nil),  // 23: resources.centrum.dispatches.DispatchStatus
+	(*GetSettingsRequest)(nil),             // 0: services.centrum.GetSettingsRequest
+	(*GetSettingsResponse)(nil),            // 1: services.centrum.GetSettingsResponse
+	(*UpdateSettingsRequest)(nil),          // 2: services.centrum.UpdateSettingsRequest
+	(*UpdateSettingsResponse)(nil),         // 3: services.centrum.UpdateSettingsResponse
+	(*GetDispatchHeatmapRequest)(nil),      // 4: services.centrum.GetDispatchHeatmapRequest
+	(*GetDispatchHeatmapResponse)(nil),     // 5: services.centrum.GetDispatchHeatmapResponse
+	(*TakeControlRequest)(nil),             // 6: services.centrum.TakeControlRequest
+	(*TakeControlResponse)(nil),            // 7: services.centrum.TakeControlResponse
+	(*UpdateDispatchersRequest)(nil),       // 8: services.centrum.UpdateDispatchersRequest
+	(*UpdateDispatchersResponse)(nil),      // 9: services.centrum.UpdateDispatchersResponse
+	(*StreamHandshake)(nil),                // 10: services.centrum.StreamHandshake
+	(*LatestState)(nil),                    // 11: services.centrum.LatestState
+	(*StreamRequest)(nil),                  // 12: services.centrum.StreamRequest
+	(*StreamResponse)(nil),                 // 13: services.centrum.StreamResponse
+	(*settings.Settings)(nil),              // 14: resources.centrum.settings.Settings
+	(*settings.EffectiveAccess)(nil),       // 15: resources.centrum.settings.EffectiveAccess
+	(*heatmap.HeatmapEntry)(nil),           // 16: resources.livemap.heatmap.HeatmapEntry
+	(*dispatchers.Dispatchers)(nil),        // 17: resources.centrum.dispatchers.Dispatchers
+	(*timestamp.Timestamp)(nil),            // 18: resources.timestamp.Timestamp
+	(*dispatchers.JobDispatchers)(nil),     // 19: resources.centrum.dispatchers.JobDispatchers
+	(*units.Unit)(nil),                     // 20: resources.centrum.units.Unit
+	(*dispatches.Dispatch)(nil),            // 21: resources.centrum.dispatches.Dispatch
+	(*units.UnitStatus)(nil),               // 22: resources.centrum.units.UnitStatus
+	(*dispatches.DispatchStatus)(nil),      // 23: resources.centrum.dispatches.DispatchStatus
+	(*units.UnitSpec)(nil),                 // 24: resources.centrum.units.UnitSpec
+	(*units.UnitAssignments)(nil),          // 25: resources.centrum.units.UnitAssignments
+	(*dispatches.DispatchSpec)(nil),        // 26: resources.centrum.dispatches.DispatchSpec
+	(*dispatches.DispatchAssignments)(nil), // 27: resources.centrum.dispatches.DispatchAssignments
 }
 var file_services_centrum_centrum_proto_depIdxs = []int32{
 	14, // 0: services.centrum.GetSettingsResponse.settings:type_name -> resources.centrum.settings.Settings
@@ -1667,23 +1855,27 @@ var file_services_centrum_centrum_proto_depIdxs = []int32{
 	22, // 18: services.centrum.StreamResponse.unit_status:type_name -> resources.centrum.units.UnitStatus
 	21, // 19: services.centrum.StreamResponse.dispatch_updated:type_name -> resources.centrum.dispatches.Dispatch
 	23, // 20: services.centrum.StreamResponse.dispatch_status:type_name -> resources.centrum.dispatches.DispatchStatus
-	0,  // 21: services.centrum.CentrumService.GetSettings:input_type -> services.centrum.GetSettingsRequest
-	2,  // 22: services.centrum.CentrumService.UpdateSettings:input_type -> services.centrum.UpdateSettingsRequest
-	4,  // 23: services.centrum.CentrumService.GetDispatchHeatmap:input_type -> services.centrum.GetDispatchHeatmapRequest
-	6,  // 24: services.centrum.CentrumService.TakeControl:input_type -> services.centrum.TakeControlRequest
-	8,  // 25: services.centrum.CentrumService.UpdateDispatchers:input_type -> services.centrum.UpdateDispatchersRequest
-	12, // 26: services.centrum.CentrumService.Stream:input_type -> services.centrum.StreamRequest
-	1,  // 27: services.centrum.CentrumService.GetSettings:output_type -> services.centrum.GetSettingsResponse
-	3,  // 28: services.centrum.CentrumService.UpdateSettings:output_type -> services.centrum.UpdateSettingsResponse
-	5,  // 29: services.centrum.CentrumService.GetDispatchHeatmap:output_type -> services.centrum.GetDispatchHeatmapResponse
-	7,  // 30: services.centrum.CentrumService.TakeControl:output_type -> services.centrum.TakeControlResponse
-	9,  // 31: services.centrum.CentrumService.UpdateDispatchers:output_type -> services.centrum.UpdateDispatchersResponse
-	13, // 32: services.centrum.CentrumService.Stream:output_type -> services.centrum.StreamResponse
-	27, // [27:33] is the sub-list for method output_type
-	21, // [21:27] is the sub-list for method input_type
-	21, // [21:21] is the sub-list for extension type_name
-	21, // [21:21] is the sub-list for extension extendee
-	0,  // [0:21] is the sub-list for field type_name
+	24, // 21: services.centrum.StreamResponse.unit_spec_updated:type_name -> resources.centrum.units.UnitSpec
+	25, // 22: services.centrum.StreamResponse.unit_members_updated:type_name -> resources.centrum.units.UnitAssignments
+	26, // 23: services.centrum.StreamResponse.dispatch_spec_updated:type_name -> resources.centrum.dispatches.DispatchSpec
+	27, // 24: services.centrum.StreamResponse.dispatch_assignments_updated:type_name -> resources.centrum.dispatches.DispatchAssignments
+	0,  // 25: services.centrum.CentrumService.GetSettings:input_type -> services.centrum.GetSettingsRequest
+	2,  // 26: services.centrum.CentrumService.UpdateSettings:input_type -> services.centrum.UpdateSettingsRequest
+	4,  // 27: services.centrum.CentrumService.GetDispatchHeatmap:input_type -> services.centrum.GetDispatchHeatmapRequest
+	6,  // 28: services.centrum.CentrumService.TakeControl:input_type -> services.centrum.TakeControlRequest
+	8,  // 29: services.centrum.CentrumService.UpdateDispatchers:input_type -> services.centrum.UpdateDispatchersRequest
+	12, // 30: services.centrum.CentrumService.Stream:input_type -> services.centrum.StreamRequest
+	1,  // 31: services.centrum.CentrumService.GetSettings:output_type -> services.centrum.GetSettingsResponse
+	3,  // 32: services.centrum.CentrumService.UpdateSettings:output_type -> services.centrum.UpdateSettingsResponse
+	5,  // 33: services.centrum.CentrumService.GetDispatchHeatmap:output_type -> services.centrum.GetDispatchHeatmapResponse
+	7,  // 34: services.centrum.CentrumService.TakeControl:output_type -> services.centrum.TakeControlResponse
+	9,  // 35: services.centrum.CentrumService.UpdateDispatchers:output_type -> services.centrum.UpdateDispatchersResponse
+	13, // 36: services.centrum.CentrumService.Stream:output_type -> services.centrum.StreamResponse
+	31, // [31:37] is the sub-list for method output_type
+	25, // [25:31] is the sub-list for method input_type
+	25, // [25:25] is the sub-list for extension type_name
+	25, // [25:25] is the sub-list for extension extendee
+	0,  // [0:25] is the sub-list for field type_name
 }
 
 func init() { file_services_centrum_centrum_proto_init() }
@@ -1705,6 +1897,10 @@ func file_services_centrum_centrum_proto_init() {
 		(*streamResponse_DispatchUpdated)(nil),
 		(*streamResponse_DispatchStatus)(nil),
 		(*streamResponse_SettingsDeleted)(nil),
+		(*streamResponse_UnitSpecUpdated)(nil),
+		(*streamResponse_UnitMembersUpdated)(nil),
+		(*streamResponse_DispatchSpecUpdated)(nil),
+		(*streamResponse_DispatchAssignmentsUpdated)(nil),
 	}
 	type x struct{}
 	out := protoimpl.TypeBuilder{

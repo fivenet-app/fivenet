@@ -89,7 +89,7 @@ func (s *Housekeeper) unitKVPing(ctx context.Context) error {
 // was leader, so relying only on replayed ping keys would leave a supervision
 // gap after failover.
 func (s *Housekeeper) reconcileUnitPings(ctx context.Context) error {
-	s.units.Range(func(_ string, unit *centrumunits.Unit) bool {
+	s.units.Range(ctx, func(_ string, unit *centrumunits.Unit) bool {
 		if ctx.Err() != nil {
 			return false
 		}

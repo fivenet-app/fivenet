@@ -31,7 +31,7 @@ func (s *Housekeeper) runUnitAssignmentWatch(ctx context.Context) {
 }
 
 func (s *Housekeeper) watchUnitAssignments(ctx context.Context) error {
-	watch, err := s.unitAssignmentWatchSource.WatchAll(ctx)
+	watch, err := s.unitAssignmentWatchSource.WatchMembers(ctx)
 	if err != nil {
 		return err
 	}
@@ -49,12 +49,24 @@ func (s *Housekeeper) watchUnitAssignments(ctx context.Context) error {
 				continue
 			}
 
-			unit, err := event.Value()
+			members, err := event.Value()
 			if err != nil {
 				s.logger.Warn("cannot read unit assignment watch value", zap.Error(err))
 				continue
 			}
-			if unit == nil || unit.GetId() <= 0 || len(unit.GetUsers()) > 0 {
+			if members == nil || members.GetUnitId() <= 0 || len(members.GetUsers()) > 0 {
+				continue
+			}
+			unit := &centrumunits.Unit{Id: members.GetUnitId()}
+			if s.units != nil {
+				unit, err = s.units.Get(ctx, members.GetUnitId())
+			}
+			if err != nil || unit == nil {
+				s.logger.Warn(
+					"cannot compose unit after membership update",
+					zap.Int64("unit_id", members.GetUnitId()),
+					zap.Error(err),
+				)
 				continue
 			}
 

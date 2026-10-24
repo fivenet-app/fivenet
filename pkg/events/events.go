@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"github.com/fivenet-app/fivenet/v2026/pkg/config"
+	eventsmigrations "github.com/fivenet-app/fivenet/v2026/pkg/events/migrations"
 	"github.com/fivenet-app/fivenet/v2026/pkg/reqs"
 	"github.com/fivenet-app/fivenet/v2026/pkg/server/admin"
 	"github.com/fivenet-app/fivenet/v2026/pkg/version"
@@ -147,7 +148,7 @@ func New(p Params) (Result, error) {
 
 	// Run migrations and collect basic metric
 	p.LC.Append(fx.StartHook(func(_ context.Context) error {
-		if err := runMigrations(ctx, p.Logger, res.JS, res.Req); err != nil {
+		if err := eventsmigrations.Run(ctx, p.Logger, res.JS, res.Req); err != nil {
 			return fmt.Errorf("failed to run nats migrations. %w", err)
 		}
 

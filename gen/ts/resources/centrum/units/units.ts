@@ -84,6 +84,70 @@ export interface Unit {
     access?: Access;
 }
 /**
+ * UnitSpec contains the configured, non-volatile portion of a unit
+ * projection. Runtime status and current membership are stored independently.
+ *
+ * @generated from protobuf message resources.centrum.units.UnitSpec
+ */
+export interface UnitSpec {
+    /**
+     * @generated from protobuf field: int64 id = 1
+     */
+    id: number;
+    /**
+     * @generated from protobuf field: optional resources.timestamp.Timestamp created_at = 2
+     */
+    createdAt?: Timestamp;
+    /**
+     * @generated from protobuf field: optional resources.timestamp.Timestamp updated_at = 3
+     */
+    updatedAt?: Timestamp;
+    /**
+     * @generated from protobuf field: string job = 4
+     */
+    job: string;
+    /**
+     * @generated from protobuf field: optional string job_label = 15
+     */
+    jobLabel?: string;
+    /**
+     * @generated from protobuf field: int32 sort_order = 17
+     */
+    sortOrder: number;
+    /**
+     * @generated from protobuf field: string name = 5
+     */
+    name: string;
+    /**
+     * @generated from protobuf field: string initials = 6
+     */
+    initials: string;
+    /**
+     * @generated from protobuf field: string color = 7
+     */
+    color: string;
+    /**
+     * @generated from protobuf field: optional string icon = 16
+     */
+    icon?: string;
+    /**
+     * @generated from protobuf field: optional string description = 8
+     */
+    description?: string;
+    /**
+     * @generated from protobuf field: optional resources.centrum.units.UnitAttributes attributes = 12
+     */
+    attributes?: UnitAttributes;
+    /**
+     * @generated from protobuf field: optional string home_postal = 13
+     */
+    homePostal?: string;
+    /**
+     * @generated from protobuf field: resources.access.Access access = 14
+     */
+    access?: Access;
+}
+/**
  * @generated from protobuf message resources.centrum.units.UnitAssignments
  */
 export interface UnitAssignments {
@@ -403,6 +467,149 @@ class Unit$Type extends MessageType<Unit> {
  * @generated MessageType for protobuf message resources.centrum.units.Unit
  */
 export const Unit = new Unit$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class UnitSpec$Type extends MessageType<UnitSpec> {
+    constructor() {
+        super("resources.centrum.units.UnitSpec", [
+            { no: 1, name: "id", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/, options: { "tagger.tags": "sql:\"primary_key\" alias:\"id\"" } },
+            { no: 2, name: "created_at", kind: "message", T: () => Timestamp },
+            { no: 3, name: "updated_at", kind: "message", T: () => Timestamp },
+            { no: 4, name: "job", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "20" } } } },
+            { no: 15, name: "job_label", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "50" } } } },
+            { no: 17, name: "sort_order", kind: "scalar", T: 5 /*ScalarType.INT32*/, options: { "buf.validate.field": { int32: { gte: 0 } } } },
+            { no: 5, name: "name", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { minLen: "3", maxLen: "24" } } } },
+            { no: 6, name: "initials", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { minLen: "2", maxLen: "4" } } } },
+            { no: 7, name: "color", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { len: "7", pattern: "^#[A-Fa-f0-9]{6}$" } } } },
+            { no: 16, name: "icon", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "128" } } } },
+            { no: 8, name: "description", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "255" } } } },
+            { no: 12, name: "attributes", kind: "message", T: () => UnitAttributes },
+            { no: 13, name: "home_postal", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "48" } } } },
+            { no: 14, name: "access", kind: "message", T: () => Access }
+        ]);
+    }
+    create(value?: PartialMessage<UnitSpec>): UnitSpec {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        message.id = 0;
+        message.job = "";
+        message.sortOrder = 0;
+        message.name = "";
+        message.initials = "";
+        message.color = "";
+        if (value !== undefined)
+            reflectionMergePartial<UnitSpec>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: UnitSpec): UnitSpec {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* int64 id */ 1:
+                    message.id = reader.int64().toNumber();
+                    break;
+                case /* optional resources.timestamp.Timestamp created_at */ 2:
+                    message.createdAt = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.createdAt);
+                    break;
+                case /* optional resources.timestamp.Timestamp updated_at */ 3:
+                    message.updatedAt = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.updatedAt);
+                    break;
+                case /* string job */ 4:
+                    message.job = reader.string();
+                    break;
+                case /* optional string job_label */ 15:
+                    message.jobLabel = reader.string();
+                    break;
+                case /* int32 sort_order */ 17:
+                    message.sortOrder = reader.int32();
+                    break;
+                case /* string name */ 5:
+                    message.name = reader.string();
+                    break;
+                case /* string initials */ 6:
+                    message.initials = reader.string();
+                    break;
+                case /* string color */ 7:
+                    message.color = reader.string();
+                    break;
+                case /* optional string icon */ 16:
+                    message.icon = reader.string();
+                    break;
+                case /* optional string description */ 8:
+                    message.description = reader.string();
+                    break;
+                case /* optional resources.centrum.units.UnitAttributes attributes */ 12:
+                    message.attributes = UnitAttributes.internalBinaryRead(reader, reader.uint32(), options, message.attributes);
+                    break;
+                case /* optional string home_postal */ 13:
+                    message.homePostal = reader.string();
+                    break;
+                case /* resources.access.Access access */ 14:
+                    message.access = Access.internalBinaryRead(reader, reader.uint32(), options, message.access);
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: UnitSpec, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* int64 id = 1; */
+        if (message.id !== 0)
+            writer.tag(1, WireType.Varint).int64(message.id);
+        /* optional resources.timestamp.Timestamp created_at = 2; */
+        if (message.createdAt)
+            Timestamp.internalBinaryWrite(message.createdAt, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
+        /* optional resources.timestamp.Timestamp updated_at = 3; */
+        if (message.updatedAt)
+            Timestamp.internalBinaryWrite(message.updatedAt, writer.tag(3, WireType.LengthDelimited).fork(), options).join();
+        /* string job = 4; */
+        if (message.job !== "")
+            writer.tag(4, WireType.LengthDelimited).string(message.job);
+        /* string name = 5; */
+        if (message.name !== "")
+            writer.tag(5, WireType.LengthDelimited).string(message.name);
+        /* string initials = 6; */
+        if (message.initials !== "")
+            writer.tag(6, WireType.LengthDelimited).string(message.initials);
+        /* string color = 7; */
+        if (message.color !== "")
+            writer.tag(7, WireType.LengthDelimited).string(message.color);
+        /* optional string description = 8; */
+        if (message.description !== undefined)
+            writer.tag(8, WireType.LengthDelimited).string(message.description);
+        /* optional resources.centrum.units.UnitAttributes attributes = 12; */
+        if (message.attributes)
+            UnitAttributes.internalBinaryWrite(message.attributes, writer.tag(12, WireType.LengthDelimited).fork(), options).join();
+        /* optional string home_postal = 13; */
+        if (message.homePostal !== undefined)
+            writer.tag(13, WireType.LengthDelimited).string(message.homePostal);
+        /* resources.access.Access access = 14; */
+        if (message.access)
+            Access.internalBinaryWrite(message.access, writer.tag(14, WireType.LengthDelimited).fork(), options).join();
+        /* optional string job_label = 15; */
+        if (message.jobLabel !== undefined)
+            writer.tag(15, WireType.LengthDelimited).string(message.jobLabel);
+        /* optional string icon = 16; */
+        if (message.icon !== undefined)
+            writer.tag(16, WireType.LengthDelimited).string(message.icon);
+        /* int32 sort_order = 17; */
+        if (message.sortOrder !== 0)
+            writer.tag(17, WireType.Varint).int32(message.sortOrder);
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message resources.centrum.units.UnitSpec
+ */
+export const UnitSpec = new UnitSpec$Type();
 // @generated message type with reflection information, may provide speed optimized methods
 class UnitAssignments$Type extends MessageType<UnitAssignments> {
     constructor() {

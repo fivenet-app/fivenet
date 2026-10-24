@@ -14,7 +14,13 @@ import {
     TakeDispatchResp,
 } from '~~/gen/ts/resources/centrum/dispatches/dispatches';
 import { type EffectiveAccess, type Settings, CentrumMode, CentrumType } from '~~/gen/ts/resources/centrum/settings/settings';
-import { type Unit, type UnitStatus, StatusUnit } from '~~/gen/ts/resources/centrum/units/units';
+import {
+    type Unit,
+    type UnitAssignments,
+    type UnitSpec,
+    type UnitStatus,
+    StatusUnit,
+} from '~~/gen/ts/resources/centrum/units/units';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 import type { Timestamp } from '~~/gen/ts/resources/timestamp/timestamp';
 import type { StreamResponse } from '~~/gen/ts/services/centrum/centrum';
@@ -53,6 +59,25 @@ type ProjectionRevision = {
     deletedAt?: number;
 };
 
+type UnitComponent = 'spec' | 'members' | 'status';
+type DispatchComponent = 'spec' | 'assignments' | 'status';
+
+export const replaceUnitMembersWithTransition = (
+    existing: Unit,
+    incoming: UnitAssignments,
+    activeUserId: number | undefined,
+): { wasOwnUnit: boolean; isOwnUnit: boolean } => {
+    const wasOwnUnit = existing.users.some((user) => user.userId === activeUserId);
+    existing.users.length = 0;
+    if (incoming.users.length > 0) {
+        existing.users.push(...incoming.users);
+    }
+    return {
+        wasOwnUnit,
+        isOwnUnit: existing.users.some((user) => user.userId === activeUserId),
+    };
+};
+
 export const useCentrumStore = defineStore(
     'centrum',
     () => {
@@ -79,7 +104,9 @@ export const useCentrumStore = defineStore(
         const dispatches = ref<Map<number, Dispatch>>(new Map());
         // KV stream revisions order aggregate updates and bounded delete tombstones.
         const unitRevisions = new Map<number, ProjectionRevision>();
+        const unitComponentRevisions = new Map<number, Map<UnitComponent, ProjectionRevision>>();
         const dispatchRevisions = new Map<number, ProjectionRevision>();
+        const dispatchComponentRevisions = new Map<number, Map<DispatchComponent, ProjectionRevision>>();
 
         const ownUnitId = ref<number | undefined>(undefined);
         const ownDispatches = ref<number[]>([]);
@@ -145,6 +172,28 @@ export const useCentrumStore = defineStore(
             tombstones.sort(([, a], [, b]) => a.deletedAt! - b.deletedAt!);
             for (const [id] of tombstones.slice(0, Math.max(0, tombstones.length - maxRevisionTombstones))) {
                 revisions.delete(id);
+            }
+        };
+
+        const pruneComponentRevisionTombstones = <T extends string>(
+            revisionsByResource: Map<number, Map<T, ProjectionRevision>>,
+        ): void => {
+            const now = Date.now();
+            const tombstones: [number, T, ProjectionRevision][] = [];
+            for (const [id, revisions] of revisionsByResource) {
+                for (const [component, revision] of revisions) {
+                    if (revision.deletedAt === undefined) continue;
+                    if (now - revision.deletedAt >= revisionTombstoneLifetime) {
+                        revisions.delete(component);
+                        continue;
+                    }
+                    tombstones.push([id, component, revision]);
+                }
+                if (revisions.size === 0) revisionsByResource.delete(id);
+            }
+            tombstones.sort(([, a], [, b]) => a.deletedAt! - b.deletedAt!);
+            for (const [id, component] of tombstones.slice(0, Math.max(0, tombstones.length - maxRevisionTombstones))) {
+                revisionsByResource.get(id)?.delete(component);
             }
         };
 
@@ -326,6 +375,77 @@ export const useCentrumStore = defineStore(
 
         // Units
         /**
+         * Applies the configured portion of a unit. Component events can use
+         * this without touching live status or membership state.
+         */
+        const updateUnitSpec = (existing: Unit, incoming: Unit | UnitSpec): void => {
+            existing.job = incoming.job;
+            existing.createdAt = incoming.createdAt;
+            existing.updatedAt = incoming.updatedAt;
+            existing.name = incoming.name;
+            existing.sortOrder = incoming.sortOrder;
+            existing.initials = incoming.initials;
+            existing.color = incoming.color;
+            existing.icon = incoming.icon;
+            existing.description = incoming.description;
+            existing.jobLabel = incoming.jobLabel;
+            existing.attributes = incoming.attributes;
+            existing.homePostal = incoming.homePostal;
+            existing.access = incoming.access;
+        };
+
+        const ensureUnitProjection = (id: number, job = ''): Unit => {
+            let unit = units.value.get(id);
+            if (!unit) {
+                unit = normalizeUnit({
+                    id,
+                    job,
+                    sortOrder: 0,
+                    name: '',
+                    initials: '',
+                    color: '',
+                    users: [],
+                } as Unit);
+                units.value.set(id, unit);
+            }
+            return unit;
+        };
+
+        /**
+         * Replaces membership as a snapshot. Never merge/append repeated
+         * assignments: the KV component owns the complete current list.
+         */
+        const replaceUnitMembers = (existing: Unit, incoming: Unit | UnitAssignments): void => {
+            existing.users.length = 0;
+            if (incoming.users.length > 0) {
+                existing.users.push(...incoming.users);
+            }
+        };
+
+        const acceptUnitComponentRevision = (id: number, component: UnitComponent, revision?: number): boolean => {
+            if (revision === undefined || revision <= 0) return true;
+            let revisions = unitComponentRevisions.get(id);
+            if (!revisions) {
+                revisions = new Map();
+                unitComponentRevisions.set(id, revisions);
+            }
+            const current = revisions.get(component);
+            if (current && revision <= current.revision) return false;
+            revisions.set(component, { revision });
+            const aggregate = unitRevisions.get(id)?.revision ?? 0;
+            if (revision > aggregate) unitRevisions.set(id, { revision });
+            return true;
+        };
+
+        const setUnitComponentTombstone = (id: number, revision: number): void => {
+            const revisions = new Map<UnitComponent, ProjectionRevision>();
+            for (const component of ['spec', 'members', 'status'] as UnitComponent[]) {
+                revisions.set(component, { revision, deletedAt: Date.now() });
+            }
+            unitComponentRevisions.set(id, revisions);
+        };
+
+        /**
          * Adds or updates a unit in the store.
          * @param {Unit} unit - The unit to add or update.
          */
@@ -344,29 +464,16 @@ export const useCentrumStore = defineStore(
             if (!existing) {
                 units.value.set(unit.id, normalizeUnit(unit));
             } else {
-                existing.job = unit.job;
-                existing.createdAt = unit.createdAt;
-                existing.updatedAt = unit.updatedAt;
-                existing.name = unit.name;
-                existing.sortOrder = unit.sortOrder;
-                existing.initials = unit.initials;
-                existing.color = unit.color;
-                existing.icon = unit.icon;
-                existing.description = unit.description;
-
-                existing.users.length = 0;
-                if (unit.users.length > 0) {
-                    existing.users.push(...unit.users);
-                }
-
-                if (unit.access) {
-                    existing.access = unit.access;
-                }
+                updateUnitSpec(existing, unit);
+                replaceUnitMembers(existing, unit);
 
                 updateUnitStatus(unit.status);
             }
             if (kvRevision !== undefined && kvRevision > 0) {
                 unitRevisions.set(unit.id, { revision: kvRevision });
+                for (const component of ['spec', 'members', 'status'] as UnitComponent[]) {
+                    acceptUnitComponentRevision(unit.id, component, kvRevision);
+                }
             }
 
             return true;
@@ -434,6 +541,7 @@ export const useCentrumStore = defineStore(
             units.value.delete(id);
             if (kvRevision !== undefined && kvRevision > 0) {
                 unitRevisions.set(id, { revision: kvRevision, deletedAt: Date.now() });
+                setUnitComponentTombstone(id, kvRevision);
             } else if (currentRevision > 0) {
                 unitRevisions.set(id, { revision: currentRevision, deletedAt: Date.now() });
             }
@@ -487,8 +595,26 @@ export const useCentrumStore = defineStore(
             }
             if (kvRevision !== undefined && kvRevision > 0) {
                 dispatchRevisions.set(dispatchObj.id, { revision: kvRevision });
+                for (const component of ['spec', 'assignments', 'status'] as DispatchComponent[]) {
+                    acceptDispatchComponentRevision(dispatchObj.id, component, kvRevision);
+                }
             }
             handleDispatchAssignment(dispatchObj);
+        };
+
+        const acceptDispatchComponentRevision = (id: number, component: DispatchComponent, revision?: number): boolean => {
+            if (revision === undefined || revision <= 0) return true;
+            let revisions = dispatchComponentRevisions.get(id);
+            if (!revisions) {
+                revisions = new Map();
+                dispatchComponentRevisions.set(id, revisions);
+            }
+            const current = revisions.get(component);
+            if (current && revision <= current.revision) return false;
+            revisions.set(component, { revision });
+            const aggregate = dispatchRevisions.get(id)?.revision ?? 0;
+            if (revision > aggregate) dispatchRevisions.set(id, { revision });
+            return true;
         };
 
         /**
@@ -556,6 +682,23 @@ export const useCentrumStore = defineStore(
             return true;
         };
 
+        const ensureDispatchProjection = (id: number): Dispatch => {
+            let dispatchObj = dispatches.value.get(id);
+            if (!dispatchObj) {
+                dispatchObj = normalizeDispatch({
+                    id,
+                    jobs: { jobs: [] },
+                    message: '',
+                    x: 0,
+                    y: 0,
+                    anon: false,
+                    units: [],
+                } as Dispatch);
+                dispatches.value.set(id, dispatchObj);
+            }
+            return dispatchObj;
+        };
+
         /**
          * Removes a dispatch from the store.
          * @param {number} id - The ID of the dispatch to remove.
@@ -571,6 +714,11 @@ export const useCentrumStore = defineStore(
             dispatches.value.delete(id);
             if (kvRevision !== undefined && kvRevision > 0) {
                 dispatchRevisions.set(id, { revision: kvRevision, deletedAt: Date.now() });
+                const revisions = new Map<DispatchComponent, ProjectionRevision>();
+                for (const component of ['spec', 'assignments', 'status'] as DispatchComponent[]) {
+                    revisions.set(component, { revision: kvRevision, deletedAt: Date.now() });
+                }
+                dispatchComponentRevisions.set(id, revisions);
             } else if (currentRevision > 0) {
                 dispatchRevisions.set(id, { revision: currentRevision, deletedAt: Date.now() });
             }
@@ -989,10 +1137,12 @@ export const useCentrumStore = defineStore(
                         isDispatcher.value = checkIfDispatcher(activeChar.value?.userId);
 
                         unitRevisions.clear();
+                        unitComponentRevisions.clear();
                         units.value = new Map(resp.change.latestState.units.map((unit) => [unit.id, normalizeUnit(unit)]));
                         setOwnUnit(resp.change.latestState.ownUnitId);
 
                         dispatchRevisions.clear();
+                        dispatchComponentRevisions.clear();
                         dispatches.value = new Map(
                             resp.change.latestState.dispatches.map((dispatchObj) => [
                                 dispatchObj.id,
@@ -1072,7 +1222,51 @@ export const useCentrumStore = defineStore(
                                 pendingDispatches.value.length = 0;
                             }
                         }
+                    } else if (resp.change.oneofKind === 'unitSpecUpdated') {
+                        const spec = resp.change.unitSpecUpdated;
+                        if (!acceptUnitComponentRevision(spec.id, 'spec', resp.kvRevision)) continue;
+                        const existing = ensureUnitProjection(spec.id, spec.job);
+                        updateUnitSpec(existing, spec);
+                    } else if (resp.change.oneofKind === 'unitMembersUpdated') {
+                        const members = resp.change.unitMembersUpdated;
+                        if (!acceptUnitComponentRevision(members.unitId, 'members', resp.kvRevision)) continue;
+                        const existing = ensureUnitProjection(members.unitId, members.job);
+
+                        const { wasOwnUnit, isOwnUnit } = replaceUnitMembersWithTransition(
+                            existing,
+                            members,
+                            activeChar.value?.userId,
+                        );
+                        if (isOwnUnit && !wasOwnUnit) {
+                            setOwnUnit(members.unitId);
+                            notifications.add({
+                                title: { key: 'notifications.centrum.unitUpdated.joined.title', parameters: {} },
+                                description: { key: 'notifications.centrum.unitUpdated.joined.content', parameters: {} },
+                                type: NotificationType.SUCCESS,
+                                actions: getNotificationActions(),
+                            });
+                            dispatches.value.forEach((d) => handleDispatchAssignment(d));
+                        } else if (!isOwnUnit && wasOwnUnit && ownUnitId.value === members.unitId) {
+                            notifications.add({
+                                title: { key: 'notifications.centrum.unitUpdated.removed.title', parameters: {} },
+                                description: { key: 'notifications.centrum.unitUpdated.removed.content', parameters: {} },
+                                type: NotificationType.WARNING,
+                                actions: getNotificationActions(),
+                            });
+                            setOwnUnit(undefined);
+                            ownDispatches.value.length = 0;
+                            pendingDispatches.value.length = 0;
+                        }
                     } else if (resp.change.oneofKind === 'unitStatus') {
+                        if (
+                            resp.kvRevision > 0 &&
+                            !acceptUnitComponentRevision(resp.change.unitStatus.unitId, 'status', resp.kvRevision)
+                        ) {
+                            continue;
+                        }
+                        const existing = units.value.get(resp.change.unitStatus.unitId);
+                        if (!existing && resp.kvRevision <= 0) continue;
+                        ensureUnitProjection(resp.change.unitStatus.unitId);
                         updateUnitStatus(resp.change.unitStatus);
 
                         if (isCenter.value) {
@@ -1121,12 +1315,44 @@ export const useCentrumStore = defineStore(
                         removeDispatch(resp.change.dispatchDeleted, resp.kvRevision);
                     } else if (resp.change.oneofKind === 'dispatchUpdated') {
                         addOrUpdateDispatch(resp.change.dispatchUpdated, resp.kvRevision);
+                    } else if (resp.change.oneofKind === 'dispatchSpecUpdated') {
+                        const spec = resp.change.dispatchSpecUpdated;
+                        if (!acceptDispatchComponentRevision(spec.id, 'spec', resp.kvRevision)) continue;
+                        const existing = ensureDispatchProjection(spec.id);
+                        existing.createdAt = spec.createdAt;
+                        existing.updatedAt = spec.updatedAt;
+                        existing.jobs = spec.jobs;
+                        existing.message = spec.message;
+                        existing.description = spec.description;
+                        existing.attributes = spec.attributes;
+                        existing.x = spec.x;
+                        existing.y = spec.y;
+                        existing.postal = spec.postal;
+                        existing.anon = spec.anon;
+                        existing.creatorId = spec.creatorId;
+                        existing.creator = spec.creator;
+                        existing.references = spec.references;
+                    } else if (resp.change.oneofKind === 'dispatchAssignmentsUpdated') {
+                        const assignments = resp.change.dispatchAssignmentsUpdated;
+                        if (!acceptDispatchComponentRevision(assignments.dispatchId, 'assignments', resp.kvRevision)) continue;
+                        const existing = ensureDispatchProjection(assignments.dispatchId);
+                        existing.units.length = 0;
+                        existing.units.push(...assignments.units);
+                        handleDispatchAssignment(existing);
                     } else if (resp.change.oneofKind === 'dispatchStatus') {
                         const ds = resp.change.dispatchStatus;
 
+                        if (resp.kvRevision > 0 && !acceptDispatchComponentRevision(ds.dispatchId, 'status', resp.kvRevision)) {
+                            continue;
+                        }
+
+                        const existing = dispatches.value.get(ds.dispatchId);
+                        if (!existing && resp.kvRevision <= 0) continue;
+                        const dispatch = ensureDispatchProjection(ds.dispatchId);
                         if (isCenter.value) addFeedItem(ds);
 
                         const statusApplied = updateDispatchStatus(ds);
+                        if (statusApplied) handleDispatchAssignment(dispatch);
 
                         if (ds.status === StatusDispatch.COMPLETED) {
                             // Play sound if one of the user's own dispatches got completed
@@ -1279,7 +1505,9 @@ export const useCentrumStore = defineStore(
             units.value = new Map();
             dispatches.value = new Map();
             unitRevisions.clear();
+            unitComponentRevisions.clear();
             dispatchRevisions.clear();
+            dispatchComponentRevisions.clear();
             ownUnitId.value = undefined;
             ownDispatches.value.length = 0;
             pendingDispatches.value.length = 0;
@@ -1367,7 +1595,9 @@ export const useCentrumStore = defineStore(
             const now = new Date().getTime() - timeCorrection.value;
 
             pruneRevisionTombstones(unitRevisions);
+            pruneComponentRevisionTombstones(unitComponentRevisions);
             pruneRevisionTombstones(dispatchRevisions);
+            pruneComponentRevisionTombstones(dispatchComponentRevisions);
 
             // Cleanup pending dispatches
             for (const pd of [...pendingDispatches.value]) {

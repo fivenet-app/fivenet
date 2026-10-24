@@ -67,8 +67,10 @@ type UnitDB struct {
 	postals  postals.Postals
 	jobs     jobsstore.IStore
 
-	store      *store.Store[centrumunits.Unit, *centrumunits.Unit]
-	jobMapping *store.Store[common.IDMapping, *common.IDMapping]
+	specStore    *store.Store[centrumunits.UnitSpec, *centrumunits.UnitSpec]
+	statusStore  *store.Store[centrumunits.UnitStatus, *centrumunits.UnitStatus]
+	membersStore *store.Store[centrumunits.UnitAssignments, *centrumunits.UnitAssignments]
+	jobMapping   *store.Store[common.IDMapping, *common.IDMapping]
 
 	unitAccess         *access.CentrumUnitsObjectAccess
 	unitAccessResolver *access.SubjectResolver
@@ -141,7 +143,9 @@ func New(p Params) *UnitDB {
 			store.WithKVPrefix[common.IDMapping, *common.IDMapping]("job"),
 			store.WithLocks[common.IDMapping, *common.IDMapping](nil),
 			store.WithKVConfig[common.IDMapping, *common.IDMapping](
-				jetstream.KeyValueConfig{LimitMarkerTTL: UnitPurgeMarkerTTL},
+				jetstream.KeyValueConfig{
+					LimitMarkerTTL: UnitPurgeMarkerTTL,
+				},
 			),
 			store.WithPurgeMarkerTTL[common.IDMapping, *common.IDMapping](UnitPurgeMarkerTTL),
 		)
@@ -153,198 +157,65 @@ func New(p Params) *UnitDB {
 			return err
 		}
 		d.jobMapping = jobSt
-		ensureJobMapping := func(ctx context.Context, job string, unitID int64, source string, refresh bool) error {
-			key := centrumutils.JobIdKey(job, unitID)
-			mapping := &common.IDMapping{Id: unitID}
-			var changed bool
-			var err error
-			if refresh {
-				// The job mapping is the job-scoped stream trigger. Rewrite it for
-				// every local unit projection update, even when its ID is unchanged.
-				err = jobSt.Put(ctx, key, mapping)
-				changed = err == nil
-			} else {
-				// Remote watchers only repair a missing mapping. Rewriting it from
-				// every server would duplicate the stream trigger.
-				changed, err = jobSt.PutIfChanged(ctx, key, mapping)
-			}
-			logger.Debug(
-				"ensured unit job mapping",
-				zap.String("source", source),
-				zap.String("key", key),
-				zap.Int64("unit_id", unitID),
-				zap.Bool("changed", changed),
-				zap.Error(err),
-			)
-			return err
-		}
 
-		st, err := store.New[centrumunits.Unit, *centrumunits.Unit](
+		specSt, err := store.New[centrumunits.UnitSpec](
 			ctxCancel,
 			storeLogger,
 			p.JS,
 			"centrum_units",
-			store.WithKVPrefix[centrumunits.Unit, *centrumunits.Unit]("id"),
-			store.WithKVConfig[centrumunits.Unit, *centrumunits.Unit](
+			store.WithKVPrefix[centrumunits.UnitSpec, *centrumunits.UnitSpec]("spec"),
+			store.WithKVConfig[centrumunits.UnitSpec, *centrumunits.UnitSpec](
 				jetstream.KeyValueConfig{LimitMarkerTTL: UnitPurgeMarkerTTL},
 			),
-			store.WithPurgeMarkerTTL[centrumunits.Unit, *centrumunits.Unit](UnitPurgeMarkerTTL),
-			store.WithOnUpdateFn[centrumunits.Unit, *centrumunits.Unit](
-				func(ctx context.Context, old *centrumunits.Unit, unit *centrumunits.Unit) (*centrumunits.Unit, error) {
-					if unit == nil {
-						return nil, nil
-					}
-
-					if err := ensureJobMapping(
-						ctx,
-						unit.GetJob(),
-						unit.GetId(),
-						"local_update",
-						true,
-					); err != nil {
-						return nil, fmt.Errorf(
-							"failed to update job %s mapping for unit %d. %w",
-							unit.GetJob(),
-							unit.GetId(),
-							err,
-						)
-					}
-
-					if old != nil && old.GetJob() != "" && old.GetJob() != unit.GetJob() {
-						if err := jobSt.Delete(
-							ctx,
-							centrumutils.JobIdKey(old.GetJob(), unit.GetId()),
-						); err != nil {
-							return nil, fmt.Errorf(
-								"failed to delete stale job %s mapping for unit %d. %w",
-								old.GetJob(),
-								unit.GetId(),
-								err,
-							)
-						}
-					}
-
-					if err := d.SyncUnitPing(ctx, unit); err != nil {
-						return nil, fmt.Errorf("failed to sync ping unit timer. %w", err)
-					}
-
-					return unit, nil
-				},
-			),
-			store.WithOnRemoteUpdatedFn[centrumunits.Unit, *centrumunits.Unit](
-				func(ctx context.Context, old *centrumunits.Unit, unit *centrumunits.Unit) (*centrumunits.Unit, error) {
-					if unit == nil {
-						return nil, nil
-					}
-
-					if err := ensureJobMapping(
-						ctx,
-						unit.GetJob(),
-						unit.GetId(),
-						"remote_update",
-						false,
-					); err != nil {
-						return nil, fmt.Errorf(
-							"failed to update job %s mapping for unit %d. %w",
-							unit.GetJob(),
-							unit.GetId(),
-							err,
-						)
-					}
-
-					if old != nil && old.GetJob() != "" && old.GetJob() != unit.GetJob() {
-						if err := jobSt.Delete(
-							ctx,
-							centrumutils.JobIdKey(old.GetJob(), unit.GetId()),
-						); err != nil {
-							return nil, fmt.Errorf(
-								"failed to delete stale job %s mapping for unit %d. %w",
-								old.GetJob(),
-								unit.GetId(),
-								err,
-							)
-						}
-					}
-
-					if err := d.SyncUnitPing(ctx, unit); err != nil {
-						return nil, fmt.Errorf("failed to sync ping unit timer. %w", err)
-					}
-
-					return unit, nil
-				},
-			),
-			store.WithOnDeleteFn(
-				func(ctx context.Context, _ string, unit *centrumunits.Unit) error {
-					if unit == nil {
-						return nil
-					}
-
-					if err := jobSt.Delete(
-						ctx,
-						centrumutils.JobIdKey(unit.GetJob(), unit.GetId()),
-					); err != nil {
-						return fmt.Errorf(
-							"failed to delete job %s mapping for unit %d. %w",
-							unit.GetJob(),
-							unit.GetId(),
-							err,
-						)
-					}
-
-					if err := d.KVPing.Delete(
-						ctx,
-						fmt.Sprintf("ping.%d", unit.GetId()),
-					); err != nil {
-						d.logger.Error(
-							"failed to delete ping timer for unit",
-							zap.Int64("unit_id", unit.GetId()),
-							zap.Error(err),
-						)
-					}
-
-					return nil
-				},
-			),
-			store.WithOnRemoteDeletedFn(
-				func(ctx context.Context, key string, unit *centrumunits.Unit) error {
-					if unit != nil {
-						return jobSt.Delete(
-							ctx,
-							centrumutils.JobIdKey(unit.GetJob(), unit.GetId()),
-						)
-					}
-
-					idKey, err := centrumutils.ExtractIDString(key)
-					if err != nil {
-						return fmt.Errorf("failed to parse unit id from key %s. %w", key, err)
-					}
-
-					var errs error
-					for _, jobKey := range jobSt.KeysFiltered("", func(jobKey string) bool {
-						uid, err := centrumutils.ExtractIDString(jobKey)
-						return err == nil && uid == idKey
-					}) {
-						if err := jobSt.Delete(ctx, jobKey); err != nil {
-							errs = fmt.Errorf(
-								"failed to delete unit job mapping %s. %w",
-								jobKey,
-								err,
-							)
-						}
-					}
-
-					return errs
-				},
+			store.WithPurgeMarkerTTL[centrumunits.UnitSpec, *centrumunits.UnitSpec](
+				UnitPurgeMarkerTTL,
 			),
 		)
 		if err != nil {
 			return err
 		}
-
-		if err := st.Start(ctxCancel, true); err != nil {
+		statusSt, err := store.New[centrumunits.UnitStatus](
+			ctxCancel,
+			storeLogger,
+			p.JS,
+			"centrum_units",
+			store.WithKVPrefix[centrumunits.UnitStatus, *centrumunits.UnitStatus]("status"),
+			store.WithKVConfig[centrumunits.UnitStatus, *centrumunits.UnitStatus](
+				jetstream.KeyValueConfig{LimitMarkerTTL: UnitPurgeMarkerTTL},
+			),
+			store.WithPurgeMarkerTTL[centrumunits.UnitStatus, *centrumunits.UnitStatus](
+				UnitPurgeMarkerTTL,
+			),
+		)
+		if err != nil {
 			return err
 		}
-		d.store = st
+		membersSt, err := store.New[centrumunits.UnitAssignments](
+			ctxCancel,
+			storeLogger,
+			p.JS,
+			"centrum_units",
+			store.WithKVPrefix[centrumunits.UnitAssignments, *centrumunits.UnitAssignments](
+				"members",
+			),
+			store.WithKVConfig[centrumunits.UnitAssignments, *centrumunits.UnitAssignments](
+				jetstream.KeyValueConfig{LimitMarkerTTL: UnitPurgeMarkerTTL},
+			),
+			store.WithPurgeMarkerTTL[centrumunits.UnitAssignments, *centrumunits.UnitAssignments](
+				UnitPurgeMarkerTTL,
+			),
+		)
+		if err != nil {
+			return err
+		}
+		d.specStore, d.statusStore, d.membersStore = specSt, statusSt, membersSt
+		for _, component := range []interface {
+			Start(context.Context, bool) error
+		}{specSt, statusSt, membersSt} {
+			if err := component.Start(ctxCancel, true); err != nil {
+				return err
+			}
+		}
 
 		return nil
 	}))
@@ -394,17 +265,17 @@ func (s *UnitDB) removeOrphanedProjections(
 	}
 
 	var orphaned []*centrumunits.Unit
-	s.store.Range(func(_ string, unit *centrumunits.Unit) bool {
-		if unit != nil {
-			if _, ok := existing[unit.GetId()]; !ok {
-				orphaned = append(orphaned, unit)
+	s.specStore.Range(func(_ string, spec *centrumunits.UnitSpec) bool {
+		if spec != nil {
+			if _, ok := existing[spec.GetId()]; !ok {
+				orphaned = append(orphaned, composeUnit(spec, nil, nil))
 			}
 		}
 		return true
 	})
 
 	for _, unit := range orphaned {
-		if err := s.store.Delete(ctx, centrumutils.IdKey(unit.GetId())); err != nil &&
+		if err := s.deleteInKV(ctx, unit.GetId()); err != nil &&
 			!errors.Is(err, jetstream.ErrKeyNotFound) {
 			return fmt.Errorf("failed to remove orphaned unit projection %d: %w", unit.GetId(), err)
 		}
@@ -795,12 +666,14 @@ func (s *UnitDB) Update(
 	if err := s.LoadFromDB(ctx, unit.GetId()); err != nil {
 		return nil, err
 	}
-
-	if err := s.updateInKV(ctx, unit.GetId(), unit); err != nil {
+	if err := s.refreshProjectionSideEffects(ctx, unit.GetId()); err != nil {
 		return nil, err
 	}
-
-	return unit, nil
+	loaded, err := s.Get(ctx, unit.GetId())
+	if err != nil {
+		return nil, err
+	}
+	return loaded, nil
 }
 
 func (s *UnitDB) Delete(ctx context.Context, id int64) error {
