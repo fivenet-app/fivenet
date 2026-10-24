@@ -82,6 +82,14 @@ func init() {
 		DeletedAtColumn: table.FivenetJobGroups.DeletedAt,
 
 		MinDays: 60,
+
+		DependantTables: []*housekeeper.Table{
+			{
+				Table:      table.FivenetJobGroupActivity,
+				IDColumn:   table.FivenetJobGroupActivity.ID,
+				ForeignKey: table.FivenetJobGroupActivity.GroupID,
+			},
+		},
 	})
 }
 

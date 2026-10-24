@@ -44,6 +44,11 @@ func init() {
 
 		DependantTables: []*housekeeper.Table{
 			{
+				Table:      table.FivenetQualificationsActivity,
+				IDColumn:   table.FivenetQualificationsActivity.ID,
+				ForeignKey: table.FivenetQualificationsActivity.QualificationID,
+			},
+			{
 				Table:           table.FivenetQualificationsExamUsers,
 				DeletedAtColumn: table.FivenetQualificationsExamUsers.EndsAt,
 				ForeignKey:      table.FivenetQualificationsExamUsers.QualificationID,
