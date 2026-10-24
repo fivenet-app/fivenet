@@ -28,6 +28,11 @@ import (
 
 const citizenIDLogFieldKey = "fivenet.citizens.user_id"
 
+func init() {
+	filestore.RegisterFileReference(table.FivenetUserProps, table.FivenetUserProps.AvatarFileID)
+	filestore.RegisterFileReference(table.FivenetUserProps, table.FivenetUserProps.MugshotFileID)
+}
+
 type Server struct {
 	pbcitizens.CitizensServiceServer
 	pbcitizens.LabelsServiceServer

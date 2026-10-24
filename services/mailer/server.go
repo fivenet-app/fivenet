@@ -6,6 +6,7 @@ import (
 	pbmailer "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/mailer"
 	"github.com/fivenet-app/fivenet/v2026/pkg/access"
 	"github.com/fivenet-app/fivenet/v2026/pkg/events"
+	"github.com/fivenet-app/fivenet/v2026/pkg/filestore"
 	"github.com/fivenet-app/fivenet/v2026/pkg/housekeeper"
 	"github.com/fivenet-app/fivenet/v2026/pkg/mstlystcdata"
 	"github.com/fivenet-app/fivenet/v2026/pkg/perms"
@@ -17,6 +18,8 @@ import (
 )
 
 func init() {
+	filestore.RegisterFileReference(table.FivenetMailerMessagesFiles, table.FivenetMailerMessagesFiles.FileID)
+
 	housekeeper.AddTable(&housekeeper.Table{
 		Table:           table.FivenetMailerEmails,
 		IDColumn:        table.FivenetMailerEmails.ID,

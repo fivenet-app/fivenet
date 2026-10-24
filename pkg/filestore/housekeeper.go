@@ -187,6 +187,8 @@ func (h *Housekeeper) Run(ctx context.Context) (int64, error) {
 		tFiles.DeletedAt.IS_NOT_NULL(),
 		tFiles.DeletedAt.LT(mysql.DateTimeT(cutoff)),
 	)
+	// FIXME Consider applying reference checks to softExpired as defensive
+	// protection against legacy data or writes outside the normal transaction.
 
 	// B) orphaned & not yet soft-deleted
 	candidateWhere := softExpired

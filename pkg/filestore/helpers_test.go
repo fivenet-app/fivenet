@@ -60,6 +60,7 @@ func TestAddTableIgnoresNilAndRegistersValidTables(t *testing.T) {
 	AddTable(
 		joinInfo{Table: table.FivenetDocumentsFiles, FileCol: table.FivenetDocumentsFiles.FileID},
 	)
+	RegisterFileReference(table.FivenetDocumentsFiles, table.FivenetDocumentsFiles.FileID)
 	tableListsMu.Lock()
 	defer tableListsMu.Unlock()
 	require.Len(t, tablesList, 1)

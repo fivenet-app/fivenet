@@ -48,6 +48,8 @@ const (
 )
 
 func init() {
+	filestore.RegisterFileReference(table.FivenetDocumentsFiles, table.FivenetDocumentsFiles.FileID)
+
 	// Documents
 	housekeeper.AddTable(&housekeeper.Table{
 		Table:           table.FivenetDocuments,

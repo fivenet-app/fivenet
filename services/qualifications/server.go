@@ -32,6 +32,8 @@ const (
 )
 
 func init() {
+	filestore.RegisterFileReference(table.FivenetQualificationsFiles, table.FivenetQualificationsFiles.FileID)
+
 	housekeeper.AddTable(&housekeeper.Table{
 		Table:           table.FivenetQualifications,
 		IDColumn:        table.FivenetQualifications.ID,

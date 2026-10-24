@@ -27,6 +27,10 @@ import (
 )
 
 func init() {
+	filestore.RegisterFileReference(table.FivenetJobConductFiles, table.FivenetJobConductFiles.FileID)
+	filestore.RegisterFileReference(table.FivenetJobGroups, table.FivenetJobGroups.LogoFileID)
+	filestore.RegisterFileReference(table.FivenetJobAssets, table.FivenetJobAssets.FileID)
+
 	housekeeper.AddTable(&housekeeper.Table{
 		Table:           table.FivenetJobColleagueProps,
 		JobColumn:       table.FivenetJobColleagueProps.Job,

@@ -39,6 +39,8 @@ const (
 )
 
 func init() {
+	filestore.RegisterFileReference(table.FivenetJobProps, table.FivenetJobProps.LogoFileID)
+
 	housekeeper.AddTable(&housekeeper.Table{
 		Table:           table.FivenetJobProps,
 		JobColumn:       table.FivenetJobProps.Job,

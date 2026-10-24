@@ -26,6 +26,8 @@ import (
 const pageIDLogFieldKey = "fivenet.wiki.page_id"
 
 func init() {
+	filestore.RegisterFileReference(table.FivenetWikiPagesFiles, table.FivenetWikiPagesFiles.FileID)
+
 	housekeeper.AddTable(&housekeeper.Table{
 		Table:           table.FivenetWikiPages,
 		IDColumn:        table.FivenetWikiPages.ID,
