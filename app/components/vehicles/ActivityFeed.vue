@@ -29,7 +29,15 @@ const activityTypes = Object.keys(VehicleActivityType)
     .map((t) => VehicleActivityType[t as keyof typeof VehicleActivityType])
     .filter((at) => typeof at === 'number' && at > VehicleActivityType.UNSPECIFIED);
 
-const options = activityTypes.map((at) => ({
+const visibleActivityTypes = activityTypes.filter(
+    (activityType) =>
+        (activityType !== VehicleActivityType.WANTED ||
+            attr('vehicles.VehiclesService/ListVehicles', 'Properties', 'vehicle.wanted').value) &&
+        (activityType !== VehicleActivityType.FILE ||
+            attr('vehicles.VehiclesService/ListVehicles', 'Properties', 'vehicle.files').value),
+);
+
+const options = visibleActivityTypes.map((at) => ({
     label: t(`enums.vehicles.VehicleActivityType.${VehicleActivityType[at]}`),
     icon: vehicleActivityTypeIcon(at),
     value: at,

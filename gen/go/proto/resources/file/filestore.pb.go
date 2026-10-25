@@ -208,13 +208,15 @@ func (*UploadFileRequest_Meta) isUploadFileRequest_Payload() {}
 func (*UploadFileRequest_Data) isUploadFileRequest_Payload() {}
 
 type UploadMeta struct {
-	state         protoimpl.MessageState `protogen:"hybrid.v1"`
-	ParentId      int64                  `protobuf:"varint,1,opt,name=parent_id,json=parentId,proto3" json:"parent_id,omitempty"`
-	Namespace     string                 `protobuf:"bytes,2,opt,name=namespace,proto3" json:"namespace,omitempty"` // "documents", "wiki", …
-	OriginalName  string                 `protobuf:"bytes,3,opt,name=original_name,json=originalName,proto3" json:"original_name,omitempty"`
-	ContentType   string                 `protobuf:"bytes,4,opt,name=content_type,json=contentType,proto3" json:"content_type,omitempty"` // optional - server re-validates
-	Size          int64                  `protobuf:"varint,5,opt,name=size,proto3" json:"size,omitempty"`                                 // Size in bytes
-	Reason        string                 `protobuf:"bytes,6,opt,name=reason,proto3" json:"reason,omitempty"`
+	state        protoimpl.MessageState `protogen:"hybrid.v1"`
+	ParentId     int64                  `protobuf:"varint,1,opt,name=parent_id,json=parentId,proto3" json:"parent_id,omitempty"`
+	Namespace    string                 `protobuf:"bytes,2,opt,name=namespace,proto3" json:"namespace,omitempty"` // "documents", "wiki", …
+	OriginalName string                 `protobuf:"bytes,3,opt,name=original_name,json=originalName,proto3" json:"original_name,omitempty"`
+	ContentType  string                 `protobuf:"bytes,4,opt,name=content_type,json=contentType,proto3" json:"content_type,omitempty"` // optional - server re-validates
+	Size         int64                  `protobuf:"varint,5,opt,name=size,proto3" json:"size,omitempty"`                                 // Size in bytes; the largest configured upload limit is 5 MiB
+	Reason       string                 `protobuf:"bytes,6,opt,name=reason,proto3" json:"reason,omitempty"`
+	// String parent key for resources whose natural identifier is not numeric.
+	ParentKey     string `protobuf:"bytes,7,opt,name=parent_key,json=parentKey,proto3" json:"parent_key,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -286,6 +288,13 @@ func (x *UploadMeta) GetReason() string {
 	return ""
 }
 
+func (x *UploadMeta) GetParentKey() string {
+	if x != nil {
+		return x.ParentKey
+	}
+	return ""
+}
+
 func (x *UploadMeta) SetParentId(v int64) {
 	x.ParentId = v
 }
@@ -310,6 +319,10 @@ func (x *UploadMeta) SetReason(v string) {
 	x.Reason = v
 }
 
+func (x *UploadMeta) SetParentKey(v string) {
+	x.ParentKey = v
+}
+
 type UploadMeta_builder struct {
 	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
 
@@ -319,6 +332,8 @@ type UploadMeta_builder struct {
 	ContentType  string
 	Size         int64
 	Reason       string
+	// String parent key for resources whose natural identifier is not numeric.
+	ParentKey string
 }
 
 func (b0 UploadMeta_builder) Build() *UploadMeta {
@@ -331,6 +346,7 @@ func (b0 UploadMeta_builder) Build() *UploadMeta {
 	x.ContentType = b.ContentType
 	x.Size = b.Size
 	x.Reason = b.Reason
+	x.ParentKey = b.ParentKey
 	return m0
 }
 
@@ -552,7 +568,7 @@ const file_resources_file_filestore_proto_rawDesc = "" +
 	"\x11UploadFileRequest\x120\n" +
 	"\x04meta\x18\x01 \x01(\v2\x1a.resources.file.UploadMetaH\x00R\x04meta\x12\x1a\n" +
 	"\x04data\x18\x02 \x01(\fB\x04\xf0\xf3\x18\x01H\x00R\x04dataB\t\n" +
-	"\apayload\"\xc3\x01\n" +
+	"\apayload\"\xe2\x01\n" +
 	"\n" +
 	"UploadMeta\x12\x1b\n" +
 	"\tparent_id\x18\x01 \x01(\x03R\bparentId\x12\x1c\n" +
@@ -560,7 +576,9 @@ const file_resources_file_filestore_proto_rawDesc = "" +
 	"\roriginal_name\x18\x03 \x01(\tR\foriginalName\x12!\n" +
 	"\fcontent_type\x18\x04 \x01(\tR\vcontentType\x12\x12\n" +
 	"\x04size\x18\x05 \x01(\x03R\x04size\x12\x1e\n" +
-	"\x06reason\x18\x06 \x01(\tB\x06\xda\xf3\x18\x02\b\x01R\x06reason\"`\n" +
+	"\x06reason\x18\x06 \x01(\tB\x06\xda\xf3\x18\x02\b\x01R\x06reason\x12\x1d\n" +
+	"\n" +
+	"parent_key\x18\a \x01(\tR\tparentKey\"`\n" +
 	"\x12UploadFileResponse\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x10\n" +
 	"\x03url\x18\x02 \x01(\tR\x03url\x12(\n" +

@@ -44,7 +44,23 @@ const activityTypes = Object.keys(UserActivityType)
         return true;
     });
 
-const options = activityTypes.map((at) => ({
+const propertyActivityKeys: Partial<Record<UserActivityType, string>> = {
+    [UserActivityType.LICENSES]: 'user.licenses',
+    [UserActivityType.WANTED]: 'user.wanted',
+    [UserActivityType.TRAFFIC_INFRACTION_POINTS]: 'user.traffic_infraction_points',
+    [UserActivityType.MUGSHOT]: 'user.mugshot',
+    [UserActivityType.FILE]: 'user.files',
+    [UserActivityType.LABELS]: 'user.labels',
+    [UserActivityType.JOB]: 'user.job',
+    [UserActivityType.FINE]: 'user.open_fines',
+};
+
+const visibleActivityTypes = activityTypes.filter((activityType) => {
+    const propertyKey = propertyActivityKeys[activityType];
+    return propertyKey === undefined || attr('citizens.CitizensService/ListCitizens', 'Properties', propertyKey).value;
+});
+
+const options = visibleActivityTypes.map((at) => ({
     label: t(`enums.users.UserActivityType.${UserActivityType[at]}`),
     icon: citizenUserActivityTypeIcon(at),
     value: at,
@@ -303,6 +319,14 @@ const denyView = computed(
                                         `components.citizens.CitizenInfoActivityFeedEntry.user_props_mugshot_${activity.data.data.mugshotChange.new ? 'set' : 'removed'}`,
                                     )
                                 }}
+                            </template>
+
+                            <template
+                                v-else-if="
+                                    activity.type === UserActivityType.FILE && activity.data?.data.oneofKind === 'fileChange'
+                                "
+                            >
+                                {{ $t(activity.data.data.fileChange.added ? 'common.image_uploaded' : 'common.image_deleted') }}
                             </template>
 
                             <template

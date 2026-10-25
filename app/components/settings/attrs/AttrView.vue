@@ -42,7 +42,7 @@ const { game } = useAppConfig();
 
 const overlay = useOverlay();
 
-const notifications = useNotificationsStore();
+const { notifyCopied } = useClipboardNotifications();
 
 const settingsSystemClient = await getSettingsSystemClient();
 
@@ -251,7 +251,7 @@ type CopyRole = {
 };
 
 async function copyRole(): Promise<void> {
-    copyToClipboardWrapper(
+    await copyToClipboardWrapper(
         JSON.stringify({
             job: props.job,
             attrList: attrList.value,
@@ -259,12 +259,7 @@ async function copyRole(): Promise<void> {
         } as CopyRole),
     );
 
-    notifications.add({
-        title: { key: 'notifications.clipboard.copied.title', parameters: {} },
-        description: { key: 'notifications.clipboard.copied.content', parameters: {} },
-        duration: 3250,
-        type: NotificationType.INFO,
-    });
+    notifyCopied();
 }
 
 const schema = z.object({

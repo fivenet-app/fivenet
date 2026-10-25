@@ -24,6 +24,7 @@ type FivenetUser struct {
 	Sex           *string          `json:"sex"`
 	Height        *decimal.Decimal `json:"height"`
 	PhoneNumber   *string          `json:"phone_number"`
+	AvatarFileID  *int64           `json:"avatar_file_id"`
 	Disabled      *bool            `json:"disabled"`
 	Visum         *int32           `json:"visum"`
 	Playtime      *int32           `json:"playtime"`

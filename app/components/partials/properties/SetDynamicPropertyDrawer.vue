@@ -5,6 +5,7 @@ import ConfirmModal from '~/components/partials/ConfirmModal.vue';
 import ResponsiveDrawerModal from '~/components/partials/ResponsiveDrawerModal.vue';
 import { getCitizensCitizensClient, getVehiclesVehiclesClient } from '~~/gen/ts/clients';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
+import InputDatePicker from '~/components/partials/InputDatePicker.vue';
 import {
     PropertyScope,
     PropertyValueType,
@@ -171,7 +172,7 @@ async function closeModal(): Promise<void> {
         </template>
 
         <template #body>
-            <UForm ref="formRef" class="grid gap-4" :schema="schema" :state="state" @submit="submit">
+            <UForm ref="formRef" class="grid gap-2" :schema="schema" :state="state" @submit="submit">
                 <UFormField name="reason" :label="$t('common.reason')" required>
                     <UInput v-model="state.reason" class="w-full" :placeholder="$t('common.reason')" />
                 </UFormField>
@@ -205,7 +206,6 @@ async function closeModal(): Promise<void> {
         <template #footer>
             <div class="flex w-full flex-col-reverse gap-2 sm:flex-row">
                 <UButton
-                    v-if="canReset"
                     class="flex-1"
                     color="neutral"
                     :disabled="!canSubmit"
@@ -213,6 +213,7 @@ async function closeModal(): Promise<void> {
                     @click="closeModal"
                 />
                 <UButton
+                    v-if="canReset"
                     class="flex-1"
                     color="error"
                     :disabled="!canSubmit"

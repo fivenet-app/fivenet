@@ -187,3 +187,48 @@ func TestStoreHandleUserPropsChangesUpdatesWanted(t *testing.T) {
 	assert.Equal(t, wantedTill, activities[0].GetData().GetWantedChange().GetWantedTill())
 	require.NoError(t, mock.ExpectationsWereMet())
 }
+
+func TestSyncUserMugshotFileRespectsTotalUserFileLimit(t *testing.T) {
+	t.Parallel()
+
+	t.Run("inserts when a slot remains", func(t *testing.T) {
+		t.Parallel()
+		db, mock, err := sqlmock.New()
+		require.NoError(t, err)
+		t.Cleanup(func() { _ = db.Close() })
+
+		mock.ExpectExec(regexp.QuoteMeta(`DELETE FROM fivenet_user_files`)).
+			WithArgs(int32(42), "mugshot").
+			WillReturnResult(sqlmock.NewResult(0, 1))
+		mock.ExpectQuery(`SELECT COUNT\(fivenet_user_files\.file_id\).*FROM fivenet_user_files.*WHERE fivenet_user_files\.user_id = \?;`).
+			WithArgs(int32(42)).
+			WillReturnRows(sqlmock.NewRows([]string{"total"}).AddRow(MaxUserFiles - 1))
+		mock.ExpectExec(regexp.QuoteMeta(`INSERT INTO fivenet_user_files`)).
+			WithArgs(int32(42), int64(99), "mugshot").
+			WillReturnResult(sqlmock.NewResult(0, 1))
+
+		require.NoError(t, syncUserMugshotFile(t.Context(), db, 42, 99))
+		require.NoError(t, mock.ExpectationsWereMet())
+	})
+
+	t.Run("rejects when all slots are occupied", func(t *testing.T) {
+		t.Parallel()
+		db, mock, err := sqlmock.New()
+		require.NoError(t, err)
+		t.Cleanup(func() { _ = db.Close() })
+
+		mock.ExpectExec(regexp.QuoteMeta(`DELETE FROM fivenet_user_files`)).
+			WithArgs(int32(42), "mugshot").
+			WillReturnResult(sqlmock.NewResult(0, 1))
+		mock.ExpectQuery(`SELECT COUNT\(fivenet_user_files\.file_id\).*FROM fivenet_user_files.*WHERE fivenet_user_files\.user_id = \?;`).
+			WithArgs(int32(42)).
+			WillReturnRows(sqlmock.NewRows([]string{"total"}).AddRow(MaxUserFiles))
+
+		require.EqualError(
+			t,
+			syncUserMugshotFile(t.Context(), db, 42, 99),
+			"user file limit reached",
+		)
+		require.NoError(t, mock.ExpectationsWereMet())
+	})
+}

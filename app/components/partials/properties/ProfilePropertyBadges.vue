@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 import { PropertyDisplayMode, type Property } from '~~/gen/ts/resources/properties/properties';
 import type { User } from '~~/gen/ts/resources/users/user';
+import WantedBadge from '~/components/partials/WantedBadge.vue';
 
 const props = defineProps<{ properties?: Property[]; user?: User; keyOrder?: string[] }>();
 const { t } = useI18n();
@@ -39,21 +40,14 @@ function valueFor(property: Property): string {
 
 <template>
     <div v-if="badges.length" class="flex flex-wrap items-center gap-2">
-        <UBadge
-            v-for="property in badges"
-            :key="property.key"
-            :color="property.key === 'user.wanted' ? (isWanted(property) ? 'error' : 'success') : 'neutral'"
-            variant="subtle"
-            size="lg"
-        >
-            <UIcon
-                v-if="property.key === 'user.wanted'"
-                :name="isWanted(property) ? 'i-mdi-account-alert' : 'i-mdi-account-check'"
-            />
-            <UIcon v-else-if="property.key === 'user.job'" name="i-mdi-briefcase" />
-            <UIcon v-else name="i-mdi-tag-outline" />
-            <span class="font-medium">{{ propertyLabel(property) }}:</span>
-            <span>{{ valueFor(property) }}</span>
-        </UBadge>
+        <template v-for="property in badges" :key="property.key">
+            <WantedBadge v-if="property.key === 'user.wanted'" :wanted="isWanted(property)" variant="long" size="lg" />
+            <UBadge v-else color="neutral" variant="subtle" size="lg">
+                <UIcon v-if="property.key === 'user.job'" name="i-mdi-briefcase" />
+                <UIcon v-else name="i-mdi-tag-outline" />
+                <span class="font-medium">{{ propertyLabel(property) }}:</span>
+                <span>{{ valueFor(property) }}</span>
+            </UBadge>
+        </template>
     </div>
 </template>

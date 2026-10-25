@@ -32,7 +32,9 @@ definePageMeta({
 
 const { t } = useI18n();
 
-const { can } = useAuth();
+const { can, attr } = useAuth();
+
+const canViewCitizenFiles = attr('citizens.CitizensService/ListCitizens', 'Properties', 'user.files');
 
 const clipboardStore = useClipboardStore();
 const { open: openClipboardModal } = useClipboardModal();
@@ -146,6 +148,16 @@ const items = computed<NavigationMenuItem[]>(() =>
             permission: 'documents.DocumentsService/ListUserDocuments' as Perms,
             to: '/citizens/' + route.params.id + '/documents',
         },
+        ...(canViewCitizenFiles.value
+            ? [
+                  {
+                      label: t('common.image', 2),
+                      icon: 'i-mdi-folder-multiple-image',
+                      to: '/citizens/' + route.params.id + '/files',
+                      permission: 'citizens.CitizensService/ListCitizens' as Perms,
+                  },
+              ]
+            : []),
         {
             label: t('common.activity'),
             icon: 'i-mdi-pulse',

@@ -36,7 +36,7 @@ func NewServer(p Params) *Server {
 		nil,
 		filestore.InsertJoinRow,
 		false,
-	)
+	).WithUploadFilter(filestore.NewImageUploadFilter())
 
 	return &Server{
 		st:       p.Storage,

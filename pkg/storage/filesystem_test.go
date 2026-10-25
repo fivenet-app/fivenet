@@ -115,6 +115,7 @@ func TestFilesystem_Get(t *testing.T) {
 
 		// Verify file info
 		require.Equal(t, key, info.GetName())
+		require.Equal(t, "text/plain; charset=utf-8", info.GetContentType())
 		require.Equal(t, int64(len(contentToPut)), info.GetSize())
 	})
 

@@ -1,12 +1,11 @@
 <script lang="ts" setup>
 import LivemapSettings from '~/components/user-settings/preferences/LivemapSettings.vue';
-import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 
 defineEmits<{
     (e: 'close', v: boolean): void;
 }>();
 
-const notifications = useNotificationsStore();
+const { notifyCopied } = useClipboardNotifications();
 
 const livemapStore = useLivemapStore();
 const {
@@ -88,15 +87,10 @@ const collectLivemapDebugInfo = (): string =>
         2,
     );
 
-function copyLivemapDebugInfo(): void {
-    copyToClipboardWrapper(collectLivemapDebugInfo());
+async function copyLivemapDebugInfo(): Promise<void> {
+    await copyToClipboardWrapper(collectLivemapDebugInfo());
 
-    notifications.add({
-        title: { key: 'notifications.clipboard.copied.title', parameters: {} },
-        description: { key: 'notifications.clipboard.copied.content', parameters: {} },
-        duration: 3250,
-        type: NotificationType.INFO,
-    });
+    notifyCopied();
 }
 </script>
 

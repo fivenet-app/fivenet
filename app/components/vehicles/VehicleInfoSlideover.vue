@@ -1,21 +1,52 @@
 <script lang="ts" setup>
+import type { TabsItem } from '@nuxt/ui';
 import { titleCase } from 'scule';
 import ActivityFeed from '~/components/vehicles/ActivityFeed.vue';
 import type { Vehicle } from '~~/gen/ts/resources/vehicles/vehicles';
 import GenericTime from '../partials/elements/GenericTime.vue';
 import LicensePlate from '../partials/LicensePlate.vue';
 import CitizenInfoPopover from '~/components/partials/citizens/CitizenInfoPopover.vue';
-import PinnedProperties from '~/components/partials/properties/PinnedProperties.vue';
+import WantedBadge from '~/components/partials/WantedBadge.vue';
+import VehicleFiles from './files/VehicleFiles.vue';
 
 defineEmits<{
     (e: 'close', v: boolean): void;
 }>();
 
 const vehicle = defineModel<Vehicle>({ required: true });
+
+const { t } = useI18n();
+const { attr } = useAuth();
+
+const canViewFiles = attr('vehicles.VehiclesService/ListVehicles', 'Properties', 'vehicle.files');
+
 const activityFeed = useTemplateRef<InstanceType<typeof ActivityFeed>>('activityFeed');
+
 const { canViewWanted, canSetWanted, dynamicProperties, openWantedDrawer, openDynamicPropertyDrawer } =
     useVehiclePropertyActions(vehicle, () => activityFeed.value?.refresh());
+
 const { propertyLabel } = usePropertyRenderer();
+
+const selectedTab = ref('activity');
+
+const tabs = computed<TabsItem[]>(() => [
+    {
+        slot: 'activity',
+        label: t('common.activity'),
+        icon: 'i-mdi-history',
+        value: 'activity',
+    },
+    ...(canViewFiles.value
+        ? [
+              {
+                  slot: 'files',
+                  label: t('common.image', 2),
+                  icon: 'i-mdi-folder-multiple-image',
+                  value: 'files',
+              },
+          ]
+        : []),
+]);
 </script>
 
 <template>
@@ -88,14 +119,7 @@ const { propertyLabel } = usePropertyRenderer();
                             <div v-if="canViewWanted">
                                 <dt class="font-semibold">{{ $t('common.wanted') }}</dt>
                                 <dd>
-                                    <UBadge
-                                        :color="vehicle.props?.wanted ? 'error' : 'neutral'"
-                                        :label="
-                                            vehicle.props?.wanted
-                                                ? $t('common.wanted').toUpperCase()
-                                                : `${$t('common.not')} ${$t('common.wanted')}`
-                                        "
-                                    />
+                                    <WantedBadge :wanted="vehicle.props?.wanted ?? false" variant="long" />
                                 </dd>
                             </div>
 
@@ -109,14 +133,30 @@ const { propertyLabel } = usePropertyRenderer();
                                 <dd><GenericTime :value="vehicle.props.wantedTill" /></dd>
                             </div>
                         </dl>
-                        <PinnedProperties :properties="vehicle.properties?.properties" />
                     </div>
                 </div>
 
-                <USeparator />
-
                 <div class="min-h-0 flex-1">
-                    <ActivityFeed ref="activityFeed" :plate="vehicle.plate" :owner-id="vehicle.ownerId" />
+                    <UTabs
+                        v-model="selectedTab"
+                        class="flex h-full min-h-0 flex-col"
+                        :items="tabs"
+                        :unmount-on-hide="true"
+                        variant="link"
+                        :ui="{ root: 'flex min-h-0 flex-1 flex-col gap-0', content: 'min-h-0 flex-1 overflow-y-auto' }"
+                    >
+                        <template #activity>
+                            <div class="min-h-full">
+                                <ActivityFeed ref="activityFeed" :plate="vehicle.plate" :owner-id="vehicle.ownerId" />
+                            </div>
+                        </template>
+
+                        <template #files>
+                            <div class="min-h-full">
+                                <VehicleFiles v-model="vehicle" />
+                            </div>
+                        </template>
+                    </UTabs>
                 </div>
             </div>
         </template>

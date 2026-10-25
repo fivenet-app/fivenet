@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { UBadge, UButton, UTooltip } from '#components';
+import { UButton, UTooltip } from '#components';
 import type { Form, TableColumn } from '@nuxt/ui';
 import { z } from 'zod';
 import CitizenInfoPopover from '~/components/partials/citizens/CitizenInfoPopover.vue';
@@ -18,6 +18,7 @@ import ColleagueName from '../jobs/colleagues/ColleagueName.vue';
 import SelectMenu from '../partials/SelectMenu.vue';
 import VehicleInfoPopover from './VehicleInfoPopover.vue';
 import VehicleInfoSlideover from './VehicleInfoSlideover.vue';
+import WantedBadge from '../partials/WantedBadge.vue';
 import { titleCase } from 'scule';
 
 const { t } = useI18n();
@@ -179,9 +180,7 @@ const columns = computed(() =>
                       accessorKey: 'wanted',
                       header: t('common.wanted'),
                       cell: ({ row }) =>
-                          row.original.props?.wanted
-                              ? h(UBadge, { color: 'error' }, () => $t('common.wanted').toUpperCase())
-                              : undefined,
+                          row.original.props?.wanted ? h(WantedBadge, { wanted: true, variant: 'short' }) : undefined,
                   }
                 : undefined,
             {

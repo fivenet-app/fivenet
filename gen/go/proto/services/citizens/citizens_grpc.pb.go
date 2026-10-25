@@ -20,14 +20,17 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	CitizensService_ListCitizens_FullMethodName     = "/services.citizens.CitizensService/ListCitizens"
-	CitizensService_GetUser_FullMethodName          = "/services.citizens.CitizensService/GetUser"
-	CitizensService_ListUserActivity_FullMethodName = "/services.citizens.CitizensService/ListUserActivity"
-	CitizensService_SetUserProps_FullMethodName     = "/services.citizens.CitizensService/SetUserProps"
-	CitizensService_UploadAvatar_FullMethodName     = "/services.citizens.CitizensService/UploadAvatar"
-	CitizensService_DeleteAvatar_FullMethodName     = "/services.citizens.CitizensService/DeleteAvatar"
-	CitizensService_UploadMugshot_FullMethodName    = "/services.citizens.CitizensService/UploadMugshot"
-	CitizensService_DeleteMugshot_FullMethodName    = "/services.citizens.CitizensService/DeleteMugshot"
+	CitizensService_ListCitizens_FullMethodName      = "/services.citizens.CitizensService/ListCitizens"
+	CitizensService_GetUser_FullMethodName           = "/services.citizens.CitizensService/GetUser"
+	CitizensService_ListUserActivity_FullMethodName  = "/services.citizens.CitizensService/ListUserActivity"
+	CitizensService_SetUserProps_FullMethodName      = "/services.citizens.CitizensService/SetUserProps"
+	CitizensService_UploadAvatar_FullMethodName      = "/services.citizens.CitizensService/UploadAvatar"
+	CitizensService_DeleteAvatar_FullMethodName      = "/services.citizens.CitizensService/DeleteAvatar"
+	CitizensService_UploadMugshot_FullMethodName     = "/services.citizens.CitizensService/UploadMugshot"
+	CitizensService_DeleteMugshot_FullMethodName     = "/services.citizens.CitizensService/DeleteMugshot"
+	CitizensService_ListCitizenFiles_FullMethodName  = "/services.citizens.CitizensService/ListCitizenFiles"
+	CitizensService_UploadCitizenFile_FullMethodName = "/services.citizens.CitizensService/UploadCitizenFile"
+	CitizensService_DeleteCitizenFile_FullMethodName = "/services.citizens.CitizensService/DeleteCitizenFile"
 )
 
 // CitizensServiceClient is the client API for CitizensService service.
@@ -48,6 +51,12 @@ type CitizensServiceClient interface {
 	// buf:lint:ignore RPC_RESPONSE_STANDARD_NAME
 	UploadMugshot(ctx context.Context, opts ...grpc.CallOption) (grpc.ClientStreamingClient[file.UploadFileRequest, file.UploadFileResponse], error)
 	DeleteMugshot(ctx context.Context, in *DeleteMugshotRequest, opts ...grpc.CallOption) (*DeleteMugshotResponse, error)
+	ListCitizenFiles(ctx context.Context, in *ListCitizenFilesRequest, opts ...grpc.CallOption) (*ListCitizenFilesResponse, error)
+	// buf:lint:ignore RPC_REQUEST_RESPONSE_UNIQUE
+	// buf:lint:ignore RPC_REQUEST_STANDARD_NAME
+	// buf:lint:ignore RPC_RESPONSE_STANDARD_NAME
+	UploadCitizenFile(ctx context.Context, opts ...grpc.CallOption) (grpc.ClientStreamingClient[file.UploadFileRequest, file.UploadFileResponse], error)
+	DeleteCitizenFile(ctx context.Context, in *DeleteCitizenFileRequest, opts ...grpc.CallOption) (*DeleteCitizenFileResponse, error)
 }
 
 type citizensServiceClient struct {
@@ -144,6 +153,39 @@ func (c *citizensServiceClient) DeleteMugshot(ctx context.Context, in *DeleteMug
 	return out, nil
 }
 
+func (c *citizensServiceClient) ListCitizenFiles(ctx context.Context, in *ListCitizenFilesRequest, opts ...grpc.CallOption) (*ListCitizenFilesResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ListCitizenFilesResponse)
+	err := c.cc.Invoke(ctx, CitizensService_ListCitizenFiles_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *citizensServiceClient) UploadCitizenFile(ctx context.Context, opts ...grpc.CallOption) (grpc.ClientStreamingClient[file.UploadFileRequest, file.UploadFileResponse], error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	stream, err := c.cc.NewStream(ctx, &CitizensService_ServiceDesc.Streams[2], CitizensService_UploadCitizenFile_FullMethodName, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	x := &grpc.GenericClientStream[file.UploadFileRequest, file.UploadFileResponse]{ClientStream: stream}
+	return x, nil
+}
+
+// This type alias is provided for backwards compatibility with existing code that references the prior non-generic stream type by name.
+type CitizensService_UploadCitizenFileClient = grpc.ClientStreamingClient[file.UploadFileRequest, file.UploadFileResponse]
+
+func (c *citizensServiceClient) DeleteCitizenFile(ctx context.Context, in *DeleteCitizenFileRequest, opts ...grpc.CallOption) (*DeleteCitizenFileResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(DeleteCitizenFileResponse)
+	err := c.cc.Invoke(ctx, CitizensService_DeleteCitizenFile_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // CitizensServiceServer is the server API for CitizensService service.
 // All implementations must embed UnimplementedCitizensServiceServer
 // for forward compatibility.
@@ -162,6 +204,12 @@ type CitizensServiceServer interface {
 	// buf:lint:ignore RPC_RESPONSE_STANDARD_NAME
 	UploadMugshot(grpc.ClientStreamingServer[file.UploadFileRequest, file.UploadFileResponse]) error
 	DeleteMugshot(context.Context, *DeleteMugshotRequest) (*DeleteMugshotResponse, error)
+	ListCitizenFiles(context.Context, *ListCitizenFilesRequest) (*ListCitizenFilesResponse, error)
+	// buf:lint:ignore RPC_REQUEST_RESPONSE_UNIQUE
+	// buf:lint:ignore RPC_REQUEST_STANDARD_NAME
+	// buf:lint:ignore RPC_RESPONSE_STANDARD_NAME
+	UploadCitizenFile(grpc.ClientStreamingServer[file.UploadFileRequest, file.UploadFileResponse]) error
+	DeleteCitizenFile(context.Context, *DeleteCitizenFileRequest) (*DeleteCitizenFileResponse, error)
 	mustEmbedUnimplementedCitizensServiceServer()
 }
 
@@ -195,6 +243,15 @@ func (UnimplementedCitizensServiceServer) UploadMugshot(grpc.ClientStreamingServ
 }
 func (UnimplementedCitizensServiceServer) DeleteMugshot(context.Context, *DeleteMugshotRequest) (*DeleteMugshotResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DeleteMugshot not implemented")
+}
+func (UnimplementedCitizensServiceServer) ListCitizenFiles(context.Context, *ListCitizenFilesRequest) (*ListCitizenFilesResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ListCitizenFiles not implemented")
+}
+func (UnimplementedCitizensServiceServer) UploadCitizenFile(grpc.ClientStreamingServer[file.UploadFileRequest, file.UploadFileResponse]) error {
+	return status.Errorf(codes.Unimplemented, "method UploadCitizenFile not implemented")
+}
+func (UnimplementedCitizensServiceServer) DeleteCitizenFile(context.Context, *DeleteCitizenFileRequest) (*DeleteCitizenFileResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DeleteCitizenFile not implemented")
 }
 func (UnimplementedCitizensServiceServer) mustEmbedUnimplementedCitizensServiceServer() {}
 func (UnimplementedCitizensServiceServer) testEmbeddedByValue()                         {}
@@ -339,6 +396,49 @@ func _CitizensService_DeleteMugshot_Handler(srv interface{}, ctx context.Context
 	return interceptor(ctx, in, info, handler)
 }
 
+func _CitizensService_ListCitizenFiles_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ListCitizenFilesRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CitizensServiceServer).ListCitizenFiles(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: CitizensService_ListCitizenFiles_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CitizensServiceServer).ListCitizenFiles(ctx, req.(*ListCitizenFilesRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _CitizensService_UploadCitizenFile_Handler(srv interface{}, stream grpc.ServerStream) error {
+	return srv.(CitizensServiceServer).UploadCitizenFile(&grpc.GenericServerStream[file.UploadFileRequest, file.UploadFileResponse]{ServerStream: stream})
+}
+
+// This type alias is provided for backwards compatibility with existing code that references the prior non-generic stream type by name.
+type CitizensService_UploadCitizenFileServer = grpc.ClientStreamingServer[file.UploadFileRequest, file.UploadFileResponse]
+
+func _CitizensService_DeleteCitizenFile_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DeleteCitizenFileRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CitizensServiceServer).DeleteCitizenFile(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: CitizensService_DeleteCitizenFile_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CitizensServiceServer).DeleteCitizenFile(ctx, req.(*DeleteCitizenFileRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // CitizensService_ServiceDesc is the grpc.ServiceDesc for CitizensService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -370,6 +470,14 @@ var CitizensService_ServiceDesc = grpc.ServiceDesc{
 			MethodName: "DeleteMugshot",
 			Handler:    _CitizensService_DeleteMugshot_Handler,
 		},
+		{
+			MethodName: "ListCitizenFiles",
+			Handler:    _CitizensService_ListCitizenFiles_Handler,
+		},
+		{
+			MethodName: "DeleteCitizenFile",
+			Handler:    _CitizensService_DeleteCitizenFile_Handler,
+		},
 	},
 	Streams: []grpc.StreamDesc{
 		{
@@ -380,6 +488,11 @@ var CitizensService_ServiceDesc = grpc.ServiceDesc{
 		{
 			StreamName:    "UploadMugshot",
 			Handler:       _CitizensService_UploadMugshot_Handler,
+			ClientStreams: true,
+		},
+		{
+			StreamName:    "UploadCitizenFile",
+			Handler:       _CitizensService_UploadCitizenFile_Handler,
 			ClientStreams: true,
 		},
 	},

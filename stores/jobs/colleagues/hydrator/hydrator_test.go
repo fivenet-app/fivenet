@@ -251,8 +251,7 @@ func expectFallbackQuery(mock sqlmock.Sqlmock, userIDs ...int32) {
 		)
 	}
 
-	args := make([]driver.Value, 0, len(userIDs)+2)
-	args = append(args, "avatar")
+	args := make([]driver.Value, 0, len(userIDs)+1)
 	for _, userID := range userIDs {
 		args = append(args, userID)
 	}
@@ -438,7 +437,7 @@ func TestListByUserIDSkipsDeletedColleagueRows(t *testing.T) {
 	mock.ExpectQuery(
 		`(?s)^SELECT .*FROM fivenet_user AS colleague .*colleague\.deleted_at IS NULL.*LIMIT \?;$`,
 	).
-		WithArgs("avatar", int32(7), int64(1)).
+		WithArgs(int32(7), int64(1)).
 		WillReturnRows(sqlmock.NewRows([]string{
 			"colleague.id",
 			"colleague.job",

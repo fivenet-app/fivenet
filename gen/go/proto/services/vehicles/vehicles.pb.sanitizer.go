@@ -9,6 +9,22 @@ import (
 
 // Sanitize sanitizes the message's fields, in case of complex types it calls
 // their Sanitize() method recursively.
+func (m *DeleteVehicleFileRequest) Sanitize() error {
+	if m == nil {
+		return nil
+	}
+
+	// Field: Plate
+	m.Plate = htmlsanitizer.SanitizeAndUnescape(m.Plate)
+
+	// Field: Reason
+	m.Reason = htmlsanitizer.SanitizeAndUnescape(m.Reason)
+
+	return nil
+}
+
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *ListVehicleActivityRequest) Sanitize() error {
 	if m == nil {
 		return nil
@@ -96,6 +112,41 @@ func (m *ListVehicleActivityResponse) Sanitize() error {
 				return err
 			}
 		}
+	}
+
+	return nil
+}
+
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
+func (m *ListVehicleFilesRequest) Sanitize() error {
+	if m == nil {
+		return nil
+	}
+
+	// Field: Plate
+	m.Plate = htmlsanitizer.SanitizeAndUnescape(m.Plate)
+
+	return nil
+}
+
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
+func (m *ListVehicleFilesResponse) Sanitize() error {
+	if m == nil {
+		return nil
+	}
+
+	// Field: Files
+	for idx, item := range m.Files {
+		_, _ = idx, item
+
+		if v, ok := any(item).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+
 	}
 
 	return nil
@@ -236,6 +287,28 @@ func (m *SetVehiclePropsResponse) Sanitize() error {
 			}
 		}
 	}
+
+	return nil
+}
+
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
+func (m *VehicleFile) Sanitize() error {
+	if m == nil {
+		return nil
+	}
+
+	// Field: File
+	if m.File != nil {
+		if v, ok := any(m.GetFile()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+	}
+
+	// Field: Kind
+	m.Kind = htmlsanitizer.SanitizeAndUnescape(m.Kind)
 
 	return nil
 }

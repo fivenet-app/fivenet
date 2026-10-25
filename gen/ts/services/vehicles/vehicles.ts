@@ -2,6 +2,8 @@
 // @generated from protobuf file "services/vehicles/vehicles.proto" (package "services.vehicles", syntax proto3)
 // tslint:disable
 // @ts-nocheck
+import { UploadFileResponse } from "../../resources/file/filestore";
+import { UploadFileRequest } from "../../resources/file/filestore";
 import { ServiceType } from "@protobuf-ts/runtime-rpc";
 import type { BinaryWriteOptions } from "@protobuf-ts/runtime";
 import type { IBinaryWriter } from "@protobuf-ts/runtime";
@@ -12,6 +14,7 @@ import { WireType } from "@protobuf-ts/runtime";
 import type { PartialMessage } from "@protobuf-ts/runtime";
 import { reflectionMergePartial } from "@protobuf-ts/runtime";
 import { MessageType } from "@protobuf-ts/runtime";
+import { File } from "../../resources/file/file";
 import { VehicleActivity } from "../../resources/vehicles/activity/activity";
 import { Timestamp } from "../../resources/timestamp/timestamp";
 import { VehicleActivityType } from "../../resources/vehicles/activity/activity";
@@ -154,6 +157,59 @@ export interface ListVehicleActivityResponse {
      * @generated from protobuf field: repeated resources.vehicles.activity.VehicleActivity activity = 2
      */
     activity: VehicleActivity[];
+}
+/**
+ * @generated from protobuf message services.vehicles.VehicleFile
+ */
+export interface VehicleFile {
+    /**
+     * @generated from protobuf field: resources.file.File file = 1
+     */
+    file?: File;
+    /**
+     * @generated from protobuf field: string kind = 2
+     */
+    kind: string;
+}
+/**
+ * @generated from protobuf message services.vehicles.ListVehicleFilesRequest
+ */
+export interface ListVehicleFilesRequest {
+    /**
+     * @generated from protobuf field: string plate = 1
+     */
+    plate: string;
+}
+/**
+ * @generated from protobuf message services.vehicles.ListVehicleFilesResponse
+ */
+export interface ListVehicleFilesResponse {
+    /**
+     * @generated from protobuf field: repeated services.vehicles.VehicleFile files = 1
+     */
+    files: VehicleFile[];
+}
+/**
+ * @generated from protobuf message services.vehicles.DeleteVehicleFileRequest
+ */
+export interface DeleteVehicleFileRequest {
+    /**
+     * @generated from protobuf field: string plate = 1
+     */
+    plate: string;
+    /**
+     * @generated from protobuf field: int64 file_id = 2
+     */
+    fileId: number;
+    /**
+     * @generated from protobuf field: string reason = 3
+     */
+    reason: string;
+}
+/**
+ * @generated from protobuf message services.vehicles.DeleteVehicleFileResponse
+ */
+export interface DeleteVehicleFileResponse {
 }
 // @generated message type with reflection information, may provide speed optimized methods
 class ListVehiclesRequest$Type extends MessageType<ListVehiclesRequest> {
@@ -575,11 +631,263 @@ class ListVehicleActivityResponse$Type extends MessageType<ListVehicleActivityRe
  * @generated MessageType for protobuf message services.vehicles.ListVehicleActivityResponse
  */
 export const ListVehicleActivityResponse = new ListVehicleActivityResponse$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class VehicleFile$Type extends MessageType<VehicleFile> {
+    constructor() {
+        super("services.vehicles.VehicleFile", [
+            { no: 1, name: "file", kind: "message", T: () => File, options: { "buf.validate.field": { required: true } } },
+            { no: 2, name: "kind", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "32" } } } }
+        ]);
+    }
+    create(value?: PartialMessage<VehicleFile>): VehicleFile {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        message.kind = "";
+        if (value !== undefined)
+            reflectionMergePartial<VehicleFile>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: VehicleFile): VehicleFile {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* resources.file.File file */ 1:
+                    message.file = File.internalBinaryRead(reader, reader.uint32(), options, message.file);
+                    break;
+                case /* string kind */ 2:
+                    message.kind = reader.string();
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: VehicleFile, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* resources.file.File file = 1; */
+        if (message.file)
+            File.internalBinaryWrite(message.file, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
+        /* string kind = 2; */
+        if (message.kind !== "")
+            writer.tag(2, WireType.LengthDelimited).string(message.kind);
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message services.vehicles.VehicleFile
+ */
+export const VehicleFile = new VehicleFile$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class ListVehicleFilesRequest$Type extends MessageType<ListVehicleFilesRequest> {
+    constructor() {
+        super("services.vehicles.ListVehicleFilesRequest", [
+            { no: 1, name: "plate", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { minLen: "1", maxLen: "32" } } } }
+        ]);
+    }
+    create(value?: PartialMessage<ListVehicleFilesRequest>): ListVehicleFilesRequest {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        message.plate = "";
+        if (value !== undefined)
+            reflectionMergePartial<ListVehicleFilesRequest>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: ListVehicleFilesRequest): ListVehicleFilesRequest {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* string plate */ 1:
+                    message.plate = reader.string();
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: ListVehicleFilesRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* string plate = 1; */
+        if (message.plate !== "")
+            writer.tag(1, WireType.LengthDelimited).string(message.plate);
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message services.vehicles.ListVehicleFilesRequest
+ */
+export const ListVehicleFilesRequest = new ListVehicleFilesRequest$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class ListVehicleFilesResponse$Type extends MessageType<ListVehicleFilesResponse> {
+    constructor() {
+        super("services.vehicles.ListVehicleFilesResponse", [
+            { no: 1, name: "files", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => VehicleFile, options: { "codegen.itemslen.enabled": true } }
+        ]);
+    }
+    create(value?: PartialMessage<ListVehicleFilesResponse>): ListVehicleFilesResponse {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        message.files = [];
+        if (value !== undefined)
+            reflectionMergePartial<ListVehicleFilesResponse>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: ListVehicleFilesResponse): ListVehicleFilesResponse {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* repeated services.vehicles.VehicleFile files */ 1:
+                    message.files.push(VehicleFile.internalBinaryRead(reader, reader.uint32(), options));
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: ListVehicleFilesResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* repeated services.vehicles.VehicleFile files = 1; */
+        for (let i = 0; i < message.files.length; i++)
+            VehicleFile.internalBinaryWrite(message.files[i], writer.tag(1, WireType.LengthDelimited).fork(), options).join();
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message services.vehicles.ListVehicleFilesResponse
+ */
+export const ListVehicleFilesResponse = new ListVehicleFilesResponse$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class DeleteVehicleFileRequest$Type extends MessageType<DeleteVehicleFileRequest> {
+    constructor() {
+        super("services.vehicles.DeleteVehicleFileRequest", [
+            { no: 1, name: "plate", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { minLen: "1", maxLen: "32" } } } },
+            { no: 2, name: "file_id", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/, options: { "buf.validate.field": { int64: { gt: "0" } } } },
+            { no: 3, name: "reason", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { minLen: "3", maxLen: "255" } }, "codegen.sanitizer.sanitizer": { enabled: true } } }
+        ]);
+    }
+    create(value?: PartialMessage<DeleteVehicleFileRequest>): DeleteVehicleFileRequest {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        message.plate = "";
+        message.fileId = 0;
+        message.reason = "";
+        if (value !== undefined)
+            reflectionMergePartial<DeleteVehicleFileRequest>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: DeleteVehicleFileRequest): DeleteVehicleFileRequest {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* string plate */ 1:
+                    message.plate = reader.string();
+                    break;
+                case /* int64 file_id */ 2:
+                    message.fileId = reader.int64().toNumber();
+                    break;
+                case /* string reason */ 3:
+                    message.reason = reader.string();
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: DeleteVehicleFileRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* string plate = 1; */
+        if (message.plate !== "")
+            writer.tag(1, WireType.LengthDelimited).string(message.plate);
+        /* int64 file_id = 2; */
+        if (message.fileId !== 0)
+            writer.tag(2, WireType.Varint).int64(message.fileId);
+        /* string reason = 3; */
+        if (message.reason !== "")
+            writer.tag(3, WireType.LengthDelimited).string(message.reason);
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message services.vehicles.DeleteVehicleFileRequest
+ */
+export const DeleteVehicleFileRequest = new DeleteVehicleFileRequest$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class DeleteVehicleFileResponse$Type extends MessageType<DeleteVehicleFileResponse> {
+    constructor() {
+        super("services.vehicles.DeleteVehicleFileResponse", []);
+    }
+    create(value?: PartialMessage<DeleteVehicleFileResponse>): DeleteVehicleFileResponse {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        if (value !== undefined)
+            reflectionMergePartial<DeleteVehicleFileResponse>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: DeleteVehicleFileResponse): DeleteVehicleFileResponse {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: DeleteVehicleFileResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message services.vehicles.DeleteVehicleFileResponse
+ */
+export const DeleteVehicleFileResponse = new DeleteVehicleFileResponse$Type();
 /**
  * @generated ServiceType for protobuf service services.vehicles.VehiclesService
  */
 export const VehiclesService = new ServiceType("services.vehicles.VehiclesService", [
     { name: "ListVehicles", options: { "codegen.perms.perms": { enabled: true, attrs: [{ key: "Properties", type: "ATTRIBUTE_TYPE_PROPERTY_LIST", propertyScope: "PROPERTY_SCOPE_VEHICLE" }] } }, I: ListVehiclesRequest, O: ListVehiclesResponse },
     { name: "SetVehicleProps", options: { "codegen.perms.perms": { enabled: true, attrs: [{ key: "Properties", type: "ATTRIBUTE_TYPE_PROPERTY_LIST", propertyScope: "PROPERTY_SCOPE_VEHICLE" }] } }, I: SetVehiclePropsRequest, O: SetVehiclePropsResponse },
-    { name: "ListVehicleActivity", options: { "codegen.perms.perms": { enabled: true, attrs: [{ key: "Fields", type: "ATTRIBUTE_TYPE_STRING_LIST", validStringList: ["Creator", "Own"] }] } }, I: ListVehicleActivityRequest, O: ListVehicleActivityResponse }
-], { "codegen.perms.perms_svc": { order: 40, icon: "i-mdi-car-outline", systemProperties: [{ scope: "PROPERTY_SCOPE_VEHICLE", key: "vehicle.wanted", valueType: "PROPERTY_VALUE_TYPE_BOOL", enabled: true, displayKey: "common.wanted", searchable: true, valueFormat: "PROPERTY_VALUE_FORMAT_PLAIN", behavior: "PROPERTY_BEHAVIOR_MANAGED", displayMode: "PROPERTY_DISPLAY_MODE_PROFILE_BADGE", groupKey: "status", sortOrder: 100, pinned: true }], propertyGroups: [{ scope: "PROPERTY_SCOPE_VEHICLE", key: "status", displayKey: "components.settings.property_definitions.groups.status", sortOrder: 100 }] } });
+    { name: "ListVehicleActivity", options: { "codegen.perms.perms": { enabled: true, attrs: [{ key: "Fields", type: "ATTRIBUTE_TYPE_STRING_LIST", validStringList: ["Creator", "Own"] }] } }, I: ListVehicleActivityRequest, O: ListVehicleActivityResponse },
+    { name: "UploadVehicleFile", clientStreaming: true, options: { "codegen.perms.perms": { enabled: true, name: "SetVehicleProps" } }, I: UploadFileRequest, O: UploadFileResponse },
+    { name: "ListVehicleFiles", options: { "codegen.perms.perms": { enabled: true, name: "ListVehicles" } }, I: ListVehicleFilesRequest, O: ListVehicleFilesResponse },
+    { name: "DeleteVehicleFile", options: { "codegen.perms.perms": { enabled: true } }, I: DeleteVehicleFileRequest, O: DeleteVehicleFileResponse }
+], { "codegen.perms.perms_svc": { order: 40, icon: "i-mdi-car-outline", systemProperties: [{ scope: "PROPERTY_SCOPE_VEHICLE", key: "vehicle.wanted", valueType: "PROPERTY_VALUE_TYPE_BOOL", enabled: true, displayKey: "common.wanted", searchable: true, valueFormat: "PROPERTY_VALUE_FORMAT_PLAIN", behavior: "PROPERTY_BEHAVIOR_MANAGED", displayMode: "PROPERTY_DISPLAY_MODE_PROFILE_BADGE", groupKey: "status", sortOrder: 100, pinned: true }, { scope: "PROPERTY_SCOPE_VEHICLE", key: "vehicle.files", valueType: "PROPERTY_VALUE_TYPE_STRING", enabled: true, displayKey: "common.file", behavior: "PROPERTY_BEHAVIOR_MANAGED", groupKey: "status", sortOrder: 200 }], propertyGroups: [{ scope: "PROPERTY_SCOPE_VEHICLE", key: "status", displayKey: "components.settings.property_definitions.groups.status", sortOrder: 100 }] } });

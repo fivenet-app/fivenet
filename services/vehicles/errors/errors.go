@@ -26,6 +26,11 @@ var (
 		&common.I18NItem{Key: "errors.vehicles.VehiclesService.ErrPropsPropertiesDenied.content"},
 		&common.I18NItem{Key: "errors.vehicles.VehiclesService.ErrPropsPropertiesDenied.title"},
 	)
+	ErrPropsFilesDenied = common.NewI18nErr(
+		codes.PermissionDenied,
+		&common.I18NItem{Key: "errors.vehicles.VehiclesService.ErrPropsFilesDenied.content"},
+		&common.I18NItem{Key: "errors.vehicles.VehiclesService.ErrPropsFilesDenied.title"},
+	)
 	ErrInvalidProperty = common.NewI18nErr(
 		codes.InvalidArgument,
 		&common.I18NItem{Key: "errors.vehicles.VehiclesService.ErrInvalidProperty.content"},

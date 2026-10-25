@@ -4653,8 +4653,9 @@ Policy snapshot applied to a specific version
 | `namespace` | [string](#string) |  | "documents", "wiki", … |
 | `original_name` | [string](#string) |  |  |
 | `content_type` | [string](#string) |  | optional - server re-validates |
-| `size` | [int64](#int64) |  | Size in bytes |
+| `size` | [int64](#int64) |  | Size in bytes; the largest configured upload limit is 5 MiB |
 | `reason` | [string](#string) |  |  |
+| `parent_key` | [string](#string) |  | String parent key for resources whose natural identifier is not numeric. |
 
 
 
@@ -7944,6 +7945,19 @@ Detailed user information for sync purposes Should be kept inline with `resource
 
 
 
+### resources.users.activity.FileChange
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `added` | [bool](#bool) |  |  |
+| `kind` | [string](#string) |  |  |
+| `file` | [resources.file.File](#resourcesfileFile) |  |  |
+
+
+
+
+
 ### resources.users.activity.FineChange
 
 
@@ -8110,6 +8124,7 @@ PropertyChange is used only for custom, generic properties. Managed system prope
 | `jail_change` | [JailChange](#resourcesusersactivityJailChange) |  | "Plugin" activities |
 | `fine_change` | [FineChange](#resourcesusersactivityFineChange) |  |  |
 | `property_change` | [PropertyChange](#resourcesusersactivityPropertyChange) |  |  |
+| `file_change` | [FileChange](#resourcesusersactivityFileChange) |  |  |
 
 
 
@@ -8160,6 +8175,19 @@ PropertyChange is used only for custom, generic properties. Managed system prope
 ## resources/vehicles/activity/activity.proto
 
 
+### resources.vehicles.activity.FileChange
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `added` | [bool](#bool) |  |  |
+| `kind` | [string](#string) |  |  |
+| `file` | [resources.file.File](#resourcesfileFile) |  |  |
+
+
+
+
+
 ### resources.vehicles.activity.PropertyChange
 PropertyChange is used only for custom, generic properties. Managed system properties retain their dedicated activity types and richer payloads.
 
@@ -8203,6 +8231,7 @@ PropertyChange is used only for custom, generic properties. Managed system prope
 | ----- | ---- | ----- | ----------- |
 | `wanted_change` | [WantedChange](#resourcesvehiclesactivityWantedChange) |  |  |
 | `property_change` | [PropertyChange](#resourcesvehiclesactivityPropertyChange) |  |  |
+| `file_change` | [FileChange](#resourcesvehiclesactivityFileChange) |  |  |
 
 
 
@@ -9800,6 +9829,20 @@ Auth Service handles user authentication, character selection and oauth2 connect
 ## services/citizens/citizens.proto
 
 
+### services.citizens.CitizenFile
+CitizenFile is a restricted investigation attachment. The public profile avatar is deliberately not represented here.
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `file` | [resources.file.File](#resourcesfileFile) |  |  |
+| `kind` | [string](#string) |  |  |
+
+
+
+
+
 ### services.citizens.DeleteAvatarRequest
 
 
@@ -9807,6 +9850,25 @@ Auth Service handles user authentication, character selection and oauth2 connect
 
 
 ### services.citizens.DeleteAvatarResponse
+
+
+
+
+
+### services.citizens.DeleteCitizenFileRequest
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `user_id` | [int32](#int32) |  |  |
+| `file_id` | [int64](#int64) |  |  |
+| `reason` | [string](#string) |  |  |
+
+
+
+
+
+### services.citizens.DeleteCitizenFileResponse
 
 
 
@@ -9848,6 +9910,28 @@ Auth Service handles user authentication, character selection and oauth2 connect
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | `user` | [resources.users.User](#resourcesusersUser) |  |  |
+
+
+
+
+
+### services.citizens.ListCitizenFilesRequest
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `user_id` | [int32](#int32) |  |  |
+
+
+
+
+
+### services.citizens.ListCitizenFilesResponse
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `files` | [CitizenFile](#servicescitizensCitizenFile) | repeated |  |
 
 
 
@@ -9957,6 +10041,9 @@ Auth Service handles user authentication, character selection and oauth2 connect
 | `DeleteAvatar` | [DeleteAvatarRequest](#servicescitizensDeleteAvatarRequest) | [DeleteAvatarResponse](#servicescitizensDeleteAvatarResponse) | |
 | `UploadMugshot` | [.resources.file.UploadFileRequest](#resourcesfileUploadFileRequest) stream | [.resources.file.UploadFileResponse](#resourcesfileUploadFileResponse) |buf:lint:ignore RPC_REQUEST_RESPONSE_UNIQUE buf:lint:ignore RPC_REQUEST_STANDARD_NAME buf:lint:ignore RPC_RESPONSE_STANDARD_NAME |
 | `DeleteMugshot` | [DeleteMugshotRequest](#servicescitizensDeleteMugshotRequest) | [DeleteMugshotResponse](#servicescitizensDeleteMugshotResponse) | |
+| `ListCitizenFiles` | [ListCitizenFilesRequest](#servicescitizensListCitizenFilesRequest) | [ListCitizenFilesResponse](#servicescitizensListCitizenFilesResponse) | |
+| `UploadCitizenFile` | [.resources.file.UploadFileRequest](#resourcesfileUploadFileRequest) stream | [.resources.file.UploadFileResponse](#resourcesfileUploadFileResponse) |buf:lint:ignore RPC_REQUEST_RESPONSE_UNIQUE buf:lint:ignore RPC_REQUEST_STANDARD_NAME buf:lint:ignore RPC_RESPONSE_STANDARD_NAME |
+| `DeleteCitizenFile` | [DeleteCitizenFileRequest](#servicescitizensDeleteCitizenFileRequest) | [DeleteCitizenFileResponse](#servicescitizensDeleteCitizenFileResponse) | |
 
  <!-- end services -->
 
@@ -16245,6 +16332,25 @@ Sync Service handles the sync of data (e.g., users, jobs) to this FiveNet instan
 ## services/vehicles/vehicles.proto
 
 
+### services.vehicles.DeleteVehicleFileRequest
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `plate` | [string](#string) |  |  |
+| `file_id` | [int64](#int64) |  |  |
+| `reason` | [string](#string) |  |  |
+
+
+
+
+
+### services.vehicles.DeleteVehicleFileResponse
+
+
+
+
+
 ### services.vehicles.ListVehicleActivityRequest
 
 
@@ -16269,6 +16375,28 @@ Sync Service handles the sync of data (e.g., users, jobs) to this FiveNet instan
 | ----- | ---- | ----- | ----------- |
 | `pagination` | [resources.common.database.PaginationResponse](#resourcescommondatabasePaginationResponse) |  |  |
 | `activity` | [resources.vehicles.activity.VehicleActivity](#resourcesvehiclesactivityVehicleActivity) | repeated |  |
+
+
+
+
+
+### services.vehicles.ListVehicleFilesRequest
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `plate` | [string](#string) |  |  |
+
+
+
+
+
+### services.vehicles.ListVehicleFilesResponse
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `files` | [VehicleFile](#servicesvehiclesVehicleFile) | repeated |  |
 
 
 
@@ -16327,6 +16455,18 @@ Sync Service handles the sync of data (e.g., users, jobs) to this FiveNet instan
 
 
 
+
+### services.vehicles.VehicleFile
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `file` | [resources.file.File](#resourcesfileFile) |  |  |
+| `kind` | [string](#string) |  |  |
+
+
+
+
  <!-- end messages -->
 
  <!-- end enums -->
@@ -16341,6 +16481,9 @@ Sync Service handles the sync of data (e.g., users, jobs) to this FiveNet instan
 | `ListVehicles` | [ListVehiclesRequest](#servicesvehiclesListVehiclesRequest) | [ListVehiclesResponse](#servicesvehiclesListVehiclesResponse) | |
 | `SetVehicleProps` | [SetVehiclePropsRequest](#servicesvehiclesSetVehiclePropsRequest) | [SetVehiclePropsResponse](#servicesvehiclesSetVehiclePropsResponse) | |
 | `ListVehicleActivity` | [ListVehicleActivityRequest](#servicesvehiclesListVehicleActivityRequest) | [ListVehicleActivityResponse](#servicesvehiclesListVehicleActivityResponse) | |
+| `UploadVehicleFile` | [.resources.file.UploadFileRequest](#resourcesfileUploadFileRequest) stream | [.resources.file.UploadFileResponse](#resourcesfileUploadFileResponse) |buf:lint:ignore RPC_REQUEST_RESPONSE_UNIQUE buf:lint:ignore RPC_REQUEST_STANDARD_NAME buf:lint:ignore RPC_RESPONSE_STANDARD_NAME |
+| `ListVehicleFiles` | [ListVehicleFilesRequest](#servicesvehiclesListVehicleFilesRequest) | [ListVehicleFilesResponse](#servicesvehiclesListVehicleFilesResponse) | |
+| `DeleteVehicleFile` | [DeleteVehicleFileRequest](#servicesvehiclesDeleteVehicleFileRequest) | [DeleteVehicleFileResponse](#servicesvehiclesDeleteVehicleFileResponse) | |
 
  <!-- end services -->
 

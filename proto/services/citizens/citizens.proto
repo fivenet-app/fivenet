@@ -7,6 +7,7 @@ import "codegen/itemslen/itemslen.proto";
 import "codegen/perms/perms.proto";
 import "codegen/sanitizer/sanitizer.proto";
 import "resources/common/database/database.proto";
+import "resources/file/file.proto";
 import "resources/file/filestore.proto";
 import "resources/properties/properties.proto";
 import "resources/timestamp/timestamp.proto";
@@ -111,6 +112,35 @@ message DeleteMugshotRequest {
 }
 
 message DeleteMugshotResponse {}
+
+// CitizenFile is a restricted investigation attachment. The public profile
+// avatar is deliberately not represented here.
+message CitizenFile {
+  resources.file.File file = 1 [(buf.validate.field).required = true];
+  string kind = 2 [(buf.validate.field).string.max_len = 32];
+}
+
+message ListCitizenFilesRequest {
+  int32 user_id = 1 [(buf.validate.field).int32.gt = 0];
+}
+
+message ListCitizenFilesResponse {
+  repeated CitizenFile files = 1 [(codegen.itemslen.enabled) = true];
+}
+
+message DeleteCitizenFileRequest {
+  int32 user_id = 1 [(buf.validate.field).int32.gt = 0];
+  int64 file_id = 2 [(buf.validate.field).int64.gt = 0];
+  string reason = 3 [
+    (buf.validate.field).string = {
+      min_len: 3
+      max_len: 255
+    },
+    (codegen.sanitizer.sanitizer) = {enabled: true}
+  ];
+}
+
+message DeleteCitizenFileResponse {}
 
 service CitizensService {
   option (codegen.perms.perms_svc) = {
@@ -280,6 +310,16 @@ service CitizensService {
       },
       {
         scope: PROPERTY_SCOPE_USER
+        key: "user.files"
+        value_type: PROPERTY_VALUE_TYPE_STRING
+        behavior: PROPERTY_BEHAVIOR_MANAGED
+        enabled: true
+        display_key: "common.file"
+        group_key: "personal"
+        sort_order: 600
+      },
+      {
+        scope: PROPERTY_SCOPE_USER
         key: "user.labels"
         value_type: PROPERTY_VALUE_TYPE_STRING
         enabled: true
@@ -384,5 +424,25 @@ service CitizensService {
       enabled: true
       name: "SetUserProps"
     };
+  }
+
+  rpc ListCitizenFiles(ListCitizenFilesRequest) returns (ListCitizenFilesResponse) {
+    option (codegen.perms.perms) = {
+      enabled: true
+      name: "ListCitizens"
+    };
+  }
+  // buf:lint:ignore RPC_REQUEST_RESPONSE_UNIQUE
+  // buf:lint:ignore RPC_REQUEST_STANDARD_NAME
+  // buf:lint:ignore RPC_RESPONSE_STANDARD_NAME
+  rpc UploadCitizenFile(stream resources.file.UploadFileRequest) returns (resources.file.UploadFileResponse) {
+    option (codegen.perms.perms) = {
+      enabled: true
+      name: "SetUserProps"
+    };
+  }
+  // Requires DeleteCitizenFile and SetUserProps with the user.files property.
+  rpc DeleteCitizenFile(DeleteCitizenFileRequest) returns (DeleteCitizenFileResponse) {
+    option (codegen.perms.perms) = {enabled: true};
   }
 }

@@ -21,11 +21,25 @@ type countingReader struct {
 	io.Reader
 
 	// n is the total number of bytes read so far.
-	n int64
+	n   int64
+	max int64
 }
 
 // Read reads from the underlying reader and increments the byte count.
 func (c *countingReader) Read(p []byte) (int, error) {
+	if c.max > 0 {
+		if c.n >= c.max {
+			var probe [1]byte
+			n, err := c.Reader.Read(probe[:])
+			if n > 0 {
+				return 0, ErrUploadFileTooLarge(map[string]any{"maxSize": c.max / (1 << 20)})
+			}
+			return 0, err
+		}
+		if remaining := c.max - c.n; int64(len(p)) > remaining {
+			p = p[:remaining]
+		}
+	}
 	n, err := c.Reader.Read(p)
 	c.n += int64(n)
 	return n, err

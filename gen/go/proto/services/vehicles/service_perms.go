@@ -33,6 +33,23 @@ func init() {
 			Pinned:      true,
 			Implicit:    false,
 		},
+		{
+			Scope:       propertypb.PropertyScope_PROPERTY_SCOPE_VEHICLE,
+			Key:         "vehicle.files",
+			ValueType:   propertypb.PropertyValueType_PROPERTY_VALUE_TYPE_STRING,
+			Source:      propertypb.PropertyDefinitionSource_PROPERTY_DEFINITION_SOURCE_SYSTEM,
+			Enabled:     true,
+			DisplayKey:  "common.file",
+			Searchable:  false,
+			ValueFormat: propertypb.PropertyValueFormat_PROPERTY_VALUE_FORMAT_PLAIN,
+			Renderer:    propertypb.PropertyRenderer_PROPERTY_RENDERER_DEFAULT,
+			DisplayMode: propertypb.PropertyDisplayMode_PROPERTY_DISPLAY_MODE_DEFAULT,
+			Behavior:    propertypb.PropertyBehavior_PROPERTY_BEHAVIOR_MANAGED,
+			GroupKey:    "status",
+			SortOrder:   200,
+			Pinned:      false,
+			Implicit:    false,
+		},
 	})
 }
 
@@ -41,6 +58,14 @@ func init() {
 		// Namespace: vehicles
 
 		// Service: vehicles.VehiclesService
+		{
+			Namespace: permkeys.Namespace,
+			Service:   permkeys.VehiclesServicePerm,
+			Name:      permkeys.VehiclesServiceDeleteVehicleFilePerm,
+			Attrs:     []perms.Attr{},
+			Order:     4000,
+			Icon:      "i-mdi-car-outline",
+		},
 		{
 			Namespace: permkeys.Namespace,
 			Service:   permkeys.VehiclesServicePerm,
@@ -65,7 +90,7 @@ func init() {
 					Key:           permkeys.VehiclesServiceListVehiclesPropertiesPermField,
 					Type:          permissionsattributes.PropertyListAttributeType,
 					PropertyScope: propertypb.PropertyScope_PROPERTY_SCOPE_VEHICLE,
-					ValidValues:   []string{"vehicle.wanted"},
+					ValidValues:   []string{"vehicle.wanted", "vehicle.files"},
 				},
 			},
 			Order: 4000,
@@ -80,7 +105,7 @@ func init() {
 					Key:           permkeys.VehiclesServiceSetVehiclePropsPropertiesPermField,
 					Type:          permissionsattributes.PropertyListAttributeType,
 					PropertyScope: propertypb.PropertyScope_PROPERTY_SCOPE_VEHICLE,
-					ValidValues:   []string{"vehicle.wanted"},
+					ValidValues:   []string{"vehicle.wanted", "vehicle.files"},
 				},
 			},
 			Order: 4000,

@@ -15,6 +15,7 @@ const (
 	LabelsServicePerm   perms.Service = "LabelsService"
 
 	// Service: citizens.CitizensService
+	CitizensServiceDeleteCitizenFilePerm           perms.Name = "DeleteCitizenFile"
 	CitizensServiceGetUserPerm                     perms.Name = "GetUser"
 	CitizensServiceGetUserJobsPermField            perms.Key  = "Jobs"
 	CitizensServiceListCitizensPerm                perms.Name = "ListCitizens"
@@ -44,6 +45,7 @@ const (
 	CitizensServiceListCitizensPropertiesPermValueUserOpenFines               CitizensServiceListCitizensPropertiesPermValue = "user.open_fines"
 	CitizensServiceListCitizensPropertiesPermValueUserBloodType               CitizensServiceListCitizensPropertiesPermValue = "user.blood_type"
 	CitizensServiceListCitizensPropertiesPermValueUserMugshot                 CitizensServiceListCitizensPropertiesPermValue = "user.mugshot"
+	CitizensServiceListCitizensPropertiesPermValueUserFiles                   CitizensServiceListCitizensPropertiesPermValue = "user.files"
 	CitizensServiceListCitizensPropertiesPermValueUserLabels                  CitizensServiceListCitizensPropertiesPermValue = "user.labels"
 	CitizensServiceListCitizensPropertiesPermValueUserEmail                   CitizensServiceListCitizensPropertiesPermValue = "user.email"
 )
@@ -70,15 +72,20 @@ const (
 	CitizensServiceSetUserPropsPropertiesPermValueUserOpenFines               CitizensServiceSetUserPropsPropertiesPermValue = "user.open_fines"
 	CitizensServiceSetUserPropsPropertiesPermValueUserBloodType               CitizensServiceSetUserPropsPropertiesPermValue = "user.blood_type"
 	CitizensServiceSetUserPropsPropertiesPermValueUserMugshot                 CitizensServiceSetUserPropsPropertiesPermValue = "user.mugshot"
+	CitizensServiceSetUserPropsPropertiesPermValueUserFiles                   CitizensServiceSetUserPropsPropertiesPermValue = "user.files"
 	CitizensServiceSetUserPropsPropertiesPermValueUserLabels                  CitizensServiceSetUserPropsPropertiesPermValue = "user.labels"
 	CitizensServiceSetUserPropsPropertiesPermValueUserEmail                   CitizensServiceSetUserPropsPropertiesPermValue = "user.email"
 )
 
 type CitizensServicePerms struct {
-	GetUser          CitizensServiceGetUserPermRef
-	ListCitizens     CitizensServiceListCitizensPermRef
-	ListUserActivity CitizensServiceListUserActivityPermRef
-	SetUserProps     CitizensServiceSetUserPropsPermRef
+	DeleteCitizenFile CitizensServiceDeleteCitizenFilePermRef
+	GetUser           CitizensServiceGetUserPermRef
+	ListCitizens      CitizensServiceListCitizensPermRef
+	ListUserActivity  CitizensServiceListUserActivityPermRef
+	SetUserProps      CitizensServiceSetUserPropsPermRef
+}
+type CitizensServiceDeleteCitizenFilePermRef struct {
+	Perm perms.PermissionRef
 }
 type CitizensServiceGetUserPermRef struct {
 	Perm perms.PermissionRef
@@ -101,6 +108,9 @@ type CitizensServiceSetUserPropsPermRef struct {
 }
 
 var CitizensService = CitizensServicePerms{
+	DeleteCitizenFile: CitizensServiceDeleteCitizenFilePermRef{
+		Perm: perms.NewPermissionRef(Namespace, CitizensServicePerm, CitizensServiceDeleteCitizenFilePerm),
+	},
 	GetUser: CitizensServiceGetUserPermRef{
 		Perm: perms.NewPermissionRef(Namespace, CitizensServicePerm, CitizensServiceGetUserPerm),
 		Jobs: perms.NewJobGradeListAttrRef(

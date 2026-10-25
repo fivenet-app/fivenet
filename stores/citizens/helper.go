@@ -68,14 +68,11 @@ func (s *Store) ListExpiredWantedUserProps(
 }
 
 func (s *Store) GetAvatarFileID(ctx context.Context, userId int32) (*int64, error) {
-	tUserFiles := table.FivenetUserFiles
+	tUser := table.FivenetUser
 
-	stmt := tUserFiles.
-		SELECT(tUserFiles.FileID.AS("avatar_file_id")).
-		WHERE(mysql.AND(
-			tUserFiles.UserID.EQ(mysql.Int32(userId)),
-			tUserFiles.Kind.EQ(mysql.String("avatar")),
-		)).
+	stmt := tUser.
+		SELECT(tUser.AvatarFileID.AS("avatar_file_id")).
+		WHERE(tUser.ID.EQ(mysql.Int32(userId))).
 		LIMIT(1)
 
 	var props struct {
@@ -88,27 +85,4 @@ func (s *Store) GetAvatarFileID(ctx context.Context, userId int32) (*int64, erro
 	}
 
 	return props.AvatarFileID, nil
-}
-
-func (s *Store) GetMugshotFileID(ctx context.Context, userId int32) (*int64, error) {
-	tUserFiles := table.FivenetUserFiles
-
-	stmt := tUserFiles.
-		SELECT(tUserFiles.FileID.AS("mugshot_file_id")).
-		WHERE(mysql.AND(
-			tUserFiles.UserID.EQ(mysql.Int32(userId)),
-			tUserFiles.Kind.EQ(mysql.String("mugshot")),
-		)).
-		LIMIT(1)
-
-	var props struct {
-		MugshotFileID *int64
-	}
-	if err := stmt.QueryContext(ctx, s.db, &props); err != nil {
-		if !errors.Is(err, qrm.ErrNoRows) {
-			return nil, err
-		}
-	}
-
-	return props.MugshotFileID, nil
 }

@@ -37,8 +37,7 @@ func LocalDateToTime(date *propertypb.LocalDate) (time.Time, error) {
 }
 
 func LocalDateFromTime(value time.Time) *propertypb.LocalDate {
-	date := value.UTC()
-	year, month, day := date.Date()
+	year, month, day := value.Date()
 	yearValue, yearOK := utils.ToInt32Checked(year)
 	monthValue, monthOK := utils.ToInt32Checked(month)
 	dayValue, dayOK := utils.ToInt32Checked(day)

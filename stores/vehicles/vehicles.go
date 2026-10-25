@@ -40,6 +40,18 @@ type ListQuery struct {
 	Limit  int64
 }
 
+func (s *Store) AddActivity(ctx context.Context, activity *vehiclesactivity.VehicleActivity) error {
+	tx, err := s.db.BeginTx(ctx, nil)
+	if err != nil {
+		return err
+	}
+	defer tx.Rollback()
+	if _, err := s.addVehicleActivity(ctx, tx, activity); err != nil {
+		return err
+	}
+	return tx.Commit()
+}
+
 func (s *Store) Count(ctx context.Context, q ListQuery) (int64, error) {
 	tVehicles := table.FivenetVehicle.AS("vehicle")
 	condition := s.listConditions(q, tVehicles)

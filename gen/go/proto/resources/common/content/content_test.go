@@ -8,13 +8,19 @@ import (
 )
 
 func TestContentExtract(t *testing.T) {
+	t.Parallel()
+
 	t.Run("nil content", func(t *testing.T) {
+		t.Parallel()
+
 		var content *Content
 
 		require.Empty(t, content.Extract().GetText())
 	})
 
 	t.Run("tiptap content", func(t *testing.T) {
+		t.Parallel()
+
 		content := &Content{
 			TiptapJson: mustStructForContentTest(t, map[string]any{
 				"type": "doc",
@@ -33,6 +39,8 @@ func TestContentExtract(t *testing.T) {
 	})
 
 	t.Run("legacy HTML content scan and value round trip", func(t *testing.T) {
+		t.Parallel()
+
 		content := &Content{}
 		require.NoError(t, content.Scan(`<p>Hello <strong>world</strong></p>`))
 		require.Equal(t, "Hello world", content.Extract().GetText())

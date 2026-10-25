@@ -14,6 +14,7 @@ import { UnknownFieldHandler } from "@protobuf-ts/runtime";
 import type { PartialMessage } from "@protobuf-ts/runtime";
 import { reflectionMergePartial } from "@protobuf-ts/runtime";
 import { MessageType } from "@protobuf-ts/runtime";
+import { File } from "../../resources/file/file";
 import { PropertyChange } from "../../resources/properties/properties";
 import { UserProps } from "../../resources/users/props/props";
 import { UserActivity } from "../../resources/users/activity/activity";
@@ -220,6 +221,62 @@ export interface DeleteMugshotRequest {
  * @generated from protobuf message services.citizens.DeleteMugshotResponse
  */
 export interface DeleteMugshotResponse {
+}
+/**
+ * CitizenFile is a restricted investigation attachment. The public profile
+ * avatar is deliberately not represented here.
+ *
+ * @generated from protobuf message services.citizens.CitizenFile
+ */
+export interface CitizenFile {
+    /**
+     * @generated from protobuf field: resources.file.File file = 1
+     */
+    file?: File;
+    /**
+     * @generated from protobuf field: string kind = 2
+     */
+    kind: string;
+}
+/**
+ * @generated from protobuf message services.citizens.ListCitizenFilesRequest
+ */
+export interface ListCitizenFilesRequest {
+    /**
+     * @generated from protobuf field: int32 user_id = 1
+     */
+    userId: number;
+}
+/**
+ * @generated from protobuf message services.citizens.ListCitizenFilesResponse
+ */
+export interface ListCitizenFilesResponse {
+    /**
+     * @generated from protobuf field: repeated services.citizens.CitizenFile files = 1
+     */
+    files: CitizenFile[];
+}
+/**
+ * @generated from protobuf message services.citizens.DeleteCitizenFileRequest
+ */
+export interface DeleteCitizenFileRequest {
+    /**
+     * @generated from protobuf field: int32 user_id = 1
+     */
+    userId: number;
+    /**
+     * @generated from protobuf field: int64 file_id = 2
+     */
+    fileId: number;
+    /**
+     * @generated from protobuf field: string reason = 3
+     */
+    reason: string;
+}
+/**
+ * @generated from protobuf message services.citizens.DeleteCitizenFileResponse
+ */
+export interface DeleteCitizenFileResponse {
 }
 // @generated message type with reflection information, may provide speed optimized methods
 class ListCitizensRequest$Type extends MessageType<ListCitizensRequest> {
@@ -923,6 +980,255 @@ class DeleteMugshotResponse$Type extends MessageType<DeleteMugshotResponse> {
  * @generated MessageType for protobuf message services.citizens.DeleteMugshotResponse
  */
 export const DeleteMugshotResponse = new DeleteMugshotResponse$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class CitizenFile$Type extends MessageType<CitizenFile> {
+    constructor() {
+        super("services.citizens.CitizenFile", [
+            { no: 1, name: "file", kind: "message", T: () => File, options: { "buf.validate.field": { required: true } } },
+            { no: 2, name: "kind", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "32" } } } }
+        ]);
+    }
+    create(value?: PartialMessage<CitizenFile>): CitizenFile {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        message.kind = "";
+        if (value !== undefined)
+            reflectionMergePartial<CitizenFile>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: CitizenFile): CitizenFile {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* resources.file.File file */ 1:
+                    message.file = File.internalBinaryRead(reader, reader.uint32(), options, message.file);
+                    break;
+                case /* string kind */ 2:
+                    message.kind = reader.string();
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: CitizenFile, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* resources.file.File file = 1; */
+        if (message.file)
+            File.internalBinaryWrite(message.file, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
+        /* string kind = 2; */
+        if (message.kind !== "")
+            writer.tag(2, WireType.LengthDelimited).string(message.kind);
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message services.citizens.CitizenFile
+ */
+export const CitizenFile = new CitizenFile$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class ListCitizenFilesRequest$Type extends MessageType<ListCitizenFilesRequest> {
+    constructor() {
+        super("services.citizens.ListCitizenFilesRequest", [
+            { no: 1, name: "user_id", kind: "scalar", T: 5 /*ScalarType.INT32*/, options: { "buf.validate.field": { int32: { gt: 0 } } } }
+        ]);
+    }
+    create(value?: PartialMessage<ListCitizenFilesRequest>): ListCitizenFilesRequest {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        message.userId = 0;
+        if (value !== undefined)
+            reflectionMergePartial<ListCitizenFilesRequest>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: ListCitizenFilesRequest): ListCitizenFilesRequest {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* int32 user_id */ 1:
+                    message.userId = reader.int32();
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: ListCitizenFilesRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* int32 user_id = 1; */
+        if (message.userId !== 0)
+            writer.tag(1, WireType.Varint).int32(message.userId);
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message services.citizens.ListCitizenFilesRequest
+ */
+export const ListCitizenFilesRequest = new ListCitizenFilesRequest$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class ListCitizenFilesResponse$Type extends MessageType<ListCitizenFilesResponse> {
+    constructor() {
+        super("services.citizens.ListCitizenFilesResponse", [
+            { no: 1, name: "files", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => CitizenFile, options: { "codegen.itemslen.enabled": true } }
+        ]);
+    }
+    create(value?: PartialMessage<ListCitizenFilesResponse>): ListCitizenFilesResponse {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        message.files = [];
+        if (value !== undefined)
+            reflectionMergePartial<ListCitizenFilesResponse>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: ListCitizenFilesResponse): ListCitizenFilesResponse {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* repeated services.citizens.CitizenFile files */ 1:
+                    message.files.push(CitizenFile.internalBinaryRead(reader, reader.uint32(), options));
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: ListCitizenFilesResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* repeated services.citizens.CitizenFile files = 1; */
+        for (let i = 0; i < message.files.length; i++)
+            CitizenFile.internalBinaryWrite(message.files[i], writer.tag(1, WireType.LengthDelimited).fork(), options).join();
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message services.citizens.ListCitizenFilesResponse
+ */
+export const ListCitizenFilesResponse = new ListCitizenFilesResponse$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class DeleteCitizenFileRequest$Type extends MessageType<DeleteCitizenFileRequest> {
+    constructor() {
+        super("services.citizens.DeleteCitizenFileRequest", [
+            { no: 1, name: "user_id", kind: "scalar", T: 5 /*ScalarType.INT32*/, options: { "buf.validate.field": { int32: { gt: 0 } } } },
+            { no: 2, name: "file_id", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/, options: { "buf.validate.field": { int64: { gt: "0" } } } },
+            { no: 3, name: "reason", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { minLen: "3", maxLen: "255" } }, "codegen.sanitizer.sanitizer": { enabled: true } } }
+        ]);
+    }
+    create(value?: PartialMessage<DeleteCitizenFileRequest>): DeleteCitizenFileRequest {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        message.userId = 0;
+        message.fileId = 0;
+        message.reason = "";
+        if (value !== undefined)
+            reflectionMergePartial<DeleteCitizenFileRequest>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: DeleteCitizenFileRequest): DeleteCitizenFileRequest {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* int32 user_id */ 1:
+                    message.userId = reader.int32();
+                    break;
+                case /* int64 file_id */ 2:
+                    message.fileId = reader.int64().toNumber();
+                    break;
+                case /* string reason */ 3:
+                    message.reason = reader.string();
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: DeleteCitizenFileRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* int32 user_id = 1; */
+        if (message.userId !== 0)
+            writer.tag(1, WireType.Varint).int32(message.userId);
+        /* int64 file_id = 2; */
+        if (message.fileId !== 0)
+            writer.tag(2, WireType.Varint).int64(message.fileId);
+        /* string reason = 3; */
+        if (message.reason !== "")
+            writer.tag(3, WireType.LengthDelimited).string(message.reason);
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message services.citizens.DeleteCitizenFileRequest
+ */
+export const DeleteCitizenFileRequest = new DeleteCitizenFileRequest$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class DeleteCitizenFileResponse$Type extends MessageType<DeleteCitizenFileResponse> {
+    constructor() {
+        super("services.citizens.DeleteCitizenFileResponse", []);
+    }
+    create(value?: PartialMessage<DeleteCitizenFileResponse>): DeleteCitizenFileResponse {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        if (value !== undefined)
+            reflectionMergePartial<DeleteCitizenFileResponse>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: DeleteCitizenFileResponse): DeleteCitizenFileResponse {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: DeleteCitizenFileResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message services.citizens.DeleteCitizenFileResponse
+ */
+export const DeleteCitizenFileResponse = new DeleteCitizenFileResponse$Type();
 /**
  * @generated ServiceType for protobuf service services.citizens.CitizensService
  */
@@ -934,5 +1240,8 @@ export const CitizensService = new ServiceType("services.citizens.CitizensServic
     { name: "UploadAvatar", clientStreaming: true, options: { "codegen.perms.perms": { enabled: true, name: "Any" } }, I: UploadFileRequest, O: UploadFileResponse },
     { name: "DeleteAvatar", options: { "codegen.perms.perms": { enabled: true, name: "Any" } }, I: DeleteAvatarRequest, O: DeleteAvatarResponse },
     { name: "UploadMugshot", clientStreaming: true, options: { "codegen.perms.perms": { enabled: true, name: "SetUserProps" } }, I: UploadFileRequest, O: UploadFileResponse },
-    { name: "DeleteMugshot", options: { "codegen.perms.perms": { enabled: true, name: "SetUserProps" } }, I: DeleteMugshotRequest, O: DeleteMugshotResponse }
-], { "codegen.perms.perms_svc": { order: 30, icon: "i-mdi-account-multiple-outline", systemProperties: [{ scope: "PROPERTY_SCOPE_USER", key: "user.dateofbirth", valueType: "PROPERTY_VALUE_TYPE_STRING", enabled: true, displayKey: "common.date_of_birth", groupKey: "personal", sortOrder: 100, implicit: true }, { scope: "PROPERTY_SCOPE_USER", key: "user.sex", valueType: "PROPERTY_VALUE_TYPE_STRING", enabled: true, displayKey: "common.sex", groupKey: "personal", sortOrder: 200, implicit: true }, { scope: "PROPERTY_SCOPE_USER", key: "user.height", valueType: "PROPERTY_VALUE_TYPE_NUMBER", enabled: true, displayKey: "common.height", renderer: "PROPERTY_RENDERER_HEIGHT", groupKey: "personal", sortOrder: 300, implicit: true }, { scope: "PROPERTY_SCOPE_USER", key: "user.phone_number", valueType: "PROPERTY_VALUE_TYPE_STRING", enabled: true, displayKey: "common.phone_number", searchable: true, renderer: "PROPERTY_RENDERER_PHONE", groupKey: "contact", sortOrder: 100 }, { scope: "PROPERTY_SCOPE_USER", key: "user.visum", valueType: "PROPERTY_VALUE_TYPE_INTEGER", enabled: true, displayKey: "common.visum", groupKey: "contact", sortOrder: 300, implicit: true }, { scope: "PROPERTY_SCOPE_USER", key: "user.licenses", valueType: "PROPERTY_VALUE_TYPE_STRING", enabled: true, displayKey: "common.license", groupKey: "licenses", sortOrder: 100 }, { scope: "PROPERTY_SCOPE_USER", key: "user.wanted", valueType: "PROPERTY_VALUE_TYPE_BOOL", enabled: true, displayKey: "common.wanted", searchable: true, valueFormat: "PROPERTY_VALUE_FORMAT_PLAIN", behavior: "PROPERTY_BEHAVIOR_MANAGED", displayMode: "PROPERTY_DISPLAY_MODE_PROFILE_BADGE", groupKey: "status", sortOrder: 100, pinned: true }, { scope: "PROPERTY_SCOPE_USER", key: "user.job", valueType: "PROPERTY_VALUE_TYPE_STRING", enabled: true, displayKey: "common.job", searchable: true, displayMode: "PROPERTY_DISPLAY_MODE_PROFILE_BADGE", groupKey: "status", sortOrder: 400, pinned: true }, { scope: "PROPERTY_SCOPE_USER", key: "user.traffic_infraction_points", valueType: "PROPERTY_VALUE_TYPE_INTEGER", enabled: true, displayKey: "common.traffic_infraction_points", searchable: true, renderer: "PROPERTY_RENDERER_TRAFFIC_POINTS", groupKey: "status", sortOrder: 200, pinned: true }, { scope: "PROPERTY_SCOPE_USER", key: "user.open_fines", valueType: "PROPERTY_VALUE_TYPE_INTEGER", enabled: true, displayKey: "common.fine", searchable: true, valueFormat: "PROPERTY_VALUE_FORMAT_MONEY", renderer: "PROPERTY_RENDERER_MONEY", groupKey: "status", sortOrder: 300, pinned: true }, { scope: "PROPERTY_SCOPE_USER", key: "user.blood_type", valueType: "PROPERTY_VALUE_TYPE_STRING", enabled: true, displayKey: "common.blood_type", searchable: true, groupKey: "personal", sortOrder: 400 }, { scope: "PROPERTY_SCOPE_USER", key: "user.mugshot", valueType: "PROPERTY_VALUE_TYPE_STRING", enabled: true, displayKey: "common.mugshot", groupKey: "personal", sortOrder: 500 }, { scope: "PROPERTY_SCOPE_USER", key: "user.labels", valueType: "PROPERTY_VALUE_TYPE_STRING", enabled: true, displayKey: "common.label", groupKey: "labels", sortOrder: 500 }, { scope: "PROPERTY_SCOPE_USER", key: "user.email", valueType: "PROPERTY_VALUE_TYPE_STRING", enabled: true, displayKey: "common.mail", searchable: true, renderer: "PROPERTY_RENDERER_EMAIL", groupKey: "contact", sortOrder: 200 }], propertyGroups: [{ scope: "PROPERTY_SCOPE_USER", key: "personal", displayKey: "components.settings.property_definitions.groups.personal", sortOrder: 100 }, { scope: "PROPERTY_SCOPE_USER", key: "contact", displayKey: "components.settings.property_definitions.groups.contact", sortOrder: 200 }, { scope: "PROPERTY_SCOPE_USER", key: "status", displayKey: "components.settings.property_definitions.groups.status", sortOrder: 300 }, { scope: "PROPERTY_SCOPE_USER", key: "labels", displayKey: "components.settings.property_definitions.groups.labels", sortOrder: 400 }, { scope: "PROPERTY_SCOPE_USER", key: "licenses", displayKey: "components.settings.property_definitions.groups.licenses", sortOrder: 500 }] } });
+    { name: "DeleteMugshot", options: { "codegen.perms.perms": { enabled: true, name: "SetUserProps" } }, I: DeleteMugshotRequest, O: DeleteMugshotResponse },
+    { name: "ListCitizenFiles", options: { "codegen.perms.perms": { enabled: true, name: "ListCitizens" } }, I: ListCitizenFilesRequest, O: ListCitizenFilesResponse },
+    { name: "UploadCitizenFile", clientStreaming: true, options: { "codegen.perms.perms": { enabled: true, name: "SetUserProps" } }, I: UploadFileRequest, O: UploadFileResponse },
+    { name: "DeleteCitizenFile", options: { "codegen.perms.perms": { enabled: true } }, I: DeleteCitizenFileRequest, O: DeleteCitizenFileResponse }
+], { "codegen.perms.perms_svc": { order: 30, icon: "i-mdi-account-multiple-outline", systemProperties: [{ scope: "PROPERTY_SCOPE_USER", key: "user.dateofbirth", valueType: "PROPERTY_VALUE_TYPE_STRING", enabled: true, displayKey: "common.date_of_birth", groupKey: "personal", sortOrder: 100, implicit: true }, { scope: "PROPERTY_SCOPE_USER", key: "user.sex", valueType: "PROPERTY_VALUE_TYPE_STRING", enabled: true, displayKey: "common.sex", groupKey: "personal", sortOrder: 200, implicit: true }, { scope: "PROPERTY_SCOPE_USER", key: "user.height", valueType: "PROPERTY_VALUE_TYPE_NUMBER", enabled: true, displayKey: "common.height", renderer: "PROPERTY_RENDERER_HEIGHT", groupKey: "personal", sortOrder: 300, implicit: true }, { scope: "PROPERTY_SCOPE_USER", key: "user.phone_number", valueType: "PROPERTY_VALUE_TYPE_STRING", enabled: true, displayKey: "common.phone_number", searchable: true, renderer: "PROPERTY_RENDERER_PHONE", groupKey: "contact", sortOrder: 100 }, { scope: "PROPERTY_SCOPE_USER", key: "user.visum", valueType: "PROPERTY_VALUE_TYPE_INTEGER", enabled: true, displayKey: "common.visum", groupKey: "contact", sortOrder: 300, implicit: true }, { scope: "PROPERTY_SCOPE_USER", key: "user.licenses", valueType: "PROPERTY_VALUE_TYPE_STRING", enabled: true, displayKey: "common.license", groupKey: "licenses", sortOrder: 100 }, { scope: "PROPERTY_SCOPE_USER", key: "user.wanted", valueType: "PROPERTY_VALUE_TYPE_BOOL", enabled: true, displayKey: "common.wanted", searchable: true, valueFormat: "PROPERTY_VALUE_FORMAT_PLAIN", behavior: "PROPERTY_BEHAVIOR_MANAGED", displayMode: "PROPERTY_DISPLAY_MODE_PROFILE_BADGE", groupKey: "status", sortOrder: 100, pinned: true }, { scope: "PROPERTY_SCOPE_USER", key: "user.job", valueType: "PROPERTY_VALUE_TYPE_STRING", enabled: true, displayKey: "common.job", searchable: true, displayMode: "PROPERTY_DISPLAY_MODE_PROFILE_BADGE", groupKey: "status", sortOrder: 400, pinned: true }, { scope: "PROPERTY_SCOPE_USER", key: "user.traffic_infraction_points", valueType: "PROPERTY_VALUE_TYPE_INTEGER", enabled: true, displayKey: "common.traffic_infraction_points", searchable: true, renderer: "PROPERTY_RENDERER_TRAFFIC_POINTS", groupKey: "status", sortOrder: 200, pinned: true }, { scope: "PROPERTY_SCOPE_USER", key: "user.open_fines", valueType: "PROPERTY_VALUE_TYPE_INTEGER", enabled: true, displayKey: "common.fine", searchable: true, valueFormat: "PROPERTY_VALUE_FORMAT_MONEY", renderer: "PROPERTY_RENDERER_MONEY", groupKey: "status", sortOrder: 300, pinned: true }, { scope: "PROPERTY_SCOPE_USER", key: "user.blood_type", valueType: "PROPERTY_VALUE_TYPE_STRING", enabled: true, displayKey: "common.blood_type", searchable: true, groupKey: "personal", sortOrder: 400 }, { scope: "PROPERTY_SCOPE_USER", key: "user.mugshot", valueType: "PROPERTY_VALUE_TYPE_STRING", enabled: true, displayKey: "common.mugshot", groupKey: "personal", sortOrder: 500 }, { scope: "PROPERTY_SCOPE_USER", key: "user.files", valueType: "PROPERTY_VALUE_TYPE_STRING", enabled: true, displayKey: "common.file", behavior: "PROPERTY_BEHAVIOR_MANAGED", groupKey: "personal", sortOrder: 600 }, { scope: "PROPERTY_SCOPE_USER", key: "user.labels", valueType: "PROPERTY_VALUE_TYPE_STRING", enabled: true, displayKey: "common.label", groupKey: "labels", sortOrder: 500 }, { scope: "PROPERTY_SCOPE_USER", key: "user.email", valueType: "PROPERTY_VALUE_TYPE_STRING", enabled: true, displayKey: "common.mail", searchable: true, renderer: "PROPERTY_RENDERER_EMAIL", groupKey: "contact", sortOrder: 200 }], propertyGroups: [{ scope: "PROPERTY_SCOPE_USER", key: "personal", displayKey: "components.settings.property_definitions.groups.personal", sortOrder: 100 }, { scope: "PROPERTY_SCOPE_USER", key: "contact", displayKey: "components.settings.property_definitions.groups.contact", sortOrder: 200 }, { scope: "PROPERTY_SCOPE_USER", key: "status", displayKey: "components.settings.property_definitions.groups.status", sortOrder: 300 }, { scope: "PROPERTY_SCOPE_USER", key: "labels", displayKey: "components.settings.property_definitions.groups.labels", sortOrder: 400 }, { scope: "PROPERTY_SCOPE_USER", key: "licenses", displayKey: "components.settings.property_definitions.groups.licenses", sortOrder: 500 }] } });

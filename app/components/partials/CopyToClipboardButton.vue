@@ -1,6 +1,4 @@
 <script lang="ts" setup>
-import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
-
 const props = withDefaults(
     defineProps<{
         value: string | number | (() => string | number);
@@ -11,17 +9,12 @@ const props = withDefaults(
     },
 );
 
-const notifications = useNotificationsStore();
+const { notifyCopied } = useClipboardNotifications();
 
-function addToClipboard(): void {
-    copyToClipboardWrapper(typeof props.value === 'function' ? props.value().toString() : props.value.toString());
+async function addToClipboard(): Promise<void> {
+    await copyToClipboardWrapper(typeof props.value === 'function' ? props.value().toString() : props.value.toString());
 
-    notifications.add({
-        title: { key: 'notifications.clipboard.copied.title', parameters: {} },
-        description: { key: 'notifications.clipboard.copied.content', parameters: {} },
-        duration: 3250,
-        type: NotificationType.INFO,
-    });
+    notifyCopied();
 }
 
 defineOptions({

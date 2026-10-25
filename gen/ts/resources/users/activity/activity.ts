@@ -12,6 +12,7 @@ import type { PartialMessage } from "@protobuf-ts/runtime";
 import { reflectionMergePartial } from "@protobuf-ts/runtime";
 import { MessageType } from "@protobuf-ts/runtime";
 import { PropertyValue } from "../../properties/properties";
+import { File } from "../../file/file";
 import { DocRelation } from "../../documents/relations/relations";
 import { Label } from "../../citizens/labels/labels";
 import { License } from "../../citizens/licenses/licenses";
@@ -149,6 +150,12 @@ export interface UserActivityData {
          * @generated from protobuf field: resources.users.activity.PropertyChange property_change = 11
          */
         propertyChange: PropertyChange;
+    } | {
+        oneofKind: "fileChange";
+        /**
+         * @generated from protobuf field: resources.users.activity.FileChange file_change = 12
+         */
+        fileChange: FileChange;
     } | {
         oneofKind: undefined;
     };
@@ -327,6 +334,23 @@ export interface FineChange {
      * @generated from protobuf field: int64 amount = 2
      */
     amount: number;
+}
+/**
+ * @generated from protobuf message resources.users.activity.FileChange
+ */
+export interface FileChange {
+    /**
+     * @generated from protobuf field: bool added = 1
+     */
+    added: boolean;
+    /**
+     * @generated from protobuf field: string kind = 2
+     */
+    kind: string;
+    /**
+     * @generated from protobuf field: resources.file.File file = 3
+     */
+    file?: File;
 }
 /**
  * PropertyChange is used only for custom, generic properties. Managed system
@@ -559,7 +583,8 @@ class UserActivityData$Type extends MessageType<UserActivityData> {
             { no: 8, name: "document_relation", kind: "message", oneof: "data", T: () => CitizenDocumentRelation },
             { no: 9, name: "jail_change", kind: "message", oneof: "data", T: () => JailChange },
             { no: 10, name: "fine_change", kind: "message", oneof: "data", T: () => FineChange },
-            { no: 11, name: "property_change", kind: "message", oneof: "data", T: () => PropertyChange }
+            { no: 11, name: "property_change", kind: "message", oneof: "data", T: () => PropertyChange },
+            { no: 12, name: "file_change", kind: "message", oneof: "data", T: () => FileChange }
         ], { "codegen.dbscanner.dbscanner": { enabled: true } });
     }
     create(value?: PartialMessage<UserActivityData>): UserActivityData {
@@ -640,6 +665,12 @@ class UserActivityData$Type extends MessageType<UserActivityData> {
                         propertyChange: PropertyChange.internalBinaryRead(reader, reader.uint32(), options, (message.data as any).propertyChange)
                     };
                     break;
+                case /* resources.users.activity.FileChange file_change */ 12:
+                    message.data = {
+                        oneofKind: "fileChange",
+                        fileChange: FileChange.internalBinaryRead(reader, reader.uint32(), options, (message.data as any).fileChange)
+                    };
+                    break;
                 default:
                     let u = options.readUnknownField;
                     if (u === "throw")
@@ -685,6 +716,9 @@ class UserActivityData$Type extends MessageType<UserActivityData> {
         /* resources.users.activity.PropertyChange property_change = 11; */
         if (message.data.oneofKind === "propertyChange")
             PropertyChange.internalBinaryWrite(message.data.propertyChange, writer.tag(11, WireType.LengthDelimited).fork(), options).join();
+        /* resources.users.activity.FileChange file_change = 12; */
+        if (message.data.oneofKind === "fileChange")
+            FileChange.internalBinaryWrite(message.data.fileChange, writer.tag(12, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -1356,6 +1390,68 @@ class FineChange$Type extends MessageType<FineChange> {
  * @generated MessageType for protobuf message resources.users.activity.FineChange
  */
 export const FineChange = new FineChange$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class FileChange$Type extends MessageType<FileChange> {
+    constructor() {
+        super("resources.users.activity.FileChange", [
+            { no: 1, name: "added", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
+            { no: 2, name: "kind", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "32" } } } },
+            { no: 3, name: "file", kind: "message", T: () => File, options: { "buf.validate.field": { required: true } } }
+        ]);
+    }
+    create(value?: PartialMessage<FileChange>): FileChange {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        message.added = false;
+        message.kind = "";
+        if (value !== undefined)
+            reflectionMergePartial<FileChange>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: FileChange): FileChange {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* bool added */ 1:
+                    message.added = reader.bool();
+                    break;
+                case /* string kind */ 2:
+                    message.kind = reader.string();
+                    break;
+                case /* resources.file.File file */ 3:
+                    message.file = File.internalBinaryRead(reader, reader.uint32(), options, message.file);
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: FileChange, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* bool added = 1; */
+        if (message.added !== false)
+            writer.tag(1, WireType.Varint).bool(message.added);
+        /* string kind = 2; */
+        if (message.kind !== "")
+            writer.tag(2, WireType.LengthDelimited).string(message.kind);
+        /* resources.file.File file = 3; */
+        if (message.file)
+            File.internalBinaryWrite(message.file, writer.tag(3, WireType.LengthDelimited).fork(), options).join();
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message resources.users.activity.FileChange
+ */
+export const FileChange = new FileChange$Type();
 // @generated message type with reflection information, may provide speed optimized methods
 class PropertyChange$Type extends MessageType<PropertyChange> {
     constructor() {

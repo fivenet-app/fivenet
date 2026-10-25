@@ -11,10 +11,10 @@ option go_package = "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources
 message File {
   optional int64 parent_id = 1 [(buf.validate.field).int64.gt = 0];
   int64 id = 2 [(buf.validate.field).int64.gt = 0];
-  string file_path = 3;
+  string file_path = 3 [(buf.validate.field).string.max_len = 512];
   optional resources.timestamp.Timestamp created_at = 4;
-  int64 byte_size = 5; // Bytes stored
-  string content_type = 6;
+  int64 byte_size = 5 [(buf.validate.field).int64.gte = 0]; // Bytes stored
+  string content_type = 6 [(buf.validate.field).string.max_len = 127];
 
   optional FileMeta meta = 7;
   bool is_dir = 8;

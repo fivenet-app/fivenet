@@ -1205,11 +1205,337 @@ func (b0 DeleteMugshotResponse_builder) Build() *DeleteMugshotResponse {
 	return m0
 }
 
+// CitizenFile is a restricted investigation attachment. The public profile
+// avatar is deliberately not represented here.
+type CitizenFile struct {
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
+	File          *file.File             `protobuf:"bytes,1,opt,name=file,proto3" json:"file,omitempty"`
+	Kind          string                 `protobuf:"bytes,2,opt,name=kind,proto3" json:"kind,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *CitizenFile) Reset() {
+	*x = CitizenFile{}
+	mi := &file_services_citizens_citizens_proto_msgTypes[12]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *CitizenFile) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*CitizenFile) ProtoMessage() {}
+
+func (x *CitizenFile) ProtoReflect() protoreflect.Message {
+	mi := &file_services_citizens_citizens_proto_msgTypes[12]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+func (x *CitizenFile) GetFile() *file.File {
+	if x != nil {
+		return x.File
+	}
+	return nil
+}
+
+func (x *CitizenFile) GetKind() string {
+	if x != nil {
+		return x.Kind
+	}
+	return ""
+}
+
+func (x *CitizenFile) SetFile(v *file.File) {
+	x.File = v
+}
+
+func (x *CitizenFile) SetKind(v string) {
+	x.Kind = v
+}
+
+func (x *CitizenFile) HasFile() bool {
+	if x == nil {
+		return false
+	}
+	return x.File != nil
+}
+
+func (x *CitizenFile) ClearFile() {
+	x.File = nil
+}
+
+type CitizenFile_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	File *file.File
+	Kind string
+}
+
+func (b0 CitizenFile_builder) Build() *CitizenFile {
+	m0 := &CitizenFile{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.File = b.File
+	x.Kind = b.Kind
+	return m0
+}
+
+type ListCitizenFilesRequest struct {
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
+	UserId        int32                  `protobuf:"varint,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ListCitizenFilesRequest) Reset() {
+	*x = ListCitizenFilesRequest{}
+	mi := &file_services_citizens_citizens_proto_msgTypes[13]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ListCitizenFilesRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ListCitizenFilesRequest) ProtoMessage() {}
+
+func (x *ListCitizenFilesRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_services_citizens_citizens_proto_msgTypes[13]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+func (x *ListCitizenFilesRequest) GetUserId() int32 {
+	if x != nil {
+		return x.UserId
+	}
+	return 0
+}
+
+func (x *ListCitizenFilesRequest) SetUserId(v int32) {
+	x.UserId = v
+}
+
+type ListCitizenFilesRequest_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	UserId int32
+}
+
+func (b0 ListCitizenFilesRequest_builder) Build() *ListCitizenFilesRequest {
+	m0 := &ListCitizenFilesRequest{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.UserId = b.UserId
+	return m0
+}
+
+type ListCitizenFilesResponse struct {
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
+	Files         []*CitizenFile         `protobuf:"bytes,1,rep,name=files,proto3" json:"files,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ListCitizenFilesResponse) Reset() {
+	*x = ListCitizenFilesResponse{}
+	mi := &file_services_citizens_citizens_proto_msgTypes[14]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ListCitizenFilesResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ListCitizenFilesResponse) ProtoMessage() {}
+
+func (x *ListCitizenFilesResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_services_citizens_citizens_proto_msgTypes[14]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+func (x *ListCitizenFilesResponse) GetFiles() []*CitizenFile {
+	if x != nil {
+		return x.Files
+	}
+	return nil
+}
+
+func (x *ListCitizenFilesResponse) SetFiles(v []*CitizenFile) {
+	x.Files = v
+}
+
+type ListCitizenFilesResponse_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Files []*CitizenFile
+}
+
+func (b0 ListCitizenFilesResponse_builder) Build() *ListCitizenFilesResponse {
+	m0 := &ListCitizenFilesResponse{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Files = b.Files
+	return m0
+}
+
+type DeleteCitizenFileRequest struct {
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
+	UserId        int32                  `protobuf:"varint,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	FileId        int64                  `protobuf:"varint,2,opt,name=file_id,json=fileId,proto3" json:"file_id,omitempty"`
+	Reason        string                 `protobuf:"bytes,3,opt,name=reason,proto3" json:"reason,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *DeleteCitizenFileRequest) Reset() {
+	*x = DeleteCitizenFileRequest{}
+	mi := &file_services_citizens_citizens_proto_msgTypes[15]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *DeleteCitizenFileRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*DeleteCitizenFileRequest) ProtoMessage() {}
+
+func (x *DeleteCitizenFileRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_services_citizens_citizens_proto_msgTypes[15]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+func (x *DeleteCitizenFileRequest) GetUserId() int32 {
+	if x != nil {
+		return x.UserId
+	}
+	return 0
+}
+
+func (x *DeleteCitizenFileRequest) GetFileId() int64 {
+	if x != nil {
+		return x.FileId
+	}
+	return 0
+}
+
+func (x *DeleteCitizenFileRequest) GetReason() string {
+	if x != nil {
+		return x.Reason
+	}
+	return ""
+}
+
+func (x *DeleteCitizenFileRequest) SetUserId(v int32) {
+	x.UserId = v
+}
+
+func (x *DeleteCitizenFileRequest) SetFileId(v int64) {
+	x.FileId = v
+}
+
+func (x *DeleteCitizenFileRequest) SetReason(v string) {
+	x.Reason = v
+}
+
+type DeleteCitizenFileRequest_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	UserId int32
+	FileId int64
+	Reason string
+}
+
+func (b0 DeleteCitizenFileRequest_builder) Build() *DeleteCitizenFileRequest {
+	m0 := &DeleteCitizenFileRequest{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.UserId = b.UserId
+	x.FileId = b.FileId
+	x.Reason = b.Reason
+	return m0
+}
+
+type DeleteCitizenFileResponse struct {
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *DeleteCitizenFileResponse) Reset() {
+	*x = DeleteCitizenFileResponse{}
+	mi := &file_services_citizens_citizens_proto_msgTypes[16]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *DeleteCitizenFileResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*DeleteCitizenFileResponse) ProtoMessage() {}
+
+func (x *DeleteCitizenFileResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_services_citizens_citizens_proto_msgTypes[16]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+type DeleteCitizenFileResponse_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+}
+
+func (b0 DeleteCitizenFileResponse_builder) Build() *DeleteCitizenFileResponse {
+	m0 := &DeleteCitizenFileResponse{}
+	b, x := &b0, m0
+	_, _ = b, x
+	return m0
+}
+
 var File_services_citizens_citizens_proto protoreflect.FileDescriptor
 
 const file_services_citizens_citizens_proto_rawDesc = "" +
 	"\n" +
-	" services/citizens/citizens.proto\x12\x11services.citizens\x1a\x1fcodegen/itemslen/itemslen.proto\x1a\x19codegen/perms/perms.proto\x1a!codegen/sanitizer/sanitizer.proto\x1a(resources/common/database/database.proto\x1a\x1eresources/file/filestore.proto\x1a%resources/properties/properties.proto\x1a#resources/timestamp/timestamp.proto\x1a'resources/users/activity/activity.proto\x1a!resources/users/props/props.proto\x1a\x1aresources/users/user.proto\"\x9f\x05\n" +
+	" services/citizens/citizens.proto\x12\x11services.citizens\x1a\x1fcodegen/itemslen/itemslen.proto\x1a\x19codegen/perms/perms.proto\x1a!codegen/sanitizer/sanitizer.proto\x1a(resources/common/database/database.proto\x1a\x19resources/file/file.proto\x1a\x1eresources/file/filestore.proto\x1a%resources/properties/properties.proto\x1a#resources/timestamp/timestamp.proto\x1a'resources/users/activity/activity.proto\x1a!resources/users/props/props.proto\x1a\x1aresources/users/user.proto\"\x9f\x05\n" +
 	"\x13ListCitizensRequest\x12L\n" +
 	"\n" +
 	"pagination\x18\x01 \x01(\v2,.resources.common.database.PaginationRequestR\n" +
@@ -1277,7 +1603,19 @@ const file_services_citizens_citizens_proto_rawDesc = "" +
 	"\x14DeleteMugshotRequest\x12\x17\n" +
 	"\auser_id\x18\x01 \x01(\x05R\x06userId\x12\x1e\n" +
 	"\x06reason\x18\x02 \x01(\tB\x06\xda\xf3\x18\x02\b\x01R\x06reason\"\x17\n" +
-	"\x15DeleteMugshotResponse2\xeb\x10\n" +
+	"\x15DeleteMugshotResponse\"K\n" +
+	"\vCitizenFile\x12(\n" +
+	"\x04file\x18\x01 \x01(\v2\x14.resources.file.FileR\x04file\x12\x12\n" +
+	"\x04kind\x18\x02 \x01(\tR\x04kind\"2\n" +
+	"\x17ListCitizenFilesRequest\x12\x17\n" +
+	"\auser_id\x18\x01 \x01(\x05R\x06userId\"V\n" +
+	"\x18ListCitizenFilesResponse\x12:\n" +
+	"\x05files\x18\x01 \x03(\v2\x1e.services.citizens.CitizenFileB\x04\xc8\xf3\x18\x01R\x05files\"l\n" +
+	"\x18DeleteCitizenFileRequest\x12\x17\n" +
+	"\auser_id\x18\x01 \x01(\x05R\x06userId\x12\x17\n" +
+	"\afile_id\x18\x02 \x01(\x03R\x06fileId\x12\x1e\n" +
+	"\x06reason\x18\x03 \x01(\tB\x06\xda\xf3\x18\x02\b\x01R\x06reason\"\x1b\n" +
+	"\x19DeleteCitizenFileResponse2\x8b\x14\n" +
 	"\x0fCitizensService\x12y\n" +
 	"\fListCitizens\x12&.services.citizens.ListCitizensRequest\x1a'.services.citizens.ListCitizensResponse\"\x18\xd2\xf3\x18\x14\b\x01:\x10\n" +
 	"\n" +
@@ -1293,13 +1631,17 @@ const file_services_citizens_citizens_proto_rawDesc = "" +
 	"\fUploadAvatar\x12!.resources.file.UploadFileRequest\x1a\".resources.file.UploadFileResponse\"\v\xd2\xf3\x18\a\b\x01\"\x03Any(\x01\x12l\n" +
 	"\fDeleteAvatar\x12&.services.citizens.DeleteAvatarRequest\x1a'.services.citizens.DeleteAvatarResponse\"\v\xd2\xf3\x18\a\b\x01\"\x03Any\x12n\n" +
 	"\rUploadMugshot\x12!.resources.file.UploadFileRequest\x1a\".resources.file.UploadFileResponse\"\x14\xd2\xf3\x18\x10\b\x01\"\fSetUserProps(\x01\x12x\n" +
-	"\rDeleteMugshot\x12'.services.citizens.DeleteMugshotRequest\x1a(.services.citizens.DeleteMugshotResponse\"\x14\xd2\xf3\x18\x10\b\x01\"\fSetUserProps\x1a\xac\t\xea\xf3\x18\xa7\t\b\x1e\x12\x1ei-mdi-account-multiple-outline2=\b\x02\x12\x10user.dateofbirth\x18\x01 \x01*\x14common.date_of_birthr\bpersonalxd\xa0\x01\x012,\b\x02\x12\buser.sex\x18\x01 \x01*\n" +
+	"\rDeleteMugshot\x12'.services.citizens.DeleteMugshotRequest\x1a(.services.citizens.DeleteMugshotResponse\"\x14\xd2\xf3\x18\x10\b\x01\"\fSetUserProps\x12\x81\x01\n" +
+	"\x10ListCitizenFiles\x12*.services.citizens.ListCitizenFilesRequest\x1a+.services.citizens.ListCitizenFilesResponse\"\x14\xd2\xf3\x18\x10\b\x01\"\fListCitizens\x12r\n" +
+	"\x11UploadCitizenFile\x12!.resources.file.UploadFileRequest\x1a\".resources.file.UploadFileResponse\"\x14\xd2\xf3\x18\x10\b\x01\"\fSetUserProps(\x01\x12v\n" +
+	"\x11DeleteCitizenFile\x12+.services.citizens.DeleteCitizenFileRequest\x1a,.services.citizens.DeleteCitizenFileResponse\"\x06\xd2\xf3\x18\x02\b\x01\x1a\xdc\t\xea\xf3\x18\xd7\t\b\x1e\x12\x1ei-mdi-account-multiple-outline2=\b\x02\x12\x10user.dateofbirth\x18\x01 \x01*\x14common.date_of_birthr\bpersonalxd\xa0\x01\x012,\b\x02\x12\buser.sex\x18\x01 \x01*\n" +
 	"common.sexr\bpersonalx\xc8\x01\xa0\x01\x0125\b\x02\x12\vuser.height\x18\x03 \x01*\rcommon.heightr\bpersonalx\xac\x02\x88\x01\x04\xa0\x01\x012>\b\x02\x12\x11user.phone_number\x18\x01 \x01*\x13common.phone_number@\x01r\acontactxd\x88\x01\x032/\b\x02\x12\n" +
 	"user.visum\x18\x02 \x01*\fcommon.visumr\acontactx\xac\x02\xa0\x01\x0121\b\x02\x12\ruser.licenses\x18\x01 \x01*\x0ecommon.licenser\blicensesxd28\b\x02\x12\vuser.wanted\x18\x04 \x01*\rcommon.wanted@\x01H\x01P\x02r\x06statusxd\x80\x01\x01\x98\x01\x032/\b\x02\x12\buser.job\x18\x01 \x01*\n" +
-	"common.job@\x01r\x06statusx\x90\x03\x80\x01\x01\x98\x01\x032[\b\x02\x12\x1euser.traffic_infraction_points\x18\x02 \x01* common.traffic_infraction_points@\x01r\x06statusx\xc8\x01\x80\x01\x01\x88\x01\x0529\b\x02\x12\x0fuser.open_fines\x18\x02 \x01*\vcommon.fine@\x01H\x02r\x06statusx\xac\x02\x80\x01\x01\x88\x01\r29\b\x02\x12\x0fuser.blood_type\x18\x01 \x01*\x11common.blood_type@\x01r\bpersonalx\x90\x0321\b\x02\x12\fuser.mugshot\x18\x01 \x01*\x0ecommon.mugshotr\bpersonalx\xf4\x032,\b\x02\x12\vuser.labels\x18\x01 \x01*\fcommon.labelr\x06labelsx\xf4\x0320\b\x02\x12\n" +
+	"common.job@\x01r\x06statusx\x90\x03\x80\x01\x01\x98\x01\x032[\b\x02\x12\x1euser.traffic_infraction_points\x18\x02 \x01* common.traffic_infraction_points@\x01r\x06statusx\xc8\x01\x80\x01\x01\x88\x01\x0529\b\x02\x12\x0fuser.open_fines\x18\x02 \x01*\vcommon.fine@\x01H\x02r\x06statusx\xac\x02\x80\x01\x01\x88\x01\r29\b\x02\x12\x0fuser.blood_type\x18\x01 \x01*\x11common.blood_type@\x01r\bpersonalx\x90\x0321\b\x02\x12\fuser.mugshot\x18\x01 \x01*\x0ecommon.mugshotr\bpersonalx\xf4\x032.\b\x02\x12\n" +
+	"user.files\x18\x01 \x01*\vcommon.fileP\x02r\bpersonalx\xd8\x042,\b\x02\x12\vuser.labels\x18\x01 \x01*\fcommon.labelr\x06labelsx\xf4\x0320\b\x02\x12\n" +
 	"user.email\x18\x01 \x01*\vcommon.mail@\x01r\acontactx\xc8\x01\x88\x01\x02:H\b\x02\x12\bpersonal\x1a8components.settings.property_definitions.groups.personal d:G\b\x02\x12\acontact\x1a7components.settings.property_definitions.groups.contact \xc8\x01:E\b\x02\x12\x06status\x1a6components.settings.property_definitions.groups.status \xac\x02:E\b\x02\x12\x06labels\x1a6components.settings.property_definitions.groups.labels \x90\x03:I\b\x02\x12\blicenses\x1a8components.settings.property_definitions.groups.licenses \xf4\x03BNZLgithub.com/fivenet-app/fivenet/v2026/gen/go/proto/services/citizens;citizensb\x06proto3"
 
-var file_services_citizens_citizens_proto_msgTypes = make([]protoimpl.MessageInfo, 12)
+var file_services_citizens_citizens_proto_msgTypes = make([]protoimpl.MessageInfo, 17)
 var file_services_citizens_citizens_proto_goTypes = []any{
 	(*ListCitizensRequest)(nil),         // 0: services.citizens.ListCitizensRequest
 	(*ListCitizensResponse)(nil),        // 1: services.citizens.ListCitizensResponse
@@ -1313,57 +1655,71 @@ var file_services_citizens_citizens_proto_goTypes = []any{
 	(*DeleteAvatarResponse)(nil),        // 9: services.citizens.DeleteAvatarResponse
 	(*DeleteMugshotRequest)(nil),        // 10: services.citizens.DeleteMugshotRequest
 	(*DeleteMugshotResponse)(nil),       // 11: services.citizens.DeleteMugshotResponse
-	(*database.PaginationRequest)(nil),  // 12: resources.common.database.PaginationRequest
-	(*database.Sort)(nil),               // 13: resources.common.database.Sort
-	(*properties.PropertyFilter)(nil),   // 14: resources.properties.PropertyFilter
-	(*database.PaginationResponse)(nil), // 15: resources.common.database.PaginationResponse
-	(*users.User)(nil),                  // 16: resources.users.User
-	(activity.UserActivityType)(0),      // 17: resources.users.activity.UserActivityType
-	(*timestamp.Timestamp)(nil),         // 18: resources.timestamp.Timestamp
-	(*activity.UserActivity)(nil),       // 19: resources.users.activity.UserActivity
-	(*props.UserProps)(nil),             // 20: resources.users.props.UserProps
-	(*properties.PropertyChange)(nil),   // 21: resources.properties.PropertyChange
-	(*file.UploadFileRequest)(nil),      // 22: resources.file.UploadFileRequest
-	(*file.UploadFileResponse)(nil),     // 23: resources.file.UploadFileResponse
+	(*CitizenFile)(nil),                 // 12: services.citizens.CitizenFile
+	(*ListCitizenFilesRequest)(nil),     // 13: services.citizens.ListCitizenFilesRequest
+	(*ListCitizenFilesResponse)(nil),    // 14: services.citizens.ListCitizenFilesResponse
+	(*DeleteCitizenFileRequest)(nil),    // 15: services.citizens.DeleteCitizenFileRequest
+	(*DeleteCitizenFileResponse)(nil),   // 16: services.citizens.DeleteCitizenFileResponse
+	(*database.PaginationRequest)(nil),  // 17: resources.common.database.PaginationRequest
+	(*database.Sort)(nil),               // 18: resources.common.database.Sort
+	(*properties.PropertyFilter)(nil),   // 19: resources.properties.PropertyFilter
+	(*database.PaginationResponse)(nil), // 20: resources.common.database.PaginationResponse
+	(*users.User)(nil),                  // 21: resources.users.User
+	(activity.UserActivityType)(0),      // 22: resources.users.activity.UserActivityType
+	(*timestamp.Timestamp)(nil),         // 23: resources.timestamp.Timestamp
+	(*activity.UserActivity)(nil),       // 24: resources.users.activity.UserActivity
+	(*props.UserProps)(nil),             // 25: resources.users.props.UserProps
+	(*properties.PropertyChange)(nil),   // 26: resources.properties.PropertyChange
+	(*file.File)(nil),                   // 27: resources.file.File
+	(*file.UploadFileRequest)(nil),      // 28: resources.file.UploadFileRequest
+	(*file.UploadFileResponse)(nil),     // 29: resources.file.UploadFileResponse
 }
 var file_services_citizens_citizens_proto_depIdxs = []int32{
-	12, // 0: services.citizens.ListCitizensRequest.pagination:type_name -> resources.common.database.PaginationRequest
-	13, // 1: services.citizens.ListCitizensRequest.sort:type_name -> resources.common.database.Sort
-	14, // 2: services.citizens.ListCitizensRequest.property_filters:type_name -> resources.properties.PropertyFilter
-	15, // 3: services.citizens.ListCitizensResponse.pagination:type_name -> resources.common.database.PaginationResponse
-	16, // 4: services.citizens.ListCitizensResponse.users:type_name -> resources.users.User
-	16, // 5: services.citizens.GetUserResponse.user:type_name -> resources.users.User
-	12, // 6: services.citizens.ListUserActivityRequest.pagination:type_name -> resources.common.database.PaginationRequest
-	13, // 7: services.citizens.ListUserActivityRequest.sort:type_name -> resources.common.database.Sort
-	17, // 8: services.citizens.ListUserActivityRequest.types:type_name -> resources.users.activity.UserActivityType
-	18, // 9: services.citizens.ListUserActivityRequest.from:type_name -> resources.timestamp.Timestamp
-	18, // 10: services.citizens.ListUserActivityRequest.to:type_name -> resources.timestamp.Timestamp
-	15, // 11: services.citizens.ListUserActivityResponse.pagination:type_name -> resources.common.database.PaginationResponse
-	19, // 12: services.citizens.ListUserActivityResponse.activity:type_name -> resources.users.activity.UserActivity
-	20, // 13: services.citizens.SetUserPropsRequest.props:type_name -> resources.users.props.UserProps
-	21, // 14: services.citizens.SetUserPropsRequest.property_changes:type_name -> resources.properties.PropertyChange
-	20, // 15: services.citizens.SetUserPropsResponse.props:type_name -> resources.users.props.UserProps
-	0,  // 16: services.citizens.CitizensService.ListCitizens:input_type -> services.citizens.ListCitizensRequest
-	2,  // 17: services.citizens.CitizensService.GetUser:input_type -> services.citizens.GetUserRequest
-	4,  // 18: services.citizens.CitizensService.ListUserActivity:input_type -> services.citizens.ListUserActivityRequest
-	6,  // 19: services.citizens.CitizensService.SetUserProps:input_type -> services.citizens.SetUserPropsRequest
-	22, // 20: services.citizens.CitizensService.UploadAvatar:input_type -> resources.file.UploadFileRequest
-	8,  // 21: services.citizens.CitizensService.DeleteAvatar:input_type -> services.citizens.DeleteAvatarRequest
-	22, // 22: services.citizens.CitizensService.UploadMugshot:input_type -> resources.file.UploadFileRequest
-	10, // 23: services.citizens.CitizensService.DeleteMugshot:input_type -> services.citizens.DeleteMugshotRequest
-	1,  // 24: services.citizens.CitizensService.ListCitizens:output_type -> services.citizens.ListCitizensResponse
-	3,  // 25: services.citizens.CitizensService.GetUser:output_type -> services.citizens.GetUserResponse
-	5,  // 26: services.citizens.CitizensService.ListUserActivity:output_type -> services.citizens.ListUserActivityResponse
-	7,  // 27: services.citizens.CitizensService.SetUserProps:output_type -> services.citizens.SetUserPropsResponse
-	23, // 28: services.citizens.CitizensService.UploadAvatar:output_type -> resources.file.UploadFileResponse
-	9,  // 29: services.citizens.CitizensService.DeleteAvatar:output_type -> services.citizens.DeleteAvatarResponse
-	23, // 30: services.citizens.CitizensService.UploadMugshot:output_type -> resources.file.UploadFileResponse
-	11, // 31: services.citizens.CitizensService.DeleteMugshot:output_type -> services.citizens.DeleteMugshotResponse
-	24, // [24:32] is the sub-list for method output_type
-	16, // [16:24] is the sub-list for method input_type
-	16, // [16:16] is the sub-list for extension type_name
-	16, // [16:16] is the sub-list for extension extendee
-	0,  // [0:16] is the sub-list for field type_name
+	17, // 0: services.citizens.ListCitizensRequest.pagination:type_name -> resources.common.database.PaginationRequest
+	18, // 1: services.citizens.ListCitizensRequest.sort:type_name -> resources.common.database.Sort
+	19, // 2: services.citizens.ListCitizensRequest.property_filters:type_name -> resources.properties.PropertyFilter
+	20, // 3: services.citizens.ListCitizensResponse.pagination:type_name -> resources.common.database.PaginationResponse
+	21, // 4: services.citizens.ListCitizensResponse.users:type_name -> resources.users.User
+	21, // 5: services.citizens.GetUserResponse.user:type_name -> resources.users.User
+	17, // 6: services.citizens.ListUserActivityRequest.pagination:type_name -> resources.common.database.PaginationRequest
+	18, // 7: services.citizens.ListUserActivityRequest.sort:type_name -> resources.common.database.Sort
+	22, // 8: services.citizens.ListUserActivityRequest.types:type_name -> resources.users.activity.UserActivityType
+	23, // 9: services.citizens.ListUserActivityRequest.from:type_name -> resources.timestamp.Timestamp
+	23, // 10: services.citizens.ListUserActivityRequest.to:type_name -> resources.timestamp.Timestamp
+	20, // 11: services.citizens.ListUserActivityResponse.pagination:type_name -> resources.common.database.PaginationResponse
+	24, // 12: services.citizens.ListUserActivityResponse.activity:type_name -> resources.users.activity.UserActivity
+	25, // 13: services.citizens.SetUserPropsRequest.props:type_name -> resources.users.props.UserProps
+	26, // 14: services.citizens.SetUserPropsRequest.property_changes:type_name -> resources.properties.PropertyChange
+	25, // 15: services.citizens.SetUserPropsResponse.props:type_name -> resources.users.props.UserProps
+	27, // 16: services.citizens.CitizenFile.file:type_name -> resources.file.File
+	12, // 17: services.citizens.ListCitizenFilesResponse.files:type_name -> services.citizens.CitizenFile
+	0,  // 18: services.citizens.CitizensService.ListCitizens:input_type -> services.citizens.ListCitizensRequest
+	2,  // 19: services.citizens.CitizensService.GetUser:input_type -> services.citizens.GetUserRequest
+	4,  // 20: services.citizens.CitizensService.ListUserActivity:input_type -> services.citizens.ListUserActivityRequest
+	6,  // 21: services.citizens.CitizensService.SetUserProps:input_type -> services.citizens.SetUserPropsRequest
+	28, // 22: services.citizens.CitizensService.UploadAvatar:input_type -> resources.file.UploadFileRequest
+	8,  // 23: services.citizens.CitizensService.DeleteAvatar:input_type -> services.citizens.DeleteAvatarRequest
+	28, // 24: services.citizens.CitizensService.UploadMugshot:input_type -> resources.file.UploadFileRequest
+	10, // 25: services.citizens.CitizensService.DeleteMugshot:input_type -> services.citizens.DeleteMugshotRequest
+	13, // 26: services.citizens.CitizensService.ListCitizenFiles:input_type -> services.citizens.ListCitizenFilesRequest
+	28, // 27: services.citizens.CitizensService.UploadCitizenFile:input_type -> resources.file.UploadFileRequest
+	15, // 28: services.citizens.CitizensService.DeleteCitizenFile:input_type -> services.citizens.DeleteCitizenFileRequest
+	1,  // 29: services.citizens.CitizensService.ListCitizens:output_type -> services.citizens.ListCitizensResponse
+	3,  // 30: services.citizens.CitizensService.GetUser:output_type -> services.citizens.GetUserResponse
+	5,  // 31: services.citizens.CitizensService.ListUserActivity:output_type -> services.citizens.ListUserActivityResponse
+	7,  // 32: services.citizens.CitizensService.SetUserProps:output_type -> services.citizens.SetUserPropsResponse
+	29, // 33: services.citizens.CitizensService.UploadAvatar:output_type -> resources.file.UploadFileResponse
+	9,  // 34: services.citizens.CitizensService.DeleteAvatar:output_type -> services.citizens.DeleteAvatarResponse
+	29, // 35: services.citizens.CitizensService.UploadMugshot:output_type -> resources.file.UploadFileResponse
+	11, // 36: services.citizens.CitizensService.DeleteMugshot:output_type -> services.citizens.DeleteMugshotResponse
+	14, // 37: services.citizens.CitizensService.ListCitizenFiles:output_type -> services.citizens.ListCitizenFilesResponse
+	29, // 38: services.citizens.CitizensService.UploadCitizenFile:output_type -> resources.file.UploadFileResponse
+	16, // 39: services.citizens.CitizensService.DeleteCitizenFile:output_type -> services.citizens.DeleteCitizenFileResponse
+	29, // [29:40] is the sub-list for method output_type
+	18, // [18:29] is the sub-list for method input_type
+	18, // [18:18] is the sub-list for extension type_name
+	18, // [18:18] is the sub-list for extension extendee
+	0,  // [0:18] is the sub-list for field type_name
 }
 
 func init() { file_services_citizens_citizens_proto_init() }
@@ -1380,7 +1736,7 @@ func file_services_citizens_citizens_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_services_citizens_citizens_proto_rawDesc), len(file_services_citizens_citizens_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   12,
+			NumMessages:   17,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

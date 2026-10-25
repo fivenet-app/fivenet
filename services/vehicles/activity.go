@@ -2,6 +2,7 @@ package vehicles
 
 import (
 	context "context"
+	"slices"
 
 	vehiclesactivity "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/vehicles/activity"
 	pbvehicles "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/vehicles"
@@ -59,11 +60,15 @@ func (s *Server) ListVehicleActivity(
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsvehicles.ErrFailedQuery)
 	}
+	activityTypes := effectiveVehicleActivityTypes(
+		req.GetTypes(),
+		visiblePropertyKeys,
+	)
 
 	queryOpts := vehiclesstore.CountVehicleActivityOptions{
 		VehicleActivityOptions: vehiclesstore.VehicleActivityOptions{
 			Plate:               req.GetPlate(),
-			Types:               req.GetTypes(),
+			Types:               activityTypes,
 			PropertyKeys:        req.GetPropertyKeys(),
 			VisiblePropertyKeys: visiblePropertyKeys,
 			From:                req.GetFrom(),
@@ -117,6 +122,39 @@ func (s *Server) ListVehicleActivity(
 	}
 
 	return resp, nil
+}
+
+func effectiveVehicleActivityTypes(
+	requested []vehiclesactivity.VehicleActivityType,
+	visiblePropertyKeys []string,
+) []vehiclesactivity.VehicleActivityType {
+	activityTypes := []vehiclesactivity.VehicleActivityType{
+		vehiclesactivity.VehicleActivityType_VEHICLE_ACTIVITY_TYPE_WANTED,
+		vehiclesactivity.VehicleActivityType_VEHICLE_ACTIVITY_TYPE_FILE,
+		vehiclesactivity.VehicleActivityType_VEHICLE_ACTIVITY_TYPE_PROPERTY,
+	}
+	if len(requested) > 0 {
+		activityTypes = requested
+	}
+
+	allowed := make([]vehiclesactivity.VehicleActivityType, 0, len(activityTypes))
+	for _, activityType := range activityTypes {
+		if activityType == vehiclesactivity.VehicleActivityType_VEHICLE_ACTIVITY_TYPE_WANTED &&
+			!slices.Contains(visiblePropertyKeys, "vehicle.wanted") {
+			continue
+		}
+		if activityType == vehiclesactivity.VehicleActivityType_VEHICLE_ACTIVITY_TYPE_FILE &&
+			!slices.Contains(visiblePropertyKeys, vehicleFilesPropertyKey) {
+			continue
+		}
+		allowed = append(allowed, activityType)
+	}
+	if len(allowed) == 0 {
+		return []vehiclesactivity.VehicleActivityType{
+			vehiclesactivity.VehicleActivityType_VEHICLE_ACTIVITY_TYPE_UNSPECIFIED,
+		}
+	}
+	return allowed
 }
 
 func (s *Server) effectiveActivityPropertyKeys(

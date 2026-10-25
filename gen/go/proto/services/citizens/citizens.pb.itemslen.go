@@ -3,6 +3,14 @@
 
 package citizens
 
+// ItemsLen returns the length of Files.
+func (m *ListCitizenFilesResponse) ItemsLen() int {
+	if m == nil {
+		return 0
+	}
+	return len(m.GetFiles())
+}
+
 // ItemsLen returns the length of Users.
 func (m *ListCitizensResponse) ItemsLen() int {
 	if m == nil {

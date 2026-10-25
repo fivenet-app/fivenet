@@ -23,7 +23,6 @@ import { toDate } from '~/utils/time';
 import { useCalendarEntryShortcutState } from '~/composables/useCalendarEntryShortcutState';
 import { CalendarEntryRecurringEvery, type CalendarEntry } from '~~/gen/ts/resources/calendar/entries/entries';
 import { AccessLevel } from '~~/gen/ts/resources/calendar/access/access';
-import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 import EntryRSVPList from './EntryRSVPList.vue';
 import EntryActionButtons from './EntryActionButtons.vue';
 import { emojiBlast } from 'emoji-blast';
@@ -42,7 +41,7 @@ const confirmModal = overlay.create(ConfirmModal);
 const shortcutState = useCalendarEntryShortcutState();
 
 const { t, d } = useI18n();
-const notifications = useNotificationsStore();
+const { notifyLinkCopied } = useClipboardNotifications();
 
 const calendarStore = useCalendarStore();
 const { calendars } = storeToRefs(calendarStore);
@@ -172,14 +171,9 @@ async function copyEntryLink(): Promise<void> {
         url.searchParams.delete('entryKey');
     }
 
-    copyToClipboardWrapper(url.toString());
+    await copyToClipboardWrapper(url.toString());
 
-    notifications.add({
-        title: { key: 'notifications.clipboard.link_copied.title', parameters: {} },
-        description: { key: 'notifications.clipboard.link_copied.content', parameters: {} },
-        duration: 3250,
-        type: NotificationType.INFO,
-    });
+    notifyLinkCopied();
 }
 
 async function openDeleteEntry(): Promise<void> {

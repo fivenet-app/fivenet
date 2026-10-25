@@ -17,9 +17,11 @@ type fivenetUserFilesTable struct {
 	mysql.Table
 
 	// Columns
-	UserID mysql.ColumnInteger
-	FileID mysql.ColumnInteger
-	Kind   mysql.ColumnString
+	UserID        mysql.ColumnInteger
+	FileID        mysql.ColumnInteger
+	Kind          mysql.ColumnString
+	CreatedAt     mysql.ColumnTimestamp
+	MugshotUserID mysql.ColumnInteger
 
 	AllColumns     mysql.ColumnList
 	MutableColumns mysql.ColumnList
@@ -61,21 +63,25 @@ func newFivenetUserFilesTable(schemaName, tableName, alias string) *FivenetUserF
 
 func newFivenetUserFilesTableImpl(schemaName, tableName, alias string) fivenetUserFilesTable {
 	var (
-		UserIDColumn   = mysql.IntegerColumn("user_id")
-		FileIDColumn   = mysql.IntegerColumn("file_id")
-		KindColumn     = mysql.StringColumn("kind")
-		allColumns     = mysql.ColumnList{UserIDColumn, FileIDColumn, KindColumn}
-		mutableColumns = mysql.ColumnList{FileIDColumn}
-		defaultColumns = mysql.ColumnList{}
+		UserIDColumn        = mysql.IntegerColumn("user_id")
+		FileIDColumn        = mysql.IntegerColumn("file_id")
+		KindColumn          = mysql.StringColumn("kind")
+		CreatedAtColumn     = mysql.TimestampColumn("created_at")
+		MugshotUserIDColumn = mysql.IntegerColumn("mugshot_user_id")
+		allColumns          = mysql.ColumnList{UserIDColumn, FileIDColumn, KindColumn, CreatedAtColumn, MugshotUserIDColumn}
+		mutableColumns      = mysql.ColumnList{UserIDColumn, KindColumn, CreatedAtColumn}
+		defaultColumns      = mysql.ColumnList{CreatedAtColumn}
 	)
 
 	return fivenetUserFilesTable{
 		Table: mysql.NewTable(schemaName, tableName, alias, allColumns...),
 
 		//Columns
-		UserID: UserIDColumn,
-		FileID: FileIDColumn,
-		Kind:   KindColumn,
+		UserID:        UserIDColumn,
+		FileID:        FileIDColumn,
+		Kind:          KindColumn,
+		CreatedAt:     CreatedAtColumn,
+		MugshotUserID: MugshotUserIDColumn,
 
 		AllColumns:     allColumns,
 		MutableColumns: mutableColumns,

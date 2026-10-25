@@ -49,6 +49,7 @@ type IStore interface {
 	CountVehicleActivity(ctx context.Context, opts CountVehicleActivityOptions) (int64, error)
 	ListExpiredWanted(ctx context.Context, maxDays int64, limit int64) ([]string, error)
 	ClearWanted(ctx context.Context, plate string) error
+	AddActivity(ctx context.Context, activity *vehiclesactivity.VehicleActivity) error
 }
 
 type Store struct {
@@ -59,6 +60,9 @@ type Store struct {
 	vehicleActivitySorter *database.SorterBuilder
 	propertyCache         *propertyregistry.DefinitionCache
 }
+
+// MaxVehicleFiles is the total number of restricted files a vehicle may have.
+const MaxVehicleFiles int64 = 6
 
 func New(
 	db *sql.DB,

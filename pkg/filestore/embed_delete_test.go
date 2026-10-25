@@ -1,6 +1,7 @@
 package filestore
 
 import (
+	"context"
 	"database/sql"
 	"errors"
 	"testing"
@@ -109,6 +110,40 @@ func TestDeleteStorageFailureLeavesDatabaseTransactionUncommitted(t *testing.T) 
 
 	h := newDeleteHandler(db, st, false)
 	require.ErrorIs(t, h.Delete(t.Context(), int64(7), 23), st.deleteErr)
+}
+
+func TestDeleteWithParentLockFindsAndDeletesUnderLock(t *testing.T) {
+	t.Parallel()
+	db, mock := newFilestoreDB(t)
+	st := &uploadStorage{}
+	locked := false
+	foundWhileLocked := false
+
+	mock.ExpectBegin()
+	mock.ExpectExec(`DELETE FROM fivenet_documents_files .*WHERE .*document_id = \?.*file_id = \?.*LIMIT \?;`).
+		WithArgs(int64(7), int64(23), int64(1)).
+		WillReturnResult(sqlmock.NewResult(0, 1))
+	mock.ExpectQuery(`SELECT COUNT\(fivenet_documents_files\.file_id\).*FROM fivenet_documents_files.*WHERE .*file_id = \?;`).
+		WithArgs(int64(23)).
+		WillReturnRows(sqlmock.NewRows([]string{"count"}).AddRow(int64(1)))
+	mock.ExpectCommit()
+
+	h := newDeleteHandler(db, st, false)
+	fileID, err := h.DeleteWithParentLock(
+		t.Context(),
+		int64(7),
+		func(context.Context, *sql.Tx, int64) error {
+			locked = true
+			return nil
+		},
+		func(context.Context, *sql.Tx, mysql.Table, mysql.Column, mysql.ColumnInteger, int64) (int64, error) {
+			foundWhileLocked = locked
+			return 23, nil
+		},
+	)
+	require.NoError(t, err)
+	assert.Equal(t, int64(23), fileID)
+	assert.True(t, foundWhileLocked)
 }
 
 func TestDeleteFileByPathReturnsWithoutDeletingMissingFile(t *testing.T) {

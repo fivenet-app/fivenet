@@ -88,20 +88,21 @@ func TestListPropertyDefinitionsMergesSystemOverridesAndCustomDefinitions(t *tes
 		false,
 	)
 	require.NoError(t, err)
-	require.Len(t, definitions, 2)
+	require.Len(t, definitions, 3)
 	assert.Equal(
 		t,
 		string(permsvehicles.VehiclesServiceListVehiclesPropertiesPermValueVehicleWanted),
 		definitions[0].GetKey(),
 	)
 	assert.False(t, definitions[0].GetEnabled())
-	assert.Equal(t, "vehicle.inspection_due", definitions[1].GetKey())
+	assert.Equal(t, "vehicle.files", definitions[1].GetKey())
+	assert.Equal(t, "vehicle.inspection_due", definitions[2].GetKey())
 	assert.Equal(
 		t,
 		properties.PropertyDefinitionSource_PROPERTY_DEFINITION_SOURCE_CUSTOM,
-		definitions[1].GetSource(),
+		definitions[2].GetSource(),
 	)
-	assert.True(t, definitions[1].GetSearchable())
+	assert.True(t, definitions[2].GetSearchable())
 	require.NoError(t, mock.ExpectationsWereMet())
 }
 

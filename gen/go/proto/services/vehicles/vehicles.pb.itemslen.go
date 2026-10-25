@@ -11,6 +11,14 @@ func (m *ListVehicleActivityResponse) ItemsLen() int {
 	return len(m.GetActivity())
 }
 
+// ItemsLen returns the length of Files.
+func (m *ListVehicleFilesResponse) ItemsLen() int {
+	if m == nil {
+		return 0
+	}
+	return len(m.GetFiles())
+}
+
 // ItemsLen returns the length of Vehicles.
 func (m *ListVehiclesResponse) ItemsLen() int {
 	if m == nil {

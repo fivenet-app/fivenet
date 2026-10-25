@@ -103,7 +103,7 @@ func newFivenetPropertyDefinitionsTableImpl(schemaName, tableName, alias string)
 		CreatedAtColumn      = mysql.TimestampColumn("created_at")
 		UpdatedAtColumn      = mysql.TimestampColumn("updated_at")
 		allColumns           = mysql.ColumnList{ScopeColumn, PropertyKeyColumn, ValueTypeColumn, LabelColumn, DescriptionColumn, EnabledColumn, SearchableColumn, ValueFormatColumn, BehaviorColumn, GroupKeyColumn, SortOrderColumn, PinnedColumn, RendererColumn, RendererConfigColumn, DisplayModeColumn, ImplicitColumn, UnitColumn, DecimalPlacesColumn, CurrencyColumn, DeletedAtColumn, CreatedAtColumn, UpdatedAtColumn}
-		mutableColumns       = mysql.ColumnList{ValueTypeColumn, LabelColumn, DescriptionColumn, EnabledColumn, SearchableColumn, ValueFormatColumn, BehaviorColumn, GroupKeyColumn, SortOrderColumn, PinnedColumn, RendererColumn, RendererConfigColumn, DisplayModeColumn, ImplicitColumn, UnitColumn, DecimalPlacesColumn, CurrencyColumn, DeletedAtColumn, UpdatedAtColumn}
+		mutableColumns       = mysql.ColumnList{ValueTypeColumn, LabelColumn, DescriptionColumn, EnabledColumn, SearchableColumn, ValueFormatColumn, BehaviorColumn, GroupKeyColumn, SortOrderColumn, PinnedColumn, RendererColumn, RendererConfigColumn, DisplayModeColumn, ImplicitColumn, UnitColumn, DecimalPlacesColumn, CurrencyColumn, DeletedAtColumn, CreatedAtColumn, UpdatedAtColumn}
 		defaultColumns       = mysql.ColumnList{LabelColumn, EnabledColumn, SearchableColumn, ValueFormatColumn, BehaviorColumn, GroupKeyColumn, SortOrderColumn, PinnedColumn, RendererColumn, DisplayModeColumn, ImplicitColumn, CreatedAtColumn, UpdatedAtColumn}
 	)
 

@@ -9,6 +9,28 @@ import (
 
 // Sanitize sanitizes the message's fields, in case of complex types it calls
 // their Sanitize() method recursively.
+func (m *FileChange) Sanitize() error {
+	if m == nil {
+		return nil
+	}
+
+	// Field: File
+	if m.File != nil {
+		if v, ok := any(m.GetFile()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+	}
+
+	// Field: Kind
+	m.Kind = htmlsanitizer.SanitizeAndUnescape(m.Kind)
+
+	return nil
+}
+
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *JailChange) Sanitize() error {
 	if m == nil {
 		return nil
@@ -268,6 +290,17 @@ func (m *UserActivityData) Sanitize() error {
 
 		if v.DocumentRelation != nil {
 			if s, ok := any(v.DocumentRelation).(interface{ Sanitize() error }); ok {
+				if err := s.Sanitize(); err != nil {
+					return err
+				}
+			}
+		}
+
+		// Field: FileChange
+	case *UserActivityData_FileChange:
+
+		if v.FileChange != nil {
+			if s, ok := any(v.FileChange).(interface{ Sanitize() error }); ok {
 				if err := s.Sanitize(); err != nil {
 					return err
 				}

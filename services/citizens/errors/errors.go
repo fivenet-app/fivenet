@@ -53,6 +53,11 @@ var (
 		&common.I18NItem{Key: "errors.citizens.CitizensService.ErrPropsMugshotDenied.content"},
 		&common.I18NItem{Key: "errors.citizens.CitizensService.ErrPropsMugshotDenied.title"},
 	)
+	ErrPropsFilesDenied = common.NewI18nErr(
+		codes.PermissionDenied,
+		&common.I18NItem{Key: "errors.citizens.CitizensService.ErrPropsFilesDenied.content"},
+		&common.I18NItem{Key: "errors.citizens.CitizensService.ErrPropsFilesDenied.title"},
+	)
 	ErrPropsLabelsDenied = common.NewI18nErr(
 		codes.PermissionDenied,
 		&common.I18NItem{Key: "errors.citizens.CitizensService.ErrPropsLabelsDenied.content"},

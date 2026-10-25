@@ -55,7 +55,7 @@ export function citizenUserActivityTypeIcon(activityType: UserActivityType | und
         case UserActivityType.FINE:
             return 'i-mdi-receipt-text-remove';
         case UserActivityType.FILE:
-            return 'i-mdi-file-outline';
+            return 'i-mdi-file-image';
         case UserActivityType.PROPERTY:
             return 'i-mdi-form-textbox';
         case UserActivityType.UNSPECIFIED:
@@ -110,6 +110,10 @@ export function citizenUserActivityIconColor(activity: UserActivity): string {
             }
             break;
         case UserActivityType.FILE:
+            if (activity.data?.data.oneofKind === 'fileChange' && !activity.data.data.fileChange.added) {
+                return 'text-error-400';
+            }
+
             return 'text-primary-500';
         case UserActivityType.PROPERTY:
             return 'text-secondary-500';

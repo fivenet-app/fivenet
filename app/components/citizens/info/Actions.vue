@@ -8,10 +8,10 @@ import SetDynamicPropertyDrawer from '~/components/partials/properties/SetDynami
 import { canActOnDynamicProperty, dynamicPropertiesForAction } from '~/composables/useDynamicPropertyAction';
 import { checkIfCanAccessColleague } from '~/components/jobs/colleagues/helpers';
 import { useClipboardStore } from '~/stores/clipboard';
+import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 import { PropertyScope, type Properties, type Property } from '~~/gen/ts/resources/properties/properties';
 import type { File } from '~~/gen/ts/resources/file/file';
 import type { Job, JobGrade } from '~~/gen/ts/resources/jobs/jobs';
-import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 import type { UserProps } from '~~/gen/ts/resources/users/props/props';
 import type { User } from '~~/gen/ts/resources/users/user';
 
@@ -39,7 +39,7 @@ const { propertyLabel } = usePropertyRenderer();
 const clipboardStore = useClipboardStore();
 const { open: openClipboardModal } = useClipboardModal();
 
-const notifications = useNotificationsStore();
+const { notifyLinkCopied } = useClipboardNotifications();
 
 const overlay = useOverlay();
 
@@ -103,15 +103,10 @@ function openTemplates(): void {
     templateDrawer.open({});
 }
 
-function copyLinkToClipboard(): void {
-    copyToClipboardWrapper(window.location.href);
+async function copyLinkToClipboard(): Promise<void> {
+    await copyToClipboardWrapper(window.location.href);
 
-    notifications.add({
-        title: { key: 'notifications.clipboard.link_copied.title', parameters: {} },
-        description: { key: 'notifications.clipboard.link_copied.content', parameters: {} },
-        duration: 3250,
-        type: NotificationType.INFO,
-    });
+    notifyLinkCopied();
 }
 
 defineShortcuts({

@@ -13,6 +13,7 @@ const (
 	VehiclesServicePerm perms.Service = "VehiclesService"
 
 	// Service: vehicles.VehiclesService
+	VehiclesServiceDeleteVehicleFilePerm              perms.Name = "DeleteVehicleFile"
 	VehiclesServiceListVehicleActivityPerm            perms.Name = "ListVehicleActivity"
 	VehiclesServiceListVehicleActivityFieldsPermField perms.Key  = "Fields"
 	VehiclesServiceListVehiclesPerm                   perms.Name = "ListVehicles"
@@ -32,18 +33,24 @@ type VehiclesServiceListVehiclesPropertiesPermValue string
 
 const (
 	VehiclesServiceListVehiclesPropertiesPermValueVehicleWanted VehiclesServiceListVehiclesPropertiesPermValue = "vehicle.wanted"
+	VehiclesServiceListVehiclesPropertiesPermValueVehicleFiles  VehiclesServiceListVehiclesPropertiesPermValue = "vehicle.files"
 )
 
 type VehiclesServiceSetVehiclePropsPropertiesPermValue string
 
 const (
 	VehiclesServiceSetVehiclePropsPropertiesPermValueVehicleWanted VehiclesServiceSetVehiclePropsPropertiesPermValue = "vehicle.wanted"
+	VehiclesServiceSetVehiclePropsPropertiesPermValueVehicleFiles  VehiclesServiceSetVehiclePropsPropertiesPermValue = "vehicle.files"
 )
 
 type VehiclesServicePerms struct {
+	DeleteVehicleFile   VehiclesServiceDeleteVehicleFilePermRef
 	ListVehicleActivity VehiclesServiceListVehicleActivityPermRef
 	ListVehicles        VehiclesServiceListVehiclesPermRef
 	SetVehicleProps     VehiclesServiceSetVehiclePropsPermRef
+}
+type VehiclesServiceDeleteVehicleFilePermRef struct {
+	Perm perms.PermissionRef
 }
 type VehiclesServiceListVehicleActivityPermRef struct {
 	Perm        perms.PermissionRef
@@ -62,6 +69,9 @@ type VehiclesServiceSetVehiclePropsPermRef struct {
 }
 
 var VehiclesService = VehiclesServicePerms{
+	DeleteVehicleFile: VehiclesServiceDeleteVehicleFilePermRef{
+		Perm: perms.NewPermissionRef(Namespace, VehiclesServicePerm, VehiclesServiceDeleteVehicleFilePerm),
+	},
 	ListVehicleActivity: VehiclesServiceListVehicleActivityPermRef{
 		Perm: perms.NewPermissionRef(Namespace, VehiclesServicePerm, VehiclesServiceListVehicleActivityPerm),
 		Fields: perms.NewStringListAttrRef(

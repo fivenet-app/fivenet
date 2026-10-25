@@ -121,6 +121,49 @@ func TestUploadFileSuccess(t *testing.T) {
 	assert.Empty(t, st.deleted)
 }
 
+func TestUploadFileEnforcesActualSizeLimitAndCleansStorage(t *testing.T) {
+	t.Parallel()
+
+	st := &uploadStorage{}
+	stream := &uploadStream{
+		packets: []*file.UploadFileRequest{dataRequest([]byte("hello!"))},
+		recvErr: io.EOF,
+	}
+
+	// The metadata says five bytes, but the stream contains six.
+	h := &Handler[int64]{store: st, sizeLimit: 5}
+	_, err := h.UploadFile(t.Context(), 1, "uploads/file.txt", 5, "text/plain", stream)
+
+	require.Error(t, err)
+	assert.Equal(t, codes.ResourceExhausted, status.Code(err))
+	assert.Equal(t, "uploads/file.txt", st.deleted)
+}
+
+func TestUploadFileEnforcesChunkLimitAndCleansStorage(t *testing.T) {
+	t.Parallel()
+
+	packets := make([]*file.UploadFileRequest, MaxUploadChunks+1)
+	for i := range packets {
+		packets[i] = dataRequest([]byte("x"))
+	}
+	st := &uploadStorage{}
+	stream := &uploadStream{packets: packets, recvErr: io.EOF}
+	h := &Handler[int64]{store: st, sizeLimit: 1 << 20}
+
+	_, err := h.UploadFile(
+		t.Context(),
+		1,
+		"uploads/file.txt",
+		int64(len(packets)),
+		"text/plain",
+		stream,
+	)
+
+	require.Error(t, err)
+	assert.Equal(t, codes.ResourceExhausted, status.Code(err))
+	assert.Equal(t, "uploads/file.txt", st.deleted)
+}
+
 func TestUploadFileRejectsDisallowedTypeBeforeStorage(t *testing.T) {
 	t.Parallel()
 	st := &uploadStorage{}
@@ -195,7 +238,7 @@ func TestUploadFileCleansStorageWhenCommitFails(t *testing.T) {
 func TestReplaceFileSuccess(t *testing.T) {
 	t.Parallel()
 	db, mock := newFilestoreDB(t)
-	st := &uploadStorage{getData: "old content", getType: "text/plain"}
+	st := &uploadStorage{getData: "old", getType: "text/plain"}
 	stream := &uploadStream{
 		packets: []*file.UploadFileRequest{dataRequest([]byte("new content"))},
 		recvErr: io.EOF,
@@ -213,6 +256,48 @@ func TestReplaceFileSuccess(t *testing.T) {
 	assert.Equal(t, "new content", st.putData)
 	assert.Equal(t, []string{"new content"}, st.putHistory)
 	assert.True(t, stream.closed)
+}
+
+func TestReplaceFileRestoresOldObjectWhenStreamExceedsLimit(t *testing.T) {
+	t.Parallel()
+
+	st := &uploadStorage{getData: "old", getType: "text/plain"}
+	stream := &uploadStream{
+		packets: []*file.UploadFileRequest{dataRequest([]byte("hello!"))},
+		recvErr: io.EOF,
+	}
+	h := &Handler[int64]{store: st, sizeLimit: 5}
+
+	_, err := h.ReplaceFile(t.Context(), 23, "uploads/file.txt", 5, "text/plain", stream)
+
+	require.Error(t, err)
+	assert.Equal(t, codes.ResourceExhausted, status.Code(err))
+	assert.Equal(t, "old", st.putData)
+}
+
+func TestReplaceFileRestoresOldObjectWhenChunkLimitIsExceeded(t *testing.T) {
+	t.Parallel()
+
+	packets := make([]*file.UploadFileRequest, MaxUploadChunks+1)
+	for i := range packets {
+		packets[i] = dataRequest([]byte("x"))
+	}
+	st := &uploadStorage{getData: "old content", getType: "text/plain"}
+	stream := &uploadStream{packets: packets, recvErr: io.EOF}
+	h := &Handler[int64]{store: st, sizeLimit: 1 << 20}
+
+	_, err := h.ReplaceFile(
+		t.Context(),
+		23,
+		"uploads/file.txt",
+		int64(len(packets)),
+		"text/plain",
+		stream,
+	)
+
+	require.Error(t, err)
+	assert.Equal(t, codes.ResourceExhausted, status.Code(err))
+	assert.Equal(t, "old content", st.putData)
 }
 
 func TestReplaceFileRestoresOldObjectWhenMetadataUpdateFails(t *testing.T) {

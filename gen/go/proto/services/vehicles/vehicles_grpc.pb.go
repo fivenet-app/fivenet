@@ -8,6 +8,7 @@ package vehicles
 
 import (
 	context "context"
+	file "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/file"
 	grpc "google.golang.org/grpc"
 	codes "google.golang.org/grpc/codes"
 	status "google.golang.org/grpc/status"
@@ -22,6 +23,9 @@ const (
 	VehiclesService_ListVehicles_FullMethodName        = "/services.vehicles.VehiclesService/ListVehicles"
 	VehiclesService_SetVehicleProps_FullMethodName     = "/services.vehicles.VehiclesService/SetVehicleProps"
 	VehiclesService_ListVehicleActivity_FullMethodName = "/services.vehicles.VehiclesService/ListVehicleActivity"
+	VehiclesService_UploadVehicleFile_FullMethodName   = "/services.vehicles.VehiclesService/UploadVehicleFile"
+	VehiclesService_ListVehicleFiles_FullMethodName    = "/services.vehicles.VehiclesService/ListVehicleFiles"
+	VehiclesService_DeleteVehicleFile_FullMethodName   = "/services.vehicles.VehiclesService/DeleteVehicleFile"
 )
 
 // VehiclesServiceClient is the client API for VehiclesService service.
@@ -31,6 +35,12 @@ type VehiclesServiceClient interface {
 	ListVehicles(ctx context.Context, in *ListVehiclesRequest, opts ...grpc.CallOption) (*ListVehiclesResponse, error)
 	SetVehicleProps(ctx context.Context, in *SetVehiclePropsRequest, opts ...grpc.CallOption) (*SetVehiclePropsResponse, error)
 	ListVehicleActivity(ctx context.Context, in *ListVehicleActivityRequest, opts ...grpc.CallOption) (*ListVehicleActivityResponse, error)
+	// buf:lint:ignore RPC_REQUEST_RESPONSE_UNIQUE
+	// buf:lint:ignore RPC_REQUEST_STANDARD_NAME
+	// buf:lint:ignore RPC_RESPONSE_STANDARD_NAME
+	UploadVehicleFile(ctx context.Context, opts ...grpc.CallOption) (grpc.ClientStreamingClient[file.UploadFileRequest, file.UploadFileResponse], error)
+	ListVehicleFiles(ctx context.Context, in *ListVehicleFilesRequest, opts ...grpc.CallOption) (*ListVehicleFilesResponse, error)
+	DeleteVehicleFile(ctx context.Context, in *DeleteVehicleFileRequest, opts ...grpc.CallOption) (*DeleteVehicleFileResponse, error)
 }
 
 type vehiclesServiceClient struct {
@@ -71,6 +81,39 @@ func (c *vehiclesServiceClient) ListVehicleActivity(ctx context.Context, in *Lis
 	return out, nil
 }
 
+func (c *vehiclesServiceClient) UploadVehicleFile(ctx context.Context, opts ...grpc.CallOption) (grpc.ClientStreamingClient[file.UploadFileRequest, file.UploadFileResponse], error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	stream, err := c.cc.NewStream(ctx, &VehiclesService_ServiceDesc.Streams[0], VehiclesService_UploadVehicleFile_FullMethodName, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	x := &grpc.GenericClientStream[file.UploadFileRequest, file.UploadFileResponse]{ClientStream: stream}
+	return x, nil
+}
+
+// This type alias is provided for backwards compatibility with existing code that references the prior non-generic stream type by name.
+type VehiclesService_UploadVehicleFileClient = grpc.ClientStreamingClient[file.UploadFileRequest, file.UploadFileResponse]
+
+func (c *vehiclesServiceClient) ListVehicleFiles(ctx context.Context, in *ListVehicleFilesRequest, opts ...grpc.CallOption) (*ListVehicleFilesResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ListVehicleFilesResponse)
+	err := c.cc.Invoke(ctx, VehiclesService_ListVehicleFiles_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *vehiclesServiceClient) DeleteVehicleFile(ctx context.Context, in *DeleteVehicleFileRequest, opts ...grpc.CallOption) (*DeleteVehicleFileResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(DeleteVehicleFileResponse)
+	err := c.cc.Invoke(ctx, VehiclesService_DeleteVehicleFile_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // VehiclesServiceServer is the server API for VehiclesService service.
 // All implementations must embed UnimplementedVehiclesServiceServer
 // for forward compatibility.
@@ -78,6 +121,12 @@ type VehiclesServiceServer interface {
 	ListVehicles(context.Context, *ListVehiclesRequest) (*ListVehiclesResponse, error)
 	SetVehicleProps(context.Context, *SetVehiclePropsRequest) (*SetVehiclePropsResponse, error)
 	ListVehicleActivity(context.Context, *ListVehicleActivityRequest) (*ListVehicleActivityResponse, error)
+	// buf:lint:ignore RPC_REQUEST_RESPONSE_UNIQUE
+	// buf:lint:ignore RPC_REQUEST_STANDARD_NAME
+	// buf:lint:ignore RPC_RESPONSE_STANDARD_NAME
+	UploadVehicleFile(grpc.ClientStreamingServer[file.UploadFileRequest, file.UploadFileResponse]) error
+	ListVehicleFiles(context.Context, *ListVehicleFilesRequest) (*ListVehicleFilesResponse, error)
+	DeleteVehicleFile(context.Context, *DeleteVehicleFileRequest) (*DeleteVehicleFileResponse, error)
 	mustEmbedUnimplementedVehiclesServiceServer()
 }
 
@@ -96,6 +145,15 @@ func (UnimplementedVehiclesServiceServer) SetVehicleProps(context.Context, *SetV
 }
 func (UnimplementedVehiclesServiceServer) ListVehicleActivity(context.Context, *ListVehicleActivityRequest) (*ListVehicleActivityResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ListVehicleActivity not implemented")
+}
+func (UnimplementedVehiclesServiceServer) UploadVehicleFile(grpc.ClientStreamingServer[file.UploadFileRequest, file.UploadFileResponse]) error {
+	return status.Errorf(codes.Unimplemented, "method UploadVehicleFile not implemented")
+}
+func (UnimplementedVehiclesServiceServer) ListVehicleFiles(context.Context, *ListVehicleFilesRequest) (*ListVehicleFilesResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ListVehicleFiles not implemented")
+}
+func (UnimplementedVehiclesServiceServer) DeleteVehicleFile(context.Context, *DeleteVehicleFileRequest) (*DeleteVehicleFileResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DeleteVehicleFile not implemented")
 }
 func (UnimplementedVehiclesServiceServer) mustEmbedUnimplementedVehiclesServiceServer() {}
 func (UnimplementedVehiclesServiceServer) testEmbeddedByValue()                         {}
@@ -172,6 +230,49 @@ func _VehiclesService_ListVehicleActivity_Handler(srv interface{}, ctx context.C
 	return interceptor(ctx, in, info, handler)
 }
 
+func _VehiclesService_UploadVehicleFile_Handler(srv interface{}, stream grpc.ServerStream) error {
+	return srv.(VehiclesServiceServer).UploadVehicleFile(&grpc.GenericServerStream[file.UploadFileRequest, file.UploadFileResponse]{ServerStream: stream})
+}
+
+// This type alias is provided for backwards compatibility with existing code that references the prior non-generic stream type by name.
+type VehiclesService_UploadVehicleFileServer = grpc.ClientStreamingServer[file.UploadFileRequest, file.UploadFileResponse]
+
+func _VehiclesService_ListVehicleFiles_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ListVehicleFilesRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(VehiclesServiceServer).ListVehicleFiles(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: VehiclesService_ListVehicleFiles_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(VehiclesServiceServer).ListVehicleFiles(ctx, req.(*ListVehicleFilesRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _VehiclesService_DeleteVehicleFile_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DeleteVehicleFileRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(VehiclesServiceServer).DeleteVehicleFile(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: VehiclesService_DeleteVehicleFile_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(VehiclesServiceServer).DeleteVehicleFile(ctx, req.(*DeleteVehicleFileRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // VehiclesService_ServiceDesc is the grpc.ServiceDesc for VehiclesService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -191,7 +292,21 @@ var VehiclesService_ServiceDesc = grpc.ServiceDesc{
 			MethodName: "ListVehicleActivity",
 			Handler:    _VehiclesService_ListVehicleActivity_Handler,
 		},
+		{
+			MethodName: "ListVehicleFiles",
+			Handler:    _VehiclesService_ListVehicleFiles_Handler,
+		},
+		{
+			MethodName: "DeleteVehicleFile",
+			Handler:    _VehiclesService_DeleteVehicleFile_Handler,
+		},
 	},
-	Streams:  []grpc.StreamDesc{},
+	Streams: []grpc.StreamDesc{
+		{
+			StreamName:    "UploadVehicleFile",
+			Handler:       _VehiclesService_UploadVehicleFile_Handler,
+			ClientStreams: true,
+		},
+	},
 	Metadata: "services/vehicles/vehicles.proto",
 }

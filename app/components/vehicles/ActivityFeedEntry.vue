@@ -82,6 +82,13 @@ const reasonHtml = computed(() => {
                     :old-value="activity.data.data.propertyChange.oldValue"
                     :new-value="activity.data.data.propertyChange.newValue"
                 />
+                <template
+                    v-else-if="
+                        activity.activityType === VehicleActivityType.FILE && activity.data?.data.oneofKind === 'fileChange'
+                    "
+                >
+                    {{ $t(activity.data.data.fileChange.added ? 'common.image_uploaded' : 'common.image_deleted') }}
+                </template>
                 <template v-else>{{
                     $t(`enums.vehicles.VehicleActivityType.${VehicleActivityType[activity.activityType]}`)
                 }}</template>
@@ -90,6 +97,11 @@ const reasonHtml = computed(() => {
             <template #timestamp>
                 <GenericTime :value="activity.createdAt" type="long" />
             </template>
+
+            <p v-if="activity.creator" class="inline-flex justify-end text-sm">
+                {{ $t('common.created_by') }}
+                <CitizenInfoPopover class="ml-1" :user="activity.creator" />
+            </p>
         </ActivityFeedItem>
     </template>
 </template>

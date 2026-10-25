@@ -22,6 +22,10 @@ import (
 	"go.uber.org/fx"
 )
 
+// MaxUserFiles is the total number of restricted files a citizen may have.
+// The current mugshot, if any, occupies one of these slots.
+const MaxUserFiles int64 = 6
+
 type IStore interface {
 	ListCitizens(
 		ctx context.Context,
@@ -82,7 +86,6 @@ type IStore interface {
 	GetUserAccess(ctx context.Context, userId int32) (*users.User, error)
 	ListExpiredWantedUserProps(ctx context.Context, maxDays int64, limit int64) ([]int32, error)
 	GetAvatarFileID(ctx context.Context, userId int32) (*int64, error)
-	GetMugshotFileID(ctx context.Context, userId int32) (*int64, error)
 	GetUserProps(ctx context.Context, tx qrm.DB, userId int32) (*usersprops.UserProps, error)
 	GetProperties(ctx context.Context, userId int32) ([]*properties.Property, error)
 	ListProperties(ctx context.Context, userIds []int32) (map[int32][]*properties.Property, error)

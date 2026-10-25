@@ -25,7 +25,18 @@ func TestLocalDateToTime(t *testing.T) {
 func TestLocalDateFromTime(t *testing.T) {
 	t.Parallel()
 
-	assert.Equal(t, &propertypb.LocalDate{Year: 2028, Month: 2, Day: 29},
-		LocalDateFromTime(time.Date(2028, time.February, 29, 12, 0, 0, 0, time.FixedZone("UTC+2", 2*60*60))))
+	positiveOffset := time.FixedZone("UTC+2", 2*60*60)
+	assert.Equal(
+		t,
+		&propertypb.LocalDate{Year: 2028, Month: 2, Day: 29},
+		LocalDateFromTime(time.Date(2028, time.February, 29, 0, 0, 0, 0, positiveOffset)),
+	)
+	assert.Equal(
+		t,
+		&propertypb.LocalDate{Year: 2028, Month: 2, Day: 29},
+		LocalDateFromTime(
+			time.Date(2028, time.February, 29, 12, 0, 0, 0, positiveOffset),
+		),
+	)
 	assert.Nil(t, LocalDateFromTime(time.Date(10000, time.January, 1, 0, 0, 0, 0, time.UTC)))
 }

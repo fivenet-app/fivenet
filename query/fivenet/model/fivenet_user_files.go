@@ -7,8 +7,14 @@
 
 package model
 
+import (
+	"time"
+)
+
 type FivenetUserFiles struct {
-	UserID int32  `sql:"primary_key" json:"user_id"`
-	FileID int64  `json:"file_id"`
-	Kind   string `sql:"primary_key" json:"kind"`
+	UserID        int32     `json:"user_id"`
+	FileID        int64     `sql:"primary_key" json:"file_id"`
+	Kind          string    `json:"kind"`
+	CreatedAt     time.Time `json:"created_at"`
+	MugshotUserID *int32    `json:"mugshot_user_id"`
 }

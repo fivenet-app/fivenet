@@ -1041,6 +1041,7 @@
         "service": "Service",
         "copy": "Kopieren",
         "copy_image_link": "Bildlink kopieren",
+        "copy_file_link": "Dateilink kopieren",
         "download": "Herunterladen",
         "prop": "Eigenschaft",
         "theme": "Design",
@@ -1194,7 +1195,9 @@
         "motd": "MOTD",
         "fallback_mode": "Fallback-Modus",
         "volume": "Lautstärke",
-        "image": "Bild",
+        "image": "Bild | Bilder",
+        "image_uploaded": "Bild hochgeladen",
+        "image_deleted": "Bild gelöscht",
         "logo": "Logo",
         "absence_date": "Abwesenheit",
         "file_size": "Dateigröße",
@@ -4381,6 +4384,10 @@
                     "title": "Fahndungsfoto verweigert",
                     "content": "Sie dürfen nicht das Fahndungsfoto der Person ändern!"
                 },
+                "ErrPropsFilesDenied": {
+                    "title": "Bürgerdateien verweigert",
+                    "content": "Sie dürfen keine Bürgerdateien hochladen!"
+                },
                 "ErrCitizenNotFound": {
                     "title": "Bürger nicht gefunden!",
                     "content": "Der angeforderte Bürger wurde nicht gefunden."
@@ -4407,6 +4414,10 @@
                 "ErrPropsPropertiesDenied": {
                     "title": "Fahrzeugeigenschaften verweigert",
                     "content": "Sie haben keine Berechtigung Fahrzeugattribute einzusehen oder zu bearbeiten."
+                },
+                "ErrPropsFilesDenied": {
+                    "title": "Fahrzeugdateien verweigert",
+                    "content": "Sie dürfen keine Fahrzeugdateien hochladen!"
                 },
                 "ErrInvalidProperty": {
                     "title": "Ungültiges Fahrzeugattribut",
@@ -5392,6 +5403,10 @@
             "namespace": "Bürger",
             "CitizensService": {
                 "service": "Bürger",
+                "DeleteCitizenFile": {
+                    "key": "Bürgerdateien löschen",
+                    "description": "Bürgerdateien löschen. Zusätzlich ist die Berechtigung Bürger-Eigenschaften festlegen mit aktivierter Eigenschaft user.files erforderlich."
+                },
                 "ListCitizens": {
                     "key": "Bürger auflisten",
                     "description": "Bürger auflisten und suchen.",
@@ -5424,7 +5439,7 @@
                 },
                 "SetUserProps": {
                     "key": "Bürger-Eigenschaften festlegen",
-                    "description": "Bürger-Eigenschaften festlegen (z.B. Fahndungsstatus).",
+                    "description": "Bürger-Eigenschaften festlegen (z.B. Fahndungsstatus). Die Eigenschaft user.files wird auch benötigt, um Bürgerdateien hochzuladen oder zu löschen.",
                     "attrs": {
                         "Property_user_phone_number": "Telefonnummer",
                         "Property_user_licenses": "Lizenzen",
@@ -5465,6 +5480,10 @@
             "namespace": "Fahrzeuge",
             "VehiclesService": {
                 "service": "Fahrzeuge",
+                "DeleteVehicleFile": {
+                    "key": "Fahrzeugdateien löschen",
+                    "description": "Fahrzeugdateien löschen. Zusätzlich ist die Berechtigung Fahrzeug-Eigenschaften festlegen mit aktivierter Eigenschaft vehicle.files erforderlich."
+                },
                 "ListVehicles": {
                     "key": "Fahrzeuge suchen",
                     "description": "Suchen und Finden von Fahrzeugen von Bürgern.",
@@ -5488,7 +5507,7 @@
                 },
                 "SetVehicleProps": {
                     "key": "Fahrzeug-Eigenschaften festlegen",
-                    "description": "Fahrzeug-Eigenschaften festlegen (z.B. Kennzeichen, Farbe).",
+                    "description": "Fahrzeug-Eigenschaften festlegen (z.B. Kennzeichen, Farbe). Die Eigenschaft vehicle.files wird auch benötigt, um Fahrzeugdateien hochzuladen oder zu löschen.",
                     "attrs": {
                         "Property_vehicle_wanted": "Gesuchten Status"
                     },

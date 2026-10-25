@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 import type { Vehicle } from '~~/gen/ts/resources/vehicles/vehicles';
 import GenericTime from '../partials/elements/GenericTime.vue';
+import WantedBadge from '~/components/partials/WantedBadge.vue';
 
 const vehicle = defineModel<Vehicle>({ required: true });
 
@@ -51,7 +52,7 @@ const { propertyLabel } = usePropertyRenderer();
                     </li>
 
                     <li v-if="canViewWanted && vehicle.props?.wanted" class="inline-flex items-center gap-2">
-                        <UBadge color="error" :label="$t('common.wanted').toUpperCase()" />
+                        <WantedBadge :wanted="true" variant="short" />
 
                         <span class="line-clamp-3 font-semibold">{{ $t('common.reason') }}:</span>
                         {{ vehicle.props?.wantedReason ?? $t('common.na') }}

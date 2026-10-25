@@ -11,6 +11,7 @@ package vehiclesactivity
 import (
 	_ "github.com/fivenet-app/fivenet/v2026/gen/go/proto/codegen/dbscanner"
 	_ "github.com/fivenet-app/fivenet/v2026/gen/go/proto/codegen/sanitizer"
+	file "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/file"
 	properties "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/properties"
 	timestamp "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/timestamp"
 	short "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/users/short"
@@ -434,6 +435,15 @@ func (x *VehicleActivityData) GetPropertyChange() *PropertyChange {
 	return nil
 }
 
+func (x *VehicleActivityData) GetFileChange() *FileChange {
+	if x != nil {
+		if x, ok := x.xxx_hidden_Data.(*vehicleActivityData_FileChange); ok {
+			return x.FileChange
+		}
+	}
+	return nil
+}
+
 func (x *VehicleActivityData) SetWantedChange(v *WantedChange) {
 	if v == nil {
 		x.xxx_hidden_Data = nil
@@ -448,6 +458,14 @@ func (x *VehicleActivityData) SetPropertyChange(v *PropertyChange) {
 		return
 	}
 	x.xxx_hidden_Data = &vehicleActivityData_PropertyChange{v}
+}
+
+func (x *VehicleActivityData) SetFileChange(v *FileChange) {
+	if v == nil {
+		x.xxx_hidden_Data = nil
+		return
+	}
+	x.xxx_hidden_Data = &vehicleActivityData_FileChange{v}
 }
 
 func (x *VehicleActivityData) HasData() bool {
@@ -473,6 +491,14 @@ func (x *VehicleActivityData) HasPropertyChange() bool {
 	return ok
 }
 
+func (x *VehicleActivityData) HasFileChange() bool {
+	if x == nil {
+		return false
+	}
+	_, ok := x.xxx_hidden_Data.(*vehicleActivityData_FileChange)
+	return ok
+}
+
 func (x *VehicleActivityData) ClearData() {
 	x.xxx_hidden_Data = nil
 }
@@ -489,9 +515,16 @@ func (x *VehicleActivityData) ClearPropertyChange() {
 	}
 }
 
+func (x *VehicleActivityData) ClearFileChange() {
+	if _, ok := x.xxx_hidden_Data.(*vehicleActivityData_FileChange); ok {
+		x.xxx_hidden_Data = nil
+	}
+}
+
 const VehicleActivityData_Data_not_set_case case_VehicleActivityData_Data = 0
 const VehicleActivityData_WantedChange_case case_VehicleActivityData_Data = 1
 const VehicleActivityData_PropertyChange_case case_VehicleActivityData_Data = 2
+const VehicleActivityData_FileChange_case case_VehicleActivityData_Data = 3
 
 func (x *VehicleActivityData) WhichData() case_VehicleActivityData_Data {
 	if x == nil {
@@ -502,6 +535,8 @@ func (x *VehicleActivityData) WhichData() case_VehicleActivityData_Data {
 		return VehicleActivityData_WantedChange_case
 	case *vehicleActivityData_PropertyChange:
 		return VehicleActivityData_PropertyChange_case
+	case *vehicleActivityData_FileChange:
+		return VehicleActivityData_FileChange_case
 	default:
 		return VehicleActivityData_Data_not_set_case
 	}
@@ -513,6 +548,7 @@ type VehicleActivityData_builder struct {
 	// Fields of oneof xxx_hidden_Data:
 	WantedChange   *WantedChange
 	PropertyChange *PropertyChange
+	FileChange     *FileChange
 	// -- end of xxx_hidden_Data
 }
 
@@ -525,6 +561,9 @@ func (b0 VehicleActivityData_builder) Build() *VehicleActivityData {
 	}
 	if b.PropertyChange != nil {
 		x.xxx_hidden_Data = &vehicleActivityData_PropertyChange{b.PropertyChange}
+	}
+	if b.FileChange != nil {
+		x.xxx_hidden_Data = &vehicleActivityData_FileChange{b.FileChange}
 	}
 	return m0
 }
@@ -551,9 +590,15 @@ type vehicleActivityData_PropertyChange struct {
 	PropertyChange *PropertyChange `protobuf:"bytes,2,opt,name=property_change,json=propertyChange,proto3,oneof"`
 }
 
+type vehicleActivityData_FileChange struct {
+	FileChange *FileChange `protobuf:"bytes,3,opt,name=file_change,json=fileChange,proto3,oneof"`
+}
+
 func (*vehicleActivityData_WantedChange) isVehicleActivityData_Data() {}
 
 func (*vehicleActivityData_PropertyChange) isVehicleActivityData_Data() {}
+
+func (*vehicleActivityData_FileChange) isVehicleActivityData_Data() {}
 
 type WantedChange struct {
 	state                     protoimpl.MessageState `protogen:"opaque.v1"`
@@ -850,11 +895,107 @@ func (b0 PropertyChange_builder) Build() *PropertyChange {
 	return m0
 }
 
+type FileChange struct {
+	state            protoimpl.MessageState `protogen:"opaque.v1"`
+	xxx_hidden_Added bool                   `protobuf:"varint,1,opt,name=added,proto3"`
+	xxx_hidden_Kind  string                 `protobuf:"bytes,2,opt,name=kind,proto3"`
+	xxx_hidden_File  *file.File             `protobuf:"bytes,3,opt,name=file,proto3"`
+	unknownFields    protoimpl.UnknownFields
+	sizeCache        protoimpl.SizeCache
+}
+
+func (x *FileChange) Reset() {
+	*x = FileChange{}
+	mi := &file_resources_vehicles_activity_activity_proto_msgTypes[4]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *FileChange) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*FileChange) ProtoMessage() {}
+
+func (x *FileChange) ProtoReflect() protoreflect.Message {
+	mi := &file_resources_vehicles_activity_activity_proto_msgTypes[4]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+func (x *FileChange) GetAdded() bool {
+	if x != nil {
+		return x.xxx_hidden_Added
+	}
+	return false
+}
+
+func (x *FileChange) GetKind() string {
+	if x != nil {
+		return x.xxx_hidden_Kind
+	}
+	return ""
+}
+
+func (x *FileChange) GetFile() *file.File {
+	if x != nil {
+		return x.xxx_hidden_File
+	}
+	return nil
+}
+
+func (x *FileChange) SetAdded(v bool) {
+	x.xxx_hidden_Added = v
+}
+
+func (x *FileChange) SetKind(v string) {
+	x.xxx_hidden_Kind = v
+}
+
+func (x *FileChange) SetFile(v *file.File) {
+	x.xxx_hidden_File = v
+}
+
+func (x *FileChange) HasFile() bool {
+	if x == nil {
+		return false
+	}
+	return x.xxx_hidden_File != nil
+}
+
+func (x *FileChange) ClearFile() {
+	x.xxx_hidden_File = nil
+}
+
+type FileChange_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Added bool
+	Kind  string
+	File  *file.File
+}
+
+func (b0 FileChange_builder) Build() *FileChange {
+	m0 := &FileChange{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.xxx_hidden_Added = b.Added
+	x.xxx_hidden_Kind = b.Kind
+	x.xxx_hidden_File = b.File
+	return m0
+}
+
 var File_resources_vehicles_activity_activity_proto protoreflect.FileDescriptor
 
 const file_resources_vehicles_activity_activity_proto_rawDesc = "" +
 	"\n" +
-	"*resources/vehicles/activity/activity.proto\x12\x1bresources.vehicles.activity\x1a!codegen/dbscanner/dbscanner.proto\x1a!codegen/sanitizer/sanitizer.proto\x1a%resources/properties/properties.proto\x1a#resources/timestamp/timestamp.proto\x1a resources/users/short/user.proto\x1a\x13tagger/tagger.proto\"\xb4\a\n" +
+	"*resources/vehicles/activity/activity.proto\x12\x1bresources.vehicles.activity\x1a!codegen/dbscanner/dbscanner.proto\x1a!codegen/sanitizer/sanitizer.proto\x1a%resources/properties/properties.proto\x1a\x19resources/file/file.proto\x1a#resources/timestamp/timestamp.proto\x1a resources/users/short/user.proto\x1a\x13tagger/tagger.proto\"\xb4\a\n" +
 	"\x0fVehicleActivity\x120\n" +
 	"\x02id\x18\x01 \x01(\x03B \x9a\x84\x9e\x03\x1balias:\"vehicle_activity.id\"R\x02id\x12l\n" +
 	"\n" +
@@ -878,10 +1019,12 @@ const file_resources_vehicles_activity_activity_proto_rawDesc = "" +
 	"\x12_creator_job_labelB\t\n" +
 	"\a_reasonB\a\n" +
 	"\x05_dataB\x06\n" +
-	"\x04_key\"\xcf\x01\n" +
+	"\x04_key\"\x9b\x02\n" +
 	"\x13VehicleActivityData\x12P\n" +
 	"\rwanted_change\x18\x01 \x01(\v2).resources.vehicles.activity.WantedChangeH\x00R\fwantedChange\x12V\n" +
-	"\x0fproperty_change\x18\x02 \x01(\v2+.resources.vehicles.activity.PropertyChangeH\x00R\x0epropertyChange:\x06\xe2\xf3\x18\x02\b\x01B\x06\n" +
+	"\x0fproperty_change\x18\x02 \x01(\v2+.resources.vehicles.activity.PropertyChangeH\x00R\x0epropertyChange\x12J\n" +
+	"\vfile_change\x18\x03 \x01(\v2'.resources.vehicles.activity.FileChangeH\x00R\n" +
+	"fileChange:\x06\xe2\xf3\x18\x02\b\x01B\x06\n" +
 	"\x04data\"\xde\x02\n" +
 	"\fWantedChange\x12\x16\n" +
 	"\x06wanted\x18\x01 \x01(\bR\x06wanted\x12,\n" +
@@ -903,7 +1046,12 @@ const file_resources_vehicles_activity_activity_proto_rawDesc = "" +
 	"\n" +
 	"_old_valueB\f\n" +
 	"\n" +
-	"_new_value*\xa2\x01\n" +
+	"_new_value\"`\n" +
+	"\n" +
+	"FileChange\x12\x14\n" +
+	"\x05added\x18\x01 \x01(\bR\x05added\x12\x12\n" +
+	"\x04kind\x18\x02 \x01(\tR\x04kind\x12(\n" +
+	"\x04file\x18\x03 \x01(\v2\x14.resources.file.FileR\x04file*\xa2\x01\n" +
 	"\x13VehicleActivityType\x12%\n" +
 	"!VEHICLE_ACTIVITY_TYPE_UNSPECIFIED\x10\x00\x12 \n" +
 	"\x1cVEHICLE_ACTIVITY_TYPE_WANTED\x10\x01\x12\x1e\n" +
@@ -911,33 +1059,37 @@ const file_resources_vehicles_activity_activity_proto_rawDesc = "" +
 	"\x1eVEHICLE_ACTIVITY_TYPE_PROPERTY\x10\x03B`Z^github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/vehicles/activity;vehiclesactivityb\x06proto3"
 
 var file_resources_vehicles_activity_activity_proto_enumTypes = make([]protoimpl.EnumInfo, 1)
-var file_resources_vehicles_activity_activity_proto_msgTypes = make([]protoimpl.MessageInfo, 4)
+var file_resources_vehicles_activity_activity_proto_msgTypes = make([]protoimpl.MessageInfo, 5)
 var file_resources_vehicles_activity_activity_proto_goTypes = []any{
 	(VehicleActivityType)(0),         // 0: resources.vehicles.activity.VehicleActivityType
 	(*VehicleActivity)(nil),          // 1: resources.vehicles.activity.VehicleActivity
 	(*VehicleActivityData)(nil),      // 2: resources.vehicles.activity.VehicleActivityData
 	(*WantedChange)(nil),             // 3: resources.vehicles.activity.WantedChange
 	(*PropertyChange)(nil),           // 4: resources.vehicles.activity.PropertyChange
-	(*timestamp.Timestamp)(nil),      // 5: resources.timestamp.Timestamp
-	(*short.UserShort)(nil),          // 6: resources.users.short.UserShort
-	(*properties.PropertyValue)(nil), // 7: resources.properties.PropertyValue
+	(*FileChange)(nil),               // 5: resources.vehicles.activity.FileChange
+	(*timestamp.Timestamp)(nil),      // 6: resources.timestamp.Timestamp
+	(*short.UserShort)(nil),          // 7: resources.users.short.UserShort
+	(*properties.PropertyValue)(nil), // 8: resources.properties.PropertyValue
+	(*file.File)(nil),                // 9: resources.file.File
 }
 var file_resources_vehicles_activity_activity_proto_depIdxs = []int32{
-	5,  // 0: resources.vehicles.activity.VehicleActivity.created_at:type_name -> resources.timestamp.Timestamp
+	6,  // 0: resources.vehicles.activity.VehicleActivity.created_at:type_name -> resources.timestamp.Timestamp
 	0,  // 1: resources.vehicles.activity.VehicleActivity.activity_type:type_name -> resources.vehicles.activity.VehicleActivityType
-	6,  // 2: resources.vehicles.activity.VehicleActivity.creator:type_name -> resources.users.short.UserShort
+	7,  // 2: resources.vehicles.activity.VehicleActivity.creator:type_name -> resources.users.short.UserShort
 	2,  // 3: resources.vehicles.activity.VehicleActivity.data:type_name -> resources.vehicles.activity.VehicleActivityData
 	3,  // 4: resources.vehicles.activity.VehicleActivityData.wanted_change:type_name -> resources.vehicles.activity.WantedChange
 	4,  // 5: resources.vehicles.activity.VehicleActivityData.property_change:type_name -> resources.vehicles.activity.PropertyChange
-	5,  // 6: resources.vehicles.activity.WantedChange.wanted_at:type_name -> resources.timestamp.Timestamp
-	5,  // 7: resources.vehicles.activity.WantedChange.wanted_till:type_name -> resources.timestamp.Timestamp
-	7,  // 8: resources.vehicles.activity.PropertyChange.old_value:type_name -> resources.properties.PropertyValue
-	7,  // 9: resources.vehicles.activity.PropertyChange.new_value:type_name -> resources.properties.PropertyValue
-	10, // [10:10] is the sub-list for method output_type
-	10, // [10:10] is the sub-list for method input_type
-	10, // [10:10] is the sub-list for extension type_name
-	10, // [10:10] is the sub-list for extension extendee
-	0,  // [0:10] is the sub-list for field type_name
+	5,  // 6: resources.vehicles.activity.VehicleActivityData.file_change:type_name -> resources.vehicles.activity.FileChange
+	6,  // 7: resources.vehicles.activity.WantedChange.wanted_at:type_name -> resources.timestamp.Timestamp
+	6,  // 8: resources.vehicles.activity.WantedChange.wanted_till:type_name -> resources.timestamp.Timestamp
+	8,  // 9: resources.vehicles.activity.PropertyChange.old_value:type_name -> resources.properties.PropertyValue
+	8,  // 10: resources.vehicles.activity.PropertyChange.new_value:type_name -> resources.properties.PropertyValue
+	9,  // 11: resources.vehicles.activity.FileChange.file:type_name -> resources.file.File
+	12, // [12:12] is the sub-list for method output_type
+	12, // [12:12] is the sub-list for method input_type
+	12, // [12:12] is the sub-list for extension type_name
+	12, // [12:12] is the sub-list for extension extendee
+	0,  // [0:12] is the sub-list for field type_name
 }
 
 func init() { file_resources_vehicles_activity_activity_proto_init() }
@@ -949,6 +1101,7 @@ func file_resources_vehicles_activity_activity_proto_init() {
 	file_resources_vehicles_activity_activity_proto_msgTypes[1].OneofWrappers = []any{
 		(*vehicleActivityData_WantedChange)(nil),
 		(*vehicleActivityData_PropertyChange)(nil),
+		(*vehicleActivityData_FileChange)(nil),
 	}
 	file_resources_vehicles_activity_activity_proto_msgTypes[2].OneofWrappers = []any{}
 	file_resources_vehicles_activity_activity_proto_msgTypes[3].OneofWrappers = []any{}
@@ -958,7 +1111,7 @@ func file_resources_vehicles_activity_activity_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_resources_vehicles_activity_activity_proto_rawDesc), len(file_resources_vehicles_activity_activity_proto_rawDesc)),
 			NumEnums:      1,
-			NumMessages:   4,
+			NumMessages:   5,
 			NumExtensions: 0,
 			NumServices:   0,
 		},

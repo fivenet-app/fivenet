@@ -24,10 +24,21 @@ message UploadFileRequest {
 
 message UploadMeta {
   int64 parent_id = 1;
-  string namespace = 2; // "documents", "wiki", …
-  string original_name = 3 [(buf.validate.field).string.max_len = 255];
-  string content_type = 4; // optional - server re-validates
-  int64 size = 5 [(buf.validate.field).int64.gt = 0]; // Size in bytes
+  string namespace = 2 [
+    (buf.validate.field).string = {
+      min_len: 1
+      max_len: 64
+      pattern: "^[a-zA-Z0-9_-]+$"
+    }
+  ]; // "documents", "wiki", …
+  string original_name = 3 [(buf.validate.field).string = {min_len: 1, max_len: 255}];
+  string content_type = 4 [(buf.validate.field).string.max_len = 127]; // optional - server re-validates
+  int64 size = 5 [
+    (buf.validate.field).int64 = {
+      gt: 0
+      lte: 5242880
+    }
+  ]; // Size in bytes; the largest configured upload limit is 5 MiB
 
   string reason = 6 [
     (buf.validate.field).string = {
@@ -37,12 +48,14 @@ message UploadMeta {
     (buf.validate.field).ignore = IGNORE_IF_ZERO_VALUE,
     (codegen.sanitizer.sanitizer) = {enabled: true}
   ];
+  // String parent key for resources whose natural identifier is not numeric.
+  string parent_key = 7 [(buf.validate.field).string.max_len = 64];
 }
 
 message UploadFileResponse {
-  int64 id = 1; // Unique ID for the uploaded file
-  string url = 2; // URL to the uploaded file
-  File file = 3; // File info
+  int64 id = 1 [(buf.validate.field).int64.gt = 0]; // Unique ID for the uploaded file
+  string url = 2 [(buf.validate.field).string.max_len = 512]; // URL to the uploaded file
+  File file = 3 [(buf.validate.field).required = true]; // File info
 }
 
 message DeleteFileRequest {

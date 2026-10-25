@@ -75,6 +75,9 @@ func (m *UploadMeta) Sanitize() error {
 	// Field: OriginalName
 	m.OriginalName = htmlsanitizer.SanitizeAndUnescape(m.OriginalName)
 
+	// Field: ParentKey
+	m.ParentKey = htmlsanitizer.SanitizeAndUnescape(m.ParentKey)
+
 	// Field: Reason
 	m.Reason = htmlsanitizer.SanitizeAndUnescape(m.Reason)
 

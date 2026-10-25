@@ -44,7 +44,7 @@ const { activeChar, can, isSuperuser } = useAuth();
 
 const overlay = useOverlay();
 
-const notifications = useNotificationsStore();
+const { notifyCopied } = useClipboardNotifications();
 
 const authStore = useAuthStore();
 const { impersonateJob } = authStore;
@@ -313,7 +313,7 @@ type CopyRole = {
 };
 
 async function copyRole(): Promise<void> {
-    copyToClipboardWrapper(
+    await copyToClipboardWrapper(
         JSON.stringify({
             roleId: props.roleId,
             attrList: attrList.value.map((a) => ({
@@ -325,12 +325,7 @@ async function copyRole(): Promise<void> {
         } as CopyRole),
     );
 
-    notifications.add({
-        title: { key: 'notifications.clipboard.copied.title', parameters: {} },
-        description: { key: 'notifications.clipboard.copied.content', parameters: {} },
-        duration: 3250,
-        type: NotificationType.INFO,
-    });
+    notifyCopied();
 }
 
 const schema = z.object({

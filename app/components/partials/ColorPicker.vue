@@ -1,6 +1,5 @@
 <script lang="ts" setup>
 import { vMaska } from 'maska/vue';
-import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 
 defineProps<{
     disabled?: boolean;
@@ -18,7 +17,7 @@ defineOptions({
 
 const modelValue = defineModel<string | undefined>({ default: undefined });
 
-const notifications = useNotificationsStore();
+const { notifyCopied } = useClipboardNotifications();
 
 watch(modelValue, (val) => (manual.value = val ?? ''));
 
@@ -30,14 +29,9 @@ watch(manual, (val) => {
 });
 
 async function copyColor() {
-    copyToClipboardWrapper(manual.value);
+    await copyToClipboardWrapper(manual.value);
 
-    notifications.add({
-        title: { key: 'notifications.clipboard.copied.title', parameters: {} },
-        description: { key: 'notifications.clipboard.copied.content', parameters: {} },
-        duration: 1500,
-        type: NotificationType.INFO,
-    });
+    notifyCopied(1500);
 }
 </script>
 

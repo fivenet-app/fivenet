@@ -259,6 +259,23 @@ func init() {
 			Pinned:      false,
 			Implicit:    false,
 		},
+		{
+			Scope:       propertypb.PropertyScope_PROPERTY_SCOPE_USER,
+			Key:         "user.files",
+			ValueType:   propertypb.PropertyValueType_PROPERTY_VALUE_TYPE_STRING,
+			Source:      propertypb.PropertyDefinitionSource_PROPERTY_DEFINITION_SOURCE_SYSTEM,
+			Enabled:     true,
+			DisplayKey:  "common.file",
+			Searchable:  false,
+			ValueFormat: propertypb.PropertyValueFormat_PROPERTY_VALUE_FORMAT_PLAIN,
+			Renderer:    propertypb.PropertyRenderer_PROPERTY_RENDERER_DEFAULT,
+			DisplayMode: propertypb.PropertyDisplayMode_PROPERTY_DISPLAY_MODE_DEFAULT,
+			Behavior:    propertypb.PropertyBehavior_PROPERTY_BEHAVIOR_MANAGED,
+			GroupKey:    "personal",
+			SortOrder:   600,
+			Pinned:      false,
+			Implicit:    false,
+		},
 	})
 }
 
@@ -267,6 +284,14 @@ func init() {
 		// Namespace: citizens
 
 		// Service: citizens.CitizensService
+		{
+			Namespace: permkeys.Namespace,
+			Service:   permkeys.CitizensServicePerm,
+			Name:      permkeys.CitizensServiceDeleteCitizenFilePerm,
+			Attrs:     []perms.Attr{},
+			Order:     3000,
+			Icon:      "i-mdi-account-multiple-outline",
+		},
 		{
 			Namespace: permkeys.Namespace,
 			Service:   permkeys.CitizensServicePerm,
@@ -289,7 +314,7 @@ func init() {
 					Key:           permkeys.CitizensServiceListCitizensPropertiesPermField,
 					Type:          permissionsattributes.PropertyListAttributeType,
 					PropertyScope: propertypb.PropertyScope_PROPERTY_SCOPE_USER,
-					ValidValues:   []string{"user.dateofbirth", "user.sex", "user.height", "user.phone_number", "user.visum", "user.licenses", "user.wanted", "user.job", "user.traffic_infraction_points", "user.open_fines", "user.blood_type", "user.mugshot", "user.labels", "user.email"},
+					ValidValues:   []string{"user.dateofbirth", "user.sex", "user.height", "user.phone_number", "user.visum", "user.licenses", "user.wanted", "user.job", "user.traffic_infraction_points", "user.open_fines", "user.blood_type", "user.mugshot", "user.files", "user.labels", "user.email"},
 				},
 			},
 			Order: 3000,
@@ -319,7 +344,7 @@ func init() {
 					Key:           permkeys.CitizensServiceSetUserPropsPropertiesPermField,
 					Type:          permissionsattributes.PropertyListAttributeType,
 					PropertyScope: propertypb.PropertyScope_PROPERTY_SCOPE_USER,
-					ValidValues:   []string{"user.dateofbirth", "user.sex", "user.height", "user.phone_number", "user.visum", "user.licenses", "user.wanted", "user.job", "user.traffic_infraction_points", "user.open_fines", "user.blood_type", "user.mugshot", "user.labels", "user.email"},
+					ValidValues:   []string{"user.dateofbirth", "user.sex", "user.height", "user.phone_number", "user.visum", "user.licenses", "user.wanted", "user.job", "user.traffic_infraction_points", "user.open_fines", "user.blood_type", "user.mugshot", "user.files", "user.labels", "user.email"},
 				},
 			},
 			Order: 3000,

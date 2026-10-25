@@ -58,10 +58,18 @@ func (s *Server) ListUserActivity(
 	if err != nil {
 		return nil, errswrap.NewError(err, errorscitizens.ErrFailedQuery)
 	}
+	canViewFiles := false
+	if slices.Contains(visiblePropertyKeys, citizenFilesPropertyKey) {
+		canViewFiles, err = s.canViewCitizenFiles(ctx, userInfo, req.GetUserId())
+		if err != nil {
+			return nil, errswrap.NewError(err, errorscitizens.ErrFailedQuery)
+		}
+	}
+	activityTypes := effectiveUserActivityTypes(req.GetTypes(), visiblePropertyKeys, canViewFiles)
 	queryOpts := citizensstore.CountUserActivityOptions{
 		UserActivityOptions: citizensstore.UserActivityOptions{
 			UserID:              req.GetUserId(),
-			Types:               req.GetTypes(),
+			Types:               activityTypes,
 			PropertyKeys:        req.GetPropertyKeys(),
 			VisiblePropertyKeys: visiblePropertyKeys,
 			From:                req.GetFrom(),
@@ -117,6 +125,71 @@ func (s *Server) ListUserActivity(
 	}
 
 	return resp, nil
+}
+
+func effectiveUserActivityTypes(
+	requested []usersactivity.UserActivityType,
+	visiblePropertyKeys []string,
+	canViewFiles bool,
+) []usersactivity.UserActivityType {
+	allTypes := []usersactivity.UserActivityType{
+		usersactivity.UserActivityType_USER_ACTIVITY_TYPE_NAME,
+		usersactivity.UserActivityType_USER_ACTIVITY_TYPE_LICENSES,
+		usersactivity.UserActivityType_USER_ACTIVITY_TYPE_WANTED,
+		usersactivity.UserActivityType_USER_ACTIVITY_TYPE_TRAFFIC_INFRACTION_POINTS,
+		usersactivity.UserActivityType_USER_ACTIVITY_TYPE_MUGSHOT,
+		usersactivity.UserActivityType_USER_ACTIVITY_TYPE_LABELS,
+		usersactivity.UserActivityType_USER_ACTIVITY_TYPE_JOB,
+		usersactivity.UserActivityType_USER_ACTIVITY_TYPE_DOCUMENT,
+		usersactivity.UserActivityType_USER_ACTIVITY_TYPE_JAIL,
+		usersactivity.UserActivityType_USER_ACTIVITY_TYPE_FINE,
+		usersactivity.UserActivityType_USER_ACTIVITY_TYPE_FILE,
+		usersactivity.UserActivityType_USER_ACTIVITY_TYPE_PROPERTY,
+	}
+	if len(requested) > 0 {
+		allTypes = requested
+	}
+
+	allowed := make([]usersactivity.UserActivityType, 0, len(allTypes))
+	for _, activityType := range allTypes {
+		if activityType == usersactivity.UserActivityType_USER_ACTIVITY_TYPE_FILE && !canViewFiles {
+			continue
+		}
+		if propertyKey := userActivityPropertyKey(activityType); propertyKey != "" &&
+			!slices.Contains(visiblePropertyKeys, propertyKey) {
+			continue
+		}
+		allowed = append(allowed, activityType)
+	}
+	if len(allowed) == 0 {
+		return []usersactivity.UserActivityType{
+			usersactivity.UserActivityType_USER_ACTIVITY_TYPE_UNSPECIFIED,
+		}
+	}
+	return allowed
+}
+
+func userActivityPropertyKey(activityType usersactivity.UserActivityType) string {
+	switch activityType {
+	case usersactivity.UserActivityType_USER_ACTIVITY_TYPE_LICENSES:
+		return "user.licenses"
+	case usersactivity.UserActivityType_USER_ACTIVITY_TYPE_WANTED:
+		return "user.wanted"
+	case usersactivity.UserActivityType_USER_ACTIVITY_TYPE_TRAFFIC_INFRACTION_POINTS:
+		return "user.traffic_infraction_points"
+	case usersactivity.UserActivityType_USER_ACTIVITY_TYPE_MUGSHOT:
+		return "user.mugshot"
+	case usersactivity.UserActivityType_USER_ACTIVITY_TYPE_FILE:
+		return "user.files"
+	case usersactivity.UserActivityType_USER_ACTIVITY_TYPE_LABELS:
+		return "user.labels"
+	case usersactivity.UserActivityType_USER_ACTIVITY_TYPE_JOB:
+		return "user.job"
+	case usersactivity.UserActivityType_USER_ACTIVITY_TYPE_FINE:
+		return "user.open_fines"
+	default:
+		return ""
+	}
 }
 
 func (s *Server) effectiveActivityPropertyKeys(

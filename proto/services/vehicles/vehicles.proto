@@ -7,6 +7,8 @@ import "codegen/itemslen/itemslen.proto";
 import "codegen/perms/perms.proto";
 import "codegen/sanitizer/sanitizer.proto";
 import "resources/common/database/database.proto";
+import "resources/file/file.proto";
+import "resources/file/filestore.proto";
 import "resources/properties/properties.proto";
 import "resources/timestamp/timestamp.proto";
 import "resources/vehicles/activity/activity.proto";
@@ -87,6 +89,30 @@ message ListVehicleActivityResponse {
   repeated resources.vehicles.activity.VehicleActivity activity = 2 [(codegen.itemslen.enabled) = true];
 }
 
+message VehicleFile {
+  resources.file.File file = 1 [(buf.validate.field).required = true];
+  string kind = 2 [(buf.validate.field).string.max_len = 32];
+}
+
+message ListVehicleFilesRequest {
+  string plate = 1 [(buf.validate.field).string = {min_len: 1, max_len: 32}];
+}
+
+message ListVehicleFilesResponse {
+  repeated VehicleFile files = 1 [(codegen.itemslen.enabled) = true];
+}
+
+message DeleteVehicleFileRequest {
+  string plate = 1 [(buf.validate.field).string = {min_len: 1, max_len: 32}];
+  int64 file_id = 2 [(buf.validate.field).int64.gt = 0];
+  string reason = 3 [
+    (buf.validate.field).string = {min_len: 3, max_len: 255},
+    (codegen.sanitizer.sanitizer) = {enabled: true}
+  ];
+}
+
+message DeleteVehicleFileResponse {}
+
 service VehiclesService {
   option (codegen.perms.perms_svc) = {
     order: 40
@@ -111,6 +137,16 @@ service VehiclesService {
         searchable: true
         group_key: "status"
         sort_order: 100
+      },
+      {
+        scope: PROPERTY_SCOPE_VEHICLE
+        key: "vehicle.files"
+        value_type: PROPERTY_VALUE_TYPE_STRING
+        behavior: PROPERTY_BEHAVIOR_MANAGED
+        enabled: true
+        display_key: "common.file"
+        group_key: "status"
+        sort_order: 200
       }
     ]
   };
@@ -155,5 +191,25 @@ service VehiclesService {
         }
       ]
     };
+  }
+
+  // buf:lint:ignore RPC_REQUEST_RESPONSE_UNIQUE
+  // buf:lint:ignore RPC_REQUEST_STANDARD_NAME
+  // buf:lint:ignore RPC_RESPONSE_STANDARD_NAME
+  rpc UploadVehicleFile(stream resources.file.UploadFileRequest) returns (resources.file.UploadFileResponse) {
+    option (codegen.perms.perms) = {
+      enabled: true
+      name: "SetVehicleProps"
+    };
+  }
+  rpc ListVehicleFiles(ListVehicleFilesRequest) returns (ListVehicleFilesResponse) {
+    option (codegen.perms.perms) = {
+      enabled: true
+      name: "ListVehicles"
+    };
+  }
+  // Requires DeleteVehicleFile and SetVehicleProps with the vehicle.files property.
+  rpc DeleteVehicleFile(DeleteVehicleFileRequest) returns (DeleteVehicleFileResponse) {
+    option (codegen.perms.perms) = {enabled: true};
   }
 }

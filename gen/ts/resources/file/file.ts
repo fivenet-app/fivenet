@@ -56,10 +56,10 @@ class File$Type extends MessageType<File> {
         super("resources.file.File", [
             { no: 1, name: "parent_id", kind: "scalar", opt: true, T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/, options: { "buf.validate.field": { int64: { gt: "0" } } } },
             { no: 2, name: "id", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/, options: { "buf.validate.field": { int64: { gt: "0" } } } },
-            { no: 3, name: "file_path", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
+            { no: 3, name: "file_path", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "512" } } } },
             { no: 4, name: "created_at", kind: "message", T: () => Timestamp },
-            { no: 5, name: "byte_size", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ },
-            { no: 6, name: "content_type", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
+            { no: 5, name: "byte_size", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/, options: { "buf.validate.field": { int64: { gte: "0" } } } },
+            { no: 6, name: "content_type", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "127" } } } },
             { no: 7, name: "meta", kind: "message", T: () => FileMeta },
             { no: 8, name: "is_dir", kind: "scalar", T: 8 /*ScalarType.BOOL*/ }
         ]);

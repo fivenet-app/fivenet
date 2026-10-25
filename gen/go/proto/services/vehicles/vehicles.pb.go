@@ -13,6 +13,7 @@ import (
 	_ "github.com/fivenet-app/fivenet/v2026/gen/go/proto/codegen/perms"
 	_ "github.com/fivenet-app/fivenet/v2026/gen/go/proto/codegen/sanitizer"
 	database "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/common/database"
+	file "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/file"
 	properties "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/properties"
 	timestamp "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/timestamp"
 	vehicles "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/vehicles"
@@ -777,11 +778,335 @@ func (b0 ListVehicleActivityResponse_builder) Build() *ListVehicleActivityRespon
 	return m0
 }
 
+type VehicleFile struct {
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
+	File          *file.File             `protobuf:"bytes,1,opt,name=file,proto3" json:"file,omitempty"`
+	Kind          string                 `protobuf:"bytes,2,opt,name=kind,proto3" json:"kind,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *VehicleFile) Reset() {
+	*x = VehicleFile{}
+	mi := &file_services_vehicles_vehicles_proto_msgTypes[6]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *VehicleFile) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*VehicleFile) ProtoMessage() {}
+
+func (x *VehicleFile) ProtoReflect() protoreflect.Message {
+	mi := &file_services_vehicles_vehicles_proto_msgTypes[6]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+func (x *VehicleFile) GetFile() *file.File {
+	if x != nil {
+		return x.File
+	}
+	return nil
+}
+
+func (x *VehicleFile) GetKind() string {
+	if x != nil {
+		return x.Kind
+	}
+	return ""
+}
+
+func (x *VehicleFile) SetFile(v *file.File) {
+	x.File = v
+}
+
+func (x *VehicleFile) SetKind(v string) {
+	x.Kind = v
+}
+
+func (x *VehicleFile) HasFile() bool {
+	if x == nil {
+		return false
+	}
+	return x.File != nil
+}
+
+func (x *VehicleFile) ClearFile() {
+	x.File = nil
+}
+
+type VehicleFile_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	File *file.File
+	Kind string
+}
+
+func (b0 VehicleFile_builder) Build() *VehicleFile {
+	m0 := &VehicleFile{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.File = b.File
+	x.Kind = b.Kind
+	return m0
+}
+
+type ListVehicleFilesRequest struct {
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
+	Plate         string                 `protobuf:"bytes,1,opt,name=plate,proto3" json:"plate,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ListVehicleFilesRequest) Reset() {
+	*x = ListVehicleFilesRequest{}
+	mi := &file_services_vehicles_vehicles_proto_msgTypes[7]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ListVehicleFilesRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ListVehicleFilesRequest) ProtoMessage() {}
+
+func (x *ListVehicleFilesRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_services_vehicles_vehicles_proto_msgTypes[7]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+func (x *ListVehicleFilesRequest) GetPlate() string {
+	if x != nil {
+		return x.Plate
+	}
+	return ""
+}
+
+func (x *ListVehicleFilesRequest) SetPlate(v string) {
+	x.Plate = v
+}
+
+type ListVehicleFilesRequest_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Plate string
+}
+
+func (b0 ListVehicleFilesRequest_builder) Build() *ListVehicleFilesRequest {
+	m0 := &ListVehicleFilesRequest{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Plate = b.Plate
+	return m0
+}
+
+type ListVehicleFilesResponse struct {
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
+	Files         []*VehicleFile         `protobuf:"bytes,1,rep,name=files,proto3" json:"files,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ListVehicleFilesResponse) Reset() {
+	*x = ListVehicleFilesResponse{}
+	mi := &file_services_vehicles_vehicles_proto_msgTypes[8]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ListVehicleFilesResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ListVehicleFilesResponse) ProtoMessage() {}
+
+func (x *ListVehicleFilesResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_services_vehicles_vehicles_proto_msgTypes[8]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+func (x *ListVehicleFilesResponse) GetFiles() []*VehicleFile {
+	if x != nil {
+		return x.Files
+	}
+	return nil
+}
+
+func (x *ListVehicleFilesResponse) SetFiles(v []*VehicleFile) {
+	x.Files = v
+}
+
+type ListVehicleFilesResponse_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Files []*VehicleFile
+}
+
+func (b0 ListVehicleFilesResponse_builder) Build() *ListVehicleFilesResponse {
+	m0 := &ListVehicleFilesResponse{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Files = b.Files
+	return m0
+}
+
+type DeleteVehicleFileRequest struct {
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
+	Plate         string                 `protobuf:"bytes,1,opt,name=plate,proto3" json:"plate,omitempty"`
+	FileId        int64                  `protobuf:"varint,2,opt,name=file_id,json=fileId,proto3" json:"file_id,omitempty"`
+	Reason        string                 `protobuf:"bytes,3,opt,name=reason,proto3" json:"reason,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *DeleteVehicleFileRequest) Reset() {
+	*x = DeleteVehicleFileRequest{}
+	mi := &file_services_vehicles_vehicles_proto_msgTypes[9]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *DeleteVehicleFileRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*DeleteVehicleFileRequest) ProtoMessage() {}
+
+func (x *DeleteVehicleFileRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_services_vehicles_vehicles_proto_msgTypes[9]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+func (x *DeleteVehicleFileRequest) GetPlate() string {
+	if x != nil {
+		return x.Plate
+	}
+	return ""
+}
+
+func (x *DeleteVehicleFileRequest) GetFileId() int64 {
+	if x != nil {
+		return x.FileId
+	}
+	return 0
+}
+
+func (x *DeleteVehicleFileRequest) GetReason() string {
+	if x != nil {
+		return x.Reason
+	}
+	return ""
+}
+
+func (x *DeleteVehicleFileRequest) SetPlate(v string) {
+	x.Plate = v
+}
+
+func (x *DeleteVehicleFileRequest) SetFileId(v int64) {
+	x.FileId = v
+}
+
+func (x *DeleteVehicleFileRequest) SetReason(v string) {
+	x.Reason = v
+}
+
+type DeleteVehicleFileRequest_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Plate  string
+	FileId int64
+	Reason string
+}
+
+func (b0 DeleteVehicleFileRequest_builder) Build() *DeleteVehicleFileRequest {
+	m0 := &DeleteVehicleFileRequest{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Plate = b.Plate
+	x.FileId = b.FileId
+	x.Reason = b.Reason
+	return m0
+}
+
+type DeleteVehicleFileResponse struct {
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *DeleteVehicleFileResponse) Reset() {
+	*x = DeleteVehicleFileResponse{}
+	mi := &file_services_vehicles_vehicles_proto_msgTypes[10]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *DeleteVehicleFileResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*DeleteVehicleFileResponse) ProtoMessage() {}
+
+func (x *DeleteVehicleFileResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_services_vehicles_vehicles_proto_msgTypes[10]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+type DeleteVehicleFileResponse_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+}
+
+func (b0 DeleteVehicleFileResponse_builder) Build() *DeleteVehicleFileResponse {
+	m0 := &DeleteVehicleFileResponse{}
+	b, x := &b0, m0
+	_, _ = b, x
+	return m0
+}
+
 var File_services_vehicles_vehicles_proto protoreflect.FileDescriptor
 
 const file_services_vehicles_vehicles_proto_rawDesc = "" +
 	"\n" +
-	" services/vehicles/vehicles.proto\x12\x11services.vehicles\x1a\x1fcodegen/itemslen/itemslen.proto\x1a\x19codegen/perms/perms.proto\x1a!codegen/sanitizer/sanitizer.proto\x1a(resources/common/database/database.proto\x1a%resources/properties/properties.proto\x1a#resources/timestamp/timestamp.proto\x1a*resources/vehicles/activity/activity.proto\x1a$resources/vehicles/props/props.proto\x1a!resources/vehicles/vehicles.proto\"\xba\x03\n" +
+	" services/vehicles/vehicles.proto\x12\x11services.vehicles\x1a\x1fcodegen/itemslen/itemslen.proto\x1a\x19codegen/perms/perms.proto\x1a!codegen/sanitizer/sanitizer.proto\x1a(resources/common/database/database.proto\x1a\x19resources/file/file.proto\x1a\x1eresources/file/filestore.proto\x1a%resources/properties/properties.proto\x1a#resources/timestamp/timestamp.proto\x1a*resources/vehicles/activity/activity.proto\x1a$resources/vehicles/props/props.proto\x1a!resources/vehicles/vehicles.proto\"\xba\x03\n" +
 	"\x13ListVehiclesRequest\x12L\n" +
 	"\n" +
 	"pagination\x18\x01 \x01(\v2,.resources.common.database.PaginationRequestR\n" +
@@ -826,7 +1151,19 @@ const file_services_vehicles_vehicles_proto_rawDesc = "" +
 	"\n" +
 	"pagination\x18\x01 \x01(\v2-.resources.common.database.PaginationResponseR\n" +
 	"pagination\x12N\n" +
-	"\bactivity\x18\x02 \x03(\v2,.resources.vehicles.activity.VehicleActivityB\x04\xc8\xf3\x18\x01R\bactivity2\xca\x04\n" +
+	"\bactivity\x18\x02 \x03(\v2,.resources.vehicles.activity.VehicleActivityB\x04\xc8\xf3\x18\x01R\bactivity\"K\n" +
+	"\vVehicleFile\x12(\n" +
+	"\x04file\x18\x01 \x01(\v2\x14.resources.file.FileR\x04file\x12\x12\n" +
+	"\x04kind\x18\x02 \x01(\tR\x04kind\"/\n" +
+	"\x17ListVehicleFilesRequest\x12\x14\n" +
+	"\x05plate\x18\x01 \x01(\tR\x05plate\"V\n" +
+	"\x18ListVehicleFilesResponse\x12:\n" +
+	"\x05files\x18\x01 \x03(\v2\x1e.services.vehicles.VehicleFileB\x04\xc8\xf3\x18\x01R\x05files\"i\n" +
+	"\x18DeleteVehicleFileRequest\x12\x14\n" +
+	"\x05plate\x18\x01 \x01(\tR\x05plate\x12\x17\n" +
+	"\afile_id\x18\x02 \x01(\x03R\x06fileId\x12\x1e\n" +
+	"\x06reason\x18\x03 \x01(\tB\x06\xda\xf3\x18\x02\b\x01R\x06reason\"\x1b\n" +
+	"\x19DeleteVehicleFileResponse2\xee\a\n" +
 	"\x0fVehiclesService\x12y\n" +
 	"\fListVehicles\x12&.services.vehicles.ListVehiclesRequest\x1a'.services.vehicles.ListVehiclesResponse\"\x18\xd2\xf3\x18\x14\b\x01:\x10\n" +
 	"\n" +
@@ -835,9 +1172,12 @@ const file_services_vehicles_vehicles_proto_rawDesc = "" +
 	"\n" +
 	"Properties\x18\x04(\x01\x12\x96\x01\n" +
 	"\x13ListVehicleActivity\x12-.services.vehicles.ListVehicleActivityRequest\x1a..services.vehicles.ListVehicleActivityResponse\" \xd2\xf3\x18\x1c\b\x01:\x18\n" +
-	"\x06Fields\x18\x01\"\aCreator\"\x03Own\x1a\x9d\x01\xea\xf3\x18\x98\x01\b(\x12\x11i-mdi-car-outline2;\b\x01\x12\x0evehicle.wanted\x18\x04 \x01*\rcommon.wanted@\x01H\x01P\x02r\x06statusxd\x80\x01\x01\x98\x01\x03:D\b\x01\x12\x06status\x1a6components.settings.property_definitions.groups.status dBNZLgithub.com/fivenet-app/fivenet/v2026/gen/go/proto/services/vehicles;vehiclesb\x06proto3"
+	"\x06Fields\x18\x01\"\aCreator\"\x03Own\x12u\n" +
+	"\x11UploadVehicleFile\x12!.resources.file.UploadFileRequest\x1a\".resources.file.UploadFileResponse\"\x17\xd2\xf3\x18\x13\b\x01\"\x0fSetVehicleProps(\x01\x12\x81\x01\n" +
+	"\x10ListVehicleFiles\x12*.services.vehicles.ListVehicleFilesRequest\x1a+.services.vehicles.ListVehicleFilesResponse\"\x14\xd2\xf3\x18\x10\b\x01\"\fListVehicles\x12v\n" +
+	"\x11DeleteVehicleFile\x12+.services.vehicles.DeleteVehicleFileRequest\x1a,.services.vehicles.DeleteVehicleFileResponse\"\x06\xd2\xf3\x18\x02\b\x01\x1a\xce\x01\xea\xf3\x18\xc9\x01\b(\x12\x11i-mdi-car-outline2;\b\x01\x12\x0evehicle.wanted\x18\x04 \x01*\rcommon.wanted@\x01H\x01P\x02r\x06statusxd\x80\x01\x01\x98\x01\x032/\b\x01\x12\rvehicle.files\x18\x01 \x01*\vcommon.fileP\x02r\x06statusx\xc8\x01:D\b\x01\x12\x06status\x1a6components.settings.property_definitions.groups.status dBNZLgithub.com/fivenet-app/fivenet/v2026/gen/go/proto/services/vehicles;vehiclesb\x06proto3"
 
-var file_services_vehicles_vehicles_proto_msgTypes = make([]protoimpl.MessageInfo, 6)
+var file_services_vehicles_vehicles_proto_msgTypes = make([]protoimpl.MessageInfo, 11)
 var file_services_vehicles_vehicles_proto_goTypes = []any{
 	(*ListVehiclesRequest)(nil),         // 0: services.vehicles.ListVehiclesRequest
 	(*ListVehiclesResponse)(nil),        // 1: services.vehicles.ListVehiclesResponse
@@ -845,44 +1185,60 @@ var file_services_vehicles_vehicles_proto_goTypes = []any{
 	(*SetVehiclePropsResponse)(nil),     // 3: services.vehicles.SetVehiclePropsResponse
 	(*ListVehicleActivityRequest)(nil),  // 4: services.vehicles.ListVehicleActivityRequest
 	(*ListVehicleActivityResponse)(nil), // 5: services.vehicles.ListVehicleActivityResponse
-	(*database.PaginationRequest)(nil),  // 6: resources.common.database.PaginationRequest
-	(*database.Sort)(nil),               // 7: resources.common.database.Sort
-	(*properties.PropertyFilter)(nil),   // 8: resources.properties.PropertyFilter
-	(*database.PaginationResponse)(nil), // 9: resources.common.database.PaginationResponse
-	(*vehicles.Vehicle)(nil),            // 10: resources.vehicles.Vehicle
-	(*props.VehicleProps)(nil),          // 11: resources.vehicles.props.VehicleProps
-	(*properties.PropertyChange)(nil),   // 12: resources.properties.PropertyChange
-	(activity.VehicleActivityType)(0),   // 13: resources.vehicles.activity.VehicleActivityType
-	(*timestamp.Timestamp)(nil),         // 14: resources.timestamp.Timestamp
-	(*activity.VehicleActivity)(nil),    // 15: resources.vehicles.activity.VehicleActivity
+	(*VehicleFile)(nil),                 // 6: services.vehicles.VehicleFile
+	(*ListVehicleFilesRequest)(nil),     // 7: services.vehicles.ListVehicleFilesRequest
+	(*ListVehicleFilesResponse)(nil),    // 8: services.vehicles.ListVehicleFilesResponse
+	(*DeleteVehicleFileRequest)(nil),    // 9: services.vehicles.DeleteVehicleFileRequest
+	(*DeleteVehicleFileResponse)(nil),   // 10: services.vehicles.DeleteVehicleFileResponse
+	(*database.PaginationRequest)(nil),  // 11: resources.common.database.PaginationRequest
+	(*database.Sort)(nil),               // 12: resources.common.database.Sort
+	(*properties.PropertyFilter)(nil),   // 13: resources.properties.PropertyFilter
+	(*database.PaginationResponse)(nil), // 14: resources.common.database.PaginationResponse
+	(*vehicles.Vehicle)(nil),            // 15: resources.vehicles.Vehicle
+	(*props.VehicleProps)(nil),          // 16: resources.vehicles.props.VehicleProps
+	(*properties.PropertyChange)(nil),   // 17: resources.properties.PropertyChange
+	(activity.VehicleActivityType)(0),   // 18: resources.vehicles.activity.VehicleActivityType
+	(*timestamp.Timestamp)(nil),         // 19: resources.timestamp.Timestamp
+	(*activity.VehicleActivity)(nil),    // 20: resources.vehicles.activity.VehicleActivity
+	(*file.File)(nil),                   // 21: resources.file.File
+	(*file.UploadFileRequest)(nil),      // 22: resources.file.UploadFileRequest
+	(*file.UploadFileResponse)(nil),     // 23: resources.file.UploadFileResponse
 }
 var file_services_vehicles_vehicles_proto_depIdxs = []int32{
-	6,  // 0: services.vehicles.ListVehiclesRequest.pagination:type_name -> resources.common.database.PaginationRequest
-	7,  // 1: services.vehicles.ListVehiclesRequest.sort:type_name -> resources.common.database.Sort
-	8,  // 2: services.vehicles.ListVehiclesRequest.property_filters:type_name -> resources.properties.PropertyFilter
-	9,  // 3: services.vehicles.ListVehiclesResponse.pagination:type_name -> resources.common.database.PaginationResponse
-	10, // 4: services.vehicles.ListVehiclesResponse.vehicles:type_name -> resources.vehicles.Vehicle
-	11, // 5: services.vehicles.SetVehiclePropsRequest.props:type_name -> resources.vehicles.props.VehicleProps
-	12, // 6: services.vehicles.SetVehiclePropsRequest.property_changes:type_name -> resources.properties.PropertyChange
-	11, // 7: services.vehicles.SetVehiclePropsResponse.props:type_name -> resources.vehicles.props.VehicleProps
-	6,  // 8: services.vehicles.ListVehicleActivityRequest.pagination:type_name -> resources.common.database.PaginationRequest
-	7,  // 9: services.vehicles.ListVehicleActivityRequest.sort:type_name -> resources.common.database.Sort
-	13, // 10: services.vehicles.ListVehicleActivityRequest.types:type_name -> resources.vehicles.activity.VehicleActivityType
-	14, // 11: services.vehicles.ListVehicleActivityRequest.from:type_name -> resources.timestamp.Timestamp
-	14, // 12: services.vehicles.ListVehicleActivityRequest.to:type_name -> resources.timestamp.Timestamp
-	9,  // 13: services.vehicles.ListVehicleActivityResponse.pagination:type_name -> resources.common.database.PaginationResponse
-	15, // 14: services.vehicles.ListVehicleActivityResponse.activity:type_name -> resources.vehicles.activity.VehicleActivity
-	0,  // 15: services.vehicles.VehiclesService.ListVehicles:input_type -> services.vehicles.ListVehiclesRequest
-	2,  // 16: services.vehicles.VehiclesService.SetVehicleProps:input_type -> services.vehicles.SetVehiclePropsRequest
-	4,  // 17: services.vehicles.VehiclesService.ListVehicleActivity:input_type -> services.vehicles.ListVehicleActivityRequest
-	1,  // 18: services.vehicles.VehiclesService.ListVehicles:output_type -> services.vehicles.ListVehiclesResponse
-	3,  // 19: services.vehicles.VehiclesService.SetVehicleProps:output_type -> services.vehicles.SetVehiclePropsResponse
-	5,  // 20: services.vehicles.VehiclesService.ListVehicleActivity:output_type -> services.vehicles.ListVehicleActivityResponse
-	18, // [18:21] is the sub-list for method output_type
-	15, // [15:18] is the sub-list for method input_type
-	15, // [15:15] is the sub-list for extension type_name
-	15, // [15:15] is the sub-list for extension extendee
-	0,  // [0:15] is the sub-list for field type_name
+	11, // 0: services.vehicles.ListVehiclesRequest.pagination:type_name -> resources.common.database.PaginationRequest
+	12, // 1: services.vehicles.ListVehiclesRequest.sort:type_name -> resources.common.database.Sort
+	13, // 2: services.vehicles.ListVehiclesRequest.property_filters:type_name -> resources.properties.PropertyFilter
+	14, // 3: services.vehicles.ListVehiclesResponse.pagination:type_name -> resources.common.database.PaginationResponse
+	15, // 4: services.vehicles.ListVehiclesResponse.vehicles:type_name -> resources.vehicles.Vehicle
+	16, // 5: services.vehicles.SetVehiclePropsRequest.props:type_name -> resources.vehicles.props.VehicleProps
+	17, // 6: services.vehicles.SetVehiclePropsRequest.property_changes:type_name -> resources.properties.PropertyChange
+	16, // 7: services.vehicles.SetVehiclePropsResponse.props:type_name -> resources.vehicles.props.VehicleProps
+	11, // 8: services.vehicles.ListVehicleActivityRequest.pagination:type_name -> resources.common.database.PaginationRequest
+	12, // 9: services.vehicles.ListVehicleActivityRequest.sort:type_name -> resources.common.database.Sort
+	18, // 10: services.vehicles.ListVehicleActivityRequest.types:type_name -> resources.vehicles.activity.VehicleActivityType
+	19, // 11: services.vehicles.ListVehicleActivityRequest.from:type_name -> resources.timestamp.Timestamp
+	19, // 12: services.vehicles.ListVehicleActivityRequest.to:type_name -> resources.timestamp.Timestamp
+	14, // 13: services.vehicles.ListVehicleActivityResponse.pagination:type_name -> resources.common.database.PaginationResponse
+	20, // 14: services.vehicles.ListVehicleActivityResponse.activity:type_name -> resources.vehicles.activity.VehicleActivity
+	21, // 15: services.vehicles.VehicleFile.file:type_name -> resources.file.File
+	6,  // 16: services.vehicles.ListVehicleFilesResponse.files:type_name -> services.vehicles.VehicleFile
+	0,  // 17: services.vehicles.VehiclesService.ListVehicles:input_type -> services.vehicles.ListVehiclesRequest
+	2,  // 18: services.vehicles.VehiclesService.SetVehicleProps:input_type -> services.vehicles.SetVehiclePropsRequest
+	4,  // 19: services.vehicles.VehiclesService.ListVehicleActivity:input_type -> services.vehicles.ListVehicleActivityRequest
+	22, // 20: services.vehicles.VehiclesService.UploadVehicleFile:input_type -> resources.file.UploadFileRequest
+	7,  // 21: services.vehicles.VehiclesService.ListVehicleFiles:input_type -> services.vehicles.ListVehicleFilesRequest
+	9,  // 22: services.vehicles.VehiclesService.DeleteVehicleFile:input_type -> services.vehicles.DeleteVehicleFileRequest
+	1,  // 23: services.vehicles.VehiclesService.ListVehicles:output_type -> services.vehicles.ListVehiclesResponse
+	3,  // 24: services.vehicles.VehiclesService.SetVehicleProps:output_type -> services.vehicles.SetVehiclePropsResponse
+	5,  // 25: services.vehicles.VehiclesService.ListVehicleActivity:output_type -> services.vehicles.ListVehicleActivityResponse
+	23, // 26: services.vehicles.VehiclesService.UploadVehicleFile:output_type -> resources.file.UploadFileResponse
+	8,  // 27: services.vehicles.VehiclesService.ListVehicleFiles:output_type -> services.vehicles.ListVehicleFilesResponse
+	10, // 28: services.vehicles.VehiclesService.DeleteVehicleFile:output_type -> services.vehicles.DeleteVehicleFileResponse
+	23, // [23:29] is the sub-list for method output_type
+	17, // [17:23] is the sub-list for method input_type
+	17, // [17:17] is the sub-list for extension type_name
+	17, // [17:17] is the sub-list for extension extendee
+	0,  // [0:17] is the sub-list for field type_name
 }
 
 func init() { file_services_vehicles_vehicles_proto_init() }
@@ -898,7 +1254,7 @@ func file_services_vehicles_vehicles_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_services_vehicles_vehicles_proto_rawDesc), len(file_services_vehicles_vehicles_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   6,
+			NumMessages:   11,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

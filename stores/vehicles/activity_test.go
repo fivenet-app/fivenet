@@ -35,6 +35,7 @@ func TestStoreCountVehicleActivityAppliesPlateAndTypeFilter(t *testing.T) {
 			1,
 			"vehicle",
 			"vehicle.wanted",
+			"vehicle.files",
 		).
 		WillReturnRows(sqlmock.NewRows([]string{"data_count.total"}).AddRow(int64(3)))
 
@@ -71,6 +72,7 @@ func TestStoreListVehicleActivityAppliesSortWithoutCreatorJoin(t *testing.T) {
 			1,
 			"vehicle",
 			"vehicle.wanted",
+			"vehicle.files",
 			int64(20),
 			int64(0),
 		).

@@ -543,20 +543,33 @@ func (s *Store) HandleUserPropsChanges(
 func syncUserMugshotFile(ctx context.Context, tx qrm.DB, userID int32, fileID int64) error {
 	tUserFiles := table.FivenetUserFiles
 
-	if fileID == 0 {
-		_, err := tUserFiles.DELETE().WHERE(mysql.AND(
-			tUserFiles.UserID.EQ(mysql.Int32(userID)),
-			tUserFiles.Kind.EQ(mysql.String("mugshot")),
-		)).ExecContext(ctx, tx)
+	if _, err := tUserFiles.DELETE().WHERE(mysql.AND(
+		tUserFiles.UserID.EQ(mysql.Int32(userID)),
+		tUserFiles.Kind.EQ(mysql.String("mugshot")),
+	)).ExecContext(ctx, tx); err != nil {
 		return err
+	}
+
+	if fileID == 0 {
+		return nil
+	}
+
+	var count struct {
+		Total int64 `alias:"total"`
+	}
+	countStmt := tUserFiles.SELECT(mysql.COUNT(tUserFiles.FileID).AS("total")).
+		FROM(tUserFiles).
+		WHERE(tUserFiles.UserID.EQ(mysql.Int32(userID)))
+	if err := countStmt.QueryContext(ctx, tx, &count); err != nil {
+		return err
+	}
+	if count.Total >= MaxUserFiles {
+		return errors.New("user file limit reached")
 	}
 
 	_, err := tUserFiles.
 		INSERT(tUserFiles.UserID, tUserFiles.FileID, tUserFiles.Kind).
 		VALUES(userID, fileID, "mugshot").
-		ON_DUPLICATE_KEY_UPDATE(
-			tUserFiles.FileID.SET(mysql.IntExp(mysql.RawString("VALUES(`file_id`)"))),
-		).
 		ExecContext(ctx, tx)
 	return err
 }

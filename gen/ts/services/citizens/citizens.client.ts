@@ -5,6 +5,10 @@
 import type { RpcTransport } from "@protobuf-ts/runtime-rpc";
 import type { ServiceInfo } from "@protobuf-ts/runtime-rpc";
 import { CitizensService } from "./citizens";
+import type { DeleteCitizenFileResponse } from "./citizens";
+import type { DeleteCitizenFileRequest } from "./citizens";
+import type { ListCitizenFilesResponse } from "./citizens";
+import type { ListCitizenFilesRequest } from "./citizens";
 import type { DeleteMugshotResponse } from "./citizens";
 import type { DeleteMugshotRequest } from "./citizens";
 import type { DeleteAvatarResponse } from "./citizens";
@@ -67,6 +71,22 @@ export interface ICitizensServiceClient {
      * @generated from protobuf rpc: DeleteMugshot
      */
     deleteMugshot(input: DeleteMugshotRequest, options?: RpcOptions): UnaryCall<DeleteMugshotRequest, DeleteMugshotResponse>;
+    /**
+     * @generated from protobuf rpc: ListCitizenFiles
+     */
+    listCitizenFiles(input: ListCitizenFilesRequest, options?: RpcOptions): UnaryCall<ListCitizenFilesRequest, ListCitizenFilesResponse>;
+    /**
+     * buf:lint:ignore RPC_REQUEST_RESPONSE_UNIQUE
+     * buf:lint:ignore RPC_REQUEST_STANDARD_NAME
+     * buf:lint:ignore RPC_RESPONSE_STANDARD_NAME
+     *
+     * @generated from protobuf rpc: UploadCitizenFile
+     */
+    uploadCitizenFile(options?: RpcOptions): ClientStreamingCall<UploadFileRequest, UploadFileResponse>;
+    /**
+     * @generated from protobuf rpc: DeleteCitizenFile
+     */
+    deleteCitizenFile(input: DeleteCitizenFileRequest, options?: RpcOptions): UnaryCall<DeleteCitizenFileRequest, DeleteCitizenFileResponse>;
 }
 /**
  * @generated from protobuf service services.citizens.CitizensService
@@ -140,5 +160,30 @@ export class CitizensServiceClient implements ICitizensServiceClient, ServiceInf
     deleteMugshot(input: DeleteMugshotRequest, options?: RpcOptions): UnaryCall<DeleteMugshotRequest, DeleteMugshotResponse> {
         const method = this.methods[7], opt = this._transport.mergeOptions(options);
         return stackIntercept<DeleteMugshotRequest, DeleteMugshotResponse>("unary", this._transport, method, opt, input);
+    }
+    /**
+     * @generated from protobuf rpc: ListCitizenFiles
+     */
+    listCitizenFiles(input: ListCitizenFilesRequest, options?: RpcOptions): UnaryCall<ListCitizenFilesRequest, ListCitizenFilesResponse> {
+        const method = this.methods[8], opt = this._transport.mergeOptions(options);
+        return stackIntercept<ListCitizenFilesRequest, ListCitizenFilesResponse>("unary", this._transport, method, opt, input);
+    }
+    /**
+     * buf:lint:ignore RPC_REQUEST_RESPONSE_UNIQUE
+     * buf:lint:ignore RPC_REQUEST_STANDARD_NAME
+     * buf:lint:ignore RPC_RESPONSE_STANDARD_NAME
+     *
+     * @generated from protobuf rpc: UploadCitizenFile
+     */
+    uploadCitizenFile(options?: RpcOptions): ClientStreamingCall<UploadFileRequest, UploadFileResponse> {
+        const method = this.methods[9], opt = this._transport.mergeOptions(options);
+        return stackIntercept<UploadFileRequest, UploadFileResponse>("clientStreaming", this._transport, method, opt);
+    }
+    /**
+     * @generated from protobuf rpc: DeleteCitizenFile
+     */
+    deleteCitizenFile(input: DeleteCitizenFileRequest, options?: RpcOptions): UnaryCall<DeleteCitizenFileRequest, DeleteCitizenFileResponse> {
+        const method = this.methods[10], opt = this._transport.mergeOptions(options);
+        return stackIntercept<DeleteCitizenFileRequest, DeleteCitizenFileResponse>("unary", this._transport, method, opt, input);
     }
 }

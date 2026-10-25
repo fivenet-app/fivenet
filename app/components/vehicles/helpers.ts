@@ -19,7 +19,7 @@ export function vehicleActivityTypeIcon(activityType: VehicleActivityType | unde
         case VehicleActivityType.WANTED:
             return 'i-mdi-bell-alert';
         case VehicleActivityType.FILE:
-            return 'i-mdi-file-outline';
+            return 'i-mdi-file-image';
         case VehicleActivityType.PROPERTY:
             return 'i-mdi-form-textbox';
         case VehicleActivityType.UNSPECIFIED:
@@ -36,6 +36,10 @@ export function vehicleActivityIconColor(activity: VehicleActivity): string {
             }
             break;
         case VehicleActivityType.FILE:
+            if (activity.data?.data.oneofKind === 'fileChange' && !activity.data.data.fileChange.added) {
+                return 'text-error-400';
+            }
+
             return 'text-primary-500';
         case VehicleActivityType.PROPERTY:
             return 'text-secondary-500';

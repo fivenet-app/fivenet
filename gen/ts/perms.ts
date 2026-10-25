@@ -62,6 +62,7 @@ export type GRPCServicePerms =
 	| 'centrum.DispatchesService/UpdateDispatch'
 	| 'centrum.UnitsService/CreateOrUpdateUnit'
 	| 'centrum.UnitsService/DeleteUnit'
+	| 'citizens.CitizensService/DeleteCitizenFile'
 	| 'citizens.CitizensService/GetUser'
 	| 'citizens.CitizensService/ListCitizens'
 	| 'citizens.CitizensService/ListUserActivity'
@@ -138,6 +139,7 @@ export type GRPCServicePerms =
 	| 'settings.SettingsService/SetJobProps'
 	| 'settings.SettingsService/UpdateRolePerms'
 	| 'settings.SettingsService/ViewAuditLog'
+	| 'vehicles.VehiclesService/DeleteVehicleFile'
 	| 'vehicles.VehiclesService/ListVehicleActivity'
 	| 'vehicles.VehiclesService/ListVehicles'
 	| 'vehicles.VehiclesService/SetVehicleProps'
@@ -193,6 +195,7 @@ export const GRPCServiceMethods = [
 	'centrum.DispatchesService/UpdateDispatch',
 	'centrum.UnitsService/CreateOrUpdateUnit',
 	'centrum.UnitsService/DeleteUnit',
+	'citizens.CitizensService/DeleteCitizenFile',
 	'citizens.CitizensService/GetUser',
 	'citizens.CitizensService/ListCitizens',
 	'citizens.CitizensService/ListUserActivity',
@@ -269,6 +272,7 @@ export const GRPCServiceMethods = [
 	'settings.SettingsService/SetJobProps',
 	'settings.SettingsService/UpdateRolePerms',
 	'settings.SettingsService/ViewAuditLog',
+	'vehicles.VehiclesService/DeleteVehicleFile',
 	'vehicles.VehiclesService/ListVehicleActivity',
 	'vehicles.VehiclesService/ListVehicles',
 	'vehicles.VehiclesService/SetVehicleProps',
@@ -312,6 +316,8 @@ export const PermAttributes = {
 	'centrum.UnitsService/CreateOrUpdateUnit': {
 	},
 	'centrum.UnitsService/DeleteUnit': {
+	},
+	'citizens.CitizensService/DeleteCitizenFile': {
 	},
 	'citizens.CitizensService/GetUser': {
 		'Jobs': {
@@ -573,6 +579,8 @@ export const PermAttributes = {
 	'settings.SettingsService/UpdateRolePerms': {
 	},
 	'settings.SettingsService/ViewAuditLog': {
+	},
+	'vehicles.VehiclesService/DeleteVehicleFile': {
 	},
 	'vehicles.VehiclesService/ListVehicleActivity': {
 		'Fields': {

@@ -55,6 +55,7 @@ import (
 	permsmailer "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/mailer/perms"
 	permsqualifications "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/qualifications/perms"
 	permssettings "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/settings/perms"
+	permsvehicles "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/vehicles/perms"
 	permswiki "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/wiki/perms"
 	perms "github.com/fivenet-app/fivenet/v2026/pkg/perms"
 )
@@ -166,8 +167,14 @@ var PermsRemap = map[string][]perms.PermissionRef{
 	"citizens.CitizensService/DeleteMugshot": {
 		permscitizens.CitizensService.SetUserProps.Perm,
 	},
+	"citizens.CitizensService/ListCitizenFiles": {
+		permscitizens.CitizensService.ListCitizens.Perm,
+	},
 	"citizens.CitizensService/UploadAvatar": {
 		perms.PermAnyRef,
+	},
+	"citizens.CitizensService/UploadCitizenFile": {
+		permscitizens.CitizensService.SetUserProps.Perm,
 	},
 	"citizens.CitizensService/UploadMugshot": {
 		permscitizens.CitizensService.SetUserProps.Perm,
@@ -674,6 +681,14 @@ var PermsRemap = map[string][]perms.PermissionRef{
 	},
 	"settings.SystemService/UpdateJobLimits": {
 		perms.PermJobAdminRef,
+	},
+
+	// Service: vehicles.VehiclesService
+	"vehicles.VehiclesService/ListVehicleFiles": {
+		permsvehicles.VehiclesService.ListVehicles.Perm,
+	},
+	"vehicles.VehiclesService/UploadVehicleFile": {
+		permsvehicles.VehiclesService.SetVehicleProps.Perm,
 	},
 
 	// Service: wiki.CollabService

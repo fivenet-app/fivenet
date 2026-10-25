@@ -25,6 +25,11 @@ import (
 
 const ApplicationOctetStreamMIMEType = "application/octet-stream"
 
+// MaxUploadChunks bounds the number of data packets accepted for one upload.
+// The web client uses 128 KiB packets, so this leaves substantial room for
+// small-chunk clients while bounding per-message overhead.
+const MaxUploadChunks = 4096
+
 var tFiles = table.FivenetFiles
 
 // ParentID is a type constraint that matches any type that can be a parent ID.
@@ -39,6 +44,17 @@ type ParentColBoolExpFn[P ParentID] func(parentId P) mysql.BoolExpression
 
 // JoinRowInserterFn is a function type for inserting a join row into a table linking parent and file.
 type JoinRowInserterFn[P ParentID] func(ctx context.Context, tx *sql.Tx, join mysql.Table, parentCol mysql.Column, fileCol mysql.ColumnInteger, parentId P, _ mysql.BoolExpression, fileID int64) error
+
+// JoinRowReplacerFn replaces a singleton relation and returns the old file ID.
+type JoinRowReplacerFn[P ParentID] func(ctx context.Context, tx *sql.Tx, join mysql.Table, parentCol mysql.Column, fileCol mysql.ColumnInteger, parentID P, parentIDBoolExp mysql.BoolExpression, fileID int64) (int64, error)
+
+// FileLimitLockFn locks the parent row used to serialize a file-count check
+// with the subsequent join-row insert.
+type FileLimitLockFn[P ParentID] func(ctx context.Context, tx *sql.Tx, parentID P) error
+
+// RelationFileIDFn finds the relation that should be deleted while the
+// handler's parent lock is held.
+type RelationFileIDFn[P ParentID] func(ctx context.Context, tx *sql.Tx, join mysql.Table, parentCol mysql.Column, fileCol mysql.ColumnInteger, parentID P) (int64, error)
 
 // Handler is a generic, embeddable file-upload helper.
 type Handler[P ParentID] struct {
@@ -57,7 +73,8 @@ type Handler[P ParentID] struct {
 	// fileLimit is the maximum allowed number of files per parent.
 	fileLimit int64
 	// uploadFilter optionally restricts allowed upload file types.
-	uploadFilter *UploadFilter
+	uploadFilter  *UploadFilter
+	fileLimitLock FileLimitLockFn[P]
 	// fileLimitMu serializes additive uploads so the count check and insert are
 	// atomic from the handler's perspective.
 	fileLimitMu sync.Mutex
@@ -106,6 +123,12 @@ func NewHandler[P ParentID](
 // WithUploadFilter sets an optional upload filter for file type validation.
 func (h *Handler[P]) WithUploadFilter(filter *UploadFilter) *Handler[P] {
 	h.uploadFilter = filter.clone()
+	return h
+}
+
+// WithFileLimitLock configures a database row lock for the file-limit check.
+func (h *Handler[P]) WithFileLimitLock(lock FileLimitLockFn[P]) *Handler[P] {
+	h.fileLimitLock = lock
 	return h
 }
 
@@ -164,61 +187,52 @@ func (h *Handler[P]) UploadFile(
 	ctype string,
 	srv pbfilestore.FilestoreService_UploadServer,
 ) (*file.UploadFileResponse, error) {
+	resp, _, err := h.uploadFile(ctx, parentID, key, size, ctype, srv, nil)
+	return resp, err
+}
+
+func (h *Handler[P]) uploadFile(
+	ctx context.Context,
+	parentID P,
+	key string,
+	size int64,
+	ctype string,
+	srv pbfilestore.FilestoreService_UploadServer,
+	replacer JoinRowReplacerFn[P],
+) (*file.UploadFileResponse, int64, error) {
 	if h.sizeLimit > 0 && size > h.sizeLimit {
-		return nil, ErrUploadFileTooLarge(
-			map[string]any{"maxSize": h.sizeLimit / 8},
+		return nil, 0, ErrUploadFileTooLarge(
+			map[string]any{"maxSize": h.sizeLimit / (1 << 20)},
 		) // Convert bytes to megabytes
 	}
 
 	ctype = sniff(ctype, key)
-	leadingData, err := readLeadingData(srv, 512)
+	chunkCounter := &uploadChunkCounter{max: MaxUploadChunks}
+	leadingData, err := readLeadingDataWithCounter(srv, 512, chunkCounter)
 	if err != nil {
-		return nil, err
+		return nil, 0, err
 	}
 	if detected := detectContentType(leadingData); detected != "" {
 		ctype = detected
 	}
 
 	if err := h.validateUploadType(key, ctype); err != nil {
-		return nil, err
+		return nil, 0, err
 	}
 
-	if h.joinTable != nil && h.fileLimit > 0 && !h.nullOnlyParentRow {
+	if h.joinTable != nil && h.fileLimit > 0 && !h.nullOnlyParentRow && h.fileLimitLock == nil {
 		h.fileLimitMu.Lock()
 		defer h.fileLimitMu.Unlock()
 	}
-	if err := h.CheckFileLimit(ctx, parentID); err != nil {
-		return nil, err
+	if replacer == nil {
+		if err := h.CheckFileLimit(ctx, parentID); err != nil {
+			return nil, 0, err
+		}
 	}
 
 	// Pipe chunks to the storage backend
-	pr, pw := io.Pipe()
-	go func() {
-		if len(leadingData) > 0 {
-			if _, err := pw.Write(leadingData); err != nil {
-				pw.CloseWithError(err)
-				return
-			}
-		}
-
-		for {
-			pkt, err := srv.Recv()
-			if errors.Is(err, io.EOF) {
-				_ = pw.Close()
-				return
-			}
-			if err != nil {
-				pw.CloseWithError(err)
-				return
-			}
-			if data := pkt.GetData(); data != nil {
-				if _, w := pw.Write(data); w != nil {
-					pw.CloseWithError(w)
-					return
-				}
-			}
-		}
-	}()
+	pr := streamUploadData(srv, leadingData, chunkCounter)
+	defer pr.Close()
 
 	// Size - if client sent one, honor it; otherwise -1 (unknown)
 	szHint := int64(-1)
@@ -233,47 +247,83 @@ func (h *Handler[P]) UploadFile(
 		}
 	}()
 
-	urlKey, bytes, err := putToStorage(ctx, h.store, key, pr, ctype, szHint)
+	urlKey, bytes, err := putToStorage(ctx, h.store, key, pr, ctype, szHint, h.sizeLimit)
 	if err != nil {
-		return nil, err
+		return nil, 0, err
 	}
 
 	// DB transaction
 	tx, err := h.db.BeginTx(ctx, nil)
 	if err != nil {
-		return nil, err
+		return nil, 0, err
 	}
 	defer tx.Rollback()
 
+	var replacedFileID int64
+	if h.joinTable != nil && h.fileLimit > 0 && !h.nullOnlyParentRow {
+		if h.fileLimitLock != nil {
+			if err := h.fileLimitLock(ctx, tx, parentID); err != nil {
+				return nil, 0, err
+			}
+		}
+		if replacer == nil {
+			count, err := h.countFilesForParentID(ctx, tx, parentID)
+			if err != nil {
+				return nil, 0, err
+			}
+			if count >= h.fileLimit {
+				return nil, 0, ErrMaxFilesPerParentReached(map[string]any{"maxFiles": h.fileLimit})
+			}
+		}
+	}
+
 	fileID, err := upsertFileRow(ctx, tx, key, ctype, bytes)
 	if err != nil {
-		return nil, err
+		return nil, 0, err
 	}
 
 	if h.joinTable != nil {
 		parentIdBoolExp := h.parentColBoolExp(parentID)
-		if err := h.joinRowInserter(
-			ctx,
-			tx,
-			h.joinTable,
-			h.parentCol,
-			h.fileCol,
-			parentID,
-			parentIdBoolExp,
-			fileID,
-		); err != nil {
-			return nil, err
+		var err error
+		if replacer != nil {
+			replacedFileID, err = replacer(
+				ctx, tx, h.joinTable, h.parentCol, h.fileCol,
+				parentID, parentIdBoolExp, fileID,
+			)
+		} else {
+			err = h.joinRowInserter(
+				ctx,
+				tx,
+				h.joinTable,
+				h.parentCol,
+				h.fileCol,
+				parentID,
+				parentIdBoolExp,
+				fileID,
+			)
+		}
+		if err != nil {
+			return nil, 0, err
+		}
+	}
+	if replacer != nil && h.joinTable != nil && h.fileLimit > 0 && !h.nullOnlyParentRow {
+		count, err := h.countFilesForParentID(ctx, tx, parentID)
+		if err != nil {
+			return nil, 0, err
+		}
+		if count > h.fileLimit {
+			return nil, 0, ErrMaxFilesPerParentReached(map[string]any{"maxFiles": h.fileLimit})
 		}
 	}
 
 	if err := tx.Commit(); err != nil {
-		return nil, err
+		return nil, 0, err
 	}
 	cleanupStorage = false
 
 	full, err := url.JoinPath(FilestoreURLPrefix, urlKey)
 	if err != nil {
-		return nil, err
+		return nil, 0, err
 	}
 
 	resp := &file.UploadFileResponse{
@@ -287,7 +337,7 @@ func (h *Handler[P]) UploadFile(
 			CreatedAt:   timestamp.Now(),
 		},
 	}
-	return resp, srv.SendAndClose(resp)
+	return resp, replacedFileID, srv.SendAndClose(resp)
 }
 
 // ReplaceFile replaces the bytes and metadata of an existing file while keeping
@@ -302,11 +352,12 @@ func (h *Handler[P]) ReplaceFile(
 	srv pbfilestore.FilestoreService_UploadServer,
 ) (*file.UploadFileResponse, error) {
 	if h.sizeLimit > 0 && size > h.sizeLimit {
-		return nil, ErrUploadFileTooLarge(map[string]any{"maxSize": h.sizeLimit / 8})
+		return nil, ErrUploadFileTooLarge(map[string]any{"maxSize": h.sizeLimit / (1 << 20)})
 	}
 
 	ctype = sniff(ctype, key)
-	leadingData, err := readLeadingData(srv, 512)
+	chunkCounter := &uploadChunkCounter{max: MaxUploadChunks}
+	leadingData, err := readLeadingDataWithCounter(srv, 512, chunkCounter)
 	if err != nil {
 		return nil, err
 	}
@@ -334,7 +385,7 @@ func (h *Handler[P]) ReplaceFile(
 		return nil, err
 	}
 	if h.sizeLimit > 0 && int64(len(oldBytes)) > h.sizeLimit {
-		return nil, ErrUploadFileTooLarge(map[string]any{"maxSize": h.sizeLimit / 8})
+		return nil, ErrUploadFileTooLarge(map[string]any{"maxSize": h.sizeLimit / (1 << 20)})
 	}
 
 	restoreOldFile := func(cause error) (*file.UploadFileResponse, error) {
@@ -351,36 +402,12 @@ func (h *Handler[P]) ReplaceFile(
 		return nil, cause
 	}
 
-	pr, pw := io.Pipe()
-	go func() {
-		if len(leadingData) > 0 {
-			if _, err := pw.Write(leadingData); err != nil {
-				pw.CloseWithError(err)
-				return
-			}
-		}
-		for {
-			pkt, err := srv.Recv()
-			if errors.Is(err, io.EOF) {
-				_ = pw.Close()
-				return
-			}
-			if err != nil {
-				pw.CloseWithError(err)
-				return
-			}
-			if data := pkt.GetData(); data != nil {
-				if _, err := pw.Write(data); err != nil {
-					pw.CloseWithError(err)
-					return
-				}
-			}
-		}
-	}()
+	pr := streamUploadData(srv, leadingData, chunkCounter)
+	defer pr.Close()
 
-	_, bytes, err := putToStorage(ctx, h.store, key, pr, ctype, size)
+	_, bytes, err := putToStorage(ctx, h.store, key, pr, ctype, size, h.sizeLimit)
 	if err != nil {
-		return nil, err
+		return restoreOldFile(err)
 	}
 	result, err := tFiles.UPDATE().SET(
 		tFiles.ByteSize.SET(mysql.Int64(bytes)),
@@ -440,13 +467,90 @@ func readLeadingData(
 	srv pbfilestore.FilestoreService_UploadServer,
 	minBytes int,
 ) ([]byte, error) {
+	return readLeadingDataWithCounter(srv, minBytes, nil)
+}
+
+type uploadChunkCounter struct {
+	count int
+	max   int
+}
+
+func streamUploadData(
+	srv pbfilestore.FilestoreService_UploadServer,
+	leadingData []byte,
+	counter *uploadChunkCounter,
+) *io.PipeReader {
+	pr, pw := io.Pipe()
+	go func() {
+		if len(leadingData) > 0 {
+			if _, err := pw.Write(leadingData); err != nil {
+				pw.CloseWithError(err)
+				return
+			}
+		}
+		for {
+			pkt, err := recvUploadChunk(srv, counter)
+			if errors.Is(err, io.EOF) {
+				_ = pw.Close()
+				return
+			}
+			if err != nil {
+				pw.CloseWithError(err)
+				return
+			}
+			if data := pkt.GetData(); data != nil {
+				if _, err := pw.Write(data); err != nil {
+					pw.CloseWithError(err)
+					return
+				}
+			}
+		}
+	}()
+	return pr
+}
+
+func recvUploadChunk(
+	srv pbfilestore.FilestoreService_UploadServer,
+	counter *uploadChunkCounter,
+) (*file.UploadFileRequest, error) {
+	if counter != nil && counter.count >= counter.max {
+		// Permit the terminating EOF after the final allowed packet, but reject
+		// any additional packet.
+		_, err := srv.Recv()
+		if errors.Is(err, io.EOF) {
+			return nil, io.EOF
+		}
+		if err != nil {
+			return nil, err
+		}
+		return nil, status.Errorf(
+			codes.ResourceExhausted,
+			"upload contains too many chunks: maximum is %d",
+			counter.max,
+		)
+	}
+	pkt, err := srv.Recv()
+	if err != nil {
+		return nil, err
+	}
+	if counter != nil {
+		counter.count++
+	}
+	return pkt, nil
+}
+
+func readLeadingDataWithCounter(
+	srv pbfilestore.FilestoreService_UploadServer,
+	minBytes int,
+	counter *uploadChunkCounter,
+) ([]byte, error) {
 	if minBytes <= 0 {
 		return nil, nil
 	}
 
 	var buf bytespkg.Buffer
 	for buf.Len() < minBytes {
-		pkt, err := srv.Recv()
+		pkt, err := recvUploadChunk(srv, counter)
 		if errors.Is(err, io.EOF) {
 			break
 		}
@@ -495,6 +599,21 @@ func (h *Handler[P]) UploadFromMeta(
 	ctype := sniff(meta.GetContentType(), key)
 
 	return h.UploadFile(ctx, parentID, key, meta.GetSize(), ctype, srv)
+}
+
+// UploadFromMetaWithReplacement is the replacement variant for singleton
+// relations. The relation callback runs while the handler holds its parent
+// lock and the upload transaction is open.
+func (h *Handler[P]) UploadFromMetaWithReplacement(
+	ctx context.Context,
+	meta *file.UploadMeta,
+	parentID P,
+	srv pbfilestore.FilestoreService_UploadServer,
+	replacer JoinRowReplacerFn[P],
+) (*file.UploadFileResponse, int64, error) {
+	key := buildKey(meta.GetNamespace(), SanitizeFileName(meta.GetOriginalName()))
+	ctype := sniff(meta.GetContentType(), key)
+	return h.uploadFile(ctx, parentID, key, meta.GetSize(), ctype, srv, replacer)
 }
 
 // GetFileByPath retrieves the file ID and path for a given file path string.
@@ -577,6 +696,47 @@ func (h *Handler[P]) Delete(ctx context.Context, parentID P, fileID int64) error
 	}
 	defer tx.Rollback()
 
+	if err := h.deleteInTx(ctx, tx, parentID, fileID); err != nil {
+		return err
+	}
+	return tx.Commit()
+}
+
+// DeleteWithParentLock finds and deletes a relation while holding the
+// caller-provided parent lock. This prevents replacement and deletion from
+// racing on singleton relations.
+func (h *Handler[P]) DeleteWithParentLock(
+	ctx context.Context,
+	parentID P,
+	lock FileLimitLockFn[P],
+	find RelationFileIDFn[P],
+) (int64, error) {
+	tx, err := h.db.BeginTx(ctx, nil)
+	if err != nil {
+		return 0, err
+	}
+	defer tx.Rollback()
+
+	if err := lock(ctx, tx, parentID); err != nil {
+		return 0, err
+	}
+	fileID, err := find(ctx, tx, h.joinTable, h.parentCol, h.fileCol, parentID)
+	if err != nil {
+		return 0, err
+	}
+	if fileID == 0 {
+		return 0, tx.Commit()
+	}
+	if err := h.deleteInTx(ctx, tx, parentID, fileID); err != nil {
+		return 0, err
+	}
+	if err := tx.Commit(); err != nil {
+		return 0, err
+	}
+	return fileID, nil
+}
+
+func (h *Handler[P]) deleteInTx(ctx context.Context, tx *sql.Tx, parentID P, fileID int64) error {
 	var zeroVal P
 	if parentID != zeroVal {
 		// 1. Remove or empty join row
@@ -589,7 +749,7 @@ func (h *Handler[P]) Delete(ctx context.Context, parentID P, fileID int64) error
 	var refs struct {
 		Count int64
 	}
-	err = h.joinTable.
+	err := h.joinTable.
 		SELECT(mysql.COUNT(h.fileCol).AS("count")).
 		FROM(h.joinTable).
 		WHERE(h.fileCol.EQ(mysql.Int64(fileID))).
@@ -626,7 +786,7 @@ func (h *Handler[P]) Delete(ctx context.Context, parentID P, fileID int64) error
 		}
 	}
 
-	return tx.Commit()
+	return nil
 }
 
 // DeleteFileByPath deletes a file by its path and parent ID, if it exists.
@@ -754,8 +914,9 @@ func putToStorage(
 	r io.Reader,
 	ctype string,
 	userSize int64,
+	maxSize int64,
 ) (string, int64, error) {
-	cr := &countingReader{Reader: r}
+	cr := &countingReader{Reader: r, max: maxSize}
 
 	// Unknown total size: pass -1, backend switches to multipart automatically
 	s := int64(-1)
@@ -772,13 +933,21 @@ func putToStorage(
 
 // CountFilesForParentID returns the number of files associated with a given parent ID.
 func (h *Handler[P]) CountFilesForParentID(ctx context.Context, parentID P) (int64, error) {
+	return h.countFilesForParentID(ctx, h.db, parentID)
+}
+
+func (h *Handler[P]) countFilesForParentID(
+	ctx context.Context,
+	db qrm.Queryable,
+	parentID P,
+) (int64, error) {
 	stmt := h.joinTable.
 		SELECT(mysql.COUNT(h.fileCol).AS("data_count.total")).
 		FROM(h.joinTable).
 		WHERE(h.parentColBoolExp(parentID))
 
 	var count database.DataCount
-	if err := stmt.QueryContext(ctx, h.db, &count); err != nil {
+	if err := stmt.QueryContext(ctx, db, &count); err != nil {
 		return 0, err
 	}
 
