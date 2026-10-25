@@ -209,6 +209,31 @@ function clearCollectedErrors(): void {
             <code>{{ settingsStore.nuiResourceName ?? $t('common.na') }}</code>
         </UFormField>
 
+        <UFormField
+            v-if="activeChar"
+            class="grid grid-cols-2 items-center gap-2"
+            name="permissions"
+            :label="$t('components.debug_info.perms')"
+        >
+            <UCollapsible>
+                <UButton
+                    class="group"
+                    variant="soft"
+                    :label="$t('components.debug_info.perms')"
+                    icon="i-mdi-key"
+                    trailing-icon="i-mdi-chevron-down"
+                    block
+                    :ui="{
+                        trailingIcon: 'group-data-[state=open]:rotate-180 transition-transform duration-200',
+                    }"
+                />
+
+                <template #content>
+                    <PermList class="w-full" :permissions="permissions" :attributes="attributes" disabled />
+                </template>
+            </UCollapsible>
+        </UFormField>
+
         <USeparator :label="$t('components.debug_info.client_errors')" class="my-4" />
 
         <UAlert
@@ -349,31 +374,6 @@ function clearCollectedErrors(): void {
                             @click="() => triggerErrorPage()"
                         />
                     </UFieldGroup>
-                </template>
-            </UCollapsible>
-        </UFormField>
-
-        <UFormField
-            v-if="activeChar"
-            class="grid grid-cols-2 items-center gap-2"
-            name="permissions"
-            :label="$t('components.debug_info.perms')"
-        >
-            <UCollapsible>
-                <UButton
-                    class="group"
-                    variant="soft"
-                    :label="$t('components.debug_info.perms')"
-                    icon="i-mdi-key"
-                    trailing-icon="i-mdi-chevron-down"
-                    block
-                    :ui="{
-                        trailingIcon: 'group-data-[state=open]:rotate-180 transition-transform duration-200',
-                    }"
-                />
-
-                <template #content>
-                    <PermList class="w-full" :permissions="permissions" :attributes="attributes" disabled />
                 </template>
             </UCollapsible>
         </UFormField>
