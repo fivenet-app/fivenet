@@ -18,9 +18,6 @@ import type {
 const props = withDefaults(
     defineProps<{
         targetId: number;
-        jobs?: JobsT[];
-        users?: UsersT[];
-        qualifications?: QualiT[];
         accessTypes?: AccessType[];
         accessRoles: AccessLevelEnum[];
         defaultAccess?: number;
@@ -37,9 +34,6 @@ const props = withDefaults(
         fullName?: boolean;
     }>(),
     {
-        jobs: () => [],
-        users: () => [],
-        qualifications: () => [],
         accessTypes: undefined,
         defaultAccess: 2, // All `AccessLevel` should have 0 = UNSPECIFIED, 1 = BLOCKED, 2 = VIEW levels
         disabled: false,
