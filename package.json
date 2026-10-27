@@ -148,7 +148,7 @@
         "eslint-plugin-prettier": "5.5.7",
         "h3-next": "npm:h3@2.0.8",
         "happy-dom": "21.0.4",
-        "nuxt": "4.6.2",
+        "nuxt": "4.6.3",
         "nuxt-tiptap-editor": "3.4.0",
         "nuxt-typed-router": "4.0.10",
         "pinia-plugin-persistedstate": "4.7.1",
