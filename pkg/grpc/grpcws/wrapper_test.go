@@ -860,8 +860,8 @@ func (s *testServiceImpl) PingError(
 	ctx context.Context,
 	ping *testproto.PingRequest,
 ) (*emptypb.Empty, error) {
-	md, _ := metadata.FromIncomingContext(ctx)
-	if _, exists := md[useFlushForHeaders]; exists {
+	md := metadata.ValueFromIncomingContext(ctx, useFlushForHeaders)
+	if len(md) > 0 && md[0] == "true" {
 		grpc.SendHeader(ctx, expectedHeaders)
 		grpclog.Info("handling PingError with flushed headers")
 	} else {

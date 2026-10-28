@@ -60,6 +60,8 @@ var ServerModule = fx.Module("grpcserver",
 type ServerParams struct {
 	fx.In
 
+	LC fx.Lifecycle
+
 	Logger   *zap.Logger
 	Config   *config.Config
 	TP       *tracesdk.TracerProvider
@@ -83,6 +85,8 @@ type ServerResult struct {
 }
 
 func NewServer(p ServerParams) (ServerResult, error) {
+	logger := p.Logger.Named("grpc")
+
 	extraLogFields := func(ctx context.Context) logging.Fields {
 		if span := trace.SpanContextFromContext(ctx); span.IsSampled() {
 			return logging.Fields{"traceID", span.TraceID().String()}
@@ -141,7 +145,7 @@ func NewServer(p ServerParams) (ServerResult, error) {
 			srvMetrics.UnaryServerInterceptor(
 				grpcprom.WithExemplarFromContext(exemplarFromContext),
 			),
-			logging.UnaryServerInterceptor(InterceptorLogger(p.Logger),
+			logging.UnaryServerInterceptor(InterceptorLogger(logger),
 				logging.WithFieldsFromContext(extraLogFields),
 				logging.WithLogOnEvents(logging.StartCall, logging.FinishCall),
 			),
@@ -151,7 +155,7 @@ func NewServer(p ServerParams) (ServerResult, error) {
 			protovalidate_middleware.UnaryServerInterceptor(validator),
 			grpc_sanitizer.UnaryServerInterceptor(),
 			recovery.UnaryServerInterceptor(
-				recovery.WithRecoveryHandler(grpcPanicRecoveryHandler(p.Logger)),
+				recovery.WithRecoveryHandler(grpcPanicRecoveryHandler(logger)),
 			),
 			grpc_audit.NewUnary(grpc_audit.Options{
 				Logger:      p.Audit,
@@ -163,7 +167,7 @@ func NewServer(p ServerParams) (ServerResult, error) {
 			srvMetrics.StreamServerInterceptor(
 				grpcprom.WithExemplarFromContext(exemplarFromContext),
 			),
-			logging.StreamServerInterceptor(InterceptorLogger(p.Logger),
+			logging.StreamServerInterceptor(InterceptorLogger(logger),
 				logging.WithFieldsFromContext(extraLogFields),
 				logging.WithLogOnEvents(logging.StartCall, logging.FinishCall),
 			),
@@ -177,11 +181,11 @@ func NewServer(p ServerParams) (ServerResult, error) {
 				RecordFirst: true,
 			}),
 			recovery.StreamServerInterceptor(
-				recovery.WithRecoveryHandler(grpcPanicRecoveryHandler(p.Logger)),
+				recovery.WithRecoveryHandler(grpcPanicRecoveryHandler(logger)),
 			),
 		),
 	)
-	grpclog.SetLoggerV2(zapgrpc.NewLogger(p.Logger))
+	grpclog.SetLoggerV2(zapgrpc.NewLogger(logger))
 
 	for _, service := range p.Services {
 		if service == nil {
@@ -190,6 +194,19 @@ func NewServer(p ServerParams) (ServerResult, error) {
 
 		service.RegisterServer(srv)
 	}
+
+	// Graceful GRPC server shutdown with a timeout of 5 seconds.
+	p.LC.Append(fx.StopHook(func(ctx context.Context) error {
+		timer := time.AfterFunc(5*time.Second, func() {
+			logger.Warn("grpc server couldn't stop gracefully in time. Doing force stop.")
+			srv.Stop()
+		})
+		defer timer.Stop()
+
+		srv.GracefulStop()
+
+		return nil
+	}))
 
 	return ServerResult{
 		Server: srv,
