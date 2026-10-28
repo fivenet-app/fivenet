@@ -126,6 +126,11 @@ describe('tiptapTextPreview', () => {
 });
 
 describe('isEmptyDoc', () => {
+    it('should handle legacy HTML strings', () => {
+        expect(isEmptyDoc('<p>Zahlung von $1.394.550,00 für 3 Monate FiveNet.</p>')).toBe(false);
+        expect(isEmptyDoc('<p></p>')).toBe(true);
+    });
+
     it('should return true for empty documents', () => {
         const doc = { type: 'doc', content: [] };
 

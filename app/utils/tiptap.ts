@@ -335,8 +335,15 @@ export function tiptapTextPreview(
     return result;
 }
 
-export function isEmptyDoc(content: Struct | JSONContent | null | undefined): boolean {
+export function isEmptyDoc(content: Struct | JSONContent | string | null | undefined): boolean {
     if (!content) return true;
+
+    // Legacy content can still be returned as raw HTML while old comments are
+    // being migrated. It is not a Tiptap document and must not be passed to
+    // the `in` operator below.
+    if (typeof content === 'string') {
+        return content.replace(/<[^>]*>/g, '').trim().length === 0;
+    }
 
     let c: JSONContent;
     if ('fields' in content) {

@@ -102,7 +102,7 @@ func (x *Content) Value() (driver.Value, error) {
 }
 
 func (x *Content) Extract() *ExtractedContent {
-	if x != nil {
+	if x == nil {
 		return &ExtractedContent{}
 	}
 
