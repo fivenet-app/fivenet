@@ -131,6 +131,10 @@ describe('isEmptyDoc', () => {
         expect(isEmptyDoc('<p></p>')).toBe(true);
     });
 
+    it('should treat malformed HTML as non-empty', () => {
+        expect(isEmptyDoc('<script')).toBe(false);
+    });
+
     it('should return true for empty documents', () => {
         const doc = { type: 'doc', content: [] };
 

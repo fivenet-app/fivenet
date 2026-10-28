@@ -342,7 +342,21 @@ export function isEmptyDoc(content: Struct | JSONContent | string | null | undef
     // being migrated. It is not a Tiptap document and must not be passed to
     // the `in` operator below.
     if (typeof content === 'string') {
-        return content.replace(/<[^>]*>/g, '').trim().length === 0;
+        // Scan tags conservatively for the emptiness check and retain any
+        // unterminated tag as content rather than accidentally dropping it.
+        for (let i = 0; i < content.length; i++) {
+            if (content[i] !== '<') {
+                if (!/\s/.test(content[i]!)) return false;
+                continue;
+            }
+
+            const tagEnd = content.indexOf('>', i + 1);
+            if (tagEnd === -1) return false;
+
+            i = tagEnd;
+        }
+
+        return true;
     }
 
     let c: JSONContent;
