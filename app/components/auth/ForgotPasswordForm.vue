@@ -121,12 +121,16 @@ watch(isSubmitting, (value) => (parentCanSubmit.value = !value), { immediate: tr
             </div>
         </UFormField>
 
-        <UFormField name="password" :label="$t('common.password')">
+        <UFormField
+            name="password"
+            :label="$t('components.auth.ChangePasswordModal.new_password')"
+            :description="$t('components.auth.ChangePasswordModal.new_password_description')"
+        >
             <UInput
                 v-model="state.password"
                 :type="passwordVisibility ? 'text' : 'password'"
                 autocomplete="new-password"
-                :placeholder="$t('common.password')"
+                :placeholder="$t('components.auth.ChangePasswordModal.new_password')"
                 aria-describedby="password-strength"
                 :ui="{ trailing: 'pe-1', root: 'w-full' }"
             >

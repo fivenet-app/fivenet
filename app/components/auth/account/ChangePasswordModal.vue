@@ -92,7 +92,11 @@ const formRef = useTemplateRef('formRef');
 
         <template #body>
             <UForm ref="formRef" :schema="schema" :state="state" @submit="submit">
-                <UFormField name="currentPassword" :label="$t('components.auth.ChangePasswordModal.current_password')">
+                <UFormField
+                    name="currentPassword"
+                    :label="$t('components.auth.ChangePasswordModal.current_password')"
+                    :description="$t('components.auth.ChangePasswordModal.current_password_description')"
+                >
                     <UInput
                         v-model="state.currentPassword"
                         class="w-full"
@@ -116,7 +120,11 @@ const formRef = useTemplateRef('formRef');
                     </UInput>
                 </UFormField>
 
-                <UFormField name="newPassword" :label="$t('components.auth.ChangePasswordModal.new_password')">
+                <UFormField
+                    name="newPassword"
+                    :label="$t('components.auth.ChangePasswordModal.new_password')"
+                    :description="$t('components.auth.ChangePasswordModal.new_password_description')"
+                >
                     <UInput
                         v-model="state.newPassword"
                         class="w-full"

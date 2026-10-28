@@ -2419,7 +2419,9 @@
             "ChangePasswordModal": {
                 "change_password": "Change Password",
                 "current_password": "Current Password",
-                "new_password": "New Password"
+                "current_password_description": "Enter your current password to verify this account change.",
+                "new_password": "New Password",
+                "new_password_description": "Choose a new password for your account. The strength indicator below shows how secure it is."
             },
             "SocialLogins": {
                 "title": "Connected Accounts",

@@ -2419,7 +2419,9 @@
             "ChangePasswordModal": {
                 "change_password": "Passwort ändern",
                 "current_password": "Momentanes Passwort",
-                "new_password": "Neues Passwort"
+                "current_password_description": "Gib dein aktuelles Passwort ein, um diese Kontoänderung zu bestätigen.",
+                "new_password": "Neues Passwort",
+                "new_password_description": "Wähle ein neues Passwort für dein Konto. Die Anzeige zur Passwortstärke zeigt dir, wie sicher es ist."
             },
             "SocialLogins": {
                 "title": "Verknüpfte Konten",
