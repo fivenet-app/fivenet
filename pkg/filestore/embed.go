@@ -15,6 +15,7 @@ import (
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/file"
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/timestamp"
 	pbfilestore "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/filestore"
+	grpc_audit "github.com/fivenet-app/fivenet/v2026/pkg/grpc/interceptors/audit"
 	"github.com/fivenet-app/fivenet/v2026/pkg/storage"
 	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
 	"github.com/go-jet/jet/v2/mysql"
@@ -55,6 +56,20 @@ type FileLimitLockFn[P ParentID] func(ctx context.Context, tx *sql.Tx, parentID 
 // RelationFileIDFn finds the relation that should be deleted while the
 // handler's parent lock is held.
 type RelationFileIDFn[P ParentID] func(ctx context.Context, tx *sql.Tx, join mysql.Table, parentCol mysql.Column, fileCol mysql.ColumnInteger, parentID P) (int64, error)
+
+// UploadCallbackFn runs after the file and its relation have been written, but
+// before their transaction commits. It allows callers to atomically persist
+// related records, such as an activity entry.
+type UploadCallbackFn func(ctx context.Context, tx *sql.Tx, response *file.UploadFileResponse) error
+
+// DeleteCallbackFn runs before the file relation is removed, while the
+// deletion transaction is still open. It allows callers to atomically persist
+// related records, such as an activity entry.
+//
+// The callback intentionally runs before the relation deletion because an
+// orphaned file may be removed from storage during deletion. A callback error
+// must therefore abort before storage is touched.
+type DeleteCallbackFn func(ctx context.Context, tx *sql.Tx) error
 
 // Handler is a generic, embeddable file-upload helper.
 type Handler[P ParentID] struct {
@@ -187,7 +202,22 @@ func (h *Handler[P]) UploadFile(
 	ctype string,
 	srv pbfilestore.FilestoreService_UploadServer,
 ) (*file.UploadFileResponse, error) {
-	resp, _, err := h.uploadFile(ctx, parentID, key, size, ctype, srv, nil)
+	resp, _, err := h.uploadFile(ctx, parentID, key, size, ctype, srv, nil, nil)
+	return resp, err
+}
+
+// UploadFileWithCallback is UploadFile with a callback that participates in
+// the file metadata and relation transaction.
+func (h *Handler[P]) UploadFileWithCallback(
+	ctx context.Context,
+	parentID P,
+	key string,
+	size int64,
+	ctype string,
+	srv pbfilestore.FilestoreService_UploadServer,
+	callback UploadCallbackFn,
+) (*file.UploadFileResponse, error) {
+	resp, _, err := h.uploadFile(ctx, parentID, key, size, ctype, srv, nil, callback)
 	return resp, err
 }
 
@@ -199,6 +229,7 @@ func (h *Handler[P]) uploadFile(
 	ctype string,
 	srv pbfilestore.FilestoreService_UploadServer,
 	replacer JoinRowReplacerFn[P],
+	callback UploadCallbackFn,
 ) (*file.UploadFileResponse, int64, error) {
 	if h.sizeLimit > 0 && size > h.sizeLimit {
 		return nil, 0, ErrUploadFileTooLarge(
@@ -316,11 +347,6 @@ func (h *Handler[P]) uploadFile(
 		}
 	}
 
-	if err := tx.Commit(); err != nil {
-		return nil, 0, err
-	}
-	cleanupStorage = false
-
 	full, err := url.JoinPath(FilestoreURLPrefix, urlKey)
 	if err != nil {
 		return nil, 0, err
@@ -337,7 +363,21 @@ func (h *Handler[P]) uploadFile(
 			CreatedAt:   timestamp.Now(),
 		},
 	}
-	return resp, replacedFileID, srv.SendAndClose(resp)
+	if callback != nil {
+		if err := callback(ctx, tx, resp); err != nil {
+			return nil, 0, err
+		}
+	}
+
+	if err := tx.Commit(); err != nil {
+		return nil, 0, err
+	}
+	cleanupStorage = false
+	if err := srv.SendAndClose(resp); err != nil {
+		return resp, replacedFileID, err
+	}
+	grpc_audit.AddFileMeta(ctx, resp.GetFile())
+	return resp, replacedFileID, nil
 }
 
 // ReplaceFile replaces the bytes and metadata of an existing file while keeping
@@ -453,7 +493,12 @@ func (h *Handler[P]) ReplaceFile(
 			CreatedAt:   timestamp.Now(),
 		},
 	}
-	return resp, srv.SendAndClose(resp)
+	if err := srv.SendAndClose(resp); err != nil {
+		return resp, err
+	}
+	grpc_audit.AddFileMeta(ctx, resp.GetFile())
+	grpc_audit.AddPreviousFileMeta(ctx, fileID, key)
+	return resp, nil
 }
 
 func (h *Handler[P]) validateUploadType(key, contentType string) error {
@@ -601,6 +646,21 @@ func (h *Handler[P]) UploadFromMeta(
 	return h.UploadFile(ctx, parentID, key, meta.GetSize(), ctype, srv)
 }
 
+// UploadFromMetaWithCallback is UploadFromMeta with a callback that
+// participates in the file metadata and relation transaction.
+func (h *Handler[P]) UploadFromMetaWithCallback(
+	ctx context.Context,
+	meta *file.UploadMeta,
+	parentID P,
+	srv pbfilestore.FilestoreService_UploadServer,
+	callback UploadCallbackFn,
+) (*file.UploadFileResponse, error) {
+	key := buildKey(meta.GetNamespace(), SanitizeFileName(meta.GetOriginalName()))
+	ctype := sniff(meta.GetContentType(), key)
+
+	return h.UploadFileWithCallback(ctx, parentID, key, meta.GetSize(), ctype, srv, callback)
+}
+
 // UploadFromMetaWithReplacement is the replacement variant for singleton
 // relations. The relation callback runs while the handler holds its parent
 // lock and the upload transaction is open.
@@ -613,7 +673,7 @@ func (h *Handler[P]) UploadFromMetaWithReplacement(
 ) (*file.UploadFileResponse, int64, error) {
 	key := buildKey(meta.GetNamespace(), SanitizeFileName(meta.GetOriginalName()))
 	ctype := sniff(meta.GetContentType(), key)
-	return h.uploadFile(ctx, parentID, key, meta.GetSize(), ctype, srv, replacer)
+	return h.uploadFile(ctx, parentID, key, meta.GetSize(), ctype, srv, replacer, nil)
 }
 
 // GetFileByPath retrieves the file ID and path for a given file path string.
@@ -690,12 +750,29 @@ func (h *Handler[P]) deleteJoinRow(
 
 // Delete removes the association between a parent and a file, and deletes the file if it is orphaned.
 func (h *Handler[P]) Delete(ctx context.Context, parentID P, fileID int64) error {
+	return h.DeleteWithCallback(ctx, parentID, fileID, nil)
+}
+
+// DeleteWithCallback removes the association between a parent and a file, and
+// deletes the file if it is orphaned. callback participates in the deletion
+// transaction and runs before the relation or storage object is removed.
+func (h *Handler[P]) DeleteWithCallback(
+	ctx context.Context,
+	parentID P,
+	fileID int64,
+	callback DeleteCallbackFn,
+) error {
 	tx, err := h.db.BeginTx(ctx, nil)
 	if err != nil {
 		return err
 	}
 	defer tx.Rollback()
 
+	if callback != nil {
+		if err := callback(ctx, tx); err != nil {
+			return err
+		}
+	}
 	if err := h.deleteInTx(ctx, tx, parentID, fileID); err != nil {
 		return err
 	}

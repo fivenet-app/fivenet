@@ -2,7 +2,9 @@ package citizens
 
 import (
 	"context"
+	"database/sql"
 	"errors"
+	"strconv"
 
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/audit"
 	filepb "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/file"
@@ -100,21 +102,31 @@ func (s *Server) UploadCitizenFile(
 	}
 	logging.InjectFields(ctx, logging.Fields{citizenIDLogFieldKey, targetID})
 	meta.Namespace = "citizen_files"
-	resp, err := s.citizenFilesHandler.UploadFromMeta(ctx, meta, targetID, srv)
+	_, err = s.citizenFilesHandler.UploadFromMetaWithCallback(
+		ctx,
+		meta,
+		targetID,
+		srv,
+		func(ctx context.Context, tx *sql.Tx, resp *filepb.UploadFileResponse) error {
+			err := s.createCitizenFileActivity(
+				ctx,
+				tx,
+				userInfo.GetUserId(),
+				targetID,
+				true,
+				citizenFileKindAttachment,
+				resp.GetFile(),
+				meta.GetReason(),
+			)
+			return errswrap.NewError(err, errorscitizens.ErrFailedQuery)
+		},
+	)
 	if err != nil {
 		return err
 	}
-	if err := s.createCitizenFileActivity(
-		ctx,
-		userInfo.GetUserId(),
-		targetID,
-		true,
-		citizenFileKindAttachment,
-		resp.GetFile(),
-		meta.GetReason(),
-	); err != nil {
-		return errswrap.NewError(err, errorscitizens.ErrFailedQuery)
-	}
+	grpc_audit.SetTargetUser(ctx, targetID, "")
+	grpc_audit.AddMeta(ctx, "citizen.user_id", strconv.FormatInt(int64(targetID), 10))
+	grpc_audit.AddMeta(ctx, "file.kind", citizenFileKindAttachment)
 	grpc_audit.SetAction(ctx, audit.EventAction_EVENT_ACTION_CREATED)
 	return nil
 }
@@ -149,17 +161,22 @@ func (s *Server) DeleteCitizenFile(
 	if target.Kind == "mugshot" {
 		return nil, errorscitizens.ErrPropsMugshotDenied
 	}
-	if err := s.citizenFilesHandler.Delete(ctx, req.GetUserId(), req.GetFileId()); err != nil {
-		return nil, errswrap.NewError(err, errorscitizens.ErrFailedQuery)
-	}
-	if err := s.createCitizenFileActivity(
+	if err := s.citizenFilesHandler.DeleteWithCallback(
 		ctx,
-		userInfo.GetUserId(),
 		req.GetUserId(),
-		false,
-		target.Kind,
-		target.File,
-		req.GetReason(),
+		req.GetFileId(),
+		func(ctx context.Context, tx *sql.Tx) error {
+			return s.createCitizenFileActivity(
+				ctx,
+				tx,
+				userInfo.GetUserId(),
+				req.GetUserId(),
+				false,
+				target.Kind,
+				target.File,
+				req.GetReason(),
+			)
+		},
 	); err != nil {
 		return nil, errswrap.NewError(err, errorscitizens.ErrFailedQuery)
 	}
@@ -255,6 +272,7 @@ func (s *Server) listCitizenFiles(
 
 func (s *Server) createCitizenFileActivity(
 	ctx context.Context,
+	db qrm.DB,
 	sourceID, targetID int32,
 	added bool,
 	kind string,
@@ -263,7 +281,7 @@ func (s *Server) createCitizenFileActivity(
 ) error {
 	return usersactivity.CreateUserActivities(
 		ctx,
-		s.db,
+		db,
 		&usersactivity.UserActivity{
 			SourceUserId: &sourceID,
 			TargetUserId: targetID,

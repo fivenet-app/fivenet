@@ -46,10 +46,22 @@ func (s *Store) AddActivity(ctx context.Context, activity *vehiclesactivity.Vehi
 		return err
 	}
 	defer tx.Rollback()
-	if _, err := s.addVehicleActivity(ctx, tx, activity); err != nil {
+	if err := s.AddActivityWithDB(ctx, tx, activity); err != nil {
 		return err
 	}
 	return tx.Commit()
+}
+
+// AddActivityWithDB adds an activity using the caller's database handle. It
+// lets operations that mutate another record include their audit activity in
+// the same transaction.
+func (s *Store) AddActivityWithDB(
+	ctx context.Context,
+	db qrm.DB,
+	activity *vehiclesactivity.VehicleActivity,
+) error {
+	_, err := s.addVehicleActivity(ctx, db, activity)
+	return err
 }
 
 func (s *Store) Count(ctx context.Context, q ListQuery) (int64, error) {

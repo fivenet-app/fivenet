@@ -112,6 +112,50 @@ func TestDeleteStorageFailureLeavesDatabaseTransactionUncommitted(t *testing.T) 
 	require.ErrorIs(t, h.Delete(t.Context(), int64(7), 23), st.deleteErr)
 }
 
+func TestDeleteWithCallbackRunsBeforeDeletionAndCommitsTogether(t *testing.T) {
+	t.Parallel()
+	db, mock := newFilestoreDB(t)
+	st := &uploadStorage{}
+
+	mock.ExpectBegin()
+	mock.ExpectExec(`INSERT INTO deletion_activities`).
+		WillReturnResult(sqlmock.NewResult(1, 1))
+	mock.ExpectExec(`DELETE FROM fivenet_documents_files .*WHERE .*document_id = \?.*file_id = \?.*LIMIT \?;`).
+		WithArgs(int64(7), int64(23), int64(1)).
+		WillReturnResult(sqlmock.NewResult(0, 1))
+	mock.ExpectQuery(`SELECT COUNT\(fivenet_documents_files\.file_id\).*FROM fivenet_documents_files.*WHERE .*file_id = \?;`).
+		WithArgs(int64(23)).
+		WillReturnRows(sqlmock.NewRows([]string{"count"}).AddRow(int64(1)))
+	mock.ExpectCommit()
+
+	h := newDeleteHandler(db, st, false)
+	err := h.DeleteWithCallback(t.Context(), int64(7), 23, func(ctx context.Context, tx *sql.Tx) error {
+		_, err := tx.ExecContext(ctx, "INSERT INTO deletion_activities VALUES ()")
+		return err
+	})
+	require.NoError(t, err)
+	assert.Empty(t, st.deleted)
+	require.NoError(t, mock.ExpectationsWereMet())
+}
+
+func TestDeleteWithCallbackFailureRollsBackBeforeStorageDeletion(t *testing.T) {
+	t.Parallel()
+	db, mock := newFilestoreDB(t)
+	st := &uploadStorage{}
+	callbackErr := errors.New("activity unavailable")
+
+	mock.ExpectBegin()
+	mock.ExpectRollback()
+
+	h := newDeleteHandler(db, st, false)
+	err := h.DeleteWithCallback(t.Context(), int64(7), 23, func(context.Context, *sql.Tx) error {
+		return callbackErr
+	})
+	require.ErrorIs(t, err, callbackErr)
+	assert.Empty(t, st.deleted)
+	require.NoError(t, mock.ExpectationsWereMet())
+}
+
 func TestDeleteWithParentLockFindsAndDeletesUnderLock(t *testing.T) {
 	t.Parallel()
 	db, mock := newFilestoreDB(t)

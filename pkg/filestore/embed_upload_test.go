@@ -121,6 +121,43 @@ func TestUploadFileSuccess(t *testing.T) {
 	assert.Empty(t, st.deleted)
 }
 
+func TestUploadFileCallbackFailureRollsBackAndDoesNotRespond(t *testing.T) {
+	t.Parallel()
+	db, mock := newFilestoreDB(t)
+	st := &uploadStorage{}
+	stream := &uploadStream{
+		packets: []*file.UploadFileRequest{dataRequest([]byte("hello"))},
+		recvErr: io.EOF,
+	}
+
+	mock.ExpectBegin()
+	mock.ExpectQuery(`SELECT .*fivenet_files.*WHERE .*file_path = \?.*FOR UPDATE;`).
+		WithArgs("uploads/file.txt").
+		WillReturnRows(sqlmock.NewRows([]string{"id"}))
+	mock.ExpectExec(`INSERT INTO fivenet_files .*file_path.*byte_size.*content_type.*meta`).
+		WithArgs("uploads/file.txt", int64(5), "text/plain").
+		WillReturnResult(sqlmock.NewResult(23, 1))
+	mock.ExpectRollback()
+
+	h := &Handler[int64]{store: st, db: db}
+	_, err := h.UploadFileWithCallback(
+		t.Context(),
+		7,
+		"uploads/file.txt",
+		5,
+		"",
+		stream,
+		func(context.Context, *sql.Tx, *file.UploadFileResponse) error {
+			return errors.New("activity insert failed")
+		},
+	)
+	require.ErrorContains(t, err, "activity insert failed")
+	assert.Nil(t, stream.sent)
+	assert.False(t, stream.closed)
+	assert.Equal(t, "uploads/file.txt", st.deleted)
+	require.NoError(t, mock.ExpectationsWereMet())
+}
+
 func TestUploadFileEnforcesActualSizeLimitAndCleansStorage(t *testing.T) {
 	t.Parallel()
 

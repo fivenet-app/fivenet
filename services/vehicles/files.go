@@ -2,6 +2,7 @@ package vehicles
 
 import (
 	"context"
+	"database/sql"
 
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/audit"
 	filepb "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/file"
@@ -79,21 +80,30 @@ func (s *Server) UploadVehicleFile(
 		return errorsvehicles.ErrReasonRequired
 	}
 	meta.Namespace = "vehicle_files"
-	resp, err := s.filesHandler.UploadFromMeta(ctx, meta, plate, srv)
+	_, err = s.filesHandler.UploadFromMetaWithCallback(
+		ctx,
+		meta,
+		plate,
+		srv,
+		func(ctx context.Context, tx *sql.Tx, resp *filepb.UploadFileResponse) error {
+			err := s.addFileActivity(
+				ctx,
+				tx,
+				userInfo,
+				plate,
+				true,
+				vehicleFileKindAttachment,
+				resp.GetFile(),
+				meta.GetReason(),
+			)
+			return errswrap.NewError(err, errorsvehicles.ErrFailedQuery)
+		},
+	)
 	if err != nil {
 		return err
 	}
-	if err := s.addFileActivity(
-		ctx,
-		userInfo,
-		plate,
-		true,
-		vehicleFileKindAttachment,
-		resp.GetFile(),
-		meta.GetReason(),
-	); err != nil {
-		return errswrap.NewError(err, errorsvehicles.ErrFailedQuery)
-	}
+	grpc_audit.AddMeta(ctx, "vehicle.plate", plate)
+	grpc_audit.AddMeta(ctx, "file.kind", vehicleFileKindAttachment)
 	grpc_audit.SetAction(ctx, audit.EventAction_EVENT_ACTION_CREATED)
 	return nil
 }
@@ -122,17 +132,22 @@ func (s *Server) DeleteVehicleFile(
 	if target == nil {
 		return nil, errorsvehicles.ErrFailedQuery
 	}
-	if err := s.filesHandler.Delete(ctx, req.GetPlate(), req.GetFileId()); err != nil {
-		return nil, errswrap.NewError(err, errorsvehicles.ErrFailedQuery)
-	}
-	if err := s.addFileActivity(
+	if err := s.filesHandler.DeleteWithCallback(
 		ctx,
-		userInfo,
 		req.GetPlate(),
-		false,
-		target.Kind,
-		target.File,
-		req.GetReason(),
+		req.GetFileId(),
+		func(ctx context.Context, tx *sql.Tx) error {
+			return s.addFileActivity(
+				ctx,
+				tx,
+				userInfo,
+				req.GetPlate(),
+				false,
+				target.Kind,
+				target.File,
+				req.GetReason(),
+			)
+		},
 	); err != nil {
 		return nil, errswrap.NewError(err, errorsvehicles.ErrFailedQuery)
 	}
@@ -167,6 +182,7 @@ func (s *Server) listVehicleFiles(
 
 func (s *Server) addFileActivity(
 	ctx context.Context,
+	db qrm.DB,
 	user *userinfo.UserInfo,
 	plate string,
 	added bool,
@@ -175,8 +191,9 @@ func (s *Server) addFileActivity(
 	reason string,
 ) error {
 	creatorID := user.GetUserId()
-	return s.store.AddActivity(
+	return s.store.AddActivityWithDB(
 		ctx,
+		db,
 		&vehiclesactivity.VehicleActivity{
 			Plate:        plate,
 			CreatorId:    &creatorID,

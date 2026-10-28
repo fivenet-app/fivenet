@@ -50,6 +50,11 @@ type IStore interface {
 	ListExpiredWanted(ctx context.Context, maxDays int64, limit int64) ([]string, error)
 	ClearWanted(ctx context.Context, plate string) error
 	AddActivity(ctx context.Context, activity *vehiclesactivity.VehicleActivity) error
+	AddActivityWithDB(
+		ctx context.Context,
+		db qrm.DB,
+		activity *vehiclesactivity.VehicleActivity,
+	) error
 }
 
 type Store struct {
