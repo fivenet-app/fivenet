@@ -5,7 +5,7 @@ import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
 import TiptapEditor from '~/components/partials/editor/TiptapEditor.vue';
 import { useMailerStore } from '~/stores/mailer';
 import { getMailerSettingsClient } from '~~/gen/ts/clients';
-import { contentToTiptapValue } from '~/utils/content';
+import { contentToEditorValue } from '~/utils/content';
 import { AccessLevel } from '~~/gen/ts/resources/mailer/access/access';
 import type { ListTemplatesResponse } from '~~/gen/ts/services/mailer/settings';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
@@ -206,7 +206,7 @@ const confirmModal = overlay.create(ConfirmModal);
 
                                             <ClientOnly>
                                                 <TiptapEditor
-                                                    :model-value="contentToTiptapValue(visibleTemplates[index].content)"
+                                                    :model-value="contentToEditorValue(visibleTemplates[index].content)"
                                                     disabled
                                                     hide-toolbar
                                                     wrapper-class="min-h-44"

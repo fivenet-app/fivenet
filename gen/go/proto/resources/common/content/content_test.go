@@ -31,6 +31,22 @@ func TestContentExtract(t *testing.T) {
 
 		require.Equal(t, "Hello", content.Extract().GetText())
 	})
+
+	t.Run("legacy HTML content scan and value round trip", func(t *testing.T) {
+		content := &Content{}
+		require.NoError(t, content.Scan(`<p>Hello <strong>world</strong></p>`))
+		require.Equal(t, "Hello world", content.Extract().GetText())
+
+		value, err := content.Value()
+		require.NoError(t, err)
+
+		encoded, ok := value.([]byte)
+		require.True(t, ok)
+
+		var roundTripped Content
+		require.NoError(t, roundTripped.Scan(encoded))
+		require.Equal(t, "Hello world", roundTripped.Extract().GetText())
+	})
 }
 
 func mustStructForContentTest(t *testing.T, value map[string]any) *structpb.Struct {

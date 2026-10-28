@@ -5,12 +5,11 @@ import { z } from 'zod';
 import ConfirmModal from '~/components/partials/ConfirmModal.vue';
 import CustomContentRenderer from '~/components/partials/content/CustomContentRenderer.vue';
 import TiptapEditor from '~/components/partials/editor/TiptapEditor.vue';
-import type { HistoryContent } from '~/types/history';
-import { contentToTiptapValue, tiptapToContent } from '~/utils/content';
+import { contentToEditorValue, tiptapToContent } from '~/utils/content';
 import { getDocumentsCommentsClient } from '~~/gen/ts/clients';
 import type { Comment } from '~~/gen/ts/resources/documents/comment/comment';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
-import { isEmptyDoc } from '~/utils/tiptap';
+import { useDocumentCommentHistory } from '~/composables/useDocumentCommentHistory';
 
 const props = withDefaults(
     defineProps<{
@@ -29,8 +28,6 @@ const emit = defineEmits<{
 
 const comment = defineModel<Comment | undefined>({ default: undefined });
 
-const { t } = useI18n();
-
 const overlay = useOverlay();
 
 const { can, activeChar, isSuperuser } = useAuth();
@@ -38,8 +35,6 @@ const { can, activeChar, isSuperuser } = useAuth();
 const { custom } = useAppConfig();
 
 const notifications = useNotificationsStore();
-
-const historyStore = useHistoryStore();
 
 const documentsCommentsClient = await getDocumentsCommentsClient();
 
@@ -55,50 +50,9 @@ const state = reactive<Schema>({
     content: undefined,
 });
 
-function serializeCommentContent(value: Schema): string {
-    if (isEmptyDoc(value.content as JSONContent | undefined)) return '__empty__';
-    return JSON.stringify(value.content);
-}
-
-const { snapshotDirty, syncSnapshot } = useSnapshotChanges(state, {
+const { snapshotDirty, syncSnapshot, saving, saveHistory } = useDocumentCommentHistory(state, () => props.documentId, {
     dirty: editing,
-    serializer: serializeCommentContent,
 });
-
-const saving = ref<boolean>(false);
-
-// Track last saved string and timestamp
-let lastSavedString: JSONContent | string | undefined = undefined;
-let lastSaveTimestamp = 0;
-
-async function saveHistory(values: Schema, type = 'document_comments'): Promise<void> {
-    if (saving.value) return;
-
-    const now = Date.now();
-    // Skip if identical to last saved or if within MIN_GAP
-    if (state.content === lastSavedString || now - lastSaveTimestamp < 5000) return;
-
-    saving.value = true;
-
-    historyStore.addVersion<HistoryContent>(
-        type,
-        props.documentId,
-        {
-            content: values.content,
-            files: [],
-        },
-        `${t('common.comment')}: DOC-${props.documentId}`,
-    );
-
-    useTimeoutFn(() => {
-        saving.value = false;
-    }, 1750);
-
-    lastSavedString = state.content;
-    lastSaveTimestamp = now;
-}
-
-historyStore.handleRefresh(() => saveHistory(state));
 
 watchDebounced(
     state,
@@ -172,7 +126,7 @@ async function deleteComment(id: number): Promise<void> {
 function setFromProps(): void {
     if (!comment.value) return;
 
-    state.content = contentToTiptapValue(comment.value.content);
+    state.content = contentToEditorValue(comment.value.content);
     syncSnapshot();
 }
 

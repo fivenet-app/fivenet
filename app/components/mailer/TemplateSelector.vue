@@ -2,7 +2,7 @@
 import type { Editor } from '@tiptap/core';
 import { useMailerStore } from '~/stores/mailer';
 import { getMailerSettingsClient } from '~~/gen/ts/clients';
-import { contentToTiptapValue } from '~/utils/content';
+import { contentToEditorValue } from '~/utils/content';
 import type { Template } from '~~/gen/ts/resources/mailer/templates/template';
 import type { ListTemplatesResponse } from '~~/gen/ts/services/mailer/settings';
 
@@ -45,7 +45,7 @@ const selectedTemplate = ref<Template | undefined>(undefined);
 function selectTemplate(template: Template | undefined): void {
     if (!props.editor || !template) return;
 
-    props.editor.commands.insertContent(contentToTiptapValue(template.content));
+    props.editor.commands.insertContent(contentToEditorValue(template.content));
 
     selectedTemplate.value = undefined;
 }

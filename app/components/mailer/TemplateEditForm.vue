@@ -5,7 +5,7 @@ import { z } from 'zod';
 import TiptapEditor from '~/components/partials/editor/TiptapEditor.vue';
 import { useMailerStore } from '~/stores/mailer';
 import { getMailerSettingsClient } from '~~/gen/ts/clients';
-import { contentToTiptapValue, tiptapToContent } from '~/utils/content';
+import { contentToEditorValue, tiptapToContent } from '~/utils/content';
 import type { Template } from '~~/gen/ts/resources/mailer/templates/template';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 import type { CreateOrUpdateTemplateRequest } from '~~/gen/ts/services/mailer/settings';
@@ -50,7 +50,7 @@ function setFromProps(): void {
     }
 
     state.title = props.template?.title ?? '';
-    state.content = contentToTiptapValue(props.template.content);
+    state.content = contentToEditorValue(props.template.content);
     syncSnapshot();
 }
 

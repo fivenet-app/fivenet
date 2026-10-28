@@ -10,14 +10,13 @@ import DeletedAtBadge from '~/components/partials/DeletedAtBadge.vue';
 import TiptapEditor from '~/components/partials/editor/TiptapEditor.vue';
 import GenericTime from '~/components/partials/elements/GenericTime.vue';
 import Pagination from '~/components/partials/Pagination.vue';
-import type { HistoryContent } from '~/types/history';
 import { tiptapToContent } from '~/utils/content';
 import { getDocumentsCommentsClient } from '~~/gen/ts/clients';
 import type { Comment } from '~~/gen/ts/resources/documents/comment/comment';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 import type { GetCommentsResponse } from '~~/gen/ts/services/documents/comments';
 import CommentEntry from './CommentEntry.vue';
-import { isEmptyDoc } from '~/utils/tiptap';
+import { useDocumentCommentHistory } from '~/composables/useDocumentCommentHistory';
 
 const props = withDefaults(
     defineProps<{
@@ -38,13 +37,9 @@ const emit = defineEmits<{
     (e: 'restoredComment'): void;
 }>();
 
-const { t } = useI18n();
-
 const { isSuperuser } = useAuth();
 
 const notifications = useNotificationsStore();
-
-const historyStore = useHistoryStore();
 
 const documentsCommentsClient = await getDocumentsCommentsClient();
 
@@ -104,49 +99,7 @@ const state = reactive<Schema>({
     content: undefined,
 });
 
-function serializeCommentContent(value: Schema): string {
-    if (isEmptyDoc(value.content as JSONContent | undefined)) return '__empty__';
-    return JSON.stringify(value.content);
-}
-
-const { hasUnsavedChanges, syncSnapshot } = useSnapshotChanges(state, {
-    serializer: serializeCommentContent,
-});
-
-const saving = ref<boolean>(false);
-
-// Track last saved string and timestamp
-let lastSavedString: JSONContent | string | undefined = undefined;
-let lastSaveTimestamp = 0;
-
-async function saveHistory(values: Schema, type = 'document_comments'): Promise<void> {
-    if (saving.value) return;
-
-    const now = Date.now();
-    // Skip if identical to last saved or if within MIN_GAP
-    if (state.content === lastSavedString || now - lastSaveTimestamp < 5000) return;
-
-    saving.value = true;
-
-    historyStore.addVersion<HistoryContent>(
-        type,
-        props.documentId,
-        {
-            content: values.content,
-            files: [],
-        },
-        `${t('common.comment')}: DOC-${props.documentId}`,
-    );
-
-    useTimeoutFn(() => {
-        saving.value = false;
-    }, 1750);
-
-    lastSavedString = state.content;
-    lastSaveTimestamp = now;
-}
-
-historyStore.handleRefresh(() => saveHistory(state));
+const { hasUnsavedChanges, syncSnapshot, saving, saveHistory } = useDocumentCommentHistory(state, () => props.documentId);
 
 watchDebounced(
     state,

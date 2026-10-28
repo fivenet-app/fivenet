@@ -8,7 +8,7 @@ import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import TiptapEditor from '~/components/partials/editor/TiptapEditor.vue';
 import ConfirmModal from '~/components/partials/ConfirmModal.vue';
 import { useMailerStore } from '~/stores/mailer';
-import { contentToTiptapValue, tiptapToContent } from '~/utils/content';
+import { contentToEditorValue, tiptapToContent } from '~/utils/content';
 import { getMailerMailerClient } from '~~/gen/ts/clients';
 import { AccessLevel } from '~~/gen/ts/resources/mailer/access/access';
 import type { Email } from '~~/gen/ts/resources/mailer/emails/email';
@@ -161,7 +161,7 @@ function setFromProps(): void {
     state.label = email.value.label;
     state.deactivated = email.value.deactivated;
     if (email.value.access) state.access = email.value.access;
-    state.signature = contentToTiptapValue(email.value.settings?.signature);
+    state.signature = contentToEditorValue(email.value.settings?.signature);
     state.blockedEmails = email.value.settings?.blockedEmails ?? [];
 
     syncSnapshot();

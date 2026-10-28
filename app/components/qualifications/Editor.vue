@@ -9,7 +9,7 @@ import { enumToAccessLevelEnums, normalizeAccessEntryIds, type AccessType } from
 import TiptapEditor from '~/components/partials/editor/TiptapEditor.vue';
 import RequirementEntry from '~/components/qualifications/RequirementEntry.vue';
 import type { HistoryContent } from '~/types/history';
-import { contentToTiptapValue, tiptapToContent } from '~/utils/content';
+import { contentToEditorValue, tiptapToContent } from '~/utils/content';
 import { getQualificationsQualificationsClient } from '~~/gen/ts/clients';
 import type { File } from '~~/gen/ts/resources/file/file';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
@@ -411,7 +411,7 @@ function setFromProps(): void {
     state.abbreviation = qualification.value.abbreviation;
     state.title = qualification.value.title;
     state.description = qualification.value.description;
-    state.content = contentToTiptapValue(qualification.value.content);
+    state.content = contentToEditorValue(qualification.value.content);
     state.closed = qualification.value.closed;
     state.public = qualification.value.public;
     state.abbreviation = qualification.value.abbreviation;

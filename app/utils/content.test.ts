@@ -2,7 +2,7 @@ import type { JsonObject } from '@protobuf-ts/runtime';
 import { describe, expect, it } from 'vitest';
 import { Struct } from '~~/gen/ts/google/protobuf/struct';
 import { ContentType, NodeType, type Content, type RichTextHtmlNode } from '~~/gen/ts/resources/common/content/content';
-import { contentToTiptapValue, getTextFromContent, jsonNodeToTocLinks, tiptapToContent } from './content';
+import { contentToEditorValue, getTextFromContent, jsonNodeToTocLinks, tiptapToContent } from './content';
 
 function richNode(node: Partial<RichTextHtmlNode> & Pick<RichTextHtmlNode, 'tag'>): RichTextHtmlNode {
     const { tag, ...rest } = node;
@@ -180,7 +180,7 @@ describe('tiptapToContent', () => {
     });
 });
 
-describe('contentToTiptapValue', () => {
+describe('contentToEditorValue', () => {
     it('should prefer tiptap json when available', () => {
         const content: Content = {
             version: '1',
@@ -188,7 +188,7 @@ describe('contentToTiptapValue', () => {
             tiptapJson: Struct.fromJson({ type: 'doc', content: [] }),
         };
 
-        expect(contentToTiptapValue(content)).toEqual({ type: 'doc', content: [] });
+        expect(contentToEditorValue(content)).toEqual({ type: 'doc', content: [] });
     });
 
     it('should fall back to raw html when tiptap json is missing', () => {
@@ -198,12 +198,12 @@ describe('contentToTiptapValue', () => {
             rawHtml: '<p>Hello</p>',
         };
 
-        expect(contentToTiptapValue(content)).toBe('<p>Hello</p>');
+        expect(contentToEditorValue(content)).toBe('<p>Hello</p>');
     });
 
     it('should return an empty string when content is missing', () => {
-        expect(contentToTiptapValue()).toBe('');
-        expect(contentToTiptapValue(null)).toBe('');
+        expect(contentToEditorValue()).toBe('');
+        expect(contentToEditorValue(null)).toBe('');
     });
 });
 

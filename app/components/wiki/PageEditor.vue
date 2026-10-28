@@ -7,7 +7,7 @@ import AccessManager from '~/components/partials/access/AccessManager.vue';
 import { enumToAccessLevelEnums, normalizeAccessEntryIds } from '~/components/partials/access/helpers';
 import TiptapEditor from '~/components/partials/editor/TiptapEditor.vue';
 import type { HistoryContent } from '~/types/history';
-import { contentToTiptapValue, tiptapToContent } from '~/utils/content';
+import { contentToEditorValue, tiptapToContent } from '~/utils/content';
 import { getWikiWikiClient } from '~~/gen/ts/clients';
 import { ContentType } from '~~/gen/ts/resources/common/content/content';
 import type { File } from '~~/gen/ts/resources/file/file';
@@ -213,7 +213,7 @@ function setFromProps(): void {
     state.parentId = input?.parentId ?? 0;
     state.meta.title = input.meta?.title ?? '';
     state.meta.description = input.meta?.description ?? '';
-    state.content = contentToTiptapValue(input.content);
+    state.content = contentToEditorValue(input.content);
     state.meta.toc = input.meta?.toc ?? true;
     state.meta.draft = input.meta?.draft ?? true;
     state.meta.public = input.meta?.public ?? false;

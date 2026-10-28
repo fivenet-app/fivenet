@@ -13,7 +13,7 @@ export function tiptapToContent(doc?: JSONContent | string, version = ''): Conte
     };
 }
 
-export function contentToTiptapValue(content?: Content | null): JSONContent | string {
+export function contentToEditorValue(content?: Content | null): JSONContent | string {
     if (content?.tiptapJson) {
         return Struct.toJson(content.tiptapJson) as JSONContent;
     }

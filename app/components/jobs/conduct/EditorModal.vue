@@ -9,7 +9,7 @@ import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
 import TiptapEditor from '~/components/partials/editor/TiptapEditor.vue';
 import InputDatePicker from '~/components/partials/InputDatePicker.vue';
 import SelectMenu from '~/components/partials/SelectMenu.vue';
-import { contentToTiptapValue, tiptapToContent } from '~/utils/content';
+import { contentToEditorValue, tiptapToContent } from '~/utils/content';
 import { useAuthStore } from '~/stores/auth';
 import { useCompletorStore } from '~/stores/completor';
 import { getJobsConductClient } from '~~/gen/ts/clients';
@@ -170,7 +170,7 @@ async function setFromProps(): Promise<void> {
     state.draft = entry.value.draft;
     state.targetUserId = entry.value.targetUserId;
     state.type = entry.value.type;
-    state.message = contentToTiptapValue(entry.value.message);
+    state.message = contentToEditorValue(entry.value.message);
     state.files = entry.value.files ?? [];
     state.expiresAt = entry.value.expiresAt ? toDate(entry.value.expiresAt) : undefined;
     syncSnapshot();

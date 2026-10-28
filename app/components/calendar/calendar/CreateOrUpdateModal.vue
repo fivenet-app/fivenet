@@ -194,7 +194,7 @@ function setFromProps(): void {
 
     const calendar = data.value?.calendar;
     state.name = calendar.name;
-    state.description = contentToTiptapValue(calendar.description);
+    state.description = contentToEditorValue(calendar.description);
     state.private = calendar.job === undefined;
     state.public = calendar.public;
     state.closed = calendar.closed;

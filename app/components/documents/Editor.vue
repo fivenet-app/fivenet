@@ -10,7 +10,7 @@ import TiptapEditor from '~/components/partials/editor/TiptapEditor.vue';
 import { useClipboardStore } from '~/stores/clipboard';
 import { useCompletorStore } from '~/stores/completor';
 import type { HistoryContent } from '~/types/history';
-import { contentToTiptapValue, tiptapToContent } from '~/utils/content';
+import { contentToEditorValue, tiptapToContent } from '~/utils/content';
 import { getDocumentsDocumentsClient } from '~~/gen/ts/clients';
 import type { JobAccess, UserAccess } from '~~/gen/ts/resources/access/access';
 import { ContentType } from '~~/gen/ts/resources/common/content/content';
@@ -85,7 +85,7 @@ function setFromProps(): void {
     state.closed = document.value.document.meta?.closed ?? false;
     state.draft = document.value.document.meta?.draft ?? false;
     state.public = document.value.document.meta?.public ?? false;
-    state.content = contentToTiptapValue(document.value.document.content);
+    state.content = contentToEditorValue(document.value.document.content);
     state.category = document.value.document.category
         ? Category.clone(document.value.document.category)
         : Category.clone(emptyCategory);

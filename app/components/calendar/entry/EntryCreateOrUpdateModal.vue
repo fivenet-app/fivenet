@@ -13,7 +13,7 @@ import TiptapEditor from '~/components/partials/editor/TiptapEditor.vue';
 import InputDatePicker from '~/components/partials/InputDatePicker.vue';
 import SelectMenu from '~/components/partials/SelectMenu.vue';
 import { isValidCalendarEntryRecurring } from '~/components/calendar/helpers';
-import { contentToTiptapValue, tiptapToContent } from '~/utils/content';
+import { contentToEditorValue, tiptapToContent } from '~/utils/content';
 import { isCalendarEntryAllDay } from '~/utils/calendar';
 import { useCalendarStore } from '~/stores/calendar';
 import { useCompletorStore } from '~/stores/completor';
@@ -233,7 +233,7 @@ function setFromProps(): void {
         : state.allDay
           ? state.startTime
           : undefined;
-    state.content = contentToTiptapValue(entry.content);
+    state.content = contentToEditorValue(entry.content);
     state.closed = entry.closed;
     state.icon = entry.icon ?? undefined;
     // Don't enable RSVP when the proto omits the field.
