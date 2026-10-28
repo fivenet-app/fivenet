@@ -2,6 +2,53 @@
 
 All notable changes to this project will be documented in this file.
 
+## [2026.10.2] - 2026-10-28
+
+### 🚀 Features
+
+- *(ui)* Add help button
+- *(ui)* Add more description to form fields
+- *(ui)* Add more description texts to form fields
+- *(settings)* Reorganize preferences navigation
+- *(debug)* Add client error diagnostics
+- *(qualifications)* Add client view live updates
+- *(colleagues)* Resolve activity label changes by ID
+
+### 🐛 Bug Fixes
+
+- *(citizens)* Better wanted till handling for feed and props
+- *(ui)* Responsive modal/drawer based on screen size for modals/drawers
+- *(livemap)* Improve select/follow marker handling
+- *(ui)* Stabilize layout and heatmap rendering
+- *(documents)* Signature pad color settings
+- *(documents)* Signature pad popover button typing
+- *(livemap)* Layer controls truncation issues
+- *(ui)* Adjust debug info advanced functions variant
+- *(ui)* Ignore certain errors on client-side
+- *(perms)* Update limiter templates
+- *(perms)* Cleanup/deduplicate limiter templates
+- *(overview)* Add context menu to quick access items too
+- *(vscode)* Update recommended extensions and go format settings
+- *(i18n)* Build and provide dateparser config with locales
+- *(i18n)* Dummy interface implementation
+- Update mb size comments
+- *(filestore)* Housekeeper missing storage DI
+- *(discord)* Calendar reminders "event start" not working
+- *(livemap)* Follow marker fix
+- *(server)* Enable wildcards in origins
+- *(jobprops)* Logo upload issues
+- *(jobprops)* Logo file upload/change issues
+- *(centrum)* Created at timestamp not always set
+- *(filestore)* Reference cleanup issues
+- *(housekeeper)* Clean up qualification and job group activity
+- *(yjs)* Add more tests and improve collab reconnect
+- *(ui)* Move permissions up in debug info
+- *(ui)* Duplicate props on access manager
+- *(grpc)* Graceful server stop
+- *(ui)* Add more form field descriptions for password fields
+- *(documents)* Handle legacy comment content safely
+- *(documents)* Avoid incomplete HTML sanitization in empty doc check
+
 ## [2026.10.1] - 2026-10-17
 
 ### 🚀 Features
