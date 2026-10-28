@@ -4479,8 +4479,10 @@ Policy snapshot applied to a specific version
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `added` | [resources.jobs.labels.Label](#resourcesjobslabelsLabel) | repeated |  |
-| `removed` | [resources.jobs.labels.Label](#resourcesjobslabelsLabel) | repeated | TODO switch to storing label ids instead of the whole label (resolve labels on client-side) |
+| `added` | [resources.jobs.labels.Label](#resourcesjobslabelsLabel) | repeated | **Deprecated.**  |
+| `removed` | [resources.jobs.labels.Label](#resourcesjobslabelsLabel) | repeated | **Deprecated.**  |
+| `added_ids` | [int64](#int64) | repeated |  |
+| `removed_ids` | [int64](#int64) | repeated |  |
 
 
 

@@ -765,9 +765,13 @@ func (b0 GradeChange_builder) Build() *GradeChange {
 }
 
 type LabelsChange struct {
-	state         protoimpl.MessageState `protogen:"hybrid.v1"`
-	Added         []*labels.Label        `protobuf:"bytes,1,rep,name=added,proto3" json:"added,omitempty"`
-	Removed       []*labels.Label        `protobuf:"bytes,2,rep,name=removed,proto3" json:"removed,omitempty"` // TODO switch to storing label ids instead of the whole label (resolve labels on client-side)
+	state protoimpl.MessageState `protogen:"hybrid.v1"`
+	// Deprecated: Marked as deprecated in resources/jobs/colleagues/activity/activity.proto.
+	Added []*labels.Label `protobuf:"bytes,1,rep,name=added,proto3" json:"added,omitempty"`
+	// Deprecated: Marked as deprecated in resources/jobs/colleagues/activity/activity.proto.
+	Removed       []*labels.Label `protobuf:"bytes,2,rep,name=removed,proto3" json:"removed,omitempty"`
+	AddedIds      []int64         `protobuf:"varint,3,rep,packed,name=added_ids,json=addedIds,proto3" json:"added_ids,omitempty"`
+	RemovedIds    []int64         `protobuf:"varint,4,rep,packed,name=removed_ids,json=removedIds,proto3" json:"removed_ids,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -797,6 +801,7 @@ func (x *LabelsChange) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
+// Deprecated: Marked as deprecated in resources/jobs/colleagues/activity/activity.proto.
 func (x *LabelsChange) GetAdded() []*labels.Label {
 	if x != nil {
 		return x.Added
@@ -804,6 +809,7 @@ func (x *LabelsChange) GetAdded() []*labels.Label {
 	return nil
 }
 
+// Deprecated: Marked as deprecated in resources/jobs/colleagues/activity/activity.proto.
 func (x *LabelsChange) GetRemoved() []*labels.Label {
 	if x != nil {
 		return x.Removed
@@ -811,19 +817,47 @@ func (x *LabelsChange) GetRemoved() []*labels.Label {
 	return nil
 }
 
+func (x *LabelsChange) GetAddedIds() []int64 {
+	if x != nil {
+		return x.AddedIds
+	}
+	return nil
+}
+
+func (x *LabelsChange) GetRemovedIds() []int64 {
+	if x != nil {
+		return x.RemovedIds
+	}
+	return nil
+}
+
+// Deprecated: Marked as deprecated in resources/jobs/colleagues/activity/activity.proto.
 func (x *LabelsChange) SetAdded(v []*labels.Label) {
 	x.Added = v
 }
 
+// Deprecated: Marked as deprecated in resources/jobs/colleagues/activity/activity.proto.
 func (x *LabelsChange) SetRemoved(v []*labels.Label) {
 	x.Removed = v
+}
+
+func (x *LabelsChange) SetAddedIds(v []int64) {
+	x.AddedIds = v
+}
+
+func (x *LabelsChange) SetRemovedIds(v []int64) {
+	x.RemovedIds = v
 }
 
 type LabelsChange_builder struct {
 	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
 
-	Added   []*labels.Label
-	Removed []*labels.Label
+	// Deprecated: Marked as deprecated in resources/jobs/colleagues/activity/activity.proto.
+	Added []*labels.Label
+	// Deprecated: Marked as deprecated in resources/jobs/colleagues/activity/activity.proto.
+	Removed    []*labels.Label
+	AddedIds   []int64
+	RemovedIds []int64
 }
 
 func (b0 LabelsChange_builder) Build() *LabelsChange {
@@ -832,6 +866,8 @@ func (b0 LabelsChange_builder) Build() *LabelsChange {
 	_, _ = b, x
 	x.Added = b.Added
 	x.Removed = b.Removed
+	x.AddedIds = b.AddedIds
+	x.RemovedIds = b.RemovedIds
 	return m0
 }
 
@@ -965,10 +1001,13 @@ const file_resources_jobs_colleagues_activity_activity_proto_rawDesc = "" +
 	"\vGradeChange\x12\x14\n" +
 	"\x05grade\x18\x01 \x01(\x05R\x05grade\x12\x1f\n" +
 	"\vgrade_label\x18\x02 \x01(\tR\n" +
-	"gradeLabel\"z\n" +
-	"\fLabelsChange\x122\n" +
-	"\x05added\x18\x01 \x03(\v2\x1c.resources.jobs.labels.LabelR\x05added\x126\n" +
-	"\aremoved\x18\x02 \x03(\v2\x1c.resources.jobs.labels.LabelR\aremoved\"\\\n" +
+	"gradeLabel\"\xc0\x01\n" +
+	"\fLabelsChange\x126\n" +
+	"\x05added\x18\x01 \x03(\v2\x1c.resources.jobs.labels.LabelB\x02\x18\x01R\x05added\x12:\n" +
+	"\aremoved\x18\x02 \x03(\v2\x1c.resources.jobs.labels.LabelB\x02\x18\x01R\aremoved\x12\x1b\n" +
+	"\tadded_ids\x18\x03 \x03(\x03R\baddedIds\x12\x1f\n" +
+	"\vremoved_ids\x18\x04 \x03(\x03R\n" +
+	"removedIds\"\\\n" +
 	"\n" +
 	"NameChange\x12\x1b\n" +
 	"\x06prefix\x18\x01 \x01(\tH\x00R\x06prefix\x88\x01\x01\x12\x1b\n" +

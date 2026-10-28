@@ -1,5 +1,6 @@
 <script lang="ts" setup>
 import ColleagueInfoPopover from '~/components/jobs/colleagues/ColleagueInfoPopover.vue';
+import LabelBadge from '~/components/jobs/colleagues/labels/LabelBadge.vue';
 import { jobsUserActivityTypeBGColor, jobsUserActivityTypeIcon } from '~/components/jobs/colleagues/info/helpers';
 import ActivityFeedItem from '~/components/partials/data/ActivityFeedItem.vue';
 import GenericTime from '~/components/partials/elements/GenericTime.vue';
@@ -44,25 +45,23 @@ withDefaults(
 
                 <template v-else-if="activity.data?.data.oneofKind === 'labelsChange'">
                     <span class="inline-flex flex-wrap gap-1">
-                        <UBadge
+                        <LabelBadge
                             v-for="label in activity.data.data.labelsChange?.removed"
-                            :key="label.name"
-                            class="justify-between gap-2 line-through"
-                            :class="isColorBright(hexToRgb(label.color, rgbBlack)!) ? 'text-black!' : 'text-white!'"
-                            :style="{ backgroundColor: label.color }"
-                            size="md"
-                            :label="label.name"
+                            :key="label.id"
+                            :label="label"
+                            removed
                         />
 
-                        <UBadge
-                            v-for="label in activity.data.data.labelsChange?.added"
-                            :key="label.name"
-                            class="justify-between gap-2"
-                            :class="isColorBright(hexToRgb(label.color, rgbBlack)!) ? 'text-black!' : 'text-white!'"
-                            :style="{ backgroundColor: label.color }"
-                            size="md"
-                            :label="label.name"
+                        <LabelBadge v-for="label in activity.data.data.labelsChange?.added" :key="label.id" :label="label" />
+
+                        <LabelBadge
+                            v-for="labelId in activity.data.data.labelsChange?.removedIds"
+                            :id="labelId"
+                            :key="labelId"
+                            removed
                         />
+
+                        <LabelBadge v-for="labelId in activity.data.data.labelsChange?.addedIds" :id="labelId" :key="labelId" />
                     </span>
                 </template>
 

@@ -797,7 +797,10 @@ func (s *Store) HandleColleaguePropsChanges(
 			Reason:       reason,
 			Data: &colleaguesactivity.ColleagueActivityData{
 				Data: &colleaguesactivity.ColleagueActivityData_LabelsChange{
-					LabelsChange: &colleaguesactivity.LabelsChange{Added: added, Removed: removed},
+					LabelsChange: &colleaguesactivity.LabelsChange{
+						AddedIds:   labelIDs(added),
+						RemovedIds: labelIDs(removed),
+					},
 				},
 			},
 		})
@@ -853,6 +856,15 @@ func (s *Store) HandleColleaguePropsChanges(
 	}
 
 	return activities, nil
+}
+
+func labelIDs(labels []*jobslabels.Label) []int64 {
+	ids := make([]int64, len(labels))
+	for i, label := range labels {
+		ids[i] = label.GetId()
+	}
+
+	return ids
 }
 
 func updateColleaguesLabels(

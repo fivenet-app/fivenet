@@ -125,13 +125,23 @@ export interface GradeChange {
  */
 export interface LabelsChange {
     /**
-     * @generated from protobuf field: repeated resources.jobs.labels.Label added = 1
+     * @deprecated
+     * @generated from protobuf field: repeated resources.jobs.labels.Label added = 1 [deprecated = true]
      */
     added: Label[];
     /**
-     * @generated from protobuf field: repeated resources.jobs.labels.Label removed = 2
+     * @deprecated
+     * @generated from protobuf field: repeated resources.jobs.labels.Label removed = 2 [deprecated = true]
      */
-    removed: Label[]; // TODO switch to storing label ids instead of the whole label (resolve labels on client-side)
+    removed: Label[];
+    /**
+     * @generated from protobuf field: repeated int64 added_ids = 3
+     */
+    addedIds: number[];
+    /**
+     * @generated from protobuf field: repeated int64 removed_ids = 4
+     */
+    removedIds: number[];
 }
 /**
  * @generated from protobuf message resources.jobs.colleagues.activity.NameChange
@@ -494,13 +504,17 @@ class LabelsChange$Type extends MessageType<LabelsChange> {
     constructor() {
         super("resources.jobs.colleagues.activity.LabelsChange", [
             { no: 1, name: "added", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => Label },
-            { no: 2, name: "removed", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => Label }
+            { no: 2, name: "removed", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => Label },
+            { no: 3, name: "added_ids", kind: "scalar", repeat: 1 /*RepeatType.PACKED*/, T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ },
+            { no: 4, name: "removed_ids", kind: "scalar", repeat: 1 /*RepeatType.PACKED*/, T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ }
         ]);
     }
     create(value?: PartialMessage<LabelsChange>): LabelsChange {
         const message = globalThis.Object.create((this.messagePrototype!));
         message.added = [];
         message.removed = [];
+        message.addedIds = [];
+        message.removedIds = [];
         if (value !== undefined)
             reflectionMergePartial<LabelsChange>(this, message, value);
         return message;
@@ -510,11 +524,25 @@ class LabelsChange$Type extends MessageType<LabelsChange> {
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* repeated resources.jobs.labels.Label added */ 1:
+                case /* repeated resources.jobs.labels.Label added = 1 [deprecated = true] */ 1:
                     message.added.push(Label.internalBinaryRead(reader, reader.uint32(), options));
                     break;
-                case /* repeated resources.jobs.labels.Label removed */ 2:
+                case /* repeated resources.jobs.labels.Label removed = 2 [deprecated = true] */ 2:
                     message.removed.push(Label.internalBinaryRead(reader, reader.uint32(), options));
+                    break;
+                case /* repeated int64 added_ids */ 3:
+                    if (wireType === WireType.LengthDelimited)
+                        for (let e = reader.int32() + reader.pos; reader.pos < e;)
+                            message.addedIds.push(reader.int64().toNumber());
+                    else
+                        message.addedIds.push(reader.int64().toNumber());
+                    break;
+                case /* repeated int64 removed_ids */ 4:
+                    if (wireType === WireType.LengthDelimited)
+                        for (let e = reader.int32() + reader.pos; reader.pos < e;)
+                            message.removedIds.push(reader.int64().toNumber());
+                    else
+                        message.removedIds.push(reader.int64().toNumber());
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -528,12 +556,26 @@ class LabelsChange$Type extends MessageType<LabelsChange> {
         return message;
     }
     internalBinaryWrite(message: LabelsChange, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* repeated resources.jobs.labels.Label added = 1; */
+        /* repeated resources.jobs.labels.Label added = 1 [deprecated = true]; */
         for (let i = 0; i < message.added.length; i++)
             Label.internalBinaryWrite(message.added[i], writer.tag(1, WireType.LengthDelimited).fork(), options).join();
-        /* repeated resources.jobs.labels.Label removed = 2; */
+        /* repeated resources.jobs.labels.Label removed = 2 [deprecated = true]; */
         for (let i = 0; i < message.removed.length; i++)
             Label.internalBinaryWrite(message.removed[i], writer.tag(2, WireType.LengthDelimited).fork(), options).join();
+        /* repeated int64 added_ids = 3; */
+        if (message.addedIds.length) {
+            writer.tag(3, WireType.LengthDelimited).fork();
+            for (let i = 0; i < message.addedIds.length; i++)
+                writer.int64(message.addedIds[i]);
+            writer.join();
+        }
+        /* repeated int64 removed_ids = 4; */
+        if (message.removedIds.length) {
+            writer.tag(4, WireType.LengthDelimited).fork();
+            for (let i = 0; i < message.removedIds.length; i++)
+                writer.int64(message.removedIds[i]);
+            writer.join();
+        }
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);

@@ -64,9 +64,11 @@ message GradeChange {
 }
 
 message LabelsChange {
-  repeated resources.jobs.labels.Label added = 1;
-  repeated resources.jobs.labels.Label removed = 2;
-  // TODO switch to storing label ids instead of the whole label (resolve labels on client-side)
+  repeated resources.jobs.labels.Label added = 1 [deprecated = true];
+  repeated resources.jobs.labels.Label removed = 2 [deprecated = true];
+
+  repeated int64 added_ids = 3;
+  repeated int64 removed_ids = 4;
 }
 
 message NameChange {
