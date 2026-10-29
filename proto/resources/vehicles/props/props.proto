@@ -4,6 +4,7 @@ package resources.vehicles.props;
 
 import "buf/validate/validate.proto";
 import "resources/timestamp/timestamp.proto";
+import "resources/properties/properties.proto";
 
 option go_package = "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/vehicles/props;vehiclesprops";
 
@@ -15,4 +16,5 @@ message VehicleProps {
   optional string wanted_reason = 4 [(buf.validate.field).string.max_len = 255];
   optional resources.timestamp.Timestamp wanted_at = 5;
   optional resources.timestamp.Timestamp wanted_till = 6;
+  optional resources.properties.Properties properties = 7;
 }

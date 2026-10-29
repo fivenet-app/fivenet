@@ -26,7 +26,7 @@ type Routes struct {
 
 	cfg              *config.Config
 	providers        []*clientconfig.ProviderConfig
-	clientCfg        *atomic.Pointer[clientconfig.ClientConfig]
+	clientCfgJSON    *atomic.Pointer[[]byte]
 	discordInviteUrl *atomic.Pointer[string]
 }
 
@@ -45,7 +45,7 @@ func New(p Params) *Routes {
 		logger:           p.Logger,
 		cfg:              p.Config,
 		providers:        clientconfig.BuildProviderList(p.Config),
-		clientCfg:        &atomic.Pointer[clientconfig.ClientConfig]{},
+		clientCfgJSON:    &atomic.Pointer[[]byte]{},
 		discordInviteUrl: &atomic.Pointer[string]{},
 	}
 
@@ -111,7 +111,14 @@ func (r *Routes) RegisterHTTP(e *gin.Engine) {
 		})
 
 		g.POST("/config", func(c *gin.Context) {
-			c.JSON(http.StatusOK, r.clientCfg.Load())
+			data := r.clientCfgJSON.Load()
+			if data == nil {
+				r.logger.Error("client config is not available")
+				c.AbortWithStatus(http.StatusInternalServerError)
+				return
+			}
+
+			c.Data(http.StatusOK, "application/json; charset=utf-8", *data)
 		})
 
 		g.GET("/clear-site-data", func(c *gin.Context) {

@@ -9,6 +9,22 @@ import (
 
 // Sanitize sanitizes the message's fields, in case of complex types it calls
 // their Sanitize() method recursively.
+func (m *DeleteVehicleFileRequest) Sanitize() error {
+	if m == nil {
+		return nil
+	}
+
+	// Field: Plate
+	m.Plate = htmlsanitizer.SanitizeAndUnescape(m.Plate)
+
+	// Field: Reason
+	m.Reason = htmlsanitizer.SanitizeAndUnescape(m.Reason)
+
+	return nil
+}
+
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *ListVehicleActivityRequest) Sanitize() error {
 	if m == nil {
 		return nil
@@ -34,6 +50,14 @@ func (m *ListVehicleActivityRequest) Sanitize() error {
 
 	// Field: Plate
 	m.Plate = htmlsanitizer.SanitizeAndUnescape(m.Plate)
+
+	// Field: PropertyKeys
+	for idx, item := range m.PropertyKeys {
+		_, _ = idx, item
+
+		m.PropertyKeys[idx] = htmlsanitizer.SanitizeAndUnescape(m.PropertyKeys[idx])
+
+	}
 
 	// Field: Sort
 	if m.Sort != nil {
@@ -95,6 +119,41 @@ func (m *ListVehicleActivityResponse) Sanitize() error {
 
 // Sanitize sanitizes the message's fields, in case of complex types it calls
 // their Sanitize() method recursively.
+func (m *ListVehicleFilesRequest) Sanitize() error {
+	if m == nil {
+		return nil
+	}
+
+	// Field: Plate
+	m.Plate = htmlsanitizer.SanitizeAndUnescape(m.Plate)
+
+	return nil
+}
+
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
+func (m *ListVehicleFilesResponse) Sanitize() error {
+	if m == nil {
+		return nil
+	}
+
+	// Field: Files
+	for idx, item := range m.Files {
+		_, _ = idx, item
+
+		if v, ok := any(item).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+
+	}
+
+	return nil
+}
+
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *ListVehiclesRequest) Sanitize() error {
 	if m == nil {
 		return nil
@@ -122,6 +181,18 @@ func (m *ListVehiclesRequest) Sanitize() error {
 				return err
 			}
 		}
+	}
+
+	// Field: PropertyFilters
+	for idx, item := range m.PropertyFilters {
+		_, _ = idx, item
+
+		if v, ok := any(item).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+
 	}
 
 	// Field: Sort
@@ -174,6 +245,18 @@ func (m *SetVehiclePropsRequest) Sanitize() error {
 		return nil
 	}
 
+	// Field: PropertyChanges
+	for idx, item := range m.PropertyChanges {
+		_, _ = idx, item
+
+		if v, ok := any(item).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+
+	}
+
 	// Field: Props
 	if m.Props != nil {
 		if v, ok := any(m.GetProps()).(interface{ Sanitize() error }); ok {
@@ -204,6 +287,28 @@ func (m *SetVehiclePropsResponse) Sanitize() error {
 			}
 		}
 	}
+
+	return nil
+}
+
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
+func (m *VehicleFile) Sanitize() error {
+	if m == nil {
+		return nil
+	}
+
+	// Field: File
+	if m.File != nil {
+		if v, ok := any(m.GetFile()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+	}
+
+	// Field: Kind
+	m.Kind = htmlsanitizer.SanitizeAndUnescape(m.Kind)
 
 	return nil
 }

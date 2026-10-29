@@ -2,6 +2,7 @@ package citizens
 
 import (
 	context "context"
+	"errors"
 	"slices"
 	"strings"
 	"time"
@@ -9,6 +10,8 @@ import (
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/audit"
 	citizenslabels "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/citizens/labels"
 	notificationsclientview "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/notifications/clientview"
+	permissionsattributes "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/permissions/attributes"
+	properties "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/properties"
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/timestamp"
 	usersactivity "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/users/activity"
 	usersprops "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/users/props"
@@ -17,7 +20,9 @@ import (
 	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/auth"
 	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/errswrap"
 	grpc_audit "github.com/fivenet-app/fivenet/v2026/pkg/grpc/interceptors/audit"
+	propertyregistry "github.com/fivenet-app/fivenet/v2026/pkg/properties"
 	errorscitizens "github.com/fivenet-app/fivenet/v2026/services/citizens/errors"
+	citizensstore "github.com/fivenet-app/fivenet/v2026/stores/citizens"
 	"github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/logging"
 )
 
@@ -76,7 +81,10 @@ func (s *Server) SetUserProps(
 	}
 
 	// Field Permission Check
-	fields, err := permscitizens.CitizensService.SetUserProps.FieldsTyped.Get(s.perms, userInfo)
+	propertyList, err := s.perms.AttrPropertyList(
+		userInfo,
+		permscitizens.CitizensService.SetUserProps.Properties,
+	)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorscitizens.ErrFailedQuery)
 	}
@@ -100,7 +108,14 @@ func (s *Server) SetUserProps(
 
 	// Generate the update sets
 	if req.Props.Wanted != nil {
-		if !fields.Contains(permscitizens.CitizensServiceSetUserPropsFieldsPermValueWanted) {
+		wantedEnabled, err := s.store.IsSystemPropertyEnabled(ctx, "user.wanted")
+		if err != nil {
+			return nil, errswrap.NewError(err, errorscitizens.ErrFailedQuery)
+		}
+		if !wantedEnabled {
+			return nil, errorscitizens.ErrSystemPropertyDisabled
+		}
+		if !propertyList.Contains("user.wanted") {
 			return nil, errorscitizens.ErrPropsWantedDenied
 		}
 	}
@@ -131,7 +146,7 @@ func (s *Server) SetUserProps(
 	}
 
 	if req.Props.JobName != nil {
-		if !fields.Contains(permscitizens.CitizensServiceSetUserPropsFieldsPermValueJob) {
+		if !propertyList.Contains("user.job") {
 			return nil, errorscitizens.ErrPropsJobDenied
 		}
 
@@ -154,11 +169,14 @@ func (s *Server) SetUserProps(
 	}
 
 	if req.Props.TrafficInfractionPoints != nil {
-		if !fields.Contains(
-			permscitizens.CitizensServiceSetUserPropsFieldsPermValueTrafficInfractionPoints,
-		) {
+		if !propertyList.Contains("user.traffic_infraction_points") {
 			return nil, errorscitizens.ErrPropsTrafficPointsDenied
 		}
+	}
+
+	propertyChanges, err := s.preparePropertyChanges(ctx, req.GetPropertyChanges(), propertyList)
+	if err != nil {
+		return nil, err
 	}
 
 	// Users aren't allowed to set certain props, unset them so they are set to the db state
@@ -173,9 +191,8 @@ func (s *Server) SetUserProps(
 	}
 	// Defer a rollback in case anything fails
 	defer tx.Rollback()
-
 	if req.GetProps().GetLabels() != nil {
-		if !fields.Contains(permscitizens.CitizensServiceSetUserPropsFieldsPermValueLabels) {
+		if !propertyList.Contains("user.labels") {
 			return nil, errorscitizens.ErrPropsLabelsDenied
 		}
 
@@ -217,6 +234,20 @@ func (s *Server) SetUserProps(
 	if err != nil {
 		return nil, errswrap.NewError(err, errorscitizens.ErrFailedQuery)
 	}
+	if len(propertyChanges) > 0 {
+		propertyActivities, err := s.store.ApplyPropertyChangesWithActivity(
+			ctx,
+			tx,
+			req.GetProps().GetUserId(),
+			propertyChanges,
+			&userInfo.UserId,
+			req.GetReason(),
+		)
+		if err != nil {
+			return nil, errswrap.NewError(err, errorscitizens.ErrFailedQuery)
+		}
+		activities = append(activities, propertyActivities...)
+	}
 
 	if err := usersactivity.CreateUserActivities(ctx, tx, activities...); err != nil {
 		return nil, errswrap.NewError(err, errorscitizens.ErrFailedQuery)
@@ -236,6 +267,9 @@ func (s *Server) SetUserProps(
 	}
 
 	resp.Props = user.GetUser().GetProps()
+	if resp.GetProps() != nil {
+		resp.Props.Properties = user.GetUser().GetProperties()
+	}
 
 	// Set Job info if set
 	if resp.GetProps() != nil && resp.Props.JobName != nil {
@@ -263,4 +297,49 @@ func (s *Server) SetUserProps(
 	grpc_audit.SetAction(ctx, audit.EventAction_EVENT_ACTION_UPDATED)
 
 	return resp, nil
+}
+
+func (s *Server) preparePropertyChanges(
+	ctx context.Context,
+	values []*properties.PropertyChange,
+	allowed *permissionsattributes.PropertyList,
+) ([]citizensstore.PropertyChange, error) {
+	err := propertyregistry.ValidateCustomPropertyChanges(
+		ctx,
+		properties.PropertyScope_PROPERTY_SCOPE_USER,
+		values,
+		func(key string) bool { return allowed.Contains(key) },
+		s.store.ResolvePropertyDefinitions,
+	)
+	if err != nil {
+		switch {
+		case errors.Is(err, propertyregistry.ErrInvalidPropertyChange):
+			return nil, errorscitizens.ErrInvalidProperty
+		case errors.Is(err, propertyregistry.ErrPropertyChangeDenied):
+			return nil, errorscitizens.ErrPropsPropertiesDenied
+		default:
+			return nil, errswrap.NewError(err, errorscitizens.ErrFailedQuery)
+		}
+	}
+
+	changes := make([]citizensstore.PropertyChange, 0, len(values))
+	for _, value := range values {
+		if value.GetValue() == nil {
+			changes = append(
+				changes,
+				citizensstore.PropertyChange{
+					Property: &properties.Property{Key: value.GetKey()},
+					Delete:   true,
+				},
+			)
+			continue
+		}
+		changes = append(
+			changes,
+			citizensstore.PropertyChange{
+				Property: &properties.Property{Key: value.GetKey(), Value: value.GetValue()},
+			},
+		)
+	}
+	return changes, nil
 }

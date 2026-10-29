@@ -5,6 +5,13 @@
 import type { RpcTransport } from "@protobuf-ts/runtime-rpc";
 import type { ServiceInfo } from "@protobuf-ts/runtime-rpc";
 import { VehiclesService } from "./vehicles";
+import type { DeleteVehicleFileResponse } from "./vehicles";
+import type { DeleteVehicleFileRequest } from "./vehicles";
+import type { ListVehicleFilesResponse } from "./vehicles";
+import type { ListVehicleFilesRequest } from "./vehicles";
+import type { UploadFileResponse } from "../../resources/file/filestore";
+import type { UploadFileRequest } from "../../resources/file/filestore";
+import type { ClientStreamingCall } from "@protobuf-ts/runtime-rpc";
 import type { ListVehicleActivityResponse } from "./vehicles";
 import type { ListVehicleActivityRequest } from "./vehicles";
 import type { SetVehiclePropsResponse } from "./vehicles";
@@ -30,6 +37,22 @@ export interface IVehiclesServiceClient {
      * @generated from protobuf rpc: ListVehicleActivity
      */
     listVehicleActivity(input: ListVehicleActivityRequest, options?: RpcOptions): UnaryCall<ListVehicleActivityRequest, ListVehicleActivityResponse>;
+    /**
+     * buf:lint:ignore RPC_REQUEST_RESPONSE_UNIQUE
+     * buf:lint:ignore RPC_REQUEST_STANDARD_NAME
+     * buf:lint:ignore RPC_RESPONSE_STANDARD_NAME
+     *
+     * @generated from protobuf rpc: UploadVehicleFile
+     */
+    uploadVehicleFile(options?: RpcOptions): ClientStreamingCall<UploadFileRequest, UploadFileResponse>;
+    /**
+     * @generated from protobuf rpc: ListVehicleFiles
+     */
+    listVehicleFiles(input: ListVehicleFilesRequest, options?: RpcOptions): UnaryCall<ListVehicleFilesRequest, ListVehicleFilesResponse>;
+    /**
+     * @generated from protobuf rpc: DeleteVehicleFile
+     */
+    deleteVehicleFile(input: DeleteVehicleFileRequest, options?: RpcOptions): UnaryCall<DeleteVehicleFileRequest, DeleteVehicleFileResponse>;
 }
 /**
  * @generated from protobuf service services.vehicles.VehiclesService
@@ -60,5 +83,30 @@ export class VehiclesServiceClient implements IVehiclesServiceClient, ServiceInf
     listVehicleActivity(input: ListVehicleActivityRequest, options?: RpcOptions): UnaryCall<ListVehicleActivityRequest, ListVehicleActivityResponse> {
         const method = this.methods[2], opt = this._transport.mergeOptions(options);
         return stackIntercept<ListVehicleActivityRequest, ListVehicleActivityResponse>("unary", this._transport, method, opt, input);
+    }
+    /**
+     * buf:lint:ignore RPC_REQUEST_RESPONSE_UNIQUE
+     * buf:lint:ignore RPC_REQUEST_STANDARD_NAME
+     * buf:lint:ignore RPC_RESPONSE_STANDARD_NAME
+     *
+     * @generated from protobuf rpc: UploadVehicleFile
+     */
+    uploadVehicleFile(options?: RpcOptions): ClientStreamingCall<UploadFileRequest, UploadFileResponse> {
+        const method = this.methods[3], opt = this._transport.mergeOptions(options);
+        return stackIntercept<UploadFileRequest, UploadFileResponse>("clientStreaming", this._transport, method, opt);
+    }
+    /**
+     * @generated from protobuf rpc: ListVehicleFiles
+     */
+    listVehicleFiles(input: ListVehicleFilesRequest, options?: RpcOptions): UnaryCall<ListVehicleFilesRequest, ListVehicleFilesResponse> {
+        const method = this.methods[4], opt = this._transport.mergeOptions(options);
+        return stackIntercept<ListVehicleFilesRequest, ListVehicleFilesResponse>("unary", this._transport, method, opt, input);
+    }
+    /**
+     * @generated from protobuf rpc: DeleteVehicleFile
+     */
+    deleteVehicleFile(input: DeleteVehicleFileRequest, options?: RpcOptions): UnaryCall<DeleteVehicleFileRequest, DeleteVehicleFileResponse> {
+        const method = this.methods[5], opt = this._transport.mergeOptions(options);
+        return stackIntercept<DeleteVehicleFileRequest, DeleteVehicleFileResponse>("unary", this._transport, method, opt, input);
     }
 }

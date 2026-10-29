@@ -125,6 +125,14 @@ func (s *Housekeeper) maxWantedDurationHandling(ctx context.Context) (int, error
 	if !game.GetMaxWantedDurationVehicleEnabled() || game.GetMaxWantedDurationVehicle() == nil {
 		return 0, nil
 	}
+	wantedEnabled, err := s.store.IsSystemPropertyEnabled(ctx, "vehicle.wanted")
+	if err != nil {
+		return 0, err
+	}
+	if !wantedEnabled {
+		// Keep the stored state intact while the system property is disabled.
+		return 0, nil
+	}
 
 	maxDays := game.GetMaxWantedDurationVehicle().GetSeconds() / 24 / 3600
 

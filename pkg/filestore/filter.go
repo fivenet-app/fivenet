@@ -44,13 +44,11 @@ func NewUploadFilter(allowedContentTypes []string, allowedExtensions []string) *
 func NewImageUploadFilter() *UploadFilter {
 	return NewUploadFilter(
 		[]string{
-			"image/gif",
 			"image/jpeg",
 			"image/png",
 			"image/webp",
 		},
 		[]string{
-			"gif",
 			"jpg",
 			"jpeg",
 			"png",

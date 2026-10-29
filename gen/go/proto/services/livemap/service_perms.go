@@ -20,8 +20,9 @@ func init() {
 			Name:      permkeys.LivemapServiceCreateOrUpdateMarkerPerm,
 			Attrs: []perms.Attr{
 				{
-					Key:         permkeys.LivemapServiceCreateOrUpdateMarkerAccessPermField,
-					Type:        permissionsattributes.StringListAttributeType,
+					Key:  permkeys.LivemapServiceCreateOrUpdateMarkerAccessPermField,
+					Type: permissionsattributes.StringListAttributeType,
+
 					ValidValues: []string{"Own", "Lower_Rank", "Same_Rank", "Any"},
 				},
 			},
@@ -34,8 +35,9 @@ func init() {
 			Name:      permkeys.LivemapServiceDeleteMarkerPerm,
 			Attrs: []perms.Attr{
 				{
-					Key:         permkeys.LivemapServiceDeleteMarkerAccessPermField,
-					Type:        permissionsattributes.StringListAttributeType,
+					Key:  permkeys.LivemapServiceDeleteMarkerAccessPermField,
+					Type: permissionsattributes.StringListAttributeType,
+
 					ValidValues: []string{"Own", "Lower_Rank", "Same_Rank", "Any"},
 				},
 			},

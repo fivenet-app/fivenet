@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"io"
 	"io/fs"
+	"net/http"
 	"os"
 	"path/filepath"
 	"strings"
@@ -80,12 +81,18 @@ func (s *Filesystem) Get(ctx context.Context, key string) (IObject, IObjectInfo,
 	if err != nil {
 		return nil, nil, err
 	}
+	contentType, err := sniffFile(f)
+	if err != nil {
+		_ = f.Close()
+		return nil, nil, err
+	}
 
 	name := stat.Name()
 
 	return f, &ObjectInfo{
 		name:         strings.TrimPrefix(name, s.prefix),
 		extension:    strings.TrimPrefix(filepath.Ext(name), "."),
+		contentType:  contentType,
 		size:         stat.Size(),
 		lastModified: stat.ModTime(),
 	}, nil
@@ -110,10 +117,44 @@ func (s *Filesystem) Stat(ctx context.Context, key string) (IObjectInfo, error) 
 		return nil, ErrNotFound
 	}
 
+	f, err := s.root.OpenFile(key, os.O_RDONLY, 0o600)
+	if err != nil {
+		return nil, err
+	}
+	contentType, err := sniffFile(f)
+	closeErr := f.Close()
+	if err != nil {
+		return nil, err
+	}
+	if closeErr != nil {
+		return nil, closeErr
+	}
+
 	return &ObjectInfo{
-		name: strings.TrimPrefix(key, s.prefix),
-		size: stat.Size(),
+		name:        strings.TrimPrefix(key, s.prefix),
+		extension:   strings.TrimPrefix(filepath.Ext(key), "."),
+		contentType: contentType,
+		size:        stat.Size(),
 	}, nil
+}
+
+func sniffFile(f *os.File) (string, error) {
+	const sniffSize = 512
+
+	buf := make([]byte, sniffSize)
+	n, err := f.Read(buf)
+	if err != nil && !errors.Is(err, io.EOF) {
+		return "", err
+	}
+	if n == 0 {
+		return "", nil
+	}
+
+	if _, err := f.Seek(0, io.SeekStart); err != nil {
+		return "", err
+	}
+
+	return http.DetectContentType(buf[:n]), nil
 }
 
 // Put writes a file to the filesystem, creating directories as needed.

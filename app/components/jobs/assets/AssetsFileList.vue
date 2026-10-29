@@ -3,7 +3,6 @@ import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import GenericImg from '~/components/partials/elements/GenericImg.vue';
 import ConfirmModal from '~/components/partials/ConfirmModal.vue';
 import type { JobAsset } from '~~/gen/ts/resources/jobs/job_asset';
-import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 import { getSettingsJobsassetsClient } from '~~/gen/ts/clients';
 import { copyToClipboardWrapper } from '~/utils/clipboard';
 
@@ -22,7 +21,7 @@ const jobsClient = await getSettingsJobsassetsClient();
 const { t } = useI18n();
 const overlay = useOverlay();
 const confirmModal = overlay.create(ConfirmModal);
-const notifications = useNotificationsStore();
+const { notifyLinkCopied } = useClipboardNotifications();
 
 function getAssetURL(asset: JobAsset): string | undefined {
     const filePath = asset.file?.filePath;
@@ -36,12 +35,7 @@ async function copyImageLink(asset: JobAsset): Promise<void> {
     if (!url) return;
 
     await copyToClipboardWrapper(url);
-    notifications.add({
-        title: { key: 'notifications.clipboard.link_copied.title', parameters: {} },
-        description: { key: 'notifications.clipboard.link_copied.content', parameters: {} },
-        duration: 3250,
-        type: NotificationType.INFO,
-    });
+    notifyLinkCopied();
 }
 
 async function deleteAsset(asset: JobAsset): Promise<void> {

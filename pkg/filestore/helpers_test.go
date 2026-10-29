@@ -17,11 +17,11 @@ func TestUploadFilterCloneIsIndependent(t *testing.T) {
 
 	clone.allowedContentTypes["image/jpeg"] = struct{}{}
 	clone.allowedExtensions["jpg"] = struct{}{}
-	original.allowedContentTypes["image/gif"] = struct{}{}
-	original.allowedExtensions["gif"] = struct{}{}
+	original.allowedContentTypes["image/webp"] = struct{}{}
+	original.allowedExtensions["webp"] = struct{}{}
 
-	assert.Equal(t, []string{"image/gif", "image/png"}, original.AllowedContentTypes())
-	assert.Equal(t, []string{"gif", "png"}, original.AllowedExtensions())
+	assert.Equal(t, []string{"image/png", "image/webp"}, original.AllowedContentTypes())
+	assert.Equal(t, []string{"png", "webp"}, original.AllowedExtensions())
 	assert.Equal(t, []string{"image/jpeg", "image/png"}, clone.AllowedContentTypes())
 	assert.Equal(t, []string{"jpg", "png"}, clone.AllowedExtensions())
 }

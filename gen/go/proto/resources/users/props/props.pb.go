@@ -13,6 +13,7 @@ import (
 	labels "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/citizens/labels"
 	file "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/file"
 	jobs "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/jobs"
+	properties "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/properties"
 	timestamp "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/timestamp"
 	_ "github.com/srikrsna/protoc-gen-gotag/tagger"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
@@ -47,6 +48,7 @@ type UserProps struct {
 	Mugshot                          *file.File             `protobuf:"bytes,15,opt,name=mugshot,proto3,oneof" json:"mugshot,omitempty" alias:"mugshot"`
 	Labels                           *labels.Labels         `protobuf:"bytes,16,opt,name=labels,proto3,oneof" json:"labels,omitempty"`
 	Email                            *string                `protobuf:"bytes,17,opt,name=email,proto3,oneof" json:"email,omitempty"`
+	Properties                       *properties.Properties `protobuf:"bytes,18,opt,name=properties,proto3,oneof" json:"properties,omitempty"`
 	unknownFields                    protoimpl.UnknownFields
 	sizeCache                        protoimpl.SizeCache
 }
@@ -195,6 +197,13 @@ func (x *UserProps) GetEmail() string {
 	return ""
 }
 
+func (x *UserProps) GetProperties() *properties.Properties {
+	if x != nil {
+		return x.Properties
+	}
+	return nil
+}
+
 func (x *UserProps) SetUserId(v int32) {
 	x.UserId = v
 }
@@ -261,6 +270,10 @@ func (x *UserProps) SetLabels(v *labels.Labels) {
 
 func (x *UserProps) SetEmail(v string) {
 	x.Email = &v
+}
+
+func (x *UserProps) SetProperties(v *properties.Properties) {
+	x.Properties = v
 }
 
 func (x *UserProps) HasUpdatedAt() bool {
@@ -375,6 +388,13 @@ func (x *UserProps) HasEmail() bool {
 	return x.Email != nil
 }
 
+func (x *UserProps) HasProperties() bool {
+	if x == nil {
+		return false
+	}
+	return x.Properties != nil
+}
+
 func (x *UserProps) ClearUpdatedAt() {
 	x.UpdatedAt = nil
 }
@@ -439,6 +459,10 @@ func (x *UserProps) ClearEmail() {
 	x.Email = nil
 }
 
+func (x *UserProps) ClearProperties() {
+	x.Properties = nil
+}
+
 type UserProps_builder struct {
 	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
 
@@ -459,6 +483,7 @@ type UserProps_builder struct {
 	Mugshot                          *file.File
 	Labels                           *labels.Labels
 	Email                            *string
+	Properties                       *properties.Properties
 }
 
 func (b0 UserProps_builder) Build() *UserProps {
@@ -482,6 +507,7 @@ func (b0 UserProps_builder) Build() *UserProps {
 	x.Mugshot = b.Mugshot
 	x.Labels = b.Labels
 	x.Email = b.Email
+	x.Properties = b.Properties
 	return m0
 }
 
@@ -489,7 +515,8 @@ var File_resources_users_props_props_proto protoreflect.FileDescriptor
 
 const file_resources_users_props_props_proto_rawDesc = "" +
 	"\n" +
-	"!resources/users/props/props.proto\x12\x15resources.users.props\x1a!codegen/sanitizer/sanitizer.proto\x1a&resources/citizens/labels/labels.proto\x1a\x19resources/file/file.proto\x1a\x19resources/jobs/jobs.proto\x1a#resources/timestamp/timestamp.proto\x1a\x13tagger/tagger.proto\"\xd3\t\n" +
+	"!resources/users/props/props.proto\x12\x15resources.users.props\x1a!codegen/sanitizer/sanitizer.proto\x1a&resources/citizens/labels/labels.proto\x1a\x19resources/file/file.proto\x1a\x19resources/jobs/jobs.proto\x1a%resources/properties/properties.proto\x1a#resources/timestamp/timestamp.proto\x1a\x13tagger/tagger.proto\"\xa9\n" +
+	"\n" +
 	"\tUserProps\x12\x17\n" +
 	"\auser_id\x18\x01 \x01(\x05R\x06userId\x12B\n" +
 	"\n" +
@@ -513,7 +540,10 @@ const file_resources_users_props_props_proto_rawDesc = "" +
 	"\x0fmugshot_file_id\x18\x0e \x01(\x03H\fR\rmugshotFileId\x88\x01\x01\x12I\n" +
 	"\amugshot\x18\x0f \x01(\v2\x14.resources.file.FileB\x14\x9a\x84\x9e\x03\x0falias:\"mugshot\"H\rR\amugshot\x88\x01\x01\x12>\n" +
 	"\x06labels\x18\x10 \x01(\v2!.resources.citizens.labels.LabelsH\x0eR\x06labels\x88\x01\x01\x12#\n" +
-	"\x05email\x18\x11 \x01(\tB\b\xda\xf3\x18\x04\b\x01\x18\x01H\x0fR\x05email\x88\x01\x01B\r\n" +
+	"\x05email\x18\x11 \x01(\tB\b\xda\xf3\x18\x04\b\x01\x18\x01H\x0fR\x05email\x88\x01\x01\x12E\n" +
+	"\n" +
+	"properties\x18\x12 \x01(\v2 .resources.properties.PropertiesH\x10R\n" +
+	"properties\x88\x01\x01B\r\n" +
 	"\v_updated_atB\t\n" +
 	"\a_wantedB\f\n" +
 	"\n" +
@@ -532,16 +562,18 @@ const file_resources_users_props_props_proto_rawDesc = "" +
 	"\n" +
 	"\b_mugshotB\t\n" +
 	"\a_labelsB\b\n" +
-	"\x06_emailBTZRgithub.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/users/props;userspropsb\x06proto3"
+	"\x06_emailB\r\n" +
+	"\v_propertiesBTZRgithub.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/users/props;userspropsb\x06proto3"
 
 var file_resources_users_props_props_proto_msgTypes = make([]protoimpl.MessageInfo, 1)
 var file_resources_users_props_props_proto_goTypes = []any{
-	(*UserProps)(nil),           // 0: resources.users.props.UserProps
-	(*timestamp.Timestamp)(nil), // 1: resources.timestamp.Timestamp
-	(*jobs.Job)(nil),            // 2: resources.jobs.Job
-	(*jobs.JobGrade)(nil),       // 3: resources.jobs.JobGrade
-	(*file.File)(nil),           // 4: resources.file.File
-	(*labels.Labels)(nil),       // 5: resources.citizens.labels.Labels
+	(*UserProps)(nil),             // 0: resources.users.props.UserProps
+	(*timestamp.Timestamp)(nil),   // 1: resources.timestamp.Timestamp
+	(*jobs.Job)(nil),              // 2: resources.jobs.Job
+	(*jobs.JobGrade)(nil),         // 3: resources.jobs.JobGrade
+	(*file.File)(nil),             // 4: resources.file.File
+	(*labels.Labels)(nil),         // 5: resources.citizens.labels.Labels
+	(*properties.Properties)(nil), // 6: resources.properties.Properties
 }
 var file_resources_users_props_props_proto_depIdxs = []int32{
 	1, // 0: resources.users.props.UserProps.updated_at:type_name -> resources.timestamp.Timestamp
@@ -552,11 +584,12 @@ var file_resources_users_props_props_proto_depIdxs = []int32{
 	1, // 5: resources.users.props.UserProps.traffic_infraction_points_updated_at:type_name -> resources.timestamp.Timestamp
 	4, // 6: resources.users.props.UserProps.mugshot:type_name -> resources.file.File
 	5, // 7: resources.users.props.UserProps.labels:type_name -> resources.citizens.labels.Labels
-	8, // [8:8] is the sub-list for method output_type
-	8, // [8:8] is the sub-list for method input_type
-	8, // [8:8] is the sub-list for extension type_name
-	8, // [8:8] is the sub-list for extension extendee
-	0, // [0:8] is the sub-list for field type_name
+	6, // 8: resources.users.props.UserProps.properties:type_name -> resources.properties.Properties
+	9, // [9:9] is the sub-list for method output_type
+	9, // [9:9] is the sub-list for method input_type
+	9, // [9:9] is the sub-list for extension type_name
+	9, // [9:9] is the sub-list for extension extendee
+	0, // [0:9] is the sub-list for field type_name
 }
 
 func init() { file_resources_users_props_props_proto_init() }

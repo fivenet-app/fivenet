@@ -143,20 +143,20 @@ INSERT INTO fivenet_jobs_grades (job_name, grade, label) VALUES('police', 26, 'A
 INSERT INTO fivenet_jobs_grades (job_name, grade, label) VALUES('police', 27, 'Chief of Police');
 INSERT INTO fivenet_jobs_grades (job_name, grade, label) VALUES('unemployed', 1, 'Arbeitslos');
 
--- Table data: fivenet_owned_vehicles - Add some normal `aircraft`, `boat` and `car` vehicles to the database
+-- Table data: fivenet_vehicle - Add some normal `aircraft`, `boat` and `car` vehicles to the database
 -- aircraft
-INSERT INTO fivenet_owned_vehicles (user_id, plate, model, `type`) VALUES(3, 'ABC 381', 'buzzard2', 'aircraft');
-INSERT INTO fivenet_owned_vehicles (user_id, plate, model, `type`) VALUES(2, 'DEZ 725', 'supervolito', 'aircraft');
+INSERT INTO fivenet_vehicle (user_id, plate, model, `type`) VALUES(3, 'ABC 381', 'buzzard2', 'aircraft');
+INSERT INTO fivenet_vehicle (user_id, plate, model, `type`) VALUES(2, 'DEZ 725', 'supervolito', 'aircraft');
 -- boat
-INSERT INTO fivenet_owned_vehicles (user_id, plate, model, `type`) VALUES(5, 'BCJ 282', 'seashark', 'boat');
-INSERT INTO fivenet_owned_vehicles (user_id, plate, model, `type`) VALUES(3, 'BEG 837', 'yaluxe', 'boat');
+INSERT INTO fivenet_vehicle (user_id, plate, model, `type`) VALUES(5, 'BCJ 282', 'seashark', 'boat');
+INSERT INTO fivenet_vehicle (user_id, plate, model, `type`) VALUES(3, 'BEG 837', 'yaluxe', 'boat');
 -- car
-INSERT INTO fivenet_owned_vehicles (user_id, plate, model, `type`) VALUES(1, 'AMJV 079', 'xxxxx', 'car');
-INSERT INTO fivenet_owned_vehicles (user_id, plate, model, `type`) VALUES(3, 'GFFT 070', 'veto2', 'car');
-INSERT INTO fivenet_owned_vehicles (user_id, plate, model, `type`) VALUES(5, 'GWU 358', 'rmodsuprapandem', 'car');
+INSERT INTO fivenet_vehicle (user_id, plate, model, `type`) VALUES(1, 'AMJV 079', 'xxxxx', 'car');
+INSERT INTO fivenet_vehicle (user_id, plate, model, `type`) VALUES(3, 'GFFT 070', 'veto2', 'car');
+INSERT INTO fivenet_vehicle (user_id, plate, model, `type`) VALUES(5, 'GWU 358', 'rmodsuprapandem', 'car');
 -- car job specific
-INSERT INTO fivenet_owned_vehicles (user_id, plate, model, `type`) VALUES(1, 'OENG 747', '16ramambo', 'car_ambulance');
-INSERT INTO fivenet_owned_vehicles (user_id, plate, model, `type`) VALUES(2, 'XJMV 726', 'flyhoe', 'car_ambulance');
-INSERT INTO fivenet_owned_vehicles (user_id, plate, model, `type`) VALUES(4, 'JMI 560', '18chgr', 'car_police');
-INSERT INTO fivenet_owned_vehicles (user_id, plate, model, `type`) VALUES(4, 'NBH 257', 'poltahoe21', 'car_police');
-INSERT INTO fivenet_owned_vehicles (user_id, plate, model, `type`) VALUES(4, 'QNT 765', 'poldurango', 'car_police');
+INSERT INTO fivenet_vehicle (user_id, plate, model, `type`) VALUES(1, 'OENG 747', '16ramambo', 'car_ambulance');
+INSERT INTO fivenet_vehicle (user_id, plate, model, `type`) VALUES(2, 'XJMV 726', 'flyhoe', 'car_ambulance');
+INSERT INTO fivenet_vehicle (user_id, plate, model, `type`) VALUES(4, 'JMI 560', '18chgr', 'car_police');
+INSERT INTO fivenet_vehicle (user_id, plate, model, `type`) VALUES(4, 'NBH 257', 'poltahoe21', 'car_police');
+INSERT INTO fivenet_vehicle (user_id, plate, model, `type`) VALUES(4, 'QNT 765', 'poldurango', 'car_police');

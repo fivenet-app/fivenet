@@ -85,6 +85,7 @@ async function setJobProp(userId: number, values: Schema): Promise<void> {
         const call = citizensCitizensClient.setUserProps({
             props: userProps,
             reason: values.reason,
+            propertyChanges: [],
         });
         const { response } = await call;
 
@@ -163,7 +164,7 @@ const labelChanges = computed(() => {
         <UFormField
             v-if="
                 can('citizens.CitizensService/SetUserProps').value &&
-                attr('citizens.CitizensService/SetUserProps', 'Fields', 'Labels').value
+                attr('citizens.CitizensService/SetUserProps', 'Properties', 'user.labels').value
             "
             name="labels"
         >

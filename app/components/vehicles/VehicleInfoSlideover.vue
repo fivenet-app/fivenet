@@ -1,11 +1,13 @@
 <script lang="ts" setup>
+import type { TabsItem } from '@nuxt/ui';
 import { titleCase } from 'scule';
 import ActivityFeed from '~/components/vehicles/ActivityFeed.vue';
 import type { Vehicle } from '~~/gen/ts/resources/vehicles/vehicles';
 import GenericTime from '../partials/elements/GenericTime.vue';
 import LicensePlate from '../partials/LicensePlate.vue';
-import SetWantedDrawer from './SetWantedDrawer.vue';
 import CitizenInfoPopover from '~/components/partials/citizens/CitizenInfoPopover.vue';
+import WantedBadge from '~/components/partials/WantedBadge.vue';
+import VehicleFiles from './files/VehicleFiles.vue';
 
 defineEmits<{
     (e: 'close', v: boolean): void;
@@ -13,20 +15,38 @@ defineEmits<{
 
 const vehicle = defineModel<Vehicle>({ required: true });
 
-const overlay = useOverlay();
-const setWantedDrawer = overlay.create(SetWantedDrawer);
+const { t } = useI18n();
+const { attr } = useAuth();
 
-const { attr, can } = useAuth();
+const canViewFiles = attr('vehicles.VehiclesService/ListVehicles', 'Properties', 'vehicle.files');
 
 const activityFeed = useTemplateRef<InstanceType<typeof ActivityFeed>>('activityFeed');
 
-const canViewWanted = computed(() => attr('vehicles.VehiclesService/ListVehicles', 'Fields', 'Wanted').value);
-const canSetWanted = computed(
-    () =>
-        canViewWanted.value &&
-        can('vehicles.VehiclesService/SetVehicleProps').value &&
-        attr('vehicles.VehiclesService/SetVehicleProps', 'Fields', 'Wanted').value,
-);
+const { canViewWanted, canSetWanted, dynamicProperties, openWantedDrawer, openDynamicPropertyDrawer } =
+    useVehiclePropertyActions(vehicle, () => activityFeed.value?.refresh());
+
+const { propertyLabel } = usePropertyRenderer();
+
+const selectedTab = ref('activity');
+
+const tabs = computed<TabsItem[]>(() => [
+    {
+        slot: 'activity',
+        label: t('common.activity'),
+        icon: 'i-mdi-history',
+        value: 'activity',
+    },
+    ...(canViewFiles.value
+        ? [
+              {
+                  slot: 'files',
+                  label: t('common.image', 2),
+                  icon: 'i-mdi-folder-multiple-image',
+                  value: 'files',
+              },
+          ]
+        : []),
+]);
 </script>
 
 <template>
@@ -54,24 +74,25 @@ const canSetWanted = computed(
                                 </div>
                             </div>
 
-                            <div v-if="canSetWanted" class="space-y-1">
+                            <div v-if="canSetWanted || dynamicProperties.length" class="space-y-1">
                                 <p class="text-sm font-semibold">{{ $t('common.action', 2) }}</p>
-                                <div>
+                                <div class="flex flex-wrap gap-2">
                                     <UButton
+                                        v-if="canSetWanted"
                                         :color="vehicle.props?.wanted ? 'error' : 'primary'"
                                         :icon="vehicle.props?.wanted ? 'i-mdi-account-alert' : 'i-mdi-account-cancel'"
                                         :label="vehicle.props?.wanted ? $t('common.revoke_wanted') : $t('common.set_wanted')"
-                                        @click="
-                                            () =>
-                                                setWantedDrawer.open({
-                                                    vehicleProps: vehicle.props,
-                                                    plate: vehicle.plate,
-                                                    'onUpdate:vehicleProps': ($event) => {
-                                                        vehicle.props = $event;
-                                                        activityFeed?.refresh();
-                                                    },
-                                                })
-                                        "
+                                        @click="() => openWantedDrawer()"
+                                    />
+
+                                    <UButton
+                                        v-for="property in dynamicProperties"
+                                        :key="property.key"
+                                        color="neutral"
+                                        variant="outline"
+                                        icon="i-mdi-pencil"
+                                        :label="`${$t(canActOnDynamicProperty(property) ? 'common.edit' : 'common.set')}: ${propertyLabel(property)}`"
+                                        @click="openDynamicPropertyDrawer(property)"
                                     />
                                 </div>
                             </div>
@@ -98,14 +119,7 @@ const canSetWanted = computed(
                             <div v-if="canViewWanted">
                                 <dt class="font-semibold">{{ $t('common.wanted') }}</dt>
                                 <dd>
-                                    <UBadge
-                                        :color="vehicle.props?.wanted ? 'error' : 'neutral'"
-                                        :label="
-                                            vehicle.props?.wanted
-                                                ? $t('common.wanted').toUpperCase()
-                                                : `${$t('common.not')} ${$t('common.wanted')}`
-                                        "
-                                    />
+                                    <WantedBadge :wanted="vehicle.props?.wanted ?? false" variant="long" />
                                 </dd>
                             </div>
 
@@ -122,10 +136,27 @@ const canSetWanted = computed(
                     </div>
                 </div>
 
-                <USeparator />
-
                 <div class="min-h-0 flex-1">
-                    <ActivityFeed ref="activityFeed" :plate="vehicle.plate" :owner-id="vehicle.ownerId" />
+                    <UTabs
+                        v-model="selectedTab"
+                        class="flex h-full min-h-0 flex-col"
+                        :items="tabs"
+                        :unmount-on-hide="true"
+                        variant="link"
+                        :ui="{ root: 'flex min-h-0 flex-1 flex-col gap-0', content: 'min-h-0 flex-1 overflow-y-auto' }"
+                    >
+                        <template #activity>
+                            <div class="min-h-full">
+                                <ActivityFeed ref="activityFeed" :plate="vehicle.plate" :owner-id="vehicle.ownerId" />
+                            </div>
+                        </template>
+
+                        <template #files>
+                            <div class="min-h-full">
+                                <VehicleFiles v-model="vehicle" />
+                            </div>
+                        </template>
+                    </UTabs>
                 </div>
             </div>
         </template>

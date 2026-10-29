@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { UBadge, UButton, UTooltip } from '#components';
+import { UButton, UTooltip } from '#components';
 import type { Form, TableColumn } from '@nuxt/ui';
 import { z } from 'zod';
 import CitizenInfoPopover from '~/components/partials/citizens/CitizenInfoPopover.vue';
@@ -18,6 +18,7 @@ import ColleagueName from '../jobs/colleagues/ColleagueName.vue';
 import SelectMenu from '../partials/SelectMenu.vue';
 import VehicleInfoPopover from './VehicleInfoPopover.vue';
 import VehicleInfoSlideover from './VehicleInfoSlideover.vue';
+import WantedBadge from '../partials/WantedBadge.vue';
 import { titleCase } from 'scule';
 
 const { t } = useI18n();
@@ -48,7 +49,7 @@ const { open: openClipboardModal } = useClipboardModal();
 
 const notifications = useNotificationsStore();
 
-const { attr, attrStringList, can, isSuperuser } = useAuth();
+const { attr, attrPropertyList, can, isSuperuser } = useAuth();
 const overlay = useOverlay();
 const vehicleInfoSlideover = overlay.create(VehicleInfoSlideover);
 
@@ -88,7 +89,7 @@ const { validatedQuery, commitValidatedQuery } = useFormSearchValidation<typeof 
 const { data, status, refresh, error } = useAuthedLazyAsyncData(
     'userState',
     () =>
-        `vehicles-${validatedQuery.value.licensePlate}-${JSON.stringify(validatedQuery.value.userIds)}-${JSON.stringify(validatedQuery.value.sorting)}-${validatedQuery.value.page}`,
+        `vehicles-${validatedQuery.value.licensePlate}:${validatedQuery.value.wanted}-${JSON.stringify(validatedQuery.value.userIds)}-${JSON.stringify(validatedQuery.value.sorting)}-${validatedQuery.value.page}`,
     ({ signal }) => listVehicles(validatedQuery.value, signal),
 );
 
@@ -104,6 +105,7 @@ async function listVehicles(values: Schema, signal: AbortSignal): Promise<ListVe
                 model: values.model,
                 userIds: values.userIds,
                 wanted: values.wanted,
+                propertyFilters: [],
             },
             { abort: signal },
         );
@@ -173,14 +175,12 @@ const columns = computed(() =>
                         h(LicensePlate, { plate: row.original.plate, class: 'sm:min-w-40 md:min-w-48' }),
                     ]),
             },
-            attr('vehicles.VehiclesService/ListVehicles', 'Fields', 'Wanted').value
+            attr('vehicles.VehiclesService/ListVehicles', 'Properties', 'vehicle.wanted').value
                 ? {
                       accessorKey: 'wanted',
                       header: t('common.wanted'),
                       cell: ({ row }) =>
-                          row.original.props?.wanted
-                              ? h(UBadge, { color: 'error' }, () => $t('common.wanted').toUpperCase())
-                              : undefined,
+                          row.original.props?.wanted ? h(WantedBadge, { wanted: true, variant: 'short' }) : undefined,
                   }
                 : undefined,
             {
@@ -230,7 +230,7 @@ const columns = computed(() =>
                                   )
                                 : null,
                             !can('vehicles.VehiclesService/ListVehicleActivity').value &&
-                            (attrStringList('vehicles.VehiclesService/ListVehicles', 'Fields').value.length > 0 ||
+                            (attrPropertyList('vehicles.VehiclesService/ListVehicles', 'Properties').value.length > 0 ||
                                 isSuperuser.value)
                                 ? h(
                                       UTooltip,
@@ -353,7 +353,7 @@ defineShortcuts({
                 </UFormField>
 
                 <UFormField
-                    v-if="attr('vehicles.VehiclesService/ListVehicles', 'Fields', 'Wanted').value"
+                    v-if="attr('vehicles.VehiclesService/ListVehicles', 'Properties', 'vehicle.wanted').value"
                     class="flex flex-initial flex-col"
                     name="wanted"
                     :label="$t('common.only_wanted')"

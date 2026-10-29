@@ -152,6 +152,9 @@ func (p *PermifyModule) Execute(
 						case permissionsattributes.AttributeType_ATTRIBUTE_TYPE_JOB_GRADE_LIST:
 							atype = "JobGradeList"
 							kind = "jobGradeList"
+						case permissionsattributes.AttributeType_ATTRIBUTE_TYPE_PROPERTY_LIST:
+							atype = "PropertyList"
+							kind = "propertyList"
 						}
 
 						perm.Attrs[i] = Attr{
@@ -237,6 +240,9 @@ func (p *PermifyModule) Execute(
 						case permissionsattributes.AttributeType_ATTRIBUTE_TYPE_JOB_GRADE_LIST:
 							atype = "JobGradeList"
 							kind = "jobGradeList"
+						case permissionsattributes.AttributeType_ATTRIBUTE_TYPE_PROPERTY_LIST:
+							atype = "PropertyList"
+							kind = "propertyList"
 						}
 
 						attrs[i] = Attr{
@@ -343,7 +349,7 @@ export const PermAttributes = {
 } as const;
 
 export type PermAttributesMap = typeof PermAttributes;
-export type PermAttrKind = 'stringList' | 'jobList' | 'jobGradeList';
+export type PermAttrKind = 'stringList' | 'jobList' | 'jobGradeList' | 'propertyList';
 
 export type PermAttrPerm = keyof PermAttributesMap;
 

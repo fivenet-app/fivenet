@@ -260,7 +260,7 @@ func (s *Store) ListColleagues(
 			tColleague.Lastname,
 			tColleague.Dateofbirth,
 			tColleague.PhoneNumber,
-			tUserProps.AvatarFileID.AS("colleague.profile_picture_file_id"),
+			tColleague.AvatarFileID.AS("colleague.profile_picture_file_id"),
 			tAvatar.FilePath.AS("colleague.profile_picture"),
 			tUserProps.Email.AS("colleague.email"),
 			tColleagueProps.UserID,
@@ -285,7 +285,7 @@ func (s *Store) ListColleagues(
 					),
 				).
 				LEFT_JOIN(tAvatar,
-					tAvatar.ID.EQ(tUserProps.AvatarFileID),
+					tAvatar.ID.EQ(tColleague.AvatarFileID),
 				),
 		).
 		WHERE(condition).
@@ -326,7 +326,7 @@ func (s *Store) ListColleaguesByUserIDs(
 		tColleague.Lastname,
 		tColleague.Dateofbirth,
 		tColleague.PhoneNumber,
-		tUserProps.AvatarFileID.AS("colleague.profile_picture_file_id"),
+		tColleague.AvatarFileID.AS("colleague.profile_picture_file_id"),
 		tAvatar.FilePath.AS("colleague.profile_picture"),
 		tUserProps.Email.AS("colleague.email"),
 		tColleagueProps.UserID,
@@ -358,7 +358,7 @@ func (s *Store) ListColleaguesByUserIDs(
 					),
 				).
 				LEFT_JOIN(tAvatar,
-					tAvatar.ID.EQ(tUserProps.AvatarFileID),
+					tAvatar.ID.EQ(tColleague.AvatarFileID),
 				),
 		).
 		WHERE(mysql.AND(
@@ -403,7 +403,7 @@ func (s *Store) GetColleague(
 		tUserJobs.Grade.AS("colleague.job_grade"),
 		tColleague.Dateofbirth,
 		tColleague.PhoneNumber,
-		tUserProps.AvatarFileID.AS("colleague.profile_picture_file_id"),
+		tColleague.AvatarFileID.AS("colleague.profile_picture_file_id"),
 		tAvatar.FilePath.AS("colleague.profile_picture"),
 		tUserProps.Email.AS("colleague.email"),
 		tColleagueProps.UserID,
@@ -435,7 +435,7 @@ func (s *Store) GetColleague(
 					),
 				).
 				LEFT_JOIN(tAvatar,
-					tAvatar.ID.EQ(tUserProps.AvatarFileID),
+					tAvatar.ID.EQ(tColleague.AvatarFileID),
 				),
 		).
 		WHERE(mysql.AND(
@@ -555,7 +555,7 @@ func (s *Store) ListColleagueActivity(
 			tTargetColleague.Lastname,
 			tTargetColleague.Dateofbirth,
 			tTargetColleague.PhoneNumber,
-			tTargetUserProps.AvatarFileID.AS("target_user.profile_picture_file_id"),
+			tTargetColleague.AvatarFileID.AS("target_user.profile_picture_file_id"),
 			tTargetUserAvatar.FilePath.AS("target_user.profile_picture"),
 			tTargetColleagueProps.UserID,
 			tTargetColleagueProps.Job,
@@ -570,7 +570,7 @@ func (s *Store) ListColleagueActivity(
 			tSourceUser.Lastname,
 			tSourceUser.Dateofbirth,
 			tSourceUser.PhoneNumber,
-			tSourceUserProps.AvatarFileID.AS("source_user.profile_picture_file_id"),
+			tSourceUser.AvatarFileID.AS("source_user.profile_picture_file_id"),
 			tSourceUserAvatar.FilePath.AS("source_user.profile_picture"),
 		).
 		FROM(
@@ -585,7 +585,7 @@ func (s *Store) ListColleagueActivity(
 					tTargetUserProps.UserID.EQ(tTargetColleague.ID),
 				).
 				LEFT_JOIN(tTargetUserAvatar,
-					tTargetUserAvatar.ID.EQ(tTargetUserProps.AvatarFileID),
+					tTargetUserAvatar.ID.EQ(tTargetColleague.AvatarFileID),
 				).
 				LEFT_JOIN(tTargetColleagueProps,
 					mysql.AND(
@@ -603,7 +603,7 @@ func (s *Store) ListColleagueActivity(
 					tSourceUserProps.UserID.EQ(tSourceUser.ID),
 				).
 				LEFT_JOIN(tSourceUserAvatar,
-					tSourceUserAvatar.ID.EQ(tSourceUserProps.AvatarFileID),
+					tSourceUserAvatar.ID.EQ(tSourceUser.AvatarFileID),
 				),
 		).
 		WHERE(condition).

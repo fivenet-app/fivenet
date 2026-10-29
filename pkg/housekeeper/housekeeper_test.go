@@ -197,3 +197,34 @@ func TestHardDelete(t *testing.T) {
 	// Ensure all expectations were met
 	require.NoError(t, mock.ExpectationsWereMet(), "unmet expectations")
 }
+
+func TestHardDeleteStringKeyDependencyIsBatched(t *testing.T) {
+	t.Parallel()
+
+	db, mock, err := sqlmock.New()
+	require.NoError(t, err)
+	defer db.Close()
+
+	h := &Housekeeper{logger: zap.NewNop(), db: db}
+	table := &Table{
+		Table:           mysql.NewTable("", "property_definitions", ""),
+		KeyColumnString: mysql.StringColumn("property_key"),
+		DeletedAtColumn: mysql.TimestampColumn("deleted_at"),
+		MinDays:         30,
+		DependantTables: []*Table{{
+			Table:            mysql.NewTable("", "property_values", ""),
+			ForeignKeyString: mysql.StringColumn("property_key"),
+		}},
+	}
+
+	mock.ExpectExec("(?s)DELETE FROM property_values WHERE .*property_key IN.*SELECT property_key AS \"property_key\" FROM property_definitions.*deleted_at IS NOT NULL.*LIMIT \\?;").
+		WithArgs().
+		WillReturnResult(sqlmock.NewResult(0, DefaultDeleteLimit))
+	mock.ExpectExec("DELETE FROM property_definitions WHERE .*deleted_at IS NOT NULL.*LIMIT \\?;").
+		WithArgs().
+		WillReturnResult(sqlmock.NewResult(0, 0))
+
+	_, err = h.HardDelete(t.Context(), table)
+	require.NoError(t, err)
+	require.NoError(t, mock.ExpectationsWereMet())
+}

@@ -224,6 +224,12 @@ export async function getSettingsLawsClient() {
     return new LawsServiceClient(useGRPCTransport());
 }
 
+// Factory for settings.property client.
+export async function getSettingsPropertyClient() {
+    const { PropertyServiceClient } = await import('~~/gen/ts/services/settings/properties.client');
+    return new PropertyServiceClient(useGRPCTransport());
+}
+
 // Factory for settings.settings client.
 export async function getSettingsSettingsClient() {
     const { SettingsServiceClient } = await import('~~/gen/ts/services/settings/settings.client');

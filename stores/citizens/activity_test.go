@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/DATA-DOG/go-sqlmock"
+	usersactivity "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/users/activity"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
@@ -19,8 +20,11 @@ func TestStoreCountUserActivityAppliesTargetFilter(t *testing.T) {
 
 	store := New(testParams(db))
 
-	mock.ExpectQuery(regexp.QuoteMeta(`FROM fivenet_user_activity AS user_activity`) + `(?s).*` + regexp.QuoteMeta(`user_activity.target_user_id = ?`)).
-		WithArgs(int32(42)).
+	mock.ExpectQuery(regexp.QuoteMeta(`FROM fivenet_user_activity AS user_activity`)+`(?s).*`+regexp.QuoteMeta(`user_activity.target_user_id = ?`)).
+		WithArgs(
+			int32(42),
+			int32(usersactivity.UserActivityType_USER_ACTIVITY_TYPE_PROPERTY),
+		).
 		WillReturnRows(sqlmock.NewRows([]string{"data_count.total"}).AddRow(int64(7)))
 
 	total, err := store.CountUserActivity(t.Context(), CountUserActivityOptions{
@@ -28,6 +32,36 @@ func TestStoreCountUserActivityAppliesTargetFilter(t *testing.T) {
 	})
 	require.NoError(t, err)
 	assert.Equal(t, int64(7), total)
+	require.NoError(t, mock.ExpectationsWereMet())
+}
+
+func TestStoreCountUserActivityHidesInaccessibleProperties(t *testing.T) {
+	t.Parallel()
+
+	db, mock, err := sqlmock.New()
+	require.NoError(t, err)
+	t.Cleanup(func() { _ = db.Close() })
+
+	store := New(testParams(db))
+	mock.ExpectQuery(regexp.QuoteMeta(`FROM fivenet_user_activity AS user_activity`)+`(?s).*`+
+		regexp.QuoteMeta(`user_activity.target_user_id = ?`)+`(?s).*`+
+		regexp.QuoteMeta(`user_activity.type != ?`)+`(?s).*`+
+		regexp.QuoteMeta("user_activity.`key` IN (?)")).
+		WithArgs(
+			int32(42),
+			int32(usersactivity.UserActivityType_USER_ACTIVITY_TYPE_PROPERTY),
+			"user.risk_level",
+		).
+		WillReturnRows(sqlmock.NewRows([]string{"data_count.total"}).AddRow(int64(2)))
+
+	total, err := store.CountUserActivity(t.Context(), CountUserActivityOptions{
+		UserActivityOptions: UserActivityOptions{
+			UserID:              42,
+			VisiblePropertyKeys: []string{"user.risk_level"},
+		},
+	})
+	require.NoError(t, err)
+	assert.Equal(t, int64(2), total)
 	require.NoError(t, mock.ExpectationsWereMet())
 }
 
@@ -45,7 +79,12 @@ func TestStoreListUserActivityAppliesSortAndIdsOnly(t *testing.T) {
 		`(?s).*` + regexp.QuoteMeta(`ORDER BY user_activity.created_at DESC, user_activity.id DESC LIMIT ? OFFSET ?`)
 
 	mock.ExpectQuery(expectedQuery).
-		WithArgs(int32(42), int64(20), int64(0)).
+		WithArgs(
+			int32(42),
+			int32(usersactivity.UserActivityType_USER_ACTIVITY_TYPE_PROPERTY),
+			int64(20),
+			int64(0),
+		).
 		WillReturnRows(sqlmock.NewRows([]string{
 			"user_activity.id",
 			"user_activity.created_at",
@@ -65,9 +104,11 @@ func TestStoreListUserActivityAppliesSortAndIdsOnly(t *testing.T) {
 		))
 
 	activities, err := store.ListUserActivity(t.Context(), ListUserActivityOptions{
-		UserID: 42,
 		Offset: 0,
 		Limit:  20,
+		UserActivityOptions: UserActivityOptions{
+			UserID: 42,
+		},
 	})
 	require.NoError(t, err)
 	require.Len(t, activities, 1)

@@ -104,6 +104,58 @@ func TestValidateJobList(t *testing.T) {
 	}
 }
 
+func TestValidatePropertyList(t *testing.T) {
+	t.Parallel()
+
+	tests := []struct {
+		name        string
+		in          *PropertyList
+		validVals   []string
+		maxVals     []string
+		hasMax      bool
+		wantKeys    []string
+		wantChanged bool
+	}{
+		{
+			name:        "allows_runtime_keys_without_a_registered_or_job_limit",
+			in:          &PropertyList{Keys: []string{"vehicle.inspection_score"}},
+			wantKeys:    []string{"vehicle.inspection_score"},
+			wantChanged: false,
+		},
+		{
+			name: "filters_keys_outside_the_job_limit",
+			in: &PropertyList{
+				Keys: []string{"vehicle.inspection_score", "vehicle.owner_notes"},
+			},
+			maxVals:     []string{"vehicle.inspection_score"},
+			hasMax:      true,
+			wantKeys:    []string{"vehicle.inspection_score"},
+			wantChanged: true,
+		},
+		{
+			name: "filters_keys_outside_registered_values_when_present",
+			in: &PropertyList{
+				Keys: []string{"vehicle.inspection_score", "vehicle.owner_notes"},
+			},
+			validVals:   []string{"vehicle.inspection_score"},
+			wantKeys:    []string{"vehicle.inspection_score"},
+			wantChanged: true,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
+			ok, changed := ValidatePropertyList(tt.in, tt.validVals, tt.maxVals, tt.hasMax)
+
+			assert.True(t, ok)
+			assert.Equal(t, tt.wantChanged, changed)
+			assert.Equal(t, tt.wantKeys, tt.in.GetKeys())
+		})
+	}
+}
+
 func TestValidateJobGradeListNonFineGrained(t *testing.T) {
 	t.Parallel()
 

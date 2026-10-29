@@ -61,8 +61,9 @@ func init() {
 			Name:      permkeys.WikiServiceUpdatePagePerm,
 			Attrs: []perms.Attr{
 				{
-					Key:         permkeys.WikiServiceUpdatePageFieldsPermField,
-					Type:        permissionsattributes.StringListAttributeType,
+					Key:  permkeys.WikiServiceUpdatePageFieldsPermField,
+					Type: permissionsattributes.StringListAttributeType,
+
 					ValidValues: []string{"Public"},
 				},
 			},

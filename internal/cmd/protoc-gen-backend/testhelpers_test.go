@@ -54,6 +54,7 @@ func loadBackendFixture(t *testing.T) (pgs.AST, map[string]pgs.File) {
 		"resources/permissions/attributes/attributes.proto",
 		backendTestAttributesProto,
 	)
+	writeBackendTestProto(t, root, "resources/properties/properties.proto", backendTestPropertiesProto)
 	writeBackendTestProto(t, root, "codegen/perms/perms.proto", backendTestPermissionsProto)
 	writeBackendTestProto(t, root, "services/documents/documents.proto", backendTestDocumentsProto)
 	writeBackendTestProto(
@@ -115,6 +116,7 @@ func loadBackendOverrideFixture(t *testing.T) (pgs.AST, map[string]pgs.File) {
 		"resources/permissions/attributes/attributes.proto",
 		backendTestAttributesProto,
 	)
+	writeBackendTestProto(t, root, "resources/properties/properties.proto", backendTestPropertiesProto)
 	writeBackendTestProto(t, root, "codegen/perms/perms.proto", backendTestPermissionsProto)
 	writeBackendTestProto(t, root, "services/settings/overrides.proto", backendTestOverridesProto)
 

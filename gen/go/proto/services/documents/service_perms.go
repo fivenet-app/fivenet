@@ -93,8 +93,9 @@ func init() {
 			Name:      permkeys.CommentsServiceDeleteCommentPerm,
 			Attrs: []perms.Attr{
 				{
-					Key:         permkeys.CommentsServiceDeleteCommentAccessPermField,
-					Type:        permissionsattributes.StringListAttributeType,
+					Key:  permkeys.CommentsServiceDeleteCommentAccessPermField,
+					Type: permissionsattributes.StringListAttributeType,
+
 					ValidValues: []string{"Own", "Lower_Rank", "Same_Rank", "Any"},
 				},
 			},
@@ -125,8 +126,9 @@ func init() {
 			Name:      permkeys.DocumentsServiceChangeDocumentOwnerPerm,
 			Attrs: []perms.Attr{
 				{
-					Key:         permkeys.DocumentsServiceChangeDocumentOwnerAccessPermField,
-					Type:        permissionsattributes.StringListAttributeType,
+					Key:  permkeys.DocumentsServiceChangeDocumentOwnerAccessPermField,
+					Type: permissionsattributes.StringListAttributeType,
+
 					ValidValues: []string{"Own", "Lower_Rank", "Same_Rank", "Any"},
 				},
 			},
@@ -139,8 +141,9 @@ func init() {
 			Name:      permkeys.DocumentsServiceCreateDocumentReqPerm,
 			Attrs: []perms.Attr{
 				{
-					Key:         permkeys.DocumentsServiceCreateDocumentReqTypesPermField,
-					Type:        permissionsattributes.StringListAttributeType,
+					Key:  permkeys.DocumentsServiceCreateDocumentReqTypesPermField,
+					Type: permissionsattributes.StringListAttributeType,
+
 					ValidValues: []string{"Access", "Closure", "Update", "Deletion", "OwnerChange"},
 				},
 			},
@@ -153,8 +156,9 @@ func init() {
 			Name:      permkeys.DocumentsServiceDeleteDocumentPerm,
 			Attrs: []perms.Attr{
 				{
-					Key:         permkeys.DocumentsServiceDeleteDocumentAccessPermField,
-					Type:        permissionsattributes.StringListAttributeType,
+					Key:  permkeys.DocumentsServiceDeleteDocumentAccessPermField,
+					Type: permissionsattributes.StringListAttributeType,
+
 					ValidValues: []string{"Own", "Lower_Rank", "Same_Rank", "Any"},
 				},
 			},
@@ -215,8 +219,9 @@ func init() {
 			Name:      permkeys.DocumentsServiceToggleDocumentPerm,
 			Attrs: []perms.Attr{
 				{
-					Key:         permkeys.DocumentsServiceToggleDocumentAccessPermField,
-					Type:        permissionsattributes.StringListAttributeType,
+					Key:  permkeys.DocumentsServiceToggleDocumentAccessPermField,
+					Type: permissionsattributes.StringListAttributeType,
+
 					ValidValues: []string{"Own", "Lower_Rank", "Same_Rank", "Any"},
 				},
 			},
@@ -229,8 +234,9 @@ func init() {
 			Name:      permkeys.DocumentsServiceToggleDocumentPinPerm,
 			Attrs: []perms.Attr{
 				{
-					Key:         permkeys.DocumentsServiceToggleDocumentPinTypesPermField,
-					Type:        permissionsattributes.StringListAttributeType,
+					Key:  permkeys.DocumentsServiceToggleDocumentPinTypesPermField,
+					Type: permissionsattributes.StringListAttributeType,
+
 					ValidValues: []string{"JobWide"},
 				},
 			},
@@ -243,8 +249,9 @@ func init() {
 			Name:      permkeys.DocumentsServiceUpdateDocumentPerm,
 			Attrs: []perms.Attr{
 				{
-					Key:         permkeys.DocumentsServiceUpdateDocumentAccessPermField,
-					Type:        permissionsattributes.StringListAttributeType,
+					Key:  permkeys.DocumentsServiceUpdateDocumentAccessPermField,
+					Type: permissionsattributes.StringListAttributeType,
+
 					ValidValues: []string{"Own", "Lower_Rank", "Same_Rank", "Any"},
 				},
 			},
@@ -285,8 +292,9 @@ func init() {
 			Name:      permkeys.StatsServiceGetStatsPerm,
 			Attrs: []perms.Attr{
 				{
-					Key:         permkeys.StatsServiceGetStatsCategoriesPermField,
-					Type:        permissionsattributes.StringListAttributeType,
+					Key:  permkeys.StatsServiceGetStatsCategoriesPermField,
+					Type: permissionsattributes.StringListAttributeType,
+
 					ValidValues: []string{"PenaltyCalculator"},
 				},
 				{

@@ -130,9 +130,79 @@ func (m *ServiceOptions) Sanitize() error {
 		*m.Namespace = htmlsanitizer.SanitizeAndUnescape(*m.Namespace)
 	}
 
+	// Field: PropertyGroups
+	for idx, item := range m.PropertyGroups {
+		_, _ = idx, item
+
+		if v, ok := any(item).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+
+	}
+
 	// Field: Service
 	if m.Service != nil {
 		*m.Service = htmlsanitizer.SanitizeAndUnescape(*m.Service)
+	}
+
+	// Field: SystemProperties
+	for idx, item := range m.SystemProperties {
+		_, _ = idx, item
+
+		if v, ok := any(item).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+
+	}
+
+	return nil
+}
+
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
+func (m *SystemProperty) Sanitize() error {
+	if m == nil {
+		return nil
+	}
+
+	// Field: Currency
+	if m.Currency != nil {
+		*m.Currency = htmlsanitizer.SanitizeAndUnescape(*m.Currency)
+	}
+
+	// Field: Description
+	if m.Description != nil {
+		*m.Description = htmlsanitizer.SanitizeAndUnescape(*m.Description)
+	}
+
+	// Field: DisplayKey
+	m.DisplayKey = htmlsanitizer.SanitizeAndUnescape(m.DisplayKey)
+
+	// Field: GroupKey
+	m.GroupKey = htmlsanitizer.SanitizeAndUnescape(m.GroupKey)
+
+	// Field: Key
+	m.Key = htmlsanitizer.SanitizeAndUnescape(m.Key)
+
+	// Field: Label
+	m.Label = htmlsanitizer.SanitizeAndUnescape(m.Label)
+
+	// Field: RendererConfig
+	if m.RendererConfig != nil {
+		if v, ok := any(m.GetRendererConfig()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+	}
+
+	// Field: Unit
+	if m.Unit != nil {
+		*m.Unit = htmlsanitizer.SanitizeAndUnescape(*m.Unit)
 	}
 
 	return nil

@@ -17,6 +17,7 @@ type FivenetUserActivity struct {
 	SourceUserID *int32     `json:"source_user_id"`
 	TargetUserID int32      `json:"target_user_id"`
 	Type         int16      `json:"type"`
+	Key          *string    `json:"key"`
 	Reason       *string    `json:"reason"`
 	Data         *string    `json:"data"`
 }

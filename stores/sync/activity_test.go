@@ -151,35 +151,13 @@ func TestAddUserPropsPreservesExistingLabelsWhenSyncPayloadHasLabels(t *testing.
 	})
 
 	mock.ExpectBegin()
-	mock.ExpectQuery(regexp.QuoteMeta(`FROM fivenet_user_props AS user_props`)+`(?s).*`+regexp.QuoteMeta(`LEFT JOIN fivenet_files AS mugshot ON`)).
-		WithArgs(int32(42), int64(1)).
-		WillReturnRows(sqlmock.NewRows([]string{
-			"user_props.user_id",
-			"user_props.updated_at",
-			"user_props.wanted",
-			"user_props.job",
-			"user_props.job_grade",
-			"user_props.traffic_infraction_points",
-			"user_props.traffic_infraction_points_updated_at",
-			"user_props.open_fines",
-			"user_props.avatar_file_id",
-			"user_props.mugshot_file_id",
-			"mugshot.mugshot_file_id",
-			"file_path",
-		}).AddRow(
-			int32(42),
-			nil,
-			nil,
-			nil,
-			nil,
-			nil,
-			nil,
-			nil,
-			nil,
-			nil,
-			nil,
-			nil,
-		))
+	mock.ExpectQuery(`FROM fivenet_user_property_values`).WithArgs(int32(42)).
+		WillReturnRows(sqlmock.NewRows([]string{"user_id", "property_key", "value_type", "value_string", "value_integer", "value_number", "value_bool", "value_timestamp", "value_date", "updated_at"}))
+	mock.ExpectQuery(`FROM fivenet_user_property_state`).WithArgs(int32(42)).
+		WillReturnRows(sqlmock.NewRows([]string{"user_id", "property_key", "reason", "active_at", "expires_at", "updated_at"}))
+	mock.ExpectQuery(`FROM fivenet_user_files AS mugshot_file`).
+		WithArgs(int32(42), "mugshot", int64(1)).
+		WillReturnRows(sqlmock.NewRows([]string{"mugshot_file_id", "mugshot.mugshot_file_id", "file_path"}))
 
 	mock.ExpectQuery(regexp.QuoteMeta(`FROM fivenet_user_labels INNER JOIN fivenet_user_labels_job AS label ON`)+`(?s).*`+regexp.QuoteMeta(`WHERE (fivenet_user_labels.user_id = ?)`)+`(?s).*`+regexp.QuoteMeta(`LIMIT ?;`)).
 		WithArgs(int32(42), int64(25)).
@@ -209,6 +187,10 @@ func TestAddUserPropsPreservesExistingLabelsWhenSyncPayloadHasLabels(t *testing.
 			nil,
 		))
 
+	mock.ExpectExec(`(?s)INSERT INTO fivenet_user_property_values`).
+		WillReturnResult(sqlmock.NewResult(0, 1))
+	mock.ExpectExec(`(?s)DELETE FROM fivenet_user_property_state`).
+		WillReturnResult(sqlmock.NewResult(0, 1))
 	mock.ExpectExec(regexp.QuoteMeta(`DELETE FROM fivenet_user_labels`)+`(?s).*`+regexp.QuoteMeta(`label_id IN (?)`)+`(?s).*`+regexp.QuoteMeta(`LIMIT ?;`)).
 		WithArgs(int32(42), int64(1), int64(1)).
 		WillReturnResult(sqlmock.NewResult(0, 1))

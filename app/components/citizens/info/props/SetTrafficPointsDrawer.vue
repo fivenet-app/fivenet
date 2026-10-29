@@ -56,6 +56,7 @@ async function setTrafficPoints(values: Schema): Promise<void> {
         const call = citizensCitizensClient.setUserProps({
             props: userProps,
             reason: values.reason,
+            propertyChanges: [],
         });
         const { response } = await call;
 

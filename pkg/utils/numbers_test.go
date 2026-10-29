@@ -82,3 +82,21 @@ func TestToUint32Checked(t *testing.T) {
 		})
 	}
 }
+
+func TestCheckedNarrowingFromInt64(t *testing.T) {
+	t.Parallel()
+
+	points, ok := ToUint32Checked(int64(math.MaxUint32))
+	assert.True(t, ok)
+	assert.Equal(t, uint32(math.MaxUint32), points)
+
+	_, ok = ToUint32Checked(int64(-1))
+	assert.False(t, ok)
+
+	grade, ok := ToInt32Checked(int64(math.MinInt32))
+	assert.True(t, ok)
+	assert.Equal(t, int32(math.MinInt32), grade)
+
+	_, ok = ToInt32Checked(int64(math.MaxInt32) + 1)
+	assert.False(t, ok)
+}

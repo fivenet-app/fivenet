@@ -1,5 +1,6 @@
 <script lang="ts" setup>
 import ProfilePictureImg from '~/components/partials/citizens/ProfilePictureImg.vue';
+import ProfilePropertyBadges from '~/components/partials/properties/ProfilePropertyBadges.vue';
 import type { User } from '~~/gen/ts/resources/users/user';
 defineProps<{
     user: User;
@@ -8,8 +9,6 @@ defineProps<{
 defineEmits<{
     (e: 'toggle-actions'): void;
 }>();
-
-const { game } = useAppConfig();
 </script>
 
 <template>
@@ -30,17 +29,11 @@ const { game } = useAppConfig();
                 </h1>
             </div>
 
-            <div class="flex flex-row flex-wrap gap-2">
-                <UBadge>
-                    {{ user.jobLabel }}
-                    <template v-if="user.job !== game.unemployedJobName">
-                        ({{ $t('common.rank') }}: {{ user.jobGradeLabel }})
-                    </template>
-                    {{ user.props?.jobName || user.props?.jobGradeNumber ? '*' : '' }}
-                </UBadge>
-
-                <UBadge v-if="user?.props?.wanted" color="error" :label="$t('common.wanted').toUpperCase()" />
-            </div>
+            <ProfilePropertyBadges
+                :properties="user.properties?.properties"
+                :user="user"
+                :key-order="['user.job', 'user.wanted']"
+            />
         </div>
 
         <div class="flex shrink-0 flex-col gap-1 sm:flex-row">

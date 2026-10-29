@@ -54,6 +54,7 @@ async function setWantedState(values: Schema): Promise<void> {
         const call = vehiclesVehiclesClient.setVehicleProps({
             props: vProps,
             reason: values.reason,
+            propertyChanges: [],
         });
         const { response } = await call;
 
@@ -113,7 +114,7 @@ async function closeModal(): Promise<void> {
         </template>
 
         <template #body>
-            <UForm ref="formRef" :schema="schema" :state="state" @submit="submit">
+            <UForm ref="formRef" class="flex flex-col gap-2" :schema="schema" :state="state" @submit="submit">
                 <UFormField class="flex-1" name="reason" :label="$t('common.reason')" required>
                     <UInput v-model="state.reason" class="w-full" type="text" :placeholder="$t('common.reason')" />
                 </UFormField>

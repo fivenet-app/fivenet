@@ -33,13 +33,15 @@ func init() {
 			Name:      permkeys.ColleaguesServiceGetColleaguePerm,
 			Attrs: []perms.Attr{
 				{
-					Key:         permkeys.ColleaguesServiceGetColleagueAccessPermField,
-					Type:        permissionsattributes.StringListAttributeType,
+					Key:  permkeys.ColleaguesServiceGetColleagueAccessPermField,
+					Type: permissionsattributes.StringListAttributeType,
+
 					ValidValues: []string{"Own", "Lower_Rank", "Same_Rank", "Any"},
 				},
 				{
-					Key:         permkeys.ColleaguesServiceGetColleagueTypesPermField,
-					Type:        permissionsattributes.StringListAttributeType,
+					Key:  permkeys.ColleaguesServiceGetColleagueTypesPermField,
+					Type: permissionsattributes.StringListAttributeType,
+
 					ValidValues: []string{"Note", "Labels"},
 				},
 			},
@@ -52,8 +54,9 @@ func init() {
 			Name:      permkeys.ColleaguesServiceListColleagueActivityPerm,
 			Attrs: []perms.Attr{
 				{
-					Key:         permkeys.ColleaguesServiceListColleagueActivityTypesPermField,
-					Type:        permissionsattributes.StringListAttributeType,
+					Key:  permkeys.ColleaguesServiceListColleagueActivityTypesPermField,
+					Type: permissionsattributes.StringListAttributeType,
+
 					ValidValues: []string{"HIRED", "FIRED", "PROMOTED", "DEMOTED", "ABSENCE_DATE", "NOTE", "LABELS", "NAME"},
 				},
 			},
@@ -74,13 +77,15 @@ func init() {
 			Name:      permkeys.ColleaguesServiceSetColleaguePropsPerm,
 			Attrs: []perms.Attr{
 				{
-					Key:         permkeys.ColleaguesServiceSetColleaguePropsAccessPermField,
-					Type:        permissionsattributes.StringListAttributeType,
+					Key:  permkeys.ColleaguesServiceSetColleaguePropsAccessPermField,
+					Type: permissionsattributes.StringListAttributeType,
+
 					ValidValues: []string{"Own", "Lower_Rank", "Same_Rank", "Any"},
 				},
 				{
-					Key:         permkeys.ColleaguesServiceSetColleaguePropsTypesPermField,
-					Type:        permissionsattributes.StringListAttributeType,
+					Key:  permkeys.ColleaguesServiceSetColleaguePropsTypesPermField,
+					Type: permissionsattributes.StringListAttributeType,
+
 					ValidValues: []string{"AbsenceDate", "Note", "Labels", "Name"},
 				},
 			},
@@ -111,8 +116,9 @@ func init() {
 			Name:      permkeys.ConductServiceListConductEntriesPerm,
 			Attrs: []perms.Attr{
 				{
-					Key:         permkeys.ConductServiceListConductEntriesAccessPermField,
-					Type:        permissionsattributes.StringListAttributeType,
+					Key:  permkeys.ConductServiceListConductEntriesAccessPermField,
+					Type: permissionsattributes.StringListAttributeType,
+
 					ValidValues: []string{"Own", "All"},
 				},
 			},
@@ -197,8 +203,9 @@ func init() {
 			Name:      permkeys.TimeclockServiceListTimeclockPerm,
 			Attrs: []perms.Attr{
 				{
-					Key:         permkeys.TimeclockServiceListTimeclockAccessPermField,
-					Type:        permissionsattributes.StringListAttributeType,
+					Key:  permkeys.TimeclockServiceListTimeclockAccessPermField,
+					Type: permissionsattributes.StringListAttributeType,
+
 					ValidValues: []string{"All"},
 				},
 			},

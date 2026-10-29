@@ -17,6 +17,15 @@ func (m *VehicleProps) Sanitize() error {
 	// Field: Plate
 	m.Plate = htmlsanitizer.SanitizeAndUnescape(m.Plate)
 
+	// Field: Properties
+	if m.Properties != nil {
+		if v, ok := any(m.GetProperties()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+	}
+
 	// Field: UpdatedAt
 	if m.UpdatedAt != nil {
 		if v, ok := any(m.GetUpdatedAt()).(interface{ Sanitize() error }); ok {

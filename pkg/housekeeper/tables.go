@@ -28,6 +28,10 @@ type Table struct {
 	ForeignKey mysql.ColumnInteger
 	// IDColumn is the primary key column for the table.
 	IDColumn mysql.ColumnInteger
+	// ForeignKeyString and KeyColumnString support dependencies joined by a
+	// string key, such as property definitions and property values.
+	ForeignKeyString mysql.ColumnString
+	KeyColumnString  mysql.ColumnString
 
 	// TimestampColumn is an optional timestamp column for filtering by age.
 	TimestampColumn mysql.ColumnTimestamp

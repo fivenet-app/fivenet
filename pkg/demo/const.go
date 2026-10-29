@@ -76,7 +76,6 @@ var (
 		{Name: cafeJob, Label: "Cat Café"},
 		{Name: fibJob, Label: "FIB"},
 		{Name: mechanicJob, Label: "Nagata Performance"},
-		{Name: "prisoner", Label: "Inmate"},
 		{Name: yardiesJob, Label: "Yardies"},
 	}
 
@@ -175,7 +174,6 @@ var (
 		{JobName: mechanicJob, Grade: 10, Label: "Department Head"},
 		{JobName: mechanicJob, Grade: 11, Label: "Deputy CEO"},
 		{JobName: mechanicJob, Grade: 12, Label: "CEO"},
-		{JobName: "prisoner", Grade: 1, Label: "Prisoner"},
 		{JobName: yardiesJob, Grade: 1, Label: "Runner"},
 		{JobName: yardiesJob, Grade: 2, Label: "Dealer"},
 		{JobName: yardiesJob, Grade: 3, Label: "Bouncer"},

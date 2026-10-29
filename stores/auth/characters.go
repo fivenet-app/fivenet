@@ -19,7 +19,6 @@ func (s *Store) ListCharacters(
 ) ([]*accounts.Character, error) {
 	tUsers := table.FivenetUser.AS("user")
 	tUserAccounts := table.FivenetUserAccounts.AS("user_accounts")
-	tUserProps := table.FivenetUserProps.AS("user_props")
 	tAvatar := table.FivenetFiles.AS("profile_picture")
 
 	stmt := tUsers.
@@ -37,7 +36,7 @@ func (s *Store) ListCharacters(
 				tUsers.Sex,
 				tUsers.Height,
 				tUsers.PhoneNumber,
-				tUserProps.AvatarFileID.AS("user.profile_picture_file_id"),
+				tUsers.AvatarFileID.AS("user.profile_picture_file_id"),
 				tAvatar.FilePath.AS("user.profile_picture"),
 				s.customDB.Columns.User.GetVisum(tUsers.Alias()),
 				s.customDB.Columns.User.GetPlaytime(tUsers.Alias()),
@@ -47,11 +46,8 @@ func (s *Store) ListCharacters(
 			INNER_JOIN(tUserAccounts,
 				tUserAccounts.UserID.EQ(tUsers.ID),
 			).
-			LEFT_JOIN(tUserProps,
-				tUserProps.UserID.EQ(tUsers.ID),
-			).
 			LEFT_JOIN(tAvatar,
-				tAvatar.ID.EQ(tUserProps.AvatarFileID),
+				tAvatar.ID.EQ(tUsers.AvatarFileID),
 			),
 		).
 		WHERE(tUserAccounts.AccountID.EQ(mysql.Int64(accountID))).
@@ -71,7 +67,6 @@ func (s *Store) GetCharacter(
 	charID int32,
 ) (*users.User, *jobsprops.JobProps, error) {
 	tUsers := table.FivenetUser.AS("user")
-	tUserProps := table.FivenetUserProps.AS("user_props")
 	tAvatar := table.FivenetFiles.AS("profile_picture")
 	tJobProps := table.FivenetJobProps.AS("job_props")
 	tLogo := table.FivenetFiles.AS("logo_file")
@@ -86,7 +81,7 @@ func (s *Store) GetCharacter(
 			tUsers.Firstname,
 			tUsers.Lastname,
 			tUsers.Dateofbirth,
-			tUserProps.AvatarFileID.AS("user.profile_picture_file_id"),
+			tUsers.AvatarFileID.AS("user.profile_picture_file_id"),
 			tAvatar.FilePath.AS("user.profile_picture"),
 			tJobProps.Job,
 			tJobProps.UpdatedAt,
@@ -110,11 +105,8 @@ func (s *Store) GetCharacter(
 						tLogo.DeletedAt.IS_NULL(),
 					),
 				).
-				LEFT_JOIN(tUserProps,
-					tUserProps.UserID.EQ(tUsers.ID),
-				).
 				LEFT_JOIN(tAvatar,
-					tAvatar.ID.EQ(tUserProps.AvatarFileID),
+					tAvatar.ID.EQ(tUsers.AvatarFileID),
 				),
 		).
 		WHERE(tUsers.ID.EQ(mysql.Int32(charID))).

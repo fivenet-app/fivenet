@@ -60,11 +60,17 @@ export interface UploadMeta {
     /**
      * @generated from protobuf field: int64 size = 5
      */
-    size: number; // Size in bytes
+    size: number; // Size in bytes; the largest configured upload limit is 5 MiB
     /**
      * @generated from protobuf field: string reason = 6
      */
     reason: string;
+    /**
+     * String parent key for resources whose natural identifier is not numeric.
+     *
+     * @generated from protobuf field: string parent_key = 7
+     */
+    parentKey: string;
 }
 /**
  * @generated from protobuf message resources.file.UploadFileResponse
@@ -166,11 +172,12 @@ class UploadMeta$Type extends MessageType<UploadMeta> {
     constructor() {
         super("resources.file.UploadMeta", [
             { no: 1, name: "parent_id", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ },
-            { no: 2, name: "namespace", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
-            { no: 3, name: "original_name", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "255" } } } },
-            { no: 4, name: "content_type", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
-            { no: 5, name: "size", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/, options: { "buf.validate.field": { int64: { gt: "0" } } } },
-            { no: 6, name: "reason", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { ignore: "IGNORE_IF_ZERO_VALUE", string: { minLen: "3", maxLen: "255" } }, "codegen.sanitizer.sanitizer": { enabled: true } } }
+            { no: 2, name: "namespace", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { minLen: "1", maxLen: "64", pattern: "^[a-zA-Z0-9_-]+$" } } } },
+            { no: 3, name: "original_name", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { minLen: "1", maxLen: "255" } } } },
+            { no: 4, name: "content_type", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "127" } } } },
+            { no: 5, name: "size", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/, options: { "buf.validate.field": { int64: { lte: "5242880", gt: "0" } } } },
+            { no: 6, name: "reason", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { ignore: "IGNORE_IF_ZERO_VALUE", string: { minLen: "3", maxLen: "255" } }, "codegen.sanitizer.sanitizer": { enabled: true } } },
+            { no: 7, name: "parent_key", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "64" } } } }
         ]);
     }
     create(value?: PartialMessage<UploadMeta>): UploadMeta {
@@ -181,6 +188,7 @@ class UploadMeta$Type extends MessageType<UploadMeta> {
         message.contentType = "";
         message.size = 0;
         message.reason = "";
+        message.parentKey = "";
         if (value !== undefined)
             reflectionMergePartial<UploadMeta>(this, message, value);
         return message;
@@ -207,6 +215,9 @@ class UploadMeta$Type extends MessageType<UploadMeta> {
                     break;
                 case /* string reason */ 6:
                     message.reason = reader.string();
+                    break;
+                case /* string parent_key */ 7:
+                    message.parentKey = reader.string();
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -238,6 +249,9 @@ class UploadMeta$Type extends MessageType<UploadMeta> {
         /* string reason = 6; */
         if (message.reason !== "")
             writer.tag(6, WireType.LengthDelimited).string(message.reason);
+        /* string parent_key = 7; */
+        if (message.parentKey !== "")
+            writer.tag(7, WireType.LengthDelimited).string(message.parentKey);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -252,9 +266,9 @@ export const UploadMeta = new UploadMeta$Type();
 class UploadFileResponse$Type extends MessageType<UploadFileResponse> {
     constructor() {
         super("resources.file.UploadFileResponse", [
-            { no: 1, name: "id", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ },
-            { no: 2, name: "url", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
-            { no: 3, name: "file", kind: "message", T: () => File }
+            { no: 1, name: "id", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/, options: { "buf.validate.field": { int64: { gt: "0" } } } },
+            { no: 2, name: "url", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "512" } } } },
+            { no: 3, name: "file", kind: "message", T: () => File, options: { "buf.validate.field": { required: true } } }
         ]);
     }
     create(value?: PartialMessage<UploadFileResponse>): UploadFileResponse {

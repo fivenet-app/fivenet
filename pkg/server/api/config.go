@@ -7,11 +7,17 @@ import (
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/clientconfig"
 	"github.com/fivenet-app/fivenet/v2026/pkg/config/appconfig"
 	"go.uber.org/zap"
+	"google.golang.org/protobuf/encoding/protojson"
 )
 
 func (r *Routes) handleAppConfigUpdate(appCfg *appconfig.Cfg) {
 	clientCfg := clientconfig.BuildClientConfig(r.cfg, r.providers, appCfg)
-	r.clientCfg.Store(clientCfg)
+	clientCfgJSON, err := protojson.Marshal(clientCfg)
+	if err != nil {
+		r.logger.Error("failed to marshal client config", zap.Error(err))
+		return
+	}
+	r.clientCfgJSON.Store(&clientCfgJSON)
 
 	if appCfg.Discord.BotId == nil || appCfg.Discord.GetBotId() == "" {
 		r.discordInviteUrl.Store(nil)

@@ -53,10 +53,30 @@ var (
 		&common.I18NItem{Key: "errors.citizens.CitizensService.ErrPropsMugshotDenied.content"},
 		&common.I18NItem{Key: "errors.citizens.CitizensService.ErrPropsMugshotDenied.title"},
 	)
+	ErrPropsFilesDenied = common.NewI18nErr(
+		codes.PermissionDenied,
+		&common.I18NItem{Key: "errors.citizens.CitizensService.ErrPropsFilesDenied.content"},
+		&common.I18NItem{Key: "errors.citizens.CitizensService.ErrPropsFilesDenied.title"},
+	)
 	ErrPropsLabelsDenied = common.NewI18nErr(
 		codes.PermissionDenied,
 		&common.I18NItem{Key: "errors.citizens.CitizensService.ErrPropsLabelsDenied.content"},
 		&common.I18NItem{Key: "errors.citizens.CitizensService.ErrPropsLabelsDenied.title"},
+	)
+	ErrPropsPropertiesDenied = common.NewI18nErr(
+		codes.PermissionDenied,
+		&common.I18NItem{Key: "errors.citizens.CitizensService.ErrPropsPropertiesDenied.content"},
+		&common.I18NItem{Key: "errors.citizens.CitizensService.ErrPropsPropertiesDenied.title"},
+	)
+	ErrInvalidProperty = common.NewI18nErr(
+		codes.InvalidArgument,
+		&common.I18NItem{Key: "errors.citizens.CitizensService.ErrInvalidProperty.content"},
+		&common.I18NItem{Key: "errors.citizens.CitizensService.ErrInvalidProperty.title"},
+	)
+	ErrSystemPropertyDisabled = common.NewI18nErr(
+		codes.FailedPrecondition,
+		&common.I18NItem{Key: "errors.citizens.CitizensService.ErrSystemPropertyDisabled.content"},
+		&common.I18NItem{Key: "errors.citizens.CitizensService.ErrSystemPropertyDisabled.title"},
 	)
 	ErrCitizenNotFound = common.NewI18nErr(
 		codes.NotFound,

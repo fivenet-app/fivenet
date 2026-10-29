@@ -303,14 +303,14 @@ func (h *Hydrator) loadFallbackByUserID(
 			tColleague.Lastname,
 			tColleague.Dateofbirth,
 			tColleague.PhoneNumber,
-			tUserProps.AvatarFileID.AS("colleague.profile_picture_file_id"),
+			tColleague.AvatarFileID.AS("colleague.profile_picture_file_id"),
 			tAvatar.FilePath.AS("colleague.profile_picture"),
 			tUserProps.Email.AS("colleague.email"),
 		).
 		FROM(
 			tColleague.
 				LEFT_JOIN(tUserProps, tUserProps.UserID.EQ(tColleague.ID)).
-				LEFT_JOIN(tAvatar, tAvatar.ID.EQ(tUserProps.AvatarFileID)),
+				LEFT_JOIN(tAvatar, tAvatar.ID.EQ(tColleague.AvatarFileID)),
 		).
 		WHERE(mysql.AND(
 			tColleague.ID.IN(userIdExprs...),

@@ -9,6 +9,59 @@ import (
 
 // Sanitize sanitizes the message's fields, in case of complex types it calls
 // their Sanitize() method recursively.
+func (m *FileChange) Sanitize() error {
+	if m == nil {
+		return nil
+	}
+
+	// Field: File
+	if m.File != nil {
+		if v, ok := any(m.GetFile()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+	}
+
+	// Field: Kind
+	m.Kind = htmlsanitizer.SanitizeAndUnescape(m.Kind)
+
+	return nil
+}
+
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
+func (m *PropertyChange) Sanitize() error {
+	if m == nil {
+		return nil
+	}
+
+	// Field: Key
+	m.Key = htmlsanitizer.SanitizeAndUnescape(m.Key)
+
+	// Field: NewValue
+	if m.NewValue != nil {
+		if v, ok := any(m.GetNewValue()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+	}
+
+	// Field: OldValue
+	if m.OldValue != nil {
+		if v, ok := any(m.GetOldValue()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+	}
+
+	return nil
+}
+
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *VehicleActivity) Sanitize() error {
 	if m == nil {
 		return nil
@@ -49,6 +102,11 @@ func (m *VehicleActivity) Sanitize() error {
 		}
 	}
 
+	// Field: Key
+	if m.Key != nil {
+		*m.Key = htmlsanitizer.SanitizeAndUnescape(*m.Key)
+	}
+
 	// Field: Plate
 	m.Plate = htmlsanitizer.SanitizeAndUnescape(m.Plate)
 
@@ -67,9 +125,31 @@ func (m *VehicleActivityData) Sanitize() error {
 		return nil
 	}
 
-	// Field: WantedChange
+	// Field: FileChange
 	switch v := m.Data.(type) {
 
+	case *VehicleActivityData_FileChange:
+
+		if v.FileChange != nil {
+			if s, ok := any(v.FileChange).(interface{ Sanitize() error }); ok {
+				if err := s.Sanitize(); err != nil {
+					return err
+				}
+			}
+		}
+
+		// Field: PropertyChange
+	case *VehicleActivityData_PropertyChange:
+
+		if v.PropertyChange != nil {
+			if s, ok := any(v.PropertyChange).(interface{ Sanitize() error }); ok {
+				if err := s.Sanitize(); err != nil {
+					return err
+				}
+			}
+		}
+
+		// Field: WantedChange
 	case *VehicleActivityData_WantedChange:
 
 		if v.WantedChange != nil {

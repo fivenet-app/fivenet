@@ -3,8 +3,12 @@ package vehiclesstore
 import (
 	"context"
 	"errors"
+	"strings"
+	"time"
 
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/common/database"
+	properties "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/properties"
+	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/timestamp"
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/userinfo"
 	usershort "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/users/short"
 	resourcesvehicles "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/vehicles"
@@ -21,15 +25,14 @@ import (
 type ListQuery struct {
 	UserInfo *userinfo.UserInfo
 
-	LicensePlate string
-	Plates       []string
-	Model        string
-	UserIDs      []int32
-	Job          string
-	Wanted       *bool
+	LicensePlate    string
+	Plates          []string
+	Model           string
+	UserIDs         []int32
+	Job             string
+	PropertyFilters []*properties.PropertyFilter
 
-	CanFilterWanted     bool
-	IncludePropsUpdated bool
+	CanFilterProperties bool
 	IncludeWantedFields bool
 
 	Sort   *database.Sort
@@ -37,22 +40,39 @@ type ListQuery struct {
 	Limit  int64
 }
 
-func (s *Store) Count(ctx context.Context, q ListQuery) (int64, error) {
-	tVehicles := table.FivenetOwnedVehicles.AS("vehicle")
-	tVehicleProps := table.FivenetVehiclesProps.AS("vehicle_props")
+func (s *Store) AddActivity(ctx context.Context, activity *vehiclesactivity.VehicleActivity) error {
+	tx, err := s.db.BeginTx(ctx, nil)
+	if err != nil {
+		return err
+	}
+	defer tx.Rollback()
+	if err := s.AddActivityWithDB(ctx, tx, activity); err != nil {
+		return err
+	}
+	return tx.Commit()
+}
 
-	condition := s.listConditions(q, tVehicles, tVehicleProps)
+// AddActivityWithDB adds an activity using the caller's database handle. It
+// lets operations that mutate another record include their audit activity in
+// the same transaction.
+func (s *Store) AddActivityWithDB(
+	ctx context.Context,
+	db qrm.DB,
+	activity *vehiclesactivity.VehicleActivity,
+) error {
+	_, err := s.addVehicleActivity(ctx, db, activity)
+	return err
+}
+
+func (s *Store) Count(ctx context.Context, q ListQuery) (int64, error) {
+	tVehicles := table.FivenetVehicle.AS("vehicle")
+	condition := s.listConditions(q, tVehicles)
 
 	stmt := tVehicles.
 		SELECT(
 			mysql.COUNT(tVehicles.Plate).AS("data_count.total"),
 		).
-		FROM(
-			tVehicles.
-				LEFT_JOIN(tVehicleProps,
-					tVehicleProps.Plate.EQ(tVehicles.Plate),
-				),
-		).
+		FROM(tVehicles).
 		WHERE(condition)
 
 	var count database.DataCount
@@ -66,29 +86,16 @@ func (s *Store) Count(ctx context.Context, q ListQuery) (int64, error) {
 }
 
 func (s *Store) List(ctx context.Context, q ListQuery) ([]*resourcesvehicles.Vehicle, error) {
-	tVehicles := table.FivenetOwnedVehicles.AS("vehicle")
-	tVehicleProps := table.FivenetVehiclesProps.AS("vehicle_props")
-
-	condition := s.listConditions(q, tVehicles, tVehicleProps)
+	tVehicles := table.FivenetVehicle.AS("vehicle")
+	condition := s.listConditions(q, tVehicles)
 	orderBys := s.sorter.Build(q.Sort)
 
 	columns := dbutils.Columns{
 		s.customDB.Columns.Vehicle.GetModel(tVehicles.Alias()),
 		mysql.REPLACE(tVehicles.Type, mysql.String("_"), mysql.String(" ")).AS("vehicle.type"),
 		tVehicles.UserID.AS("vehicle.owner_id"),
-		tVehicleProps.Plate,
 		tVehicles.Job,
 		tVehicles.Data,
-	}
-
-	if q.IncludePropsUpdated {
-		columns = append(columns, tVehicleProps.UpdatedAt)
-	}
-	if q.IncludeWantedFields {
-		columns = append(columns,
-			tVehicleProps.Wanted,
-			tVehicleProps.WantedReason,
-		)
 	}
 
 	stmt := tVehicles.
@@ -96,12 +103,7 @@ func (s *Store) List(ctx context.Context, q ListQuery) ([]*resourcesvehicles.Veh
 			tVehicles.Plate,
 			columns.Get()...,
 		).
-		FROM(
-			tVehicles.
-				LEFT_JOIN(tVehicleProps,
-					tVehicleProps.Plate.EQ(tVehicles.Plate),
-				),
-		).
+		FROM(tVehicles).
 		WHERE(condition).
 		OFFSET(q.Offset).
 		ORDER_BY(orderBys...).
@@ -110,6 +112,22 @@ func (s *Store) List(ctx context.Context, q ListQuery) ([]*resourcesvehicles.Veh
 	var vehicles []*resourcesvehicles.Vehicle
 	if err := stmt.QueryContext(ctx, s.db, &vehicles); err != nil {
 		return nil, err
+	}
+
+	if q.IncludeWantedFields {
+		plates := make([]string, 0, len(vehicles))
+		for _, vehicle := range vehicles {
+			plates = append(plates, vehicle.GetPlate())
+		}
+		propsByPlate, err := loadVehicleWantedProps(ctx, s.db, plates)
+		if err != nil {
+			return nil, err
+		}
+		for _, vehicle := range vehicles {
+			if props, ok := propsByPlate[vehicle.GetPlate()]; ok {
+				vehicle.Props = props
+			}
+		}
 	}
 
 	if s.hydrator == nil {
@@ -136,7 +154,7 @@ func (s *Store) List(ctx context.Context, q ListQuery) ([]*resourcesvehicles.Veh
 }
 
 func (s *Store) IsVehicleOwner(ctx context.Context, plate string, userID int32) (bool, error) {
-	tVehicles := table.FivenetOwnedVehicles
+	tVehicles := table.FivenetVehicle
 
 	var owner struct {
 		Plate string `alias:"plate"`
@@ -165,38 +183,100 @@ func (s *Store) GetProps(
 	tx qrm.DB,
 	plate string,
 ) (*vehiclesprops.VehicleProps, error) {
-	props := &vehiclesprops.VehicleProps{}
-	tVehicleProps := table.FivenetVehiclesProps.AS("vehicle_props")
-	stmt := tVehicleProps.
-		SELECT(
-			tVehicleProps.Plate,
-			tVehicleProps.UpdatedAt,
-			tVehicleProps.Wanted,
-			tVehicleProps.WantedReason,
-			tVehicleProps.WantedAt,
-			tVehicleProps.WantedTill,
-		).
-		FROM(tVehicleProps).
-		WHERE(tVehicleProps.Plate.EQ(mysql.String(plate))).
-		LIMIT(1)
-
-	if err := stmt.QueryContext(ctx, tx, props); err != nil && !errors.Is(err, qrm.ErrNoRows) {
+	propsByPlate, err := loadVehicleWantedProps(ctx, tx, []string{plate})
+	if err != nil {
 		return nil, err
 	}
-	if props.GetPlate() == "" {
-		props.SetPlate(plate)
+	if props, ok := propsByPlate[plate]; ok {
+		return props, nil
+	}
+	return &vehiclesprops.VehicleProps{Plate: plate}, nil
+}
+
+func loadVehicleWantedProps(
+	ctx context.Context,
+	db qrm.DB,
+	plates []string,
+) (map[string]*vehiclesprops.VehicleProps, error) {
+	result := make(map[string]*vehiclesprops.VehicleProps, len(plates))
+	if len(plates) == 0 {
+		return result, nil
 	}
 
-	return props, nil
+	placeholders := strings.TrimRight(strings.Repeat("?,", len(plates)), ",")
+	args := make([]any, 0, len(plates)+1)
+	args = append(args, vehicleWantedPropertyKey)
+	for _, plate := range plates {
+		args = append(args, plate)
+	}
+
+	rows, err := db.QueryContext(ctx, `
+SELECT value.plate, value.updated_at, value.value_bool, state.reason, state.active_at, state.expires_at
+FROM fivenet_vehicle_property_values value
+LEFT JOIN fivenet_vehicle_property_state state
+  ON state.plate = value.plate AND state.property_key = value.property_key
+WHERE value.property_key = ? AND value.plate IN (`+placeholders+`)
+ORDER BY value.plate ASC`, args...)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		var (
+			plate     string
+			updatedAt time.Time
+			wanted    *bool
+			reason    *string
+			activeAt  *time.Time
+			expiresAt *time.Time
+		)
+		if err := rows.Scan(
+			&plate,
+			&updatedAt,
+			&wanted,
+			&reason,
+			&activeAt,
+			&expiresAt,
+		); err != nil {
+			return nil, err
+		}
+
+		props := &vehiclesprops.VehicleProps{
+			Plate:     plate,
+			UpdatedAt: timestamp.New(updatedAt),
+		}
+		if wanted != nil {
+			props.Wanted = wanted
+		}
+		if reason != nil {
+			props.WantedReason = reason
+		}
+		if activeAt != nil {
+			props.WantedAt = timestamp.New(*activeAt)
+		}
+		if expiresAt != nil {
+			props.WantedTill = timestamp.New(*expiresAt)
+		}
+		result[plate] = props
+	}
+
+	return result, rows.Err()
+}
+
+type PropsUpdate struct {
+	Props           *vehiclesprops.VehicleProps
+	CreatorID       *int32
+	CreatorJob      string
+	Reason          string
+	PropertyChanges []*properties.PropertyChange
 }
 
 func (s *Store) UpdateProps(
 	ctx context.Context,
-	in *vehiclesprops.VehicleProps,
-	creatorID *int32,
-	creatorJob string,
-	reason string,
+	update PropsUpdate,
 ) (*vehiclesprops.VehicleProps, error) {
+	in := update.Props
 	props, err := s.GetProps(ctx, s.db, in.GetPlate())
 	if err != nil {
 		return nil, err
@@ -206,8 +286,15 @@ func (s *Store) UpdateProps(
 		wanted := false
 		props.Wanted = &wanted
 	}
-	normalizeWantedChange(props, in, reason)
-	activity := buildWantedActivity(props, in, creatorID, creatorJob, reason, false)
+	normalizeWantedChange(props, in, update.Reason)
+	activity := buildWantedActivity(
+		props,
+		in,
+		update.CreatorID,
+		update.CreatorJob,
+		update.Reason,
+		false,
+	)
 
 	tx, err := s.db.BeginTx(ctx, nil)
 	if err != nil {
@@ -223,6 +310,17 @@ func (s *Store) UpdateProps(
 			return nil, err
 		}
 	}
+	if err := s.applyPropertiesWithActivity(
+		ctx,
+		tx,
+		in.GetPlate(),
+		update.PropertyChanges,
+		update.CreatorID,
+		update.CreatorJob,
+		update.Reason,
+	); err != nil {
+		return nil, err
+	}
 
 	if err := tx.Commit(); err != nil {
 		return nil, err
@@ -236,28 +334,31 @@ func (s *Store) ListExpiredWanted(
 	maxDays int64,
 	limit int64,
 ) ([]string, error) {
-	tVehicleProps := table.FivenetVehiclesProps
-	stmt := tVehicleProps.
-		SELECT(
-			tVehicleProps.Plate,
-		).
-		FROM(tVehicleProps).
+	tValues := table.FivenetVehiclePropertyValues.AS("value")
+	tState := table.FivenetVehiclePropertyState.AS("state")
+	stmt := tValues.
+		SELECT(tValues.Plate).
+		FROM(tValues.INNER_JOIN(tState, mysql.AND(
+			tState.Plate.EQ(tValues.Plate),
+			tState.PropertyKey.EQ(tValues.PropertyKey),
+		))).
 		WHERE(mysql.AND(
-			tVehicleProps.Wanted.IS_TRUE(),
+			tValues.PropertyKey.EQ(mysql.String(vehicleWantedPropertyKey)),
+			tValues.ValueType.EQ(mysql.Uint8(uint8(propertyValueTypeBool))),
+			tValues.ValueBool.IS_TRUE(),
 			mysql.OR(
-				tVehicleProps.WantedAt.LT(
-					mysql.CURRENT_TIMESTAMP().SUB(mysql.INTERVAL(maxDays, "DAY")),
+				tState.ActiveAt.LT(
+					mysql.CURRENT_TIMESTAMP().SUB(mysql.INTERVAL(maxDays, mysql.DAY)),
 				),
-				tVehicleProps.WantedTill.LT(mysql.CURRENT_TIMESTAMP()),
+				tState.ExpiresAt.LT(mysql.CURRENT_TIMESTAMP()),
 			),
 		)).
 		LIMIT(limit)
 
-	var plates []string
-	if err := stmt.QueryContext(ctx, s.db, &plates); err != nil {
+	plates := []string{}
+	if err := stmt.QueryContext(ctx, s.db, &plates); err != nil && !errors.Is(err, qrm.ErrNoRows) {
 		return nil, err
 	}
-
 	return plates, nil
 }
 
@@ -350,8 +451,7 @@ func buildWantedActivity(
 
 func (s *Store) listConditions(
 	q ListQuery,
-	tVehicles *table.FivenetOwnedVehiclesTable,
-	tVehicleProps *table.FivenetVehiclesPropsTable,
+	tVehicles *table.FivenetVehicleTable,
 ) mysql.BoolExpression {
 	condition := mysql.Bool(true)
 
@@ -388,10 +488,17 @@ func (s *Store) listConditions(
 		)
 	}
 
-	if q.CanFilterWanted && q.Wanted != nil && *q.Wanted {
-		condition = mysql.AND(condition,
-			tVehicleProps.Wanted.EQ(mysql.Bool(*q.Wanted)),
-		)
+	if q.CanFilterProperties {
+		for i, filter := range q.PropertyFilters {
+			propertyCondition, err := propertyFilterCondition(filter, tVehicles.Alias(), i)
+			if err != nil {
+				// ListQuery is constructed by the service after protobuf validation.
+				// Preserve the invalid request as an empty result rather than ever
+				// interpolating untrusted SQL.
+				return mysql.Bool(false)
+			}
+			condition = mysql.AND(condition, propertyCondition)
+		}
 	}
 
 	return condition

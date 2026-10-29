@@ -117,7 +117,7 @@ async function closeModal(): Promise<void> {
         </template>
 
         <template #body>
-            <UForm ref="formRef" :schema="schema" :state="state" @submit="submit">
+            <UForm ref="formRef" class="flex flex-col gap-2" :schema="schema" :state="state" @submit="submit">
                 <UFormField class="flex-1" name="category" :label="$t('common.category')" required>
                     <ClientOnly>
                         <USelectMenu

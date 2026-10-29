@@ -136,6 +136,7 @@ func (s *S3) Stat(ctx context.Context, key string) (IObjectInfo, error) {
 
 	return &ObjectInfo{
 		name:         strings.TrimPrefix(info.Key, s.prefix),
+		extension:    strings.TrimPrefix(filepath.Ext(info.Key), "."),
 		lastModified: info.LastModified,
 		contentType:  info.ContentType,
 		size:         info.Size,

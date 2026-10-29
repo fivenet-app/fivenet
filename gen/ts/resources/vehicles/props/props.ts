@@ -11,6 +11,7 @@ import { UnknownFieldHandler } from "@protobuf-ts/runtime";
 import type { PartialMessage } from "@protobuf-ts/runtime";
 import { reflectionMergePartial } from "@protobuf-ts/runtime";
 import { MessageType } from "@protobuf-ts/runtime";
+import { Properties } from "../../properties/properties";
 import { Timestamp } from "../../timestamp/timestamp";
 /**
  * @generated from protobuf message resources.vehicles.props.VehicleProps
@@ -40,6 +41,10 @@ export interface VehicleProps {
      * @generated from protobuf field: optional resources.timestamp.Timestamp wanted_till = 6
      */
     wantedTill?: Timestamp;
+    /**
+     * @generated from protobuf field: optional resources.properties.Properties properties = 7
+     */
+    properties?: Properties;
 }
 // @generated message type with reflection information, may provide speed optimized methods
 class VehicleProps$Type extends MessageType<VehicleProps> {
@@ -50,7 +55,8 @@ class VehicleProps$Type extends MessageType<VehicleProps> {
             { no: 3, name: "wanted", kind: "scalar", opt: true, T: 8 /*ScalarType.BOOL*/ },
             { no: 4, name: "wanted_reason", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "255" } } } },
             { no: 5, name: "wanted_at", kind: "message", T: () => Timestamp },
-            { no: 6, name: "wanted_till", kind: "message", T: () => Timestamp }
+            { no: 6, name: "wanted_till", kind: "message", T: () => Timestamp },
+            { no: 7, name: "properties", kind: "message", T: () => Properties }
         ]);
     }
     create(value?: PartialMessage<VehicleProps>): VehicleProps {
@@ -83,6 +89,9 @@ class VehicleProps$Type extends MessageType<VehicleProps> {
                 case /* optional resources.timestamp.Timestamp wanted_till */ 6:
                     message.wantedTill = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.wantedTill);
                     break;
+                case /* optional resources.properties.Properties properties */ 7:
+                    message.properties = Properties.internalBinaryRead(reader, reader.uint32(), options, message.properties);
+                    break;
                 default:
                     let u = options.readUnknownField;
                     if (u === "throw")
@@ -113,6 +122,9 @@ class VehicleProps$Type extends MessageType<VehicleProps> {
         /* optional resources.timestamp.Timestamp wanted_till = 6; */
         if (message.wantedTill)
             Timestamp.internalBinaryWrite(message.wantedTill, writer.tag(6, WireType.LengthDelimited).fork(), options).join();
+        /* optional resources.properties.Properties properties = 7; */
+        if (message.properties)
+            Properties.internalBinaryWrite(message.properties, writer.tag(7, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);

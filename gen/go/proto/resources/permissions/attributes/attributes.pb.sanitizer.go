@@ -38,6 +38,17 @@ func (m *AttributeValues) Sanitize() error {
 			}
 		}
 
+		// Field: PropertyList
+	case *AttributeValues_PropertyList:
+
+		if v.PropertyList != nil {
+			if s, ok := any(v.PropertyList).(interface{ Sanitize() error }); ok {
+				if err := s.Sanitize(); err != nil {
+					return err
+				}
+			}
+		}
+
 		// Field: StringList
 	case *AttributeValues_StringList:
 
@@ -78,6 +89,52 @@ func (m *JobGradeList) Sanitize() error {
 		_, _ = idx, item
 
 	}
+
+	return nil
+}
+
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
+func (m *PropertyList) Sanitize() error {
+	if m == nil {
+		return nil
+	}
+
+	// Field: Keys
+	for idx, item := range m.Keys {
+		_, _ = idx, item
+
+		m.Keys[idx] = htmlsanitizer.SanitizeAndUnescape(m.Keys[idx])
+
+	}
+
+	// Field: Properties
+	for idx, item := range m.Properties {
+		_, _ = idx, item
+
+		if v, ok := any(item).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+
+	}
+
+	return nil
+}
+
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
+func (m *PropertyListEntry) Sanitize() error {
+	if m == nil {
+		return nil
+	}
+
+	// Field: Key
+	m.Key = htmlsanitizer.SanitizeAndUnescape(m.Key)
+
+	// Field: Label
+	m.Label = htmlsanitizer.SanitizeAndUnescape(m.Label)
 
 	return nil
 }

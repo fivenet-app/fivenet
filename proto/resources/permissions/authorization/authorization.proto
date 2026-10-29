@@ -1,0 +1,15 @@
+syntax = "proto3";
+
+package resources.permissions.authorization;
+
+import "resources/permissions/attributes/attributes.proto";
+import "resources/permissions/permissions/permissions.proto";
+
+option go_package = "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/permissions/authorization;permissionsauthorization";
+
+// AuthorizationState is the effective authorization of the currently selected
+// character. It is a complete replacement snapshot, not a delta.
+message AuthorizationState {
+  repeated resources.permissions.permissions.Permission permissions = 1;
+  repeated resources.permissions.attributes.RoleAttribute attributes = 2;
+}

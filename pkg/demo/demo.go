@@ -55,8 +55,7 @@ var (
 	tUserLicenses         = table.FivenetUserLicenses
 	tUserPhoneNumbers     = table.FivenetUserPhoneNumbers
 	tUserProps            = table.FivenetUserProps
-	tOwnedVehicles        = table.FivenetOwnedVehicles
-	tVehicleProps         = table.FivenetVehiclesProps
+	tVehicles             = table.FivenetVehicle
 )
 
 var Module = fx.Module(

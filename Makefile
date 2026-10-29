@@ -1,8 +1,6 @@
 VERSION := $(shell cat VERSION)
 GIT_VERSION ?= $(shell sh ./internal/scripts/get-version.sh)
 
-VALIDATE_VERSION ?= v1.0.2
-
 GO ?= go
 PROTOC ?= protoc
 GO_TEST_PARALLEL ?= 4
@@ -88,7 +86,8 @@ gen-sql:
 	$(GO) run ./query/gen/
 
 	# Remove schema/database name from the generated table code, so it uses the currently selected database
-	find ./query/fivenet/table -type f -iname '*.go' -exec sed -E -i 's~\("fivenet[_a-z-]*", ~\("", ~g' {} \;
+	find ./query/fivenet/table -type f -iname '*.go' \
+		-exec sed -E -i -e 's~\("(demo|fivenet)[_a-z-]*", ~\("", ~g' {} \;
 
 .PHONY: gen-proto
 gen-proto: buf protoc-gen-doc

@@ -5,9 +5,53 @@ package vehicles
 
 import (
 	permissionsattributes "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/permissions/attributes"
+	propertypb "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/properties"
 	permkeys "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/vehicles/perms"
 	"github.com/fivenet-app/fivenet/v2026/pkg/perms"
+	propertyregistry "github.com/fivenet-app/fivenet/v2026/pkg/properties"
 )
+
+func init() {
+	propertyregistry.AddSystemPropertyGroups([]*propertypb.PropertyGroup{
+		{Scope: propertypb.PropertyScope_PROPERTY_SCOPE_VEHICLE, Key: "status", DisplayKey: "components.settings.property_definitions.groups.status", SortOrder: 100},
+	})
+	propertyregistry.AddSystemPropertyDefinitions([]*propertypb.PropertyDefinition{
+		{
+			Scope:       propertypb.PropertyScope_PROPERTY_SCOPE_VEHICLE,
+			Key:         "vehicle.wanted",
+			ValueType:   propertypb.PropertyValueType_PROPERTY_VALUE_TYPE_BOOL,
+			Source:      propertypb.PropertyDefinitionSource_PROPERTY_DEFINITION_SOURCE_SYSTEM,
+			Enabled:     true,
+			DisplayKey:  "common.wanted",
+			Searchable:  true,
+			ValueFormat: propertypb.PropertyValueFormat_PROPERTY_VALUE_FORMAT_PLAIN,
+			Renderer:    propertypb.PropertyRenderer_PROPERTY_RENDERER_DEFAULT,
+			DisplayMode: propertypb.PropertyDisplayMode_PROPERTY_DISPLAY_MODE_PROFILE_BADGE,
+			Behavior:    propertypb.PropertyBehavior_PROPERTY_BEHAVIOR_MANAGED,
+			GroupKey:    "status",
+			SortOrder:   100,
+			Pinned:      true,
+			Implicit:    false,
+		},
+		{
+			Scope:       propertypb.PropertyScope_PROPERTY_SCOPE_VEHICLE,
+			Key:         "vehicle.files",
+			ValueType:   propertypb.PropertyValueType_PROPERTY_VALUE_TYPE_STRING,
+			Source:      propertypb.PropertyDefinitionSource_PROPERTY_DEFINITION_SOURCE_SYSTEM,
+			Enabled:     true,
+			DisplayKey:  "common.file",
+			Searchable:  false,
+			ValueFormat: propertypb.PropertyValueFormat_PROPERTY_VALUE_FORMAT_PLAIN,
+			Renderer:    propertypb.PropertyRenderer_PROPERTY_RENDERER_DEFAULT,
+			DisplayMode: propertypb.PropertyDisplayMode_PROPERTY_DISPLAY_MODE_DEFAULT,
+			Behavior:    propertypb.PropertyBehavior_PROPERTY_BEHAVIOR_MANAGED,
+			GroupKey:    "status",
+			SortOrder:   200,
+			Pinned:      false,
+			Implicit:    false,
+		},
+	})
+}
 
 func init() {
 	perms.AddPermsToList([]*perms.Perm{
@@ -17,11 +61,20 @@ func init() {
 		{
 			Namespace: permkeys.Namespace,
 			Service:   permkeys.VehiclesServicePerm,
+			Name:      permkeys.VehiclesServiceDeleteVehicleFilePerm,
+			Attrs:     []perms.Attr{},
+			Order:     4000,
+			Icon:      "i-mdi-car-outline",
+		},
+		{
+			Namespace: permkeys.Namespace,
+			Service:   permkeys.VehiclesServicePerm,
 			Name:      permkeys.VehiclesServiceListVehicleActivityPerm,
 			Attrs: []perms.Attr{
 				{
-					Key:         permkeys.VehiclesServiceListVehicleActivityFieldsPermField,
-					Type:        permissionsattributes.StringListAttributeType,
+					Key:  permkeys.VehiclesServiceListVehicleActivityFieldsPermField,
+					Type: permissionsattributes.StringListAttributeType,
+
 					ValidValues: []string{"Creator", "Own"},
 				},
 			},
@@ -34,9 +87,10 @@ func init() {
 			Name:      permkeys.VehiclesServiceListVehiclesPerm,
 			Attrs: []perms.Attr{
 				{
-					Key:         permkeys.VehiclesServiceListVehiclesFieldsPermField,
-					Type:        permissionsattributes.StringListAttributeType,
-					ValidValues: []string{"Wanted"},
+					Key:           permkeys.VehiclesServiceListVehiclesPropertiesPermField,
+					Type:          permissionsattributes.PropertyListAttributeType,
+					PropertyScope: propertypb.PropertyScope_PROPERTY_SCOPE_VEHICLE,
+					ValidValues:   []string{"vehicle.wanted", "vehicle.files"},
 				},
 			},
 			Order: 4000,
@@ -48,9 +102,10 @@ func init() {
 			Name:      permkeys.VehiclesServiceSetVehiclePropsPerm,
 			Attrs: []perms.Attr{
 				{
-					Key:         permkeys.VehiclesServiceSetVehiclePropsFieldsPermField,
-					Type:        permissionsattributes.StringListAttributeType,
-					ValidValues: []string{"Wanted"},
+					Key:           permkeys.VehiclesServiceSetVehiclePropsPropertiesPermField,
+					Type:          permissionsattributes.PropertyListAttributeType,
+					PropertyScope: propertypb.PropertyScope_PROPERTY_SCOPE_VEHICLE,
+					ValidValues:   []string{"vehicle.wanted", "vehicle.files"},
 				},
 			},
 			Order: 4000,

@@ -83,19 +83,21 @@ func (s *Server) UploadMugshot(
 	logging.InjectFields(ctx, logging.Fields{citizenIDLogFieldKey, userInfo.GetUserId()})
 
 	// Field Permission Check
-	fields, err := permscitizens.CitizensService.SetUserProps.FieldsTyped.Get(s.perms, userInfo)
+	propertyList, err := s.perms.AttrPropertyList(
+		userInfo,
+		permscitizens.CitizensService.SetUserProps.Properties,
+	)
 	if err != nil {
 		return errswrap.NewError(err, errorscitizens.ErrFailedQuery)
 	}
-	if !fields.Contains(permscitizens.CitizensServiceSetUserPropsFieldsPermValueMugshot) {
+	if !propertyList.Contains("user.mugshot") {
 		return errorscitizens.ErrPropsMugshotDenied
 	}
 
-	meta, err := s.profilePictureHandler.AwaitHandshake(srv)
+	meta, err := s.mugshotHandler.AwaitHandshake(srv)
 	if err != nil {
 		return errswrap.NewError(err, filestore.ErrInvalidUploadMeta)
 	}
-	meta.Namespace = "mugshot"
 
 	if meta.GetReason() == "" {
 		return errorscitizens.ErrReasonRequired
@@ -126,23 +128,23 @@ func (s *Server) UploadMugshot(
 
 	meta.Namespace = "user_mugshots"
 
-	currentMugshotFileID, err := s.store.GetMugshotFileID(ctx, targetUserId)
+	resp, oldMugshotFileID, err := s.mugshotHandler.UploadFromMetaWithReplacement(
+		ctx,
+		meta,
+		targetUserId,
+		srv,
+		replaceUserMugshot,
+	)
 	if err != nil {
-		return errswrap.NewError(err, errorscitizens.ErrFailedQuery)
+		return err
 	}
-
-	if currentMugshotFileID != nil && *currentMugshotFileID > 0 {
-		if err := s.mugshotHandler.Delete(ctx, targetUserId, *currentMugshotFileID); err != nil {
+	if oldMugshotFileID > 0 && oldMugshotFileID != resp.GetId() {
+		if err := s.mugshotHandler.Delete(ctx, targetUserId, oldMugshotFileID); err != nil {
 			return errswrap.NewError(err, errorscitizens.ErrFailedQuery)
 		}
 	}
 
-	resp, err := s.mugshotHandler.UploadFromMeta(ctx, meta, targetUserId, srv)
-	if err != nil {
-		return err
-	}
-
-	if currentMugshotFileID == nil || resp.GetId() != *currentMugshotFileID {
+	if oldMugshotFileID == 0 || resp.GetId() != oldMugshotFileID {
 		if err := usersactivity.CreateUserActivities(ctx, s.db, &usersactivity.UserActivity{
 			SourceUserId: &userInfo.UserId,
 			TargetUserId: targetUserId,
@@ -190,21 +192,17 @@ func (s *Server) DeleteMugshot(
 		return nil, errorscitizens.ErrJobGradeNoPermission
 	}
 
-	mugshotFileId, err := s.store.GetMugshotFileID(ctx, u.GetUserId())
+	mugshotFileID, err := s.mugshotHandler.DeleteWithParentLock(
+		ctx,
+		u.GetUserId(),
+		lockCitizenFileLimitParent,
+		findUserMugshot,
+	)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorscitizens.ErrFailedQuery)
 	}
-
-	if mugshotFileId == nil || *mugshotFileId == 0 {
+	if mugshotFileID == 0 {
 		return &pbcitizens.DeleteMugshotResponse{}, nil
-	}
-
-	if err := s.mugshotHandler.Delete(
-		ctx,
-		u.GetUserId(),
-		*mugshotFileId,
-	); err != nil {
-		return nil, errswrap.NewError(err, errorscitizens.ErrFailedQuery)
 	}
 
 	if err := usersactivity.CreateUserActivities(ctx, s.db, &usersactivity.UserActivity{

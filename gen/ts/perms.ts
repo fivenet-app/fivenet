@@ -36,6 +36,7 @@
 // source: services/settings/cron.proto
 // source: services/settings/job_assets.proto
 // source: services/settings/laws.proto
+// source: services/settings/properties.proto
 // source: services/settings/settings.proto
 // source: services/settings/system.proto
 // source: services/stats/stats.proto
@@ -61,6 +62,7 @@ export type GRPCServicePerms =
 	| 'centrum.DispatchesService/UpdateDispatch'
 	| 'centrum.UnitsService/CreateOrUpdateUnit'
 	| 'centrum.UnitsService/DeleteUnit'
+	| 'citizens.CitizensService/DeleteCitizenFile'
 	| 'citizens.CitizensService/GetUser'
 	| 'citizens.CitizensService/ListCitizens'
 	| 'citizens.CitizensService/ListUserActivity'
@@ -129,6 +131,7 @@ export type GRPCServicePerms =
 	| 'settings.JobsAssetsService/UpdateJobAsset'
 	| 'settings.LawsService/CreateOrUpdateLawBook'
 	| 'settings.LawsService/DeleteLawBook'
+	| 'settings.PropertyService/UpdatePropertyDefinition'
 	| 'settings.SettingsService/CreateRole'
 	| 'settings.SettingsService/DeleteRole'
 	| 'settings.SettingsService/GetJobProps'
@@ -136,6 +139,7 @@ export type GRPCServicePerms =
 	| 'settings.SettingsService/SetJobProps'
 	| 'settings.SettingsService/UpdateRolePerms'
 	| 'settings.SettingsService/ViewAuditLog'
+	| 'vehicles.VehiclesService/DeleteVehicleFile'
 	| 'vehicles.VehiclesService/ListVehicleActivity'
 	| 'vehicles.VehiclesService/ListVehicles'
 	| 'vehicles.VehiclesService/SetVehicleProps'
@@ -172,6 +176,7 @@ export const GRPCServices = [
 	'qualifications.QualificationsService',
 	'settings.JobsAssetsService',
 	'settings.LawsService',
+	'settings.PropertyService',
 	'settings.SettingsService',
 	'vehicles.VehiclesService',
 	'wiki.WikiService',
@@ -190,6 +195,7 @@ export const GRPCServiceMethods = [
 	'centrum.DispatchesService/UpdateDispatch',
 	'centrum.UnitsService/CreateOrUpdateUnit',
 	'centrum.UnitsService/DeleteUnit',
+	'citizens.CitizensService/DeleteCitizenFile',
 	'citizens.CitizensService/GetUser',
 	'citizens.CitizensService/ListCitizens',
 	'citizens.CitizensService/ListUserActivity',
@@ -258,6 +264,7 @@ export const GRPCServiceMethods = [
 	'settings.JobsAssetsService/UpdateJobAsset',
 	'settings.LawsService/CreateOrUpdateLawBook',
 	'settings.LawsService/DeleteLawBook',
+	'settings.PropertyService/UpdatePropertyDefinition',
 	'settings.SettingsService/CreateRole',
 	'settings.SettingsService/DeleteRole',
 	'settings.SettingsService/GetJobProps',
@@ -265,6 +272,7 @@ export const GRPCServiceMethods = [
 	'settings.SettingsService/SetJobProps',
 	'settings.SettingsService/UpdateRolePerms',
 	'settings.SettingsService/ViewAuditLog',
+	'vehicles.VehiclesService/DeleteVehicleFile',
 	'vehicles.VehiclesService/ListVehicleActivity',
 	'vehicles.VehiclesService/ListVehicles',
 	'vehicles.VehiclesService/SetVehicleProps',
@@ -309,15 +317,16 @@ export const PermAttributes = {
 	},
 	'centrum.UnitsService/DeleteUnit': {
 	},
+	'citizens.CitizensService/DeleteCitizenFile': {
+	},
 	'citizens.CitizensService/GetUser': {
 		'Jobs': {
 			type: 'jobGradeList',
 		},
 	},
 	'citizens.CitizensService/ListCitizens': {
-		'Fields': {
-			type: 'stringList',
-			values: ['PhoneNumber','Licenses','UserProps.Wanted','UserProps.Job','UserProps.TrafficInfractionPoints','UserProps.OpenFines','UserProps.BloodType','UserProps.Mugshot','UserProps.Labels','UserProps.Email',] as const,
+		'Properties': {
+			type: 'propertyList',
 		},
 	},
 	'citizens.CitizensService/ListUserActivity': {
@@ -327,9 +336,8 @@ export const PermAttributes = {
 		},
 	},
 	'citizens.CitizensService/SetUserProps': {
-		'Fields': {
-			type: 'stringList',
-			values: ['Wanted','Job','TrafficInfractionPoints','Mugshot','Labels',] as const,
+		'Properties': {
+			type: 'propertyList',
 		},
 	},
 	'citizens.LabelsService/CreateOrUpdateLabel': {
@@ -556,6 +564,8 @@ export const PermAttributes = {
 	},
 	'settings.LawsService/DeleteLawBook': {
 	},
+	'settings.PropertyService/UpdatePropertyDefinition': {
+	},
 	'settings.SettingsService/CreateRole': {
 	},
 	'settings.SettingsService/DeleteRole': {
@@ -570,6 +580,8 @@ export const PermAttributes = {
 	},
 	'settings.SettingsService/ViewAuditLog': {
 	},
+	'vehicles.VehiclesService/DeleteVehicleFile': {
+	},
 	'vehicles.VehiclesService/ListVehicleActivity': {
 		'Fields': {
 			type: 'stringList',
@@ -577,15 +589,13 @@ export const PermAttributes = {
 		},
 	},
 	'vehicles.VehiclesService/ListVehicles': {
-		'Fields': {
-			type: 'stringList',
-			values: ['Wanted',] as const,
+		'Properties': {
+			type: 'propertyList',
 		},
 	},
 	'vehicles.VehiclesService/SetVehicleProps': {
-		'Fields': {
-			type: 'stringList',
-			values: ['Wanted',] as const,
+		'Properties': {
+			type: 'propertyList',
 		},
 	},
 	'wiki.WikiService/CreatePage': {
@@ -607,7 +617,7 @@ export const PermAttributes = {
 } as const;
 
 export type PermAttributesMap = typeof PermAttributes;
-export type PermAttrKind = 'stringList' | 'jobList' | 'jobGradeList';
+export type PermAttrKind = 'stringList' | 'jobList' | 'jobGradeList' | 'propertyList';
 
 export type PermAttrPerm = keyof PermAttributesMap;
 

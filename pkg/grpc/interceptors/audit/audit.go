@@ -9,6 +9,7 @@ import (
 	"time"
 
 	audit "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/audit"
+	filepb "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/file"
 	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/auth"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/status"
@@ -311,6 +312,31 @@ func AddMeta(ctx context.Context, key, val string) {
 			}
 			a.Meta.Meta[key] = val
 		})
+	}
+}
+
+// AddFileMeta adds the finalized file attributes shared by all file uploads.
+// FilePath is the server-generated storage key, rather than a client request
+// path or display name.
+func AddFileMeta(ctx context.Context, f *filepb.File) {
+	if f == nil {
+		return
+	}
+	AddMeta(ctx, "file.id", strconv.FormatInt(f.GetId(), 10))
+	AddMeta(ctx, "file.storage_key", f.GetFilePath())
+	AddMeta(ctx, "file.content_type", f.GetContentType())
+	AddMeta(ctx, "file.byte_size", strconv.FormatInt(f.GetByteSize(), 10))
+}
+
+// AddPreviousFileMeta adds the identity of a file before it was replaced.
+// Callers should only provide a storage key obtained from the existing file
+// relation or storage operation.
+func AddPreviousFileMeta(ctx context.Context, fileID int64, storageKey string) {
+	if fileID > 0 {
+		AddMeta(ctx, "file.previous_id", strconv.FormatInt(fileID, 10))
+	}
+	if storageKey != "" {
+		AddMeta(ctx, "file.previous_storage_key", storageKey)
 	}
 }
 

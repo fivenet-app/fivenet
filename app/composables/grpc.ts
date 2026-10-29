@@ -1,5 +1,6 @@
 import type { RpcError } from '#imports';
 import { formatDebugContext, getDebugContext } from '~/composables/debug';
+import { useClipboardNotifications } from '~/composables/useClipboardNotifications';
 import { useAuthStore } from '~/stores/auth';
 import type { Notification } from '~/types/notifications';
 import { recordClientError } from '~/utils/client-errors';
@@ -71,15 +72,9 @@ function addCopyActionToNotification(
         onClick: async () => {
             const debugContext = getDebugContext();
 
-            copyToClipboardWrapper(formatErrorReport(err, { ...options, context: formatDebugContext(debugContext) }));
+            await copyToClipboardWrapper(formatErrorReport(err, { ...options, context: formatDebugContext(debugContext) }));
 
-            const notifications = useNotificationsStore();
-            notifications.add({
-                title: { key: 'notifications.clipboard.copied.title', parameters: {} },
-                description: { key: 'notifications.clipboard.copied.content', parameters: {} },
-                duration: 3250,
-                type: NotificationType.INFO,
-            });
+            useClipboardNotifications().notifyCopied();
         },
     });
 }

@@ -11,6 +11,7 @@ import { UnknownFieldHandler } from "@protobuf-ts/runtime";
 import type { PartialMessage } from "@protobuf-ts/runtime";
 import { reflectionMergePartial } from "@protobuf-ts/runtime";
 import { MessageType } from "@protobuf-ts/runtime";
+import { Properties } from "../../properties/properties";
 import { Labels } from "../../citizens/labels/labels";
 import { File } from "../../file/file";
 import { JobGrade } from "../../jobs/jobs";
@@ -88,6 +89,10 @@ export interface UserProps {
      * @generated from protobuf field: optional string email = 17
      */
     email?: string;
+    /**
+     * @generated from protobuf field: optional resources.properties.Properties properties = 18
+     */
+    properties?: Properties;
 }
 // @generated message type with reflection information, may provide speed optimized methods
 class UserProps$Type extends MessageType<UserProps> {
@@ -109,7 +114,8 @@ class UserProps$Type extends MessageType<UserProps> {
             { no: 14, name: "mugshot_file_id", kind: "scalar", opt: true, T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ },
             { no: 15, name: "mugshot", kind: "message", T: () => File, options: { "tagger.tags": "alias:\"mugshot\"" } },
             { no: 16, name: "labels", kind: "message", T: () => Labels },
-            { no: 17, name: "email", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { minLen: "6", maxLen: "80" } }, "codegen.sanitizer.sanitizer": { enabled: true, stripHtmlTags: true } } }
+            { no: 17, name: "email", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { minLen: "6", maxLen: "80" } }, "codegen.sanitizer.sanitizer": { enabled: true, stripHtmlTags: true } } },
+            { no: 18, name: "properties", kind: "message", T: () => Properties }
         ]);
     }
     create(value?: PartialMessage<UserProps>): UserProps {
@@ -175,6 +181,9 @@ class UserProps$Type extends MessageType<UserProps> {
                 case /* optional string email */ 17:
                     message.email = reader.string();
                     break;
+                case /* optional resources.properties.Properties properties */ 18:
+                    message.properties = Properties.internalBinaryRead(reader, reader.uint32(), options, message.properties);
+                    break;
                 default:
                     let u = options.readUnknownField;
                     if (u === "throw")
@@ -238,6 +247,9 @@ class UserProps$Type extends MessageType<UserProps> {
         /* optional string email = 17; */
         if (message.email !== undefined)
             writer.tag(17, WireType.LengthDelimited).string(message.email);
+        /* optional resources.properties.Properties properties = 18; */
+        if (message.properties)
+            Properties.internalBinaryWrite(message.properties, writer.tag(18, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);

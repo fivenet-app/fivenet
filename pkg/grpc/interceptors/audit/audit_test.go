@@ -6,6 +6,7 @@ import (
 	"time"
 
 	audit "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/audit"
+	filepb "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/file"
 	pbuserinfo "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/userinfo"
 	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/auth"
 	"github.com/stretchr/testify/require"
@@ -15,6 +16,29 @@ import (
 type testLogger struct {
 	entry *audit.AuditEntry
 	req   any
+}
+
+func TestAddFileMeta(t *testing.T) {
+	t.Parallel()
+
+	entry := &audit.AuditEntry{Meta: &audit.AuditEntryMeta{}}
+	ctx := withEntry(t.Context(), newEntry(t.Context(), entry))
+	AddFileMeta(ctx, &filepb.File{
+		Id:          42,
+		FilePath:    "citizen_files/42.png",
+		ContentType: "image/png",
+		ByteSize:    1234,
+	})
+	AddPreviousFileMeta(ctx, 17, "citizen_files/old.png")
+
+	require.Equal(t, map[string]string{
+		"file.id":                   "42",
+		"file.storage_key":          "citizen_files/42.png",
+		"file.content_type":         "image/png",
+		"file.byte_size":            "1234",
+		"file.previous_id":          "17",
+		"file.previous_storage_key": "citizen_files/old.png",
+	}, entry.GetMeta().GetMeta())
 }
 
 func (l *testLogger) Log(entry *audit.AuditEntry, req any) {

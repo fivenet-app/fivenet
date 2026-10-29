@@ -8,6 +8,8 @@ import (
 	"slices"
 
 	citizenslicenses "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/citizens/licenses"
+	permissionsattributes "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/permissions/attributes"
+	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/timestamp"
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/userinfo"
 	users "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/users"
 	usersprops "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/users/props"
@@ -17,6 +19,8 @@ import (
 	"github.com/fivenet-app/fivenet/v2026/pkg/config/appconfig"
 	"github.com/fivenet-app/fivenet/v2026/pkg/mstlystcdata"
 	"github.com/fivenet-app/fivenet/v2026/pkg/perms"
+	"github.com/fivenet-app/fivenet/v2026/pkg/utils"
+	"github.com/fivenet-app/fivenet/v2026/query/fivenet/model"
 	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
 	citizensstore "github.com/fivenet-app/fivenet/v2026/stores/citizens"
 	"github.com/go-jet/jet/v2/mysql"
@@ -129,7 +133,11 @@ func New(p Params) IHydrator {
 }
 
 type resolvedFields struct {
+	dateOfBirth             bool
+	sex                     bool
+	height                  bool
 	phoneNumber             bool
+	visum                   bool
 	licenses                bool
 	wanted                  bool
 	job                     bool
@@ -146,48 +154,63 @@ func (f resolvedFields) hasProps() bool {
 		f.bloodType || f.mugshot || f.labels || f.email
 }
 
-func (h *Hydrator) resolveFields(userInfo *userinfo.UserInfo) (resolvedFields, error) {
+func resolvedFieldsForProperties(
+	propertyList *permissionsattributes.PropertyList,
+	enabled map[string]bool,
+) resolvedFields {
+	canUse := func(key string) bool {
+		return propertyList.Contains(key) && enabled[key]
+	}
+	return resolvedFields{
+		dateOfBirth:             canUse("user.dateofbirth"),
+		sex:                     canUse("user.sex"),
+		height:                  canUse("user.height"),
+		phoneNumber:             canUse("user.phone_number"),
+		visum:                   canUse("user.visum"),
+		licenses:                canUse("user.licenses"),
+		wanted:                  canUse("user.wanted"),
+		job:                     canUse("user.job"),
+		trafficInfractionPoints: canUse("user.traffic_infraction_points"),
+		openFines:               canUse("user.open_fines"),
+		bloodType:               canUse("user.blood_type"),
+		mugshot:                 canUse("user.mugshot"),
+		labels:                  canUse("user.labels"),
+		email:                   canUse("user.email"),
+	}
+}
+
+func (h *Hydrator) resolveFields(
+	ctx context.Context,
+	userInfo *userinfo.UserInfo,
+) (resolvedFields, error) {
 	if userInfo == nil {
 		return resolvedFields{}, nil
 	}
 
-	fields, err := permscitizens.CitizensService.ListCitizens.FieldsTyped.Get(h.perms, userInfo)
+	propertyList, err := h.perms.AttrPropertyListContext(ctx,
+		userInfo,
+		permscitizens.CitizensService.ListCitizens.Properties,
+	)
 	if err != nil {
 		return resolvedFields{}, err
 	}
 
-	return resolvedFields{
-		phoneNumber: fields.Contains(
-			permscitizens.CitizensServiceListCitizensFieldsPermValuePhoneNumber,
-		),
-		licenses: fields.Contains(
-			permscitizens.CitizensServiceListCitizensFieldsPermValueLicenses,
-		),
-		wanted: fields.Contains(
-			permscitizens.CitizensServiceListCitizensFieldsPermValueUserPropsWanted,
-		),
-		job: fields.Contains(
-			permscitizens.CitizensServiceListCitizensFieldsPermValueUserPropsJob,
-		),
-		trafficInfractionPoints: fields.Contains(
-			permscitizens.CitizensServiceListCitizensFieldsPermValueUserPropsTrafficInfractionPoints,
-		),
-		openFines: fields.Contains(
-			permscitizens.CitizensServiceListCitizensFieldsPermValueUserPropsOpenFines,
-		),
-		bloodType: fields.Contains(
-			permscitizens.CitizensServiceListCitizensFieldsPermValueUserPropsBloodType,
-		),
-		mugshot: fields.Contains(
-			permscitizens.CitizensServiceListCitizensFieldsPermValueUserPropsMugshot,
-		),
-		labels: fields.Contains(
-			permscitizens.CitizensServiceListCitizensFieldsPermValueUserPropsLabels,
-		),
-		email: fields.Contains(
-			permscitizens.CitizensServiceListCitizensFieldsPermValueUserPropsEmail,
-		),
-	}, nil
+	keys := propertyList.GetKeys()
+	enabled := make(map[string]bool, len(keys))
+	if h.store == nil {
+		for _, key := range keys {
+			enabled[key] = true
+		}
+	} else {
+		definitions, err := h.store.ResolvePropertyDefinitions(ctx, keys)
+		if err != nil {
+			return resolvedFields{}, err
+		}
+		for key, definition := range definitions {
+			enabled[key] = definition.GetEnabled()
+		}
+	}
+	return resolvedFieldsForProperties(propertyList, enabled), nil
 }
 
 func (h *Hydrator) GetBasicByUserID(
@@ -216,7 +239,7 @@ func (h *Hydrator) ListBasicByUserID(
 		db = h.db
 	}
 
-	fields, err := h.resolveFields(userInfo)
+	fields, err := h.resolveFields(ctx, userInfo)
 	if err != nil {
 		return nil, err
 	}
@@ -341,7 +364,7 @@ func (h *Hydrator) ListByUserID(
 		db = h.db
 	}
 
-	fields, err := h.resolveFields(userInfo)
+	fields, err := h.resolveFields(ctx, userInfo)
 	if err != nil {
 		return nil, err
 	}
@@ -436,13 +459,21 @@ func (h *Hydrator) loadUsers(
 		tUser.Lastname,
 		tUser.Job,
 		tUser.JobGrade,
-		tUser.Dateofbirth,
-		tUser.Sex,
-		tUser.Height,
-		h.customDB.Columns.User.GetVisum(tUser.Alias()),
+	}
+	if fields.dateOfBirth {
+		selectors = append(selectors, tUser.Dateofbirth)
+	}
+	if fields.sex {
+		selectors = append(selectors, tUser.Sex)
+	}
+	if fields.height {
+		selectors = append(selectors, tUser.Height)
 	}
 	if fields.phoneNumber {
 		selectors = append(selectors, tUser.PhoneNumber)
+	}
+	if fields.visum {
+		selectors = append(selectors, h.customDB.Columns.User.GetVisum(tUser.Alias()))
 	}
 
 	userIDExprs := make([]mysql.Expression, 0, len(userIDs))
@@ -618,67 +649,136 @@ func (h *Hydrator) loadUserProps(
 		return map[int32]*usersprops.UserProps{}, nil
 	}
 
-	tUserProps := table.FivenetUserProps.AS("user_props")
-	tFiles := table.FivenetFiles.AS("mugshot")
 	userIDExprs := make([]mysql.Expression, 0, len(userIDs))
 	for _, userID := range userIDs {
 		userIDExprs = append(userIDExprs, mysql.Int32(userID))
 	}
 
-	selectors := []mysql.Projection{tUserProps.UserID}
+	keys := make([]mysql.Expression, 0, 7)
 	if fields.wanted {
-		selectors = append(selectors, tUserProps.Wanted)
+		keys = append(keys, mysql.String("user.wanted"))
 	}
 	if fields.job {
-		selectors = append(selectors, tUserProps.Job, tUserProps.JobGrade)
+		keys = append(keys, mysql.String("user.job"), mysql.String("user.job_grade"))
 	}
 	if fields.trafficInfractionPoints {
-		selectors = append(
-			selectors,
-			tUserProps.TrafficInfractionPoints,
-			tUserProps.TrafficInfractionPointsUpdatedAt,
-		)
+		keys = append(keys, mysql.String("user.traffic_infraction_points"))
 	}
 	if fields.openFines {
-		selectors = append(selectors, tUserProps.OpenFines)
+		keys = append(keys, mysql.String("user.open_fines"))
 	}
 	if fields.bloodType {
-		selectors = append(selectors, tUserProps.BloodType)
-	}
-	if fields.mugshot {
-		selectors = append(
-			selectors,
-			tUserProps.MugshotFileID,
-			tFiles.ID.AS("mugshot.mugshot_file_id"),
-			tFiles.FilePath,
-		)
+		keys = append(keys, mysql.String("user.blood_type"))
 	}
 	if fields.email {
-		selectors = append(selectors, tUserProps.Email)
+		keys = append(keys, mysql.String("user.email"))
 	}
 
-	stmt := tUserProps.
-		SELECT(selectors[0], selectors[1:]...).
-		FROM(
-			tUserProps.LEFT_JOIN(tFiles, tFiles.ID.EQ(tUserProps.MugshotFileID)),
-		).
-		WHERE(tUserProps.UserID.IN(userIDExprs...)).
-		LIMIT(int64(len(userIDs)))
-
-	dest := []*usersprops.UserProps{}
-	if err := stmt.QueryContext(ctx, db, &dest); err != nil {
-		if errors.Is(err, qrm.ErrNoRows) {
-			return map[int32]*usersprops.UserProps{}, nil
+	propsByUserID := map[int32]*usersprops.UserProps{}
+	ensure := func(userID int32) *usersprops.UserProps {
+		if propsByUserID[userID] == nil {
+			propsByUserID[userID] = &usersprops.UserProps{UserId: userID}
 		}
-		return nil, fmt.Errorf("failed to load citizen props: %w", err)
+		return propsByUserID[userID]
 	}
-
-	propsByUserID := make(map[int32]*usersprops.UserProps, len(dest))
-	for _, props := range dest {
-		if props == nil || props.GetUserId() <= 0 {
-			continue
+	if len(keys) > 0 {
+		tValues := table.FivenetUserPropertyValues
+		rows := []model.FivenetUserPropertyValues{}
+		stmt := tValues.SELECT(tValues.AllColumns).
+			FROM(tValues).
+			WHERE(mysql.AND(tValues.UserID.IN(userIDExprs...), tValues.PropertyKey.IN(keys...)))
+		if err := stmt.QueryContext(ctx, db, &rows); err != nil && !errors.Is(err, qrm.ErrNoRows) {
+			return nil, fmt.Errorf("failed to load citizen property values: %w", err)
 		}
-		propsByUserID[props.GetUserId()] = props
+		for _, row := range rows {
+			props := ensure(row.UserID)
+			switch row.PropertyKey {
+			case "user.wanted":
+				props.Wanted = row.ValueBool
+			case "user.job":
+				props.JobName = row.ValueString
+			case "user.job_grade":
+				if row.ValueInteger != nil {
+					grade, ok := utils.ToInt32Checked(*row.ValueInteger)
+					if ok {
+						props.JobGradeNumber = &grade
+					}
+				}
+			case "user.traffic_infraction_points":
+				if row.ValueInteger != nil {
+					points, ok := utils.ToUint32Checked(*row.ValueInteger)
+					if ok {
+						props.TrafficInfractionPoints = &points
+					}
+				}
+			case "user.open_fines":
+				props.OpenFines = row.ValueInteger
+			case "user.blood_type":
+				props.BloodType = row.ValueString
+			case "user.email":
+				props.Email = row.ValueString
+			}
+		}
+	}
+	if fields.wanted || fields.trafficInfractionPoints {
+		tState := table.FivenetUserPropertyState
+		states := []model.FivenetUserPropertyState{}
+		stmt := tState.SELECT(tState.AllColumns).
+			FROM(tState).
+			WHERE(tState.UserID.IN(userIDExprs...))
+		if err := stmt.QueryContext(
+			ctx,
+			db,
+			&states,
+		); err != nil &&
+			!errors.Is(err, qrm.ErrNoRows) {
+			return nil, fmt.Errorf("failed to load citizen property state: %w", err)
+		}
+		for _, state := range states {
+			props := ensure(state.UserID)
+			if state.PropertyKey == "user.wanted" && fields.wanted {
+				if state.ActiveAt != nil {
+					props.WantedAt = timestamp.New(*state.ActiveAt)
+				}
+				if state.ExpiresAt != nil {
+					props.WantedTill = timestamp.New(*state.ExpiresAt)
+				}
+			}
+			if state.PropertyKey == "user.traffic_infraction_points" &&
+				fields.trafficInfractionPoints {
+				props.TrafficInfractionPointsUpdatedAt = timestamp.New(state.UpdatedAt)
+			}
+		}
+	}
+	if fields.mugshot {
+		tUserFiles := table.FivenetUserFiles.AS("mugshot_file")
+		tFiles := table.FivenetFiles.AS("mugshot")
+		mugshots := []*usersprops.UserProps{}
+		stmt := tUserFiles.SELECT(
+			tUserFiles.UserID,
+			tUserFiles.FileID.AS("mugshot_file_id"),
+			tFiles.ID.AS("mugshot.mugshot_file_id"),
+			tFiles.FilePath,
+		).FROM(tUserFiles.LEFT_JOIN(tFiles, tFiles.ID.EQ(tUserFiles.FileID))).WHERE(mysql.AND(
+			tUserFiles.UserID.IN(userIDExprs...),
+			tUserFiles.Kind.EQ(mysql.String("mugshot")),
+		))
+		if err := stmt.QueryContext(
+			ctx,
+			db,
+			&mugshots,
+		); err != nil &&
+			!errors.Is(err, qrm.ErrNoRows) {
+			return nil, fmt.Errorf("failed to load citizen mugshots: %w", err)
+		}
+		for _, mugshot := range mugshots {
+			if mugshot == nil || mugshot.GetUserId() <= 0 {
+				continue
+			}
+			props := ensure(mugshot.GetUserId())
+			props.MugshotFileId = mugshot.MugshotFileId
+			props.Mugshot = mugshot.Mugshot
+		}
 	}
 
 	return propsByUserID, nil

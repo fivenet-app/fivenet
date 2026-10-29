@@ -19,6 +19,7 @@ func CreateUserActivities(ctx context.Context, tx qrm.DB, activities ...*UserAct
 			tUserActivity.SourceUserID,
 			tUserActivity.TargetUserID,
 			tUserActivity.Type,
+			tUserActivity.Key,
 			tUserActivity.Reason,
 			tUserActivity.Data,
 		)
@@ -29,6 +30,7 @@ func CreateUserActivities(ctx context.Context, tx qrm.DB, activities ...*UserAct
 				activity.SourceUserId,
 				activity.GetTargetUserId(),
 				activity.GetType(),
+				activity.GetKey(),
 				activity.GetReason(),
 				activity.GetData(),
 			)

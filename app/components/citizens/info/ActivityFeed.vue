@@ -18,6 +18,7 @@ import DocumentInfoPopover from '~/components/partials/documents/DocumentInfoPop
 import GenericTime from '~/components/partials/elements/GenericTime.vue';
 import IDCopyBadge from '~/components/partials/IDCopyBadge.vue';
 import LabelBadge from '~/components/citizens/labels/LabelBadge.vue';
+import PropertyActivityChange from '~/components/partials/properties/PropertyActivityChange.vue';
 import { DocRelation } from '~~/gen/ts/resources/documents/relations/relations';
 import { citizenUserActivityIconColor, citizenUserActivityTypeBGColor, citizenUserActivityTypeIcon } from './helpers';
 
@@ -43,7 +44,23 @@ const activityTypes = Object.keys(UserActivityType)
         return true;
     });
 
-const options = activityTypes.map((at) => ({
+const propertyActivityKeys: Partial<Record<UserActivityType, string>> = {
+    [UserActivityType.LICENSES]: 'user.licenses',
+    [UserActivityType.WANTED]: 'user.wanted',
+    [UserActivityType.TRAFFIC_INFRACTION_POINTS]: 'user.traffic_infraction_points',
+    [UserActivityType.MUGSHOT]: 'user.mugshot',
+    [UserActivityType.FILE]: 'user.files',
+    [UserActivityType.LABELS]: 'user.labels',
+    [UserActivityType.JOB]: 'user.job',
+    [UserActivityType.FINE]: 'user.open_fines',
+};
+
+const visibleActivityTypes = activityTypes.filter((activityType) => {
+    const propertyKey = propertyActivityKeys[activityType];
+    return propertyKey === undefined || attr('citizens.CitizensService/ListCitizens', 'Properties', propertyKey).value;
+});
+
+const options = visibleActivityTypes.map((at) => ({
     label: t(`enums.users.UserActivityType.${UserActivityType[at]}`),
     icon: citizenUserActivityTypeIcon(at),
     value: at,
@@ -97,6 +114,7 @@ async function listUserActivity(values: Schema, signal: AbortSignal): Promise<Li
                 types: values.types,
                 from: toTimestamp(values.dateRange?.start),
                 to: toTimestamp(values.dateRange?.end),
+                propertyKeys: [],
             },
             { abort: signal },
         );
@@ -305,6 +323,14 @@ const denyView = computed(
 
                             <template
                                 v-else-if="
+                                    activity.type === UserActivityType.FILE && activity.data?.data.oneofKind === 'fileChange'
+                                "
+                            >
+                                {{ $t(activity.data.data.fileChange.added ? 'common.image_uploaded' : 'common.image_deleted') }}
+                            </template>
+
+                            <template
+                                v-else-if="
                                     activity.type === UserActivityType.LABELS &&
                                     activity.data?.data.oneofKind === 'labelsChange'
                                 "
@@ -359,6 +385,16 @@ const denyView = computed(
                                 </template>
                                 {{ numberFormatter.format(Math.abs(activity.data.data.fineChange.amount)) }}
                             </template>
+
+                            <PropertyActivityChange
+                                v-else-if="
+                                    activity.type === UserActivityType.PROPERTY &&
+                                    activity.data?.data.oneofKind === 'propertyChange'
+                                "
+                                :property-key="activity.data.data.propertyChange.key"
+                                :old-value="activity.data.data.propertyChange.oldValue"
+                                :new-value="activity.data.data.propertyChange.newValue"
+                            />
 
                             <template v-else>{{ UserActivityType[activity.type] }}</template>
                         </template>

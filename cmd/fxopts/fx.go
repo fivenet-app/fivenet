@@ -27,6 +27,7 @@ import (
 	"github.com/fivenet-app/fivenet/v2026/pkg/mstlystcdata"
 	"github.com/fivenet-app/fivenet/v2026/pkg/notifi"
 	"github.com/fivenet-app/fivenet/v2026/pkg/perms"
+	propertyregistry "github.com/fivenet-app/fivenet/v2026/pkg/properties"
 	htmlsanitizer "github.com/fivenet-app/fivenet/v2026/pkg/sanitizer/html"
 	tiptapsanitizer "github.com/fivenet-app/fivenet/v2026/pkg/sanitizer/tiptap"
 	"github.com/fivenet-app/fivenet/v2026/pkg/server"
@@ -117,6 +118,7 @@ func GetFxBaseOpts(
 		auth.TokenMgrModule,
 		access.Module,
 		fx.Provide(
+			propertyregistry.NewDefinitionCache,
 			access.NewDocumentsSubjectObjectAccess,
 			access.NewDocumentTemplatesSubjectObjectAccess,
 			access.NewDocumentStampsSubjectObjectAccess,
@@ -222,10 +224,10 @@ func GetFxBaseOpts(
 			mailerstore.New,
 			notificationsstore.New,
 			qualificationsstore.New,
-			settingsstore.New,
+			settingsstore.NewWithCache,
 			statsstore.New,
 			documentsstore.New,
-			vehiclesstore.New,
+			vehiclesstore.NewWithCache,
 			wikistore.New,
 		),
 

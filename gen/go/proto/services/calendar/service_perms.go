@@ -21,8 +21,9 @@ func init() {
 			Name:      permkeys.CalendarServiceCreateCalendarPerm,
 			Attrs: []perms.Attr{
 				{
-					Key:         permkeys.CalendarServiceCreateCalendarFieldsPermField,
-					Type:        permissionsattributes.StringListAttributeType,
+					Key:  permkeys.CalendarServiceCreateCalendarFieldsPermField,
+					Type: permissionsattributes.StringListAttributeType,
+
 					ValidValues: []string{"Job", "Public"},
 				},
 			},

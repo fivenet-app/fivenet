@@ -40,3 +40,29 @@ func TestCountingReader(t *testing.T) {
 	assert.Equal(t, []byte("hello"), data)
 	assert.EqualValues(t, 5, reader.n)
 }
+
+func TestCountingReaderAllowsExactLimit(t *testing.T) {
+	t.Parallel()
+
+	reader := &countingReader{
+		Reader: bytes.NewReader([]byte("hello")),
+		max:    5,
+	}
+	data, err := io.ReadAll(reader)
+
+	require.NoError(t, err)
+	assert.Equal(t, []byte("hello"), data)
+	assert.EqualValues(t, 5, reader.n)
+}
+
+func TestCountingReaderRejectsDataBeyondLimit(t *testing.T) {
+	t.Parallel()
+
+	reader := &countingReader{
+		Reader: bytes.NewReader([]byte("hello!")),
+		max:    5,
+	}
+	_, err := io.ReadAll(reader)
+
+	assert.ErrorContains(t, err, "errors.Filestore.ErrUploadFileTooLarge")
+}

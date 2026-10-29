@@ -204,6 +204,7 @@ type UploadMeta struct {
 	xxx_hidden_ContentType  string                 `protobuf:"bytes,4,opt,name=content_type,json=contentType,proto3"`
 	xxx_hidden_Size         int64                  `protobuf:"varint,5,opt,name=size,proto3"`
 	xxx_hidden_Reason       string                 `protobuf:"bytes,6,opt,name=reason,proto3"`
+	xxx_hidden_ParentKey    string                 `protobuf:"bytes,7,opt,name=parent_key,json=parentKey,proto3"`
 	unknownFields           protoimpl.UnknownFields
 	sizeCache               protoimpl.SizeCache
 }
@@ -275,6 +276,13 @@ func (x *UploadMeta) GetReason() string {
 	return ""
 }
 
+func (x *UploadMeta) GetParentKey() string {
+	if x != nil {
+		return x.xxx_hidden_ParentKey
+	}
+	return ""
+}
+
 func (x *UploadMeta) SetParentId(v int64) {
 	x.xxx_hidden_ParentId = v
 }
@@ -299,6 +307,10 @@ func (x *UploadMeta) SetReason(v string) {
 	x.xxx_hidden_Reason = v
 }
 
+func (x *UploadMeta) SetParentKey(v string) {
+	x.xxx_hidden_ParentKey = v
+}
+
 type UploadMeta_builder struct {
 	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
 
@@ -308,6 +320,8 @@ type UploadMeta_builder struct {
 	ContentType  string
 	Size         int64
 	Reason       string
+	// String parent key for resources whose natural identifier is not numeric.
+	ParentKey string
 }
 
 func (b0 UploadMeta_builder) Build() *UploadMeta {
@@ -320,6 +334,7 @@ func (b0 UploadMeta_builder) Build() *UploadMeta {
 	x.xxx_hidden_ContentType = b.ContentType
 	x.xxx_hidden_Size = b.Size
 	x.xxx_hidden_Reason = b.Reason
+	x.xxx_hidden_ParentKey = b.ParentKey
 	return m0
 }
 
@@ -541,7 +556,7 @@ const file_resources_file_filestore_proto_rawDesc = "" +
 	"\x11UploadFileRequest\x120\n" +
 	"\x04meta\x18\x01 \x01(\v2\x1a.resources.file.UploadMetaH\x00R\x04meta\x12\x1a\n" +
 	"\x04data\x18\x02 \x01(\fB\x04\xf0\xf3\x18\x01H\x00R\x04dataB\t\n" +
-	"\apayload\"\xc3\x01\n" +
+	"\apayload\"\xe2\x01\n" +
 	"\n" +
 	"UploadMeta\x12\x1b\n" +
 	"\tparent_id\x18\x01 \x01(\x03R\bparentId\x12\x1c\n" +
@@ -549,7 +564,9 @@ const file_resources_file_filestore_proto_rawDesc = "" +
 	"\roriginal_name\x18\x03 \x01(\tR\foriginalName\x12!\n" +
 	"\fcontent_type\x18\x04 \x01(\tR\vcontentType\x12\x12\n" +
 	"\x04size\x18\x05 \x01(\x03R\x04size\x12\x1e\n" +
-	"\x06reason\x18\x06 \x01(\tB\x06\xda\xf3\x18\x02\b\x01R\x06reason\"`\n" +
+	"\x06reason\x18\x06 \x01(\tB\x06\xda\xf3\x18\x02\b\x01R\x06reason\x12\x1d\n" +
+	"\n" +
+	"parent_key\x18\a \x01(\tR\tparentKey\"`\n" +
 	"\x12UploadFileResponse\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x10\n" +
 	"\x03url\x18\x02 \x01(\tR\x03url\x12(\n" +

@@ -84,7 +84,7 @@ func newFivenetQualificationsResultsTableImpl(schemaName, tableName, alias strin
 		CreatorJobColumn      = mysql.StringColumn("creator_job")
 		allColumns            = mysql.ColumnList{IDColumn, CreatedAtColumn, DeletedAtColumn, QualificationIDColumn, UserIDColumn, StatusColumn, ScoreColumn, SummaryColumn, AutoGradedColumn, ExamAttemptIDColumn, CreatorIDColumn, CreatorJobColumn}
 		mutableColumns        = mysql.ColumnList{CreatedAtColumn, DeletedAtColumn, QualificationIDColumn, UserIDColumn, StatusColumn, ScoreColumn, SummaryColumn, AutoGradedColumn, ExamAttemptIDColumn, CreatorIDColumn, CreatorJobColumn}
-		defaultColumns        = mysql.ColumnList{CreatedAtColumn, StatusColumn}
+		defaultColumns        = mysql.ColumnList{CreatedAtColumn, StatusColumn, AutoGradedColumn}
 	)
 
 	return fivenetQualificationsResultsTable{

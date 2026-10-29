@@ -6,7 +6,6 @@ import { h } from 'vue';
 import { getSettingsCronClient } from '~~/gen/ts/clients';
 import { Any } from '~~/gen/ts/google/protobuf/any';
 import { type Cronjob, CronjobState, GenericCronData } from '~~/gen/ts/resources/cron/cron';
-import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 import type { ListCronjobsResponse } from '~~/gen/ts/services/settings/cron';
 import DataErrorBlock from '../partials/data/DataErrorBlock.vue';
 import GenericTime from '../partials/elements/GenericTime.vue';
@@ -17,7 +16,7 @@ const settingsCronClient = await getSettingsCronClient();
 
 const { t } = useI18n();
 
-const notifications = useNotificationsStore();
+const { notifyLinkCopied } = useClipboardNotifications();
 
 const uiState = useUIStateStore();
 const { windowFocus } = storeToRefs(uiState);
@@ -63,15 +62,10 @@ async function runCronjob(name: string): Promise<void> {
     }
 }
 
-function copyLinkToClipboard(text: string): void {
-    copyToClipboardWrapper(text);
+async function copyLinkToClipboard(text: string): Promise<void> {
+    await copyToClipboardWrapper(text);
 
-    notifications.add({
-        title: { key: 'notifications.clipboard.link_copied.title', parameters: {} },
-        description: { key: 'notifications.clipboard.link_copied.content', parameters: {} },
-        duration: 3250,
-        type: NotificationType.INFO,
-    });
+    notifyLinkCopied();
 }
 
 // Auto refresh the list every minute (if window is active)

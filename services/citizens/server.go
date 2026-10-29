@@ -3,6 +3,7 @@ package citizens
 import (
 	context "context"
 	"database/sql"
+	"errors"
 	"math"
 	"slices"
 
@@ -22,15 +23,97 @@ import (
 	citizensstore "github.com/fivenet-app/fivenet/v2026/stores/citizens"
 	citizenshydrator "github.com/fivenet-app/fivenet/v2026/stores/citizens/hydrator"
 	"github.com/go-jet/jet/v2/mysql"
+	"github.com/go-jet/jet/v2/qrm"
 	"go.uber.org/fx"
 	grpc "google.golang.org/grpc"
 )
 
 const citizenIDLogFieldKey = "fivenet.citizens.user_id"
 
+func lockCitizenFileLimitParent(ctx context.Context, tx *sql.Tx, userID int32) error {
+	tUser := table.FivenetUser
+	var user struct {
+		ID int32 `alias:"id"`
+	}
+	return tUser.
+		SELECT(tUser.ID).
+		FROM(tUser).
+		WHERE(tUser.ID.EQ(mysql.Int32(userID))).
+		FOR(mysql.UPDATE()).
+		QueryContext(ctx, tx, &user)
+}
+
+func replaceUserMugshot(
+	ctx context.Context,
+	tx *sql.Tx,
+	join mysql.Table,
+	parentCol mysql.Column,
+	fileCol mysql.ColumnInteger,
+	userID int32,
+	parentIDBoolExp mysql.BoolExpression,
+	fileID int64,
+) (int64, error) {
+	tUserFiles := table.FivenetUserFiles
+	var current struct {
+		FileID int64 `alias:"file_id"`
+	}
+	err := tUserFiles.
+		SELECT(tUserFiles.FileID.AS("file_id")).
+		WHERE(mysql.AND(
+			tUserFiles.UserID.EQ(mysql.Int32(userID)),
+			tUserFiles.Kind.EQ(mysql.String("mugshot")),
+		)).
+		FOR(mysql.UPDATE()).
+		QueryContext(ctx, tx, &current)
+	if err != nil && !errors.Is(err, qrm.ErrNoRows) {
+		return 0, err
+	}
+
+	if errors.Is(err, qrm.ErrNoRows) {
+		_, err = tUserFiles.
+			INSERT(tUserFiles.UserID, tUserFiles.FileID, tUserFiles.Kind).
+			VALUES(userID, fileID, "mugshot").
+			ExecContext(ctx, tx)
+		return 0, err
+	}
+
+	_, err = tUserFiles.
+		UPDATE(tUserFiles.FileID, tUserFiles.CreatedAt).
+		SET(fileID, mysql.CURRENT_TIMESTAMP()).
+		WHERE(mysql.AND(parentIDBoolExp, tUserFiles.Kind.EQ(mysql.String("mugshot")))).
+		LIMIT(1).
+		ExecContext(ctx, tx)
+	return current.FileID, err
+}
+
+func findUserMugshot(
+	ctx context.Context,
+	tx *sql.Tx,
+	join mysql.Table,
+	parentCol mysql.Column,
+	fileCol mysql.ColumnInteger,
+	userID int32,
+) (int64, error) {
+	tUserFiles := table.FivenetUserFiles
+	var current struct {
+		FileID int64 `alias:"file_id"`
+	}
+	err := tUserFiles.
+		SELECT(tUserFiles.FileID.AS("file_id")).
+		WHERE(mysql.AND(
+			tUserFiles.UserID.EQ(mysql.Int32(userID)),
+			tUserFiles.Kind.EQ(mysql.String("mugshot")),
+		)).
+		FOR(mysql.UPDATE()).
+		QueryContext(ctx, tx, &current)
+	if errors.Is(err, qrm.ErrNoRows) {
+		return 0, nil
+	}
+	return current.FileID, err
+}
+
 func init() {
-	filestore.RegisterFileReference(table.FivenetUserProps, table.FivenetUserProps.AvatarFileID)
-	filestore.RegisterFileReference(table.FivenetUserProps, table.FivenetUserProps.MugshotFileID)
+	filestore.RegisterFileReference(table.FivenetUser, table.FivenetUser.AvatarFileID)
 }
 
 type Server struct {
@@ -50,6 +133,7 @@ type Server struct {
 
 	profilePictureHandler *filestore.Handler[int32]
 	mugshotHandler        *filestore.Handler[int32]
+	citizenFilesHandler   *filestore.Handler[int32]
 
 	labelsAccess         *access.CitizenLabelsObjectAccess
 	labelsAccessResolver *access.SubjectResolver
@@ -71,36 +155,50 @@ type Params struct {
 }
 
 func NewServer(p Params) *Server {
-	tUserProps := table.FivenetUserProps
+	tUserFiles := table.FivenetUserFiles
 
 	profilePictureHandler := filestore.NewHandler(
 		p.Storage,
 		p.DB,
-		tUserProps,
-		tUserProps.UserID,
-		tUserProps.AvatarFileID,
+		table.FivenetUser,
+		table.FivenetUser.ID,
+		table.FivenetUser.AvatarFileID,
 		3<<20,
-		1,
+		0,
 		func(parentId int32) mysql.BoolExpression {
-			return tUserProps.UserID.EQ(mysql.Int32(parentId))
+			return table.FivenetUser.ID.EQ(mysql.Int32(parentId))
 		},
-		filestore.UpdateJoinRow,
+		userAvatarInserter,
 		true,
 	).WithUploadFilter(filestore.NewImageUploadFilter())
 	mugshotHandler := filestore.NewHandler(
 		p.Storage,
 		p.DB,
-		tUserProps,
-		tUserProps.UserID,
-		tUserProps.MugshotFileID,
+		tUserFiles,
+		tUserFiles.UserID,
+		tUserFiles.FileID,
 		3<<20,
-		1,
+		citizensstore.MaxUserFiles,
 		func(parentId int32) mysql.BoolExpression {
-			return tUserProps.UserID.EQ(mysql.Int32(parentId))
+			return tUserFiles.UserID.EQ(mysql.Int32(parentId))
 		},
-		filestore.UpdateJoinRow,
-		true,
-	).WithUploadFilter(filestore.NewImageUploadFilter())
+		userFileJoinInserter("mugshot"),
+		false,
+	).WithUploadFilter(filestore.NewImageUploadFilter()).
+		WithFileLimitLock(lockCitizenFileLimitParent)
+	citizenFilesHandler := filestore.NewHandler(
+		p.Storage,
+		p.DB,
+		tUserFiles,
+		tUserFiles.UserID,
+		tUserFiles.FileID,
+		5<<20,
+		citizensstore.MaxUserFiles,
+		func(parentID int32) mysql.BoolExpression { return tUserFiles.UserID.EQ(mysql.Int32(parentID)) },
+		userFileJoinInserter("attachment"),
+		false,
+	).WithUploadFilter(filestore.NewImageUploadFilter()).
+		WithFileLimitLock(lockCitizenFileLimitParent)
 
 	s := &Server{
 		db:       p.DB,
@@ -116,6 +214,7 @@ func NewServer(p Params) *Server {
 
 		profilePictureHandler: profilePictureHandler,
 		mugshotHandler:        mugshotHandler,
+		citizenFilesHandler:   citizenFilesHandler,
 
 		labelsAccess:         p.LabelsAccess,
 		labelsAccessResolver: access.NewSubjectResolver(p.DB),
@@ -168,6 +267,43 @@ func NewServer(p Params) *Server {
 	})
 
 	return s
+}
+
+func userAvatarInserter(
+	ctx context.Context,
+	tx *sql.Tx,
+	_ mysql.Table,
+	parentCol mysql.Column,
+	fileCol mysql.ColumnInteger,
+	userID int32,
+	_ mysql.BoolExpression,
+	fileID int64,
+) error {
+	user := table.FivenetUser
+	_, err := user.UPDATE(fileCol).SET(mysql.IntExp(mysql.Int64(fileID))).WHERE(
+		user.ID.EQ(mysql.Int32(userID)),
+	).ExecContext(ctx, tx)
+	return err
+}
+
+func userFileJoinInserter(kind string) filestore.JoinRowInserterFn[int32] {
+	return func(
+		ctx context.Context,
+		tx *sql.Tx,
+		_ mysql.Table,
+		_ mysql.Column,
+		_ mysql.ColumnInteger,
+		userID int32,
+		_ mysql.BoolExpression,
+		fileID int64,
+	) error {
+		tUserFiles := table.FivenetUserFiles
+		_, err := tUserFiles.
+			INSERT(tUserFiles.UserID, tUserFiles.FileID, tUserFiles.Kind).
+			VALUES(userID, fileID, kind).
+			ExecContext(ctx, tx)
+		return err
+	}
 }
 
 func (s *Server) RegisterServer(srv *grpc.Server) {

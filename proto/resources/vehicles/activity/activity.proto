@@ -5,6 +5,8 @@ package resources.vehicles.activity;
 import "buf/validate/validate.proto";
 import "codegen/dbscanner/dbscanner.proto";
 import "codegen/sanitizer/sanitizer.proto";
+import "resources/properties/properties.proto";
+import "resources/file/file.proto";
 import "resources/timestamp/timestamp.proto";
 import "resources/users/short/user.proto";
 import "tagger/tagger.proto";
@@ -15,6 +17,10 @@ enum VehicleActivityType {
   VEHICLE_ACTIVITY_TYPE_UNSPECIFIED = 0;
   // Types for `VehicleActivityData`
   VEHICLE_ACTIVITY_TYPE_WANTED = 1;
+  // File-backed property value change.
+  VEHICLE_ACTIVITY_TYPE_FILE = 2;
+  // Generic custom property value change.
+  VEHICLE_ACTIVITY_TYPE_PROPERTY = 3;
 }
 
 message VehicleActivity {
@@ -44,6 +50,8 @@ message VehicleActivity {
     (tagger.tags) = "alias:\"vehicle_activity.reason\""
   ];
   optional VehicleActivityData data = 10 [(tagger.tags) = "alias:\"vehicle_activity.data\""];
+  // Set for generic property activities so filtering does not depend on JSON.
+  optional string key = 11 [(buf.validate.field).string.max_len = 64];
 }
 
 message VehicleActivityData {
@@ -53,6 +61,8 @@ message VehicleActivityData {
     option (buf.validate.oneof).required = true;
 
     WantedChange wanted_change = 1;
+    PropertyChange property_change = 2;
+    FileChange file_change = 3;
   }
 }
 
@@ -63,4 +73,18 @@ message WantedChange {
   optional resources.timestamp.Timestamp wanted_at = 4;
   optional resources.timestamp.Timestamp wanted_till = 5;
   bool auto = 6;
+}
+
+// PropertyChange is used only for custom, generic properties. Managed system
+// properties retain their dedicated activity types and richer payloads.
+message PropertyChange {
+  string key = 1 [(buf.validate.field).string.max_len = 64];
+  optional resources.properties.PropertyValue old_value = 2;
+  optional resources.properties.PropertyValue new_value = 3;
+}
+
+message FileChange {
+  bool added = 1;
+  string kind = 2 [(buf.validate.field).string.max_len = 32];
+  resources.file.File file = 3 [(buf.validate.field).required = true];
 }

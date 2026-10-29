@@ -9,8 +9,10 @@ import (
 	database "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/common/database"
 	jobsprops "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/jobs/props"
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/laws"
+	properties "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/properties"
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/timestamp"
 	pbsettings "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/settings"
+	propertyregistry "github.com/fivenet-app/fivenet/v2026/pkg/properties"
 	"github.com/go-jet/jet/v2/mysql"
 )
 
@@ -81,17 +83,75 @@ type IStore interface {
 	GetLaw(ctx context.Context, lawId int64, includeDeleted bool) (*laws.Law, error)
 	SetJobProps(ctx context.Context, props *jobsprops.JobProps) error
 	DeleteJobProps(ctx context.Context, job string) error
+	ListPropertyDefinitions(
+		ctx context.Context,
+		scope properties.PropertyScope,
+		includeDeleted bool,
+	) ([]*properties.PropertyDefinition, error)
+	ListPropertyGroups(
+		ctx context.Context,
+		scope properties.PropertyScope,
+		includeDeleted bool,
+	) ([]*properties.PropertyGroup, error)
+	CreatePropertyGroup(
+		ctx context.Context,
+		group *properties.PropertyGroup,
+	) (*properties.PropertyGroup, error)
+	UpdatePropertyGroup(
+		ctx context.Context,
+		group *properties.PropertyGroup,
+	) (*properties.PropertyGroup, error)
+	DeletePropertyGroup(ctx context.Context, scope properties.PropertyScope, key string) error
+	RestorePropertyGroup(
+		ctx context.Context,
+		scope properties.PropertyScope,
+		key string,
+	) (*properties.PropertyGroup, error)
+	ReorderPropertyGroups(ctx context.Context, scope properties.PropertyScope, keys []string) error
+	ReorderPropertyDefinitions(
+		ctx context.Context,
+		scope properties.PropertyScope,
+		groupKey string,
+		keys []string,
+	) error
+	CreatePropertyDefinition(
+		ctx context.Context,
+		definition *properties.PropertyDefinition,
+	) (*properties.PropertyDefinition, error)
+	UpdatePropertyDefinition(
+		ctx context.Context,
+		definition *properties.PropertyDefinition,
+	) (*properties.PropertyDefinition, error)
+	DeletePropertyDefinition(ctx context.Context, scope properties.PropertyScope, key string) error
+	SetSystemPropertyEnabled(
+		ctx context.Context,
+		scope properties.PropertyScope,
+		key string,
+		enabled bool,
+	) (*properties.PropertyDefinition, error)
+	RestorePropertyDefinition(
+		ctx context.Context,
+		scope properties.PropertyScope,
+		key string,
+	) (*properties.PropertyDefinition, error)
+	ReconcileSystemPropertyOverrides(ctx context.Context) error
 }
 
 type Store struct {
 	db             *sql.DB
+	propertyCache  *propertyregistry.DefinitionCache
 	accountSorter  *database.SorterBuilder
 	auditLogSorter *database.SorterBuilder
 }
 
 func New(db *sql.DB) IStore {
+	return NewWithCache(db, propertyregistry.NewDefinitionCache())
+}
+
+func NewWithCache(db *sql.DB, propertyCache *propertyregistry.DefinitionCache) IStore {
 	return &Store{
-		db: db,
+		db:            db,
+		propertyCache: propertyCache,
 		accountSorter: database.New(
 			database.SpecMap{
 				"license":  database.Column{Col: tAccounts.License},

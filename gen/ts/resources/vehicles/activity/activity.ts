@@ -11,6 +11,8 @@ import { UnknownFieldHandler } from "@protobuf-ts/runtime";
 import type { PartialMessage } from "@protobuf-ts/runtime";
 import { reflectionMergePartial } from "@protobuf-ts/runtime";
 import { MessageType } from "@protobuf-ts/runtime";
+import { File } from "../../file/file";
+import { PropertyValue } from "../../properties/properties";
 import { UserShort } from "../../users/short/user";
 import { Timestamp } from "../../timestamp/timestamp";
 /**
@@ -57,6 +59,12 @@ export interface VehicleActivity {
      * @generated from protobuf field: optional resources.vehicles.activity.VehicleActivityData data = 10
      */
     data?: VehicleActivityData;
+    /**
+     * Set for generic property activities so filtering does not depend on JSON.
+     *
+     * @generated from protobuf field: optional string key = 11
+     */
+    key?: string;
 }
 /**
  * @generated from protobuf message resources.vehicles.activity.VehicleActivityData
@@ -71,6 +79,18 @@ export interface VehicleActivityData {
          * @generated from protobuf field: resources.vehicles.activity.WantedChange wanted_change = 1
          */
         wantedChange: WantedChange;
+    } | {
+        oneofKind: "propertyChange";
+        /**
+         * @generated from protobuf field: resources.vehicles.activity.PropertyChange property_change = 2
+         */
+        propertyChange: PropertyChange;
+    } | {
+        oneofKind: "fileChange";
+        /**
+         * @generated from protobuf field: resources.vehicles.activity.FileChange file_change = 3
+         */
+        fileChange: FileChange;
     } | {
         oneofKind: undefined;
     };
@@ -105,6 +125,43 @@ export interface WantedChange {
     auto: boolean;
 }
 /**
+ * PropertyChange is used only for custom, generic properties. Managed system
+ * properties retain their dedicated activity types and richer payloads.
+ *
+ * @generated from protobuf message resources.vehicles.activity.PropertyChange
+ */
+export interface PropertyChange {
+    /**
+     * @generated from protobuf field: string key = 1
+     */
+    key: string;
+    /**
+     * @generated from protobuf field: optional resources.properties.PropertyValue old_value = 2
+     */
+    oldValue?: PropertyValue;
+    /**
+     * @generated from protobuf field: optional resources.properties.PropertyValue new_value = 3
+     */
+    newValue?: PropertyValue;
+}
+/**
+ * @generated from protobuf message resources.vehicles.activity.FileChange
+ */
+export interface FileChange {
+    /**
+     * @generated from protobuf field: bool added = 1
+     */
+    added: boolean;
+    /**
+     * @generated from protobuf field: string kind = 2
+     */
+    kind: string;
+    /**
+     * @generated from protobuf field: resources.file.File file = 3
+     */
+    file?: File;
+}
+/**
  * @generated from protobuf enum resources.vehicles.activity.VehicleActivityType
  */
 export enum VehicleActivityType {
@@ -117,7 +174,19 @@ export enum VehicleActivityType {
      *
      * @generated from protobuf enum value: VEHICLE_ACTIVITY_TYPE_WANTED = 1;
      */
-    WANTED = 1
+    WANTED = 1,
+    /**
+     * File-backed property value change.
+     *
+     * @generated from protobuf enum value: VEHICLE_ACTIVITY_TYPE_FILE = 2;
+     */
+    FILE = 2,
+    /**
+     * Generic custom property value change.
+     *
+     * @generated from protobuf enum value: VEHICLE_ACTIVITY_TYPE_PROPERTY = 3;
+     */
+    PROPERTY = 3
 }
 // @generated message type with reflection information, may provide speed optimized methods
 class VehicleActivity$Type extends MessageType<VehicleActivity> {
@@ -132,7 +201,8 @@ class VehicleActivity$Type extends MessageType<VehicleActivity> {
             { no: 7, name: "creator_job", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "20" } }, "tagger.tags": "alias:\"vehicle_activity.creator_job\"" } },
             { no: 8, name: "creator_job_label", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "50" } } } },
             { no: 9, name: "reason", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "255" } }, "codegen.sanitizer.sanitizer": { enabled: true }, "tagger.tags": "alias:\"vehicle_activity.reason\"" } },
-            { no: 10, name: "data", kind: "message", T: () => VehicleActivityData, options: { "tagger.tags": "alias:\"vehicle_activity.data\"" } }
+            { no: 10, name: "data", kind: "message", T: () => VehicleActivityData, options: { "tagger.tags": "alias:\"vehicle_activity.data\"" } },
+            { no: 11, name: "key", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "64" } } } }
         ]);
     }
     create(value?: PartialMessage<VehicleActivity>): VehicleActivity {
@@ -180,6 +250,9 @@ class VehicleActivity$Type extends MessageType<VehicleActivity> {
                 case /* optional resources.vehicles.activity.VehicleActivityData data */ 10:
                     message.data = VehicleActivityData.internalBinaryRead(reader, reader.uint32(), options, message.data);
                     break;
+                case /* optional string key */ 11:
+                    message.key = reader.string();
+                    break;
                 default:
                     let u = options.readUnknownField;
                     if (u === "throw")
@@ -222,6 +295,9 @@ class VehicleActivity$Type extends MessageType<VehicleActivity> {
         /* optional resources.vehicles.activity.VehicleActivityData data = 10; */
         if (message.data)
             VehicleActivityData.internalBinaryWrite(message.data, writer.tag(10, WireType.LengthDelimited).fork(), options).join();
+        /* optional string key = 11; */
+        if (message.key !== undefined)
+            writer.tag(11, WireType.LengthDelimited).string(message.key);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -236,7 +312,9 @@ export const VehicleActivity = new VehicleActivity$Type();
 class VehicleActivityData$Type extends MessageType<VehicleActivityData> {
     constructor() {
         super("resources.vehicles.activity.VehicleActivityData", [
-            { no: 1, name: "wanted_change", kind: "message", oneof: "data", T: () => WantedChange }
+            { no: 1, name: "wanted_change", kind: "message", oneof: "data", T: () => WantedChange },
+            { no: 2, name: "property_change", kind: "message", oneof: "data", T: () => PropertyChange },
+            { no: 3, name: "file_change", kind: "message", oneof: "data", T: () => FileChange }
         ], { "codegen.dbscanner.dbscanner": { enabled: true } });
     }
     create(value?: PartialMessage<VehicleActivityData>): VehicleActivityData {
@@ -257,6 +335,18 @@ class VehicleActivityData$Type extends MessageType<VehicleActivityData> {
                         wantedChange: WantedChange.internalBinaryRead(reader, reader.uint32(), options, (message.data as any).wantedChange)
                     };
                     break;
+                case /* resources.vehicles.activity.PropertyChange property_change */ 2:
+                    message.data = {
+                        oneofKind: "propertyChange",
+                        propertyChange: PropertyChange.internalBinaryRead(reader, reader.uint32(), options, (message.data as any).propertyChange)
+                    };
+                    break;
+                case /* resources.vehicles.activity.FileChange file_change */ 3:
+                    message.data = {
+                        oneofKind: "fileChange",
+                        fileChange: FileChange.internalBinaryRead(reader, reader.uint32(), options, (message.data as any).fileChange)
+                    };
+                    break;
                 default:
                     let u = options.readUnknownField;
                     if (u === "throw")
@@ -272,6 +362,12 @@ class VehicleActivityData$Type extends MessageType<VehicleActivityData> {
         /* resources.vehicles.activity.WantedChange wanted_change = 1; */
         if (message.data.oneofKind === "wantedChange")
             WantedChange.internalBinaryWrite(message.data.wantedChange, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
+        /* resources.vehicles.activity.PropertyChange property_change = 2; */
+        if (message.data.oneofKind === "propertyChange")
+            PropertyChange.internalBinaryWrite(message.data.propertyChange, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
+        /* resources.vehicles.activity.FileChange file_change = 3; */
+        if (message.data.oneofKind === "fileChange")
+            FileChange.internalBinaryWrite(message.data.fileChange, writer.tag(3, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -365,3 +461,126 @@ class WantedChange$Type extends MessageType<WantedChange> {
  * @generated MessageType for protobuf message resources.vehicles.activity.WantedChange
  */
 export const WantedChange = new WantedChange$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class PropertyChange$Type extends MessageType<PropertyChange> {
+    constructor() {
+        super("resources.vehicles.activity.PropertyChange", [
+            { no: 1, name: "key", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "64" } } } },
+            { no: 2, name: "old_value", kind: "message", T: () => PropertyValue },
+            { no: 3, name: "new_value", kind: "message", T: () => PropertyValue }
+        ]);
+    }
+    create(value?: PartialMessage<PropertyChange>): PropertyChange {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        message.key = "";
+        if (value !== undefined)
+            reflectionMergePartial<PropertyChange>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: PropertyChange): PropertyChange {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* string key */ 1:
+                    message.key = reader.string();
+                    break;
+                case /* optional resources.properties.PropertyValue old_value */ 2:
+                    message.oldValue = PropertyValue.internalBinaryRead(reader, reader.uint32(), options, message.oldValue);
+                    break;
+                case /* optional resources.properties.PropertyValue new_value */ 3:
+                    message.newValue = PropertyValue.internalBinaryRead(reader, reader.uint32(), options, message.newValue);
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: PropertyChange, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* string key = 1; */
+        if (message.key !== "")
+            writer.tag(1, WireType.LengthDelimited).string(message.key);
+        /* optional resources.properties.PropertyValue old_value = 2; */
+        if (message.oldValue)
+            PropertyValue.internalBinaryWrite(message.oldValue, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
+        /* optional resources.properties.PropertyValue new_value = 3; */
+        if (message.newValue)
+            PropertyValue.internalBinaryWrite(message.newValue, writer.tag(3, WireType.LengthDelimited).fork(), options).join();
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message resources.vehicles.activity.PropertyChange
+ */
+export const PropertyChange = new PropertyChange$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class FileChange$Type extends MessageType<FileChange> {
+    constructor() {
+        super("resources.vehicles.activity.FileChange", [
+            { no: 1, name: "added", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
+            { no: 2, name: "kind", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "32" } } } },
+            { no: 3, name: "file", kind: "message", T: () => File, options: { "buf.validate.field": { required: true } } }
+        ]);
+    }
+    create(value?: PartialMessage<FileChange>): FileChange {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        message.added = false;
+        message.kind = "";
+        if (value !== undefined)
+            reflectionMergePartial<FileChange>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: FileChange): FileChange {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* bool added */ 1:
+                    message.added = reader.bool();
+                    break;
+                case /* string kind */ 2:
+                    message.kind = reader.string();
+                    break;
+                case /* resources.file.File file */ 3:
+                    message.file = File.internalBinaryRead(reader, reader.uint32(), options, message.file);
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: FileChange, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* bool added = 1; */
+        if (message.added !== false)
+            writer.tag(1, WireType.Varint).bool(message.added);
+        /* string kind = 2; */
+        if (message.kind !== "")
+            writer.tag(2, WireType.LengthDelimited).string(message.kind);
+        /* resources.file.File file = 3; */
+        if (message.file)
+            File.internalBinaryWrite(message.file, writer.tag(3, WireType.LengthDelimited).fork(), options).join();
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message resources.vehicles.activity.FileChange
+ */
+export const FileChange = new FileChange$Type();

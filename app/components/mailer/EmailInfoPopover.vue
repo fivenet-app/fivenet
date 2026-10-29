@@ -1,7 +1,6 @@
 <script lang="ts" setup>
 import type { ButtonProps } from '@nuxt/ui';
 import EmailBlock from '~/components/partials/citizens/EmailBlock.vue';
-import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 
 const props = withDefaults(
     defineProps<{
@@ -23,19 +22,14 @@ const props = withDefaults(
     },
 );
 
-const notifications = useNotificationsStore();
+const { notifyEmailAddressCopied } = useClipboardNotifications();
 
-function copyEmail(): void {
+async function copyEmail(): Promise<void> {
     if (!props.email) return;
 
-    copyToClipboardWrapper(props.email);
+    await copyToClipboardWrapper(props.email);
 
-    notifications.add({
-        title: { key: 'notifications.clipboard.email_address_copied.title', parameters: {} },
-        description: { key: 'notifications.clipboard.email_address_copied.content', parameters: {} },
-        duration: 3250,
-        type: NotificationType.INFO,
-    });
+    notifyEmailAddressCopied();
 }
 </script>
 

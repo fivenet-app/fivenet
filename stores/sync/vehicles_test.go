@@ -35,7 +35,7 @@ func TestSendVehicles(t *testing.T) {
 		nil,
 	)
 
-	mock.ExpectExec(`(?s)INSERT INTO .*fivenet_owned_vehicles.*ON DUPLICATE KEY UPDATE.*`).
+	mock.ExpectExec(`(?s)INSERT INTO .*fivenet_vehicle.*ON DUPLICATE KEY UPDATE.*`).
 		WithArgs(int32(3), "police", "ABC DEF1", "adder", "car").
 		WillReturnResult(sqlmock.NewResult(0, 1))
 
@@ -76,7 +76,7 @@ func TestDeleteVehicles(t *testing.T) {
 		nil,
 	)
 
-	mock.ExpectExec(`(?s)DELETE FROM .*fivenet_owned_vehicles.*plate IN \(\?, \?\).*LIMIT \?.*`).
+	mock.ExpectExec(`(?s)DELETE FROM .*fivenet_vehicle.*plate IN \(\?, \?\).*LIMIT \?.*`).
 		WithArgs("ABC DEF1", "XYZ 123", int64(2)).
 		WillReturnResult(sqlmock.NewResult(0, 2))
 

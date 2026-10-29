@@ -14,6 +14,8 @@ import (
 	labels "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/citizens/labels"
 	licenses "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/citizens/licenses"
 	relations "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/documents/relations"
+	file "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/file"
+	properties "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/properties"
 	timestamp "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/timestamp"
 	short "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/users/short"
 	_ "github.com/srikrsna/protoc-gen-gotag/tagger"
@@ -47,6 +49,10 @@ const (
 	UserActivityType_USER_ACTIVITY_TYPE_DOCUMENT                  UserActivityType = 11
 	UserActivityType_USER_ACTIVITY_TYPE_JAIL                      UserActivityType = 12
 	UserActivityType_USER_ACTIVITY_TYPE_FINE                      UserActivityType = 13
+	// File-backed property value change.
+	UserActivityType_USER_ACTIVITY_TYPE_FILE UserActivityType = 14
+	// Generic custom property value change.
+	UserActivityType_USER_ACTIVITY_TYPE_PROPERTY UserActivityType = 15
 )
 
 // Enum value maps for UserActivityType.
@@ -63,6 +69,8 @@ var (
 		11: "USER_ACTIVITY_TYPE_DOCUMENT",
 		12: "USER_ACTIVITY_TYPE_JAIL",
 		13: "USER_ACTIVITY_TYPE_FINE",
+		14: "USER_ACTIVITY_TYPE_FILE",
+		15: "USER_ACTIVITY_TYPE_PROPERTY",
 	}
 	UserActivityType_value = map[string]int32{
 		"USER_ACTIVITY_TYPE_UNSPECIFIED":               0,
@@ -76,6 +84,8 @@ var (
 		"USER_ACTIVITY_TYPE_DOCUMENT":                  11,
 		"USER_ACTIVITY_TYPE_JAIL":                      12,
 		"USER_ACTIVITY_TYPE_FINE":                      13,
+		"USER_ACTIVITY_TYPE_FILE":                      14,
+		"USER_ACTIVITY_TYPE_PROPERTY":                  15,
 	}
 )
 
@@ -496,6 +506,24 @@ func (x *UserActivityData) GetFineChange() *FineChange {
 	return nil
 }
 
+func (x *UserActivityData) GetPropertyChange() *PropertyChange {
+	if x != nil {
+		if x, ok := x.xxx_hidden_Data.(*userActivityData_PropertyChange); ok {
+			return x.PropertyChange
+		}
+	}
+	return nil
+}
+
+func (x *UserActivityData) GetFileChange() *FileChange {
+	if x != nil {
+		if x, ok := x.xxx_hidden_Data.(*userActivityData_FileChange); ok {
+			return x.FileChange
+		}
+	}
+	return nil
+}
+
 func (x *UserActivityData) SetNameChange(v *NameChange) {
 	if v == nil {
 		x.xxx_hidden_Data = nil
@@ -574,6 +602,22 @@ func (x *UserActivityData) SetFineChange(v *FineChange) {
 		return
 	}
 	x.xxx_hidden_Data = &userActivityData_FineChange{v}
+}
+
+func (x *UserActivityData) SetPropertyChange(v *PropertyChange) {
+	if v == nil {
+		x.xxx_hidden_Data = nil
+		return
+	}
+	x.xxx_hidden_Data = &userActivityData_PropertyChange{v}
+}
+
+func (x *UserActivityData) SetFileChange(v *FileChange) {
+	if v == nil {
+		x.xxx_hidden_Data = nil
+		return
+	}
+	x.xxx_hidden_Data = &userActivityData_FileChange{v}
 }
 
 func (x *UserActivityData) HasData() bool {
@@ -663,6 +707,22 @@ func (x *UserActivityData) HasFineChange() bool {
 	return ok
 }
 
+func (x *UserActivityData) HasPropertyChange() bool {
+	if x == nil {
+		return false
+	}
+	_, ok := x.xxx_hidden_Data.(*userActivityData_PropertyChange)
+	return ok
+}
+
+func (x *UserActivityData) HasFileChange() bool {
+	if x == nil {
+		return false
+	}
+	_, ok := x.xxx_hidden_Data.(*userActivityData_FileChange)
+	return ok
+}
+
 func (x *UserActivityData) ClearData() {
 	x.xxx_hidden_Data = nil
 }
@@ -727,6 +787,18 @@ func (x *UserActivityData) ClearFineChange() {
 	}
 }
 
+func (x *UserActivityData) ClearPropertyChange() {
+	if _, ok := x.xxx_hidden_Data.(*userActivityData_PropertyChange); ok {
+		x.xxx_hidden_Data = nil
+	}
+}
+
+func (x *UserActivityData) ClearFileChange() {
+	if _, ok := x.xxx_hidden_Data.(*userActivityData_FileChange); ok {
+		x.xxx_hidden_Data = nil
+	}
+}
+
 const UserActivityData_Data_not_set_case case_UserActivityData_Data = 0
 const UserActivityData_NameChange_case case_UserActivityData_Data = 1
 const UserActivityData_LicensesChange_case case_UserActivityData_Data = 2
@@ -738,6 +810,8 @@ const UserActivityData_JobChange_case case_UserActivityData_Data = 7
 const UserActivityData_DocumentRelation_case case_UserActivityData_Data = 8
 const UserActivityData_JailChange_case case_UserActivityData_Data = 9
 const UserActivityData_FineChange_case case_UserActivityData_Data = 10
+const UserActivityData_PropertyChange_case case_UserActivityData_Data = 11
+const UserActivityData_FileChange_case case_UserActivityData_Data = 12
 
 func (x *UserActivityData) WhichData() case_UserActivityData_Data {
 	if x == nil {
@@ -764,6 +838,10 @@ func (x *UserActivityData) WhichData() case_UserActivityData_Data {
 		return UserActivityData_JailChange_case
 	case *userActivityData_FineChange:
 		return UserActivityData_FineChange_case
+	case *userActivityData_PropertyChange:
+		return UserActivityData_PropertyChange_case
+	case *userActivityData_FileChange:
+		return UserActivityData_FileChange_case
 	default:
 		return UserActivityData_Data_not_set_case
 	}
@@ -784,8 +862,10 @@ type UserActivityData_builder struct {
 	// Docstore related
 	DocumentRelation *CitizenDocumentRelation
 	// "Plugin" activities
-	JailChange *JailChange
-	FineChange *FineChange
+	JailChange     *JailChange
+	FineChange     *FineChange
+	PropertyChange *PropertyChange
+	FileChange     *FileChange
 	// -- end of xxx_hidden_Data
 }
 
@@ -822,6 +902,12 @@ func (b0 UserActivityData_builder) Build() *UserActivityData {
 	}
 	if b.FineChange != nil {
 		x.xxx_hidden_Data = &userActivityData_FineChange{b.FineChange}
+	}
+	if b.PropertyChange != nil {
+		x.xxx_hidden_Data = &userActivityData_PropertyChange{b.PropertyChange}
+	}
+	if b.FileChange != nil {
+		x.xxx_hidden_Data = &userActivityData_FileChange{b.FileChange}
 	}
 	return m0
 }
@@ -883,6 +969,14 @@ type userActivityData_FineChange struct {
 	FineChange *FineChange `protobuf:"bytes,10,opt,name=fine_change,json=fineChange,proto3,oneof"`
 }
 
+type userActivityData_PropertyChange struct {
+	PropertyChange *PropertyChange `protobuf:"bytes,11,opt,name=property_change,json=propertyChange,proto3,oneof"`
+}
+
+type userActivityData_FileChange struct {
+	FileChange *FileChange `protobuf:"bytes,12,opt,name=file_change,json=fileChange,proto3,oneof"`
+}
+
 func (*userActivityData_NameChange) isUserActivityData_Data() {}
 
 func (*userActivityData_LicensesChange) isUserActivityData_Data() {}
@@ -902,6 +996,10 @@ func (*userActivityData_DocumentRelation) isUserActivityData_Data() {}
 func (*userActivityData_JailChange) isUserActivityData_Data() {}
 
 func (*userActivityData_FineChange) isUserActivityData_Data() {}
+
+func (*userActivityData_PropertyChange) isUserActivityData_Data() {}
+
+func (*userActivityData_FileChange) isUserActivityData_Data() {}
 
 type NameChange struct {
 	state          protoimpl.MessageState `protogen:"opaque.v1"`
@@ -1936,11 +2034,216 @@ func (b0 FineChange_builder) Build() *FineChange {
 	return m0
 }
 
+type FileChange struct {
+	state            protoimpl.MessageState `protogen:"opaque.v1"`
+	xxx_hidden_Added bool                   `protobuf:"varint,1,opt,name=added,proto3"`
+	xxx_hidden_Kind  string                 `protobuf:"bytes,2,opt,name=kind,proto3"`
+	xxx_hidden_File  *file.File             `protobuf:"bytes,3,opt,name=file,proto3"`
+	unknownFields    protoimpl.UnknownFields
+	sizeCache        protoimpl.SizeCache
+}
+
+func (x *FileChange) Reset() {
+	*x = FileChange{}
+	mi := &file_resources_users_activity_activity_proto_msgTypes[13]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *FileChange) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*FileChange) ProtoMessage() {}
+
+func (x *FileChange) ProtoReflect() protoreflect.Message {
+	mi := &file_resources_users_activity_activity_proto_msgTypes[13]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+func (x *FileChange) GetAdded() bool {
+	if x != nil {
+		return x.xxx_hidden_Added
+	}
+	return false
+}
+
+func (x *FileChange) GetKind() string {
+	if x != nil {
+		return x.xxx_hidden_Kind
+	}
+	return ""
+}
+
+func (x *FileChange) GetFile() *file.File {
+	if x != nil {
+		return x.xxx_hidden_File
+	}
+	return nil
+}
+
+func (x *FileChange) SetAdded(v bool) {
+	x.xxx_hidden_Added = v
+}
+
+func (x *FileChange) SetKind(v string) {
+	x.xxx_hidden_Kind = v
+}
+
+func (x *FileChange) SetFile(v *file.File) {
+	x.xxx_hidden_File = v
+}
+
+func (x *FileChange) HasFile() bool {
+	if x == nil {
+		return false
+	}
+	return x.xxx_hidden_File != nil
+}
+
+func (x *FileChange) ClearFile() {
+	x.xxx_hidden_File = nil
+}
+
+type FileChange_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Added bool
+	Kind  string
+	File  *file.File
+}
+
+func (b0 FileChange_builder) Build() *FileChange {
+	m0 := &FileChange{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.xxx_hidden_Added = b.Added
+	x.xxx_hidden_Kind = b.Kind
+	x.xxx_hidden_File = b.File
+	return m0
+}
+
+// PropertyChange is used only for custom, generic properties. Managed system
+// properties retain their dedicated activity types and richer payloads.
+type PropertyChange struct {
+	state               protoimpl.MessageState    `protogen:"opaque.v1"`
+	xxx_hidden_Key      string                    `protobuf:"bytes,1,opt,name=key,proto3"`
+	xxx_hidden_OldValue *properties.PropertyValue `protobuf:"bytes,2,opt,name=old_value,json=oldValue,proto3,oneof"`
+	xxx_hidden_NewValue *properties.PropertyValue `protobuf:"bytes,3,opt,name=new_value,json=newValue,proto3,oneof"`
+	unknownFields       protoimpl.UnknownFields
+	sizeCache           protoimpl.SizeCache
+}
+
+func (x *PropertyChange) Reset() {
+	*x = PropertyChange{}
+	mi := &file_resources_users_activity_activity_proto_msgTypes[14]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *PropertyChange) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*PropertyChange) ProtoMessage() {}
+
+func (x *PropertyChange) ProtoReflect() protoreflect.Message {
+	mi := &file_resources_users_activity_activity_proto_msgTypes[14]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+func (x *PropertyChange) GetKey() string {
+	if x != nil {
+		return x.xxx_hidden_Key
+	}
+	return ""
+}
+
+func (x *PropertyChange) GetOldValue() *properties.PropertyValue {
+	if x != nil {
+		return x.xxx_hidden_OldValue
+	}
+	return nil
+}
+
+func (x *PropertyChange) GetNewValue() *properties.PropertyValue {
+	if x != nil {
+		return x.xxx_hidden_NewValue
+	}
+	return nil
+}
+
+func (x *PropertyChange) SetKey(v string) {
+	x.xxx_hidden_Key = v
+}
+
+func (x *PropertyChange) SetOldValue(v *properties.PropertyValue) {
+	x.xxx_hidden_OldValue = v
+}
+
+func (x *PropertyChange) SetNewValue(v *properties.PropertyValue) {
+	x.xxx_hidden_NewValue = v
+}
+
+func (x *PropertyChange) HasOldValue() bool {
+	if x == nil {
+		return false
+	}
+	return x.xxx_hidden_OldValue != nil
+}
+
+func (x *PropertyChange) HasNewValue() bool {
+	if x == nil {
+		return false
+	}
+	return x.xxx_hidden_NewValue != nil
+}
+
+func (x *PropertyChange) ClearOldValue() {
+	x.xxx_hidden_OldValue = nil
+}
+
+func (x *PropertyChange) ClearNewValue() {
+	x.xxx_hidden_NewValue = nil
+}
+
+type PropertyChange_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Key      string
+	OldValue *properties.PropertyValue
+	NewValue *properties.PropertyValue
+}
+
+func (b0 PropertyChange_builder) Build() *PropertyChange {
+	m0 := &PropertyChange{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.xxx_hidden_Key = b.Key
+	x.xxx_hidden_OldValue = b.OldValue
+	x.xxx_hidden_NewValue = b.NewValue
+	return m0
+}
+
 var File_resources_users_activity_activity_proto protoreflect.FileDescriptor
 
 const file_resources_users_activity_activity_proto_rawDesc = "" +
 	"\n" +
-	"'resources/users/activity/activity.proto\x12\x18resources.users.activity\x1a!codegen/dbscanner/dbscanner.proto\x1a!codegen/sanitizer/sanitizer.proto\x1a&resources/citizens/labels/labels.proto\x1a*resources/citizens/licenses/licenses.proto\x1a-resources/documents/relations/relations.proto\x1a#resources/timestamp/timestamp.proto\x1a resources/users/short/user.proto\x1a\x13tagger/tagger.proto\"\xdf\a\n" +
+	"'resources/users/activity/activity.proto\x12\x18resources.users.activity\x1a!codegen/dbscanner/dbscanner.proto\x1a!codegen/sanitizer/sanitizer.proto\x1a&resources/citizens/labels/labels.proto\x1a*resources/citizens/licenses/licenses.proto\x1a-resources/documents/relations/relations.proto\x1a\x19resources/file/file.proto\x1a%resources/properties/properties.proto\x1a#resources/timestamp/timestamp.proto\x1a resources/users/short/user.proto\x1a\x13tagger/tagger.proto\"\xdf\a\n" +
 	"\fUserActivity\x12-\n" +
 	"\x02id\x18\x01 \x01(\x03B\x1d\x9a\x84\x9e\x03\x18alias:\"user_activity.id\"R\x02id\x12_\n" +
 	"\x04type\x18\x02 \x01(\x0e2*.resources.users.activity.UserActivityTypeB\x1f\x9a\x84\x9e\x03\x1aalias:\"user_activity.type\"R\x04type\x12d\n" +
@@ -1960,7 +2263,7 @@ const file_resources_users_activity_activity_proto_rawDesc = "" +
 	"\tnew_value\x18\f \x01(\tB$\x9a\x84\x9e\x03\x1falias:\"user_activity.new_value\"R\bnewValueB\x11\n" +
 	"\x0f_source_user_idB\x0e\n" +
 	"\f_source_userB\a\n" +
-	"\x05_data\"\xee\x06\n" +
+	"\x05_data\"\x8c\b\n" +
 	"\x10UserActivityData\x12G\n" +
 	"\vname_change\x18\x01 \x01(\v2$.resources.users.activity.NameChangeH\x00R\n" +
 	"nameChange\x12R\n" +
@@ -1976,7 +2279,10 @@ const file_resources_users_activity_activity_proto_rawDesc = "" +
 	"jailChange\x12G\n" +
 	"\vfine_change\x18\n" +
 	" \x01(\v2$.resources.users.activity.FineChangeH\x00R\n" +
-	"fineChange:\x06\xe2\xf3\x18\x02\b\x01B\x06\n" +
+	"fineChange\x12S\n" +
+	"\x0fproperty_change\x18\v \x01(\v2(.resources.users.activity.PropertyChangeH\x00R\x0epropertyChange\x12G\n" +
+	"\vfile_change\x18\f \x01(\v2$.resources.users.activity.FileChangeH\x00R\n" +
+	"fileChange:\x06\xe2\xf3\x18\x02\b\x01B\x06\n" +
 	"\x04data\"0\n" +
 	"\n" +
 	"NameChange\x12\x10\n" +
@@ -2035,7 +2341,20 @@ const file_resources_users_activity_activity_proto_rawDesc = "" +
 	"\n" +
 	"FineChange\x12\x18\n" +
 	"\aremoved\x18\x01 \x01(\bR\aremoved\x12\x16\n" +
-	"\x06amount\x18\x02 \x01(\x03R\x06amount*\x81\x03\n" +
+	"\x06amount\x18\x02 \x01(\x03R\x06amount\"`\n" +
+	"\n" +
+	"FileChange\x12\x14\n" +
+	"\x05added\x18\x01 \x01(\bR\x05added\x12\x12\n" +
+	"\x04kind\x18\x02 \x01(\tR\x04kind\x12(\n" +
+	"\x04file\x18\x03 \x01(\v2\x14.resources.file.FileR\x04file\"\xcc\x01\n" +
+	"\x0ePropertyChange\x12\x10\n" +
+	"\x03key\x18\x01 \x01(\tR\x03key\x12E\n" +
+	"\told_value\x18\x02 \x01(\v2#.resources.properties.PropertyValueH\x00R\boldValue\x88\x01\x01\x12E\n" +
+	"\tnew_value\x18\x03 \x01(\v2#.resources.properties.PropertyValueH\x01R\bnewValue\x88\x01\x01B\f\n" +
+	"\n" +
+	"_old_valueB\f\n" +
+	"\n" +
+	"_new_value*\xbf\x03\n" +
 	"\x10UserActivityType\x12\"\n" +
 	"\x1eUSER_ACTIVITY_TYPE_UNSPECIFIED\x10\x00\x12\x1b\n" +
 	"\x17USER_ACTIVITY_TYPE_NAME\x10\x04\x12\x1f\n" +
@@ -2048,10 +2367,12 @@ const file_resources_users_activity_activity_proto_rawDesc = "" +
 	"\x12\x1f\n" +
 	"\x1bUSER_ACTIVITY_TYPE_DOCUMENT\x10\v\x12\x1b\n" +
 	"\x17USER_ACTIVITY_TYPE_JAIL\x10\f\x12\x1b\n" +
-	"\x17USER_ACTIVITY_TYPE_FINE\x10\r\"\x04\b\x01\x10\x03BZZXgithub.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/users/activity;usersactivityb\x06proto3"
+	"\x17USER_ACTIVITY_TYPE_FINE\x10\r\x12\x1b\n" +
+	"\x17USER_ACTIVITY_TYPE_FILE\x10\x0e\x12\x1f\n" +
+	"\x1bUSER_ACTIVITY_TYPE_PROPERTY\x10\x0f\"\x04\b\x01\x10\x03BZZXgithub.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/users/activity;usersactivityb\x06proto3"
 
 var file_resources_users_activity_activity_proto_enumTypes = make([]protoimpl.EnumInfo, 1)
-var file_resources_users_activity_activity_proto_msgTypes = make([]protoimpl.MessageInfo, 13)
+var file_resources_users_activity_activity_proto_msgTypes = make([]protoimpl.MessageInfo, 15)
 var file_resources_users_activity_activity_proto_goTypes = []any{
 	(UserActivityType)(0),                 // 0: resources.users.activity.UserActivityType
 	(*UserActivity)(nil),                  // 1: resources.users.activity.UserActivity
@@ -2067,17 +2388,21 @@ var file_resources_users_activity_activity_proto_goTypes = []any{
 	(*CitizenDocumentRelation)(nil),       // 11: resources.users.activity.CitizenDocumentRelation
 	(*JailChange)(nil),                    // 12: resources.users.activity.JailChange
 	(*FineChange)(nil),                    // 13: resources.users.activity.FineChange
-	(*timestamp.Timestamp)(nil),           // 14: resources.timestamp.Timestamp
-	(*short.UserShort)(nil),               // 15: resources.users.short.UserShort
-	(*licenses.License)(nil),              // 16: resources.citizens.licenses.License
-	(*labels.Label)(nil),                  // 17: resources.citizens.labels.Label
-	(relations.DocRelation)(0),            // 18: resources.documents.relations.DocRelation
+	(*FileChange)(nil),                    // 14: resources.users.activity.FileChange
+	(*PropertyChange)(nil),                // 15: resources.users.activity.PropertyChange
+	(*timestamp.Timestamp)(nil),           // 16: resources.timestamp.Timestamp
+	(*short.UserShort)(nil),               // 17: resources.users.short.UserShort
+	(*licenses.License)(nil),              // 18: resources.citizens.licenses.License
+	(*labels.Label)(nil),                  // 19: resources.citizens.labels.Label
+	(relations.DocRelation)(0),            // 20: resources.documents.relations.DocRelation
+	(*file.File)(nil),                     // 21: resources.file.File
+	(*properties.PropertyValue)(nil),      // 22: resources.properties.PropertyValue
 }
 var file_resources_users_activity_activity_proto_depIdxs = []int32{
 	0,  // 0: resources.users.activity.UserActivity.type:type_name -> resources.users.activity.UserActivityType
-	14, // 1: resources.users.activity.UserActivity.created_at:type_name -> resources.timestamp.Timestamp
-	15, // 2: resources.users.activity.UserActivity.source_user:type_name -> resources.users.short.UserShort
-	15, // 3: resources.users.activity.UserActivity.target_user:type_name -> resources.users.short.UserShort
+	16, // 1: resources.users.activity.UserActivity.created_at:type_name -> resources.timestamp.Timestamp
+	17, // 2: resources.users.activity.UserActivity.source_user:type_name -> resources.users.short.UserShort
+	17, // 3: resources.users.activity.UserActivity.target_user:type_name -> resources.users.short.UserShort
 	2,  // 4: resources.users.activity.UserActivity.data:type_name -> resources.users.activity.UserActivityData
 	3,  // 5: resources.users.activity.UserActivityData.name_change:type_name -> resources.users.activity.NameChange
 	4,  // 6: resources.users.activity.UserActivityData.licenses_change:type_name -> resources.users.activity.LicenseChange
@@ -2089,18 +2414,23 @@ var file_resources_users_activity_activity_proto_depIdxs = []int32{
 	11, // 12: resources.users.activity.UserActivityData.document_relation:type_name -> resources.users.activity.CitizenDocumentRelation
 	12, // 13: resources.users.activity.UserActivityData.jail_change:type_name -> resources.users.activity.JailChange
 	13, // 14: resources.users.activity.UserActivityData.fine_change:type_name -> resources.users.activity.FineChange
-	16, // 15: resources.users.activity.LicenseChange.licenses:type_name -> resources.citizens.licenses.License
-	14, // 16: resources.users.activity.WantedChange.wanted_till:type_name -> resources.timestamp.Timestamp
-	17, // 17: resources.users.activity.LabelsChange.added:type_name -> resources.citizens.labels.Label
-	17, // 18: resources.users.activity.LabelsChange.removed:type_name -> resources.citizens.labels.Label
-	9,  // 19: resources.users.activity.LabelsChange.added_ids:type_name -> resources.users.activity.LabelAdded
-	14, // 20: resources.users.activity.LabelAdded.expires_at:type_name -> resources.timestamp.Timestamp
-	18, // 21: resources.users.activity.CitizenDocumentRelation.relation:type_name -> resources.documents.relations.DocRelation
-	22, // [22:22] is the sub-list for method output_type
-	22, // [22:22] is the sub-list for method input_type
-	22, // [22:22] is the sub-list for extension type_name
-	22, // [22:22] is the sub-list for extension extendee
-	0,  // [0:22] is the sub-list for field type_name
+	15, // 15: resources.users.activity.UserActivityData.property_change:type_name -> resources.users.activity.PropertyChange
+	14, // 16: resources.users.activity.UserActivityData.file_change:type_name -> resources.users.activity.FileChange
+	18, // 17: resources.users.activity.LicenseChange.licenses:type_name -> resources.citizens.licenses.License
+	16, // 18: resources.users.activity.WantedChange.wanted_till:type_name -> resources.timestamp.Timestamp
+	19, // 19: resources.users.activity.LabelsChange.added:type_name -> resources.citizens.labels.Label
+	19, // 20: resources.users.activity.LabelsChange.removed:type_name -> resources.citizens.labels.Label
+	9,  // 21: resources.users.activity.LabelsChange.added_ids:type_name -> resources.users.activity.LabelAdded
+	16, // 22: resources.users.activity.LabelAdded.expires_at:type_name -> resources.timestamp.Timestamp
+	20, // 23: resources.users.activity.CitizenDocumentRelation.relation:type_name -> resources.documents.relations.DocRelation
+	21, // 24: resources.users.activity.FileChange.file:type_name -> resources.file.File
+	22, // 25: resources.users.activity.PropertyChange.old_value:type_name -> resources.properties.PropertyValue
+	22, // 26: resources.users.activity.PropertyChange.new_value:type_name -> resources.properties.PropertyValue
+	27, // [27:27] is the sub-list for method output_type
+	27, // [27:27] is the sub-list for method input_type
+	27, // [27:27] is the sub-list for extension type_name
+	27, // [27:27] is the sub-list for extension extendee
+	0,  // [0:27] is the sub-list for field type_name
 }
 
 func init() { file_resources_users_activity_activity_proto_init() }
@@ -2120,19 +2450,22 @@ func file_resources_users_activity_activity_proto_init() {
 		(*userActivityData_DocumentRelation)(nil),
 		(*userActivityData_JailChange)(nil),
 		(*userActivityData_FineChange)(nil),
+		(*userActivityData_PropertyChange)(nil),
+		(*userActivityData_FileChange)(nil),
 	}
 	file_resources_users_activity_activity_proto_msgTypes[4].OneofWrappers = []any{}
 	file_resources_users_activity_activity_proto_msgTypes[6].OneofWrappers = []any{}
 	file_resources_users_activity_activity_proto_msgTypes[8].OneofWrappers = []any{}
 	file_resources_users_activity_activity_proto_msgTypes[9].OneofWrappers = []any{}
 	file_resources_users_activity_activity_proto_msgTypes[11].OneofWrappers = []any{}
+	file_resources_users_activity_activity_proto_msgTypes[14].OneofWrappers = []any{}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_resources_users_activity_activity_proto_rawDesc), len(file_resources_users_activity_activity_proto_rawDesc)),
 			NumEnums:      1,
-			NumMessages:   13,
+			NumMessages:   15,
 			NumExtensions: 0,
 			NumServices:   0,
 		},

@@ -175,6 +175,8 @@ const _useAuth = () => {
                     a.value.validValues.jobGradeList.jobs[attrValue] !== undefined ||
                     a.value.validValues.jobGradeList.grades[attrValue] !== undefined
                 );
+            } else if (a?.value?.validValues.oneofKind === 'propertyList') {
+                return a.value.validValues.propertyList.keys.includes(attrValue);
             }
 
             return false;
@@ -208,6 +210,22 @@ const _useAuth = () => {
 
             if (a?.value?.validValues.oneofKind === 'jobList') {
                 return a.value.validValues.jobList.strings;
+            }
+            return [];
+        });
+    }
+
+    function attrPropertyList<P extends Perms, K extends PermAttrKeysByType<P, 'propertyList'>>(
+        perm: P,
+        key: K,
+    ): ComputedRef<ReadonlyArray<string>>;
+    function attrPropertyList(perm: Perms, key: string): ComputedRef<ReadonlyArray<string>>;
+    function attrPropertyList(perm: Perms, key: string): ComputedRef<ReadonlyArray<string>> {
+        return computed(() => {
+            const a = getAttr(perm, key).value;
+
+            if (a?.value?.validValues.oneofKind === 'propertyList') {
+                return a.value.validValues.propertyList.keys;
             }
             return [];
         });
@@ -251,6 +269,7 @@ const _useAuth = () => {
 
         attrStringList,
         attrJobList,
+        attrPropertyList,
         attrJobGradeList,
     };
 };

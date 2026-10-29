@@ -3,10 +3,12 @@ package filestore
 import (
 	"context"
 	"errors"
+	"mime"
 	"net/http"
 	"path"
 	"path/filepath"
 	"strconv"
+	"strings"
 	"time"
 
 	"github.com/fivenet-app/fivenet/v2026/pkg/filestore"
@@ -18,6 +20,11 @@ import (
 )
 
 const Path = "/api/filestore"
+
+const (
+	contentDispositionInline     = "inline"
+	contentDispositionAttachment = "attachment"
+)
 
 // FilestoreHTTP provides HTTP handlers for file storage operations (GET/HEAD) via Gin.
 type FilestoreHTTP struct {
@@ -88,6 +95,31 @@ func isPathSafe(p string) bool {
 	return true
 }
 
+func responseMetadata(contentType, extension string) (string, string) {
+	mimeVal := ""
+	if contentType != "" {
+		if parsed, _, err := mime.ParseMediaType(contentType); err == nil {
+			mimeVal = parsed
+		}
+	}
+	if mimeVal == "" {
+		// Keep extension detection as a compatibility fallback for legacy objects
+		// that do not have detectable or stored content-type metadata.
+		mimeType := filetype.GetType(extension)
+		mimeVal = filestore.ApplicationOctetStreamMIMEType
+		if mimeType != filetype.Unknown {
+			mimeVal = mimeType.MIME.Value
+		}
+	}
+
+	disposition := contentDispositionAttachment
+	if strings.HasPrefix(mimeVal, "image/") {
+		disposition = contentDispositionInline
+	}
+
+	return mimeVal, disposition
+}
+
 // HEAD handles HTTP HEAD requests for files in the filestore.
 // It checks if the requested file exists and returns 404 if not found, 400 for invalid requests.
 func (s *FilestoreHTTP) HEAD(c *gin.Context) {
@@ -118,14 +150,12 @@ func (s *FilestoreHTTP) HEAD(c *gin.Context) {
 		return
 	}
 
-	ext := objInfo.GetExtension()
-	mimeType := filetype.GetType(ext)
-	mimeVal := filestore.ApplicationOctetStreamMIMEType
-	if mimeType != filetype.Unknown {
-		mimeVal = mimeType.MIME.Value
-	}
+	mimeVal, disposition := responseMetadata(objInfo.GetContentType(), objInfo.GetExtension())
+
 	c.Header("Content-Type", mimeVal)
 	c.Header("Content-Length", strconv.FormatInt(objInfo.GetSize(), 10))
+	c.Header("X-Content-Type-Options", "nosniff")
+	c.Header("Content-Disposition", disposition)
 	// No body for HEAD
 	c.Status(http.StatusOK)
 }
@@ -161,12 +191,10 @@ func (s *FilestoreHTTP) GET(c *gin.Context) {
 	}
 	defer object.Close()
 
-	ext := objInfo.GetExtension()
-	mimeType := filetype.GetType(ext)
-	mimeVal := filestore.ApplicationOctetStreamMIMEType
-	if mimeType != filetype.Unknown {
-		mimeVal = mimeType.MIME.Value
-	}
+	mimeVal, disposition := responseMetadata(objInfo.GetContentType(), objInfo.GetExtension())
 
-	c.DataFromReader(http.StatusOK, objInfo.GetSize(), mimeVal, object, nil)
+	c.DataFromReader(http.StatusOK, objInfo.GetSize(), mimeVal, object, map[string]string{
+		"X-Content-Type-Options": "nosniff",
+		"Content-Disposition":    disposition,
+	})
 }

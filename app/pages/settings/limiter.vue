@@ -8,7 +8,7 @@ useHead({
 definePageMeta({
     title: 'pages.settings.limiter.title',
     requiresAuth: true,
-    permission: 'internal.Superuser/JobAdmin',
+    permission: 'internal.Superuser/CanBeSuperuser',
 });
 </script>
 

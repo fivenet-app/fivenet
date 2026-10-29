@@ -13,12 +13,13 @@ const (
 	VehiclesServicePerm perms.Service = "VehiclesService"
 
 	// Service: vehicles.VehiclesService
+	VehiclesServiceDeleteVehicleFilePerm              perms.Name = "DeleteVehicleFile"
 	VehiclesServiceListVehicleActivityPerm            perms.Name = "ListVehicleActivity"
 	VehiclesServiceListVehicleActivityFieldsPermField perms.Key  = "Fields"
 	VehiclesServiceListVehiclesPerm                   perms.Name = "ListVehicles"
-	VehiclesServiceListVehiclesFieldsPermField        perms.Key  = "Fields"
+	VehiclesServiceListVehiclesPropertiesPermField    perms.Key  = "Properties"
 	VehiclesServiceSetVehiclePropsPerm                perms.Name = "SetVehicleProps"
-	VehiclesServiceSetVehiclePropsFieldsPermField     perms.Key  = "Fields"
+	VehiclesServiceSetVehiclePropsPropertiesPermField perms.Key  = "Properties"
 )
 
 type VehiclesServiceListVehicleActivityFieldsPermValue string
@@ -28,22 +29,28 @@ const (
 	VehiclesServiceListVehicleActivityFieldsPermValueOwn     VehiclesServiceListVehicleActivityFieldsPermValue = "Own"
 )
 
-type VehiclesServiceListVehiclesFieldsPermValue string
+type VehiclesServiceListVehiclesPropertiesPermValue string
 
 const (
-	VehiclesServiceListVehiclesFieldsPermValueWanted VehiclesServiceListVehiclesFieldsPermValue = "Wanted"
+	VehiclesServiceListVehiclesPropertiesPermValueVehicleWanted VehiclesServiceListVehiclesPropertiesPermValue = "vehicle.wanted"
+	VehiclesServiceListVehiclesPropertiesPermValueVehicleFiles  VehiclesServiceListVehiclesPropertiesPermValue = "vehicle.files"
 )
 
-type VehiclesServiceSetVehiclePropsFieldsPermValue string
+type VehiclesServiceSetVehiclePropsPropertiesPermValue string
 
 const (
-	VehiclesServiceSetVehiclePropsFieldsPermValueWanted VehiclesServiceSetVehiclePropsFieldsPermValue = "Wanted"
+	VehiclesServiceSetVehiclePropsPropertiesPermValueVehicleWanted VehiclesServiceSetVehiclePropsPropertiesPermValue = "vehicle.wanted"
+	VehiclesServiceSetVehiclePropsPropertiesPermValueVehicleFiles  VehiclesServiceSetVehiclePropsPropertiesPermValue = "vehicle.files"
 )
 
 type VehiclesServicePerms struct {
+	DeleteVehicleFile   VehiclesServiceDeleteVehicleFilePermRef
 	ListVehicleActivity VehiclesServiceListVehicleActivityPermRef
 	ListVehicles        VehiclesServiceListVehiclesPermRef
 	SetVehicleProps     VehiclesServiceSetVehiclePropsPermRef
+}
+type VehiclesServiceDeleteVehicleFilePermRef struct {
+	Perm perms.PermissionRef
 }
 type VehiclesServiceListVehicleActivityPermRef struct {
 	Perm        perms.PermissionRef
@@ -51,17 +58,20 @@ type VehiclesServiceListVehicleActivityPermRef struct {
 	FieldsTyped perms.StringListAttrRef[VehiclesServiceListVehicleActivityFieldsPermValue]
 }
 type VehiclesServiceListVehiclesPermRef struct {
-	Perm        perms.PermissionRef
-	Fields      perms.AttrRef[perms.StringListAttr]
-	FieldsTyped perms.StringListAttrRef[VehiclesServiceListVehiclesFieldsPermValue]
+	Perm            perms.PermissionRef
+	Properties      perms.AttrRef[perms.PropertyListAttr]
+	PropertiesTyped perms.PropertyListAttrRef[VehiclesServiceListVehiclesPropertiesPermValue]
 }
 type VehiclesServiceSetVehiclePropsPermRef struct {
-	Perm        perms.PermissionRef
-	Fields      perms.AttrRef[perms.StringListAttr]
-	FieldsTyped perms.StringListAttrRef[VehiclesServiceSetVehiclePropsFieldsPermValue]
+	Perm            perms.PermissionRef
+	Properties      perms.AttrRef[perms.PropertyListAttr]
+	PropertiesTyped perms.PropertyListAttrRef[VehiclesServiceSetVehiclePropsPropertiesPermValue]
 }
 
 var VehiclesService = VehiclesServicePerms{
+	DeleteVehicleFile: VehiclesServiceDeleteVehicleFilePermRef{
+		Perm: perms.NewPermissionRef(Namespace, VehiclesServicePerm, VehiclesServiceDeleteVehicleFilePerm),
+	},
 	ListVehicleActivity: VehiclesServiceListVehicleActivityPermRef{
 		Perm: perms.NewPermissionRef(Namespace, VehiclesServicePerm, VehiclesServiceListVehicleActivityPerm),
 		Fields: perms.NewStringListAttrRef(
@@ -75,24 +85,24 @@ var VehiclesService = VehiclesServicePerms{
 	},
 	ListVehicles: VehiclesServiceListVehiclesPermRef{
 		Perm: perms.NewPermissionRef(Namespace, VehiclesServicePerm, VehiclesServiceListVehiclesPerm),
-		Fields: perms.NewStringListAttrRef(
+		Properties: perms.NewPropertyListAttrRef(
 			perms.NewPermissionRef(Namespace, VehiclesServicePerm, VehiclesServiceListVehiclesPerm),
-			VehiclesServiceListVehiclesFieldsPermField,
+			VehiclesServiceListVehiclesPropertiesPermField,
 		),
-		FieldsTyped: perms.NewTypedStringListAttrRef[VehiclesServiceListVehiclesFieldsPermValue](
+		PropertiesTyped: perms.NewTypedPropertyListAttrRef[VehiclesServiceListVehiclesPropertiesPermValue](
 			perms.NewPermissionRef(Namespace, VehiclesServicePerm, VehiclesServiceListVehiclesPerm),
-			VehiclesServiceListVehiclesFieldsPermField,
+			VehiclesServiceListVehiclesPropertiesPermField,
 		),
 	},
 	SetVehicleProps: VehiclesServiceSetVehiclePropsPermRef{
 		Perm: perms.NewPermissionRef(Namespace, VehiclesServicePerm, VehiclesServiceSetVehiclePropsPerm),
-		Fields: perms.NewStringListAttrRef(
+		Properties: perms.NewPropertyListAttrRef(
 			perms.NewPermissionRef(Namespace, VehiclesServicePerm, VehiclesServiceSetVehiclePropsPerm),
-			VehiclesServiceSetVehiclePropsFieldsPermField,
+			VehiclesServiceSetVehiclePropsPropertiesPermField,
 		),
-		FieldsTyped: perms.NewTypedStringListAttrRef[VehiclesServiceSetVehiclePropsFieldsPermValue](
+		PropertiesTyped: perms.NewTypedPropertyListAttrRef[VehiclesServiceSetVehiclePropsPropertiesPermValue](
 			perms.NewPermissionRef(Namespace, VehiclesServicePerm, VehiclesServiceSetVehiclePropsPerm),
-			VehiclesServiceSetVehiclePropsFieldsPermField,
+			VehiclesServiceSetVehiclePropsPropertiesPermField,
 		),
 	},
 }

@@ -13,7 +13,9 @@ export type UploadNamespaces =
     | 'qualifications'
     | 'qualifications-exam-questions'
     | 'wiki'
-    | 'jobs-conduct';
+    | 'jobs-conduct'
+    | 'citizen-files'
+    | 'vehicle-files';
 
 /**
  * Factory that returns resize + upload helpers bound to a parent record.
@@ -21,7 +23,7 @@ export type UploadNamespaces =
 export function useFileUploader(
     filestore: (options?: RpcOptions) => ClientStreamingCall<UploadFileRequest, UploadFileResponse>,
     namespace: UploadNamespaces,
-    parentId: number | Ref<number>,
+    parentId: number | string | Ref<number> | Ref<string>,
 ) {
     // 1. Resize and convert to webp (if available) in browser
     const resizeImage = async (file: File): Promise<{ blob: Blob; fileName: string; mime: string }> => {
@@ -81,7 +83,9 @@ export function useFileUploader(
 
             // Meta packet
             const meta = UploadMeta.create();
-            meta.parentId = unref(parentId);
+            const parent = unref(parentId);
+            if (typeof parent === 'string') meta.parentKey = parent;
+            else meta.parentId = parent;
             meta.namespace = namespace;
             meta.originalName = originalName;
             meta.contentType = mime || blob.type;

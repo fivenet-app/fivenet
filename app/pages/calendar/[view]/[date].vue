@@ -36,7 +36,6 @@ import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
 import RefreshButton from '~/components/partials/RefreshButton.vue';
 import { copyToClipboardWrapper } from '~/utils/clipboard';
-import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 import { AccessLevel } from '~~/gen/ts/resources/calendar/access/access';
 import { HELP_GUIDE_ACTION_EVENT, type HelpGuideActionDetail } from '~/composables/useHelpGuides';
 
@@ -75,7 +74,7 @@ const entryViewModal = overlay.create(EntryViewModal);
 const entryCreateOrUpdateModal = overlay.create(EntryCreateOrUpdateModal);
 const findCalendarsDrawer = overlay.create(FindCalendarDrawer);
 const confirmModal = overlay.create(ConfirmModal);
-const notifications = useNotificationsStore();
+const { notifyLinkCopied } = useClipboardNotifications();
 
 const page = ref(1);
 
@@ -319,7 +318,7 @@ function openSelectedCalendar(calendarId: number): void {
     calendarViewSlideover.open({ calendarId });
 }
 
-function copyEntryLink(entry: CalendarEntry): void {
+async function copyEntryLink(entry: CalendarEntry): Promise<void> {
     const url = new URL(window.location.href);
 
     if (entry.occurrence?.key) {
@@ -330,14 +329,9 @@ function copyEntryLink(entry: CalendarEntry): void {
         url.searchParams.delete('entryKey');
     }
 
-    copyToClipboardWrapper(url.toString());
+    await copyToClipboardWrapper(url.toString());
 
-    notifications.add({
-        title: { key: 'notifications.clipboard.link_copied.title', parameters: {} },
-        description: { key: 'notifications.clipboard.link_copied.content', parameters: {} },
-        duration: 3250,
-        type: NotificationType.INFO,
-    });
+    notifyLinkCopied();
 }
 
 async function openDeleteEntry(entry: CalendarEntry): Promise<void> {

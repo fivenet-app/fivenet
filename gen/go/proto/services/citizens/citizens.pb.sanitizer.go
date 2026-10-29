@@ -9,6 +9,41 @@ import (
 
 // Sanitize sanitizes the message's fields, in case of complex types it calls
 // their Sanitize() method recursively.
+func (m *CitizenFile) Sanitize() error {
+	if m == nil {
+		return nil
+	}
+
+	// Field: File
+	if m.File != nil {
+		if v, ok := any(m.GetFile()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+	}
+
+	// Field: Kind
+	m.Kind = htmlsanitizer.SanitizeAndUnescape(m.Kind)
+
+	return nil
+}
+
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
+func (m *DeleteCitizenFileRequest) Sanitize() error {
+	if m == nil {
+		return nil
+	}
+
+	// Field: Reason
+	m.Reason = htmlsanitizer.SanitizeAndUnescape(m.Reason)
+
+	return nil
+}
+
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *DeleteMugshotRequest) Sanitize() error {
 	if m == nil {
 		return nil
@@ -41,6 +76,28 @@ func (m *GetUserResponse) Sanitize() error {
 
 // Sanitize sanitizes the message's fields, in case of complex types it calls
 // their Sanitize() method recursively.
+func (m *ListCitizenFilesResponse) Sanitize() error {
+	if m == nil {
+		return nil
+	}
+
+	// Field: Files
+	for idx, item := range m.Files {
+		_, _ = idx, item
+
+		if v, ok := any(item).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+
+	}
+
+	return nil
+}
+
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *ListCitizensRequest) Sanitize() error {
 	if m == nil {
 		return nil
@@ -63,6 +120,18 @@ func (m *ListCitizensRequest) Sanitize() error {
 	// Field: PhoneNumber
 	if m.PhoneNumber != nil {
 		*m.PhoneNumber = htmlsanitizer.SanitizeAndUnescape(*m.PhoneNumber)
+	}
+
+	// Field: PropertyFilters
+	for idx, item := range m.PropertyFilters {
+		_, _ = idx, item
+
+		if v, ok := any(item).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+
 	}
 
 	// Field: Search
@@ -136,6 +205,14 @@ func (m *ListUserActivityRequest) Sanitize() error {
 		}
 	}
 
+	// Field: PropertyKeys
+	for idx, item := range m.PropertyKeys {
+		_, _ = idx, item
+
+		m.PropertyKeys[idx] = htmlsanitizer.SanitizeAndUnescape(m.PropertyKeys[idx])
+
+	}
+
 	// Field: Sort
 	if m.Sort != nil {
 		if v, ok := any(m.GetSort()).(interface{ Sanitize() error }); ok {
@@ -199,6 +276,18 @@ func (m *ListUserActivityResponse) Sanitize() error {
 func (m *SetUserPropsRequest) Sanitize() error {
 	if m == nil {
 		return nil
+	}
+
+	// Field: PropertyChanges
+	for idx, item := range m.PropertyChanges {
+		_, _ = idx, item
+
+		if v, ok := any(item).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+
 	}
 
 	// Field: Props
