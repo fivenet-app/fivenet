@@ -6,9 +6,9 @@ catalog:
 overrides:
   "@internationalized/date": "3.12.4"
   "@nuxt/kit": "4.6.3"
-  "@tiptap/core": "3.32.0"
-  "@tiptap/pm": "3.32.0"
-  "@tiptap/vue-3": "3.32.0"
+  "@tiptap/core": "3.32.1"
+  "@tiptap/pm": "3.32.1"
+  "@tiptap/vue-3": "3.32.1"
   typescript: npm:typescript-native-bridge@6.0.3-bridge.19.tsgo.7.0.2
   "@unhead/vue": "3.4.3"
   "fontless>esbuild": "0.28.2"
