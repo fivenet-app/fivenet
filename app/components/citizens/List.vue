@@ -5,6 +5,7 @@ import { vMaska } from 'maska/vue';
 import { h } from 'vue';
 import { z } from 'zod';
 import { sexToTextColor } from '~/components/partials/citizens/helpers';
+import WantedBadge from '~/components/partials/WantedBadge.vue';
 import PhoneNumberBlock from '~/components/partials/citizens/PhoneNumberBlock.vue';
 import ProfilePictureImg from '~/components/partials/citizens/ProfilePictureImg.vue';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
@@ -529,7 +530,7 @@ defineShortcuts({
 
                         <span>{{ row.original.firstname }} {{ row.original.lastname }}</span>
 
-                        <UBadge v-if="row.original.props?.wanted" color="error" :label="$t('common.wanted').toUpperCase()" />
+                        <WantedBadge v-if="row.original.props?.wanted" wanted variant="short" />
                     </div>
                 </template>
             </UTable>
