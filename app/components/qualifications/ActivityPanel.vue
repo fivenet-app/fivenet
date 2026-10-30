@@ -1,13 +1,11 @@
 <script lang="ts" setup>
 import type { Form } from '@nuxt/ui';
 import { z } from 'zod';
-import CitizenInfoPopover from '~/components/partials/citizens/CitizenInfoPopover.vue';
-import ActivityFeedItem from '~/components/partials/data/ActivityFeedItem.vue';
+import ActivityPanelEntry from '~/components/qualifications/ActivityPanelEntry.vue';
 import ActivityFeedFilterLayout from '~/components/partials/data/ActivityFeedFilterLayout.vue';
 import ActivityFeedSkeleton from '~/components/partials/data/ActivityFeedSkeleton.vue';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
-import GenericTime from '~/components/partials/elements/GenericTime.vue';
 import InputDateRangePopover, { type DateRange } from '~/components/partials/InputDateRangePopover.vue';
 import Pagination from '~/components/partials/Pagination.vue';
 import SelectMenu from '~/components/partials/SelectMenu.vue';
@@ -15,15 +13,13 @@ import SortButton from '~/components/partials/SortButton.vue';
 import { useCompletorStore } from '~/stores/completor';
 import { getQualificationsQualificationsClient } from '~~/gen/ts/clients';
 import { type QualificationActivity, QualificationActivityType } from '~~/gen/ts/resources/qualifications/activity/activity';
-import { RequestStatus, ResultStatus } from '~~/gen/ts/resources/qualifications/qualifications';
 import type { UserShort } from '~~/gen/ts/resources/users/short/user';
 import type { ListQualificationActivityResponse } from '~~/gen/ts/services/qualifications/qualifications';
 import type { SortByColumn } from '~~/gen/ts/resources/common/database/database';
 import {
     qualificationActivityTypeColor,
     qualificationActivityTypeIcon,
-    requestStatusToBadgeColor,
-    resultStatusToBadgeColor,
+    qualificationActivityTypeIndicatorColor,
 } from './helpers';
 
 const props = defineProps<{ qualificationId: number }>();
@@ -63,6 +59,13 @@ const { data, status, error, refresh } = useAuthedLazyAsyncData('userState', act
     listActivity(validatedQuery.value, signal),
 );
 const activityItems = computed<QualificationActivity[]>(() => data.value?.activity ?? []);
+const timelineItems = computed(() =>
+    activityItems.value.map((activity) => ({
+        ...activity,
+        icon: qualificationActivityTypeIcon(activity.type),
+        ui: { indicator: qualificationActivityTypeIndicatorColor(activity.type) },
+    })),
+);
 
 function activityTypeLabel(activityType: QualificationActivityType): string {
     return t(`enums.qualifications.QualificationActivityType.${QualificationActivityType[activityType]}`);
@@ -102,7 +105,7 @@ async function listActivity(values: Schema, signal: AbortSignal): Promise<ListQu
 </script>
 
 <template>
-    <UDashboardPanel :ui="{ root: 'min-h-0', body: 'p-0 sm:p-0 gap-0 sm:gap-0' }">
+    <UDashboardPanel :ui="{ root: 'min-h-0' }">
         <template #header>
             <UDashboardToolbar>
                 <UForm ref="formRef" class="my-2 w-full" :schema="schema" :state="query" @submit="commitValidatedQuery">
@@ -182,48 +185,15 @@ async function listActivity(values: Schema, signal: AbortSignal): Promise<ListQu
                     :type="`${$t('common.qualification', 1)} ${$t('common.activity')}`"
                 />
 
-                <ul v-else class="divide-y divide-default" role="list">
-                    <ActivityFeedItem
-                        v-for="entry in activityItems"
-                        :key="entry.id"
-                        :icon="qualificationActivityTypeIcon(entry.type)"
-                        :icon-class="qualificationActivityTypeColor(entry.type)"
-                    >
-                        <template #title>
-                            <span class="inline-flex flex-wrap items-center gap-x-2 gap-y-1">
-                                <span>{{ activityTypeLabel(entry.type) }}</span>
-                                <UBadge
-                                    v-if="entry.data?.requestStatus !== undefined"
-                                    :color="requestStatusToBadgeColor(entry.data.requestStatus)"
-                                    :label="$t(`enums.qualifications.RequestStatus.${RequestStatus[entry.data.requestStatus]}`)"
-                                />
-                                <UBadge
-                                    v-if="entry.data?.resultStatus !== undefined"
-                                    :color="resultStatusToBadgeColor(entry.data.resultStatus)"
-                                    :label="$t(`enums.qualifications.ResultStatus.${ResultStatus[entry.data.resultStatus]}`)"
-                                />
-                                <UBadge v-if="entry.data?.score !== undefined" color="neutral" :label="`${entry.data.score}`" />
-                            </span>
-                        </template>
+                <UTimeline v-else :items="timelineItems" size="md" :ui="{ wrapper: '!mt-0 !pb-2' }">
+                    <template #indicator="{ item }">
+                        <UIcon :name="item.icon" class="size-6" />
+                    </template>
 
-                        <template #timestamp>
-                            <GenericTime :value="entry.createdAt" type="long" />
-                        </template>
-
-                        <div class="flex flex-col gap-2 text-sm sm:flex-row sm:items-center sm:justify-between">
-                            <div v-if="entry.targetUser" class="inline-flex min-w-0 items-center gap-1">
-                                <span class="font-semibold">{{ $t('common.citizen', 1) }}:</span>
-                                <CitizenInfoPopover :user="entry.targetUser" show-avatar />
-                            </div>
-                            <div v-else />
-                            <div class="inline-flex shrink-0 items-center gap-1">
-                                <span>{{ $t('common.created_by') }}</span>
-                                <CitizenInfoPopover v-if="entry.actorUser" :user="entry.actorUser" show-avatar />
-                                <span v-else>{{ $t('common.system') }}</span>
-                            </div>
-                        </div>
-                    </ActivityFeedItem>
-                </ul>
+                    <template #wrapper="{ item }">
+                        <ActivityPanelEntry :activity="item" />
+                    </template>
+                </UTimeline>
             </div>
         </template>
 

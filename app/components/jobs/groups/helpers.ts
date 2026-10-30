@@ -187,6 +187,37 @@ export function groupActivityTypeColor(type: GroupActivityType | undefined): str
     }
 }
 
+export function groupActivityTypeIndicatorColor(type: GroupActivityType | undefined): string {
+    switch (type) {
+        case GroupActivityType.CREATED:
+        case GroupActivityType.MEMBER_ADDED:
+        case GroupActivityType.LEADER_ADDED:
+            return '!bg-green-500 text-white!';
+        case GroupActivityType.UPDATED:
+        case GroupActivityType.RULE_UPDATED:
+            return '!bg-blue-500 text-white!';
+        case GroupActivityType.ARCHIVED:
+            return '!bg-neutral-500 text-white!';
+        case GroupActivityType.RESTORED:
+            return '!bg-teal-500 text-white!';
+        case GroupActivityType.MEMBER_REMOVED:
+        case GroupActivityType.LEADER_REMOVED:
+        case GroupActivityType.RULE_REMOVED:
+            return '!bg-red-500 text-white!';
+        case GroupActivityType.MEMBER_EXCLUDED:
+            return '!bg-orange-500 text-white!';
+        case GroupActivityType.MEMBER_EXCLUSION_REMOVED:
+            return '!bg-emerald-500 text-white!';
+        case GroupActivityType.RULE_ADDED:
+            return '!bg-cyan-500 text-white!';
+        case GroupActivityType.LOGO_UPDATED:
+            return '!bg-purple-500 text-white!';
+        case GroupActivityType.UNSPECIFIED:
+        default:
+            return '!bg-info-500 text-white!';
+    }
+}
+
 export function groupActivityTypeIcon(type: GroupActivityType | undefined): string {
     switch (type) {
         case GroupActivityType.CREATED:

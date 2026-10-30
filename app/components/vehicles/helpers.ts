@@ -1,6 +1,6 @@
 import { VehicleActivityType, type VehicleActivity } from '~~/gen/ts/resources/vehicles/activity/activity';
 
-export function vehicleActivityTypeBGColor(activityType: VehicleActivityType | undefined): string {
+export function vehicleActivityTypeColor(activityType: VehicleActivityType | undefined): string {
     switch (activityType) {
         case VehicleActivityType.WANTED:
             return 'text-error-400!';
@@ -28,25 +28,25 @@ export function vehicleActivityTypeIcon(activityType: VehicleActivityType | unde
     }
 }
 
-export function vehicleActivityIconColor(activity: VehicleActivity): string {
+export function vehicleActivityIndicatorColor(activity: VehicleActivity): string {
     switch (activity.activityType) {
         case VehicleActivityType.WANTED:
             if (activity.data?.data.oneofKind === 'wantedChange') {
-                return activity.data.data.wantedChange.wanted ? 'text-error-400' : 'text-success-400';
+                return activity.data.data.wantedChange.wanted ? '!bg-error-400 text-white!' : '!bg-success-400 text-white!';
             }
             break;
         case VehicleActivityType.FILE:
             if (activity.data?.data.oneofKind === 'fileChange' && !activity.data.data.fileChange.added) {
-                return 'text-error-400';
+                return '!bg-error-400 text-white!';
             }
 
-            return 'text-primary-500';
+            return '!bg-primary-500 text-white!';
         case VehicleActivityType.PROPERTY:
-            return 'text-secondary-500';
+            return '!bg-secondary-500 text-white!';
         case VehicleActivityType.UNSPECIFIED:
         default:
-            return '';
+            return '!bg-info-500 text-white!';
     }
 
-    return '';
+    return '!bg-info-500 text-white!';
 }

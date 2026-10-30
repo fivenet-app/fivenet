@@ -5,7 +5,7 @@ import type { AccessLevel } from '~~/gen/ts/resources/wiki/access/access';
 import { PageActivityType } from '~~/gen/ts/resources/wiki/activity/activity';
 import { type Page, PageShort } from '~~/gen/ts/resources/wiki/page';
 
-export function getPageAtivityIcon(activityType: PageActivityType): string {
+export function getPageActivityIcon(activityType: PageActivityType): string {
     switch (activityType) {
         // Base
         case PageActivityType.CREATED:
@@ -23,6 +23,23 @@ export function getPageAtivityIcon(activityType: PageActivityType): string {
 
         default:
             return 'i-mdi-help';
+    }
+}
+
+export function getPageActivityIndicatorColor(activityType: PageActivityType): string {
+    switch (activityType) {
+        case PageActivityType.CREATED:
+            return '!bg-success-500 text-white!';
+        case PageActivityType.UPDATED:
+        case PageActivityType.OWNER_CHANGED:
+            return '!bg-primary-500 text-white!';
+        case PageActivityType.ACCESS_UPDATED:
+        case PageActivityType.DRAFT_TOGGLED:
+            return '!bg-warning-500 text-white!';
+        case PageActivityType.DELETED:
+            return '!bg-error-500 text-white!';
+        default:
+            return '!bg-info-500 text-white!';
     }
 }
 

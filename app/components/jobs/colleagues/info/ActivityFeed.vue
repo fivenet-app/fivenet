@@ -15,7 +15,7 @@ import { getJobsColleaguesClient } from '~~/gen/ts/clients';
 import type { SortByColumn } from '~~/gen/ts/resources/common/database/database';
 import { ColleagueActivityType } from '~~/gen/ts/resources/jobs/colleagues/activity/activity';
 import type { ListColleagueActivityResponse } from '~~/gen/ts/services/jobs/colleagues';
-import { jobsUserActivityTypeBGColor, jobsUserActivityTypeIcon } from './helpers';
+import { jobsUserActivityTypeColor, jobsUserActivityTypeIcon, jobsUserActivityTypeIndicatorColor } from './helpers';
 import { userSelectorSchema } from '~/utils/validation';
 
 const props = withDefaults(
@@ -88,6 +88,16 @@ const { data, status, refresh, error } = useAuthedLazyAsyncData('userState', act
     listColleagueActivity(validatedQuery.value, signal),
 );
 
+const timelineItems = computed(() =>
+    (data.value?.activity ?? []).map((activity) => ({
+        ...activity,
+        icon: jobsUserActivityTypeIcon(activity.activityType),
+        ui: {
+            indicator: jobsUserActivityTypeIndicatorColor(activity.activityType),
+        },
+    })),
+);
+
 async function listColleagueActivity(values: Schema, signal: AbortSignal): Promise<ListColleagueActivityResponse> {
     try {
         const call = jobsColleaguesClient.listColleagueActivity(
@@ -126,7 +136,7 @@ watch(
 </script>
 
 <template>
-    <UDashboardPanel :ui="{ root: 'min-h-0', body: 'p-0 sm:p-0 gap-0 sm:gap-0' }">
+    <UDashboardPanel :ui="{ root: 'min-h-0' }">
         <template #header>
             <UDashboardToolbar
                 v-if="userId === undefined || accessAttrs.some((a) => colleagueSearchAttrs.includes(a)) || isSuperuser"
@@ -166,7 +176,7 @@ watch(
                                             aType: aType,
                                             icon: jobsUserActivityTypeIcon(aType),
                                             ui: {
-                                                itemLeadingIcon: jobsUserActivityTypeBGColor(aType),
+                                                itemLeadingIcon: jobsUserActivityTypeColor(aType),
                                             },
                                         }))
                                     "
@@ -215,14 +225,15 @@ watch(
                     :type="`${$t('common.colleague', 1)} ${$t('common.activity')}`"
                 />
 
-                <ul v-else class="divide-y divide-default" role="list">
-                    <ActivityFeedEntry
-                        v-for="activity in data.activity"
-                        :key="activity.id"
-                        :activity="activity"
-                        :show-target-user="showTargetUser"
-                    />
-                </ul>
+                <UTimeline v-else :items="timelineItems" size="md" :ui="{ wrapper: '!mt-0 !pb-2' }">
+                    <template #indicator="{ item }">
+                        <UIcon :name="item.icon" class="size-6" />
+                    </template>
+
+                    <template #wrapper="{ item }">
+                        <ActivityFeedEntry :activity="item" :show-target-user="showTargetUser" />
+                    </template>
+                </UTimeline>
             </div>
         </template>
 

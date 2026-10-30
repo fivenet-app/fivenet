@@ -1,20 +1,17 @@
 <script lang="ts" setup>
 import { z } from 'zod';
-import ColleagueInfoPopover from '~/components/jobs/colleagues/ColleagueInfoPopover.vue';
+import ActivityPanelEntry from '~/components/jobs/groups/details/ActivityPanelEntry.vue';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
-import GenericTime from '~/components/partials/elements/GenericTime.vue';
 import InputDateRangePopover, { type DateRange } from '~/components/partials/InputDateRangePopover.vue';
 import Pagination from '~/components/partials/Pagination.vue';
-import QualificationBadge from '~/components/partials/qualifications/QualificationBadge.vue';
 import SelectMenu from '~/components/partials/SelectMenu.vue';
 import { useCompletorStore } from '~/stores/completor';
 import { getJobsGroupsClient } from '~~/gen/ts/clients';
 import { type GroupActivity, GroupActivityType } from '~~/gen/ts/resources/jobs/groups/activity';
-import type { QualificationShort } from '~~/gen/ts/resources/qualifications/qualifications';
 import type { UserShort } from '~~/gen/ts/resources/users/short/user';
 import type { ListGroupActivityResponse } from '~~/gen/ts/services/jobs/groups';
-import { groupActivityTypeColor, groupActivityTypeIcon, groupRuleLabel } from '../helpers';
+import { groupActivityTypeColor, groupActivityTypeIcon, groupActivityTypeIndicatorColor } from '../helpers';
 
 const props = defineProps<{
     groupId: number;
@@ -54,6 +51,13 @@ const {
 });
 
 const activityItems = computed<GroupActivity[]>(() => activity.value?.activity ?? []);
+const timelineItems = computed(() =>
+    activityItems.value.map((activity) => ({
+        ...activity,
+        icon: groupActivityTypeIcon(activity.type),
+        ui: { indicator: groupActivityTypeIndicatorColor(activity.type) },
+    })),
+);
 
 function activityTypeLabel(activityType: GroupActivityType): string {
     return t(`enums.jobs.groups.GroupActivityType.${GroupActivityType[activityType] ?? 'UNSPECIFIED'}`);
@@ -110,30 +114,6 @@ async function clearFilters(): Promise<void> {
     }
 
     page.value = 1;
-}
-
-function activityRuleLabel(activity: GroupActivity): string | undefined {
-    if (activity.data?.data.oneofKind === 'rule') {
-        const rule = activity.data.data.rule;
-        const ruleId = rule.id || activity.ruleId;
-        return ruleId ? `#${ruleId} - ${groupRuleLabel(rule, t)}` : groupRuleLabel(rule, t);
-    }
-
-    if (activity.ruleId) {
-        return `#${activity.ruleId}`;
-    }
-
-    return undefined;
-}
-
-function activityRuleQualification(activity: GroupActivity, qualificationId: number): QualificationShort | undefined {
-    if (activity.data?.data.oneofKind !== 'rule' || activity.data.data.rule.rule.oneofKind !== 'qualification') {
-        return undefined;
-    }
-
-    return activity.data.data.rule.rule.qualification.qualifications.find(
-        (qualification) => qualification.id === qualificationId,
-    );
 }
 
 watch(
@@ -211,8 +191,8 @@ watch(
             :retry="refreshActivity"
         />
         <div v-else-if="isRequestPending(activityStatus) || activityItems.length > 0">
-            <ul class="divide-y divide-default" role="list">
-                <template v-if="isRequestPending(activityStatus)">
+            <template v-if="isRequestPending(activityStatus)">
+                <ul class="divide-y divide-default" role="list">
                     <li v-for="idx in 5" :key="idx" class="px-2 py-4">
                         <div class="flex space-x-3">
                             <div class="my-auto flex size-10 items-center justify-center rounded-full">
@@ -241,87 +221,18 @@ watch(
                             </div>
                         </div>
                     </li>
+                </ul>
+            </template>
+
+            <UTimeline v-else :items="timelineItems" size="md" :ui="{ wrapper: '!mt-0 !pb-2' }">
+                <template #indicator="{ item }">
+                    <UIcon :name="item.icon" class="size-6" />
                 </template>
 
-                <template v-else>
-                    <li
-                        v-for="entry in activityItems"
-                        :key="entry.id"
-                        class="border-default p-2 hover:border-primary-500/25 hover:bg-primary-100/50 dark:hover:border-primary-400/25 dark:hover:bg-primary-900/10"
-                    >
-                        <div class="flex space-x-3">
-                            <div class="my-auto flex size-10 items-center justify-center rounded-full">
-                                <UIcon
-                                    :class="[groupActivityTypeColor(entry.type), 'size-full']"
-                                    :name="groupActivityTypeIcon(entry.type)"
-                                    inline
-                                />
-                            </div>
-
-                            <div class="flex-1 space-y-1">
-                                <div class="flex items-center justify-between gap-3">
-                                    <h3 class="text-sm font-medium">
-                                        {{ activityTypeLabel(entry.type) }}
-                                    </h3>
-
-                                    <p v-if="entry.createdAt" class="text-sm text-muted">
-                                        <GenericTime :value="entry.createdAt" type="long" />
-                                    </p>
-                                </div>
-
-                                <div class="flex items-center justify-between gap-3">
-                                    <div class="flex flex-col gap-1 text-sm">
-                                        <template v-if="entry.reason">
-                                            <span class="inline-flex gap-1">
-                                                <span class="font-semibold">{{ $t('common.reason') }}:</span>
-                                                <span>{{ entry.reason }}</span>
-                                            </span>
-                                        </template>
-
-                                        <template v-if="entry.targetUserId">
-                                            <span class="inline-flex items-center gap-1">
-                                                <span class="font-semibold">{{ $t('common.target') }}:</span>
-                                                <ColleagueInfoPopover :user="entry.targetUser" :user-id="entry.targetUserId" />
-                                            </span>
-                                        </template>
-
-                                        <template v-if="activityRuleLabel(entry)">
-                                            <span class="inline-flex gap-1">
-                                                <span class="font-semibold">
-                                                    {{ $t('components.jobs.groups.details.rule') }}:
-                                                </span>
-                                                <span>{{ activityRuleLabel(entry) }}</span>
-                                            </span>
-                                        </template>
-
-                                        <div
-                                            v-if="
-                                                entry.data?.data.oneofKind === 'rule' &&
-                                                entry.data.data.rule.rule.oneofKind === 'qualification' &&
-                                                entry.data.data.rule.rule.qualification.qualificationIds.length > 0
-                                            "
-                                            class="flex flex-wrap gap-1"
-                                        >
-                                            <QualificationBadge
-                                                v-for="qualificationId in entry.data.data.rule.rule.qualification
-                                                    .qualificationIds"
-                                                :key="qualificationId"
-                                                :qualification-id="qualificationId"
-                                                :qualification="activityRuleQualification(entry, qualificationId)"
-                                            />
-                                        </div>
-                                    </div>
-
-                                    <p class="inline-flex items-center gap-1 text-sm">
-                                        <span>{{ $t('common.created_by') }}</span>
-                                        <ColleagueInfoPopover :user="entry.actorUser" :user-id="entry.actorUserId" />
-                                    </p>
-                                </div>
-                            </div>
-                        </div>
-                    </li>
+                <template #wrapper="{ item }">
+                    <ActivityPanelEntry :activity="item" />
                 </template>
-            </ul>
+            </UTimeline>
         </div>
         <DataNoDataBlock v-else :type="$t('common.activity')" icon="i-mdi-history" :padded="false" />
 

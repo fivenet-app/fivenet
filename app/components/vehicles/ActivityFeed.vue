@@ -13,7 +13,7 @@ import type { SortByColumn } from '~~/gen/ts/resources/common/database/database'
 import { VehicleActivityType } from '~~/gen/ts/resources/vehicles/activity/activity';
 import type { ListVehicleActivityResponse } from '~~/gen/ts/services/vehicles/vehicles';
 import ActivityFeedEntry from './ActivityFeedEntry.vue';
-import { vehicleActivityTypeBGColor, vehicleActivityTypeIcon } from './helpers';
+import { vehicleActivityIndicatorColor, vehicleActivityTypeColor, vehicleActivityTypeIcon } from './helpers';
 
 const props = defineProps<{
     plate: string;
@@ -42,7 +42,7 @@ const options = visibleActivityTypes.map((at) => ({
     icon: vehicleActivityTypeIcon(at),
     value: at,
     ui: {
-        itemLeadingIcon: vehicleActivityTypeBGColor(at),
+        itemLeadingIcon: vehicleActivityTypeColor(at),
     },
 }));
 
@@ -80,6 +80,14 @@ const { data, status, refresh, error } = useAuthedLazyAsyncData(
     {
         immediate: false,
     },
+);
+
+const timelineItems = computed(() =>
+    (data.value?.activity ?? []).map((activity) => ({
+        ...activity,
+        icon: vehicleActivityTypeIcon(activity.activityType),
+        ui: { indicator: vehicleActivityIndicatorColor(activity) },
+    })),
 );
 
 defineExpose({
@@ -131,7 +139,7 @@ async function listVehicleActivity(values: Schema, signal: AbortSignal): Promise
 </script>
 
 <template>
-    <UDashboardPanel :ui="{ root: 'min-h-0 h-full', body: 'p-0 sm:p-0 gap-0 sm:gap-0' }">
+    <UDashboardPanel :ui="{ root: 'min-h-0 h-full' }">
         <template v-if="!denyView" #header>
             <UDashboardToolbar>
                 <template #default>
@@ -199,11 +207,15 @@ async function listVehicleActivity(values: Schema, signal: AbortSignal): Promise
                 icon="i-mdi-pulse"
             />
 
-            <div v-else class="relative flex-1">
-                <ul class="min-w-full divide-y divide-default" role="list">
-                    <ActivityFeedEntry v-for="activity in data.activity" :key="activity.id" :activity="activity" />
-                </ul>
-            </div>
+            <UTimeline v-else :items="timelineItems" size="md" :ui="{ wrapper: '!mt-0 !pb-2' }">
+                <template #indicator="{ item }">
+                    <UIcon :name="item.icon" class="size-6" />
+                </template>
+
+                <template #wrapper="{ item }">
+                    <ActivityFeedEntry :activity="item" />
+                </template>
+            </UTimeline>
         </template>
 
         <template #footer>

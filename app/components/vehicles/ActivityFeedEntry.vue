@@ -1,10 +1,8 @@
 <script lang="ts" setup>
 import CitizenInfoPopover from '~/components/partials/citizens/CitizenInfoPopover.vue';
-import ActivityFeedItem from '~/components/partials/data/ActivityFeedItem.vue';
 import PropertyActivityChange from '~/components/partials/properties/PropertyActivityChange.vue';
 import GenericTime from '~/components/partials/elements/GenericTime.vue';
 import { VehicleActivityType, type VehicleActivity } from '~~/gen/ts/resources/vehicles/activity/activity';
-import { vehicleActivityIconColor, vehicleActivityTypeIcon } from './helpers';
 
 const props = defineProps<{
     activity: VehicleActivity;
@@ -22,59 +20,26 @@ const reasonHtml = computed(() => {
 </script>
 
 <template>
-    <template v-if="activity.activityType === VehicleActivityType.WANTED && activity.data?.data.oneofKind === 'wantedChange'">
-        <ActivityFeedItem
-            :icon="vehicleActivityTypeIcon(activity.activityType)"
-            :icon-class="vehicleActivityIconColor(activity)"
-        >
-            <template #title>
-                {{ $t('components.vehicles.VehicleActivityFeedEntry.wanted_set') }}
-                <span class="font-semibold">
-                    {{
-                        activity.data.data.wantedChange.wanted
-                            ? $t('common.wanted')
-                            : `${$t('common.not')} ${$t('common.wanted')}`
-                    }}
-                </span>
-            </template>
-
-            <template #timestamp>
-                <GenericTime :value="activity.createdAt" type="long" />
-            </template>
-
-            <div class="grid gap-2 text-sm md:grid-cols-2">
-                <p v-if="!activity.data.data.wantedChange.auto" class="inline-flex min-w-0 gap-1">
-                    <span class="font-semibold">{{ $t('common.reason', 1) }}:</span>
-                    <!-- Reason text is sanitized by the backend and may contain HTML entities. -->
-                    <!-- eslint-disable-next-line vue/no-v-html -->
-                    <span class="truncate" v-html="reasonHtml" />
-                </p>
-
-                <p v-if="activity.data.data.wantedChange.wantedTill" class="inline-flex gap-1">
-                    <span class="font-semibold">{{ $t('common.expiration') }}:</span>
-                    <GenericTime :value="activity.data.data.wantedChange.wantedTill" type="long" />
-                </p>
-
-                <p v-if="activity.data.data.wantedChange.auto" class="inline-flex gap-1">
-                    <span class="font-semibold">{{ $t('components.vehicles.VehicleActivityFeedEntry.automatic') }}</span>
-                </p>
-
-                <p v-if="activity.creator" class="inline-flex min-w-0 justify-end text-sm md:justify-self-end">
-                    {{ $t('common.created_by') }}
-                    <CitizenInfoPopover class="ml-1" :user="activity.creator" />
-                </p>
-            </div>
-        </ActivityFeedItem>
-    </template>
-
-    <template v-else>
-        <ActivityFeedItem
-            :icon="vehicleActivityTypeIcon(activity.activityType)"
-            :icon-class="vehicleActivityIconColor(activity)"
-        >
-            <template #title>
-                <PropertyActivityChange
+    <div class="flex min-w-0 flex-auto justify-between gap-2 text-xs leading-5 text-muted">
+        <div class="flex min-w-0 flex-col gap-0.5">
+            <span class="text-sm font-medium text-highlighted">
+                <template
                     v-if="
+                        activity.activityType === VehicleActivityType.WANTED && activity.data?.data.oneofKind === 'wantedChange'
+                    "
+                >
+                    {{ $t('components.vehicles.VehicleActivityFeedEntry.wanted_set') }}
+                    <span class="font-semibold">
+                        {{
+                            activity.data.data.wantedChange.wanted
+                                ? $t('common.wanted')
+                                : `${$t('common.not')} ${$t('common.wanted')}`
+                        }}
+                    </span>
+                </template>
+
+                <PropertyActivityChange
+                    v-else-if="
                         activity.activityType === VehicleActivityType.PROPERTY &&
                         activity.data?.data.oneofKind === 'propertyChange'
                     "
@@ -92,16 +57,37 @@ const reasonHtml = computed(() => {
                 <template v-else>{{
                     $t(`enums.vehicles.VehicleActivityType.${VehicleActivityType[activity.activityType]}`)
                 }}</template>
-            </template>
+            </span>
 
-            <template #timestamp>
-                <GenericTime :value="activity.createdAt" type="long" />
-            </template>
+            <div
+                v-if="activity.activityType === VehicleActivityType.WANTED && activity.data?.data.oneofKind === 'wantedChange'"
+                class="grid gap-0.5 text-sm md:grid-cols-2"
+            >
+                <p v-if="!activity.data.data.wantedChange.auto" class="inline-flex min-w-0 gap-1">
+                    <span class="font-semibold">{{ $t('common.reason', 1) }}:</span>
+                    <!-- Reason text is sanitized by the backend and may contain HTML entities. -->
+                    <!-- eslint-disable-next-line vue/no-v-html -->
+                    <span class="truncate" v-html="reasonHtml" />
+                </p>
 
-            <p v-if="activity.creator" class="inline-flex justify-end text-sm">
-                {{ $t('common.created_by') }}
-                <CitizenInfoPopover class="ml-1" :user="activity.creator" />
-            </p>
-        </ActivityFeedItem>
-    </template>
+                <p v-if="activity.data.data.wantedChange.wantedTill" class="inline-flex gap-1">
+                    <span class="font-semibold">{{ $t('common.expiration') }}:</span>
+                    <GenericTime :value="activity.data.data.wantedChange.wantedTill" type="long" />
+                </p>
+
+                <p v-if="activity.data.data.wantedChange.auto" class="inline-flex gap-1">
+                    <span class="font-semibold">{{ $t('components.vehicles.VehicleActivityFeedEntry.automatic') }}</span>
+                </p>
+            </div>
+        </div>
+
+        <div class="flex flex-none flex-col items-end gap-0.5 text-xs">
+            <span class="text-xs/5 text-dimmed"><GenericTime :value="activity.createdAt" type="compact" /></span>
+
+            <span v-if="activity.creator" class="inline-flex items-center gap-1">
+                <span class="text-dimmed">{{ $t('common.created_by') }}:</span>
+                <CitizenInfoPopover :user="activity.creator" />
+            </span>
+        </div>
+    </div>
 </template>

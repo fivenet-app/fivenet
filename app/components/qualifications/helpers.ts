@@ -31,6 +31,30 @@ export function qualificationActivityTypeColor(type: QualificationActivityType |
     }
 }
 
+export function qualificationActivityTypeIndicatorColor(type: QualificationActivityType | undefined): string {
+    switch (type) {
+        case QualificationActivityType.CREATED:
+        case QualificationActivityType.RESTORED:
+        case QualificationActivityType.REQUEST_CREATED:
+        case QualificationActivityType.RESULT_CREATED:
+        case QualificationActivityType.RESULT_RESTORED:
+            return '!bg-success-500 text-white!';
+        case QualificationActivityType.DELETED:
+        case QualificationActivityType.REQUEST_DELETED:
+        case QualificationActivityType.RESULT_DELETED:
+        case QualificationActivityType.EXAM_CANCELLED:
+        case QualificationActivityType.EXAM_EXPIRED:
+            return '!bg-error-500 text-white!';
+        case QualificationActivityType.UPDATED:
+        case QualificationActivityType.ACCESS_UPDATED:
+        case QualificationActivityType.REQUEST_UPDATED:
+        case QualificationActivityType.RESULT_UPDATED:
+            return '!bg-warning-500 text-white!';
+        default:
+            return '!bg-primary-500 text-white!';
+    }
+}
+
 export function qualificationActivityTypeIcon(type: QualificationActivityType | undefined): string {
     switch (type) {
         case QualificationActivityType.CREATED:

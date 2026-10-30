@@ -4,6 +4,7 @@ import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
 import Pagination from '~/components/partials/Pagination.vue';
 import ListEntry from '~/components/wiki/activity/ListEntry.vue';
+import { getPageActivityIcon, getPageActivityIndicatorColor } from '~/components/wiki/helpers';
 import type { ListPageActivityResponse } from '~~/gen/ts/services/wiki/wiki';
 
 const props = defineProps<{
@@ -18,6 +19,14 @@ const { data, status, refresh, error } = useAuthedLazyAsyncData(
     'userState',
     () => `wiki-page:${props.pageId}:activity:${page.value}`,
     ({ signal }) => listPageActivity(signal),
+);
+
+const timelineItems = computed(() =>
+    (data.value?.activity ?? []).map((activity) => ({
+        ...activity,
+        icon: getPageActivityIcon(activity.activityType),
+        ui: { indicator: getPageActivityIndicatorColor(activity.activityType) },
+    })),
 );
 
 async function listPageActivity(signal: AbortSignal): Promise<ListPageActivityResponse> {
@@ -48,9 +57,15 @@ async function listPageActivity(signal: AbortSignal): Promise<ListPageActivityRe
             :message="$t('common.not_found', [$t('common.activity')])"
         />
 
-        <ul v-else class="mb-1 divide-y divide-default" role="list">
-            <ListEntry v-for="item in data.activity" :key="item.id" :entry="item" />
-        </ul>
+        <UTimeline v-else class="mb-1" :items="timelineItems" size="md" :ui="{ wrapper: '!mt-0 !pb-2' }">
+            <template #indicator="{ item }">
+                <UIcon :name="item.icon" class="size-6" />
+            </template>
+
+            <template #wrapper="{ item }">
+                <ListEntry :entry="item" />
+            </template>
+        </UTimeline>
 
         <Pagination v-model="page" :pagination="data?.pagination" :status="status" :refresh="refresh" />
     </div>

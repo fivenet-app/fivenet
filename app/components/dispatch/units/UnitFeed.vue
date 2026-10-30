@@ -77,7 +77,11 @@ defineExpose({
 </script>
 
 <template>
-    <UTimeline :items="timelineItems" size="xs" :ui="{ wrapper: '!mt-0 !pb-2' }">
+    <UTimeline :items="timelineItems" size="md" :ui="{ wrapper: '!mt-0 !pb-2' }">
+        <template #indicator="{ item }">
+            <UIcon :name="item.icon" class="size-6" />
+        </template>
+
         <template #wrapper="{ item }">
             <UnitFeedItem :item="item" />
         </template>

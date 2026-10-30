@@ -1,6 +1,6 @@
 import { ColleagueActivityType } from '~~/gen/ts/resources/jobs/colleagues/activity/activity';
 
-export function jobsUserActivityTypeBGColor(activityType: ColleagueActivityType | undefined): string {
+export function jobsUserActivityTypeColor(activityType: ColleagueActivityType | undefined): string {
     switch (activityType) {
         case ColleagueActivityType.ABSENCE_DATE:
             return 'text-yellow-300!';
@@ -19,6 +19,28 @@ export function jobsUserActivityTypeBGColor(activityType: ColleagueActivityType 
         case ColleagueActivityType.UNSPECIFIED:
         default:
             return '!text-info-500';
+    }
+}
+
+export function jobsUserActivityTypeIndicatorColor(activityType: ColleagueActivityType | undefined): string {
+    switch (activityType) {
+        case ColleagueActivityType.ABSENCE_DATE:
+            return '!bg-yellow-300 text-white!';
+        case ColleagueActivityType.HIRED:
+            return '!bg-blue-500 text-white!';
+        case ColleagueActivityType.FIRED:
+            return '!bg-red-500 text-white!';
+        case ColleagueActivityType.PROMOTED:
+            return '!bg-green-500 text-white!';
+        case ColleagueActivityType.DEMOTED:
+            return '!bg-orange-500 text-white!';
+        case ColleagueActivityType.NOTE:
+            return '!bg-teal-500 text-white!';
+        case ColleagueActivityType.NAME:
+            return '!bg-pink-500 text-white!';
+        case ColleagueActivityType.UNSPECIFIED:
+        default:
+            return '!bg-info-500 text-white!';
     }
 }
 

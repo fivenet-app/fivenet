@@ -3,138 +3,68 @@ import DocUpdatedDiff from '~/components/documents/activity/DocUpdatedDiff.vue';
 
 import CitizenInfoPopover from '~/components/partials/citizens/CitizenInfoPopover.vue';
 import GenericTime from '~/components/partials/elements/GenericTime.vue';
+import ResponsiveDrawerModal from '~/components/partials/ResponsiveDrawerModal.vue';
 import { AccessLevel } from '~~/gen/ts/resources/documents/access/access';
 import { type DocActivity, DocActivityType } from '~~/gen/ts/resources/documents/activity/activity';
-import { docActivityEntrySpoilerNeeded, getDocActivityColor, getDocAtivityIcon } from '../helpers';
 import AccessUpdated from './AccessUpdated.vue';
 
-defineProps<{
+const props = defineProps<{
     entry: DocActivity;
 }>();
+
+const detailsOpen = ref(false);
+const hasDetails = computed(
+    () =>
+        (props.entry.activityType === DocActivityType.UPDATED && props.entry.data?.data.oneofKind === 'updated') ||
+        (props.entry.activityType === DocActivityType.ACCESS_UPDATED && props.entry.data?.data.oneofKind === 'accessUpdated'),
+);
 </script>
 
 <template>
-    <li
-        class="border-default p-2 hover:border-primary-500/25 hover:bg-primary-100/50 dark:hover:border-primary-400/25 dark:hover:bg-primary-900/10"
-    >
-        <div v-if="!docActivityEntrySpoilerNeeded(entry.activityType)" class="flex space-x-3">
-            <div class="my-auto flex size-10 items-center justify-center rounded-full">
-                <UIcon
-                    class="size-7"
-                    :class="getDocActivityColor(entry.activityType)"
-                    :name="getDocAtivityIcon(entry.activityType)"
-                />
-            </div>
+    <div class="flex min-w-0 flex-auto justify-between gap-2 text-xs leading-5 text-muted">
+        <div class="flex min-w-0 flex-col gap-0.5">
+            <span class="text-sm font-medium text-highlighted">
+                {{ $t(`enums.documents.DocActivityType.${DocActivityType[entry.activityType]}`) }}
+                <template v-if="entry.data?.data.oneofKind === 'accessRequested'">
+                    ({{ $t('common.access') }}:
+                    {{ $t(`enums.documents.AccessLevel.${AccessLevel[entry.data.data.accessRequested.level ?? 0]}`) }})
+                </template>
+            </span>
 
-            <div class="flex-1 space-y-1">
-                <div class="flex items-center justify-between">
-                    <h3 class="inline-flex items-center gap-2 text-sm font-medium">
-                        <span class="font-bold text-highlighted">
-                            {{ $t(`enums.documents.DocActivityType.${DocActivityType[entry.activityType]}`) }}
-                        </span>
-                        <span v-if="entry.data">
-                            <span v-if="entry.data?.data.oneofKind === 'accessRequested'">
-                                ({{ $t('common.access') }}:
-                                {{
-                                    $t(
-                                        `enums.documents.AccessLevel.${AccessLevel[entry.data?.data.accessRequested.level ?? 0]}`,
-                                    )
-                                }})
-                            </span>
-                        </span>
-                    </h3>
+            <span v-if="entry.reason" class="inline-flex gap-1 text-sm">
+                <span class="font-semibold">{{ $t('common.reason', 1) }}:</span>
+                <span>{{ entry.reason }}</span>
+            </span>
 
-                    <p class="text-sm text-dimmed">
-                        <GenericTime :value="entry.createdAt" type="long" />
-                    </p>
-                </div>
-
-                <div class="flex items-center justify-between">
-                    <p class="inline-flex gap-1 text-sm">
-                        <template v-if="!!entry.reason">
-                            <span class="font-semibold">{{ $t('common.reason', 1) }}:</span>
-                            <span>
-                                {{ entry.reason }}
-                            </span>
-                        </template>
-                    </p>
-
-                    <p class="inline-flex text-sm">
-                        {{ $t('common.created_by') }}
-                        <CitizenInfoPopover class="ml-1" :user="entry.creator" />
-                    </p>
-                </div>
-            </div>
+            <UButton
+                v-if="hasDetails"
+                class="w-fit"
+                color="neutral"
+                variant="link"
+                size="xs"
+                icon="i-mdi-file-compare"
+                :label="$t('common.view_changes')"
+                @click="detailsOpen = true"
+            />
         </div>
 
-        <UCollapsible v-else>
-            <template #default>
-                <div class="group flex w-full flex-1 space-x-3">
-                    <div class="my-auto flex size-10 items-center justify-center rounded-full">
-                        <UIcon class="size-7" :name="getDocAtivityIcon(entry.activityType)" />
-                    </div>
+        <div class="flex flex-none flex-col items-end gap-0.5 text-xs">
+            <span class="text-xs/5 text-dimmed"><GenericTime :value="entry.createdAt" type="compact" /></span>
+            <span class="inline-flex items-center gap-1">
+                <span class="text-dimmed">{{ $t('common.created_by') }}:</span>
+                <CitizenInfoPopover :user="entry.creator" />
+            </span>
+        </div>
+    </div>
 
-                    <div class="flex-1 space-y-1">
-                        <div class="flex items-center justify-between">
-                            <h3 class="inline-flex items-center text-sm font-medium">
-                                <span class="font-bold text-highlighted">
-                                    {{ $t(`enums.documents.DocActivityType.${DocActivityType[entry.activityType]}`) }}
-                                </span>
-
-                                <span class="flex items-center">
-                                    <UIcon
-                                        class="size-5 transition-transform duration-200 group-data-[state=open]:rotate-180"
-                                        name="i-mdi-chevron-down"
-                                    />
-                                </span>
-                            </h3>
-
-                            <p class="text-sm text-dimmed">
-                                <GenericTime :value="entry.createdAt" type="long" />
-                            </p>
-                        </div>
-
-                        <div class="flex items-center justify-between">
-                            <p class="inline-flex gap-1 text-sm">
-                                <template v-if="!!entry.reason">
-                                    <span class="font-semibold">{{ $t('common.reason', 1) }}:</span>
-                                    <span>
-                                        {{ entry.reason }}
-                                    </span>
-                                </template>
-                            </p>
-
-                            <p class="inline-flex text-sm">
-                                {{ $t('common.created_by') }}
-                                <CitizenInfoPopover class="ml-1" :user="entry.creator" />
-                            </p>
-                        </div>
-                    </div>
-                </div>
-            </template>
-
-            <template #content>
-                <div class="p-2">
-                    <template v-if="entry.activityType === DocActivityType.UPDATED">
-                        <div class="rounded-md bg-default p-2">
-                            <DocUpdatedDiff
-                                v-if="entry.data?.data.oneofKind === 'updated'"
-                                :update="entry.data?.data.updated"
-                            />
-                        </div>
-                    </template>
-                    <template
-                        v-else-if="
-                            entry.activityType === DocActivityType.ACCESS_UPDATED &&
-                            entry.data?.data.oneofKind === 'accessUpdated'
-                        "
-                    >
-                        <div class="rounded-md bg-default p-2">
-                            <AccessUpdated :data="entry.data?.data.accessUpdated" />
-                        </div>
-                    </template>
-                </div>
-            </template>
-        </UCollapsible>
-    </li>
+    <ResponsiveDrawerModal
+        v-model:open="detailsOpen"
+        :title="$t('components.documents.activity_list.difference')"
+        :ui="{ content: 'max-w-4xl' }"
+    >
+        <template #body>
+            <DocUpdatedDiff v-if="entry.data?.data.oneofKind === 'updated'" :update="entry.data.data.updated" />
+            <AccessUpdated v-else-if="entry.data?.data.oneofKind === 'accessUpdated'" :data="entry.data.data.accessUpdated" />
+        </template>
+    </ResponsiveDrawerModal>
 </template>

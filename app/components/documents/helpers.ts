@@ -167,7 +167,7 @@ export function docRelationToBadge(ref: DocRelation): BadgeProps['color'] {
 
 // Document Activity
 
-export function getDocAtivityIcon(activityType: DocActivityType): string {
+export function getDocActivityIcon(activityType: DocActivityType): string {
     switch (activityType) {
         // Base
         case DocActivityType.CREATED:
@@ -232,31 +232,23 @@ export function getDocAtivityIcon(activityType: DocActivityType): string {
     }
 }
 
-export function getDocActivityColor(activityType: DocActivityType): string {
+export function getDocActivityIndicatorColor(activityType: DocActivityType): string {
     switch (activityType) {
-        case DocActivityType.APPROVAL_ASSIGNED:
-            return 'text-info';
         case DocActivityType.APPROVAL_APPROVED:
-            return 'text-success';
+            return '!bg-success-500 text-white!';
         case DocActivityType.APPROVAL_REJECTED:
-            return 'text-error';
         case DocActivityType.APPROVAL_REVOKED:
-            return 'text-error';
+        case DocActivityType.DELETED:
+        case DocActivityType.REQUESTED_DELETION:
+            return '!bg-error-500 text-white!';
         case DocActivityType.APPROVAL_REMOVED:
-            return 'text-warning';
-
-        default:
-            return '';
-    }
-}
-
-export function docActivityEntrySpoilerNeeded(activityType: DocActivityType): boolean {
-    switch (activityType) {
         case DocActivityType.ACCESS_UPDATED:
-        case DocActivityType.UPDATED:
-            return true;
-
+        case DocActivityType.STATUS_CLOSED:
+            return '!bg-warning-500 text-white!';
+        case DocActivityType.CREATED:
+        case DocActivityType.STATUS_OPEN:
+            return '!bg-success-500 text-white!';
         default:
-            return false;
+            return '!bg-primary-500 text-white!';
     }
 }

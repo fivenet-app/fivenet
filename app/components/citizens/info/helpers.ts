@@ -125,3 +125,8 @@ export function citizenUserActivityIconColor(activity: UserActivity): string {
 
     return '';
 }
+
+export function citizenUserActivityIndicatorColor(activity: UserActivity): string {
+    const color = citizenUserActivityIconColor(activity) || citizenUserActivityTypeBGColor(activity.type);
+    return `!bg-${color.replaceAll('!', '').replace('text-', '')} text-white!`;
+}

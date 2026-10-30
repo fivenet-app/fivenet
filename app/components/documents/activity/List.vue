@@ -5,6 +5,7 @@ import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
 import Pagination from '~/components/partials/Pagination.vue';
+import { getDocActivityIcon, getDocActivityIndicatorColor } from '~/components/documents/helpers';
 import { getDocumentsDocumentsClient } from '~~/gen/ts/clients';
 import type { ListDocumentActivityResponse } from '~~/gen/ts/services/documents/documents';
 
@@ -20,6 +21,14 @@ const documentActivityKey = computed(() => `document-${props.documentId}-${page.
 
 const { data, status, refresh, error } = useAuthedLazyAsyncData('userState', documentActivityKey, ({ signal }) =>
     listDocumentActivity(signal),
+);
+
+const timelineItems = computed(() =>
+    (data.value?.activity ?? []).map((activity) => ({
+        ...activity,
+        icon: getDocActivityIcon(activity.activityType),
+        ui: { indicator: getDocActivityIndicatorColor(activity.activityType) },
+    })),
 );
 
 async function listDocumentActivity(signal: AbortSignal): Promise<ListDocumentActivityResponse> {
@@ -59,9 +68,15 @@ async function listDocumentActivity(signal: AbortSignal): Promise<ListDocumentAc
             :message="$t('common.not_found', [$t('common.activity')])"
         />
 
-        <ul v-else class="mb-1 divide-y divide-default" role="list">
-            <ListEntry v-for="item in data.activity" :key="item.id" :entry="item" />
-        </ul>
+        <UTimeline v-else class="mb-1" :items="timelineItems" size="md" :ui="{ wrapper: '!mt-0 !pb-2' }">
+            <template #indicator="{ item }">
+                <UIcon :name="item.icon" class="size-6" />
+            </template>
+
+            <template #wrapper="{ item }">
+                <ListEntry :entry="item" />
+            </template>
+        </UTimeline>
 
         <Pagination v-model="page" :pagination="data?.pagination" :status="status" :refresh="refresh" />
     </div>

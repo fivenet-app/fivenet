@@ -1,92 +1,56 @@
 <script lang="ts" setup>
 import CitizenInfoPopover from '~/components/partials/citizens/CitizenInfoPopover.vue';
 import GenericTime from '~/components/partials/elements/GenericTime.vue';
+import ResponsiveDrawerModal from '~/components/partials/ResponsiveDrawerModal.vue';
 import PageUpdatedDiff from '~/components/wiki/activity/PageUpdatedDiff.vue';
 import { type PageActivity, PageActivityType } from '~~/gen/ts/resources/wiki/activity/activity';
-import { getPageAtivityIcon } from '../helpers';
 
-defineProps<{
+const props = defineProps<{
     entry: PageActivity;
 }>();
 
-function spoilerNeeded(activityType: PageActivityType): boolean {
-    switch (activityType) {
-        case PageActivityType.UPDATED:
-            return true;
-
-        default:
-            return false;
-    }
-}
+const detailsOpen = ref(false);
+const hasUpdateDiff = computed(
+    () => props.entry.activityType === PageActivityType.UPDATED && props.entry.data?.data.oneofKind === 'updated',
+);
 </script>
 
 <template>
-    <li
-        class="border-default p-2 hover:border-primary-500/25 hover:bg-primary-100/50 dark:hover:border-primary-400/25 dark:hover:bg-primary-900/10"
-    >
-        <div v-if="!spoilerNeeded(entry.activityType)" class="flex space-x-3">
-            <div class="my-auto flex size-10 items-center justify-center rounded-full">
-                <UIcon class="size-7" :name="getPageAtivityIcon(entry.activityType)" />
-            </div>
-            <div class="flex-1 space-y-1">
-                <div class="flex items-center justify-between">
-                    <h3 class="inline-flex items-center gap-2 text-sm font-medium">
-                        <span class="font-bold">
-                            {{ $t(`enums.wiki.PageActivityType.${PageActivityType[entry.activityType]}`) }}
-                        </span>
-                    </h3>
+    <div class="flex min-w-0 flex-auto justify-between gap-2 text-xs leading-5 text-muted">
+        <div class="flex min-w-0 flex-col gap-0.5">
+            <span class="text-sm font-medium text-highlighted">
+                {{ $t(`enums.wiki.PageActivityType.${PageActivityType[entry.activityType]}`) }}
+            </span>
 
-                    <p class="text-sm text-dimmed">
-                        <GenericTime :value="entry.createdAt" type="long" />
-                    </p>
-                </div>
-
-                <p class="inline-flex text-sm">
-                    {{ $t('common.created_by') }}
-                    <CitizenInfoPopover class="ml-1" :user="entry.creator" />
-                </p>
-            </div>
+            <UButton
+                v-if="hasUpdateDiff"
+                class="w-fit"
+                color="neutral"
+                variant="link"
+                size="xs"
+                icon="i-mdi-file-compare"
+                :label="$t('common.view_changes')"
+                @click="detailsOpen = true"
+            />
         </div>
 
-        <UCollapsible v-else>
-            <template #default>
-                <div class="flex space-x-3">
-                    <div class="my-auto flex size-10 items-center justify-center rounded-full">
-                        <UIcon class="size-7" :name="getPageAtivityIcon(entry.activityType)" />
-                    </div>
-                    <div class="flex-1 space-y-1">
-                        <div class="flex items-center justify-between">
-                            <h3 class="inline-flex items-center text-sm font-medium">
-                                <span class="font-bold">
-                                    {{ $t(`enums.wiki.PageActivityType.${PageActivityType[entry.activityType]}`) }}
-                                </span>
+        <div class="flex flex-none flex-col items-end gap-0.5 text-xs">
+            <span class="text-xs/5 text-dimmed"><GenericTime :value="entry.createdAt" type="compact" /></span>
 
-                                <span class="flex items-center">
-                                    <UIcon
-                                        class="size-5 transition-transform duration-200 group-data-[state=open]:rotate-180"
-                                        name="i-mdi-chevron-down"
-                                    />
-                                </span>
-                            </h3>
+            <span class="inline-flex items-center gap-1">
+                <span class="text-dimmed">{{ $t('common.created_by') }}:</span>
+                <CitizenInfoPopover :user="entry.creator" />
+            </span>
+        </div>
+    </div>
 
-                            <p class="text-sm text-dimmed">
-                                <GenericTime :value="entry.createdAt" type="long" />
-                            </p>
-                        </div>
-
-                        <p class="inline-flex text-sm">
-                            {{ $t('common.created_by') }}
-                            <CitizenInfoPopover class="ml-1" :user="entry.creator" />
-                        </p>
-                    </div>
-                </div>
-            </template>
-
-            <template v-if="entry.activityType === PageActivityType.UPDATED" #content>
-                <div class="rounded-md bg-default p-2">
-                    <PageUpdatedDiff v-if="entry.data?.data.oneofKind === 'updated'" :update="entry.data?.data.updated" />
-                </div>
-            </template>
-        </UCollapsible>
-    </li>
+    <ResponsiveDrawerModal
+        v-model:open="detailsOpen"
+        :title="$t('components.documents.activity_list.difference')"
+        :ui="{ content: 'max-w-4xl' }"
+    >
+        <template #body>
+            <PageUpdatedDiff v-if="entry.data?.data.oneofKind === 'updated'" :update="entry.data.data.updated" />
+        </template>
+    </ResponsiveDrawerModal>
 </template>
