@@ -166,6 +166,14 @@ const columns = computed(() =>
                     });
                 },
             },
+            attr('citizens.CitizensService/ListCitizens', 'Properties', 'user.wanted').value
+                ? {
+                      accessorKey: 'wanted',
+                      header: t('common.wanted'),
+                      cell: ({ row }) =>
+                          row.original.props?.wanted ? h(WantedBadge, { wanted: true, variant: 'short' }) : undefined,
+                  }
+                : undefined,
             {
                 accessorKey: 'jobLabel',
                 header: t('common.job'),
@@ -176,11 +184,24 @@ const columns = computed(() =>
                     },
                 },
                 cell: ({ row }) =>
-                    `${row.original.jobLabel}${row.original.props?.jobName || row.original.props?.jobGradeNumber ? '*' : ''}`,
+                    h(
+                        UTooltip,
+                        {
+                            text: row.original.props?.jobGrade
+                                ? `${row.original.props?.jobGrade.label} (${row.original.props?.jobGradeNumber ?? 0})`
+                                : '',
+                        },
+                        [
+                            h(
+                                'span',
+                                `${row.original.jobLabel}${row.original.props?.jobName || row.original.props?.jobGradeNumber ? '*' : ''}`,
+                            ),
+                        ],
+                    ),
             },
             {
                 accessorKey: 'sex',
-                header: t('common.sex'),
+                header: t('common.sex_short'),
                 meta: {
                     class: {
                         td: 'hidden lg:table-cell',
@@ -529,8 +550,6 @@ defineShortcuts({
                         />
 
                         <span>{{ row.original.firstname }} {{ row.original.lastname }}</span>
-
-                        <WantedBadge v-if="row.original.props?.wanted" wanted variant="short" />
                     </div>
                 </template>
             </UTable>

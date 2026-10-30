@@ -921,12 +921,6 @@
                 }
             }
         },
-        "qualifications": {
-            "clientview_update": {
-                "title": "Qualification updated",
-                "content": "The qualification was updated by another user. Click here to reload the qualification."
-            }
-        },
         "wiki": {
             "id": {
                 "title": "Wiki Page"
@@ -1529,7 +1523,8 @@
         "more": "more",
         "now": "Now",
         "sort": "Sort",
-        "replace": "Replace"
+        "replace": "Replace",
+        "sex_short": "Sex"
     },
     "components": {
         "properties": {
@@ -3735,6 +3730,10 @@
             "times_up": {
                 "title": "Your exam time is over!",
                 "content": "Your current responses have been submitted."
+            },
+            "clientview_update": {
+                "title": "Qualification updated",
+                "content": "The qualification was updated by another user. Click here to reload the qualification."
             }
         },
         "calendar": {

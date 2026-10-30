@@ -921,12 +921,6 @@
                 }
             }
         },
-        "qualifications": {
-            "clientview_update": {
-                "title": "Qualifikation wurde aktualisiert",
-                "content": "Die Qualifikation wurde von einem anderen Benutzer aktualisiert. Klicken Sie hier, um die Qualifikation neu zu laden."
-            }
-        },
         "wiki": {
             "id": {
                 "title": "Wiki Seite"
@@ -1529,7 +1523,8 @@
         "more": "mehr",
         "now": "Jetzt",
         "sort": "Sortierung",
-        "replace": "Ersetzen"
+        "replace": "Ersetzen",
+        "sex_short": "Geschl."
     },
     "components": {
         "properties": {
@@ -3735,6 +3730,10 @@
             "times_up": {
                 "title": "Ihre Prüfungszeit ist vorbei!",
                 "content": "Ihre aktuellen Antworten wurden übermittelt."
+            },
+            "clientview_update": {
+                "title": "Qualifikation wurde aktualisiert",
+                "content": "Die Qualifikation wurde von einem anderen Benutzer aktualisiert. Klicken Sie hier, um die Qualifikation neu zu laden."
             }
         },
         "calendar": {
