@@ -53,7 +53,7 @@
               unstablePkgs.golangci-lint
 
               # NodeJS stuff
-              nodejs_24
+              nodejs_26
               pnpm_12
 
               # Protobuf
