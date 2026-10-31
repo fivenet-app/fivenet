@@ -51,6 +51,7 @@ COPY --from=version /version /version
 COPY --exclude=public/images/livemap/ . ./
 
 RUN apk add --no-cache git python3 make gcc g++ pkgconfig && \
+    npm install -g corepack && \
     corepack enable && \
     corepack prepare pnpm@12.9.1 --activate && \
     version="$(cat /version)" && \
