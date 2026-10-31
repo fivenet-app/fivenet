@@ -27,11 +27,11 @@ require (
 	github.com/diamondburned/arikawa/v3 v3.6.0
 	github.com/fsnotify/fsnotify v1.10.1
 	github.com/galexrt/iconify-go v0.2.0
-	github.com/gin-contrib/cors v1.7.9
-	github.com/gin-contrib/pprof v1.5.6
-	github.com/gin-contrib/sessions v1.1.2
-	github.com/gin-contrib/static v1.1.8
-	github.com/gin-contrib/zap v1.1.9
+	github.com/gin-contrib/cors v1.7.10
+	github.com/gin-contrib/pprof v1.5.7
+	github.com/gin-contrib/sessions v1.1.3
+	github.com/gin-contrib/static v1.1.9
+	github.com/gin-contrib/zap v1.1.10
 	github.com/gin-gonic/gin v1.12.0
 	github.com/go-jet/jet/v2 v2.16.1
 	github.com/go-playground/validator/v10 v10.30.5
