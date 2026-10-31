@@ -461,7 +461,8 @@ func componentRevision(
 	id int64,
 	component string,
 ) uint64 {
-	if dispatches == nil || (reflect.ValueOf(dispatches).Kind() == reflect.Ptr && reflect.ValueOf(dispatches).IsNil()) {
+	if dispatches == nil ||
+		(reflect.ValueOf(dispatches).Kind() == reflect.Pointer && reflect.ValueOf(dispatches).IsNil()) {
 		return 0
 	}
 	revision, err := dispatches.ComponentRevision(ctx, id, component)
@@ -772,16 +773,20 @@ func (s *Server) consumeKVFeed(ctx context.Context, feed feedCfg) (bool, error) 
 	if feed.KeyPrefix != "" {
 		filterSubject = "$KV." + feed.Bucket + "." + feed.KeyPrefix + ".>"
 	}
-	consumer, err := s.js.CreateOrUpdateConsumer(ctx, "KV_"+feed.StreamName, jetstream.ConsumerConfig{
-		Name:          kvFeedConsumerName(feed),
-		FilterSubject: filterSubject,
-		DeliverPolicy: jetstream.DeliverNewPolicy,
-		AckPolicy:     jetstream.AckNonePolicy,
-		MaxWaiting:    8,
-		// Keep the named consumer stable across feed-worker restarts, but let
-		// abandoned consumers from terminated instances be removed by NATS.
-		InactiveThreshold: time.Minute,
-	})
+	consumer, err := s.js.CreateOrUpdateConsumer(
+		ctx,
+		"KV_"+feed.StreamName,
+		jetstream.ConsumerConfig{
+			Name:          kvFeedConsumerName(feed),
+			FilterSubject: filterSubject,
+			DeliverPolicy: jetstream.DeliverNewPolicy,
+			AckPolicy:     jetstream.AckNonePolicy,
+			MaxWaiting:    8,
+			// Keep the named consumer stable across feed-worker restarts, but let
+			// abandoned consumers from terminated instances be removed by NATS.
+			InactiveThreshold: time.Minute,
+		},
+	)
 	if err != nil {
 		return false, fmt.Errorf("failed to create KV feed consumer. %w", err)
 	}

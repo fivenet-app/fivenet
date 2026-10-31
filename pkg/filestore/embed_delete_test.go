@@ -129,10 +129,15 @@ func TestDeleteWithCallbackRunsBeforeDeletionAndCommitsTogether(t *testing.T) {
 	mock.ExpectCommit()
 
 	h := newDeleteHandler(db, st, false)
-	err := h.DeleteWithCallback(t.Context(), int64(7), 23, func(ctx context.Context, tx *sql.Tx) error {
-		_, err := tx.ExecContext(ctx, "INSERT INTO deletion_activities VALUES ()")
-		return err
-	})
+	err := h.DeleteWithCallback(
+		t.Context(),
+		int64(7),
+		23,
+		func(ctx context.Context, tx *sql.Tx) error {
+			_, err := tx.ExecContext(ctx, "INSERT INTO deletion_activities VALUES ()")
+			return err
+		},
+	)
 	require.NoError(t, err)
 	assert.Empty(t, st.deleted)
 	require.NoError(t, mock.ExpectationsWereMet())

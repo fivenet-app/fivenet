@@ -318,7 +318,11 @@ func (s *DispatchDB) putStatusIfActive(
 }
 
 // ComponentRevision returns the current KV revision for a dispatch component.
-func (s *DispatchDB) ComponentRevision(ctx context.Context, id int64, component string) (uint64, error) {
+func (s *DispatchDB) ComponentRevision(
+	ctx context.Context,
+	id int64,
+	component string,
+) (uint64, error) {
 	if s == nil {
 		return 0, errors.New("dispatch projection store is not initialized")
 	}
