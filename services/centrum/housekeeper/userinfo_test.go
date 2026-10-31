@@ -500,18 +500,21 @@ func TestReconcileUserInfoStateDiscoversAndDeduplicatesProjectionUsers(t *testin
 		logger:   zap.NewNop(),
 		metrics:  centrummetrics.Get(),
 		userinfo: userInfoRetrieverForTest(42, "police"),
-		unitUserState: fakeUnitUserState{rangeFn: func(fn func(string, *centrumunits.Unit) bool) {
-			fn("unit.1", &centrumunits.Unit{
-				Users: []*centrumunits.UnitAssignment{{UserId: 42}},
-			})
-			fn("unit.2", &centrumunits.Unit{
-				Users: []*centrumunits.UnitAssignment{{UserId: 42}},
-			})
-		}, reconcile: func(_ context.Context, userID int32, job string) (bool, error) {
-			reconciled = append(reconciled, userID)
-			assert.Equal(t, "police", job)
-			return false, nil
-		}},
+		unitUserState: fakeUnitUserState{
+			rangeFn: func(ctx context.Context, fn func(string, *centrumunits.Unit) bool) {
+				fn("unit.1", &centrumunits.Unit{
+					Users: []*centrumunits.UnitAssignment{{UserId: 42}},
+				})
+				fn("unit.2", &centrumunits.Unit{
+					Users: []*centrumunits.UnitAssignment{{UserId: 42}},
+				})
+			},
+			reconcile: func(_ context.Context, userID int32, job string) (bool, error) {
+				reconciled = append(reconciled, userID)
+				assert.Equal(t, "police", job)
+				return false, nil
+			},
+		},
 		dispatcherUserState: fakeDispatcherUserState{
 			rangeFn: func(fn func(string, *centrumdispatchers.Dispatchers) bool) {
 				fn("ambulance", &centrumdispatchers.Dispatchers{
@@ -548,12 +551,18 @@ func TestReconcileUserInfoStateContinuesAfterLookupFailure(t *testing.T) {
 		logger:   zap.NewNop(),
 		metrics:  centrummetrics.Get(),
 		userinfo: userInfoRetrieverForTest(42, "police"),
-		unitUserState: fakeUnitUserState{rangeFn: func(fn func(string, *centrumunits.Unit) bool) {
-			fn("unit.42", &centrumunits.Unit{Users: []*centrumunits.UnitAssignment{{UserId: 42}}})
-			fn("unit.7", &centrumunits.Unit{Users: []*centrumunits.UnitAssignment{{UserId: 7}}})
-		}, reconcile: func(context.Context, int32, string) (bool, error) {
-			return false, nil
-		}},
+		unitUserState: fakeUnitUserState{
+			rangeFn: func(ctx context.Context, fn func(string, *centrumunits.Unit) bool) {
+				fn(
+					"unit.42",
+					&centrumunits.Unit{Users: []*centrumunits.UnitAssignment{{UserId: 42}}},
+				)
+				fn("unit.7", &centrumunits.Unit{Users: []*centrumunits.UnitAssignment{{UserId: 7}}})
+			},
+			reconcile: func(context.Context, int32, string) (bool, error) {
+				return false, nil
+			},
+		},
 		dispatcherUserState: fakeDispatcherUserState{},
 	}
 
@@ -572,9 +581,14 @@ func TestReconcileUserInfoStateStopsOnCancellation(t *testing.T) {
 		logger:   zap.NewNop(),
 		metrics:  centrummetrics.Get(),
 		userinfo: userInfoRetrieverForTest(42, "police"),
-		unitUserState: fakeUnitUserState{rangeFn: func(fn func(string, *centrumunits.Unit) bool) {
-			fn("unit.42", &centrumunits.Unit{Users: []*centrumunits.UnitAssignment{{UserId: 42}}})
-		}},
+		unitUserState: fakeUnitUserState{
+			rangeFn: func(ctx context.Context, fn func(string, *centrumunits.Unit) bool) {
+				fn(
+					"unit.42",
+					&centrumunits.Unit{Users: []*centrumunits.UnitAssignment{{UserId: 42}}},
+				)
+			},
+		},
 		dispatcherUserState: fakeDispatcherUserState{},
 	}
 

@@ -59,13 +59,13 @@ func TestRemoveUnitFromDispatchEvictsMissingDispatchProjection(t *testing.T) {
 }
 
 type unitAssignmentWatchSourceStub struct {
-	store *store.Store[centrumunits.Unit, *centrumunits.Unit]
+	store *store.Store[centrumunits.UnitAssignments, *centrumunits.UnitAssignments]
 	ready chan struct{}
 }
 
-func (s *unitAssignmentWatchSourceStub) WatchAll(
+func (s *unitAssignmentWatchSourceStub) WatchMembers(
 	ctx context.Context,
-) (store.IKVWatcher[centrumunits.Unit, *centrumunits.Unit], error) {
+) (store.IKVWatcher[centrumunits.UnitAssignments, *centrumunits.UnitAssignments], error) {
 	watcher, err := s.store.WatchAll(ctx)
 	close(s.ready)
 	return watcher, err
@@ -234,12 +234,12 @@ func TestWatchUnitAssignmentsRecoversAfterCleanupFailure(t *testing.T) {
 	ctx, cancel := context.WithCancel(t.Context())
 	t.Cleanup(cancel)
 
-	unitStore, err := store.New[centrumunits.Unit](
+	unitStore, err := store.New[centrumunits.UnitAssignments](
 		ctx,
 		zap.NewNop(),
 		js,
 		"test_unit_assignment_watch",
-		store.WithLocks[centrumunits.Unit](nil),
+		store.WithLocks[centrumunits.UnitAssignments](nil),
 	)
 	require.NoError(t, err)
 
@@ -276,7 +276,7 @@ func TestWatchUnitAssignmentsRecoversAfterCleanupFailure(t *testing.T) {
 		t.Fatal("unit assignment watcher did not become ready")
 	}
 
-	emptyUnit := &centrumunits.Unit{Id: 42}
+	emptyUnit := &centrumunits.UnitAssignments{UnitId: 42}
 	require.NoError(t, unitStore.Put(ctx, "unit.42", emptyUnit))
 	select {
 	case call := <-attempts:

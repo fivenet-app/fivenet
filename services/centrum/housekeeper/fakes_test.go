@@ -45,7 +45,7 @@ func (f fakeUnitDispatchAssignments) Delete(
 type fakeUnitUserState struct {
 	sync      func(context.Context, int32) error
 	reconcile func(context.Context, int32, string) (bool, error)
-	rangeFn   func(func(string, *centrumunits.Unit) bool)
+	rangeFn   func(context.Context, func(string, *centrumunits.Unit) bool)
 }
 
 func (f fakeUnitUserState) SyncUserUnitMapping(ctx context.Context, userID int32) error {
@@ -66,9 +66,9 @@ func (f fakeUnitUserState) ReconcileUserJobChange(
 	return f.reconcile(ctx, userID, job)
 }
 
-func (f fakeUnitUserState) Range(fn func(string, *centrumunits.Unit) bool) {
+func (f fakeUnitUserState) Range(ctx context.Context, fn func(string, *centrumunits.Unit) bool) {
 	if f.rangeFn != nil {
-		f.rangeFn(fn)
+		f.rangeFn(ctx, fn)
 	}
 }
 

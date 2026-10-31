@@ -168,6 +168,84 @@ func (m *UnitAttributes) Sanitize() error {
 
 // Sanitize sanitizes the message's fields, in case of complex types it calls
 // their Sanitize() method recursively.
+func (m *UnitSpec) Sanitize() error {
+	if m == nil {
+		return nil
+	}
+
+	// Field: Access
+	if m.Access != nil {
+		if v, ok := any(m.GetAccess()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+	}
+
+	// Field: Attributes
+	if m.Attributes != nil {
+		if v, ok := any(m.GetAttributes()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+	}
+
+	// Field: Color
+	m.Color = htmlsanitizer.SanitizeAndUnescape(m.Color)
+
+	// Field: CreatedAt
+	if m.CreatedAt != nil {
+		if v, ok := any(m.GetCreatedAt()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+	}
+
+	// Field: Description
+	if m.Description != nil {
+		*m.Description = htmlsanitizer.SanitizeAndUnescape(*m.Description)
+	}
+
+	// Field: HomePostal
+	if m.HomePostal != nil {
+		*m.HomePostal = htmlsanitizer.SanitizeAndUnescape(*m.HomePostal)
+	}
+
+	// Field: Icon
+	if m.Icon != nil {
+		*m.Icon = htmlsanitizer.SanitizeAndUnescape(*m.Icon)
+	}
+
+	// Field: Initials
+	m.Initials = htmlsanitizer.SanitizeAndUnescape(m.Initials)
+
+	// Field: Job
+	m.Job = htmlsanitizer.SanitizeAndUnescape(m.Job)
+
+	// Field: JobLabel
+	if m.JobLabel != nil {
+		*m.JobLabel = htmlsanitizer.SanitizeAndUnescape(*m.JobLabel)
+	}
+
+	// Field: Name
+	m.Name = htmlsanitizer.SanitizeAndUnescape(m.Name)
+
+	// Field: UpdatedAt
+	if m.UpdatedAt != nil {
+		if v, ok := any(m.GetUpdatedAt()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+	}
+
+	return nil
+}
+
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *UnitStatus) Sanitize() error {
 	if m == nil {
 		return nil

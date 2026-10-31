@@ -1,6 +1,7 @@
 package store
 
 import (
+	"maps"
 	"time"
 
 	"github.com/fivenet-app/fivenet/v2026/pkg/nats/locks"
@@ -94,6 +95,9 @@ func WithKVConfig[T any, U protoutils.ProtoMessageWithMerge[T]](
 	return func(s *Store[T, U], kvConfig *jetstream.KeyValueConfig) {
 		kvConfig.TTL = config.TTL
 		kvConfig.LimitMarkerTTL = config.LimitMarkerTTL
+		if config.Metadata != nil {
+			kvConfig.Metadata = maps.Clone(config.Metadata)
+		}
 	}
 }
 

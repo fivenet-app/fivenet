@@ -2,10 +2,12 @@ package centrum
 
 import (
 	"context"
+	"slices"
 	"sync"
 	"testing"
 	"time"
 
+	centrum "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/centrum"
 	centrumdispatches "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/centrum/dispatches"
 	centrumsettings "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/centrum/settings"
 	centrumunits "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/centrum/units"
@@ -56,6 +58,23 @@ func newFeedHubTestServer(t *testing.T) (*Server, context.CancelFunc) {
 	})
 
 	return srv, cancel
+}
+
+func TestKVFeedConsumerNamesAreUniquePerProjection(t *testing.T) {
+	t.Parallel()
+
+	names := make(map[string]string, len(feeds))
+	for _, feed := range feeds {
+		name := kvFeedConsumerName(feed)
+		if previous, ok := names[name]; ok {
+			t.Fatalf("feeds %q and %q share consumer name %q", previous, feed.KeyPrefix, name)
+		}
+		names[name] = feed.KeyPrefix
+	}
+
+	assert.Equal(t, "KV_centrum_settings", kvFeedConsumerName(feeds[0]))
+	assert.Equal(t, "KV_centrum_units_spec", kvFeedConsumerName(feeds[3]))
+	assert.Equal(t, "KV_centrum_dispatches_assignments", kvFeedConsumerName(feeds[8]))
 }
 
 func TestFeedHubPublishesResyncEvent(t *testing.T) {
@@ -109,7 +128,7 @@ func TestFeedHubCoalescesDispatchMappingEvents(t *testing.T) {
 	defer srv.feedBroker.Unsubscribe(feed)
 
 	for _, job := range []string{"ambulance", "fire", "police"} {
-		srv.queueDispatchFeedEvent(job, &pbcentrum.StreamResponse{
+		srv.queueDispatchFeedEventContext(ctx, job, &pbcentrum.StreamResponse{
 			Change: &pbcentrum.StreamResponse_DispatchUpdated{
 				DispatchUpdated: &centrumdispatches.Dispatch{Id: 42},
 			},
@@ -117,16 +136,96 @@ func TestFeedHubCoalescesDispatchMappingEvents(t *testing.T) {
 	}
 
 	event := waitForFeedEvent(t, feed, func(event *feedEvent) bool {
-		return event.Response.GetDispatchUpdated().GetId() == 42
+		return event.Response.GetDispatchSpecUpdated().GetId() == 42
 	})
 	assert.Equal(t, []string{"ambulance", "fire", "police"}, event.Jobs)
 	assert.Equal(t, uint64(7), event.Response.GetKvRevision())
+}
 
-	select {
-	case duplicate := <-feed:
-		assert.Failf(t, "received duplicate dispatch event", "%+v", duplicate)
-	case <-time.After(feedCoalesceWindow * 2):
+func TestFeedHubDoesNotReuseSpecRevisionForComposedDispatchComponents(t *testing.T) {
+	t.Parallel()
+
+	ctx, cancel := context.WithCancel(t.Context())
+	defer cancel()
+	srv := &Server{
+		feedBroker: broker.NewWithResyncOnSlowSubscriber[*feedEvent](10),
+		metrics:    centrummetrics.Get(),
 	}
+	go srv.feedBroker.Start(ctx)
+
+	feed := srv.feedBroker.Subscribe()
+	defer srv.feedBroker.Unsubscribe(feed)
+
+	srv.queueDispatchFeedEventContext(ctx, "police", &pbcentrum.StreamResponse{
+		Change: &pbcentrum.StreamResponse_DispatchUpdated{
+			DispatchUpdated: &centrumdispatches.Dispatch{
+				Id:     42,
+				Status: &centrumdispatches.DispatchStatus{DispatchId: 42},
+			},
+		},
+	}, 101)
+
+	seen := map[string]uint64{}
+	deadline := time.NewTimer(time.Second)
+	defer deadline.Stop()
+	for len(seen) < 3 {
+		select {
+		case event := <-feed:
+			response := event.Response
+			switch {
+			case response.GetDispatchSpecUpdated() != nil:
+				seen["spec"] = response.GetKvRevision()
+			case response.GetDispatchAssignmentsUpdated() != nil:
+				seen["assignments"] = response.GetKvRevision()
+			case response.GetDispatchStatus() != nil:
+				seen["status"] = response.GetKvRevision()
+			}
+		case <-deadline.C:
+			require.FailNow(t, "timed out waiting for composed dispatch components")
+		}
+	}
+
+	require.Equal(t, uint64(101), seen["spec"])
+	require.Zero(t, seen["assignments"])
+	require.Zero(t, seen["status"])
+}
+
+func TestFeedHubPublishesDispatchComponentToEveryJob(t *testing.T) {
+	t.Parallel()
+
+	ctx, cancel := context.WithCancel(t.Context())
+	defer cancel()
+	srv := &Server{
+		feedBroker: broker.NewWithResyncOnSlowSubscriber[*feedEvent](10),
+		metrics:    centrummetrics.Get(),
+	}
+	go srv.feedBroker.Start(ctx)
+
+	feed := srv.feedBroker.Subscribe()
+	defer srv.feedBroker.Unsubscribe(feed)
+
+	spec := &centrumdispatches.DispatchSpec{
+		Id:   42,
+		Jobs: &centrum.JobList{Jobs: []*centrum.JobListEntry{{Name: "ambulance"}, {Name: "fire"}}},
+	}
+	config := slices.IndexFunc(feeds, func(feed feedCfg) bool {
+		return feed.StreamName == "centrum_dispatches" && feed.KeyPrefix == "spec"
+	})
+	require.GreaterOrEqual(t, config, 0)
+	jobs, err := feeds[config].Jobs(ctx, srv, "42", spec)
+	require.NoError(t, err)
+
+	response := &pbcentrum.StreamResponse{
+		Change: &pbcentrum.StreamResponse_DispatchSpecUpdated{DispatchSpecUpdated: spec},
+	}
+	for _, job := range jobs {
+		srv.queueDispatchFeedEventContext(ctx, job, response, 7)
+	}
+
+	event := waitForFeedEvent(t, feed, func(event *feedEvent) bool {
+		return event.Response.GetDispatchSpecUpdated().GetId() == 42
+	})
+	assert.Equal(t, []string{"ambulance", "fire"}, event.Jobs)
 }
 
 func TestFeedHubCoalescesUnitMappingEvents(t *testing.T) {
@@ -152,16 +251,12 @@ func TestFeedHubCoalescesUnitMappingEvents(t *testing.T) {
 	}
 
 	event := waitForFeedEvent(t, feed, func(event *feedEvent) bool {
-		return event.Response.GetUnitUpdated().GetId() == 42
+		return event.Response.GetUnitSpecUpdated().GetId() == 42
 	})
 	assert.Equal(t, []string{"ambulance", "fire", "police"}, event.Jobs)
 	assert.Equal(t, uint64(7), event.Response.GetKvRevision())
 
-	select {
-	case duplicate := <-feed:
-		assert.Failf(t, "received duplicate unit event", "%+v", duplicate)
-	case <-time.After(feedCoalesceWindow * 2):
-	}
+	// The composed update is fanned out into spec, members and status events.
 }
 
 func TestFeedHubPreservesDispatchUpdateBeforeDeletion(t *testing.T) {
@@ -178,17 +273,17 @@ func TestFeedHubPreservesDispatchUpdateBeforeDeletion(t *testing.T) {
 	feed := srv.feedBroker.Subscribe()
 	defer srv.feedBroker.Unsubscribe(feed)
 
-	srv.queueDispatchFeedEvent("ambulance", &pbcentrum.StreamResponse{
+	srv.queueDispatchFeedEventContext(ctx, "ambulance", &pbcentrum.StreamResponse{
 		Change: &pbcentrum.StreamResponse_DispatchUpdated{
 			DispatchUpdated: &centrumdispatches.Dispatch{Id: 42},
 		},
 	}, 7)
-	srv.queueDispatchFeedEvent("ambulance", &pbcentrum.StreamResponse{
+	srv.queueDispatchFeedEventContext(ctx, "ambulance", &pbcentrum.StreamResponse{
 		Change: &pbcentrum.StreamResponse_DispatchDeleted{DispatchDeleted: 42},
 	}, 8)
 
 	updated := waitForFeedEvent(t, feed, func(event *feedEvent) bool {
-		return event.Response.GetDispatchUpdated().GetId() == 42
+		return event.Response.GetDispatchSpecUpdated().GetId() == 42
 	})
 	deleted := waitForFeedEvent(t, feed, func(event *feedEvent) bool {
 		return event.Response.GetDispatchDeleted() == 42

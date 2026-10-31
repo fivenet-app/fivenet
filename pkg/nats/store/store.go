@@ -582,10 +582,6 @@ func (s *Store[T, U]) updateFromType(key string, incoming U, _ bool) U {
 		// which are absent from the incoming snapshot.
 		if !proto.Equal(current, incoming) {
 			proto.Reset(current)
-			// Use protobuf's merge after Reset rather than the generated custom
-			// Merge method. Some custom merge implementations assume optional
-			// destination fields are already allocated, which Reset intentionally
-			// clears.
 			proto.Merge(current, incoming)
 		}
 
@@ -1192,6 +1188,11 @@ func (k *KeyValueEntry[T, U]) Key() string {
 // Operation is the operation that was performed on the key.
 func (k *KeyValueEntry[T, U]) Operation() jetstream.KeyValueOp {
 	return k.operation
+}
+
+// Revision is the JetStream KV revision associated with this update.
+func (k *KeyValueEntry[T, U]) Revision() uint64 {
+	return k.revision
 }
 
 // Value is the value of the key that was retrieved.
