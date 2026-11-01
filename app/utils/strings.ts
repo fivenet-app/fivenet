@@ -1,6 +1,8 @@
 import { ColleagueProps } from '~~/gen/ts/resources/jobs/colleagues/colleagues';
 import type { UserProps } from '~~/gen/ts/resources/users/props/props';
 
+export const textEllipsisChar = '…';
+
 export function lowercaseFirstLetter(s: string): string {
     return s.charAt(0).toLowerCase() + s.slice(1);
 }
@@ -77,5 +79,5 @@ export function htmlPreviewSafe(html: string, maxLength: number): string {
         result += text;
     }
 
-    return result.trimEnd() + (result.length >= maxLength ? '…' : '');
+    return result.trimEnd() + (result.length >= maxLength ? textEllipsisChar : '');
 }

@@ -40,6 +40,7 @@ type VehiclesServiceClient interface {
 	// buf:lint:ignore RPC_RESPONSE_STANDARD_NAME
 	UploadVehicleFile(ctx context.Context, opts ...grpc.CallOption) (grpc.ClientStreamingClient[file.UploadFileRequest, file.UploadFileResponse], error)
 	ListVehicleFiles(ctx context.Context, in *ListVehicleFilesRequest, opts ...grpc.CallOption) (*ListVehicleFilesResponse, error)
+	// Requires DeleteVehicleFile and SetVehicleProps with the vehicle.files property.
 	DeleteVehicleFile(ctx context.Context, in *DeleteVehicleFileRequest, opts ...grpc.CallOption) (*DeleteVehicleFileResponse, error)
 }
 
@@ -126,6 +127,7 @@ type VehiclesServiceServer interface {
 	// buf:lint:ignore RPC_RESPONSE_STANDARD_NAME
 	UploadVehicleFile(grpc.ClientStreamingServer[file.UploadFileRequest, file.UploadFileResponse]) error
 	ListVehicleFiles(context.Context, *ListVehicleFilesRequest) (*ListVehicleFilesResponse, error)
+	// Requires DeleteVehicleFile and SetVehicleProps with the vehicle.files property.
 	DeleteVehicleFile(context.Context, *DeleteVehicleFileRequest) (*DeleteVehicleFileResponse, error)
 	mustEmbedUnimplementedVehiclesServiceServer()
 }

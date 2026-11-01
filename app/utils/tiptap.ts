@@ -3,6 +3,7 @@ import type { DOMOutputSpec, Mark as PMMark, Node as PMNode } from 'prosemirror-
 import { Fragment, h, type VNodeChild } from 'vue';
 import { Struct } from '~~/gen/ts/google/protobuf/struct';
 import { NodeType, type RichTextHtmlNode } from '~~/gen/ts/resources/common/content/content';
+import { textEllipsisChar } from './strings';
 
 export const emptyDoc = { type: 'doc', content: [] } as const;
 
@@ -170,7 +171,7 @@ type ExtractTextOptions = {
 const ExtractTextOptionsDEFAULTS: Required<ExtractTextOptions> = {
     blockSeparators: true,
     collapseWhitespace: true,
-    ellipsis: '…',
+    ellipsis: textEllipsisChar,
     limit: 150,
 };
 

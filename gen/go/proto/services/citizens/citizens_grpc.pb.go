@@ -56,6 +56,7 @@ type CitizensServiceClient interface {
 	// buf:lint:ignore RPC_REQUEST_STANDARD_NAME
 	// buf:lint:ignore RPC_RESPONSE_STANDARD_NAME
 	UploadCitizenFile(ctx context.Context, opts ...grpc.CallOption) (grpc.ClientStreamingClient[file.UploadFileRequest, file.UploadFileResponse], error)
+	// Requires DeleteCitizenFile and SetUserProps with the user.files property.
 	DeleteCitizenFile(ctx context.Context, in *DeleteCitizenFileRequest, opts ...grpc.CallOption) (*DeleteCitizenFileResponse, error)
 }
 
@@ -209,6 +210,7 @@ type CitizensServiceServer interface {
 	// buf:lint:ignore RPC_REQUEST_STANDARD_NAME
 	// buf:lint:ignore RPC_RESPONSE_STANDARD_NAME
 	UploadCitizenFile(grpc.ClientStreamingServer[file.UploadFileRequest, file.UploadFileResponse]) error
+	// Requires DeleteCitizenFile and SetUserProps with the user.files property.
 	DeleteCitizenFile(context.Context, *DeleteCitizenFileRequest) (*DeleteCitizenFileResponse, error)
 	mustEmbedUnimplementedCitizensServiceServer()
 }

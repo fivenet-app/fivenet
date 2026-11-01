@@ -1615,7 +1615,7 @@ const file_services_citizens_citizens_proto_rawDesc = "" +
 	"\auser_id\x18\x01 \x01(\x05R\x06userId\x12\x17\n" +
 	"\afile_id\x18\x02 \x01(\x03R\x06fileId\x12\x1e\n" +
 	"\x06reason\x18\x03 \x01(\tB\x06\xda\xf3\x18\x02\b\x01R\x06reason\"\x1b\n" +
-	"\x19DeleteCitizenFileResponse2\x8b\x14\n" +
+	"\x19DeleteCitizenFileResponse2\x99\x14\n" +
 	"\x0fCitizensService\x12y\n" +
 	"\fListCitizens\x12&.services.citizens.ListCitizensRequest\x1a'.services.citizens.ListCitizensResponse\"\x18\xd2\xf3\x18\x14\b\x01:\x10\n" +
 	"\n" +
@@ -1634,12 +1634,12 @@ const file_services_citizens_citizens_proto_rawDesc = "" +
 	"\rDeleteMugshot\x12'.services.citizens.DeleteMugshotRequest\x1a(.services.citizens.DeleteMugshotResponse\"\x14\xd2\xf3\x18\x10\b\x01\"\fSetUserProps\x12\x81\x01\n" +
 	"\x10ListCitizenFiles\x12*.services.citizens.ListCitizenFilesRequest\x1a+.services.citizens.ListCitizenFilesResponse\"\x14\xd2\xf3\x18\x10\b\x01\"\fListCitizens\x12r\n" +
 	"\x11UploadCitizenFile\x12!.resources.file.UploadFileRequest\x1a\".resources.file.UploadFileResponse\"\x14\xd2\xf3\x18\x10\b\x01\"\fSetUserProps(\x01\x12v\n" +
-	"\x11DeleteCitizenFile\x12+.services.citizens.DeleteCitizenFileRequest\x1a,.services.citizens.DeleteCitizenFileResponse\"\x06\xd2\xf3\x18\x02\b\x01\x1a\xdc\t\xea\xf3\x18\xd7\t\b\x1e\x12\x1ei-mdi-account-multiple-outline2=\b\x02\x12\x10user.dateofbirth\x18\x01 \x01*\x14common.date_of_birthr\bpersonalxd\xa0\x01\x012,\b\x02\x12\buser.sex\x18\x01 \x01*\n" +
-	"common.sexr\bpersonalx\xc8\x01\xa0\x01\x0125\b\x02\x12\vuser.height\x18\x03 \x01*\rcommon.heightr\bpersonalx\xac\x02\x88\x01\x04\xa0\x01\x012>\b\x02\x12\x11user.phone_number\x18\x01 \x01*\x13common.phone_number@\x01r\acontactxd\x88\x01\x032/\b\x02\x12\n" +
-	"user.visum\x18\x02 \x01*\fcommon.visumr\acontactx\xac\x02\xa0\x01\x0121\b\x02\x12\ruser.licenses\x18\x01 \x01*\x0ecommon.licenser\blicensesxd28\b\x02\x12\vuser.wanted\x18\x04 \x01*\rcommon.wanted@\x01H\x01P\x02r\x06statusxd\x80\x01\x01\x98\x01\x032/\b\x02\x12\buser.job\x18\x01 \x01*\n" +
+	"\x11DeleteCitizenFile\x12+.services.citizens.DeleteCitizenFileRequest\x1a,.services.citizens.DeleteCitizenFileResponse\"\x06\xd2\xf3\x18\x02\b\x01\x1a\xea\t\xea\xf3\x18\xe5\t\b\x1e\x12\x1ei-mdi-account-multiple-outline2?\b\x02\x12\x10user.dateofbirth\x18\x01 \x01*\x14common.date_of_birthP\x02r\bpersonalxd\xa0\x01\x012.\b\x02\x12\buser.sex\x18\x01 \x01*\n" +
+	"common.sexP\x02r\bpersonalx\xc8\x01\xa0\x01\x0127\b\x02\x12\vuser.height\x18\x03 \x01*\rcommon.heightP\x02r\bpersonalx\xac\x02\x88\x01\x04\xa0\x01\x012@\b\x02\x12\x11user.phone_number\x18\x01 \x01*\x13common.phone_number@\x01P\x02r\acontactxd\x88\x01\x032/\b\x02\x12\n" +
+	"user.visum\x18\x02 \x01*\fcommon.visumr\acontactx\xac\x02\xa0\x01\x0123\b\x02\x12\ruser.licenses\x18\x01 \x01*\x0ecommon.licenseP\x02r\blicensesxd28\b\x02\x12\vuser.wanted\x18\x04 \x01*\rcommon.wanted@\x01H\x01P\x02r\x06statusxd\x80\x01\x01\x98\x01\x032/\b\x02\x12\buser.job\x18\x01 \x01*\n" +
 	"common.job@\x01r\x06statusx\x90\x03\x80\x01\x01\x98\x01\x032[\b\x02\x12\x1euser.traffic_infraction_points\x18\x02 \x01* common.traffic_infraction_points@\x01r\x06statusx\xc8\x01\x80\x01\x01\x88\x01\x0529\b\x02\x12\x0fuser.open_fines\x18\x02 \x01*\vcommon.fine@\x01H\x02r\x06statusx\xac\x02\x80\x01\x01\x88\x01\r29\b\x02\x12\x0fuser.blood_type\x18\x01 \x01*\x11common.blood_type@\x01r\bpersonalx\x90\x0321\b\x02\x12\fuser.mugshot\x18\x01 \x01*\x0ecommon.mugshotr\bpersonalx\xf4\x032.\b\x02\x12\n" +
-	"user.files\x18\x01 \x01*\vcommon.fileP\x02r\bpersonalx\xd8\x042,\b\x02\x12\vuser.labels\x18\x01 \x01*\fcommon.labelr\x06labelsx\xf4\x0320\b\x02\x12\n" +
-	"user.email\x18\x01 \x01*\vcommon.mail@\x01r\acontactx\xc8\x01\x88\x01\x02:H\b\x02\x12\bpersonal\x1a8components.settings.property_definitions.groups.personal d:G\b\x02\x12\acontact\x1a7components.settings.property_definitions.groups.contact \xc8\x01:E\b\x02\x12\x06status\x1a6components.settings.property_definitions.groups.status \xac\x02:E\b\x02\x12\x06labels\x1a6components.settings.property_definitions.groups.labels \x90\x03:I\b\x02\x12\blicenses\x1a8components.settings.property_definitions.groups.licenses \xf4\x03BNZLgithub.com/fivenet-app/fivenet/v2026/gen/go/proto/services/citizens;citizensb\x06proto3"
+	"user.files\x18\x01 \x01*\vcommon.fileP\x02r\bpersonalx\xd8\x042.\b\x02\x12\vuser.labels\x18\x01 \x01*\fcommon.labelP\x02r\x06labelsx\xf4\x0322\b\x02\x12\n" +
+	"user.email\x18\x01 \x01*\vcommon.mail@\x01P\x02r\acontactx\xc8\x01\x88\x01\x02:H\b\x02\x12\bpersonal\x1a8components.settings.property_definitions.groups.personal d:G\b\x02\x12\acontact\x1a7components.settings.property_definitions.groups.contact \xc8\x01:E\b\x02\x12\x06status\x1a6components.settings.property_definitions.groups.status \xac\x02:E\b\x02\x12\x06labels\x1a6components.settings.property_definitions.groups.labels \x90\x03:I\b\x02\x12\blicenses\x1a8components.settings.property_definitions.groups.licenses \xf4\x03BNZLgithub.com/fivenet-app/fivenet/v2026/gen/go/proto/services/citizens;citizensb\x06proto3"
 
 var file_services_citizens_citizens_proto_msgTypes = make([]protoimpl.MessageInfo, 17)
 var file_services_citizens_citizens_proto_goTypes = []any{

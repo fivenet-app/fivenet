@@ -21,7 +21,7 @@ export const LOCAL_ORIGIN = Symbol('vue-yjs-local');
  * structure.
  */
 export interface YjsSyncOptions {
-    /** A provider that emits `synced` (WebsocketProvider, HocuspocusProvider …) and has authoritative prop */
+    /** A provider that emits `synced` (WebsocketProvider, basically any provider as far as I know) and has authoritative prop */
     provider?: GrpcProvider;
 }
 

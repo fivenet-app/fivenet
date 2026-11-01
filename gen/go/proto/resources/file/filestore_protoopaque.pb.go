@@ -314,7 +314,8 @@ func (x *UploadMeta) SetParentKey(v string) {
 type UploadMeta_builder struct {
 	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
 
-	ParentId     int64
+	ParentId int64
+	// Namespace is a logical grouping of files, e.g. "documents", "wiki", "avatars", etc.
 	Namespace    string
 	OriginalName string
 	ContentType  string

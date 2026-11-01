@@ -10,6 +10,134 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
+func TestListTargetAccessScansAliasedColumns(t *testing.T) {
+	t.Parallel()
+
+	db, mock, err := sqlmock.New()
+	require.NoError(t, err)
+	t.Cleanup(func() { _ = db.Close() })
+
+	access := NewDocumentsSubjectObjectAccess(db)
+	mock.ExpectQuery(`(?s)SELECT.*subject_access_row\.id.*subject_access_row\.target_id.*subject_access_row\.access.*subject_access_row\.effect.*subject_access_row\.subject_type.*subject_access_row\.acl_job.*subject_access_row\.acl_minimum_grade.*subject_access_row\.acl_qualification_id.*subject_access_row\.subject_user_id.*subject_access_row\.user_job.*subject_access_row\.user_job_grade.*subject_access_row\.user_firstname.*subject_access_row\.user_lastname.*subject_access_row\.user_dateofbirth.*subject_access_row\.user_phone_number.*FROM fivenet_documents_access`).
+		WithArgs(int64(10)).
+		WillReturnRows(sqlmock.NewRows([]string{
+			"subject_access_row.id",
+			"subject_access_row.target_id",
+			"subject_access_row.access",
+			"subject_access_row.effect",
+			"subject_access_row.subject_type",
+			"subject_access_row.acl_job",
+			"subject_access_row.acl_minimum_grade",
+			"subject_access_row.acl_qualification_id",
+			"subject_access_row.subject_user_id",
+			"subject_access_row.user_job",
+			"subject_access_row.user_job_grade",
+			"subject_access_row.user_firstname",
+			"subject_access_row.user_lastname",
+			"subject_access_row.user_dateofbirth",
+			"subject_access_row.user_phone_number",
+		}).AddRow(
+			int64(1), int64(10), int32(documentsaccess.AccessLevel_ACCESS_LEVEL_EDIT), true,
+			int16(SubjectTypeUser), nil, nil, nil, int32(42), "police", int32(5), "Ada",
+			"Lovelace", "1815-12-10", "1234",
+		))
+
+	result, err := access.ListTargetAccess(t.Context(), db, 10, SubjectAccessOptions{})
+	require.NoError(t, err)
+	require.Len(t, result.GetUsers(), 1)
+	assert.Equal(t, int64(1), result.GetUsers()[0].GetId())
+	assert.Equal(t, int64(10), result.GetUsers()[0].GetTargetId())
+	assert.Equal(t, int32(42), result.GetUsers()[0].GetUserId())
+	require.NotNil(t, result.GetUsers()[0].GetUser())
+	assert.Equal(t, "Ada", result.GetUsers()[0].GetUser().GetFirstname())
+	assert.Equal(t, "1234", result.GetUsers()[0].GetUser().GetPhoneNumber())
+	require.NoError(t, mock.ExpectationsWereMet())
+}
+
+func TestListTargetsAccessGroupsAccessByTarget(t *testing.T) {
+	t.Parallel()
+
+	db, mock, err := sqlmock.New()
+	require.NoError(t, err)
+	t.Cleanup(func() { _ = db.Close() })
+
+	access := NewDocumentsSubjectObjectAccess(db)
+	mock.ExpectQuery(`(?s)SELECT.*FROM fivenet_documents_access.*IN \(\?, \?\)`).
+		WithArgs(int64(10), int64(20)).
+		WillReturnRows(sqlmock.NewRows([]string{
+			"subject_access_row.id",
+			"subject_access_row.target_id",
+			"subject_access_row.access",
+			"subject_access_row.effect",
+			"subject_access_row.subject_type",
+			"subject_access_row.acl_job",
+			"subject_access_row.acl_minimum_grade",
+			"subject_access_row.acl_qualification_id",
+			"subject_access_row.subject_user_id",
+			"subject_access_row.user_job",
+			"subject_access_row.user_job_grade",
+			"subject_access_row.user_firstname",
+			"subject_access_row.user_lastname",
+			"subject_access_row.user_dateofbirth",
+			"subject_access_row.user_phone_number",
+		}).AddRow(
+			int64(1), int64(10), int32(documentsaccess.AccessLevel_ACCESS_LEVEL_VIEW), true,
+			int16(SubjectTypeJobGrade), "police", int32(2), nil, nil, nil, nil, nil, nil, nil, nil,
+		).AddRow(
+			int64(2), int64(20), int32(documentsaccess.AccessLevel_ACCESS_LEVEL_EDIT), true,
+			int16(SubjectTypeJobGrade), "ems", int32(3), nil, nil, nil, nil, nil, nil, nil, nil,
+		))
+
+	result, err := access.ListTargetsAccess(
+		t.Context(),
+		db,
+		[]int64{10, 20},
+		SubjectAccessOptions{},
+	)
+	require.NoError(t, err)
+	require.Len(t, result, 2)
+	require.Len(t, result[10].GetJobs(), 1)
+	assert.Equal(t, "police", result[10].GetJobs()[0].GetJob())
+	require.Len(t, result[20].GetJobs(), 1)
+	assert.Equal(t, "ems", result[20].GetJobs()[0].GetJob())
+	require.NoError(t, mock.ExpectationsWereMet())
+}
+
+func TestListTargetsAccessDeduplicatesIDsAndIncludesEmptyTargets(t *testing.T) {
+	t.Parallel()
+
+	db, mock, err := sqlmock.New()
+	require.NoError(t, err)
+	t.Cleanup(func() { _ = db.Close() })
+
+	access := NewDocumentsSubjectObjectAccess(db)
+	mock.ExpectQuery(`(?s)SELECT.*FROM fivenet_documents_access.*IN \(\?, \?\)`).
+		WithArgs(int64(10), int64(20)).
+		WillReturnRows(sqlmock.NewRows([]string{
+			"subject_access_row.id", "subject_access_row.target_id", "subject_access_row.access",
+			"subject_access_row.effect", "subject_access_row.subject_type", "subject_access_row.acl_job",
+			"subject_access_row.acl_minimum_grade", "subject_access_row.acl_qualification_id",
+			"subject_access_row.subject_user_id", "subject_access_row.user_job",
+			"subject_access_row.user_job_grade", "subject_access_row.user_firstname",
+			"subject_access_row.user_lastname", "subject_access_row.user_dateofbirth",
+			"subject_access_row.user_phone_number",
+		}))
+
+	result, err := access.ListTargetsAccess(
+		t.Context(),
+		db,
+		[]int64{10, 20, 10},
+		SubjectAccessOptions{},
+	)
+	require.NoError(t, err)
+	require.Len(t, result, 2)
+	require.NotNil(t, result[10])
+	assert.Empty(t, result[10].GetJobs())
+	require.NotNil(t, result[20])
+	assert.Empty(t, result[20].GetUsers())
+	require.NoError(t, mock.ExpectationsWereMet())
+}
+
 func TestCreateDeniedAccessUsesSingleRow(t *testing.T) {
 	t.Parallel()
 

@@ -24,21 +24,21 @@ message UploadFileRequest {
 
 message UploadMeta {
   int64 parent_id = 1;
-  string namespace = 2 [
-    (buf.validate.field).string = {
-      min_len: 1
-      max_len: 64
-      pattern: "^[a-zA-Z0-9_-]+$"
-    }
-  ]; // "documents", "wiki", …
-  string original_name = 3 [(buf.validate.field).string = {min_len: 1, max_len: 255}];
+  // Namespace is a logical grouping of files, e.g. "documents", "wiki", "avatars", etc.
+  string namespace = 2 [(buf.validate.field).string = {
+    min_len: 1
+    max_len: 64
+    pattern: "^[a-zA-Z0-9_-]+$"
+  }];
+  string original_name = 3 [(buf.validate.field).string = {
+    min_len: 1
+    max_len: 255
+  }];
   string content_type = 4 [(buf.validate.field).string.max_len = 127]; // optional - server re-validates
-  int64 size = 5 [
-    (buf.validate.field).int64 = {
-      gt: 0
-      lte: 5242880
-    }
-  ]; // Size in bytes; the largest configured upload limit is 5 MiB
+  int64 size = 5 [(buf.validate.field).int64 = {
+    gt: 0
+    lte: 5242880
+  }]; // Size in bytes; the largest configured upload limit is 5 MiB
 
   string reason = 6 [
     (buf.validate.field).string = {

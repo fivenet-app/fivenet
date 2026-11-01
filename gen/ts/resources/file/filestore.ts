@@ -46,9 +46,11 @@ export interface UploadMeta {
      */
     parentId: number;
     /**
+     * Namespace is a logical grouping of files, e.g. "documents", "wiki", "avatars", etc.
+     *
      * @generated from protobuf field: string namespace = 2
      */
-    namespace: string; // "documents", "wiki", …
+    namespace: string;
     /**
      * @generated from protobuf field: string original_name = 3
      */

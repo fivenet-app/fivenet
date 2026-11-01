@@ -50,6 +50,8 @@ export interface IVehiclesServiceClient {
      */
     listVehicleFiles(input: ListVehicleFilesRequest, options?: RpcOptions): UnaryCall<ListVehicleFilesRequest, ListVehicleFilesResponse>;
     /**
+     * Requires DeleteVehicleFile and SetVehicleProps with the vehicle.files property.
+     *
      * @generated from protobuf rpc: DeleteVehicleFile
      */
     deleteVehicleFile(input: DeleteVehicleFileRequest, options?: RpcOptions): UnaryCall<DeleteVehicleFileRequest, DeleteVehicleFileResponse>;
@@ -103,6 +105,8 @@ export class VehiclesServiceClient implements IVehiclesServiceClient, ServiceInf
         return stackIntercept<ListVehicleFilesRequest, ListVehicleFilesResponse>("unary", this._transport, method, opt, input);
     }
     /**
+     * Requires DeleteVehicleFile and SetVehicleProps with the vehicle.files property.
+     *
      * @generated from protobuf rpc: DeleteVehicleFile
      */
     deleteVehicleFile(input: DeleteVehicleFileRequest, options?: RpcOptions): UnaryCall<DeleteVehicleFileRequest, DeleteVehicleFileResponse> {

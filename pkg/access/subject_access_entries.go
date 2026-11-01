@@ -46,6 +46,37 @@ func (a *SubjectObjectAccess) ListTargetAccess(
 	targetID int64,
 	opts SubjectAccessOptions,
 ) (*resourcesaccess.Access, error) {
+	accessByTarget, err := a.ListTargetsAccess(ctx, tx, []int64{targetID}, opts)
+	if err != nil {
+		return nil, err
+	}
+
+	return accessByTarget[targetID], nil
+}
+
+// ListTargetsAccess returns access entries grouped by target ID. Every requested
+// target ID is present in the result, including targets without access entries.
+func (a *SubjectObjectAccess) ListTargetsAccess(
+	ctx context.Context,
+	tx qrm.DB,
+	targetIDs []int64,
+	opts SubjectAccessOptions,
+) (map[int64]*resourcesaccess.Access, error) {
+	accessByTarget := make(map[int64]*resourcesaccess.Access, len(targetIDs))
+	targetIDExpressions := make([]mysql.Expression, 0, len(targetIDs))
+	for _, targetID := range targetIDs {
+		if _, exists := accessByTarget[targetID]; exists {
+			continue
+		}
+
+		accessByTarget[targetID] = nil
+		targetIDExpressions = append(targetIDExpressions, mysql.Int64(targetID))
+	}
+
+	if len(targetIDExpressions) == 0 {
+		return accessByTarget, nil
+	}
+
 	tAccess := a.accessTable
 	tSubjects := table.FivenetACLSubjects.AS("acl_subject")
 	tJobGrade := table.FivenetACLSubjectJobGradeScopes.AS("subject_job_grade")
@@ -90,8 +121,8 @@ func (a *SubjectObjectAccess) ListTargetAccess(
 				tUsers.ID.EQ(tUserSubjects.UserID),
 			),
 		).
-		WHERE(columns.TargetID.EQ(mysql.Int64(targetID))).
-		ORDER_BY(columns.ID.ASC())
+		WHERE(columns.TargetID.IN(targetIDExpressions...)).
+		ORDER_BY(columns.TargetID.ASC(), columns.ID.ASC())
 
 	var rows []subjectAccessRow
 	if err := stmt.QueryContext(ctx, tx, &rows); err != nil {
@@ -100,7 +131,16 @@ func (a *SubjectObjectAccess) ListTargetAccess(
 		}
 	}
 
-	return subjectAccessRowsToProto(rows, opts), nil
+	rowsByTarget := make(map[int64][]subjectAccessRow, len(accessByTarget))
+	for _, row := range rows {
+		rowsByTarget[row.TargetID] = append(rowsByTarget[row.TargetID], row)
+	}
+
+	for targetID := range accessByTarget {
+		accessByTarget[targetID] = subjectAccessRowsToProto(rowsByTarget[targetID], opts)
+	}
+
+	return accessByTarget, nil
 }
 
 func (a *SubjectObjectAccess) ReplaceTargetAccess(

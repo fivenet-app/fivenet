@@ -4702,7 +4702,7 @@ Policy snapshot applied to a specific version
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | `parent_id` | [int64](#int64) |  |  |
-| `namespace` | [string](#string) |  | "documents", "wiki", … |
+| `namespace` | [string](#string) |  | Namespace is a logical grouping of files, e.g. "documents", "wiki", "avatars", etc. |
 | `original_name` | [string](#string) |  |  |
 | `content_type` | [string](#string) |  | optional - server re-validates |
 | `size` | [int64](#int64) |  | Size in bytes; the largest configured upload limit is 5 MiB |
@@ -10099,7 +10099,7 @@ CitizenFile is a restricted investigation attachment. The public profile avatar 
 | `DeleteMugshot` | [DeleteMugshotRequest](#servicescitizensDeleteMugshotRequest) | [DeleteMugshotResponse](#servicescitizensDeleteMugshotResponse) | |
 | `ListCitizenFiles` | [ListCitizenFilesRequest](#servicescitizensListCitizenFilesRequest) | [ListCitizenFilesResponse](#servicescitizensListCitizenFilesResponse) | |
 | `UploadCitizenFile` | [.resources.file.UploadFileRequest](#resourcesfileUploadFileRequest) stream | [.resources.file.UploadFileResponse](#resourcesfileUploadFileResponse) |buf:lint:ignore RPC_REQUEST_RESPONSE_UNIQUE buf:lint:ignore RPC_REQUEST_STANDARD_NAME buf:lint:ignore RPC_RESPONSE_STANDARD_NAME |
-| `DeleteCitizenFile` | [DeleteCitizenFileRequest](#servicescitizensDeleteCitizenFileRequest) | [DeleteCitizenFileResponse](#servicescitizensDeleteCitizenFileResponse) | |
+| `DeleteCitizenFile` | [DeleteCitizenFileRequest](#servicescitizensDeleteCitizenFileRequest) | [DeleteCitizenFileResponse](#servicescitizensDeleteCitizenFileResponse) |Requires DeleteCitizenFile and SetUserProps with the user.files property. |
 
  <!-- end services -->
 
@@ -16539,7 +16539,7 @@ Sync Service handles the sync of data (e.g., users, jobs) to this FiveNet instan
 | `ListVehicleActivity` | [ListVehicleActivityRequest](#servicesvehiclesListVehicleActivityRequest) | [ListVehicleActivityResponse](#servicesvehiclesListVehicleActivityResponse) | |
 | `UploadVehicleFile` | [.resources.file.UploadFileRequest](#resourcesfileUploadFileRequest) stream | [.resources.file.UploadFileResponse](#resourcesfileUploadFileResponse) |buf:lint:ignore RPC_REQUEST_RESPONSE_UNIQUE buf:lint:ignore RPC_REQUEST_STANDARD_NAME buf:lint:ignore RPC_RESPONSE_STANDARD_NAME |
 | `ListVehicleFiles` | [ListVehicleFilesRequest](#servicesvehiclesListVehicleFilesRequest) | [ListVehicleFilesResponse](#servicesvehiclesListVehicleFilesResponse) | |
-| `DeleteVehicleFile` | [DeleteVehicleFileRequest](#servicesvehiclesDeleteVehicleFileRequest) | [DeleteVehicleFileResponse](#servicesvehiclesDeleteVehicleFileResponse) | |
+| `DeleteVehicleFile` | [DeleteVehicleFileRequest](#servicesvehiclesDeleteVehicleFileRequest) | [DeleteVehicleFileResponse](#servicesvehiclesDeleteVehicleFileResponse) |Requires DeleteVehicleFile and SetVehicleProps with the vehicle.files property. |
 
  <!-- end services -->
 

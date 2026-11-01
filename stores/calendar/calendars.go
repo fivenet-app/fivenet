@@ -46,18 +46,22 @@ func (s *Store) ListCalendars(
 	}
 
 	if !q.OnlyPublic {
-		// FIXME temporary solution to have the access field populated for clients to decide user access
-		// E.g., batching the look up(s) would be fine as well instead of doing one lookup per calendar
+		calendarIDs := make([]int64, 0, len(calendars))
 		for _, calendar := range calendars {
-			access, err := s.ListTargetAccess(
-				ctx,
-				calendar.GetId(),
-				birthdaySyncSubjectAccessOptions,
-			)
-			if err != nil {
-				return nil, err
-			}
-			calendar.SetAccess(access)
+			calendarIDs = append(calendarIDs, calendar.GetId())
+		}
+
+		accessByCalendarID, err := s.ListTargetsAccess(
+			ctx,
+			calendarIDs,
+			birthdaySyncSubjectAccessOptions,
+		)
+		if err != nil {
+			return nil, err
+		}
+
+		for _, calendar := range calendars {
+			calendar.SetAccess(accessByCalendarID[calendar.GetId()])
 		}
 	}
 

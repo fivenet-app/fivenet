@@ -270,7 +270,7 @@ export function dispatchTimeToBadge(
 
     // Elapsed time in seconds since dispatch
     const elapsed = (Date.now() - toDate(date).getTime()) / 1000;
-    // Fraction of max elapsed (clamped 0…1)
+    // Fraction of max elapsed (clamped 0...1)
     const over = Math.min(Math.max(elapsed / maxTime, 0), 1);
 
     // Pick one of the above based on over ∈ [0,1]
@@ -294,7 +294,7 @@ export function dispatchTimeToTextColorSidebar(
 
     // elapsed time in seconds since dispatch
     const elapsed = (now - toDate(date).getTime()) / 1000;
-    // fraction of max elapsed (clamped 0…1)
+    // fraction of max elapsed (clamped 0...1)
     const over = Math.min(Math.max(elapsed / maxTime, 0), 1);
 
     // Pick the right stop

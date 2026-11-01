@@ -41,7 +41,7 @@ export function useFileUploader(
         }
 
         // 2) derive scale & height
-        const scale = tgtW / img.width; // in (0, …]
+        const scale = tgtW / img.width; // in (0, ...)
         const [w, h] = [tgtW, Math.round(img.height * scale)];
 
         // Prepare canvases

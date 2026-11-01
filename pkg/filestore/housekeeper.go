@@ -178,7 +178,7 @@ func (h *Housekeeper) Run(ctx context.Context) (int64, error) {
 	//   (deleted_at IS NULL
 	//     AND NOT EXISTS (SELECT 1 FROM fivenet_documents_files WHERE file_id = f.id)
 	//     AND NOT EXISTS (SELECT 1 FROM fivenet_wiki_pages_files WHERE file_id = f.id)
-	//     AND … for each join table …
+	//     AND ... for each join table ...
 	//   )
 	//
 

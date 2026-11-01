@@ -84,6 +84,8 @@ export interface ICitizensServiceClient {
      */
     uploadCitizenFile(options?: RpcOptions): ClientStreamingCall<UploadFileRequest, UploadFileResponse>;
     /**
+     * Requires DeleteCitizenFile and SetUserProps with the user.files property.
+     *
      * @generated from protobuf rpc: DeleteCitizenFile
      */
     deleteCitizenFile(input: DeleteCitizenFileRequest, options?: RpcOptions): UnaryCall<DeleteCitizenFileRequest, DeleteCitizenFileResponse>;
@@ -180,6 +182,8 @@ export class CitizensServiceClient implements ICitizensServiceClient, ServiceInf
         return stackIntercept<UploadFileRequest, UploadFileResponse>("clientStreaming", this._transport, method, opt);
     }
     /**
+     * Requires DeleteCitizenFile and SetUserProps with the user.files property.
+     *
      * @generated from protobuf rpc: DeleteCitizenFile
      */
     deleteCitizenFile(input: DeleteCitizenFileRequest, options?: RpcOptions): UnaryCall<DeleteCitizenFileRequest, DeleteCitizenFileResponse> {

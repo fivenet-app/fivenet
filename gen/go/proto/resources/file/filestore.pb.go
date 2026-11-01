@@ -208,13 +208,14 @@ func (*UploadFileRequest_Meta) isUploadFileRequest_Payload() {}
 func (*UploadFileRequest_Data) isUploadFileRequest_Payload() {}
 
 type UploadMeta struct {
-	state        protoimpl.MessageState `protogen:"hybrid.v1"`
-	ParentId     int64                  `protobuf:"varint,1,opt,name=parent_id,json=parentId,proto3" json:"parent_id,omitempty"`
-	Namespace    string                 `protobuf:"bytes,2,opt,name=namespace,proto3" json:"namespace,omitempty"` // "documents", "wiki", …
-	OriginalName string                 `protobuf:"bytes,3,opt,name=original_name,json=originalName,proto3" json:"original_name,omitempty"`
-	ContentType  string                 `protobuf:"bytes,4,opt,name=content_type,json=contentType,proto3" json:"content_type,omitempty"` // optional - server re-validates
-	Size         int64                  `protobuf:"varint,5,opt,name=size,proto3" json:"size,omitempty"`                                 // Size in bytes; the largest configured upload limit is 5 MiB
-	Reason       string                 `protobuf:"bytes,6,opt,name=reason,proto3" json:"reason,omitempty"`
+	state    protoimpl.MessageState `protogen:"hybrid.v1"`
+	ParentId int64                  `protobuf:"varint,1,opt,name=parent_id,json=parentId,proto3" json:"parent_id,omitempty"`
+	// Namespace is a logical grouping of files, e.g. "documents", "wiki", "avatars", etc.
+	Namespace    string `protobuf:"bytes,2,opt,name=namespace,proto3" json:"namespace,omitempty"`
+	OriginalName string `protobuf:"bytes,3,opt,name=original_name,json=originalName,proto3" json:"original_name,omitempty"`
+	ContentType  string `protobuf:"bytes,4,opt,name=content_type,json=contentType,proto3" json:"content_type,omitempty"` // optional - server re-validates
+	Size         int64  `protobuf:"varint,5,opt,name=size,proto3" json:"size,omitempty"`                                 // Size in bytes; the largest configured upload limit is 5 MiB
+	Reason       string `protobuf:"bytes,6,opt,name=reason,proto3" json:"reason,omitempty"`
 	// String parent key for resources whose natural identifier is not numeric.
 	ParentKey     string `protobuf:"bytes,7,opt,name=parent_key,json=parentKey,proto3" json:"parent_key,omitempty"`
 	unknownFields protoimpl.UnknownFields
@@ -326,7 +327,8 @@ func (x *UploadMeta) SetParentKey(v string) {
 type UploadMeta_builder struct {
 	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
 
-	ParentId     int64
+	ParentId int64
+	// Namespace is a logical grouping of files, e.g. "documents", "wiki", "avatars", etc.
 	Namespace    string
 	OriginalName string
 	ContentType  string

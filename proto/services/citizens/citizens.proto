@@ -181,6 +181,7 @@ service CitizensService {
         scope: PROPERTY_SCOPE_USER
         key: "user.dateofbirth"
         value_type: PROPERTY_VALUE_TYPE_STRING
+        behavior: PROPERTY_BEHAVIOR_MANAGED
         enabled: true
         implicit: true
         display_key: "common.date_of_birth"
@@ -191,6 +192,7 @@ service CitizensService {
         scope: PROPERTY_SCOPE_USER
         key: "user.sex"
         value_type: PROPERTY_VALUE_TYPE_STRING
+        behavior: PROPERTY_BEHAVIOR_MANAGED
         enabled: true
         implicit: true
         display_key: "common.sex"
@@ -202,6 +204,7 @@ service CitizensService {
         key: "user.height"
         value_type: PROPERTY_VALUE_TYPE_NUMBER
         renderer: PROPERTY_RENDERER_HEIGHT
+        behavior: PROPERTY_BEHAVIOR_MANAGED
         enabled: true
         implicit: true
         display_key: "common.height"
@@ -213,6 +216,7 @@ service CitizensService {
         key: "user.phone_number"
         value_type: PROPERTY_VALUE_TYPE_STRING
         renderer: PROPERTY_RENDERER_PHONE
+        behavior: PROPERTY_BEHAVIOR_MANAGED
         enabled: true
         display_key: "common.phone_number"
         searchable: true
@@ -233,6 +237,7 @@ service CitizensService {
         scope: PROPERTY_SCOPE_USER
         key: "user.licenses"
         value_type: PROPERTY_VALUE_TYPE_STRING
+        behavior: PROPERTY_BEHAVIOR_MANAGED
         enabled: true
         display_key: "common.license"
         group_key: "licenses"
@@ -322,6 +327,7 @@ service CitizensService {
         scope: PROPERTY_SCOPE_USER
         key: "user.labels"
         value_type: PROPERTY_VALUE_TYPE_STRING
+        behavior: PROPERTY_BEHAVIOR_MANAGED
         enabled: true
         display_key: "common.label"
         group_key: "labels"
@@ -332,6 +338,7 @@ service CitizensService {
         key: "user.email"
         value_type: PROPERTY_VALUE_TYPE_STRING
         renderer: PROPERTY_RENDERER_EMAIL
+        behavior: PROPERTY_BEHAVIOR_MANAGED
         enabled: true
         display_key: "common.mail"
         searchable: true

@@ -79,6 +79,11 @@ type IStore interface {
 		calendarID int64,
 		options access.SubjectAccessOptions,
 	) (*calendaraccess.CalendarAccess, error)
+	ListTargetsAccess(
+		ctx context.Context,
+		calendarIDs []int64,
+		options access.SubjectAccessOptions,
+	) (map[int64]*calendaraccess.CalendarAccess, error)
 	CheckIfUserHasAccessToCalendar(
 		ctx context.Context,
 		calendarID int64,
@@ -239,4 +244,12 @@ func (s *Store) ListTargetAccess(
 	options access.SubjectAccessOptions,
 ) (*calendaraccess.CalendarAccess, error) {
 	return s.access.ListTargetAccess(ctx, s.db, calendarID, options)
+}
+
+func (s *Store) ListTargetsAccess(
+	ctx context.Context,
+	calendarIDs []int64,
+	options access.SubjectAccessOptions,
+) (map[int64]*calendaraccess.CalendarAccess, error) {
+	return s.access.ListTargetsAccess(ctx, s.db, calendarIDs, options)
 }
