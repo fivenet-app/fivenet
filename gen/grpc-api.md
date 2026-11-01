@@ -16247,6 +16247,61 @@ Response containing the number of dispatches closed for the user.
 
 
 
+### services.sync.SetUserPropertiesRequest
+Applies managed and generic custom user properties.
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `user_id` | [int32](#int32) |  |  |
+| `managed_props` | [resources.users.props.UserProps](#resourcesuserspropsUserProps) | optional | Only Sync-writable managed fields are accepted. Source-synchronized character fields are rejected. |
+| `property_changes` | [resources.properties.PropertyChange](#resourcespropertiesPropertyChange) | repeated |  |
+| `reason` | [string](#string) | optional |  |
+| `source_user` | [SourceUser](#servicessyncSourceUser) | optional |  |
+
+
+
+
+
+### services.sync.SetUserPropertiesResponse
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `user_props` | [resources.users.props.UserProps](#resourcesuserspropsUserProps) |  |  |
+
+
+
+
+
+### services.sync.SetVehiclePropertiesRequest
+Applies managed and generic custom vehicle properties.
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `managed_props` | [resources.vehicles.props.VehicleProps](#resourcesvehiclespropsVehicleProps) |  | Only Sync-writable managed fields are accepted. |
+| `property_changes` | [resources.properties.PropertyChange](#resourcespropertiesPropertyChange) | repeated |  |
+| `reason` | [string](#string) | optional |  |
+| `source_user` | [SourceUser](#servicessyncSourceUser) | optional |  |
+
+
+
+
+
+### services.sync.SetVehiclePropertiesResponse
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `vehicle_props` | [resources.vehicles.props.VehicleProps](#resourcesvehiclespropsVehicleProps) |  |  |
+
+
+
+
+
 ### services.sync.SetVehiclePropsRequest
 
 
@@ -16355,10 +16410,12 @@ Sync Service handles the sync of data (e.g., users, jobs) to this FiveNet instan
 | `AddAccountUpdate` | [AddAccountUpdateRequest](#servicessyncAddAccountUpdateRequest) | [AddActivityResponse](#servicessyncAddActivityResponse) |Record an account update activity. |
 | `AddUserUpdate` | [AddUserUpdateRequest](#servicessyncAddUserUpdateRequest) | [AddActivityResponse](#servicessyncAddActivityResponse) |Record a user update activity. |
 | `AddUserActivity` | [AddUserActivityRequest](#servicessyncAddUserActivityRequest) | [AddActivityResponse](#servicessyncAddActivityResponse) |Record a user activity entry. |
-| `AddUserProps` | [AddUserPropsRequest](#servicessyncAddUserPropsRequest) | [AddActivityResponse](#servicessyncAddActivityResponse) |Record user props changes. |
+| `AddUserProps` | [AddUserPropsRequest](#servicessyncAddUserPropsRequest) | [AddActivityResponse](#servicessyncAddActivityResponse) |Deprecated: Record legacy managed user props changes. |
+| `SetUserProperties` | [SetUserPropertiesRequest](#servicessyncSetUserPropertiesRequest) | [SetUserPropertiesResponse](#servicessyncSetUserPropertiesResponse) |Apply managed and generic custom user property changes. |
 | `GetUserProps` | [GetUserPropsRequest](#servicessyncGetUserPropsRequest) | [GetUserPropsResponse](#servicessyncGetUserPropsResponse) |Retrieve user props. |
 | `GetVehicleProps` | [GetVehiclePropsRequest](#servicessyncGetVehiclePropsRequest) | [GetVehiclePropsResponse](#servicessyncGetVehiclePropsResponse) |Retrieve vehicle props. |
-| `SetVehicleProps` | [SetVehiclePropsRequest](#servicessyncSetVehiclePropsRequest) | [SetVehiclePropsResponse](#servicessyncSetVehiclePropsResponse) |Update vehicle props. |
+| `SetVehicleProps` | [SetVehiclePropsRequest](#servicessyncSetVehiclePropsRequest) | [SetVehiclePropsResponse](#servicessyncSetVehiclePropsResponse) |Deprecated: Update legacy managed vehicle props. |
+| `SetVehicleProperties` | [SetVehiclePropertiesRequest](#servicessyncSetVehiclePropertiesRequest) | [SetVehiclePropertiesResponse](#servicessyncSetVehiclePropertiesResponse) |Apply managed and generic custom vehicle property changes. |
 | `AddColleagueActivity` | [AddColleagueActivityRequest](#servicessyncAddColleagueActivityRequest) | [AddActivityResponse](#servicessyncAddActivityResponse) |Record a colleague activity entry. |
 | `AddColleagueProps` | [AddColleaguePropsRequest](#servicessyncAddColleaguePropsRequest) | [AddActivityResponse](#servicessyncAddActivityResponse) |Record colleague props changes. |
 | `AddJobTimeclock` | [AddJobTimeclockRequest](#servicessyncAddJobTimeclockRequest) | [AddActivityResponse](#servicessyncAddActivityResponse) |Record a job timeclock entry. |

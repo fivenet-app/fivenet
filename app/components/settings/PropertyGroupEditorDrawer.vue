@@ -73,10 +73,20 @@ async function close(): Promise<void> {
 
         <template #body>
             <UForm ref="formRef" class="flex flex-col gap-4" :schema="schema" :state="editor" @submit="submit">
-                <UFormField name="key" :label="t('components.settings.property_definitions.group_key')" required>
+                <UFormField
+                    name="key"
+                    :label="t('components.settings.property_definitions.group_key')"
+                    :description="t('components.settings.property_definitions.group_key_description')"
+                    required
+                >
                     <UInput v-model="editor.key" class="w-full" :disabled="isEditing" />
                 </UFormField>
-                <UFormField name="label" :label="t('components.settings.property_definitions.group_label')" required>
+                <UFormField
+                    name="label"
+                    :label="t('components.settings.property_definitions.group_label')"
+                    :description="t('components.settings.property_definitions.group_label_description')"
+                    required
+                >
                     <UInput v-model="editor.label" class="w-full" />
                 </UFormField>
             </UForm>

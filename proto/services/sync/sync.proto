@@ -11,6 +11,7 @@ import "resources/jobs/colleagues/activity/activity.proto";
 import "resources/jobs/jobs.proto";
 import "resources/livemap/coords.proto";
 import "resources/livemap/markers/marker_marker.proto";
+import "resources/properties/properties.proto";
 import "resources/sync/activity/activity.proto";
 import "resources/sync/data/data.proto";
 import "resources/timestamp/timestamp.proto";
@@ -122,6 +123,24 @@ message AddUserPropsRequest {
   optional SourceUser source_user = 2;
 }
 
+// Applies managed and generic custom user properties.
+message SetUserPropertiesRequest {
+  int32 user_id = 1 [(buf.validate.field).int32.gt = 0];
+  // Only Sync-writable managed fields are accepted. Source-synchronized
+  // character fields are rejected.
+  optional resources.users.props.UserProps managed_props = 2;
+  repeated resources.properties.PropertyChange property_changes = 3 [(buf.validate.field).repeated.max_items = 20];
+  optional string reason = 4 [
+    (buf.validate.field).string.max_len = 255,
+    (codegen.sanitizer.sanitizer) = {enabled: true}
+  ];
+  optional SourceUser source_user = 5;
+}
+
+message SetUserPropertiesResponse {
+  resources.users.props.UserProps user_props = 1;
+}
+
 message GetUserPropsRequest {
   int32 user_id = 1 [(buf.validate.field).int32.gt = 0];
 }
@@ -148,6 +167,22 @@ message SetVehiclePropsRequest {
 }
 
 message SetVehiclePropsResponse {
+  resources.vehicles.props.VehicleProps vehicle_props = 1;
+}
+
+// Applies managed and generic custom vehicle properties.
+message SetVehiclePropertiesRequest {
+  // Only Sync-writable managed fields are accepted.
+  resources.vehicles.props.VehicleProps managed_props = 1 [(buf.validate.field).required = true];
+  repeated resources.properties.PropertyChange property_changes = 2 [(buf.validate.field).repeated.max_items = 20];
+  optional string reason = 3 [
+    (buf.validate.field).string.max_len = 255,
+    (codegen.sanitizer.sanitizer) = {enabled: true}
+  ];
+  optional SourceUser source_user = 4;
+}
+
+message SetVehiclePropertiesResponse {
   resources.vehicles.props.VehicleProps vehicle_props = 1;
 }
 
@@ -339,14 +374,22 @@ service SyncService {
   rpc AddUserUpdate(AddUserUpdateRequest) returns (AddActivityResponse);
   // Record a user activity entry.
   rpc AddUserActivity(AddUserActivityRequest) returns (AddActivityResponse);
-  // Record user props changes.
-  rpc AddUserProps(AddUserPropsRequest) returns (AddActivityResponse);
+  // Deprecated: Record legacy managed user props changes.
+  rpc AddUserProps(AddUserPropsRequest) returns (AddActivityResponse) {
+    option deprecated = true;
+  }
+  // Apply managed and generic custom user property changes.
+  rpc SetUserProperties(SetUserPropertiesRequest) returns (SetUserPropertiesResponse);
   // Retrieve user props.
   rpc GetUserProps(GetUserPropsRequest) returns (GetUserPropsResponse);
   // Retrieve vehicle props.
   rpc GetVehicleProps(GetVehiclePropsRequest) returns (GetVehiclePropsResponse);
-  // Update vehicle props.
-  rpc SetVehicleProps(SetVehiclePropsRequest) returns (SetVehiclePropsResponse);
+  // Deprecated: Update legacy managed vehicle props.
+  rpc SetVehicleProps(SetVehiclePropsRequest) returns (SetVehiclePropsResponse) {
+    option deprecated = true;
+  }
+  // Apply managed and generic custom vehicle property changes.
+  rpc SetVehicleProperties(SetVehiclePropertiesRequest) returns (SetVehiclePropertiesResponse);
   // Record a colleague activity entry.
   rpc AddColleagueActivity(AddColleagueActivityRequest) returns (AddActivityResponse);
   // Record colleague props changes.

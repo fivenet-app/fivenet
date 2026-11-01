@@ -8,6 +8,7 @@ import (
 
 	colleaguesactivity "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/jobs/colleagues/activity"
 	jobstimeclock "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/jobs/timeclock"
+	properties "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/properties"
 	activity "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/sync/activity"
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/timestamp"
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/users"
@@ -15,6 +16,7 @@ import (
 	pbcitizens "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/citizens"
 	pbsync "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/sync"
 	"github.com/fivenet-app/fivenet/v2026/pkg/dbutils"
+	propertyregistry "github.com/fivenet-app/fivenet/v2026/pkg/properties"
 	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
 	citizensstore "github.com/fivenet-app/fivenet/v2026/stores/citizens"
 	vehiclesstore "github.com/fivenet-app/fivenet/v2026/stores/vehicles"
@@ -118,6 +120,89 @@ func (s *Store) AddUserProps(
 	return &pbsync.AddActivityResponse{}, nil
 }
 
+// SetUserProperties applies managed and generic property changes from a
+// trusted Sync client.
+func (s *Store) SetUserProperties(
+	ctx context.Context,
+	req *pbsync.SetUserPropertiesRequest,
+) (*pbsync.SetUserPropertiesResponse, error) {
+	if managedProps := req.GetManagedProps(); managedProps != nil &&
+		(managedProps.BloodType != nil || managedProps.Email != nil || managedProps.Mugshot != nil ||
+			managedProps.GetProperties() != nil) {
+		return nil, errors.New("source-synchronized or generic managed properties are not supported")
+	}
+	if err := propertyregistry.ValidateCustomPropertyChanges(
+		ctx,
+		properties.PropertyScope_PROPERTY_SCOPE_USER,
+		req.GetPropertyChanges(),
+		func(string) bool { return true },
+		s.citizensStore.ResolvePropertyDefinitions,
+	); err != nil {
+		return nil, fmt.Errorf("failed to validate user property changes: %w", err)
+	}
+
+	changes := make([]citizensstore.PropertyChange, 0, len(req.GetPropertyChanges()))
+	for _, change := range req.GetPropertyChanges() {
+		if change.GetValue() == nil {
+			changes = append(changes, citizensstore.PropertyChange{
+				Property: &properties.Property{Key: change.GetKey()},
+				Delete:   true,
+			})
+			continue
+		}
+		changes = append(changes, citizensstore.PropertyChange{
+			Property: &properties.Property{Key: change.GetKey(), Value: change.GetValue()},
+		})
+	}
+
+	var sourceUserID *int32
+	if req.GetSourceUser() != nil && req.GetSourceUser().UserId != nil {
+		id := req.GetSourceUser().GetUserId()
+		sourceUserID = &id
+	}
+
+	tx, err := s.db.BeginTx(ctx, nil)
+	if err != nil {
+		return nil, fmt.Errorf("failed to begin user property update: %w", err)
+	}
+	defer tx.Rollback()
+
+	activities := make([]*usersactivity.UserActivity, 0, len(changes))
+	if managedProps := req.GetManagedProps(); managedProps != nil {
+		managedProps.UserId = req.GetUserId()
+		current, err := s.citizensStore.GetUserProps(ctx, tx, req.GetUserId())
+		if err != nil {
+			return nil, fmt.Errorf("failed to get current user props: %w", err)
+		}
+		managedActivities, err := s.citizensStore.HandleUserPropsChanges(
+			ctx, tx, current, managedProps, sourceUserID, req.GetReason(),
+		)
+		if err != nil {
+			return nil, fmt.Errorf("failed to apply managed user property changes: %w", err)
+		}
+		activities = append(activities, managedActivities...)
+	}
+	propertyActivities, err := s.citizensStore.ApplyPropertyChangesWithActivity(
+		ctx, tx, req.GetUserId(), changes, sourceUserID, req.GetReason(),
+	)
+	if err != nil {
+		return nil, fmt.Errorf("failed to apply user property changes: %w", err)
+	}
+	activities = append(activities, propertyActivities...)
+	if err := usersactivity.CreateUserActivities(ctx, tx, activities...); err != nil {
+		return nil, fmt.Errorf("failed to create user property activities: %w", err)
+	}
+	if err := tx.Commit(); err != nil {
+		return nil, fmt.Errorf("failed to commit user property update: %w", err)
+	}
+
+	props, err := s.citizensStore.GetUserProps(ctx, s.db, req.GetUserId())
+	if err != nil {
+		return nil, fmt.Errorf("failed to get updated user props: %w", err)
+	}
+	return &pbsync.SetUserPropertiesResponse{UserProps: props}, nil
+}
+
 func (s *Store) GetUserProps(
 	ctx context.Context,
 	req *pbsync.GetUserPropsRequest,
@@ -180,6 +265,60 @@ func (s *Store) SetVehicleProps(
 		return nil, fmt.Errorf("failed to set vehicle props. %w", err)
 	}
 	return &pbsync.SetVehiclePropsResponse{VehicleProps: props}, nil
+}
+
+// SetVehicleProperties applies managed and generic property changes from a
+// trusted Sync client.
+func (s *Store) SetVehicleProperties(
+	ctx context.Context,
+	req *pbsync.SetVehiclePropertiesRequest,
+) (*pbsync.SetVehiclePropertiesResponse, error) {
+	if req.GetManagedProps().GetProperties() != nil {
+		return nil, errors.New("managed_props.properties is not supported; use property_changes")
+	}
+	if err := propertyregistry.ValidateCustomPropertyChanges(
+		ctx,
+		properties.PropertyScope_PROPERTY_SCOPE_VEHICLE,
+		req.GetPropertyChanges(),
+		func(string) bool { return true },
+		s.vehiclesStore.ResolvePropertyDefinitions,
+	); err != nil {
+		return nil, fmt.Errorf("failed to validate vehicle property changes: %w", err)
+	}
+
+	var creatorID *int32
+	if req.GetSourceUser() != nil && req.GetSourceUser().UserId != nil {
+		id := req.GetSourceUser().GetUserId()
+		creatorID = &id
+	}
+
+	sourceJob := req.GetSourceUser().GetJob()
+	if sourceJob == "" && creatorID != nil {
+		sourceUser, err := s.citizensStore.GetUser(
+			ctx,
+			&pbcitizens.GetUserRequest{UserId: *creatorID},
+			citizensstore.GetUserOptions{IncludeJob: true},
+		)
+		if err != nil {
+			return nil, fmt.Errorf("failed to get source user: %w", err)
+		}
+		if sourceUser == nil || sourceUser.GetUser() == nil {
+			return nil, fmt.Errorf("source user %d not found", *creatorID)
+		}
+		sourceJob = sourceUser.GetUser().GetJob()
+	}
+
+	props, err := s.vehiclesStore.UpdateProps(ctx, vehiclesstore.PropsUpdate{
+		Props:           req.GetManagedProps(),
+		CreatorID:       creatorID,
+		CreatorJob:      sourceJob,
+		Reason:          req.GetReason(),
+		PropertyChanges: req.GetPropertyChanges(),
+	})
+	if err != nil {
+		return nil, fmt.Errorf("failed to apply vehicle property changes: %w", err)
+	}
+	return &pbsync.SetVehiclePropertiesResponse{VehicleProps: props}, nil
 }
 
 func (s *Store) AddColleagueActivity(

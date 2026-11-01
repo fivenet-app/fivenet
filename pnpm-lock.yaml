@@ -620,6 +620,15 @@ importers:
         specifier: 1.1.1
         version: 1.1.1
 
+  gen/ts:
+    devDependencies:
+      '@protobuf-ts/plugin':
+        specifier: 'catalog:'
+        version: 2.11.1(supports-color@10.2.2)
+      google-protobuf:
+        specifier: 'catalog:'
+        version: 4.0.3
+
 packages:
 
   '@alloc/quick-lru@5.3.0':

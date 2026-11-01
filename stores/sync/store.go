@@ -36,6 +36,10 @@ type IStore interface {
 		ctx context.Context,
 		req *pbsync.AddUserPropsRequest,
 	) (*pbsync.AddActivityResponse, error)
+	SetUserProperties(
+		ctx context.Context,
+		req *pbsync.SetUserPropertiesRequest,
+	) (*pbsync.SetUserPropertiesResponse, error)
 	GetUserProps(
 		ctx context.Context,
 		req *pbsync.GetUserPropsRequest,
@@ -48,6 +52,10 @@ type IStore interface {
 		ctx context.Context,
 		req *pbsync.SetVehiclePropsRequest,
 	) (*pbsync.SetVehiclePropsResponse, error)
+	SetVehicleProperties(
+		ctx context.Context,
+		req *pbsync.SetVehiclePropertiesRequest,
+	) (*pbsync.SetVehiclePropertiesResponse, error)
 	AddColleagueActivity(
 		ctx context.Context,
 		req *pbsync.AddColleagueActivityRequest,

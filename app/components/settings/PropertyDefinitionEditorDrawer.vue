@@ -30,7 +30,11 @@ const { t, te } = useI18n();
 const isEditing = computed(() => props.definition !== undefined);
 
 const schema = z.object({
-    key: z.string().min(1).max(64),
+    key: z
+        .string()
+        .min(1)
+        .max(64)
+        .refine((key) => key.includes('.') && key.slice(key.indexOf('.') + 1).length > 0),
     label: z.string().min(1).max(128),
     description: z.string().max(512).optional(),
 });
@@ -168,10 +172,20 @@ const rendererOptions = computed(() => {
     return options;
 });
 
+// Group keys must start with a lowercase letter, so this cannot collide with a persisted group key.
+const ungroupedGroupValue = '__ungrouped__';
+
+const selectedGroupKey = computed({
+    get: () => editor.groupKey || ungroupedGroupValue,
+    set: (value: string) => {
+        editor.groupKey = value === ungroupedGroupValue ? '' : value;
+    },
+});
+
 const groupOptions = computed(() => [
     {
         label: t('components.settings.property_definitions.ungrouped'),
-        value: '',
+        value: ungroupedGroupValue,
     },
     ...props.groups
         .filter((group) => group.deletedAt === undefined)
@@ -196,6 +210,16 @@ const hasNumberRendererConfig = computed(() => [PropertyRenderer.INTEGER, Proper
 function scopeKeyPrefix(scope: PropertyScope): string {
     return scope === PropertyScope.USER ? 'user.' : 'vehicle.';
 }
+
+const keySuffix = computed({
+    get: () => {
+        const separatorIndex = editor.key.indexOf('.');
+        return separatorIndex === -1 ? editor.key : editor.key.slice(separatorIndex + 1);
+    },
+    set: (value: string) => {
+        editor.key = `${scopeKeyPrefix(props.scope)}${value}`;
+    },
+});
 
 function resetEditor(): void {
     const definition = props.definition;
@@ -292,21 +316,47 @@ async function close(): Promise<void> {
 
         <template #body>
             <UForm ref="formRef" class="flex flex-col gap-4" :schema="schema" :state="editor" @submit="submit">
-                <UFormField name="key" :label="t('components.settings.property_definitions.key')" required>
-                    <UInput v-model="editor.key" class="w-full" :disabled="isEditing" />
+                <UFormField
+                    name="key"
+                    :label="t('components.settings.property_definitions.key')"
+                    :description="t('components.settings.property_definitions.key_description')"
+                    required
+                >
+                    <div class="flex items-center gap-1">
+                        <span class="shrink-0 font-mono text-muted">{{ scopeKeyPrefix(props.scope) }}</span>
+                        <UInput
+                            v-model="keySuffix"
+                            class="min-w-0 flex-1 font-mono"
+                            :maxlength="64 - scopeKeyPrefix(props.scope).length"
+                            :disabled="isEditing"
+                        />
+                    </div>
                 </UFormField>
 
-                <UFormField name="label" :label="t('components.settings.property_definitions.label')" required>
+                <UFormField
+                    name="label"
+                    :label="t('components.settings.property_definitions.label')"
+                    :description="t('components.settings.property_definitions.label_description')"
+                    required
+                >
                     <UInput v-model="editor.label" class="w-full" />
                 </UFormField>
 
-                <UFormField name="description" :label="t('components.settings.property_definitions.description')">
+                <UFormField
+                    name="description"
+                    :label="t('components.settings.property_definitions.description')"
+                    :description="t('components.settings.property_definitions.description_description')"
+                >
                     <UTextarea v-model="editor.description" class="w-full" />
                 </UFormField>
 
-                <UFormField name="groupKey" :label="t('components.settings.property_definitions.group')">
+                <UFormField
+                    name="groupKey"
+                    :label="t('components.settings.property_definitions.group')"
+                    :description="t('components.settings.property_definitions.group_description')"
+                >
                     <USelectMenu
-                        v-model="editor.groupKey"
+                        v-model="selectedGroupKey"
                         class="w-full"
                         :items="groupOptions"
                         label-key="label"
@@ -314,7 +364,11 @@ async function close(): Promise<void> {
                     />
                 </UFormField>
 
-                <UFormField name="valueType" :label="t('components.settings.property_definitions.value_type')">
+                <UFormField
+                    name="valueType"
+                    :label="t('components.settings.property_definitions.value_type')"
+                    :description="t('components.settings.property_definitions.value_type_description')"
+                >
                     <USelectMenu
                         v-model="editor.valueType"
                         class="w-full"
@@ -325,7 +379,11 @@ async function close(): Promise<void> {
                     />
                 </UFormField>
 
-                <UFormField name="valueFormat" :label="t('components.settings.property_definitions.value_format')">
+                <UFormField
+                    name="valueFormat"
+                    :label="t('components.settings.property_definitions.value_format')"
+                    :description="t('components.settings.property_definitions.value_format_description')"
+                >
                     <USelectMenu
                         v-model="editor.valueFormat"
                         class="w-full"
@@ -335,7 +393,11 @@ async function close(): Promise<void> {
                     />
                 </UFormField>
 
-                <UFormField name="renderer" :label="t('components.settings.property_definitions.renderer')">
+                <UFormField
+                    name="renderer"
+                    :label="t('components.settings.property_definitions.renderer')"
+                    :description="t('components.settings.property_definitions.renderer_description')"
+                >
                     <USelectMenu
                         v-model="editor.renderer"
                         class="w-full"
@@ -346,21 +408,29 @@ async function close(): Promise<void> {
                 </UFormField>
 
                 <template v-if="hasRendererConfig">
-                    <UFormField :label="t('components.settings.property_definitions.renderer_prefix')">
+                    <UFormField
+                        :label="t('components.settings.property_definitions.renderer_prefix')"
+                        :description="t('components.settings.property_definitions.renderer_prefix_description')"
+                    >
                         <UInput v-model="rendererConfigDraft.prefix" class="w-full" />
                     </UFormField>
-                    <UFormField :label="t('components.settings.property_definitions.renderer_suffix')">
+                    <UFormField
+                        :label="t('components.settings.property_definitions.renderer_suffix')"
+                        :description="t('components.settings.property_definitions.renderer_suffix_description')"
+                    >
                         <UInput v-model="rendererConfigDraft.suffix" class="w-full" />
                     </UFormField>
                     <UFormField
                         v-if="hasNumberRendererConfig"
                         :label="t('components.settings.property_definitions.renderer_unit')"
+                        :description="t('components.settings.property_definitions.renderer_unit_description')"
                     >
                         <UInput v-model="rendererConfigDraft.unit" class="w-full" />
                     </UFormField>
                     <UFormField
                         v-if="hasNumberRendererConfig"
                         :label="t('components.settings.property_definitions.renderer_decimal_places')"
+                        :description="t('components.settings.property_definitions.renderer_decimal_places_description')"
                     >
                         <UInput
                             v-model.number="rendererConfigDraft.decimalPlaces"
@@ -370,16 +440,19 @@ async function close(): Promise<void> {
                             max="9"
                         />
                     </UFormField>
-                    <UCheckbox
+                    <UFormField
                         v-if="editor.renderer === PropertyRenderer.STRING"
-                        v-model="rendererConfigDraft.truncate"
                         :label="t('components.settings.property_definitions.renderer_truncate')"
-                    />
+                        :description="t('components.settings.property_definitions.renderer_truncate_description')"
+                    >
+                        <USwitch v-model="rendererConfigDraft.truncate" />
+                    </UFormField>
                 </template>
 
                 <UFormField
                     v-if="editor.valueFormat === PropertyValueFormat.MONEY"
                     :label="t('components.settings.property_definitions.currency')"
+                    :description="t('components.settings.property_definitions.currency_description')"
                 >
                     <UInput v-model="editor.currency" class="w-full uppercase" maxlength="3" />
                 </UFormField>
@@ -387,6 +460,7 @@ async function close(): Promise<void> {
                 <UFormField
                     v-if="editor.valueFormat === PropertyValueFormat.DISTANCE"
                     :label="t('components.settings.property_definitions.unit')"
+                    :description="t('components.settings.property_definitions.unit_description')"
                 >
                     <UInput v-model="editor.unit" class="w-full" maxlength="32" />
                 </UFormField>
@@ -394,15 +468,40 @@ async function close(): Promise<void> {
                 <UFormField
                     v-if="editor.valueType === PropertyValueType.NUMBER || editor.valueFormat === PropertyValueFormat.MONEY"
                     :label="t('components.settings.property_definitions.decimal_places')"
+                    :description="t('components.settings.property_definitions.decimal_places_description')"
                 >
                     <UInput v-model.number="editor.decimalPlaces" class="w-full" type="number" min="0" max="9" />
                 </UFormField>
 
                 <div class="flex flex-col gap-2">
-                    <UCheckbox v-model="editor.enabled" :label="t('components.settings.property_definitions.enabled')" />
-                    <UCheckbox v-model="editor.searchable" :label="t('components.settings.property_definitions.searchable')" />
-                    <UCheckbox v-model="editor.pinned" :label="t('components.settings.property_definitions.pinned')" />
-                    <UCheckbox v-model="editor.implicit" :label="t('components.settings.property_definitions.implicit')" />
+                    <UFormField
+                        name="enabled"
+                        :label="t('components.settings.property_definitions.enabled')"
+                        :description="t('components.settings.property_definitions.enabled_description')"
+                    >
+                        <USwitch v-model="editor.enabled" />
+                    </UFormField>
+                    <UFormField
+                        name="searchable"
+                        :label="t('components.settings.property_definitions.searchable')"
+                        :description="t('components.settings.property_definitions.searchable_description')"
+                    >
+                        <USwitch v-model="editor.searchable" />
+                    </UFormField>
+                    <UFormField
+                        name="pinned"
+                        :label="t('components.settings.property_definitions.pinned')"
+                        :description="t('components.settings.property_definitions.pinned_description')"
+                    >
+                        <USwitch v-model="editor.pinned" />
+                    </UFormField>
+                    <UFormField
+                        name="implicit"
+                        :label="t('components.settings.property_definitions.implicit')"
+                        :description="t('components.settings.property_definitions.implicit_description')"
+                    >
+                        <USwitch v-model="editor.implicit" />
+                    </UFormField>
                 </div>
             </UForm>
         </template>

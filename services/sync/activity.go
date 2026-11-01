@@ -31,6 +31,14 @@ func (s *Server) AddUserProps(
 	return s.store.AddUserProps(ctx, req)
 }
 
+func (s *Server) SetUserProperties(
+	ctx context.Context,
+	req *pbsync.SetUserPropertiesRequest,
+) (*pbsync.SetUserPropertiesResponse, error) {
+	s.lastSyncedActivity.Store(time.Now().Unix())
+	return s.store.SetUserProperties(ctx, req)
+}
+
 func (s *Server) GetUserProps(
 	ctx context.Context,
 	req *pbsync.GetUserPropsRequest,
@@ -51,6 +59,14 @@ func (s *Server) SetVehicleProps(
 ) (*pbsync.SetVehiclePropsResponse, error) {
 	s.lastSyncedActivity.Store(time.Now().Unix())
 	return s.store.SetVehicleProps(ctx, req)
+}
+
+func (s *Server) SetVehicleProperties(
+	ctx context.Context,
+	req *pbsync.SetVehiclePropertiesRequest,
+) (*pbsync.SetVehiclePropertiesResponse, error) {
+	s.lastSyncedActivity.Store(time.Now().Unix())
+	return s.store.SetVehicleProperties(ctx, req)
 }
 
 func (s *Server) AddColleagueActivity(
