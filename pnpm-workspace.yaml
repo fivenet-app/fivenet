@@ -1,3 +1,6 @@
+packages:
+  - gen/ts
+
 catalog:
   '@protobuf-ts/plugin': 2.11.1
   google-protobuf: 4.0.3
