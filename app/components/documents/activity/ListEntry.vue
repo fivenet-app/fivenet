@@ -49,7 +49,7 @@ const hasDetails = computed(
         </div>
 
         <div class="flex flex-none flex-col items-end gap-0.5 text-xs">
-            <span class="text-xs/5 text-dimmed"><GenericTime :value="entry.createdAt" type="compact" /></span>
+            <span class="text-xs/5 text-dimmed"><GenericTime :value="entry.createdAt" type="short" /></span>
             <span class="inline-flex items-center gap-1">
                 <span class="text-dimmed">{{ $t('common.created_by') }}:</span>
                 <CitizenInfoPopover :user="entry.creator" />

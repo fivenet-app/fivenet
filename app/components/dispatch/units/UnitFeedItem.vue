@@ -37,7 +37,9 @@ const showActor = computed(
         </div>
 
         <div class="flex flex-none flex-col items-end gap-0.5 text-xs">
-            <span class="text-xs/5 text-dimmed"><GenericTime :value="item.createdAt" type="compact" /></span>
+            <span class="text-xs/5 text-dimmed">
+                <GenericTime :value="item.createdAt" type="compact" compact-today />
+            </span>
 
             <span class="inline-flex items-center gap-1">
                 <UButton

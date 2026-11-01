@@ -1,4 +1,5 @@
 <script lang="ts" setup>
+import { isSameDay } from 'date-fns';
 import type { BadgeProps } from '@nuxt/ui';
 import type { Timestamp } from '~~/gen/ts/resources/timestamp/timestamp';
 import type { I18nDateTimeFormats } from '~/utils/time';
@@ -11,6 +12,7 @@ const props = withDefaults(
     defineProps<{
         value: Date | Timestamp | undefined;
         type?: I18nDateTimeFormats;
+        compactToday?: boolean;
         tooltipType?: I18nDateTimeFormats;
         ago?: boolean;
         updateInterval?: number;
@@ -21,6 +23,7 @@ const props = withDefaults(
     }>(),
     {
         type: 'short',
+        compactToday: false,
         tooltipType: undefined,
         ago: false,
         updateInterval: 1000,
@@ -38,6 +41,10 @@ const tooltipTypeMap: Partial<{ [key in I18nDateTimeFormats]: I18nDateTimeFormat
 };
 
 const date = computed<Date>(() => (props.value instanceof Date ? props.value : (toDate(props.value) ?? new Date())));
+const minuteClock = useMinuteClock();
+const displayType = computed<I18nDateTimeFormats>(() =>
+    props.compactToday && props.type === 'compact' && !isSameDay(date.value, minuteClock.value) ? 'short' : props.type,
+);
 
 const timeAttrs = ref({});
 if (props.updateCallback) {
@@ -48,14 +55,14 @@ if (props.updateCallback) {
 </script>
 
 <template>
-    <UTooltip :text="$d(date, tooltipType ?? tooltipTypeMap[type] ?? type)">
+    <UTooltip :text="$d(date, tooltipType ?? tooltipTypeMap[displayType] ?? displayType)">
         <UBadge v-if="badge" :size="size" v-bind="{ ...$attrs, ...timeAttrs }">
             <time :datetime="date.toLocaleTimeString()" v-bind="$attrs">
-                {{ !ago ? $d(date, type) : useLocaleTimeAgo(date).value }}
+                {{ !ago ? $d(date, displayType) : useLocaleTimeAgo(date).value }}
             </time>
         </UBadge>
         <time v-else :datetime="date.toLocaleTimeString()" v-bind="{ ...$attrs, ...timeAttrs }">
-            {{ !ago ? $d(date, type) : useLocaleTimeAgo(date).value }}
+            {{ !ago ? $d(date, displayType) : useLocaleTimeAgo(date).value }}
         </time>
     </UTooltip>
 </template>
