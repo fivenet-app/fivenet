@@ -184,7 +184,7 @@ overrides:
   nuxt-typed-router>lodash-es: 4.18.1
   nuxt-typed-router>nanoid: 6.0.2
   release-it>undici: ^8.12.3
-  get-uri>basic-ftp: ^6.2.4
+  get-uri>basic-ftp: ^6.2.5
   unhead: 3.4.3
   vue: 3.5.44
   '@protobuf-ts/plugin>typescript': 3.9.10
@@ -5122,8 +5122,8 @@ packages:
     engines: {node: '>=6.0.0'}
     hasBin: true
 
-  basic-ftp@6.2.4:
-    resolution: {integrity: sha512-6ACKOQxSlv5xka4i03ujfncNr9qp5yZNK3u0+yUFTAU4HfG5AeztCC9+R1I9dm8oq+1vt4RZ7cIRTBrdHqL2mw==}
+  basic-ftp@6.2.5:
+    resolution: {integrity: sha512-JJKYwxdbJM6Z4jFO+ciaIUejHRCyIg6oJ9hoAzuZ0EMlJsHDT07h6vZt4NH8G61DLzddrDKvjoRqfewnPzDSJA==}
     engines: {node: '>=10.0.0'}
 
   before-after-hook@4.0.0:
@@ -15109,7 +15109,7 @@ snapshots:
 
   baseline-browser-mapping@2.11.33: {}
 
-  basic-ftp@6.2.4: {}
+  basic-ftp@6.2.5: {}
 
   before-after-hook@4.0.0: {}
 
@@ -16569,7 +16569,7 @@ snapshots:
 
   get-uri@8.0.1(supports-color@10.2.2):
     dependencies:
-      basic-ftp: 6.2.4
+      basic-ftp: 6.2.5
       data-uri-to-buffer: 8.0.0
       debug: 4.4.3(supports-color@10.2.2)
     transitivePeerDependencies:
