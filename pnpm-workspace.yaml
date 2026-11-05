@@ -8,7 +8,7 @@ catalog:
 
 overrides:
   "@internationalized/date": "3.12.4"
-  "@nuxt/kit": "4.6.3"
+  "@nuxt/kit": "4.6.4"
   "@tiptap/core": "3.32.2"
   "@tiptap/pm": "3.32.2"
   "@tiptap/vue-3": "3.32.2"
