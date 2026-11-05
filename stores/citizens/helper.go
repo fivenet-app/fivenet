@@ -35,11 +35,17 @@ func (s *Store) GetUserAccess(ctx context.Context, userId int32) (*users.User, e
 
 func (s *Store) ListExpiredWantedUserProps(
 	ctx context.Context,
-	maxDays int64,
+	maxSeconds int64,
 	limit int64,
 ) ([]int32, error) {
 	tValues := table.FivenetUserPropertyValues.AS("value")
 	tState := table.FivenetUserPropertyState.AS("state")
+	serverDeadline := tState.ActiveAt.ADD(mysql.INTERVAL(maxSeconds, mysql.SECOND))
+	effectiveDeadline := mysql.CASE().
+		WHEN(tState.ExpiresAt.IS_NULL()).THEN(serverDeadline).
+		WHEN(tState.ActiveAt.IS_NULL()).THEN(tState.ExpiresAt).
+		WHEN(tState.ExpiresAt.LT_EQ(serverDeadline)).THEN(tState.ExpiresAt).
+		ELSE(serverDeadline)
 
 	stmt := tValues.
 		SELECT(tValues.UserID).
@@ -52,12 +58,13 @@ func (s *Store) ListExpiredWantedUserProps(
 			tValues.ValueType.EQ(mysql.Uint8(uint8(userPropertyValueTypeBool))),
 			tValues.ValueBool.IS_TRUE(),
 			mysql.OR(
-				tState.ActiveAt.LT(
-					mysql.CURRENT_TIMESTAMP().SUB(mysql.INTERVAL(maxDays, mysql.DAY)),
+				tState.ActiveAt.LT_EQ(
+					mysql.CURRENT_TIMESTAMP().SUB(mysql.INTERVAL(maxSeconds, mysql.SECOND)),
 				),
-				tState.ExpiresAt.LT(mysql.CURRENT_TIMESTAMP()),
+				tState.ExpiresAt.LT_EQ(mysql.CURRENT_TIMESTAMP()),
 			),
 		)).
+		ORDER_BY(effectiveDeadline.ASC()).
 		LIMIT(limit)
 
 	dest := []int32{}

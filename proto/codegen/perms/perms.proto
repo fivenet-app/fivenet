@@ -38,7 +38,6 @@ message Attr {
     defined_only: true
     not_in: [0]
   }];
-
 }
 
 extend google.protobuf.ServiceOptions {
@@ -81,6 +80,11 @@ message SystemProperty {
   int32 sort_order = 15;
   bool pinned = 16;
   bool implicit = 20;
+  optional resources.properties.PropertyStatePolicy state_policy = 21;
+  optional string managed_handler = 22;
+  optional resources.properties.PropertyValueConstraints value_constraints = 23;
+  // Omitted system properties inherit REQUIRED when registered.
+  resources.properties.PropertyReasonMode reason_mode = 24;
 }
 
 message AdditionalServicePerm {

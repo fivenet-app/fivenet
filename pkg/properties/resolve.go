@@ -211,6 +211,7 @@ func DefinitionFromModel(
 		Renderer:      propertypb.PropertyRenderer(row.Renderer),
 		DisplayMode:   propertypb.PropertyDisplayMode(row.DisplayMode),
 		Implicit:      row.Implicit,
+		ReasonMode:    propertypb.PropertyReasonMode(row.ReasonMode),
 	}
 	if row.Description != nil {
 		definition.Description = row.Description
@@ -223,6 +224,24 @@ func DefinitionFromModel(
 		if err := protojson.Unmarshal(
 			[]byte(*row.RendererConfig),
 			definition.RendererConfig,
+		); err != nil {
+			return nil, err
+		}
+	}
+	if row.StatePolicy != nil {
+		definition.StatePolicy = &propertypb.PropertyStatePolicy{}
+		if err := protojson.Unmarshal(
+			[]byte(*row.StatePolicy),
+			definition.StatePolicy,
+		); err != nil {
+			return nil, err
+		}
+	}
+	if row.ValueConstraints != nil {
+		definition.ValueConstraints = &propertypb.PropertyValueConstraints{}
+		if err := protojson.Unmarshal(
+			[]byte(*row.ValueConstraints),
+			definition.ValueConstraints,
 		); err != nil {
 			return nil, err
 		}

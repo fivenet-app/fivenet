@@ -11,6 +11,9 @@ import { UnknownFieldHandler } from "@protobuf-ts/runtime";
 import type { PartialMessage } from "@protobuf-ts/runtime";
 import { reflectionMergePartial } from "@protobuf-ts/runtime";
 import { MessageType } from "@protobuf-ts/runtime";
+import { PropertyReasonMode } from "../../resources/properties/properties";
+import { PropertyValueConstraints } from "../../resources/properties/properties";
+import { PropertyStatePolicy } from "../../resources/properties/properties";
 import { PropertyDisplayMode } from "../../resources/properties/properties";
 import { PropertyRendererConfig } from "../../resources/properties/properties";
 import { PropertyRenderer } from "../../resources/properties/properties";
@@ -206,6 +209,24 @@ export interface SystemProperty {
      * @generated from protobuf field: bool implicit = 20
      */
     implicit: boolean;
+    /**
+     * @generated from protobuf field: optional resources.properties.PropertyStatePolicy state_policy = 21
+     */
+    statePolicy?: PropertyStatePolicy;
+    /**
+     * @generated from protobuf field: optional string managed_handler = 22
+     */
+    managedHandler?: string;
+    /**
+     * @generated from protobuf field: optional resources.properties.PropertyValueConstraints value_constraints = 23
+     */
+    valueConstraints?: PropertyValueConstraints;
+    /**
+     * Omitted system properties inherit REQUIRED when registered.
+     *
+     * @generated from protobuf field: resources.properties.PropertyReasonMode reason_mode = 24
+     */
+    reasonMode: PropertyReasonMode;
 }
 /**
  * @generated from protobuf message codegen.perms.AdditionalServicePerm
@@ -517,7 +538,11 @@ class SystemProperty$Type extends MessageType<SystemProperty> {
             { no: 14, name: "group_key", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
             { no: 15, name: "sort_order", kind: "scalar", T: 5 /*ScalarType.INT32*/ },
             { no: 16, name: "pinned", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
-            { no: 20, name: "implicit", kind: "scalar", T: 8 /*ScalarType.BOOL*/ }
+            { no: 20, name: "implicit", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
+            { no: 21, name: "state_policy", kind: "message", T: () => PropertyStatePolicy },
+            { no: 22, name: "managed_handler", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/ },
+            { no: 23, name: "value_constraints", kind: "message", T: () => PropertyValueConstraints },
+            { no: 24, name: "reason_mode", kind: "enum", T: () => ["resources.properties.PropertyReasonMode", PropertyReasonMode, "PROPERTY_REASON_MODE_"] }
         ]);
     }
     create(value?: PartialMessage<SystemProperty>): SystemProperty {
@@ -537,6 +562,7 @@ class SystemProperty$Type extends MessageType<SystemProperty> {
         message.sortOrder = 0;
         message.pinned = false;
         message.implicit = false;
+        message.reasonMode = 0;
         if (value !== undefined)
             reflectionMergePartial<SystemProperty>(this, message, value);
         return message;
@@ -605,6 +631,18 @@ class SystemProperty$Type extends MessageType<SystemProperty> {
                     break;
                 case /* bool implicit */ 20:
                     message.implicit = reader.bool();
+                    break;
+                case /* optional resources.properties.PropertyStatePolicy state_policy */ 21:
+                    message.statePolicy = PropertyStatePolicy.internalBinaryRead(reader, reader.uint32(), options, message.statePolicy);
+                    break;
+                case /* optional string managed_handler */ 22:
+                    message.managedHandler = reader.string();
+                    break;
+                case /* optional resources.properties.PropertyValueConstraints value_constraints */ 23:
+                    message.valueConstraints = PropertyValueConstraints.internalBinaryRead(reader, reader.uint32(), options, message.valueConstraints);
+                    break;
+                case /* resources.properties.PropertyReasonMode reason_mode */ 24:
+                    message.reasonMode = reader.int32();
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -678,6 +716,18 @@ class SystemProperty$Type extends MessageType<SystemProperty> {
         /* bool implicit = 20; */
         if (message.implicit !== false)
             writer.tag(20, WireType.Varint).bool(message.implicit);
+        /* optional resources.properties.PropertyStatePolicy state_policy = 21; */
+        if (message.statePolicy)
+            PropertyStatePolicy.internalBinaryWrite(message.statePolicy, writer.tag(21, WireType.LengthDelimited).fork(), options).join();
+        /* optional string managed_handler = 22; */
+        if (message.managedHandler !== undefined)
+            writer.tag(22, WireType.LengthDelimited).string(message.managedHandler);
+        /* optional resources.properties.PropertyValueConstraints value_constraints = 23; */
+        if (message.valueConstraints)
+            PropertyValueConstraints.internalBinaryWrite(message.valueConstraints, writer.tag(23, WireType.LengthDelimited).fork(), options).join();
+        /* resources.properties.PropertyReasonMode reason_mode = 24; */
+        if (message.reasonMode !== 0)
+            writer.tag(24, WireType.Varint).int32(message.reasonMode);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);

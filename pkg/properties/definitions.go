@@ -2,12 +2,15 @@ package properties
 
 import (
 	"errors"
+	"math"
 	"regexp"
 	"slices"
 	"sort"
 	"strings"
+	"unicode/utf8"
 
 	propertypb "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/properties"
+	"github.com/fivenet-app/fivenet/v2026/pkg/utils"
 	"google.golang.org/protobuf/proto"
 )
 
@@ -108,6 +111,9 @@ func NormalizeDefinition(definition *propertypb.PropertyDefinition) *propertypb.
 	if normalized.GetDisplayMode() == propertypb.PropertyDisplayMode_PROPERTY_DISPLAY_MODE_UNSPECIFIED {
 		normalized.DisplayMode = propertypb.PropertyDisplayMode_PROPERTY_DISPLAY_MODE_DEFAULT
 	}
+	if normalized.GetReasonMode() == propertypb.PropertyReasonMode_PROPERTY_REASON_MODE_UNSPECIFIED {
+		normalized.ReasonMode = propertypb.PropertyReasonMode_PROPERTY_REASON_MODE_REQUIRED
+	}
 	return normalized
 }
 
@@ -153,11 +159,125 @@ func NormalizeAndValidateCustomDefinition(
 		!IsValueFormatCompatible(normalized.GetValueType(), normalized.GetValueFormat()) ||
 		!IsRendererCompatible(normalized.GetValueType(), normalized.GetRenderer()) ||
 		!IsRendererConfigCompatible(normalized) ||
+		!IsStatePolicyValid(normalized.GetStatePolicy()) ||
+		!IsValueConstraintsValid(normalized.GetValueType(), normalized.GetValueConstraints()) ||
 		strings.TrimSpace(normalized.GetLabel()) == "" ||
 		!IsCustomPropertyKey(normalized.GetScope(), normalized.GetKey()) {
 		return nil, ErrInvalidPropertyDefinition
 	}
 	return normalized, nil
+}
+
+// IsValueConstraintsValid verifies that constraints belong to the declared
+// scalar type and that their bounds are internally consistent.
+func IsValueConstraintsValid(
+	valueType propertypb.PropertyValueType,
+	constraints *propertypb.PropertyValueConstraints,
+) bool {
+	if constraints == nil {
+		return true
+	}
+	switch constraints.GetStringAllowedValuesMode() {
+	case propertypb.PropertyStringAllowedValuesMode_PROPERTY_STRING_ALLOWED_VALUES_MODE_UNSPECIFIED,
+		propertypb.PropertyStringAllowedValuesMode_PROPERTY_STRING_ALLOWED_VALUES_MODE_SUGGEST,
+		propertypb.PropertyStringAllowedValuesMode_PROPERTY_STRING_ALLOWED_VALUES_MODE_STRICT:
+	default:
+		return false
+	}
+	hasString := constraints.StringMinLength != nil || constraints.StringMaxLength != nil ||
+		len(constraints.GetStringAllowedValues()) > 0 ||
+		constraints.GetStringAllowedValuesMode() != propertypb.PropertyStringAllowedValuesMode_PROPERTY_STRING_ALLOWED_VALUES_MODE_UNSPECIFIED
+	hasInteger := constraints.IntegerMin != nil || constraints.IntegerMax != nil
+	hasNumber := constraints.NumberMin != nil || constraints.NumberMax != nil
+	hasTimestamp := constraints.TimestampMin != nil || constraints.TimestampMax != nil
+	hasDate := constraints.DateMin != nil || constraints.DateMax != nil
+
+	if (hasString && valueType != propertypb.PropertyValueType_PROPERTY_VALUE_TYPE_STRING) ||
+		(hasInteger && valueType != propertypb.PropertyValueType_PROPERTY_VALUE_TYPE_INTEGER) ||
+		(hasNumber && valueType != propertypb.PropertyValueType_PROPERTY_VALUE_TYPE_NUMBER) ||
+		(hasTimestamp && valueType != propertypb.PropertyValueType_PROPERTY_VALUE_TYPE_TIMESTAMP) ||
+		(hasDate && valueType != propertypb.PropertyValueType_PROPERTY_VALUE_TYPE_DATE) {
+		return false
+	}
+	if constraints.StringMinLength != nil && constraints.StringMaxLength != nil &&
+		constraints.GetStringMinLength() > constraints.GetStringMaxLength() {
+		return false
+	}
+	if len(constraints.GetStringAllowedValues()) > 50 {
+		return false
+	}
+	if constraints.GetStringAllowedValuesMode() != propertypb.PropertyStringAllowedValuesMode_PROPERTY_STRING_ALLOWED_VALUES_MODE_UNSPECIFIED &&
+		len(constraints.GetStringAllowedValues()) == 0 {
+		return false
+	}
+	if len(constraints.GetStringAllowedValues()) > 0 {
+		seen := make(map[string]struct{}, len(constraints.GetStringAllowedValues()))
+		for _, value := range constraints.GetStringAllowedValues() {
+			length, ok := utils.ToUint32Checked(utf8.RuneCountInString(value))
+			if !ok || length > 1024 ||
+				constraints.StringMinLength != nil && length < constraints.GetStringMinLength() ||
+				constraints.StringMaxLength != nil && length > constraints.GetStringMaxLength() {
+				return false
+			}
+			if _, ok := seen[value]; ok {
+				return false
+			}
+			seen[value] = struct{}{}
+		}
+	}
+	if constraints.IntegerMin != nil && constraints.IntegerMax != nil &&
+		constraints.GetIntegerMin() > constraints.GetIntegerMax() {
+		return false
+	}
+	if constraints.NumberMin != nil &&
+		(math.IsNaN(constraints.GetNumberMin()) || math.IsInf(constraints.GetNumberMin(), 0)) ||
+		constraints.NumberMax != nil &&
+			(math.IsNaN(constraints.GetNumberMax()) || math.IsInf(constraints.GetNumberMax(), 0)) ||
+		constraints.NumberMin != nil && constraints.NumberMax != nil &&
+			constraints.GetNumberMin() > constraints.GetNumberMax() {
+		return false
+	}
+	if constraints.TimestampMin != nil &&
+		(constraints.TimestampMin.GetTimestamp() == nil || constraints.TimestampMin.GetTimestamp().CheckValid() != nil) ||
+		constraints.TimestampMax != nil &&
+			(constraints.TimestampMax.GetTimestamp() == nil || constraints.TimestampMax.GetTimestamp().CheckValid() != nil) ||
+		constraints.TimestampMin != nil && constraints.TimestampMax != nil &&
+			constraints.GetTimestampMin().AsTime().After(constraints.GetTimestampMax().AsTime()) {
+		return false
+	}
+	if constraints.DateMin != nil && constraints.DateMax != nil {
+		minDate, minErr := LocalDateToTime(constraints.GetDateMin())
+		maxDate, maxErr := LocalDateToTime(constraints.GetDateMax())
+		if minErr != nil || maxErr != nil || minDate.After(maxDate) {
+			return false
+		}
+	} else if constraints.DateMin != nil {
+		if _, err := LocalDateToTime(constraints.GetDateMin()); err != nil {
+			return false
+		}
+	} else if constraints.DateMax != nil {
+		if _, err := LocalDateToTime(constraints.GetDateMax()); err != nil {
+			return false
+		}
+	}
+	return true
+}
+
+// IsStatePolicyValid keeps lifecycle capability explicit. A missing policy
+// means scalar-only; an enabled expiry capability must also declare what the
+// generic expiry worker does with the value.
+func IsStatePolicyValid(policy *propertypb.PropertyStatePolicy) bool {
+	if policy == nil {
+		return true
+	}
+	if !policy.GetEnabled() {
+		return !policy.GetSupportsExpiry() &&
+			policy.GetExpiryAction() == propertypb.PropertyExpiryAction_PROPERTY_EXPIRY_ACTION_UNSPECIFIED
+	}
+	if policy.GetSupportsExpiry() {
+		return policy.GetExpiryAction() == propertypb.PropertyExpiryAction_PROPERTY_EXPIRY_ACTION_CLEAR_VALUE
+	}
+	return policy.GetExpiryAction() == propertypb.PropertyExpiryAction_PROPERTY_EXPIRY_ACTION_UNSPECIFIED
 }
 
 // IsRendererCompatible reports whether a renderer can consume the definition's

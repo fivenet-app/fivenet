@@ -316,20 +316,7 @@ LocalDate deliberately has no timezone. Use it for calendar dates such as an ins
 | `value` | [PropertyValue](#resourcespropertiesPropertyValue) | optional | Omitted for an available custom definition that does not yet have a value on this resource. |
 | `updated_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
 | `definition` | [PropertyDefinition](#resourcespropertiesPropertyDefinition) | optional | Resolved definition metadata for detail/profile renderers. |
-
-
-
-
-
-### resources.properties.PropertyChange
-PropertyChange updates a generic scalar property. An absent value clears it.
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `key` | [string](#string) |  |  |
-| `value` | [PropertyValue](#resourcespropertiesPropertyValue) | optional |  |
+| `state` | [PropertyState](#resourcespropertiesPropertyState) | optional |  |
 
 
 
@@ -363,6 +350,10 @@ PropertyChange updates a generic scalar property. An absent value clears it.
 | `renderer_config` | [PropertyRendererConfig](#resourcespropertiesPropertyRendererConfig) | optional |  |
 | `display_mode` | [PropertyDisplayMode](#resourcespropertiesPropertyDisplayMode) |  | Controls whether the property is shown in generic property lists or is reserved for a specialized profile presentation. |
 | `implicit` | [bool](#bool) |  | Implicit properties are available whenever the containing permission is granted, but are not selectable in role property lists. |
+| `state_policy` | [PropertyStatePolicy](#resourcespropertiesPropertyStatePolicy) | optional |  |
+| `managed_handler` | [string](#string) | optional | Registry identifier for the server-side managed-property handler. Generic properties leave this unset; Sync routes managed mutations by this value. |
+| `value_constraints` | [PropertyValueConstraints](#resourcespropertiesPropertyValueConstraints) | optional |  |
+| `reason_mode` | [PropertyReasonMode](#resourcespropertiesPropertyReasonMode) |  |  |
 
 
 
@@ -413,6 +404,24 @@ PropertyGroup controls the presentation order of definitions within one property
 
 
 
+### resources.properties.PropertyMutation
+PropertyMutation is the sole scalar and lifecycle property write contract. Omitting value_change means this is a state-only mutation.
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `key` | [string](#string) |  |  |
+| `set_value` | [PropertyValue](#resourcespropertiesPropertyValue) |  |  |
+| `clear_value` | [google.protobuf.Empty](https://protobuf.dev/reference/protobuf/google.protobuf/#empty) |  |  |
+| `state` | [PropertyStatePatch](#resourcespropertiesPropertyStatePatch) | optional |  |
+| `reason` | [string](#string) | optional | The property-specific rationale/state reason. It is intentionally scoped to this mutation so batched edits can retain distinct reasons. |
+| `clear_reason` | [bool](#bool) | optional | Explicitly clears the persisted state reason. This is not a oneof because the sanitizer generator supports one oneof per message; validation rejects combining it with reason. |
+
+
+
+
+
 ### resources.properties.PropertyNumberRendererConfig
 
 
@@ -435,6 +444,48 @@ PropertyGroup controls the presentation order of definitions within one property
 | `string` | [PropertyStringRendererConfig](#resourcespropertiesPropertyStringRendererConfig) |  |  |
 | `integer` | [PropertyIntegerRendererConfig](#resourcespropertiesPropertyIntegerRendererConfig) |  |  |
 | `number` | [PropertyNumberRendererConfig](#resourcespropertiesPropertyNumberRendererConfig) |  |  |
+
+
+
+
+
+### resources.properties.PropertyState
+PropertyState is lifecycle metadata associated with a state-enabled property. key is redundant when embedded in Property, but permits independent state records to remain self-describing.
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `key` | [string](#string) | optional |  |
+| `reason` | [string](#string) | optional |  |
+| `active_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
+| `expires_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
+| `updated_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
+
+
+
+
+
+### resources.properties.PropertyStatePatch
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `expires_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) |  |  |
+| `clear_expiry` | [google.protobuf.Empty](https://protobuf.dev/reference/protobuf/google.protobuf/#empty) |  |  |
+
+
+
+
+
+### resources.properties.PropertyStatePolicy
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `enabled` | [bool](#bool) |  |  |
+| `supports_expiry` | [bool](#bool) |  |  |
+| `expiry_action` | [PropertyExpiryAction](#resourcespropertiesPropertyExpiryAction) |  |  |
 
 
 
@@ -466,6 +517,30 @@ PropertyValue is deliberately restricted to scalar values. Relations such as fil
 | `bool_value` | [bool](#bool) |  |  |
 | `timestamp_value` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) |  |  |
 | `date_value` | [LocalDate](#resourcespropertiesLocalDate) |  |  |
+
+
+
+
+
+### resources.properties.PropertyValueConstraints
+PropertyValueConstraints narrows the accepted scalar values for a custom definition. Only fields compatible with the definition's value_type may be populated. Constraints never rewrite existing stored values.
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `string_min_length` | [uint32](#uint32) | optional |  |
+| `string_max_length` | [uint32](#uint32) | optional |  |
+| `string_allowed_values` | [string](#string) | repeated |  |
+| `integer_min` | [int64](#int64) | optional |  |
+| `integer_max` | [int64](#int64) | optional |  |
+| `number_min` | [double](#double) | optional |  |
+| `number_max` | [double](#double) | optional |  |
+| `timestamp_min` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
+| `timestamp_max` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
+| `date_min` | [LocalDate](#resourcespropertiesLocalDate) | optional |  |
+| `date_max` | [LocalDate](#resourcespropertiesLocalDate) | optional |  |
+| `string_allowed_values_mode` | [PropertyStringAllowedValuesMode](#resourcespropertiesPropertyStringAllowedValuesMode) |  | The listed string values are either suggestions or an exhaustive set. UNSPECIFIED retains the legacy strict behavior for existing definitions. |
 
 
 
@@ -508,6 +583,15 @@ PropertyDisplayMode controls placement independently from the value renderer. Sp
 
 
 
+### resources.properties.PropertyExpiryAction
+
+| Name | Number | Description |
+| ---- | ------ | ----------- |
+| `PROPERTY_EXPIRY_ACTION_UNSPECIFIED` | 0 |  |
+| `PROPERTY_EXPIRY_ACTION_CLEAR_VALUE` | 1 |  |
+
+
+
 ### resources.properties.PropertyFilterOperation
 
 | Name | Number | Description |
@@ -520,6 +604,19 @@ PropertyDisplayMode controls placement independently from the value renderer. Sp
 | `PROPERTY_FILTER_OPERATION_LESS_THAN` | 5 |  |
 | `PROPERTY_FILTER_OPERATION_LESS_THAN_OR_EQUAL` | 6 |  |
 | `PROPERTY_FILTER_OPERATION_CONTAINS` | 7 |  |
+
+
+
+### resources.properties.PropertyReasonMode
+PropertyReasonMode controls the per-property rationale supplied with a mutation. The server treats UNSPECIFIED as REQUIRED for compatibility with omitted configuration.
+
+
+| Name | Number | Description |
+| ---- | ------ | ----------- |
+| `PROPERTY_REASON_MODE_UNSPECIFIED` | 0 |  |
+| `PROPERTY_REASON_MODE_REQUIRED` | 1 |  |
+| `PROPERTY_REASON_MODE_OPTIONAL` | 2 |  |
+| `PROPERTY_REASON_MODE_NONE` | 3 |  |
 
 
 
@@ -554,6 +651,16 @@ PropertyRenderer selects a predefined UI treatment for a property. It is separat
 | `PROPERTY_SCOPE_VEHICLE` | 1 |  |
 | `PROPERTY_SCOPE_USER` | 2 |  |
 | `PROPERTY_SCOPE_COLLEAGUE` | 3 |  |
+
+
+
+### resources.properties.PropertyStringAllowedValuesMode
+
+| Name | Number | Description |
+| ---- | ------ | ----------- |
+| `PROPERTY_STRING_ALLOWED_VALUES_MODE_UNSPECIFIED` | 0 |  |
+| `PROPERTY_STRING_ALLOWED_VALUES_MODE_SUGGEST` | 1 | The list is presented as a convenience, but callers may enter another value as long as it meets the remaining string constraints. |
+| `PROPERTY_STRING_ALLOWED_VALUES_MODE_STRICT` | 2 | The value must exactly match one entry in string_allowed_values. |
 
 
 
@@ -688,6 +795,10 @@ SystemProperty declares a property whose key and semantics are owned by FiveNet 
 | `sort_order` | [int32](#int32) |  |  |
 | `pinned` | [bool](#bool) |  |  |
 | `implicit` | [bool](#bool) |  |  |
+| `state_policy` | [resources.properties.PropertyStatePolicy](#resourcespropertiesPropertyStatePolicy) | optional |  |
+| `managed_handler` | [string](#string) | optional |  |
+| `value_constraints` | [resources.properties.PropertyValueConstraints](#resourcespropertiesPropertyValueConstraints) | optional |  |
+| `reason_mode` | [resources.properties.PropertyReasonMode](#resourcespropertiesPropertyReasonMode) |  | Omitted system properties inherit REQUIRED when registered. |
 
 
 
@@ -8121,6 +8232,24 @@ PropertyChange is used only for custom, generic properties. Managed system prope
 | `key` | [string](#string) |  |  |
 | `old_value` | [resources.properties.PropertyValue](#resourcespropertiesPropertyValue) | optional |  |
 | `new_value` | [resources.properties.PropertyValue](#resourcespropertiesPropertyValue) | optional |  |
+| `lifecycle` | [PropertyLifecycleChange](#resourcesusersactivityPropertyLifecycleChange) | optional |  |
+| `cause` | [PropertyChangeCause](#resourcesusersactivityPropertyChangeCause) |  |  |
+
+
+
+
+
+### resources.users.activity.PropertyLifecycleChange
+PropertyLifecycleChange records the lifecycle fields changed by this activity, including the resulting state reason when it changed.
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `expires_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
+| `expiry_cleared` | [bool](#bool) |  |  |
+| `state_reason` | [string](#string) | optional |  |
+| `state_reason_cleared` | [bool](#bool) |  |  |
 
 
 
@@ -8197,6 +8326,16 @@ PropertyChange is used only for custom, generic properties. Managed system prope
  <!-- end messages -->
 
 
+### resources.users.activity.PropertyChangeCause
+
+| Name | Number | Description |
+| ---- | ------ | ----------- |
+| `PROPERTY_CHANGE_CAUSE_UNSPECIFIED` | 0 |  |
+| `PROPERTY_CHANGE_CAUSE_MANUAL` | 1 |  |
+| `PROPERTY_CHANGE_CAUSE_EXPIRED` | 2 |  |
+
+
+
 ### resources.users.activity.UserActivityType
 
 | Name | Number | Description |
@@ -8250,6 +8389,24 @@ PropertyChange is used only for custom, generic properties. Managed system prope
 | `key` | [string](#string) |  |  |
 | `old_value` | [resources.properties.PropertyValue](#resourcespropertiesPropertyValue) | optional |  |
 | `new_value` | [resources.properties.PropertyValue](#resourcespropertiesPropertyValue) | optional |  |
+| `lifecycle` | [PropertyLifecycleChange](#resourcesvehiclesactivityPropertyLifecycleChange) | optional |  |
+| `cause` | [PropertyChangeCause](#resourcesvehiclesactivityPropertyChangeCause) |  |  |
+
+
+
+
+
+### resources.vehicles.activity.PropertyLifecycleChange
+PropertyLifecycleChange records the lifecycle fields changed by this activity, including the resulting state reason when it changed.
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `expires_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
+| `expiry_cleared` | [bool](#bool) |  |  |
+| `state_reason` | [string](#string) | optional |  |
+| `state_reason_cleared` | [bool](#bool) |  |  |
 
 
 
@@ -8305,6 +8462,16 @@ PropertyChange is used only for custom, generic properties. Managed system prope
 
 
  <!-- end messages -->
+
+
+### resources.vehicles.activity.PropertyChangeCause
+
+| Name | Number | Description |
+| ---- | ------ | ----------- |
+| `PROPERTY_CHANGE_CAUSE_UNSPECIFIED` | 0 |  |
+| `PROPERTY_CHANGE_CAUSE_MANUAL` | 1 |  |
+| `PROPERTY_CHANGE_CAUSE_EXPIRED` | 2 |  |
+
 
 
 ### resources.vehicles.activity.VehicleActivityType
@@ -10062,7 +10229,7 @@ CitizenFile is a restricted investigation attachment. The public profile avatar 
 | ----- | ---- | ----- | ----------- |
 | `props` | [resources.users.props.UserProps](#resourcesuserspropsUserProps) |  |  |
 | `reason` | [string](#string) |  |  |
-| `property_changes` | [resources.properties.PropertyChange](#resourcespropertiesPropertyChange) | repeated | Generic custom scalar properties. Managed system properties continue to use the dedicated fields above and produce their specialized activities. |
+| `property_mutations` | [resources.properties.PropertyMutation](#resourcespropertiesPropertyMutation) | repeated | The sole scalar and lifecycle property write path. Composite and relational managed features retain their dedicated domain operations. |
 
 
 
@@ -16248,15 +16415,14 @@ Response containing the number of dispatches closed for the user.
 
 
 ### services.sync.SetUserPropertiesRequest
-Applies managed and generic custom user properties.
+Applies generic and managed user property mutations.
 
 
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | `user_id` | [int32](#int32) |  |  |
-| `managed_props` | [resources.users.props.UserProps](#resourcesuserspropsUserProps) | optional | Only Sync-writable managed fields are accepted. Source-synchronized character fields are rejected. |
-| `property_changes` | [resources.properties.PropertyChange](#resourcespropertiesPropertyChange) | repeated |  |
+| `property_mutations` | [resources.properties.PropertyMutation](#resourcespropertiesPropertyMutation) | repeated |  |
 | `reason` | [string](#string) | optional |  |
 | `source_user` | [SourceUser](#servicessyncSourceUser) | optional |  |
 
@@ -16276,14 +16442,14 @@ Applies managed and generic custom user properties.
 
 
 ### services.sync.SetVehiclePropertiesRequest
-Applies managed and generic custom vehicle properties.
+Applies generic and managed vehicle property mutations.
 
 
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `managed_props` | [resources.vehicles.props.VehicleProps](#resourcesvehiclespropsVehicleProps) |  | Only Sync-writable managed fields are accepted. |
-| `property_changes` | [resources.properties.PropertyChange](#resourcespropertiesPropertyChange) | repeated |  |
+| `plate` | [string](#string) |  |  |
+| `property_mutations` | [resources.properties.PropertyMutation](#resourcespropertiesPropertyMutation) | repeated |  |
 | `reason` | [string](#string) | optional |  |
 | `source_user` | [SourceUser](#servicessyncSourceUser) | optional |  |
 
@@ -16292,30 +16458,6 @@ Applies managed and generic custom vehicle properties.
 
 
 ### services.sync.SetVehiclePropertiesResponse
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `vehicle_props` | [resources.vehicles.props.VehicleProps](#resourcesvehiclespropsVehicleProps) |  |  |
-
-
-
-
-
-### services.sync.SetVehiclePropsRequest
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `vehicle_props` | [resources.vehicles.props.VehicleProps](#resourcesvehiclespropsVehicleProps) |  |  |
-| `reason` | [string](#string) | optional |  |
-| `source_user` | [SourceUser](#servicessyncSourceUser) | optional |  |
-
-
-
-
-
-### services.sync.SetVehiclePropsResponse
 
 
 | Field | Type | Label | Description |
@@ -16410,11 +16552,9 @@ Sync Service handles the sync of data (e.g., users, jobs) to this FiveNet instan
 | `AddAccountUpdate` | [AddAccountUpdateRequest](#servicessyncAddAccountUpdateRequest) | [AddActivityResponse](#servicessyncAddActivityResponse) |Record an account update activity. |
 | `AddUserUpdate` | [AddUserUpdateRequest](#servicessyncAddUserUpdateRequest) | [AddActivityResponse](#servicessyncAddActivityResponse) |Record a user update activity. |
 | `AddUserActivity` | [AddUserActivityRequest](#servicessyncAddUserActivityRequest) | [AddActivityResponse](#servicessyncAddActivityResponse) |Record a user activity entry. |
-| `AddUserProps` | [AddUserPropsRequest](#servicessyncAddUserPropsRequest) | [AddActivityResponse](#servicessyncAddActivityResponse) |Deprecated: Record legacy managed user props changes. |
 | `SetUserProperties` | [SetUserPropertiesRequest](#servicessyncSetUserPropertiesRequest) | [SetUserPropertiesResponse](#servicessyncSetUserPropertiesResponse) |Apply managed and generic custom user property changes. |
 | `GetUserProps` | [GetUserPropsRequest](#servicessyncGetUserPropsRequest) | [GetUserPropsResponse](#servicessyncGetUserPropsResponse) |Retrieve user props. |
 | `GetVehicleProps` | [GetVehiclePropsRequest](#servicessyncGetVehiclePropsRequest) | [GetVehiclePropsResponse](#servicessyncGetVehiclePropsResponse) |Retrieve vehicle props. |
-| `SetVehicleProps` | [SetVehiclePropsRequest](#servicessyncSetVehiclePropsRequest) | [SetVehiclePropsResponse](#servicessyncSetVehiclePropsResponse) |Deprecated: Update legacy managed vehicle props. |
 | `SetVehicleProperties` | [SetVehiclePropertiesRequest](#servicessyncSetVehiclePropertiesRequest) | [SetVehiclePropertiesResponse](#servicessyncSetVehiclePropertiesResponse) |Apply managed and generic custom vehicle property changes. |
 | `AddColleagueActivity` | [AddColleagueActivityRequest](#servicessyncAddColleagueActivityRequest) | [AddActivityResponse](#servicessyncAddActivityResponse) |Record a colleague activity entry. |
 | `AddColleagueProps` | [AddColleaguePropsRequest](#servicessyncAddColleaguePropsRequest) | [AddActivityResponse](#servicessyncAddActivityResponse) |Record colleague props changes. |
@@ -16552,7 +16692,7 @@ Sync Service handles the sync of data (e.g., users, jobs) to this FiveNet instan
 | ----- | ---- | ----- | ----------- |
 | `props` | [resources.vehicles.props.VehicleProps](#resourcesvehiclespropsVehicleProps) |  |  |
 | `reason` | [string](#string) |  |  |
-| `property_changes` | [resources.properties.PropertyChange](#resourcespropertiesPropertyChange) | repeated | Generic custom scalar properties. Managed system properties continue to use the dedicated fields above and produce their specialized activities. |
+| `property_mutations` | [resources.properties.PropertyMutation](#resourcespropertiesPropertyMutation) | repeated | The sole scalar and lifecycle property write path. Composite and relational managed features retain their dedicated domain operations. |
 
 
 

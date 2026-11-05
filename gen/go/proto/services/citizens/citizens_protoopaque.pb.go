@@ -889,12 +889,12 @@ func (b0 ListUserActivityResponse_builder) Build() *ListUserActivityResponse {
 }
 
 type SetUserPropsRequest struct {
-	state                      protoimpl.MessageState        `protogen:"opaque.v1"`
-	xxx_hidden_Props           *props.UserProps              `protobuf:"bytes,1,opt,name=props,proto3"`
-	xxx_hidden_Reason          string                        `protobuf:"bytes,2,opt,name=reason,proto3"`
-	xxx_hidden_PropertyChanges *[]*properties.PropertyChange `protobuf:"bytes,3,rep,name=property_changes,json=propertyChanges,proto3"`
-	unknownFields              protoimpl.UnknownFields
-	sizeCache                  protoimpl.SizeCache
+	state                        protoimpl.MessageState          `protogen:"opaque.v1"`
+	xxx_hidden_Props             *props.UserProps                `protobuf:"bytes,1,opt,name=props,proto3"`
+	xxx_hidden_Reason            string                          `protobuf:"bytes,2,opt,name=reason,proto3"`
+	xxx_hidden_PropertyMutations *[]*properties.PropertyMutation `protobuf:"bytes,3,rep,name=property_mutations,json=propertyMutations,proto3"`
+	unknownFields                protoimpl.UnknownFields
+	sizeCache                    protoimpl.SizeCache
 }
 
 func (x *SetUserPropsRequest) Reset() {
@@ -936,10 +936,10 @@ func (x *SetUserPropsRequest) GetReason() string {
 	return ""
 }
 
-func (x *SetUserPropsRequest) GetPropertyChanges() []*properties.PropertyChange {
+func (x *SetUserPropsRequest) GetPropertyMutations() []*properties.PropertyMutation {
 	if x != nil {
-		if x.xxx_hidden_PropertyChanges != nil {
-			return *x.xxx_hidden_PropertyChanges
+		if x.xxx_hidden_PropertyMutations != nil {
+			return *x.xxx_hidden_PropertyMutations
 		}
 	}
 	return nil
@@ -953,8 +953,8 @@ func (x *SetUserPropsRequest) SetReason(v string) {
 	x.xxx_hidden_Reason = v
 }
 
-func (x *SetUserPropsRequest) SetPropertyChanges(v []*properties.PropertyChange) {
-	x.xxx_hidden_PropertyChanges = &v
+func (x *SetUserPropsRequest) SetPropertyMutations(v []*properties.PropertyMutation) {
+	x.xxx_hidden_PropertyMutations = &v
 }
 
 func (x *SetUserPropsRequest) HasProps() bool {
@@ -973,9 +973,9 @@ type SetUserPropsRequest_builder struct {
 
 	Props  *props.UserProps
 	Reason string
-	// Generic custom scalar properties. Managed system properties continue to
-	// use the dedicated fields above and produce their specialized activities.
-	PropertyChanges []*properties.PropertyChange
+	// The sole scalar and lifecycle property write path. Composite and
+	// relational managed features retain their dedicated domain operations.
+	PropertyMutations []*properties.PropertyMutation
 }
 
 func (b0 SetUserPropsRequest_builder) Build() *SetUserPropsRequest {
@@ -984,7 +984,7 @@ func (b0 SetUserPropsRequest_builder) Build() *SetUserPropsRequest {
 	_, _ = b, x
 	x.xxx_hidden_Props = b.Props
 	x.xxx_hidden_Reason = b.Reason
-	x.xxx_hidden_PropertyChanges = &b.PropertyChanges
+	x.xxx_hidden_PropertyMutations = &b.PropertyMutations
 	return m0
 }
 
@@ -1644,11 +1644,11 @@ const file_services_citizens_citizens_proto_rawDesc = "" +
 	"\n" +
 	"pagination\x18\x01 \x01(\v2-.resources.common.database.PaginationResponseR\n" +
 	"pagination\x12H\n" +
-	"\bactivity\x18\x02 \x03(\v2&.resources.users.activity.UserActivityB\x04\xc8\xf3\x18\x01R\bactivity\"\xbe\x01\n" +
+	"\bactivity\x18\x02 \x03(\v2&.resources.users.activity.UserActivityB\x04\xc8\xf3\x18\x01R\bactivity\"\xc4\x01\n" +
 	"\x13SetUserPropsRequest\x126\n" +
 	"\x05props\x18\x01 \x01(\v2 .resources.users.props.UserPropsR\x05props\x12\x1e\n" +
-	"\x06reason\x18\x02 \x01(\tB\x06\xda\xf3\x18\x02\b\x01R\x06reason\x12O\n" +
-	"\x10property_changes\x18\x03 \x03(\v2$.resources.properties.PropertyChangeR\x0fpropertyChanges\"N\n" +
+	"\x06reason\x18\x02 \x01(\tB\x06\xda\xf3\x18\x02\b\x01R\x06reason\x12U\n" +
+	"\x12property_mutations\x18\x03 \x03(\v2&.resources.properties.PropertyMutationR\x11propertyMutations\"N\n" +
 	"\x14SetUserPropsResponse\x126\n" +
 	"\x05props\x18\x01 \x01(\v2 .resources.users.props.UserPropsR\x05props\"\x15\n" +
 	"\x13DeleteAvatarRequest\"\x16\n" +
@@ -1668,7 +1668,7 @@ const file_services_citizens_citizens_proto_rawDesc = "" +
 	"\auser_id\x18\x01 \x01(\x05R\x06userId\x12\x17\n" +
 	"\afile_id\x18\x02 \x01(\x03R\x06fileId\x12\x1e\n" +
 	"\x06reason\x18\x03 \x01(\tB\x06\xda\xf3\x18\x02\b\x01R\x06reason\"\x1b\n" +
-	"\x19DeleteCitizenFileResponse2\x99\x14\n" +
+	"\x19DeleteCitizenFileResponse2\xab\x14\n" +
 	"\x0fCitizensService\x12y\n" +
 	"\fListCitizens\x12&.services.citizens.ListCitizensRequest\x1a'.services.citizens.ListCitizensResponse\"\x18\xd2\xf3\x18\x14\b\x01:\x10\n" +
 	"\n" +
@@ -1687,9 +1687,9 @@ const file_services_citizens_citizens_proto_rawDesc = "" +
 	"\rDeleteMugshot\x12'.services.citizens.DeleteMugshotRequest\x1a(.services.citizens.DeleteMugshotResponse\"\x14\xd2\xf3\x18\x10\b\x01\"\fSetUserProps\x12\x81\x01\n" +
 	"\x10ListCitizenFiles\x12*.services.citizens.ListCitizenFilesRequest\x1a+.services.citizens.ListCitizenFilesResponse\"\x14\xd2\xf3\x18\x10\b\x01\"\fListCitizens\x12r\n" +
 	"\x11UploadCitizenFile\x12!.resources.file.UploadFileRequest\x1a\".resources.file.UploadFileResponse\"\x14\xd2\xf3\x18\x10\b\x01\"\fSetUserProps(\x01\x12v\n" +
-	"\x11DeleteCitizenFile\x12+.services.citizens.DeleteCitizenFileRequest\x1a,.services.citizens.DeleteCitizenFileResponse\"\x06\xd2\xf3\x18\x02\b\x01\x1a\xea\t\xea\xf3\x18\xe5\t\b\x1e\x12\x1ei-mdi-account-multiple-outline2?\b\x02\x12\x10user.dateofbirth\x18\x01 \x01*\x14common.date_of_birthP\x02r\bpersonalxd\xa0\x01\x012.\b\x02\x12\buser.sex\x18\x01 \x01*\n" +
+	"\x11DeleteCitizenFile\x12+.services.citizens.DeleteCitizenFileRequest\x1a,.services.citizens.DeleteCitizenFileResponse\"\x06\xd2\xf3\x18\x02\b\x01\x1a\xfc\t\xea\xf3\x18\xf7\t\b\x1e\x12\x1ei-mdi-account-multiple-outline2?\b\x02\x12\x10user.dateofbirth\x18\x01 \x01*\x14common.date_of_birthP\x02r\bpersonalxd\xa0\x01\x012.\b\x02\x12\buser.sex\x18\x01 \x01*\n" +
 	"common.sexP\x02r\bpersonalx\xc8\x01\xa0\x01\x0127\b\x02\x12\vuser.height\x18\x03 \x01*\rcommon.heightP\x02r\bpersonalx\xac\x02\x88\x01\x04\xa0\x01\x012@\b\x02\x12\x11user.phone_number\x18\x01 \x01*\x13common.phone_number@\x01P\x02r\acontactxd\x88\x01\x032/\b\x02\x12\n" +
-	"user.visum\x18\x02 \x01*\fcommon.visumr\acontactx\xac\x02\xa0\x01\x0123\b\x02\x12\ruser.licenses\x18\x01 \x01*\x0ecommon.licenseP\x02r\blicensesxd28\b\x02\x12\vuser.wanted\x18\x04 \x01*\rcommon.wanted@\x01H\x01P\x02r\x06statusxd\x80\x01\x01\x98\x01\x032/\b\x02\x12\buser.job\x18\x01 \x01*\n" +
+	"user.visum\x18\x02 \x01*\fcommon.visumr\acontactx\xac\x02\xa0\x01\x0123\b\x02\x12\ruser.licenses\x18\x01 \x01*\x0ecommon.licenseP\x02r\blicensesxd2J\b\x02\x12\vuser.wanted\x18\x04 \x01*\rcommon.wanted@\x01H\x01P\x02r\x06statusxd\x80\x01\x01\x98\x01\x03\xaa\x01\x06\b\x01\x10\x01\x18\x01\xb2\x01\x06wanted2/\b\x02\x12\buser.job\x18\x01 \x01*\n" +
 	"common.job@\x01r\x06statusx\x90\x03\x80\x01\x01\x98\x01\x032[\b\x02\x12\x1euser.traffic_infraction_points\x18\x02 \x01* common.traffic_infraction_points@\x01r\x06statusx\xc8\x01\x80\x01\x01\x88\x01\x0529\b\x02\x12\x0fuser.open_fines\x18\x02 \x01*\vcommon.fine@\x01H\x02r\x06statusx\xac\x02\x80\x01\x01\x88\x01\r29\b\x02\x12\x0fuser.blood_type\x18\x01 \x01*\x11common.blood_type@\x01r\bpersonalx\x90\x0321\b\x02\x12\fuser.mugshot\x18\x01 \x01*\x0ecommon.mugshotr\bpersonalx\xf4\x032.\b\x02\x12\n" +
 	"user.files\x18\x01 \x01*\vcommon.fileP\x02r\bpersonalx\xd8\x042.\b\x02\x12\vuser.labels\x18\x01 \x01*\fcommon.labelP\x02r\x06labelsx\xf4\x0322\b\x02\x12\n" +
 	"user.email\x18\x01 \x01*\vcommon.mail@\x01P\x02r\acontactx\xc8\x01\x88\x01\x02:H\b\x02\x12\bpersonal\x1a8components.settings.property_definitions.groups.personal d:G\b\x02\x12\acontact\x1a7components.settings.property_definitions.groups.contact \xc8\x01:E\b\x02\x12\x06status\x1a6components.settings.property_definitions.groups.status \xac\x02:E\b\x02\x12\x06labels\x1a6components.settings.property_definitions.groups.labels \x90\x03:I\b\x02\x12\blicenses\x1a8components.settings.property_definitions.groups.licenses \xf4\x03BNZLgithub.com/fivenet-app/fivenet/v2026/gen/go/proto/services/citizens;citizensb\x06proto3"
@@ -1722,7 +1722,7 @@ var file_services_citizens_citizens_proto_goTypes = []any{
 	(*timestamp.Timestamp)(nil),         // 23: resources.timestamp.Timestamp
 	(*activity.UserActivity)(nil),       // 24: resources.users.activity.UserActivity
 	(*props.UserProps)(nil),             // 25: resources.users.props.UserProps
-	(*properties.PropertyChange)(nil),   // 26: resources.properties.PropertyChange
+	(*properties.PropertyMutation)(nil), // 26: resources.properties.PropertyMutation
 	(*file.File)(nil),                   // 27: resources.file.File
 	(*file.UploadFileRequest)(nil),      // 28: resources.file.UploadFileRequest
 	(*file.UploadFileResponse)(nil),     // 29: resources.file.UploadFileResponse
@@ -1742,7 +1742,7 @@ var file_services_citizens_citizens_proto_depIdxs = []int32{
 	20, // 11: services.citizens.ListUserActivityResponse.pagination:type_name -> resources.common.database.PaginationResponse
 	24, // 12: services.citizens.ListUserActivityResponse.activity:type_name -> resources.users.activity.UserActivity
 	25, // 13: services.citizens.SetUserPropsRequest.props:type_name -> resources.users.props.UserProps
-	26, // 14: services.citizens.SetUserPropsRequest.property_changes:type_name -> resources.properties.PropertyChange
+	26, // 14: services.citizens.SetUserPropsRequest.property_mutations:type_name -> resources.properties.PropertyMutation
 	25, // 15: services.citizens.SetUserPropsResponse.props:type_name -> resources.users.props.UserProps
 	27, // 16: services.citizens.CitizenFile.file:type_name -> resources.file.File
 	12, // 17: services.citizens.ListCitizenFilesResponse.files:type_name -> services.citizens.CitizenFile

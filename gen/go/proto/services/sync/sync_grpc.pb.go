@@ -26,11 +26,9 @@ const (
 	SyncService_AddAccountUpdate_FullMethodName       = "/services.sync.SyncService/AddAccountUpdate"
 	SyncService_AddUserUpdate_FullMethodName          = "/services.sync.SyncService/AddUserUpdate"
 	SyncService_AddUserActivity_FullMethodName        = "/services.sync.SyncService/AddUserActivity"
-	SyncService_AddUserProps_FullMethodName           = "/services.sync.SyncService/AddUserProps"
 	SyncService_SetUserProperties_FullMethodName      = "/services.sync.SyncService/SetUserProperties"
 	SyncService_GetUserProps_FullMethodName           = "/services.sync.SyncService/GetUserProps"
 	SyncService_GetVehicleProps_FullMethodName        = "/services.sync.SyncService/GetVehicleProps"
-	SyncService_SetVehicleProps_FullMethodName        = "/services.sync.SyncService/SetVehicleProps"
 	SyncService_SetVehicleProperties_FullMethodName   = "/services.sync.SyncService/SetVehicleProperties"
 	SyncService_AddColleagueActivity_FullMethodName   = "/services.sync.SyncService/AddColleagueActivity"
 	SyncService_AddColleagueProps_FullMethodName      = "/services.sync.SyncService/AddColleagueProps"
@@ -76,18 +74,12 @@ type SyncServiceClient interface {
 	AddUserUpdate(ctx context.Context, in *AddUserUpdateRequest, opts ...grpc.CallOption) (*AddActivityResponse, error)
 	// Record a user activity entry.
 	AddUserActivity(ctx context.Context, in *AddUserActivityRequest, opts ...grpc.CallOption) (*AddActivityResponse, error)
-	// Deprecated: Do not use.
-	// Deprecated: Record legacy managed user props changes.
-	AddUserProps(ctx context.Context, in *AddUserPropsRequest, opts ...grpc.CallOption) (*AddActivityResponse, error)
 	// Apply managed and generic custom user property changes.
 	SetUserProperties(ctx context.Context, in *SetUserPropertiesRequest, opts ...grpc.CallOption) (*SetUserPropertiesResponse, error)
 	// Retrieve user props.
 	GetUserProps(ctx context.Context, in *GetUserPropsRequest, opts ...grpc.CallOption) (*GetUserPropsResponse, error)
 	// Retrieve vehicle props.
 	GetVehicleProps(ctx context.Context, in *GetVehiclePropsRequest, opts ...grpc.CallOption) (*GetVehiclePropsResponse, error)
-	// Deprecated: Do not use.
-	// Deprecated: Update legacy managed vehicle props.
-	SetVehicleProps(ctx context.Context, in *SetVehiclePropsRequest, opts ...grpc.CallOption) (*SetVehiclePropsResponse, error)
 	// Apply managed and generic custom vehicle property changes.
 	SetVehicleProperties(ctx context.Context, in *SetVehiclePropertiesRequest, opts ...grpc.CallOption) (*SetVehiclePropertiesResponse, error)
 	// Record a colleague activity entry.
@@ -216,17 +208,6 @@ func (c *syncServiceClient) AddUserActivity(ctx context.Context, in *AddUserActi
 	return out, nil
 }
 
-// Deprecated: Do not use.
-func (c *syncServiceClient) AddUserProps(ctx context.Context, in *AddUserPropsRequest, opts ...grpc.CallOption) (*AddActivityResponse, error) {
-	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(AddActivityResponse)
-	err := c.cc.Invoke(ctx, SyncService_AddUserProps_FullMethodName, in, out, cOpts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
 func (c *syncServiceClient) SetUserProperties(ctx context.Context, in *SetUserPropertiesRequest, opts ...grpc.CallOption) (*SetUserPropertiesResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(SetUserPropertiesResponse)
@@ -251,17 +232,6 @@ func (c *syncServiceClient) GetVehicleProps(ctx context.Context, in *GetVehicleP
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(GetVehiclePropsResponse)
 	err := c.cc.Invoke(ctx, SyncService_GetVehicleProps_FullMethodName, in, out, cOpts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-// Deprecated: Do not use.
-func (c *syncServiceClient) SetVehicleProps(ctx context.Context, in *SetVehiclePropsRequest, opts ...grpc.CallOption) (*SetVehiclePropsResponse, error) {
-	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(SetVehiclePropsResponse)
-	err := c.cc.Invoke(ctx, SyncService_SetVehicleProps_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -515,18 +485,12 @@ type SyncServiceServer interface {
 	AddUserUpdate(context.Context, *AddUserUpdateRequest) (*AddActivityResponse, error)
 	// Record a user activity entry.
 	AddUserActivity(context.Context, *AddUserActivityRequest) (*AddActivityResponse, error)
-	// Deprecated: Do not use.
-	// Deprecated: Record legacy managed user props changes.
-	AddUserProps(context.Context, *AddUserPropsRequest) (*AddActivityResponse, error)
 	// Apply managed and generic custom user property changes.
 	SetUserProperties(context.Context, *SetUserPropertiesRequest) (*SetUserPropertiesResponse, error)
 	// Retrieve user props.
 	GetUserProps(context.Context, *GetUserPropsRequest) (*GetUserPropsResponse, error)
 	// Retrieve vehicle props.
 	GetVehicleProps(context.Context, *GetVehiclePropsRequest) (*GetVehiclePropsResponse, error)
-	// Deprecated: Do not use.
-	// Deprecated: Update legacy managed vehicle props.
-	SetVehicleProps(context.Context, *SetVehiclePropsRequest) (*SetVehiclePropsResponse, error)
 	// Apply managed and generic custom vehicle property changes.
 	SetVehicleProperties(context.Context, *SetVehiclePropertiesRequest) (*SetVehiclePropertiesResponse, error)
 	// Record a colleague activity entry.
@@ -606,9 +570,6 @@ func (UnimplementedSyncServiceServer) AddUserUpdate(context.Context, *AddUserUpd
 func (UnimplementedSyncServiceServer) AddUserActivity(context.Context, *AddUserActivityRequest) (*AddActivityResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method AddUserActivity not implemented")
 }
-func (UnimplementedSyncServiceServer) AddUserProps(context.Context, *AddUserPropsRequest) (*AddActivityResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method AddUserProps not implemented")
-}
 func (UnimplementedSyncServiceServer) SetUserProperties(context.Context, *SetUserPropertiesRequest) (*SetUserPropertiesResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method SetUserProperties not implemented")
 }
@@ -617,9 +578,6 @@ func (UnimplementedSyncServiceServer) GetUserProps(context.Context, *GetUserProp
 }
 func (UnimplementedSyncServiceServer) GetVehicleProps(context.Context, *GetVehiclePropsRequest) (*GetVehiclePropsResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetVehicleProps not implemented")
-}
-func (UnimplementedSyncServiceServer) SetVehicleProps(context.Context, *SetVehiclePropsRequest) (*SetVehiclePropsResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method SetVehicleProps not implemented")
 }
 func (UnimplementedSyncServiceServer) SetVehicleProperties(context.Context, *SetVehiclePropertiesRequest) (*SetVehiclePropertiesResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method SetVehicleProperties not implemented")
@@ -834,24 +792,6 @@ func _SyncService_AddUserActivity_Handler(srv interface{}, ctx context.Context, 
 	return interceptor(ctx, in, info, handler)
 }
 
-func _SyncService_AddUserProps_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(AddUserPropsRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(SyncServiceServer).AddUserProps(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: SyncService_AddUserProps_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(SyncServiceServer).AddUserProps(ctx, req.(*AddUserPropsRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
 func _SyncService_SetUserProperties_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(SetUserPropertiesRequest)
 	if err := dec(in); err != nil {
@@ -902,24 +842,6 @@ func _SyncService_GetVehicleProps_Handler(srv interface{}, ctx context.Context, 
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(SyncServiceServer).GetVehicleProps(ctx, req.(*GetVehiclePropsRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _SyncService_SetVehicleProps_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(SetVehiclePropsRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(SyncServiceServer).SetVehicleProps(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: SyncService_SetVehicleProps_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(SyncServiceServer).SetVehicleProps(ctx, req.(*SetVehiclePropsRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -1345,10 +1267,6 @@ var SyncService_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _SyncService_AddUserActivity_Handler,
 		},
 		{
-			MethodName: "AddUserProps",
-			Handler:    _SyncService_AddUserProps_Handler,
-		},
-		{
 			MethodName: "SetUserProperties",
 			Handler:    _SyncService_SetUserProperties_Handler,
 		},
@@ -1359,10 +1277,6 @@ var SyncService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetVehicleProps",
 			Handler:    _SyncService_GetVehicleProps_Handler,
-		},
-		{
-			MethodName: "SetVehicleProps",
-			Handler:    _SyncService_SetVehicleProps_Handler,
 		},
 		{
 			MethodName: "SetVehicleProperties",

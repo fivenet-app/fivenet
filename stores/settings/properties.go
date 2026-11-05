@@ -5,7 +5,9 @@ import (
 	"errors"
 	"fmt"
 	"sort"
+	"strconv"
 	"strings"
+	"time"
 
 	properties "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/properties"
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/timestamp"
@@ -16,6 +18,7 @@ import (
 	"github.com/fivenet-app/fivenet/v2026/query/fivenet/model"
 	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
 	"github.com/go-jet/jet/v2/mysql"
+	"go.uber.org/zap"
 	"google.golang.org/protobuf/encoding/protojson"
 	"google.golang.org/protobuf/proto"
 )
@@ -25,6 +28,16 @@ var (
 	ErrPropertyDefinitionNotFound = errors.New("property definition not found")
 	ErrPropertyGroupNotFound      = errors.New("property group not found")
 )
+
+func (s *Store) invalidatePropertyScope(ctx context.Context, scope properties.PropertyScope) {
+	s.propertyCache.Invalidate(scope)
+	if s.propertyEvents != nil {
+		if err := s.propertyEvents.Invalidate(ctx, scope); err != nil {
+			zap.L().
+				Warn("failed to publish property definition invalidation", zap.String("property.scope", scope.String()), zap.Error(err))
+		}
+	}
+}
 
 // Kept as local aliases for SQL expectation tests; scope semantics live in
 // pkg/properties.ScopeName.
@@ -71,6 +84,9 @@ func (s *Store) ListPropertyDefinitions(
 			tDefinitions.RendererConfig,
 			tDefinitions.DisplayMode,
 			tDefinitions.Implicit,
+			tDefinitions.StatePolicy,
+			tDefinitions.ValueConstraints,
+			tDefinitions.ReasonMode,
 			tDefinitions.DeletedAt,
 		).
 		FROM(tDefinitions).
@@ -186,7 +202,7 @@ func (s *Store) CreatePropertyGroup(
 	if err != nil {
 		return nil, err
 	}
-	s.propertyCache.Invalidate(group.GetScope())
+	s.invalidatePropertyScope(ctx, group.GetScope())
 	return proto.Clone(group).(*properties.PropertyGroup), nil
 }
 
@@ -213,7 +229,7 @@ func (s *Store) UpdatePropertyGroup(
 	if changed == 0 {
 		return nil, ErrPropertyGroupNotFound
 	}
-	s.propertyCache.Invalidate(group.GetScope())
+	s.invalidatePropertyScope(ctx, group.GetScope())
 	return proto.Clone(group).(*properties.PropertyGroup), nil
 }
 
@@ -260,7 +276,7 @@ func (s *Store) DeletePropertyGroup(
 	if err := tx.Commit(); err != nil {
 		return err
 	}
-	s.propertyCache.Invalidate(scope)
+	s.invalidatePropertyScope(ctx, scope)
 	return nil
 }
 
@@ -301,7 +317,7 @@ func (s *Store) RestorePropertyGroup(
 	if len(rows) != 1 {
 		return nil, ErrPropertyGroupNotFound
 	}
-	s.propertyCache.Invalidate(scope)
+	s.invalidatePropertyScope(ctx, scope)
 	return propertyGroupFromRow(scope, rows[0]), nil
 }
 
@@ -404,7 +420,7 @@ func (s *Store) ReorderPropertyGroups(
 	if err := tx.Commit(); err != nil {
 		return err
 	}
-	s.propertyCache.Invalidate(scope)
+	s.invalidatePropertyScope(ctx, scope)
 	return nil
 }
 
@@ -505,7 +521,7 @@ func (s *Store) ReorderPropertyDefinitions(
 	if err := tx.Commit(); err != nil {
 		return err
 	}
-	s.propertyCache.Invalidate(scope)
+	s.invalidatePropertyScope(ctx, scope)
 	return nil
 }
 
@@ -521,6 +537,14 @@ func (s *Store) CreatePropertyDefinition(
 	if err != nil {
 		return nil, err
 	}
+	statePolicy, err := statePolicyJSON(definition.GetStatePolicy())
+	if err != nil {
+		return nil, err
+	}
+	valueConstraints, err := valueConstraintsJSON(definition.GetValueConstraints())
+	if err != nil {
+		return nil, err
+	}
 
 	tDefinitions := table.FivenetPropertyDefinitions
 	_, err = tDefinitions.INSERT(
@@ -532,6 +556,9 @@ func (s *Store) CreatePropertyDefinition(
 		tDefinitions.Renderer, tDefinitions.RendererConfig,
 		tDefinitions.DisplayMode,
 		tDefinitions.Implicit,
+		tDefinitions.StatePolicy,
+		tDefinitions.ValueConstraints,
+		tDefinitions.ReasonMode,
 	).VALUES(
 		scopeName, definition.GetKey(), definition.GetValueType(), definition.GetLabel(), definition.Description,
 		definition.GetEnabled(),
@@ -542,12 +569,15 @@ func (s *Store) CreatePropertyDefinition(
 		definition.GetRenderer(), rendererConfig,
 		definition.GetDisplayMode(),
 		definition.GetImplicit(),
+		statePolicy,
+		valueConstraints,
+		definition.GetReasonMode(),
 	).
 		ExecContext(ctx, s.db)
 	if err != nil {
 		return nil, err
 	}
-	s.propertyCache.Invalidate(definition.GetScope())
+	s.invalidatePropertyScope(ctx, definition.GetScope())
 	return customPropertyDefinitionCopy(definition), nil
 }
 
@@ -560,6 +590,14 @@ func (s *Store) UpdatePropertyDefinition(
 		return nil, err
 	}
 	rendererConfig, err := rendererConfigJSON(definition.GetRendererConfig())
+	if err != nil {
+		return nil, err
+	}
+	statePolicy, err := statePolicyJSON(definition.GetStatePolicy())
+	if err != nil {
+		return nil, err
+	}
+	valueConstraints, err := valueConstraintsJSON(definition.GetValueConstraints())
 	if err != nil {
 		return nil, err
 	}
@@ -582,6 +620,9 @@ func (s *Store) UpdatePropertyDefinition(
 		tDefinitions.RendererConfig.SET(rendererConfigValue(rendererConfig)),
 		tDefinitions.DisplayMode.SET(mysql.Int32(int32(definition.GetDisplayMode()))),
 		tDefinitions.Implicit.SET(mysql.Bool(definition.GetImplicit())),
+		tDefinitions.StatePolicy.SET(rendererConfigValue(statePolicy)),
+		tDefinitions.ValueConstraints.SET(rendererConfigValue(valueConstraints)),
+		tDefinitions.ReasonMode.SET(mysql.Int32(int32(definition.GetReasonMode()))),
 	).WHERE(
 		tDefinitions.Scope.EQ(mysql.String(scopeName)).AND(
 			tDefinitions.PropertyKey.EQ(mysql.String(definition.GetKey())).AND(
@@ -601,8 +642,158 @@ func (s *Store) UpdatePropertyDefinition(
 	if changed == 0 {
 		return nil, ErrPropertyDefinitionNotFound
 	}
-	s.propertyCache.Invalidate(definition.GetScope())
+	s.invalidatePropertyScope(ctx, definition.GetScope())
 	return customPropertyDefinitionCopy(definition), nil
+}
+
+const propertyConstraintScanBatchSize = 500
+
+// ScanPropertyValueConstraints is the deliberately read-only, bounded audit
+// for values grandfathered by a later constraint change.
+func (s *Store) ScanPropertyValueConstraints(ctx context.Context) error {
+	for _, scope := range []properties.PropertyScope{properties.PropertyScope_PROPERTY_SCOPE_USER, properties.PropertyScope_PROPERTY_SCOPE_VEHICLE} {
+		definitions, err := s.ListPropertyDefinitions(ctx, scope, false)
+		if err != nil {
+			s.logger.Warn(
+				"failed to list property definitions for constraint scan",
+				zap.String("property.scope", scope.String()),
+				zap.Error(err),
+			)
+			continue
+		}
+		for _, definition := range definitions {
+			if definition.GetSource() != properties.PropertyDefinitionSource_PROPERTY_DEFINITION_SOURCE_CUSTOM ||
+				!definition.GetEnabled() ||
+				definition.GetValueConstraints() == nil ||
+				proto.Size(definition.GetValueConstraints()) == 0 {
+				continue
+			}
+			if err := s.scanPropertyDefinitionValues(ctx, definition); err != nil {
+				s.logger.Warn(
+					"failed to scan property values",
+					zap.String("property.scope", scope.String()),
+					zap.String("property.key", definition.GetKey()),
+					zap.Error(err),
+				)
+			}
+		}
+	}
+	return nil
+}
+
+func (s *Store) scanPropertyDefinitionValues(
+	ctx context.Context,
+	definition *properties.PropertyDefinition,
+) error {
+	incompatible, samples := 0, []string{}
+	var userScanCursor int32
+	var vehicleScanCursor string
+	for {
+		count := 0
+		switch definition.GetScope() {
+		case properties.PropertyScope_PROPERTY_SCOPE_USER:
+			rows := []model.FivenetUserPropertyValues{}
+			err := table.FivenetUserPropertyValues.SELECT(table.FivenetUserPropertyValues.AllColumns).
+				FROM(table.FivenetUserPropertyValues).
+				WHERE(table.FivenetUserPropertyValues.PropertyKey.EQ(mysql.String(definition.GetKey())).AND(table.FivenetUserPropertyValues.UserID.GT(mysql.Int32(userScanCursor)))).
+				ORDER_BY(table.FivenetUserPropertyValues.UserID.ASC()).
+				LIMIT(propertyConstraintScanBatchSize).
+				QueryContext(ctx, s.db, &rows)
+			if err != nil {
+				return err
+			}
+			count = len(rows)
+			for _, row := range rows {
+				userScanCursor = row.UserID
+				if !storedValueMatchesDefinition(
+					definition,
+					row.ValueType,
+					row.ValueString,
+					row.ValueInteger,
+					row.ValueNumber,
+					row.ValueBool,
+					row.ValueTimestamp,
+					row.ValueDate,
+				) {
+					incompatible++
+					if len(samples) < 10 {
+						samples = append(samples, strconv.Itoa(int(row.UserID)))
+					}
+				}
+			}
+		case properties.PropertyScope_PROPERTY_SCOPE_VEHICLE:
+			rows := []model.FivenetVehiclePropertyValues{}
+			err := table.FivenetVehiclePropertyValues.SELECT(table.FivenetVehiclePropertyValues.AllColumns).
+				FROM(table.FivenetVehiclePropertyValues).
+				WHERE(table.FivenetVehiclePropertyValues.PropertyKey.EQ(mysql.String(definition.GetKey())).AND(table.FivenetVehiclePropertyValues.Plate.GT(mysql.String(vehicleScanCursor)))).
+				ORDER_BY(table.FivenetVehiclePropertyValues.Plate.ASC()).
+				LIMIT(propertyConstraintScanBatchSize).
+				QueryContext(ctx, s.db, &rows)
+			if err != nil {
+				return err
+			}
+			count = len(rows)
+			for _, row := range rows {
+				vehicleScanCursor = row.Plate
+				if !storedValueMatchesDefinition(
+					definition,
+					row.ValueType,
+					row.ValueString,
+					row.ValueInteger,
+					row.ValueNumber,
+					row.ValueBool,
+					row.ValueTimestamp,
+					row.ValueDate,
+				) {
+					incompatible++
+					if len(samples) < 10 {
+						samples = append(samples, row.Plate)
+					}
+				}
+			}
+		}
+		if count < propertyConstraintScanBatchSize {
+			break
+		}
+	}
+	if incompatible > 0 {
+		s.logger.Warn(
+			"existing property values do not satisfy constraints",
+			zap.String(
+				"property.scope",
+				strings.ToLower(
+					strings.TrimPrefix(definition.GetScope().String(), "PROPERTY_SCOPE_"),
+				),
+			),
+			zap.String("property.key", definition.GetKey()),
+			zap.String("property.value_type", definition.GetValueType().String()),
+			zap.Int("property.incompatible_value_count", incompatible),
+			zap.Strings("property.resource_id_sample", samples),
+			zap.Int("property.scan_batch_size", propertyConstraintScanBatchSize),
+		)
+	}
+	return nil
+}
+
+func storedValueMatchesDefinition(
+	definition *properties.PropertyDefinition,
+	valueType uint8,
+	stringValue *string,
+	integerValue *int64,
+	numberValue *float64,
+	boolValue *bool,
+	timestampValue, dateValue *time.Time,
+) bool {
+	value, err := propertyregistry.DecodeStoredValue(propertyregistry.StoredValue{
+		Type:      properties.PropertyValueType(valueType),
+		String:    stringValue,
+		Integer:   integerValue,
+		Number:    numberValue,
+		Bool:      boolValue,
+		Timestamp: timestampValue,
+		Date:      dateValue,
+	})
+	return err == nil && propertyregistry.ValidateValueConstraints(definition, value) == nil
 }
 
 func (s *Store) DeletePropertyDefinition(
@@ -636,7 +827,7 @@ func (s *Store) DeletePropertyDefinition(
 	if changed == 0 {
 		return ErrPropertyDefinitionNotFound
 	}
-	s.propertyCache.Invalidate(scope)
+	s.invalidatePropertyScope(ctx, scope)
 	return nil
 }
 
@@ -670,7 +861,7 @@ func (s *Store) RestorePropertyDefinition(
 	if changed == 0 {
 		return nil, ErrPropertyDefinitionNotFound
 	}
-	s.propertyCache.Invalidate(scope)
+	s.invalidatePropertyScope(ctx, scope)
 
 	definitions, err := s.ListPropertyDefinitions(ctx, scope, true)
 	if err != nil {
@@ -705,7 +896,7 @@ func (s *Store) SetSystemPropertyEnabled(
 	if err != nil {
 		return nil, err
 	}
-	s.propertyCache.Invalidate(scope)
+	s.invalidatePropertyScope(ctx, scope)
 	defCopy := proto.Clone(definition).(*properties.PropertyDefinition)
 	defCopy.Enabled = enabled
 	return defCopy, nil
@@ -807,8 +998,8 @@ func (s *Store) ReconcileSystemPropertyOverrides(ctx context.Context) error {
 		}
 	}
 
-	s.propertyCache.Invalidate(properties.PropertyScope_PROPERTY_SCOPE_USER)
-	s.propertyCache.Invalidate(properties.PropertyScope_PROPERTY_SCOPE_VEHICLE)
+	s.invalidatePropertyScope(ctx, properties.PropertyScope_PROPERTY_SCOPE_USER)
+	s.invalidatePropertyScope(ctx, properties.PropertyScope_PROPERTY_SCOPE_VEHICLE)
 	return nil
 }
 
@@ -877,6 +1068,30 @@ func rendererConfigJSON(config *properties.PropertyRendererConfig) (*string, err
 		return nil, nil
 	}
 	b, err := protojson.Marshal(config)
+	if err != nil {
+		return nil, err
+	}
+	value := string(b)
+	return &value, nil
+}
+
+func statePolicyJSON(policy *properties.PropertyStatePolicy) (*string, error) {
+	if policy == nil {
+		return nil, nil
+	}
+	b, err := protojson.Marshal(policy)
+	if err != nil {
+		return nil, err
+	}
+	value := string(b)
+	return &value, nil
+}
+
+func valueConstraintsJSON(constraints *properties.PropertyValueConstraints) (*string, error) {
+	if constraints == nil {
+		return nil, nil
+	}
+	b, err := protojson.Marshal(constraints)
 	if err != nil {
 		return nil, err
 	}

@@ -9,8 +9,8 @@ import (
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/audit"
 	permissionsattributes "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/permissions/attributes"
 	properties "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/properties"
-	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/timestamp"
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/userinfo"
+	vehiclesactivity "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/vehicles/activity"
 	pbvehicles "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/vehicles"
 	permsvehicles "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/vehicles/perms"
 	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/auth"
@@ -188,7 +188,7 @@ func (s *Server) SetVehicleProps(
 	logging.InjectFields(ctx, logging.Fields{"fivenet.vehicles.plate", req.GetProps().GetPlate()})
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
-	if req.GetReason() == "" {
+	if req.GetReason() == "" && len(req.GetPropertyMutations()) == 0 {
 		return nil, errorsvehicles.ErrReasonRequired
 	}
 
@@ -208,64 +208,95 @@ func (s *Server) SetVehicleProps(
 		return nil, errswrap.NewError(err, errorsvehicles.ErrFailedQuery)
 	}
 	propertyAdmin := userInfo.GetJobAdmin()
+	wantedMutation := false
 
-	// Generate the update sets
-	if req.GetProps() != nil && req.GetProps().Wanted != nil {
-		wantedEnabled, err := s.store.IsSystemPropertyEnabled(ctx, "vehicle.wanted")
+	// Wanted is a managed scalar. Public callers must use PropertyMutation;
+	// these projection fields are populated only after that mutation is checked.
+	if req.GetProps().Wanted != nil || req.GetProps().WantedAt != nil ||
+		req.GetProps().WantedTill != nil || req.GetProps().WantedReason != nil {
+		return nil, errorsvehicles.ErrInvalidProperty
+	}
+	game := s.appCfg.Get().GetGame()
+	if maxDuration := game.GetMaxWantedDurationVehicle(); game.GetMaxWantedDurationVehicleEnabled() &&
+		maxDuration != nil {
+		propertyregistry.ClampWantedExpiry(
+			properties.PropertyScope_PROPERTY_SCOPE_VEHICLE,
+			req.GetPropertyMutations(),
+			time.Now().UTC().Add(maxDuration.AsDuration()),
+		)
+	}
+	for _, mutation := range req.GetPropertyMutations() {
+		managed, ok := propertyregistry.ManagedMutation(
+			properties.PropertyScope_PROPERTY_SCOPE_VEHICLE,
+			mutation.GetKey(),
+		)
+		if !ok {
+			continue
+		}
+		wantedMutation = true
+		wantedEnabled, err := s.store.IsSystemPropertyEnabled(ctx, managed.Key)
 		if err != nil {
 			return nil, errswrap.NewError(err, errorsvehicles.ErrFailedQuery)
 		}
 		if !wantedEnabled {
 			return nil, errorsvehicles.ErrSystemPropertyDisabled
 		}
-		if !setPropertyList.Contains("vehicle.wanted") ||
-			!viewPropertyList.Contains("vehicle.wanted") {
+		if !setPropertyList.Contains(managed.Key) || !viewPropertyList.Contains(managed.Key) {
 			return nil, errorsvehicles.ErrPropsWantedDenied
 		}
+		if err := propertyregistry.ValidateMutationShape(mutation); err != nil {
+			return nil, errorsvehicles.ErrInvalidProperty
+		}
+		definition, _ := propertyregistry.SystemPropertyDefinition(
+			properties.PropertyScope_PROPERTY_SCOPE_VEHICLE,
+			managed.Key,
+		)
+		if err := propertyregistry.ValidateMutationState(definition, mutation); err != nil {
+			return nil, errorsvehicles.ErrInvalidProperty
+		}
+		if err := propertyregistry.ValidateMutationReason(definition, mutation); err != nil {
+			return nil, errorsvehicles.ErrInvalidProperty
+		}
+		if err := managed.Apply(req.Props, mutation); err != nil {
+			return nil, errorsvehicles.ErrInvalidProperty
+		}
 	}
+	if err := propertyregistry.ValidateMutationKeys(req.GetPropertyMutations()); err != nil {
+		return nil, errorsvehicles.ErrInvalidProperty
+	}
+	mutationChanges, err := customMutationChanges(
+		req.GetPropertyMutations(),
+		setPropertyList,
+		viewPropertyList,
+		propertyAdmin,
+	)
+	if err != nil {
+		return nil, err
+	}
+	propertyChanges := mutationChanges
 	if err := s.validateCustomProperties(
 		ctx,
-		req.GetPropertyChanges(),
+		propertyChanges,
 		setPropertyList,
 		viewPropertyList,
 		propertyAdmin,
 	); err != nil {
 		return nil, err
 	}
-	// A protobuf epoch timestamp is the client-side marker for “permanent”.
-	// Resolve it against the configured safety maximum before persisting it.
-	if req.GetProps().GetWanted() && req.GetProps().GetWantedTill() != nil {
-		wantedTill := req.GetProps().GetWantedTill()
-		if wantedTill.GetTimestamp() != nil && wantedTill.GetTimestamp().GetSeconds() == 0 &&
-			wantedTill.GetTimestamp().GetNanos() == 0 {
-			game := s.appCfg.Get().GetGame()
-			if maxDuration := game.GetMaxWantedDurationVehicle(); maxDuration != nil &&
-				game.GetMaxWantedDurationVehicleEnabled() {
-				req.Props.SetWantedTill(
-					timestamp.New(time.Now().UTC().Add(maxDuration.AsDuration())),
-				)
-			}
-		} else if wantedTill.GetTimestamp() != nil {
-			game := s.appCfg.Get().GetGame()
-			if maxDuration := game.GetMaxWantedDurationVehicle(); maxDuration != nil &&
-				game.GetMaxWantedDurationVehicleEnabled() {
-				maxTill := time.Now().UTC().Add(maxDuration.AsDuration())
-				if wantedTill.AsTime().After(maxTill) {
-					req.Props.SetWantedTill(timestamp.New(maxTill))
-				}
-			}
-		}
-	}
-
 	grpc_audit.SetAction(ctx, audit.EventAction_EVENT_ACTION_UPDATED)
 
 	creatorID := userInfo.GetUserId()
 	props, err := s.store.UpdateProps(ctx, vehiclesstore.PropsUpdate{
-		Props:           req.GetProps(),
-		CreatorID:       &creatorID,
-		CreatorJob:      userInfo.GetJob(),
-		Reason:          req.GetReason(),
-		PropertyChanges: req.GetPropertyChanges(),
+		Props:                  req.GetProps(),
+		CreatorID:              &creatorID,
+		CreatorJob:             userInfo.GetJob(),
+		Reason:                 req.GetReason(),
+		WantedStateReason:      vehicleWantedStateReason(req.GetPropertyMutations()),
+		WantedStateClearReason: vehicleWantedStateClearReason(req.GetPropertyMutations()),
+		PropertyChanges:        propertyChanges,
+		PropertyMutations:      req.GetPropertyMutations(),
+		PropertyActivities:     vehicleMutationActivities(req.GetPropertyMutations()),
+		UpdateWanted:           wantedMutation,
 	})
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsvehicles.ErrFailedQuery)
@@ -299,9 +330,75 @@ func (s *Server) SetVehicleProps(
 	return &pbvehicles.SetVehiclePropsResponse{Props: props}, nil
 }
 
+func vehicleWantedStateReason(mutations []*properties.PropertyMutation) *string {
+	for _, mutation := range mutations {
+		if mutation.GetKey() == "vehicle.wanted" && mutation.Reason != nil {
+			return mutation.Reason
+		}
+	}
+	return nil
+}
+
+func vehicleWantedStateClearReason(mutations []*properties.PropertyMutation) bool {
+	for _, mutation := range mutations {
+		if mutation.GetKey() == "vehicle.wanted" && mutation.GetClearReason() {
+			return true
+		}
+	}
+	return false
+}
+
+func customMutationChanges(
+	mutations []*properties.PropertyMutation,
+	settable *permissionsattributes.PropertyList,
+	visible *permissionsattributes.PropertyList,
+	propertyAdmin bool,
+) ([]*propertyregistry.ScalarChange, error) {
+	changes := make([]*propertyregistry.ScalarChange, 0, len(mutations))
+	seen := make(map[string]struct{}, len(mutations))
+	for _, mutation := range mutations {
+		if err := propertyregistry.ValidateMutationShape(mutation); err != nil {
+			return nil, errorsvehicles.ErrInvalidProperty
+		}
+		if !propertyregistry.IsCustomPropertyKey(
+			properties.PropertyScope_PROPERTY_SCOPE_VEHICLE,
+			mutation.GetKey(),
+		) {
+			if _, managed := propertyregistry.ManagedMutation(
+				properties.PropertyScope_PROPERTY_SCOPE_VEHICLE,
+				mutation.GetKey(),
+			); managed {
+				continue
+			}
+			return nil, errorsvehicles.ErrPropsPropertiesDenied
+		}
+		if !vehiclePropertyCanBeChanged(mutation.GetKey(), settable, visible, propertyAdmin) {
+			return nil, errorsvehicles.ErrPropsPropertiesDenied
+		}
+		if _, ok := seen[mutation.GetKey()]; ok {
+			return nil, errorsvehicles.ErrInvalidProperty
+		}
+		seen[mutation.GetKey()] = struct{}{}
+		if mutation.GetSetValue() != nil {
+			changes = append(
+				changes,
+				&propertyregistry.ScalarChange{
+					Key:   mutation.GetKey(),
+					Value: mutation.GetSetValue(),
+				},
+			)
+		} else if mutation.GetClearValue() != nil {
+			changes = append(changes, &propertyregistry.ScalarChange{Key: mutation.GetKey()})
+		} else if mutation.GetState() == nil && mutation.Reason == nil && mutation.ClearReason == nil {
+			return nil, errorsvehicles.ErrInvalidProperty
+		}
+	}
+	return changes, nil
+}
+
 func (s *Server) validateCustomProperties(
 	ctx context.Context,
-	values []*properties.PropertyChange,
+	values []*propertyregistry.ScalarChange,
 	settable *permissionsattributes.PropertyList,
 	visible *permissionsattributes.PropertyList,
 	propertyAdmin bool,
@@ -322,6 +419,38 @@ func (s *Server) validateCustomProperties(
 		return errorsvehicles.ErrPropsPropertiesDenied
 	default:
 		return errswrap.NewError(err, errorsvehicles.ErrFailedQuery)
+	}
+}
+
+func vehicleMutationActivities(
+	mutations []*properties.PropertyMutation,
+) map[string]*vehiclesactivity.PropertyChange {
+	activities := make(map[string]*vehiclesactivity.PropertyChange, len(mutations))
+	for _, mutation := range mutations {
+		if mutation == nil || (mutation.GetSetValue() == nil && mutation.GetClearValue() == nil) {
+			continue
+		}
+		activities[mutation.GetKey()] = &vehiclesactivity.PropertyChange{
+			Key:       mutation.GetKey(),
+			Lifecycle: vehicleMutationLifecycle(mutation),
+			Cause:     vehiclesactivity.PropertyChangeCause_PROPERTY_CHANGE_CAUSE_MANUAL,
+		}
+	}
+	return activities
+}
+
+func vehicleMutationLifecycle(
+	mutation *properties.PropertyMutation,
+) *vehiclesactivity.PropertyLifecycleChange {
+	lifecycle := propertyregistry.MutationLifecycleForMutation(mutation)
+	if lifecycle == nil {
+		return nil
+	}
+	return &vehiclesactivity.PropertyLifecycleChange{
+		ExpiresAt:          lifecycle.ExpiresAt,
+		ExpiryCleared:      lifecycle.ExpiryCleared,
+		StateReason:        lifecycle.StateReason,
+		StateReasonCleared: lifecycle.StateReasonCleared,
 	}
 }
 

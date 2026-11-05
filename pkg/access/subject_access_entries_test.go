@@ -114,12 +114,20 @@ func TestListTargetsAccessDeduplicatesIDsAndIncludesEmptyTargets(t *testing.T) {
 	mock.ExpectQuery(`(?s)SELECT.*FROM fivenet_documents_access.*IN \(\?, \?\)`).
 		WithArgs(int64(10), int64(20)).
 		WillReturnRows(sqlmock.NewRows([]string{
-			"subject_access_row.id", "subject_access_row.target_id", "subject_access_row.access",
-			"subject_access_row.effect", "subject_access_row.subject_type", "subject_access_row.acl_job",
-			"subject_access_row.acl_minimum_grade", "subject_access_row.acl_qualification_id",
-			"subject_access_row.subject_user_id", "subject_access_row.user_job",
-			"subject_access_row.user_job_grade", "subject_access_row.user_firstname",
-			"subject_access_row.user_lastname", "subject_access_row.user_dateofbirth",
+			"subject_access_row.id",
+			"subject_access_row.target_id",
+			"subject_access_row.access",
+			"subject_access_row.effect",
+			"subject_access_row.subject_type",
+			"subject_access_row.acl_job",
+			"subject_access_row.acl_minimum_grade",
+			"subject_access_row.acl_qualification_id",
+			"subject_access_row.subject_user_id",
+			"subject_access_row.user_job",
+			"subject_access_row.user_job_grade",
+			"subject_access_row.user_firstname",
+			"subject_access_row.user_lastname",
+			"subject_access_row.user_dateofbirth",
 			"subject_access_row.user_phone_number",
 		}))
 

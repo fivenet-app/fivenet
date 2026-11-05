@@ -111,6 +111,50 @@ func (x UserActivityType) Number() protoreflect.EnumNumber {
 	return protoreflect.EnumNumber(x)
 }
 
+type PropertyChangeCause int32
+
+const (
+	PropertyChangeCause_PROPERTY_CHANGE_CAUSE_UNSPECIFIED PropertyChangeCause = 0
+	PropertyChangeCause_PROPERTY_CHANGE_CAUSE_MANUAL      PropertyChangeCause = 1
+	PropertyChangeCause_PROPERTY_CHANGE_CAUSE_EXPIRED     PropertyChangeCause = 2
+)
+
+// Enum value maps for PropertyChangeCause.
+var (
+	PropertyChangeCause_name = map[int32]string{
+		0: "PROPERTY_CHANGE_CAUSE_UNSPECIFIED",
+		1: "PROPERTY_CHANGE_CAUSE_MANUAL",
+		2: "PROPERTY_CHANGE_CAUSE_EXPIRED",
+	}
+	PropertyChangeCause_value = map[string]int32{
+		"PROPERTY_CHANGE_CAUSE_UNSPECIFIED": 0,
+		"PROPERTY_CHANGE_CAUSE_MANUAL":      1,
+		"PROPERTY_CHANGE_CAUSE_EXPIRED":     2,
+	}
+)
+
+func (x PropertyChangeCause) Enum() *PropertyChangeCause {
+	p := new(PropertyChangeCause)
+	*p = x
+	return p
+}
+
+func (x PropertyChangeCause) String() string {
+	return protoimpl.X.EnumStringOf(x.Descriptor(), protoreflect.EnumNumber(x))
+}
+
+func (PropertyChangeCause) Descriptor() protoreflect.EnumDescriptor {
+	return file_resources_users_activity_activity_proto_enumTypes[1].Descriptor()
+}
+
+func (PropertyChangeCause) Type() protoreflect.EnumType {
+	return &file_resources_users_activity_activity_proto_enumTypes[1]
+}
+
+func (x PropertyChangeCause) Number() protoreflect.EnumNumber {
+	return protoreflect.EnumNumber(x)
+}
+
 type UserActivity struct {
 	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty" alias:"user_activity.id"`
@@ -2095,6 +2139,8 @@ type PropertyChange struct {
 	Key           string                    `protobuf:"bytes,1,opt,name=key,proto3" json:"key,omitempty"`
 	OldValue      *properties.PropertyValue `protobuf:"bytes,2,opt,name=old_value,json=oldValue,proto3,oneof" json:"old_value,omitempty"`
 	NewValue      *properties.PropertyValue `protobuf:"bytes,3,opt,name=new_value,json=newValue,proto3,oneof" json:"new_value,omitempty"`
+	Lifecycle     *PropertyLifecycleChange  `protobuf:"bytes,4,opt,name=lifecycle,proto3,oneof" json:"lifecycle,omitempty"`
+	Cause         PropertyChangeCause       `protobuf:"varint,5,opt,name=cause,proto3,enum=resources.users.activity.PropertyChangeCause" json:"cause,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -2145,6 +2191,20 @@ func (x *PropertyChange) GetNewValue() *properties.PropertyValue {
 	return nil
 }
 
+func (x *PropertyChange) GetLifecycle() *PropertyLifecycleChange {
+	if x != nil {
+		return x.Lifecycle
+	}
+	return nil
+}
+
+func (x *PropertyChange) GetCause() PropertyChangeCause {
+	if x != nil {
+		return x.Cause
+	}
+	return PropertyChangeCause_PROPERTY_CHANGE_CAUSE_UNSPECIFIED
+}
+
 func (x *PropertyChange) SetKey(v string) {
 	x.Key = v
 }
@@ -2155,6 +2215,14 @@ func (x *PropertyChange) SetOldValue(v *properties.PropertyValue) {
 
 func (x *PropertyChange) SetNewValue(v *properties.PropertyValue) {
 	x.NewValue = v
+}
+
+func (x *PropertyChange) SetLifecycle(v *PropertyLifecycleChange) {
+	x.Lifecycle = v
+}
+
+func (x *PropertyChange) SetCause(v PropertyChangeCause) {
+	x.Cause = v
 }
 
 func (x *PropertyChange) HasOldValue() bool {
@@ -2171,6 +2239,13 @@ func (x *PropertyChange) HasNewValue() bool {
 	return x.NewValue != nil
 }
 
+func (x *PropertyChange) HasLifecycle() bool {
+	if x == nil {
+		return false
+	}
+	return x.Lifecycle != nil
+}
+
 func (x *PropertyChange) ClearOldValue() {
 	x.OldValue = nil
 }
@@ -2179,12 +2254,18 @@ func (x *PropertyChange) ClearNewValue() {
 	x.NewValue = nil
 }
 
+func (x *PropertyChange) ClearLifecycle() {
+	x.Lifecycle = nil
+}
+
 type PropertyChange_builder struct {
 	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
 
-	Key      string
-	OldValue *properties.PropertyValue
-	NewValue *properties.PropertyValue
+	Key       string
+	OldValue  *properties.PropertyValue
+	NewValue  *properties.PropertyValue
+	Lifecycle *PropertyLifecycleChange
+	Cause     PropertyChangeCause
 }
 
 func (b0 PropertyChange_builder) Build() *PropertyChange {
@@ -2194,6 +2275,131 @@ func (b0 PropertyChange_builder) Build() *PropertyChange {
 	x.Key = b.Key
 	x.OldValue = b.OldValue
 	x.NewValue = b.NewValue
+	x.Lifecycle = b.Lifecycle
+	x.Cause = b.Cause
+	return m0
+}
+
+// PropertyLifecycleChange records the lifecycle fields changed by this
+// activity, including the resulting state reason when it changed.
+type PropertyLifecycleChange struct {
+	state              protoimpl.MessageState `protogen:"hybrid.v1"`
+	ExpiresAt          *timestamp.Timestamp   `protobuf:"bytes,1,opt,name=expires_at,json=expiresAt,proto3,oneof" json:"expires_at,omitempty"`
+	ExpiryCleared      bool                   `protobuf:"varint,2,opt,name=expiry_cleared,json=expiryCleared,proto3" json:"expiry_cleared,omitempty"`
+	StateReason        *string                `protobuf:"bytes,3,opt,name=state_reason,json=stateReason,proto3,oneof" json:"state_reason,omitempty"`
+	StateReasonCleared bool                   `protobuf:"varint,4,opt,name=state_reason_cleared,json=stateReasonCleared,proto3" json:"state_reason_cleared,omitempty"`
+	unknownFields      protoimpl.UnknownFields
+	sizeCache          protoimpl.SizeCache
+}
+
+func (x *PropertyLifecycleChange) Reset() {
+	*x = PropertyLifecycleChange{}
+	mi := &file_resources_users_activity_activity_proto_msgTypes[15]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *PropertyLifecycleChange) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*PropertyLifecycleChange) ProtoMessage() {}
+
+func (x *PropertyLifecycleChange) ProtoReflect() protoreflect.Message {
+	mi := &file_resources_users_activity_activity_proto_msgTypes[15]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+func (x *PropertyLifecycleChange) GetExpiresAt() *timestamp.Timestamp {
+	if x != nil {
+		return x.ExpiresAt
+	}
+	return nil
+}
+
+func (x *PropertyLifecycleChange) GetExpiryCleared() bool {
+	if x != nil {
+		return x.ExpiryCleared
+	}
+	return false
+}
+
+func (x *PropertyLifecycleChange) GetStateReason() string {
+	if x != nil && x.StateReason != nil {
+		return *x.StateReason
+	}
+	return ""
+}
+
+func (x *PropertyLifecycleChange) GetStateReasonCleared() bool {
+	if x != nil {
+		return x.StateReasonCleared
+	}
+	return false
+}
+
+func (x *PropertyLifecycleChange) SetExpiresAt(v *timestamp.Timestamp) {
+	x.ExpiresAt = v
+}
+
+func (x *PropertyLifecycleChange) SetExpiryCleared(v bool) {
+	x.ExpiryCleared = v
+}
+
+func (x *PropertyLifecycleChange) SetStateReason(v string) {
+	x.StateReason = &v
+}
+
+func (x *PropertyLifecycleChange) SetStateReasonCleared(v bool) {
+	x.StateReasonCleared = v
+}
+
+func (x *PropertyLifecycleChange) HasExpiresAt() bool {
+	if x == nil {
+		return false
+	}
+	return x.ExpiresAt != nil
+}
+
+func (x *PropertyLifecycleChange) HasStateReason() bool {
+	if x == nil {
+		return false
+	}
+	return x.StateReason != nil
+}
+
+func (x *PropertyLifecycleChange) ClearExpiresAt() {
+	x.ExpiresAt = nil
+}
+
+func (x *PropertyLifecycleChange) ClearStateReason() {
+	x.StateReason = nil
+}
+
+type PropertyLifecycleChange_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	ExpiresAt          *timestamp.Timestamp
+	ExpiryCleared      bool
+	StateReason        *string
+	StateReasonCleared bool
+}
+
+func (b0 PropertyLifecycleChange_builder) Build() *PropertyLifecycleChange {
+	m0 := &PropertyLifecycleChange{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.ExpiresAt = b.ExpiresAt
+	x.ExpiryCleared = b.ExpiryCleared
+	x.StateReason = b.StateReason
+	x.StateReasonCleared = b.StateReasonCleared
 	return m0
 }
 
@@ -2304,15 +2510,27 @@ const file_resources_users_activity_activity_proto_rawDesc = "" +
 	"FileChange\x12\x14\n" +
 	"\x05added\x18\x01 \x01(\bR\x05added\x12\x12\n" +
 	"\x04kind\x18\x02 \x01(\tR\x04kind\x12(\n" +
-	"\x04file\x18\x03 \x01(\v2\x14.resources.file.FileR\x04file\"\xcc\x01\n" +
+	"\x04file\x18\x03 \x01(\v2\x14.resources.file.FileR\x04file\"\xf5\x02\n" +
 	"\x0ePropertyChange\x12\x10\n" +
 	"\x03key\x18\x01 \x01(\tR\x03key\x12E\n" +
 	"\told_value\x18\x02 \x01(\v2#.resources.properties.PropertyValueH\x00R\boldValue\x88\x01\x01\x12E\n" +
-	"\tnew_value\x18\x03 \x01(\v2#.resources.properties.PropertyValueH\x01R\bnewValue\x88\x01\x01B\f\n" +
+	"\tnew_value\x18\x03 \x01(\v2#.resources.properties.PropertyValueH\x01R\bnewValue\x88\x01\x01\x12T\n" +
+	"\tlifecycle\x18\x04 \x01(\v21.resources.users.activity.PropertyLifecycleChangeH\x02R\tlifecycle\x88\x01\x01\x12C\n" +
+	"\x05cause\x18\x05 \x01(\x0e2-.resources.users.activity.PropertyChangeCauseR\x05causeB\f\n" +
 	"\n" +
 	"_old_valueB\f\n" +
 	"\n" +
-	"_new_value*\xbf\x03\n" +
+	"_new_valueB\f\n" +
+	"\n" +
+	"_lifecycle\"\xfe\x01\n" +
+	"\x17PropertyLifecycleChange\x12B\n" +
+	"\n" +
+	"expires_at\x18\x01 \x01(\v2\x1e.resources.timestamp.TimestampH\x00R\texpiresAt\x88\x01\x01\x12%\n" +
+	"\x0eexpiry_cleared\x18\x02 \x01(\bR\rexpiryCleared\x12&\n" +
+	"\fstate_reason\x18\x03 \x01(\tH\x01R\vstateReason\x88\x01\x01\x120\n" +
+	"\x14state_reason_cleared\x18\x04 \x01(\bR\x12stateReasonClearedB\r\n" +
+	"\v_expires_atB\x0f\n" +
+	"\r_state_reason*\xbf\x03\n" +
 	"\x10UserActivityType\x12\"\n" +
 	"\x1eUSER_ACTIVITY_TYPE_UNSPECIFIED\x10\x00\x12\x1b\n" +
 	"\x17USER_ACTIVITY_TYPE_NAME\x10\x04\x12\x1f\n" +
@@ -2327,68 +2545,77 @@ const file_resources_users_activity_activity_proto_rawDesc = "" +
 	"\x17USER_ACTIVITY_TYPE_JAIL\x10\f\x12\x1b\n" +
 	"\x17USER_ACTIVITY_TYPE_FINE\x10\r\x12\x1b\n" +
 	"\x17USER_ACTIVITY_TYPE_FILE\x10\x0e\x12\x1f\n" +
-	"\x1bUSER_ACTIVITY_TYPE_PROPERTY\x10\x0f\"\x04\b\x01\x10\x03BZZXgithub.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/users/activity;usersactivityb\x06proto3"
+	"\x1bUSER_ACTIVITY_TYPE_PROPERTY\x10\x0f\"\x04\b\x01\x10\x03*\x81\x01\n" +
+	"\x13PropertyChangeCause\x12%\n" +
+	"!PROPERTY_CHANGE_CAUSE_UNSPECIFIED\x10\x00\x12 \n" +
+	"\x1cPROPERTY_CHANGE_CAUSE_MANUAL\x10\x01\x12!\n" +
+	"\x1dPROPERTY_CHANGE_CAUSE_EXPIRED\x10\x02BZZXgithub.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/users/activity;usersactivityb\x06proto3"
 
-var file_resources_users_activity_activity_proto_enumTypes = make([]protoimpl.EnumInfo, 1)
-var file_resources_users_activity_activity_proto_msgTypes = make([]protoimpl.MessageInfo, 15)
+var file_resources_users_activity_activity_proto_enumTypes = make([]protoimpl.EnumInfo, 2)
+var file_resources_users_activity_activity_proto_msgTypes = make([]protoimpl.MessageInfo, 16)
 var file_resources_users_activity_activity_proto_goTypes = []any{
 	(UserActivityType)(0),                 // 0: resources.users.activity.UserActivityType
-	(*UserActivity)(nil),                  // 1: resources.users.activity.UserActivity
-	(*UserActivityData)(nil),              // 2: resources.users.activity.UserActivityData
-	(*NameChange)(nil),                    // 3: resources.users.activity.NameChange
-	(*LicenseChange)(nil),                 // 4: resources.users.activity.LicenseChange
-	(*WantedChange)(nil),                  // 5: resources.users.activity.WantedChange
-	(*TrafficInfractionPointsChange)(nil), // 6: resources.users.activity.TrafficInfractionPointsChange
-	(*MugshotChange)(nil),                 // 7: resources.users.activity.MugshotChange
-	(*LabelsChange)(nil),                  // 8: resources.users.activity.LabelsChange
-	(*LabelAdded)(nil),                    // 9: resources.users.activity.LabelAdded
-	(*JobChange)(nil),                     // 10: resources.users.activity.JobChange
-	(*CitizenDocumentRelation)(nil),       // 11: resources.users.activity.CitizenDocumentRelation
-	(*JailChange)(nil),                    // 12: resources.users.activity.JailChange
-	(*FineChange)(nil),                    // 13: resources.users.activity.FineChange
-	(*FileChange)(nil),                    // 14: resources.users.activity.FileChange
-	(*PropertyChange)(nil),                // 15: resources.users.activity.PropertyChange
-	(*timestamp.Timestamp)(nil),           // 16: resources.timestamp.Timestamp
-	(*short.UserShort)(nil),               // 17: resources.users.short.UserShort
-	(*licenses.License)(nil),              // 18: resources.citizens.licenses.License
-	(*labels.Label)(nil),                  // 19: resources.citizens.labels.Label
-	(relations.DocRelation)(0),            // 20: resources.documents.relations.DocRelation
-	(*file.File)(nil),                     // 21: resources.file.File
-	(*properties.PropertyValue)(nil),      // 22: resources.properties.PropertyValue
+	(PropertyChangeCause)(0),              // 1: resources.users.activity.PropertyChangeCause
+	(*UserActivity)(nil),                  // 2: resources.users.activity.UserActivity
+	(*UserActivityData)(nil),              // 3: resources.users.activity.UserActivityData
+	(*NameChange)(nil),                    // 4: resources.users.activity.NameChange
+	(*LicenseChange)(nil),                 // 5: resources.users.activity.LicenseChange
+	(*WantedChange)(nil),                  // 6: resources.users.activity.WantedChange
+	(*TrafficInfractionPointsChange)(nil), // 7: resources.users.activity.TrafficInfractionPointsChange
+	(*MugshotChange)(nil),                 // 8: resources.users.activity.MugshotChange
+	(*LabelsChange)(nil),                  // 9: resources.users.activity.LabelsChange
+	(*LabelAdded)(nil),                    // 10: resources.users.activity.LabelAdded
+	(*JobChange)(nil),                     // 11: resources.users.activity.JobChange
+	(*CitizenDocumentRelation)(nil),       // 12: resources.users.activity.CitizenDocumentRelation
+	(*JailChange)(nil),                    // 13: resources.users.activity.JailChange
+	(*FineChange)(nil),                    // 14: resources.users.activity.FineChange
+	(*FileChange)(nil),                    // 15: resources.users.activity.FileChange
+	(*PropertyChange)(nil),                // 16: resources.users.activity.PropertyChange
+	(*PropertyLifecycleChange)(nil),       // 17: resources.users.activity.PropertyLifecycleChange
+	(*timestamp.Timestamp)(nil),           // 18: resources.timestamp.Timestamp
+	(*short.UserShort)(nil),               // 19: resources.users.short.UserShort
+	(*licenses.License)(nil),              // 20: resources.citizens.licenses.License
+	(*labels.Label)(nil),                  // 21: resources.citizens.labels.Label
+	(relations.DocRelation)(0),            // 22: resources.documents.relations.DocRelation
+	(*file.File)(nil),                     // 23: resources.file.File
+	(*properties.PropertyValue)(nil),      // 24: resources.properties.PropertyValue
 }
 var file_resources_users_activity_activity_proto_depIdxs = []int32{
 	0,  // 0: resources.users.activity.UserActivity.type:type_name -> resources.users.activity.UserActivityType
-	16, // 1: resources.users.activity.UserActivity.created_at:type_name -> resources.timestamp.Timestamp
-	17, // 2: resources.users.activity.UserActivity.source_user:type_name -> resources.users.short.UserShort
-	17, // 3: resources.users.activity.UserActivity.target_user:type_name -> resources.users.short.UserShort
-	2,  // 4: resources.users.activity.UserActivity.data:type_name -> resources.users.activity.UserActivityData
-	3,  // 5: resources.users.activity.UserActivityData.name_change:type_name -> resources.users.activity.NameChange
-	4,  // 6: resources.users.activity.UserActivityData.licenses_change:type_name -> resources.users.activity.LicenseChange
-	5,  // 7: resources.users.activity.UserActivityData.wanted_change:type_name -> resources.users.activity.WantedChange
-	6,  // 8: resources.users.activity.UserActivityData.traffic_infraction_points_change:type_name -> resources.users.activity.TrafficInfractionPointsChange
-	7,  // 9: resources.users.activity.UserActivityData.mugshot_change:type_name -> resources.users.activity.MugshotChange
-	8,  // 10: resources.users.activity.UserActivityData.labels_change:type_name -> resources.users.activity.LabelsChange
-	10, // 11: resources.users.activity.UserActivityData.job_change:type_name -> resources.users.activity.JobChange
-	11, // 12: resources.users.activity.UserActivityData.document_relation:type_name -> resources.users.activity.CitizenDocumentRelation
-	12, // 13: resources.users.activity.UserActivityData.jail_change:type_name -> resources.users.activity.JailChange
-	13, // 14: resources.users.activity.UserActivityData.fine_change:type_name -> resources.users.activity.FineChange
-	15, // 15: resources.users.activity.UserActivityData.property_change:type_name -> resources.users.activity.PropertyChange
-	14, // 16: resources.users.activity.UserActivityData.file_change:type_name -> resources.users.activity.FileChange
-	18, // 17: resources.users.activity.LicenseChange.licenses:type_name -> resources.citizens.licenses.License
-	16, // 18: resources.users.activity.WantedChange.wanted_till:type_name -> resources.timestamp.Timestamp
-	19, // 19: resources.users.activity.LabelsChange.added:type_name -> resources.citizens.labels.Label
-	19, // 20: resources.users.activity.LabelsChange.removed:type_name -> resources.citizens.labels.Label
-	9,  // 21: resources.users.activity.LabelsChange.added_ids:type_name -> resources.users.activity.LabelAdded
-	16, // 22: resources.users.activity.LabelAdded.expires_at:type_name -> resources.timestamp.Timestamp
-	20, // 23: resources.users.activity.CitizenDocumentRelation.relation:type_name -> resources.documents.relations.DocRelation
-	21, // 24: resources.users.activity.FileChange.file:type_name -> resources.file.File
-	22, // 25: resources.users.activity.PropertyChange.old_value:type_name -> resources.properties.PropertyValue
-	22, // 26: resources.users.activity.PropertyChange.new_value:type_name -> resources.properties.PropertyValue
-	27, // [27:27] is the sub-list for method output_type
-	27, // [27:27] is the sub-list for method input_type
-	27, // [27:27] is the sub-list for extension type_name
-	27, // [27:27] is the sub-list for extension extendee
-	0,  // [0:27] is the sub-list for field type_name
+	18, // 1: resources.users.activity.UserActivity.created_at:type_name -> resources.timestamp.Timestamp
+	19, // 2: resources.users.activity.UserActivity.source_user:type_name -> resources.users.short.UserShort
+	19, // 3: resources.users.activity.UserActivity.target_user:type_name -> resources.users.short.UserShort
+	3,  // 4: resources.users.activity.UserActivity.data:type_name -> resources.users.activity.UserActivityData
+	4,  // 5: resources.users.activity.UserActivityData.name_change:type_name -> resources.users.activity.NameChange
+	5,  // 6: resources.users.activity.UserActivityData.licenses_change:type_name -> resources.users.activity.LicenseChange
+	6,  // 7: resources.users.activity.UserActivityData.wanted_change:type_name -> resources.users.activity.WantedChange
+	7,  // 8: resources.users.activity.UserActivityData.traffic_infraction_points_change:type_name -> resources.users.activity.TrafficInfractionPointsChange
+	8,  // 9: resources.users.activity.UserActivityData.mugshot_change:type_name -> resources.users.activity.MugshotChange
+	9,  // 10: resources.users.activity.UserActivityData.labels_change:type_name -> resources.users.activity.LabelsChange
+	11, // 11: resources.users.activity.UserActivityData.job_change:type_name -> resources.users.activity.JobChange
+	12, // 12: resources.users.activity.UserActivityData.document_relation:type_name -> resources.users.activity.CitizenDocumentRelation
+	13, // 13: resources.users.activity.UserActivityData.jail_change:type_name -> resources.users.activity.JailChange
+	14, // 14: resources.users.activity.UserActivityData.fine_change:type_name -> resources.users.activity.FineChange
+	16, // 15: resources.users.activity.UserActivityData.property_change:type_name -> resources.users.activity.PropertyChange
+	15, // 16: resources.users.activity.UserActivityData.file_change:type_name -> resources.users.activity.FileChange
+	20, // 17: resources.users.activity.LicenseChange.licenses:type_name -> resources.citizens.licenses.License
+	18, // 18: resources.users.activity.WantedChange.wanted_till:type_name -> resources.timestamp.Timestamp
+	21, // 19: resources.users.activity.LabelsChange.added:type_name -> resources.citizens.labels.Label
+	21, // 20: resources.users.activity.LabelsChange.removed:type_name -> resources.citizens.labels.Label
+	10, // 21: resources.users.activity.LabelsChange.added_ids:type_name -> resources.users.activity.LabelAdded
+	18, // 22: resources.users.activity.LabelAdded.expires_at:type_name -> resources.timestamp.Timestamp
+	22, // 23: resources.users.activity.CitizenDocumentRelation.relation:type_name -> resources.documents.relations.DocRelation
+	23, // 24: resources.users.activity.FileChange.file:type_name -> resources.file.File
+	24, // 25: resources.users.activity.PropertyChange.old_value:type_name -> resources.properties.PropertyValue
+	24, // 26: resources.users.activity.PropertyChange.new_value:type_name -> resources.properties.PropertyValue
+	17, // 27: resources.users.activity.PropertyChange.lifecycle:type_name -> resources.users.activity.PropertyLifecycleChange
+	1,  // 28: resources.users.activity.PropertyChange.cause:type_name -> resources.users.activity.PropertyChangeCause
+	18, // 29: resources.users.activity.PropertyLifecycleChange.expires_at:type_name -> resources.timestamp.Timestamp
+	30, // [30:30] is the sub-list for method output_type
+	30, // [30:30] is the sub-list for method input_type
+	30, // [30:30] is the sub-list for extension type_name
+	30, // [30:30] is the sub-list for extension extendee
+	0,  // [0:30] is the sub-list for field type_name
 }
 
 func init() { file_resources_users_activity_activity_proto_init() }
@@ -2417,13 +2644,14 @@ func file_resources_users_activity_activity_proto_init() {
 	file_resources_users_activity_activity_proto_msgTypes[9].OneofWrappers = []any{}
 	file_resources_users_activity_activity_proto_msgTypes[11].OneofWrappers = []any{}
 	file_resources_users_activity_activity_proto_msgTypes[14].OneofWrappers = []any{}
+	file_resources_users_activity_activity_proto_msgTypes[15].OneofWrappers = []any{}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_resources_users_activity_activity_proto_rawDesc), len(file_resources_users_activity_activity_proto_rawDesc)),
-			NumEnums:      1,
-			NumMessages:   15,
+			NumEnums:      2,
+			NumMessages:   16,
 			NumExtensions: 0,
 			NumServices:   0,
 		},

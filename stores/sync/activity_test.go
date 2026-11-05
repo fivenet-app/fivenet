@@ -2,19 +2,12 @@ package syncstore
 
 import (
 	"context"
-	"regexp"
 	"testing"
 
-	"github.com/DATA-DOG/go-sqlmock"
-	citizenslabels "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/citizens/labels"
 	livemapmarkers "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/livemap/markers"
-	activity "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/sync/activity"
+	properties "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/properties"
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/timestamp"
-	usersprops "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/users/props"
 	pbsync "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/sync"
-	"github.com/fivenet-app/fivenet/v2026/pkg/access"
-	"github.com/fivenet-app/fivenet/v2026/pkg/config"
-	citizensstore "github.com/fivenet-app/fivenet/v2026/stores/citizens"
 	livemapstore "github.com/fivenet-app/fivenet/v2026/stores/livemap"
 	"github.com/go-jet/jet/v2/qrm"
 	"github.com/stretchr/testify/require"
@@ -24,6 +17,52 @@ import (
 type roundTripMarkerStore struct {
 	marker      *livemapmarkers.MarkerMarker
 	createCalls int
+}
+
+func TestSplitPropertyMutationsUsesManagedRegistry(t *testing.T) {
+	t.Parallel()
+
+	userValue := &properties.PropertyValue{}
+	userValue.SetBoolValue(true)
+	userMutation := &properties.PropertyMutation{Key: "user.wanted"}
+	userMutation.SetSetValue(userValue)
+	userProps, userChanges, err := splitUserPropertyMutations(&pbsync.SetUserPropertiesRequest{
+		UserId:            42,
+		PropertyMutations: []*properties.PropertyMutation{userMutation},
+	})
+	require.NoError(t, err)
+	require.Empty(t, userChanges)
+	require.NotNil(t, userProps)
+	require.True(t, userProps.GetWanted())
+
+	vehicleValue := &properties.PropertyValue{}
+	vehicleValue.SetBoolValue(true)
+	vehicleMutation := &properties.PropertyMutation{Key: "vehicle.wanted"}
+	vehicleMutation.SetSetValue(vehicleValue)
+	vehicleProps, vehicleChanges, hasManaged, err := splitVehiclePropertyMutations(
+		&pbsync.SetVehiclePropertiesRequest{
+			Plate:             "ABC123",
+			PropertyMutations: []*properties.PropertyMutation{vehicleMutation},
+		},
+	)
+	require.NoError(t, err)
+	require.Empty(t, vehicleChanges)
+	require.True(t, hasManaged)
+	require.True(t, vehicleProps.GetWanted())
+}
+
+func TestWantedStateClearReason(t *testing.T) {
+	t.Parallel()
+
+	mutation := &properties.PropertyMutation{
+		Key:         "vehicle.wanted",
+		ClearReason: new(true),
+	}
+	require.True(t, wantedStateClearReason([]*properties.PropertyMutation{mutation}))
+	require.False(t, wantedStateClearReason([]*properties.PropertyMutation{{
+		Key:         "user.wanted",
+		ClearReason: new(true),
+	}}))
 }
 
 func (s *roundTripMarkerStore) CreateMarker(
@@ -138,76 +177,4 @@ func TestAddMarkerAllowsNilCreatorID(t *testing.T) {
 	require.Equal(t, 1, store.createCalls)
 	require.NotNil(t, store.marker)
 	require.Nil(t, store.marker.CreatorId)
-}
-
-func TestAddUserPropsPreservesExistingLabelsWhenSyncPayloadHasLabels(t *testing.T) {
-	t.Parallel()
-
-	store, mock := newTestStore(t)
-	store.citizensStore = citizensstore.New(citizensstore.Params{
-		DB:           store.db,
-		CustomDB:     &config.CustomDB{},
-		LabelsAccess: access.NewCitizenLabelsSubjectObjectAccess(store.db),
-	})
-
-	mock.ExpectBegin()
-	mock.ExpectQuery(`FROM fivenet_user_property_values`).WithArgs(int32(42)).
-		WillReturnRows(sqlmock.NewRows([]string{"user_id", "property_key", "value_type", "value_string", "value_integer", "value_number", "value_bool", "value_timestamp", "value_date", "updated_at"}))
-	mock.ExpectQuery(`FROM fivenet_user_property_state`).WithArgs(int32(42)).
-		WillReturnRows(sqlmock.NewRows([]string{"user_id", "property_key", "reason", "active_at", "expires_at", "updated_at"}))
-	mock.ExpectQuery(`FROM fivenet_user_files AS mugshot_file`).
-		WithArgs(int32(42), "mugshot", int64(1)).
-		WillReturnRows(sqlmock.NewRows([]string{"mugshot_file_id", "mugshot.mugshot_file_id", "file_path"}))
-
-	mock.ExpectQuery(regexp.QuoteMeta(`FROM fivenet_user_labels INNER JOIN fivenet_user_labels_job AS label ON`)+`(?s).*`+regexp.QuoteMeta(`WHERE (fivenet_user_labels.user_id = ?)`)+`(?s).*`+regexp.QuoteMeta(`LIMIT ?;`)).
-		WithArgs(int32(42), int64(25)).
-		WillReturnRows(sqlmock.NewRows([]string{
-			"label.id",
-			"label.job",
-			"label.name",
-			"label.color",
-			"label.icon",
-			"label.settings",
-			"label.expiresAt",
-		}).AddRow(
-			int64(1),
-			"police",
-			"Hidden",
-			"#ffffff",
-			nil,
-			nil,
-			nil,
-		).AddRow(
-			int64(2),
-			"police",
-			"Visible",
-			"#ffffff",
-			nil,
-			nil,
-			nil,
-		))
-
-	mock.ExpectExec(`(?s)INSERT INTO fivenet_user_property_values`).
-		WillReturnResult(sqlmock.NewResult(0, 1))
-	mock.ExpectExec(`(?s)DELETE FROM fivenet_user_property_state`).
-		WillReturnResult(sqlmock.NewResult(0, 1))
-	mock.ExpectExec(regexp.QuoteMeta(`DELETE FROM fivenet_user_labels`)+`(?s).*`+regexp.QuoteMeta(`label_id IN (?)`)+`(?s).*`+regexp.QuoteMeta(`LIMIT ?;`)).
-		WithArgs(int32(42), int64(1), int64(1)).
-		WillReturnResult(sqlmock.NewResult(0, 1))
-
-	mock.ExpectCommit()
-
-	incoming := &activity.UserProps{
-		Props: &usersprops.UserProps{
-			UserId: 42,
-			Labels: &citizenslabels.Labels{
-				List: []*citizenslabels.Label{{Id: 2}},
-			},
-		},
-	}
-
-	resp, err := store.AddUserProps(t.Context(), &pbsync.AddUserPropsRequest{UserProps: incoming})
-	require.NoError(t, err)
-	require.NotNil(t, resp)
-	require.NoError(t, mock.ExpectationsWereMet())
 }

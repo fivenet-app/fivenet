@@ -9,6 +9,7 @@ import (
 	permkeys "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/vehicles/perms"
 	"github.com/fivenet-app/fivenet/v2026/pkg/perms"
 	propertyregistry "github.com/fivenet-app/fivenet/v2026/pkg/properties"
+	"google.golang.org/protobuf/proto"
 )
 
 func init() {
@@ -27,11 +28,12 @@ func init() {
 			ValueFormat: propertypb.PropertyValueFormat_PROPERTY_VALUE_FORMAT_PLAIN,
 			Renderer:    propertypb.PropertyRenderer_PROPERTY_RENDERER_DEFAULT,
 			DisplayMode: propertypb.PropertyDisplayMode_PROPERTY_DISPLAY_MODE_PROFILE_BADGE,
-			Behavior:    propertypb.PropertyBehavior_PROPERTY_BEHAVIOR_MANAGED,
-			GroupKey:    "status",
-			SortOrder:   100,
-			Pinned:      true,
-			Implicit:    false,
+			Behavior:    propertypb.PropertyBehavior_PROPERTY_BEHAVIOR_MANAGED, StatePolicy: &propertypb.PropertyStatePolicy{Enabled: true, SupportsExpiry: true, ExpiryAction: propertypb.PropertyExpiryAction_PROPERTY_EXPIRY_ACTION_CLEAR_VALUE}, ManagedHandler: proto.String("wanted"),
+			ReasonMode: propertypb.PropertyReasonMode_PROPERTY_REASON_MODE_REQUIRED,
+			GroupKey:   "status",
+			SortOrder:  100,
+			Pinned:     true,
+			Implicit:   false,
 		},
 		{
 			Scope:       propertypb.PropertyScope_PROPERTY_SCOPE_VEHICLE,
@@ -45,6 +47,7 @@ func init() {
 			Renderer:    propertypb.PropertyRenderer_PROPERTY_RENDERER_DEFAULT,
 			DisplayMode: propertypb.PropertyDisplayMode_PROPERTY_DISPLAY_MODE_DEFAULT,
 			Behavior:    propertypb.PropertyBehavior_PROPERTY_BEHAVIOR_MANAGED,
+			ReasonMode:  propertypb.PropertyReasonMode_PROPERTY_REASON_MODE_REQUIRED,
 			GroupKey:    "status",
 			SortOrder:   200,
 			Pinned:      false,

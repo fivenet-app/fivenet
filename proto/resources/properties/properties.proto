@@ -4,6 +4,7 @@ package resources.properties;
 
 import "buf/validate/validate.proto";
 import "codegen/dbscanner/dbscanner.proto";
+import "google/protobuf/empty.proto";
 import "resources/timestamp/timestamp.proto";
 
 option go_package = "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/properties;properties";
@@ -53,16 +54,57 @@ message Property {
   optional resources.timestamp.Timestamp updated_at = 3;
   // Resolved definition metadata for detail/profile renderers.
   optional PropertyDefinition definition = 4;
+  optional PropertyState state = 5;
 }
 
-// PropertyChange updates a generic scalar property. An absent value clears it.
-message PropertyChange {
+// PropertyState is lifecycle metadata associated with a state-enabled property.
+// key is redundant when embedded in Property, but permits independent state
+// records to remain self-describing.
+message PropertyState {
+  optional string key = 1 [(buf.validate.field).string = {
+    min_len: 1
+    max_len: 64
+    pattern: "^[a-z][a-z0-9_.-]*$"
+  }];
+  optional string reason = 2 [(buf.validate.field).string.max_len = 255];
+  optional resources.timestamp.Timestamp active_at = 3;
+  optional resources.timestamp.Timestamp expires_at = 4;
+  optional resources.timestamp.Timestamp updated_at = 5;
+}
+
+// PropertyMutation is the sole scalar and lifecycle property write contract.
+// Omitting value_change means this is a state-only mutation.
+message PropertyMutation {
   string key = 1 [(buf.validate.field).string = {
     min_len: 1
     max_len: 64
     pattern: "^[a-z][a-z0-9_.-]*$"
   }];
-  optional PropertyValue value = 2;
+  oneof value_change {
+    PropertyValue set_value = 2;
+    google.protobuf.Empty clear_value = 3;
+  }
+  optional PropertyStatePatch state = 4;
+  // The property-specific rationale/state reason. It is intentionally scoped
+  // to this mutation so batched edits can retain distinct reasons.
+  optional string reason = 5 [(buf.validate.field).string = {
+    min_len: 3
+    max_len: 255
+  }];
+  // Explicitly clears the persisted state reason. This is not a oneof because
+  // the sanitizer generator supports one oneof per message; validation
+  // rejects combining it with reason.
+  optional bool clear_reason = 6;
+}
+
+// PropertyStatePatch carries an explicit lifecycle override. Omitting state,
+// or omitting expiry_change within it, leaves expiry server-managed; managed
+// properties may apply their configured maximum duration from active_at.
+message PropertyStatePatch {
+  oneof expiry_change {
+    resources.timestamp.Timestamp expires_at = 1;
+    google.protobuf.Empty clear_expiry = 2;
+  }
 }
 
 message Properties {
@@ -111,6 +153,61 @@ enum PropertyBehavior {
   PROPERTY_BEHAVIOR_UNSPECIFIED = 0;
   PROPERTY_BEHAVIOR_GENERIC = 1;
   PROPERTY_BEHAVIOR_MANAGED = 2;
+}
+
+enum PropertyExpiryAction {
+  PROPERTY_EXPIRY_ACTION_UNSPECIFIED = 0;
+  PROPERTY_EXPIRY_ACTION_CLEAR_VALUE = 1;
+}
+
+message PropertyStatePolicy {
+  bool enabled = 1;
+  bool supports_expiry = 2;
+  PropertyExpiryAction expiry_action = 3 [(buf.validate.field).enum.defined_only = true];
+}
+
+// PropertyReasonMode controls the per-property rationale supplied with a
+// mutation. The server treats UNSPECIFIED as REQUIRED for compatibility with
+// omitted configuration.
+enum PropertyReasonMode {
+  PROPERTY_REASON_MODE_UNSPECIFIED = 0;
+  PROPERTY_REASON_MODE_REQUIRED = 1;
+  PROPERTY_REASON_MODE_OPTIONAL = 2;
+  PROPERTY_REASON_MODE_NONE = 3;
+}
+
+// PropertyValueConstraints narrows the accepted scalar values for a custom
+// definition. Only fields compatible with the definition's value_type may be
+// populated. Constraints never rewrite existing stored values.
+message PropertyValueConstraints {
+  optional uint32 string_min_length = 1 [(buf.validate.field).uint32.lte = 2048];
+  optional uint32 string_max_length = 2 [(buf.validate.field).uint32.lte = 2048];
+  repeated string string_allowed_values = 3 [(buf.validate.field).repeated = {
+    max_items: 50
+    items: {
+      string: {max_len: 1024}
+    }
+  }];
+  optional int64 integer_min = 4;
+  optional int64 integer_max = 5;
+  optional double number_min = 6;
+  optional double number_max = 7;
+  optional resources.timestamp.Timestamp timestamp_min = 8;
+  optional resources.timestamp.Timestamp timestamp_max = 9;
+  optional LocalDate date_min = 10;
+  optional LocalDate date_max = 11;
+  // The listed string values are either suggestions or an exhaustive set.
+  // UNSPECIFIED retains the legacy strict behavior for existing definitions.
+  PropertyStringAllowedValuesMode string_allowed_values_mode = 12 [(buf.validate.field).enum.defined_only = true];
+}
+
+enum PropertyStringAllowedValuesMode {
+  PROPERTY_STRING_ALLOWED_VALUES_MODE_UNSPECIFIED = 0;
+  // The list is presented as a convenience, but callers may enter another
+  // value as long as it meets the remaining string constraints.
+  PROPERTY_STRING_ALLOWED_VALUES_MODE_SUGGEST = 1;
+  // The value must exactly match one entry in string_allowed_values.
+  PROPERTY_STRING_ALLOWED_VALUES_MODE_STRICT = 2;
 }
 
 enum PropertyDefinitionSource {
@@ -174,6 +271,12 @@ message PropertyDefinition {
   // Implicit properties are available whenever the containing permission is
   // granted, but are not selectable in role property lists.
   bool implicit = 23;
+  optional PropertyStatePolicy state_policy = 24;
+  // Registry identifier for the server-side managed-property handler. Generic
+  // properties leave this unset; Sync routes managed mutations by this value.
+  optional string managed_handler = 25 [(buf.validate.field).string.max_len = 64];
+  optional PropertyValueConstraints value_constraints = 26;
+  PropertyReasonMode reason_mode = 27 [(buf.validate.field).enum.defined_only = true];
 }
 
 // PropertyRenderer selects a predefined UI treatment for a property.

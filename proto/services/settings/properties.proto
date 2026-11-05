@@ -79,7 +79,12 @@ message ReorderPropertyGroupsRequest {
     not_in: [0]
   }];
   repeated string group_keys = 2 [(buf.validate.field).repeated = {
-    items: { string: { min_len: 1 max_len: 64 } }
+    items: {
+      string: {
+        min_len: 1
+        max_len: 64
+      }
+    }
     min_items: 1
     max_items: 200
   }];
@@ -94,7 +99,12 @@ message ReorderPropertyDefinitionsRequest {
   }];
   string group_key = 2 [(buf.validate.field).string.max_len = 64];
   repeated string property_keys = 3 [(buf.validate.field).repeated = {
-    items: { string: { min_len: 1 max_len: 64 } }
+    items: {
+      string: {
+        min_len: 1
+        max_len: 64
+      }
+    }
     min_items: 1
     max_items: 200
   }];
@@ -190,22 +200,40 @@ service PropertyService {
     };
   }
   rpc ReorderPropertyGroups(ReorderPropertyGroupsRequest) returns (ReorderPropertyGroupsResponse) {
-    option (codegen.perms.perms) = { enabled: true name: "UpdatePropertyDefinition" };
+    option (codegen.perms.perms) = {
+      enabled: true
+      name: "UpdatePropertyDefinition"
+    };
   }
   rpc CreatePropertyGroup(CreatePropertyGroupRequest) returns (CreatePropertyGroupResponse) {
-    option (codegen.perms.perms) = { enabled: true name: "ConfigAdmin" };
+    option (codegen.perms.perms) = {
+      enabled: true
+      name: "ConfigAdmin"
+    };
   }
   rpc UpdatePropertyGroup(UpdatePropertyGroupRequest) returns (UpdatePropertyGroupResponse) {
-    option (codegen.perms.perms) = { enabled: true name: "ConfigAdmin" };
+    option (codegen.perms.perms) = {
+      enabled: true
+      name: "ConfigAdmin"
+    };
   }
   rpc DeletePropertyGroup(DeletePropertyGroupRequest) returns (DeletePropertyGroupResponse) {
-    option (codegen.perms.perms) = { enabled: true name: "ConfigAdmin" };
+    option (codegen.perms.perms) = {
+      enabled: true
+      name: "ConfigAdmin"
+    };
   }
   rpc RestorePropertyGroup(RestorePropertyGroupRequest) returns (RestorePropertyGroupResponse) {
-    option (codegen.perms.perms) = { enabled: true name: "ConfigAdmin" };
+    option (codegen.perms.perms) = {
+      enabled: true
+      name: "ConfigAdmin"
+    };
   }
   rpc ReorderPropertyDefinitions(ReorderPropertyDefinitionsRequest) returns (ReorderPropertyDefinitionsResponse) {
-    option (codegen.perms.perms) = { enabled: true name: "UpdatePropertyDefinition" };
+    option (codegen.perms.perms) = {
+      enabled: true
+      name: "UpdatePropertyDefinition"
+    };
   }
   rpc CreatePropertyDefinition(CreatePropertyDefinitionRequest) returns (CreatePropertyDefinitionResponse) {
     option (codegen.perms.perms) = {

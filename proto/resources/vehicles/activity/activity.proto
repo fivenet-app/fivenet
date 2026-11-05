@@ -5,8 +5,8 @@ package resources.vehicles.activity;
 import "buf/validate/validate.proto";
 import "codegen/dbscanner/dbscanner.proto";
 import "codegen/sanitizer/sanitizer.proto";
-import "resources/properties/properties.proto";
 import "resources/file/file.proto";
+import "resources/properties/properties.proto";
 import "resources/timestamp/timestamp.proto";
 import "resources/users/short/user.proto";
 import "tagger/tagger.proto";
@@ -81,6 +81,23 @@ message PropertyChange {
   string key = 1 [(buf.validate.field).string.max_len = 64];
   optional resources.properties.PropertyValue old_value = 2;
   optional resources.properties.PropertyValue new_value = 3;
+  optional PropertyLifecycleChange lifecycle = 4;
+  PropertyChangeCause cause = 5 [(buf.validate.field).enum.defined_only = true];
+}
+
+// PropertyLifecycleChange records the lifecycle fields changed by this
+// activity, including the resulting state reason when it changed.
+message PropertyLifecycleChange {
+  optional resources.timestamp.Timestamp expires_at = 1;
+  bool expiry_cleared = 2;
+  optional string state_reason = 3 [(buf.validate.field).string.max_len = 255];
+  bool state_reason_cleared = 4;
+}
+
+enum PropertyChangeCause {
+  PROPERTY_CHANGE_CAUSE_UNSPECIFIED = 0;
+  PROPERTY_CHANGE_CAUSE_MANUAL = 1;
+  PROPERTY_CHANGE_CAUSE_EXPIRED = 2;
 }
 
 message FileChange {

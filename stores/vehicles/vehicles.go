@@ -15,6 +15,7 @@ import (
 	vehiclesactivity "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/vehicles/activity"
 	vehiclesprops "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/vehicles/props"
 	"github.com/fivenet-app/fivenet/v2026/pkg/dbutils"
+	propertyregistry "github.com/fivenet-app/fivenet/v2026/pkg/properties"
 	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
 	citizenshydrator "github.com/fivenet-app/fivenet/v2026/stores/citizens/hydrator"
 	"github.com/go-jet/jet/v2/mysql"
@@ -265,11 +266,16 @@ ORDER BY value.plate ASC`, args...)
 }
 
 type PropsUpdate struct {
-	Props           *vehiclesprops.VehicleProps
-	CreatorID       *int32
-	CreatorJob      string
-	Reason          string
-	PropertyChanges []*properties.PropertyChange
+	Props                  *vehiclesprops.VehicleProps
+	CreatorID              *int32
+	CreatorJob             string
+	Reason                 string
+	WantedStateReason      *string
+	WantedStateClearReason bool
+	UpdateWanted           bool
+	PropertyChanges        []*propertyregistry.ScalarChange
+	PropertyMutations      []*properties.PropertyMutation
+	PropertyActivities     map[string]*vehiclesactivity.PropertyChange
 }
 
 func (s *Store) UpdateProps(
@@ -286,15 +292,24 @@ func (s *Store) UpdateProps(
 		wanted := false
 		props.Wanted = &wanted
 	}
-	normalizeWantedChange(props, in, update.Reason)
-	activity := buildWantedActivity(
-		props,
-		in,
-		update.CreatorID,
-		update.CreatorJob,
-		update.Reason,
-		false,
-	)
+	updateWanted := update.UpdateWanted || in.Wanted != nil
+	var activity *vehiclesactivity.VehicleActivity
+	if updateWanted {
+		normalizeWantedChange(props, in, update.Reason)
+		if update.WantedStateClearReason && in.GetWanted() {
+			in.WantedReason = nil
+		} else if update.WantedStateReason != nil && in.GetWanted() {
+			in.WantedReason = update.WantedStateReason
+		}
+		activity = buildWantedActivity(
+			props,
+			in,
+			update.CreatorID,
+			update.CreatorJob,
+			update.Reason,
+			false,
+		)
+	}
 
 	tx, err := s.db.BeginTx(ctx, nil)
 	if err != nil {
@@ -302,22 +317,26 @@ func (s *Store) UpdateProps(
 	}
 	defer tx.Rollback()
 
-	if err := handlePropsChanges(ctx, tx, props, in); err != nil {
-		return nil, err
+	if updateWanted {
+		if err := handlePropsChanges(ctx, tx, props, in); err != nil {
+			return nil, err
+		}
 	}
 	if activity != nil {
 		if _, err := s.addVehicleActivity(ctx, tx, activity); err != nil {
 			return nil, err
 		}
 	}
-	if err := s.applyPropertiesWithActivity(
+	if err := s.applyPropertyMutationsWithActivity(
 		ctx,
 		tx,
 		in.GetPlate(),
 		update.PropertyChanges,
+		update.PropertyMutations,
 		update.CreatorID,
 		update.CreatorJob,
 		update.Reason,
+		update.PropertyActivities,
 	); err != nil {
 		return nil, err
 	}
@@ -331,11 +350,17 @@ func (s *Store) UpdateProps(
 
 func (s *Store) ListExpiredWanted(
 	ctx context.Context,
-	maxDays int64,
+	maxSeconds int64,
 	limit int64,
 ) ([]string, error) {
 	tValues := table.FivenetVehiclePropertyValues.AS("value")
 	tState := table.FivenetVehiclePropertyState.AS("state")
+	serverDeadline := tState.ActiveAt.ADD(mysql.INTERVAL(maxSeconds, mysql.SECOND))
+	effectiveDeadline := mysql.CASE().
+		WHEN(tState.ExpiresAt.IS_NULL()).THEN(serverDeadline).
+		WHEN(tState.ActiveAt.IS_NULL()).THEN(tState.ExpiresAt).
+		WHEN(tState.ExpiresAt.LT_EQ(serverDeadline)).THEN(tState.ExpiresAt).
+		ELSE(serverDeadline)
 	stmt := tValues.
 		SELECT(tValues.Plate).
 		FROM(tValues.INNER_JOIN(tState, mysql.AND(
@@ -347,12 +372,13 @@ func (s *Store) ListExpiredWanted(
 			tValues.ValueType.EQ(mysql.Uint8(uint8(propertyValueTypeBool))),
 			tValues.ValueBool.IS_TRUE(),
 			mysql.OR(
-				tState.ActiveAt.LT(
-					mysql.CURRENT_TIMESTAMP().SUB(mysql.INTERVAL(maxDays, mysql.DAY)),
+				tState.ActiveAt.LT_EQ(
+					mysql.CURRENT_TIMESTAMP().SUB(mysql.INTERVAL(maxSeconds, mysql.SECOND)),
 				),
-				tState.ExpiresAt.LT(mysql.CURRENT_TIMESTAMP()),
+				tState.ExpiresAt.LT_EQ(mysql.CURRENT_TIMESTAMP()),
 			),
 		)).
+		ORDER_BY(effectiveDeadline.ASC()).
 		LIMIT(limit)
 
 	plates := []string{}
@@ -362,8 +388,11 @@ func (s *Store) ListExpiredWanted(
 	return plates, nil
 }
 
-func (s *Store) ClearWanted(ctx context.Context, plate string) error {
-	props, err := s.GetProps(ctx, s.db, plate)
+// ClearWantedTx clears wanted state and records its canonical activity in the
+// caller's transaction. The housekeeper locks and rechecks lifecycle state
+// before calling this method.
+func (s *Store) ClearWantedTx(ctx context.Context, tx qrm.DB, plate string) error {
+	props, err := s.GetProps(ctx, tx, plate)
 	if err != nil {
 		return err
 	}
@@ -378,12 +407,6 @@ func (s *Store) ClearWanted(ctx context.Context, plate string) error {
 	in.WantedAt = nil
 	in.WantedTill = nil
 	normalizeWantedChange(props, in, "wanted_expired")
-
-	tx, err := s.db.BeginTx(ctx, nil)
-	if err != nil {
-		return err
-	}
-	defer tx.Rollback()
 
 	if err := handlePropsChanges(ctx, tx, props, in); err != nil {
 		return err
@@ -401,7 +424,7 @@ func (s *Store) ClearWanted(ctx context.Context, plate string) error {
 		}
 	}
 
-	return tx.Commit()
+	return nil
 }
 
 func buildWantedActivity(

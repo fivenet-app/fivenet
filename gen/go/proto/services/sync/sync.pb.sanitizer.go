@@ -897,17 +897,8 @@ func (m *SetUserPropertiesRequest) Sanitize() error {
 		return nil
 	}
 
-	// Field: ManagedProps
-	if m.ManagedProps != nil {
-		if v, ok := any(m.GetManagedProps()).(interface{ Sanitize() error }); ok {
-			if err := v.Sanitize(); err != nil {
-				return err
-			}
-		}
-	}
-
-	// Field: PropertyChanges
-	for idx, item := range m.PropertyChanges {
+	// Field: PropertyMutations
+	for idx, item := range m.PropertyMutations {
 		_, _ = idx, item
 
 		if v, ok := any(item).(interface{ Sanitize() error }); ok {
@@ -961,17 +952,11 @@ func (m *SetVehiclePropertiesRequest) Sanitize() error {
 		return nil
 	}
 
-	// Field: ManagedProps
-	if m.ManagedProps != nil {
-		if v, ok := any(m.GetManagedProps()).(interface{ Sanitize() error }); ok {
-			if err := v.Sanitize(); err != nil {
-				return err
-			}
-		}
-	}
+	// Field: Plate
+	m.Plate = htmlsanitizer.SanitizeAndUnescape(m.Plate)
 
-	// Field: PropertyChanges
-	for idx, item := range m.PropertyChanges {
+	// Field: PropertyMutations
+	for idx, item := range m.PropertyMutations {
 		_, _ = idx, item
 
 		if v, ok := any(item).(interface{ Sanitize() error }); ok {
@@ -1002,58 +987,6 @@ func (m *SetVehiclePropertiesRequest) Sanitize() error {
 // Sanitize sanitizes the message's fields, in case of complex types it calls
 // their Sanitize() method recursively.
 func (m *SetVehiclePropertiesResponse) Sanitize() error {
-	if m == nil {
-		return nil
-	}
-
-	// Field: VehicleProps
-	if m.VehicleProps != nil {
-		if v, ok := any(m.GetVehicleProps()).(interface{ Sanitize() error }); ok {
-			if err := v.Sanitize(); err != nil {
-				return err
-			}
-		}
-	}
-
-	return nil
-}
-
-// Sanitize sanitizes the message's fields, in case of complex types it calls
-// their Sanitize() method recursively.
-func (m *SetVehiclePropsRequest) Sanitize() error {
-	if m == nil {
-		return nil
-	}
-
-	// Field: Reason
-	if m.Reason != nil {
-		*m.Reason = htmlsanitizer.SanitizeAndUnescape(*m.Reason)
-	}
-
-	// Field: SourceUser
-	if m.SourceUser != nil {
-		if v, ok := any(m.GetSourceUser()).(interface{ Sanitize() error }); ok {
-			if err := v.Sanitize(); err != nil {
-				return err
-			}
-		}
-	}
-
-	// Field: VehicleProps
-	if m.VehicleProps != nil {
-		if v, ok := any(m.GetVehicleProps()).(interface{ Sanitize() error }); ok {
-			if err := v.Sanitize(); err != nil {
-				return err
-			}
-		}
-	}
-
-	return nil
-}
-
-// Sanitize sanitizes the message's fields, in case of complex types it calls
-// their Sanitize() method recursively.
-func (m *SetVehiclePropsResponse) Sanitize() error {
 	if m == nil {
 		return nil
 	}

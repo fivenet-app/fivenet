@@ -30,17 +30,24 @@ func expectExpiredWantedVehicles(
 	for _, plate := range plates {
 		rows.AddRow(plate)
 	}
-	mock.ExpectQuery(`(?s)FROM fivenet_vehicle_property_values AS value.*INNER JOIN fivenet_vehicle_property_state AS state.*value.property_key.*value.value_type.*value.value_bool.*state.active_at.*state.expires_at.*LIMIT`).
+	mock.ExpectQuery(`(?s)FROM fivenet_vehicle_property_values AS value.*INNER JOIN fivenet_vehicle_property_state AS state.*value.property_key.*value.value_type.*value.value_bool.*state.active_at.*INTERVAL 259200 SECOND.*state.expires_at.*ORDER BY.*CASE.*state.expires_at.*state.active_at.*LIMIT`).
 		WithArgs("vehicle.wanted", 4, limit).
 		WillReturnRows(rows)
 }
 
 func expectClearVehicleWanted(mock sqlmock.Sqlmock, plate string) {
+	mock.ExpectBegin()
+	mock.ExpectQuery(`(?s)SELECT .*FROM fivenet_vehicle_property_values.*WHERE .*plate = \?.*property_key = \?.*FOR UPDATE`).
+		WithArgs(plate, "vehicle.wanted", sqlmock.AnyArg()).
+		WillReturnRows(sqlmock.NewRows([]string{"wanted"}).AddRow(true))
+	mock.ExpectQuery(`(?s)SELECT .*FROM fivenet_vehicle_property_state.*WHERE .*plate = \?.*property_key = \?.*FOR UPDATE`).
+		WithArgs(plate, "vehicle.wanted", sqlmock.AnyArg()).
+		WillReturnRows(sqlmock.NewRows([]string{"active_at", "expires_at"}).
+			AddRow(time.Now().Add(-7*24*time.Hour), nil))
 	mock.ExpectQuery(`(?s)FROM fivenet_vehicle_property_values value.*LEFT JOIN fivenet_vehicle_property_state state.*value.property_key.*value.plate IN`).
 		WithArgs("vehicle.wanted", plate).
 		WillReturnRows(sqlmock.NewRows([]string{"plate", "updated_at", "value_bool", "reason", "active_at", "expires_at"}).
 			AddRow(plate, time.Now(), true, nil, nil, nil))
-	mock.ExpectBegin()
 	mock.ExpectExec(`(?s)INSERT INTO fivenet_vehicle_property_values`).
 		WithArgs(plate, "vehicle.wanted", 4, false).
 		WillReturnResult(sqlmock.NewResult(0, 1))
@@ -92,6 +99,7 @@ func TestHousekeeperMaxWantedDurationHandling_Disabled(t *testing.T) {
 
 	s := &Housekeeper{
 		logger: zap.NewNop(),
+		db:     db,
 		store:  vehiclesstore.New(db, &config.CustomDB{}, nil),
 		appCfg: &mockAppConfig{cfg: cfg},
 	}
@@ -119,6 +127,7 @@ func TestHousekeeperMaxWantedDurationHandling_NoDuration(t *testing.T) {
 
 	s := &Housekeeper{
 		logger: zap.NewNop(),
+		db:     db,
 		store:  vehiclesstore.New(db, &config.CustomDB{}, nil),
 		appCfg: &mockAppConfig{cfg: cfg},
 	}
@@ -146,6 +155,7 @@ func TestHousekeeperMaxWantedDurationHandling_SystemPropertyDisabled(t *testing.
 
 	s := &Housekeeper{
 		logger: zap.NewNop(),
+		db:     db,
 		store:  vehiclesstore.New(db, &config.CustomDB{}, nil),
 		appCfg: &mockAppConfig{cfg: cfg},
 	}
@@ -176,6 +186,7 @@ func TestHousekeeperMaxWantedDurationHandling_QueryCondition(t *testing.T) {
 
 	s := &Housekeeper{
 		logger: zap.NewNop(),
+		db:     db,
 		store:  vehiclesstore.New(db, &config.CustomDB{}, nil),
 		appCfg: &mockAppConfig{cfg: cfg},
 	}
@@ -190,6 +201,29 @@ func TestHousekeeperMaxWantedDurationHandling_QueryCondition(t *testing.T) {
 	changedRows, err := s.maxWantedDurationHandling(t.Context())
 	require.NoError(t, err)
 	assert.Equal(t, 1, changedRows)
+	require.NoError(t, mock.ExpectationsWereMet())
+}
+
+func TestHousekeeperClearExpiredWanted_SkipsRenewedCandidate(t *testing.T) {
+	t.Parallel()
+	db, mock, err := sqlmock.New()
+	require.NoError(t, err)
+	t.Cleanup(func() { _ = db.Close() })
+
+	s := &Housekeeper{logger: zap.NewNop(), db: db}
+	mock.ExpectBegin()
+	mock.ExpectQuery(`(?s)SELECT .*FROM fivenet_vehicle_property_values.*WHERE .*plate = \?.*property_key = \?.*FOR UPDATE`).
+		WithArgs("ABC DEF1", "vehicle.wanted", sqlmock.AnyArg()).
+		WillReturnRows(sqlmock.NewRows([]string{"wanted"}).AddRow(true))
+	mock.ExpectQuery(`(?s)SELECT .*FROM fivenet_vehicle_property_state.*WHERE .*plate = \?.*property_key = \?.*FOR UPDATE`).
+		WithArgs("ABC DEF1", "vehicle.wanted", sqlmock.AnyArg()).
+		WillReturnRows(sqlmock.NewRows([]string{"active_at", "expires_at"}).
+			AddRow(time.Now(), nil))
+	mock.ExpectCommit()
+
+	cleared, err := s.clearExpiredWanted(t.Context(), "ABC DEF1", time.Hour)
+	require.NoError(t, err)
+	assert.False(t, cleared)
 	require.NoError(t, mock.ExpectationsWereMet())
 }
 
@@ -210,6 +244,7 @@ func TestHousekeeperMaxWantedDurationHandling_ResetMultipleVehicles(t *testing.T
 
 	s := &Housekeeper{
 		logger: zap.NewNop(),
+		db:     db,
 		store:  vehiclesstore.New(db, &config.CustomDB{}, nil),
 		appCfg: &mockAppConfig{cfg: cfg},
 	}

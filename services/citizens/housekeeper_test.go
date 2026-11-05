@@ -37,13 +37,23 @@ func (m *mockAppConfig) Update(_ context.Context, val *appconfig.Cfg) error {
 
 func expectCanonicalWantedProps(mock sqlmock.Sqlmock, userID int32) {
 	mock.ExpectQuery(`FROM fivenet_user_property_values`).WithArgs(userID).
-		WillReturnRows(sqlmock.NewRows([]string{"user_id", "property_key", "value_type", "value_string", "value_integer", "value_number", "value_bool", "value_timestamp", "value_date", "updated_at"}).
+		WillReturnRows(sqlmock.NewRows([]string{"fivenet_user_property_values.user_id", "fivenet_user_property_values.property_key", "fivenet_user_property_values.value_type", "fivenet_user_property_values.value_string", "fivenet_user_property_values.value_integer", "fivenet_user_property_values.value_number", "fivenet_user_property_values.value_bool", "fivenet_user_property_values.value_timestamp", "fivenet_user_property_values.value_date", "fivenet_user_property_values.updated_at"}).
 			AddRow(userID, "user.wanted", uint8(4), nil, nil, nil, true, nil, nil, time.Now()))
 	mock.ExpectQuery(`FROM fivenet_user_property_state`).WithArgs(userID).
 		WillReturnRows(sqlmock.NewRows([]string{"user_id", "property_key", "reason", "active_at", "expires_at", "updated_at"}))
 	mock.ExpectQuery(`FROM fivenet_user_files AS mugshot_file`).
 		WithArgs(userID, "mugshot", int64(1)).
 		WillReturnRows(sqlmock.NewRows([]string{"mugshot_file_id", "mugshot.mugshot_file_id", "file_path"}))
+}
+
+func expectLockedExpiredWanted(mock sqlmock.Sqlmock, userID int32) {
+	mock.ExpectQuery(`(?s)SELECT .*FROM fivenet_user_property_values.*WHERE .*user_id = \?.*property_key = \?.*FOR UPDATE`).
+		WithArgs(userID, "user.wanted", sqlmock.AnyArg()).
+		WillReturnRows(sqlmock.NewRows([]string{"wanted"}).AddRow(true))
+	mock.ExpectQuery(`(?s)SELECT .*FROM fivenet_user_property_state.*WHERE .*user_id = \?.*property_key = \?.*FOR UPDATE`).
+		WithArgs(userID, "user.wanted", sqlmock.AnyArg()).
+		WillReturnRows(sqlmock.NewRows([]string{"active_at", "expires_at"}).
+			AddRow(time.Now().Add(-7*24*time.Hour), nil))
 }
 
 func (m *mockAppConfig) Reload(_ context.Context) (*appconfig.Cfg, error) {
@@ -132,7 +142,7 @@ func TestHousekeeperMaxWantedDurationHandling_QueryCondition(t *testing.T) {
 	cfg.Default()
 	cfg.Game = &settings.Game{
 		MaxWantedDurationUserEnabled: true,
-		MaxWantedDurationUser:        durationpb.New(72 * time.Hour), // 3 days
+		MaxWantedDurationUser:        durationpb.New(90 * time.Minute),
 	}
 
 	s := &Housekeeper{
@@ -151,10 +161,13 @@ func TestHousekeeperMaxWantedDurationHandling_QueryCondition(t *testing.T) {
 
 	// Wanted's lifecycle is stored in property_state, while the boolean lives in
 	// property_values.
-	expectedQuery := `(?s)FROM fivenet_user_property_values AS value INNER JOIN fivenet_user_property_state AS state.*value\.property_key = \?.*value\.value_bool IS TRUE.*state\.active_at < \(CURRENT_TIMESTAMP - INTERVAL 3 DAY\).*state\.expires_at < CURRENT_TIMESTAMP.*LIMIT \?`
+	expectedQuery := `(?s)FROM fivenet_user_property_values AS value INNER JOIN fivenet_user_property_state AS state.*value\.property_key = \?.*value\.value_bool IS TRUE.*state\.active_at <= \(CURRENT_TIMESTAMP - INTERVAL 5400 SECOND\).*state\.expires_at <= CURRENT_TIMESTAMP.*ORDER BY.*CASE.*state\.expires_at.*state\.active_at.*LIMIT \?`
 	mock.ExpectQuery(expectedQuery).
 		WithArgs("user.wanted", uint8(4), sqlmock.AnyArg()).
 		WillReturnRows(sqlmock.NewRows([]string{"user_id"}).AddRow(int32(42)))
+
+	mock.ExpectBegin()
+	expectLockedExpiredWanted(mock, 42)
 
 	// Retrieve canonical wanted value and its optional lifecycle/file relations.
 	expectCanonicalWantedProps(mock, 42)
@@ -170,10 +183,34 @@ func TestHousekeeperMaxWantedDurationHandling_QueryCondition(t *testing.T) {
 	// User activity insert for wanted change.
 	mock.ExpectExec(`(?s)INSERT.*fivenet_user_activity`).
 		WillReturnResult(sqlmock.NewResult(0, 1))
+	mock.ExpectCommit()
 
 	changedRows, err := s.maxWantedDurationHandling(t.Context())
 	require.NoError(t, err)
 	assert.Equal(t, 1, changedRows)
+	require.NoError(t, mock.ExpectationsWereMet())
+}
+
+func TestHousekeeperClearExpiredWanted_SkipsRenewedCandidate(t *testing.T) {
+	t.Parallel()
+	db, mock, err := sqlmock.New()
+	require.NoError(t, err)
+	t.Cleanup(func() { _ = db.Close() })
+
+	s := &Housekeeper{logger: zap.NewNop(), db: db}
+	mock.ExpectBegin()
+	mock.ExpectQuery(`(?s)SELECT .*FROM fivenet_user_property_values.*WHERE .*user_id = \?.*property_key = \?.*FOR UPDATE`).
+		WithArgs(int32(42), "user.wanted", sqlmock.AnyArg()).
+		WillReturnRows(sqlmock.NewRows([]string{"wanted"}).AddRow(true))
+	mock.ExpectQuery(`(?s)SELECT .*FROM fivenet_user_property_state.*WHERE .*user_id = \?.*property_key = \?.*FOR UPDATE`).
+		WithArgs(int32(42), "user.wanted", sqlmock.AnyArg()).
+		WillReturnRows(sqlmock.NewRows([]string{"active_at", "expires_at"}).
+			AddRow(time.Now(), nil))
+	mock.ExpectCommit()
+
+	cleared, err := s.clearExpiredWanted(t.Context(), 42, time.Hour)
+	require.NoError(t, err)
+	assert.False(t, cleared)
 	require.NoError(t, mock.ExpectationsWereMet())
 }
 
@@ -207,7 +244,7 @@ func TestHousekeeperMaxWantedDurationHandling_ResetMultipleUsers(t *testing.T) {
 		WillReturnRows(sqlmock.NewRows([]string{"enabled"}).AddRow(true))
 
 	// Two eligible users are returned by the selection query
-	mock.ExpectQuery(`(?s)FROM fivenet_user_property_values AS value INNER JOIN fivenet_user_property_state AS state.*value\.property_key = \?.*value\.value_bool IS TRUE.*state\.active_at < \(CURRENT_TIMESTAMP - INTERVAL 3 DAY\).*state\.expires_at < CURRENT_TIMESTAMP.*LIMIT \?`).
+	mock.ExpectQuery(`(?s)FROM fivenet_user_property_values AS value INNER JOIN fivenet_user_property_state AS state.*value\.property_key = \?.*value\.value_bool IS TRUE.*state\.active_at <= \(CURRENT_TIMESTAMP - INTERVAL 259200 SECOND\).*state\.expires_at <= CURRENT_TIMESTAMP.*ORDER BY.*CASE.*state\.expires_at.*state\.active_at.*LIMIT \?`).
 		WithArgs("user.wanted", uint8(4), sqlmock.AnyArg()).
 		WillReturnRows(
 			sqlmock.NewRows([]string{"user_id"}).
@@ -215,6 +252,8 @@ func TestHousekeeperMaxWantedDurationHandling_ResetMultipleUsers(t *testing.T) {
 				AddRow(int32(43)),
 		)
 
+	mock.ExpectBegin()
+	expectLockedExpiredWanted(mock, 42)
 	expectCanonicalWantedProps(mock, 42)
 
 	mock.ExpectExec(`(?s)INSERT INTO .*fivenet_user_props.*ON DUPLICATE KEY UPDATE.*wanted = \\?.*`).
@@ -225,7 +264,10 @@ func TestHousekeeperMaxWantedDurationHandling_ResetMultipleUsers(t *testing.T) {
 		WillReturnResult(sqlmock.NewResult(0, 1))
 	mock.ExpectExec(`(?s)INSERT.*fivenet_user_activity`).
 		WillReturnResult(sqlmock.NewResult(0, 1))
+	mock.ExpectCommit()
 
+	mock.ExpectBegin()
+	expectLockedExpiredWanted(mock, 43)
 	expectCanonicalWantedProps(mock, 43)
 
 	mock.ExpectExec(`(?s)INSERT INTO .*fivenet_user_props.*ON DUPLICATE KEY UPDATE.*wanted = \\?.*`).
@@ -236,6 +278,7 @@ func TestHousekeeperMaxWantedDurationHandling_ResetMultipleUsers(t *testing.T) {
 		WillReturnResult(sqlmock.NewResult(0, 1))
 	mock.ExpectExec(`(?s)INSERT.*fivenet_user_activity`).
 		WillReturnResult(sqlmock.NewResult(0, 1))
+	mock.ExpectCommit()
 
 	changedRows, err := s.maxWantedDurationHandling(t.Context())
 	require.NoError(t, err)

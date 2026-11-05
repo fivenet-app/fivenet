@@ -6,6 +6,7 @@ import (
 	"errors"
 
 	discordapi "github.com/diamondburned/arikawa/v3/api"
+	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/cron"
 	pbsettings "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/settings"
 	"github.com/fivenet-app/fivenet/v2026/pkg/config"
 	"github.com/fivenet-app/fivenet/v2026/pkg/config/appconfig"
@@ -234,4 +235,36 @@ func (s *Server) AuthFuncOverride(ctx context.Context, fullMethod string) (conte
 func hasUserTokenInContext(ctx context.Context) bool {
 	md := grpcmetadata.ExtractIncoming(ctx)
 	return len(md.Get("authorization")) > 0 && len(md.Get("cookie")) > 0
+}
+
+type CronRegister struct {
+	store settingsstore.IStore
+}
+
+type Result struct {
+	fx.Out
+
+	CronRegister croner.CronRegister `group:"cronjobregister"`
+}
+
+// NewCronRegister exposes Settings property-maintenance jobs to the shared scheduler.
+func NewCronRegister(store settingsstore.IStore) Result {
+	return Result{CronRegister: &CronRegister{store: store}}
+}
+
+func (s *CronRegister) RegisterCronjobs(ctx context.Context, registry croner.IRegistry) error {
+	return registry.RegisterCronjob(
+		ctx,
+		&cron.Cronjob{Name: "settings.properties.constraint_scan", Schedule: "30 3 * * 0"},
+	)
+}
+
+func (s *CronRegister) RegisterCronjobHandlers(h *croner.Handlers) error {
+	h.Add(
+		"settings.properties.constraint_scan",
+		func(ctx context.Context, _ *cron.CronjobData) error {
+			return s.store.ScanPropertyValueConstraints(ctx)
+		},
+	)
+	return nil
 }

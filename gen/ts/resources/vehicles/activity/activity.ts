@@ -143,6 +143,38 @@ export interface PropertyChange {
      * @generated from protobuf field: optional resources.properties.PropertyValue new_value = 3
      */
     newValue?: PropertyValue;
+    /**
+     * @generated from protobuf field: optional resources.vehicles.activity.PropertyLifecycleChange lifecycle = 4
+     */
+    lifecycle?: PropertyLifecycleChange;
+    /**
+     * @generated from protobuf field: resources.vehicles.activity.PropertyChangeCause cause = 5
+     */
+    cause: PropertyChangeCause;
+}
+/**
+ * PropertyLifecycleChange records the lifecycle fields changed by this
+ * activity, including the resulting state reason when it changed.
+ *
+ * @generated from protobuf message resources.vehicles.activity.PropertyLifecycleChange
+ */
+export interface PropertyLifecycleChange {
+    /**
+     * @generated from protobuf field: optional resources.timestamp.Timestamp expires_at = 1
+     */
+    expiresAt?: Timestamp;
+    /**
+     * @generated from protobuf field: bool expiry_cleared = 2
+     */
+    expiryCleared: boolean;
+    /**
+     * @generated from protobuf field: optional string state_reason = 3
+     */
+    stateReason?: string;
+    /**
+     * @generated from protobuf field: bool state_reason_cleared = 4
+     */
+    stateReasonCleared: boolean;
 }
 /**
  * @generated from protobuf message resources.vehicles.activity.FileChange
@@ -187,6 +219,23 @@ export enum VehicleActivityType {
      * @generated from protobuf enum value: VEHICLE_ACTIVITY_TYPE_PROPERTY = 3;
      */
     PROPERTY = 3
+}
+/**
+ * @generated from protobuf enum resources.vehicles.activity.PropertyChangeCause
+ */
+export enum PropertyChangeCause {
+    /**
+     * @generated from protobuf enum value: PROPERTY_CHANGE_CAUSE_UNSPECIFIED = 0;
+     */
+    UNSPECIFIED = 0,
+    /**
+     * @generated from protobuf enum value: PROPERTY_CHANGE_CAUSE_MANUAL = 1;
+     */
+    MANUAL = 1,
+    /**
+     * @generated from protobuf enum value: PROPERTY_CHANGE_CAUSE_EXPIRED = 2;
+     */
+    EXPIRED = 2
 }
 // @generated message type with reflection information, may provide speed optimized methods
 class VehicleActivity$Type extends MessageType<VehicleActivity> {
@@ -467,12 +516,15 @@ class PropertyChange$Type extends MessageType<PropertyChange> {
         super("resources.vehicles.activity.PropertyChange", [
             { no: 1, name: "key", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "64" } } } },
             { no: 2, name: "old_value", kind: "message", T: () => PropertyValue },
-            { no: 3, name: "new_value", kind: "message", T: () => PropertyValue }
+            { no: 3, name: "new_value", kind: "message", T: () => PropertyValue },
+            { no: 4, name: "lifecycle", kind: "message", T: () => PropertyLifecycleChange },
+            { no: 5, name: "cause", kind: "enum", T: () => ["resources.vehicles.activity.PropertyChangeCause", PropertyChangeCause, "PROPERTY_CHANGE_CAUSE_"], options: { "buf.validate.field": { enum: { definedOnly: true } } } }
         ]);
     }
     create(value?: PartialMessage<PropertyChange>): PropertyChange {
         const message = globalThis.Object.create((this.messagePrototype!));
         message.key = "";
+        message.cause = 0;
         if (value !== undefined)
             reflectionMergePartial<PropertyChange>(this, message, value);
         return message;
@@ -490,6 +542,12 @@ class PropertyChange$Type extends MessageType<PropertyChange> {
                     break;
                 case /* optional resources.properties.PropertyValue new_value */ 3:
                     message.newValue = PropertyValue.internalBinaryRead(reader, reader.uint32(), options, message.newValue);
+                    break;
+                case /* optional resources.vehicles.activity.PropertyLifecycleChange lifecycle */ 4:
+                    message.lifecycle = PropertyLifecycleChange.internalBinaryRead(reader, reader.uint32(), options, message.lifecycle);
+                    break;
+                case /* resources.vehicles.activity.PropertyChangeCause cause */ 5:
+                    message.cause = reader.int32();
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -512,6 +570,12 @@ class PropertyChange$Type extends MessageType<PropertyChange> {
         /* optional resources.properties.PropertyValue new_value = 3; */
         if (message.newValue)
             PropertyValue.internalBinaryWrite(message.newValue, writer.tag(3, WireType.LengthDelimited).fork(), options).join();
+        /* optional resources.vehicles.activity.PropertyLifecycleChange lifecycle = 4; */
+        if (message.lifecycle)
+            PropertyLifecycleChange.internalBinaryWrite(message.lifecycle, writer.tag(4, WireType.LengthDelimited).fork(), options).join();
+        /* resources.vehicles.activity.PropertyChangeCause cause = 5; */
+        if (message.cause !== 0)
+            writer.tag(5, WireType.Varint).int32(message.cause);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -522,6 +586,75 @@ class PropertyChange$Type extends MessageType<PropertyChange> {
  * @generated MessageType for protobuf message resources.vehicles.activity.PropertyChange
  */
 export const PropertyChange = new PropertyChange$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class PropertyLifecycleChange$Type extends MessageType<PropertyLifecycleChange> {
+    constructor() {
+        super("resources.vehicles.activity.PropertyLifecycleChange", [
+            { no: 1, name: "expires_at", kind: "message", T: () => Timestamp },
+            { no: 2, name: "expiry_cleared", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
+            { no: 3, name: "state_reason", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "255" } } } },
+            { no: 4, name: "state_reason_cleared", kind: "scalar", T: 8 /*ScalarType.BOOL*/ }
+        ]);
+    }
+    create(value?: PartialMessage<PropertyLifecycleChange>): PropertyLifecycleChange {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        message.expiryCleared = false;
+        message.stateReasonCleared = false;
+        if (value !== undefined)
+            reflectionMergePartial<PropertyLifecycleChange>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: PropertyLifecycleChange): PropertyLifecycleChange {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* optional resources.timestamp.Timestamp expires_at */ 1:
+                    message.expiresAt = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.expiresAt);
+                    break;
+                case /* bool expiry_cleared */ 2:
+                    message.expiryCleared = reader.bool();
+                    break;
+                case /* optional string state_reason */ 3:
+                    message.stateReason = reader.string();
+                    break;
+                case /* bool state_reason_cleared */ 4:
+                    message.stateReasonCleared = reader.bool();
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: PropertyLifecycleChange, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* optional resources.timestamp.Timestamp expires_at = 1; */
+        if (message.expiresAt)
+            Timestamp.internalBinaryWrite(message.expiresAt, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
+        /* bool expiry_cleared = 2; */
+        if (message.expiryCleared !== false)
+            writer.tag(2, WireType.Varint).bool(message.expiryCleared);
+        /* optional string state_reason = 3; */
+        if (message.stateReason !== undefined)
+            writer.tag(3, WireType.LengthDelimited).string(message.stateReason);
+        /* bool state_reason_cleared = 4; */
+        if (message.stateReasonCleared !== false)
+            writer.tag(4, WireType.Varint).bool(message.stateReasonCleared);
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message resources.vehicles.activity.PropertyLifecycleChange
+ */
+export const PropertyLifecycleChange = new PropertyLifecycleChange$Type();
 // @generated message type with reflection information, may provide speed optimized methods
 class FileChange$Type extends MessageType<FileChange> {
     constructor() {

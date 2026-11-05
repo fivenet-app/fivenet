@@ -49,9 +49,9 @@ message SetVehiclePropsRequest {
     (buf.validate.field).ignore = IGNORE_IF_ZERO_VALUE,
     (codegen.sanitizer.sanitizer) = {enabled: true}
   ];
-  // Generic custom scalar properties. Managed system properties continue to
-  // use the dedicated fields above and produce their specialized activities.
-  repeated resources.properties.PropertyChange property_changes = 3 [(buf.validate.field).repeated.max_items = 20];
+  // The sole scalar and lifecycle property write path. Composite and
+  // relational managed features retain their dedicated domain operations.
+  repeated resources.properties.PropertyMutation property_mutations = 3 [(buf.validate.field).repeated.max_items = 20];
 }
 
 message SetVehiclePropsResponse {
@@ -95,7 +95,10 @@ message VehicleFile {
 }
 
 message ListVehicleFilesRequest {
-  string plate = 1 [(buf.validate.field).string = {min_len: 1, max_len: 32}];
+  string plate = 1 [(buf.validate.field).string = {
+    min_len: 1
+    max_len: 32
+  }];
 }
 
 message ListVehicleFilesResponse {
@@ -103,10 +106,16 @@ message ListVehicleFilesResponse {
 }
 
 message DeleteVehicleFileRequest {
-  string plate = 1 [(buf.validate.field).string = {min_len: 1, max_len: 32}];
+  string plate = 1 [(buf.validate.field).string = {
+    min_len: 1
+    max_len: 32
+  }];
   int64 file_id = 2 [(buf.validate.field).int64.gt = 0];
   string reason = 3 [
-    (buf.validate.field).string = {min_len: 3, max_len: 255},
+    (buf.validate.field).string = {
+      min_len: 3
+      max_len: 255
+    },
     (codegen.sanitizer.sanitizer) = {enabled: true}
   ];
 }
@@ -130,6 +139,12 @@ service VehiclesService {
         value_type: PROPERTY_VALUE_TYPE_BOOL
         value_format: PROPERTY_VALUE_FORMAT_PLAIN
         behavior: PROPERTY_BEHAVIOR_MANAGED
+        state_policy: {
+          enabled: true
+          supports_expiry: true
+          expiry_action: PROPERTY_EXPIRY_ACTION_CLEAR_VALUE
+        }
+        managed_handler: "wanted"
         enabled: true
         pinned: true
         display_mode: PROPERTY_DISPLAY_MODE_PROFILE_BADGE

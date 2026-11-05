@@ -191,6 +191,11 @@ func (m *SystemProperty) Sanitize() error {
 	// Field: Label
 	m.Label = htmlsanitizer.SanitizeAndUnescape(m.Label)
 
+	// Field: ManagedHandler
+	if m.ManagedHandler != nil {
+		*m.ManagedHandler = htmlsanitizer.SanitizeAndUnescape(*m.ManagedHandler)
+	}
+
 	// Field: RendererConfig
 	if m.RendererConfig != nil {
 		if v, ok := any(m.GetRendererConfig()).(interface{ Sanitize() error }); ok {
@@ -200,9 +205,27 @@ func (m *SystemProperty) Sanitize() error {
 		}
 	}
 
+	// Field: StatePolicy
+	if m.StatePolicy != nil {
+		if v, ok := any(m.GetStatePolicy()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+	}
+
 	// Field: Unit
 	if m.Unit != nil {
 		*m.Unit = htmlsanitizer.SanitizeAndUnescape(*m.Unit)
+	}
+
+	// Field: ValueConstraints
+	if m.ValueConstraints != nil {
+		if v, ok := any(m.GetValueConstraints()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
 	}
 
 	return nil

@@ -11,6 +11,7 @@ import { UnknownFieldHandler } from "@protobuf-ts/runtime";
 import type { PartialMessage } from "@protobuf-ts/runtime";
 import { reflectionMergePartial } from "@protobuf-ts/runtime";
 import { MessageType } from "@protobuf-ts/runtime";
+import { Empty } from "../../google/protobuf/empty";
 import { Timestamp } from "../timestamp/timestamp";
 /**
  * PropertyValue is deliberately restricted to scalar values. Relations such as
@@ -111,21 +112,111 @@ export interface Property {
      * @generated from protobuf field: optional resources.properties.PropertyDefinition definition = 4
      */
     definition?: PropertyDefinition;
+    /**
+     * @generated from protobuf field: optional resources.properties.PropertyState state = 5
+     */
+    state?: PropertyState;
 }
 /**
- * PropertyChange updates a generic scalar property. An absent value clears it.
+ * PropertyState is lifecycle metadata associated with a state-enabled property.
+ * key is redundant when embedded in Property, but permits independent state
+ * records to remain self-describing.
  *
- * @generated from protobuf message resources.properties.PropertyChange
+ * @generated from protobuf message resources.properties.PropertyState
  */
-export interface PropertyChange {
+export interface PropertyState {
+    /**
+     * @generated from protobuf field: optional string key = 1
+     */
+    key?: string;
+    /**
+     * @generated from protobuf field: optional string reason = 2
+     */
+    reason?: string;
+    /**
+     * @generated from protobuf field: optional resources.timestamp.Timestamp active_at = 3
+     */
+    activeAt?: Timestamp;
+    /**
+     * @generated from protobuf field: optional resources.timestamp.Timestamp expires_at = 4
+     */
+    expiresAt?: Timestamp;
+    /**
+     * @generated from protobuf field: optional resources.timestamp.Timestamp updated_at = 5
+     */
+    updatedAt?: Timestamp;
+}
+/**
+ * PropertyMutation is the sole scalar and lifecycle property write contract.
+ * Omitting value_change means this is a state-only mutation.
+ *
+ * @generated from protobuf message resources.properties.PropertyMutation
+ */
+export interface PropertyMutation {
     /**
      * @generated from protobuf field: string key = 1
      */
     key: string;
     /**
-     * @generated from protobuf field: optional resources.properties.PropertyValue value = 2
+     * @generated from protobuf oneof: value_change
      */
-    value?: PropertyValue;
+    valueChange: {
+        oneofKind: "setValue";
+        /**
+         * @generated from protobuf field: resources.properties.PropertyValue set_value = 2
+         */
+        setValue: PropertyValue;
+    } | {
+        oneofKind: "clearValue";
+        /**
+         * @generated from protobuf field: google.protobuf.Empty clear_value = 3
+         */
+        clearValue: Empty;
+    } | {
+        oneofKind: undefined;
+    };
+    /**
+     * @generated from protobuf field: optional resources.properties.PropertyStatePatch state = 4
+     */
+    state?: PropertyStatePatch;
+    /**
+     * The property-specific rationale/state reason. It is intentionally scoped
+     * to this mutation so batched edits can retain distinct reasons.
+     *
+     * @generated from protobuf field: optional string reason = 5
+     */
+    reason?: string;
+    /**
+     * Explicitly clears the persisted state reason. This is not a oneof because
+     * the sanitizer generator supports one oneof per message; validation
+     * rejects combining it with reason.
+     *
+     * @generated from protobuf field: optional bool clear_reason = 6
+     */
+    clearReason?: boolean;
+}
+/**
+ * @generated from protobuf message resources.properties.PropertyStatePatch
+ */
+export interface PropertyStatePatch {
+    /**
+     * @generated from protobuf oneof: expiry_change
+     */
+    expiryChange: {
+        oneofKind: "expiresAt";
+        /**
+         * @generated from protobuf field: resources.timestamp.Timestamp expires_at = 1
+         */
+        expiresAt: Timestamp;
+    } | {
+        oneofKind: "clearExpiry";
+        /**
+         * @generated from protobuf field: google.protobuf.Empty clear_expiry = 2
+         */
+        clearExpiry: Empty;
+    } | {
+        oneofKind: undefined;
+    };
 }
 /**
  * @generated from protobuf message resources.properties.Properties
@@ -141,6 +232,83 @@ export interface Properties {
      * @generated from protobuf field: repeated resources.properties.PropertyGroup groups = 2
      */
     groups: PropertyGroup[];
+}
+/**
+ * @generated from protobuf message resources.properties.PropertyStatePolicy
+ */
+export interface PropertyStatePolicy {
+    /**
+     * @generated from protobuf field: bool enabled = 1
+     */
+    enabled: boolean;
+    /**
+     * @generated from protobuf field: bool supports_expiry = 2
+     */
+    supportsExpiry: boolean;
+    /**
+     * @generated from protobuf field: resources.properties.PropertyExpiryAction expiry_action = 3
+     */
+    expiryAction: PropertyExpiryAction;
+}
+/**
+ * PropertyValueConstraints narrows the accepted scalar values for a custom
+ * definition. Only fields compatible with the definition's value_type may be
+ * populated. Constraints never rewrite existing stored values.
+ *
+ * @generated from protobuf message resources.properties.PropertyValueConstraints
+ */
+export interface PropertyValueConstraints {
+    /**
+     * @generated from protobuf field: optional uint32 string_min_length = 1
+     */
+    stringMinLength?: number;
+    /**
+     * @generated from protobuf field: optional uint32 string_max_length = 2
+     */
+    stringMaxLength?: number;
+    /**
+     * @generated from protobuf field: repeated string string_allowed_values = 3
+     */
+    stringAllowedValues: string[];
+    /**
+     * @generated from protobuf field: optional int64 integer_min = 4
+     */
+    integerMin?: number;
+    /**
+     * @generated from protobuf field: optional int64 integer_max = 5
+     */
+    integerMax?: number;
+    /**
+     * @generated from protobuf field: optional double number_min = 6
+     */
+    numberMin?: number;
+    /**
+     * @generated from protobuf field: optional double number_max = 7
+     */
+    numberMax?: number;
+    /**
+     * @generated from protobuf field: optional resources.timestamp.Timestamp timestamp_min = 8
+     */
+    timestampMin?: Timestamp;
+    /**
+     * @generated from protobuf field: optional resources.timestamp.Timestamp timestamp_max = 9
+     */
+    timestampMax?: Timestamp;
+    /**
+     * @generated from protobuf field: optional resources.properties.LocalDate date_min = 10
+     */
+    dateMin?: LocalDate;
+    /**
+     * @generated from protobuf field: optional resources.properties.LocalDate date_max = 11
+     */
+    dateMax?: LocalDate;
+    /**
+     * The listed string values are either suggestions or an exhaustive set.
+     * UNSPECIFIED retains the legacy strict behavior for existing definitions.
+     *
+     * @generated from protobuf field: resources.properties.PropertyStringAllowedValuesMode string_allowed_values_mode = 12
+     */
+    stringAllowedValuesMode: PropertyStringAllowedValuesMode;
 }
 /**
  * @generated from protobuf message resources.properties.PropertyDefinition
@@ -266,6 +434,25 @@ export interface PropertyDefinition {
      * @generated from protobuf field: bool implicit = 23
      */
     implicit: boolean;
+    /**
+     * @generated from protobuf field: optional resources.properties.PropertyStatePolicy state_policy = 24
+     */
+    statePolicy?: PropertyStatePolicy;
+    /**
+     * Registry identifier for the server-side managed-property handler. Generic
+     * properties leave this unset; Sync routes managed mutations by this value.
+     *
+     * @generated from protobuf field: optional string managed_handler = 25
+     */
+    managedHandler?: string;
+    /**
+     * @generated from protobuf field: optional resources.properties.PropertyValueConstraints value_constraints = 26
+     */
+    valueConstraints?: PropertyValueConstraints;
+    /**
+     * @generated from protobuf field: resources.properties.PropertyReasonMode reason_mode = 27
+     */
+    reasonMode: PropertyReasonMode;
 }
 /**
  * @generated from protobuf message resources.properties.PropertyRendererConfig
@@ -521,6 +708,66 @@ export enum PropertyBehavior {
      * @generated from protobuf enum value: PROPERTY_BEHAVIOR_MANAGED = 2;
      */
     MANAGED = 2
+}
+/**
+ * @generated from protobuf enum resources.properties.PropertyExpiryAction
+ */
+export enum PropertyExpiryAction {
+    /**
+     * @generated from protobuf enum value: PROPERTY_EXPIRY_ACTION_UNSPECIFIED = 0;
+     */
+    UNSPECIFIED = 0,
+    /**
+     * @generated from protobuf enum value: PROPERTY_EXPIRY_ACTION_CLEAR_VALUE = 1;
+     */
+    CLEAR_VALUE = 1
+}
+/**
+ * PropertyReasonMode controls the per-property rationale supplied with a
+ * mutation. The server treats UNSPECIFIED as REQUIRED for compatibility with
+ * omitted configuration.
+ *
+ * @generated from protobuf enum resources.properties.PropertyReasonMode
+ */
+export enum PropertyReasonMode {
+    /**
+     * @generated from protobuf enum value: PROPERTY_REASON_MODE_UNSPECIFIED = 0;
+     */
+    UNSPECIFIED = 0,
+    /**
+     * @generated from protobuf enum value: PROPERTY_REASON_MODE_REQUIRED = 1;
+     */
+    REQUIRED = 1,
+    /**
+     * @generated from protobuf enum value: PROPERTY_REASON_MODE_OPTIONAL = 2;
+     */
+    OPTIONAL = 2,
+    /**
+     * @generated from protobuf enum value: PROPERTY_REASON_MODE_NONE = 3;
+     */
+    NONE = 3
+}
+/**
+ * @generated from protobuf enum resources.properties.PropertyStringAllowedValuesMode
+ */
+export enum PropertyStringAllowedValuesMode {
+    /**
+     * @generated from protobuf enum value: PROPERTY_STRING_ALLOWED_VALUES_MODE_UNSPECIFIED = 0;
+     */
+    UNSPECIFIED = 0,
+    /**
+     * The list is presented as a convenience, but callers may enter another
+     * value as long as it meets the remaining string constraints.
+     *
+     * @generated from protobuf enum value: PROPERTY_STRING_ALLOWED_VALUES_MODE_SUGGEST = 1;
+     */
+    SUGGEST = 1,
+    /**
+     * The value must exactly match one entry in string_allowed_values.
+     *
+     * @generated from protobuf enum value: PROPERTY_STRING_ALLOWED_VALUES_MODE_STRICT = 2;
+     */
+    STRICT = 2
 }
 /**
  * @generated from protobuf enum resources.properties.PropertyDefinitionSource
@@ -840,7 +1087,8 @@ class Property$Type extends MessageType<Property> {
             { no: 1, name: "key", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { minLen: "1", maxLen: "64", pattern: "^[a-z][a-z0-9_.-]*$" } } } },
             { no: 2, name: "value", kind: "message", T: () => PropertyValue },
             { no: 3, name: "updated_at", kind: "message", T: () => Timestamp },
-            { no: 4, name: "definition", kind: "message", T: () => PropertyDefinition }
+            { no: 4, name: "definition", kind: "message", T: () => PropertyDefinition },
+            { no: 5, name: "state", kind: "message", T: () => PropertyState }
         ]);
     }
     create(value?: PartialMessage<Property>): Property {
@@ -867,6 +1115,9 @@ class Property$Type extends MessageType<Property> {
                 case /* optional resources.properties.PropertyDefinition definition */ 4:
                     message.definition = PropertyDefinition.internalBinaryRead(reader, reader.uint32(), options, message.definition);
                     break;
+                case /* optional resources.properties.PropertyState state */ 5:
+                    message.state = PropertyState.internalBinaryRead(reader, reader.uint32(), options, message.state);
+                    break;
                 default:
                     let u = options.readUnknownField;
                     if (u === "throw")
@@ -891,6 +1142,9 @@ class Property$Type extends MessageType<Property> {
         /* optional resources.properties.PropertyDefinition definition = 4; */
         if (message.definition)
             PropertyDefinition.internalBinaryWrite(message.definition, writer.tag(4, WireType.LengthDelimited).fork(), options).join();
+        /* optional resources.properties.PropertyState state = 5; */
+        if (message.state)
+            PropertyState.internalBinaryWrite(message.state, writer.tag(5, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -902,30 +1156,41 @@ class Property$Type extends MessageType<Property> {
  */
 export const Property = new Property$Type();
 // @generated message type with reflection information, may provide speed optimized methods
-class PropertyChange$Type extends MessageType<PropertyChange> {
+class PropertyState$Type extends MessageType<PropertyState> {
     constructor() {
-        super("resources.properties.PropertyChange", [
-            { no: 1, name: "key", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { minLen: "1", maxLen: "64", pattern: "^[a-z][a-z0-9_.-]*$" } } } },
-            { no: 2, name: "value", kind: "message", T: () => PropertyValue }
+        super("resources.properties.PropertyState", [
+            { no: 1, name: "key", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { minLen: "1", maxLen: "64", pattern: "^[a-z][a-z0-9_.-]*$" } } } },
+            { no: 2, name: "reason", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "255" } } } },
+            { no: 3, name: "active_at", kind: "message", T: () => Timestamp },
+            { no: 4, name: "expires_at", kind: "message", T: () => Timestamp },
+            { no: 5, name: "updated_at", kind: "message", T: () => Timestamp }
         ]);
     }
-    create(value?: PartialMessage<PropertyChange>): PropertyChange {
+    create(value?: PartialMessage<PropertyState>): PropertyState {
         const message = globalThis.Object.create((this.messagePrototype!));
-        message.key = "";
         if (value !== undefined)
-            reflectionMergePartial<PropertyChange>(this, message, value);
+            reflectionMergePartial<PropertyState>(this, message, value);
         return message;
     }
-    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: PropertyChange): PropertyChange {
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: PropertyState): PropertyState {
         let message = target ?? this.create(), end = reader.pos + length;
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* string key */ 1:
+                case /* optional string key */ 1:
                     message.key = reader.string();
                     break;
-                case /* optional resources.properties.PropertyValue value */ 2:
-                    message.value = PropertyValue.internalBinaryRead(reader, reader.uint32(), options, message.value);
+                case /* optional string reason */ 2:
+                    message.reason = reader.string();
+                    break;
+                case /* optional resources.timestamp.Timestamp active_at */ 3:
+                    message.activeAt = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.activeAt);
+                    break;
+                case /* optional resources.timestamp.Timestamp expires_at */ 4:
+                    message.expiresAt = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.expiresAt);
+                    break;
+                case /* optional resources.timestamp.Timestamp updated_at */ 5:
+                    message.updatedAt = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.updatedAt);
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -938,13 +1203,22 @@ class PropertyChange$Type extends MessageType<PropertyChange> {
         }
         return message;
     }
-    internalBinaryWrite(message: PropertyChange, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* string key = 1; */
-        if (message.key !== "")
+    internalBinaryWrite(message: PropertyState, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* optional string key = 1; */
+        if (message.key !== undefined)
             writer.tag(1, WireType.LengthDelimited).string(message.key);
-        /* optional resources.properties.PropertyValue value = 2; */
-        if (message.value)
-            PropertyValue.internalBinaryWrite(message.value, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
+        /* optional string reason = 2; */
+        if (message.reason !== undefined)
+            writer.tag(2, WireType.LengthDelimited).string(message.reason);
+        /* optional resources.timestamp.Timestamp active_at = 3; */
+        if (message.activeAt)
+            Timestamp.internalBinaryWrite(message.activeAt, writer.tag(3, WireType.LengthDelimited).fork(), options).join();
+        /* optional resources.timestamp.Timestamp expires_at = 4; */
+        if (message.expiresAt)
+            Timestamp.internalBinaryWrite(message.expiresAt, writer.tag(4, WireType.LengthDelimited).fork(), options).join();
+        /* optional resources.timestamp.Timestamp updated_at = 5; */
+        if (message.updatedAt)
+            Timestamp.internalBinaryWrite(message.updatedAt, writer.tag(5, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -952,9 +1226,158 @@ class PropertyChange$Type extends MessageType<PropertyChange> {
     }
 }
 /**
- * @generated MessageType for protobuf message resources.properties.PropertyChange
+ * @generated MessageType for protobuf message resources.properties.PropertyState
  */
-export const PropertyChange = new PropertyChange$Type();
+export const PropertyState = new PropertyState$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class PropertyMutation$Type extends MessageType<PropertyMutation> {
+    constructor() {
+        super("resources.properties.PropertyMutation", [
+            { no: 1, name: "key", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { minLen: "1", maxLen: "64", pattern: "^[a-z][a-z0-9_.-]*$" } } } },
+            { no: 2, name: "set_value", kind: "message", oneof: "valueChange", T: () => PropertyValue },
+            { no: 3, name: "clear_value", kind: "message", oneof: "valueChange", T: () => Empty },
+            { no: 4, name: "state", kind: "message", T: () => PropertyStatePatch },
+            { no: 5, name: "reason", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { minLen: "3", maxLen: "255" } } } },
+            { no: 6, name: "clear_reason", kind: "scalar", opt: true, T: 8 /*ScalarType.BOOL*/ }
+        ]);
+    }
+    create(value?: PartialMessage<PropertyMutation>): PropertyMutation {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        message.key = "";
+        message.valueChange = { oneofKind: undefined };
+        if (value !== undefined)
+            reflectionMergePartial<PropertyMutation>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: PropertyMutation): PropertyMutation {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* string key */ 1:
+                    message.key = reader.string();
+                    break;
+                case /* resources.properties.PropertyValue set_value */ 2:
+                    message.valueChange = {
+                        oneofKind: "setValue",
+                        setValue: PropertyValue.internalBinaryRead(reader, reader.uint32(), options, (message.valueChange as any).setValue)
+                    };
+                    break;
+                case /* google.protobuf.Empty clear_value */ 3:
+                    message.valueChange = {
+                        oneofKind: "clearValue",
+                        clearValue: Empty.internalBinaryRead(reader, reader.uint32(), options, (message.valueChange as any).clearValue)
+                    };
+                    break;
+                case /* optional resources.properties.PropertyStatePatch state */ 4:
+                    message.state = PropertyStatePatch.internalBinaryRead(reader, reader.uint32(), options, message.state);
+                    break;
+                case /* optional string reason */ 5:
+                    message.reason = reader.string();
+                    break;
+                case /* optional bool clear_reason */ 6:
+                    message.clearReason = reader.bool();
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: PropertyMutation, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* string key = 1; */
+        if (message.key !== "")
+            writer.tag(1, WireType.LengthDelimited).string(message.key);
+        /* resources.properties.PropertyValue set_value = 2; */
+        if (message.valueChange.oneofKind === "setValue")
+            PropertyValue.internalBinaryWrite(message.valueChange.setValue, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
+        /* google.protobuf.Empty clear_value = 3; */
+        if (message.valueChange.oneofKind === "clearValue")
+            Empty.internalBinaryWrite(message.valueChange.clearValue, writer.tag(3, WireType.LengthDelimited).fork(), options).join();
+        /* optional resources.properties.PropertyStatePatch state = 4; */
+        if (message.state)
+            PropertyStatePatch.internalBinaryWrite(message.state, writer.tag(4, WireType.LengthDelimited).fork(), options).join();
+        /* optional string reason = 5; */
+        if (message.reason !== undefined)
+            writer.tag(5, WireType.LengthDelimited).string(message.reason);
+        /* optional bool clear_reason = 6; */
+        if (message.clearReason !== undefined)
+            writer.tag(6, WireType.Varint).bool(message.clearReason);
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message resources.properties.PropertyMutation
+ */
+export const PropertyMutation = new PropertyMutation$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class PropertyStatePatch$Type extends MessageType<PropertyStatePatch> {
+    constructor() {
+        super("resources.properties.PropertyStatePatch", [
+            { no: 1, name: "expires_at", kind: "message", oneof: "expiryChange", T: () => Timestamp },
+            { no: 2, name: "clear_expiry", kind: "message", oneof: "expiryChange", T: () => Empty }
+        ]);
+    }
+    create(value?: PartialMessage<PropertyStatePatch>): PropertyStatePatch {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        message.expiryChange = { oneofKind: undefined };
+        if (value !== undefined)
+            reflectionMergePartial<PropertyStatePatch>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: PropertyStatePatch): PropertyStatePatch {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* resources.timestamp.Timestamp expires_at */ 1:
+                    message.expiryChange = {
+                        oneofKind: "expiresAt",
+                        expiresAt: Timestamp.internalBinaryRead(reader, reader.uint32(), options, (message.expiryChange as any).expiresAt)
+                    };
+                    break;
+                case /* google.protobuf.Empty clear_expiry */ 2:
+                    message.expiryChange = {
+                        oneofKind: "clearExpiry",
+                        clearExpiry: Empty.internalBinaryRead(reader, reader.uint32(), options, (message.expiryChange as any).clearExpiry)
+                    };
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: PropertyStatePatch, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* resources.timestamp.Timestamp expires_at = 1; */
+        if (message.expiryChange.oneofKind === "expiresAt")
+            Timestamp.internalBinaryWrite(message.expiryChange.expiresAt, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
+        /* google.protobuf.Empty clear_expiry = 2; */
+        if (message.expiryChange.oneofKind === "clearExpiry")
+            Empty.internalBinaryWrite(message.expiryChange.clearExpiry, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message resources.properties.PropertyStatePatch
+ */
+export const PropertyStatePatch = new PropertyStatePatch$Type();
 // @generated message type with reflection information, may provide speed optimized methods
 class Properties$Type extends MessageType<Properties> {
     constructor() {
@@ -1011,6 +1434,194 @@ class Properties$Type extends MessageType<Properties> {
  */
 export const Properties = new Properties$Type();
 // @generated message type with reflection information, may provide speed optimized methods
+class PropertyStatePolicy$Type extends MessageType<PropertyStatePolicy> {
+    constructor() {
+        super("resources.properties.PropertyStatePolicy", [
+            { no: 1, name: "enabled", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
+            { no: 2, name: "supports_expiry", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
+            { no: 3, name: "expiry_action", kind: "enum", T: () => ["resources.properties.PropertyExpiryAction", PropertyExpiryAction, "PROPERTY_EXPIRY_ACTION_"], options: { "buf.validate.field": { enum: { definedOnly: true } } } }
+        ]);
+    }
+    create(value?: PartialMessage<PropertyStatePolicy>): PropertyStatePolicy {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        message.enabled = false;
+        message.supportsExpiry = false;
+        message.expiryAction = 0;
+        if (value !== undefined)
+            reflectionMergePartial<PropertyStatePolicy>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: PropertyStatePolicy): PropertyStatePolicy {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* bool enabled */ 1:
+                    message.enabled = reader.bool();
+                    break;
+                case /* bool supports_expiry */ 2:
+                    message.supportsExpiry = reader.bool();
+                    break;
+                case /* resources.properties.PropertyExpiryAction expiry_action */ 3:
+                    message.expiryAction = reader.int32();
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: PropertyStatePolicy, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* bool enabled = 1; */
+        if (message.enabled !== false)
+            writer.tag(1, WireType.Varint).bool(message.enabled);
+        /* bool supports_expiry = 2; */
+        if (message.supportsExpiry !== false)
+            writer.tag(2, WireType.Varint).bool(message.supportsExpiry);
+        /* resources.properties.PropertyExpiryAction expiry_action = 3; */
+        if (message.expiryAction !== 0)
+            writer.tag(3, WireType.Varint).int32(message.expiryAction);
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message resources.properties.PropertyStatePolicy
+ */
+export const PropertyStatePolicy = new PropertyStatePolicy$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class PropertyValueConstraints$Type extends MessageType<PropertyValueConstraints> {
+    constructor() {
+        super("resources.properties.PropertyValueConstraints", [
+            { no: 1, name: "string_min_length", kind: "scalar", opt: true, T: 13 /*ScalarType.UINT32*/, options: { "buf.validate.field": { uint32: { lte: 2048 } } } },
+            { no: 2, name: "string_max_length", kind: "scalar", opt: true, T: 13 /*ScalarType.UINT32*/, options: { "buf.validate.field": { uint32: { lte: 2048 } } } },
+            { no: 3, name: "string_allowed_values", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { repeated: { maxItems: "50", items: { string: { maxLen: "1024" } } } } } },
+            { no: 4, name: "integer_min", kind: "scalar", opt: true, T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ },
+            { no: 5, name: "integer_max", kind: "scalar", opt: true, T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ },
+            { no: 6, name: "number_min", kind: "scalar", opt: true, T: 1 /*ScalarType.DOUBLE*/ },
+            { no: 7, name: "number_max", kind: "scalar", opt: true, T: 1 /*ScalarType.DOUBLE*/ },
+            { no: 8, name: "timestamp_min", kind: "message", T: () => Timestamp },
+            { no: 9, name: "timestamp_max", kind: "message", T: () => Timestamp },
+            { no: 10, name: "date_min", kind: "message", T: () => LocalDate },
+            { no: 11, name: "date_max", kind: "message", T: () => LocalDate },
+            { no: 12, name: "string_allowed_values_mode", kind: "enum", T: () => ["resources.properties.PropertyStringAllowedValuesMode", PropertyStringAllowedValuesMode, "PROPERTY_STRING_ALLOWED_VALUES_MODE_"], options: { "buf.validate.field": { enum: { definedOnly: true } } } }
+        ]);
+    }
+    create(value?: PartialMessage<PropertyValueConstraints>): PropertyValueConstraints {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        message.stringAllowedValues = [];
+        message.stringAllowedValuesMode = 0;
+        if (value !== undefined)
+            reflectionMergePartial<PropertyValueConstraints>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: PropertyValueConstraints): PropertyValueConstraints {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* optional uint32 string_min_length */ 1:
+                    message.stringMinLength = reader.uint32();
+                    break;
+                case /* optional uint32 string_max_length */ 2:
+                    message.stringMaxLength = reader.uint32();
+                    break;
+                case /* repeated string string_allowed_values */ 3:
+                    message.stringAllowedValues.push(reader.string());
+                    break;
+                case /* optional int64 integer_min */ 4:
+                    message.integerMin = reader.int64().toNumber();
+                    break;
+                case /* optional int64 integer_max */ 5:
+                    message.integerMax = reader.int64().toNumber();
+                    break;
+                case /* optional double number_min */ 6:
+                    message.numberMin = reader.double();
+                    break;
+                case /* optional double number_max */ 7:
+                    message.numberMax = reader.double();
+                    break;
+                case /* optional resources.timestamp.Timestamp timestamp_min */ 8:
+                    message.timestampMin = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.timestampMin);
+                    break;
+                case /* optional resources.timestamp.Timestamp timestamp_max */ 9:
+                    message.timestampMax = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.timestampMax);
+                    break;
+                case /* optional resources.properties.LocalDate date_min */ 10:
+                    message.dateMin = LocalDate.internalBinaryRead(reader, reader.uint32(), options, message.dateMin);
+                    break;
+                case /* optional resources.properties.LocalDate date_max */ 11:
+                    message.dateMax = LocalDate.internalBinaryRead(reader, reader.uint32(), options, message.dateMax);
+                    break;
+                case /* resources.properties.PropertyStringAllowedValuesMode string_allowed_values_mode */ 12:
+                    message.stringAllowedValuesMode = reader.int32();
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: PropertyValueConstraints, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* optional uint32 string_min_length = 1; */
+        if (message.stringMinLength !== undefined)
+            writer.tag(1, WireType.Varint).uint32(message.stringMinLength);
+        /* optional uint32 string_max_length = 2; */
+        if (message.stringMaxLength !== undefined)
+            writer.tag(2, WireType.Varint).uint32(message.stringMaxLength);
+        /* repeated string string_allowed_values = 3; */
+        for (let i = 0; i < message.stringAllowedValues.length; i++)
+            writer.tag(3, WireType.LengthDelimited).string(message.stringAllowedValues[i]);
+        /* optional int64 integer_min = 4; */
+        if (message.integerMin !== undefined)
+            writer.tag(4, WireType.Varint).int64(message.integerMin);
+        /* optional int64 integer_max = 5; */
+        if (message.integerMax !== undefined)
+            writer.tag(5, WireType.Varint).int64(message.integerMax);
+        /* optional double number_min = 6; */
+        if (message.numberMin !== undefined)
+            writer.tag(6, WireType.Bit64).double(message.numberMin);
+        /* optional double number_max = 7; */
+        if (message.numberMax !== undefined)
+            writer.tag(7, WireType.Bit64).double(message.numberMax);
+        /* optional resources.timestamp.Timestamp timestamp_min = 8; */
+        if (message.timestampMin)
+            Timestamp.internalBinaryWrite(message.timestampMin, writer.tag(8, WireType.LengthDelimited).fork(), options).join();
+        /* optional resources.timestamp.Timestamp timestamp_max = 9; */
+        if (message.timestampMax)
+            Timestamp.internalBinaryWrite(message.timestampMax, writer.tag(9, WireType.LengthDelimited).fork(), options).join();
+        /* optional resources.properties.LocalDate date_min = 10; */
+        if (message.dateMin)
+            LocalDate.internalBinaryWrite(message.dateMin, writer.tag(10, WireType.LengthDelimited).fork(), options).join();
+        /* optional resources.properties.LocalDate date_max = 11; */
+        if (message.dateMax)
+            LocalDate.internalBinaryWrite(message.dateMax, writer.tag(11, WireType.LengthDelimited).fork(), options).join();
+        /* resources.properties.PropertyStringAllowedValuesMode string_allowed_values_mode = 12; */
+        if (message.stringAllowedValuesMode !== 0)
+            writer.tag(12, WireType.Varint).int32(message.stringAllowedValuesMode);
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message resources.properties.PropertyValueConstraints
+ */
+export const PropertyValueConstraints = new PropertyValueConstraints$Type();
+// @generated message type with reflection information, may provide speed optimized methods
 class PropertyDefinition$Type extends MessageType<PropertyDefinition> {
     constructor() {
         super("resources.properties.PropertyDefinition", [
@@ -1036,7 +1647,11 @@ class PropertyDefinition$Type extends MessageType<PropertyDefinition> {
             { no: 18, name: "pinned", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
             { no: 20, name: "renderer_config", kind: "message", T: () => PropertyRendererConfig },
             { no: 21, name: "display_mode", kind: "enum", T: () => ["resources.properties.PropertyDisplayMode", PropertyDisplayMode, "PROPERTY_DISPLAY_MODE_"], options: { "buf.validate.field": { enum: { definedOnly: true } } } },
-            { no: 23, name: "implicit", kind: "scalar", T: 8 /*ScalarType.BOOL*/ }
+            { no: 23, name: "implicit", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
+            { no: 24, name: "state_policy", kind: "message", T: () => PropertyStatePolicy },
+            { no: 25, name: "managed_handler", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "64" } } } },
+            { no: 26, name: "value_constraints", kind: "message", T: () => PropertyValueConstraints },
+            { no: 27, name: "reason_mode", kind: "enum", T: () => ["resources.properties.PropertyReasonMode", PropertyReasonMode, "PROPERTY_REASON_MODE_"], options: { "buf.validate.field": { enum: { definedOnly: true } } } }
         ]);
     }
     create(value?: PartialMessage<PropertyDefinition>): PropertyDefinition {
@@ -1058,6 +1673,7 @@ class PropertyDefinition$Type extends MessageType<PropertyDefinition> {
         message.pinned = false;
         message.displayMode = 0;
         message.implicit = false;
+        message.reasonMode = 0;
         if (value !== undefined)
             reflectionMergePartial<PropertyDefinition>(this, message, value);
         return message;
@@ -1135,6 +1751,18 @@ class PropertyDefinition$Type extends MessageType<PropertyDefinition> {
                     break;
                 case /* bool implicit */ 23:
                     message.implicit = reader.bool();
+                    break;
+                case /* optional resources.properties.PropertyStatePolicy state_policy */ 24:
+                    message.statePolicy = PropertyStatePolicy.internalBinaryRead(reader, reader.uint32(), options, message.statePolicy);
+                    break;
+                case /* optional string managed_handler */ 25:
+                    message.managedHandler = reader.string();
+                    break;
+                case /* optional resources.properties.PropertyValueConstraints value_constraints */ 26:
+                    message.valueConstraints = PropertyValueConstraints.internalBinaryRead(reader, reader.uint32(), options, message.valueConstraints);
+                    break;
+                case /* resources.properties.PropertyReasonMode reason_mode */ 27:
+                    message.reasonMode = reader.int32();
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -1217,6 +1845,18 @@ class PropertyDefinition$Type extends MessageType<PropertyDefinition> {
         /* bool implicit = 23; */
         if (message.implicit !== false)
             writer.tag(23, WireType.Varint).bool(message.implicit);
+        /* optional resources.properties.PropertyStatePolicy state_policy = 24; */
+        if (message.statePolicy)
+            PropertyStatePolicy.internalBinaryWrite(message.statePolicy, writer.tag(24, WireType.LengthDelimited).fork(), options).join();
+        /* optional string managed_handler = 25; */
+        if (message.managedHandler !== undefined)
+            writer.tag(25, WireType.LengthDelimited).string(message.managedHandler);
+        /* optional resources.properties.PropertyValueConstraints value_constraints = 26; */
+        if (message.valueConstraints)
+            PropertyValueConstraints.internalBinaryWrite(message.valueConstraints, writer.tag(26, WireType.LengthDelimited).fork(), options).join();
+        /* resources.properties.PropertyReasonMode reason_mode = 27; */
+        if (message.reasonMode !== 0)
+            writer.tag(27, WireType.Varint).int32(message.reasonMode);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);

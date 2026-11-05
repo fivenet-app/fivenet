@@ -341,11 +341,11 @@ type SetVehiclePropsRequest struct {
 	state  protoimpl.MessageState `protogen:"hybrid.v1"`
 	Props  *props.VehicleProps    `protobuf:"bytes,1,opt,name=props,proto3" json:"props,omitempty"`
 	Reason string                 `protobuf:"bytes,2,opt,name=reason,proto3" json:"reason,omitempty"`
-	// Generic custom scalar properties. Managed system properties continue to
-	// use the dedicated fields above and produce their specialized activities.
-	PropertyChanges []*properties.PropertyChange `protobuf:"bytes,3,rep,name=property_changes,json=propertyChanges,proto3" json:"property_changes,omitempty"`
-	unknownFields   protoimpl.UnknownFields
-	sizeCache       protoimpl.SizeCache
+	// The sole scalar and lifecycle property write path. Composite and
+	// relational managed features retain their dedicated domain operations.
+	PropertyMutations []*properties.PropertyMutation `protobuf:"bytes,3,rep,name=property_mutations,json=propertyMutations,proto3" json:"property_mutations,omitempty"`
+	unknownFields     protoimpl.UnknownFields
+	sizeCache         protoimpl.SizeCache
 }
 
 func (x *SetVehiclePropsRequest) Reset() {
@@ -387,9 +387,9 @@ func (x *SetVehiclePropsRequest) GetReason() string {
 	return ""
 }
 
-func (x *SetVehiclePropsRequest) GetPropertyChanges() []*properties.PropertyChange {
+func (x *SetVehiclePropsRequest) GetPropertyMutations() []*properties.PropertyMutation {
 	if x != nil {
-		return x.PropertyChanges
+		return x.PropertyMutations
 	}
 	return nil
 }
@@ -402,8 +402,8 @@ func (x *SetVehiclePropsRequest) SetReason(v string) {
 	x.Reason = v
 }
 
-func (x *SetVehiclePropsRequest) SetPropertyChanges(v []*properties.PropertyChange) {
-	x.PropertyChanges = v
+func (x *SetVehiclePropsRequest) SetPropertyMutations(v []*properties.PropertyMutation) {
+	x.PropertyMutations = v
 }
 
 func (x *SetVehiclePropsRequest) HasProps() bool {
@@ -422,9 +422,9 @@ type SetVehiclePropsRequest_builder struct {
 
 	Props  *props.VehicleProps
 	Reason string
-	// Generic custom scalar properties. Managed system properties continue to
-	// use the dedicated fields above and produce their specialized activities.
-	PropertyChanges []*properties.PropertyChange
+	// The sole scalar and lifecycle property write path. Composite and
+	// relational managed features retain their dedicated domain operations.
+	PropertyMutations []*properties.PropertyMutation
 }
 
 func (b0 SetVehiclePropsRequest_builder) Build() *SetVehiclePropsRequest {
@@ -433,7 +433,7 @@ func (b0 SetVehiclePropsRequest_builder) Build() *SetVehiclePropsRequest {
 	_, _ = b, x
 	x.Props = b.Props
 	x.Reason = b.Reason
-	x.PropertyChanges = b.PropertyChanges
+	x.PropertyMutations = b.PropertyMutations
 	return m0
 }
 
@@ -1127,11 +1127,11 @@ const file_services_vehicles_vehicles_proto_rawDesc = "" +
 	"\n" +
 	"pagination\x18\x01 \x01(\v2-.resources.common.database.PaginationResponseR\n" +
 	"pagination\x12=\n" +
-	"\bvehicles\x18\x02 \x03(\v2\x1b.resources.vehicles.VehicleB\x04\xc8\xf3\x18\x01R\bvehicles\"\xc7\x01\n" +
+	"\bvehicles\x18\x02 \x03(\v2\x1b.resources.vehicles.VehicleB\x04\xc8\xf3\x18\x01R\bvehicles\"\xcd\x01\n" +
 	"\x16SetVehiclePropsRequest\x12<\n" +
 	"\x05props\x18\x01 \x01(\v2&.resources.vehicles.props.VehiclePropsR\x05props\x12\x1e\n" +
-	"\x06reason\x18\x02 \x01(\tB\x06\xda\xf3\x18\x02\b\x01R\x06reason\x12O\n" +
-	"\x10property_changes\x18\x03 \x03(\v2$.resources.properties.PropertyChangeR\x0fpropertyChanges\"W\n" +
+	"\x06reason\x18\x02 \x01(\tB\x06\xda\xf3\x18\x02\b\x01R\x06reason\x12U\n" +
+	"\x12property_mutations\x18\x03 \x03(\v2&.resources.properties.PropertyMutationR\x11propertyMutations\"W\n" +
 	"\x17SetVehiclePropsResponse\x12<\n" +
 	"\x05props\x18\x01 \x01(\v2&.resources.vehicles.props.VehiclePropsR\x05props\"\xae\x03\n" +
 	"\x1aListVehicleActivityRequest\x12L\n" +
@@ -1163,7 +1163,7 @@ const file_services_vehicles_vehicles_proto_rawDesc = "" +
 	"\x05plate\x18\x01 \x01(\tR\x05plate\x12\x17\n" +
 	"\afile_id\x18\x02 \x01(\x03R\x06fileId\x12\x1e\n" +
 	"\x06reason\x18\x03 \x01(\tB\x06\xda\xf3\x18\x02\b\x01R\x06reason\"\x1b\n" +
-	"\x19DeleteVehicleFileResponse2\xee\a\n" +
+	"\x19DeleteVehicleFileResponse2\x80\b\n" +
 	"\x0fVehiclesService\x12y\n" +
 	"\fListVehicles\x12&.services.vehicles.ListVehiclesRequest\x1a'.services.vehicles.ListVehiclesResponse\"\x18\xd2\xf3\x18\x14\b\x01:\x10\n" +
 	"\n" +
@@ -1175,7 +1175,7 @@ const file_services_vehicles_vehicles_proto_rawDesc = "" +
 	"\x06Fields\x18\x01\"\aCreator\"\x03Own\x12u\n" +
 	"\x11UploadVehicleFile\x12!.resources.file.UploadFileRequest\x1a\".resources.file.UploadFileResponse\"\x17\xd2\xf3\x18\x13\b\x01\"\x0fSetVehicleProps(\x01\x12\x81\x01\n" +
 	"\x10ListVehicleFiles\x12*.services.vehicles.ListVehicleFilesRequest\x1a+.services.vehicles.ListVehicleFilesResponse\"\x14\xd2\xf3\x18\x10\b\x01\"\fListVehicles\x12v\n" +
-	"\x11DeleteVehicleFile\x12+.services.vehicles.DeleteVehicleFileRequest\x1a,.services.vehicles.DeleteVehicleFileResponse\"\x06\xd2\xf3\x18\x02\b\x01\x1a\xce\x01\xea\xf3\x18\xc9\x01\b(\x12\x11i-mdi-car-outline2;\b\x01\x12\x0evehicle.wanted\x18\x04 \x01*\rcommon.wanted@\x01H\x01P\x02r\x06statusxd\x80\x01\x01\x98\x01\x032/\b\x01\x12\rvehicle.files\x18\x01 \x01*\vcommon.fileP\x02r\x06statusx\xc8\x01:D\b\x01\x12\x06status\x1a6components.settings.property_definitions.groups.status dBNZLgithub.com/fivenet-app/fivenet/v2026/gen/go/proto/services/vehicles;vehiclesb\x06proto3"
+	"\x11DeleteVehicleFile\x12+.services.vehicles.DeleteVehicleFileRequest\x1a,.services.vehicles.DeleteVehicleFileResponse\"\x06\xd2\xf3\x18\x02\b\x01\x1a\xe0\x01\xea\xf3\x18\xdb\x01\b(\x12\x11i-mdi-car-outline2M\b\x01\x12\x0evehicle.wanted\x18\x04 \x01*\rcommon.wanted@\x01H\x01P\x02r\x06statusxd\x80\x01\x01\x98\x01\x03\xaa\x01\x06\b\x01\x10\x01\x18\x01\xb2\x01\x06wanted2/\b\x01\x12\rvehicle.files\x18\x01 \x01*\vcommon.fileP\x02r\x06statusx\xc8\x01:D\b\x01\x12\x06status\x1a6components.settings.property_definitions.groups.status dBNZLgithub.com/fivenet-app/fivenet/v2026/gen/go/proto/services/vehicles;vehiclesb\x06proto3"
 
 var file_services_vehicles_vehicles_proto_msgTypes = make([]protoimpl.MessageInfo, 11)
 var file_services_vehicles_vehicles_proto_goTypes = []any{
@@ -1196,7 +1196,7 @@ var file_services_vehicles_vehicles_proto_goTypes = []any{
 	(*database.PaginationResponse)(nil), // 14: resources.common.database.PaginationResponse
 	(*vehicles.Vehicle)(nil),            // 15: resources.vehicles.Vehicle
 	(*props.VehicleProps)(nil),          // 16: resources.vehicles.props.VehicleProps
-	(*properties.PropertyChange)(nil),   // 17: resources.properties.PropertyChange
+	(*properties.PropertyMutation)(nil), // 17: resources.properties.PropertyMutation
 	(activity.VehicleActivityType)(0),   // 18: resources.vehicles.activity.VehicleActivityType
 	(*timestamp.Timestamp)(nil),         // 19: resources.timestamp.Timestamp
 	(*activity.VehicleActivity)(nil),    // 20: resources.vehicles.activity.VehicleActivity
@@ -1211,7 +1211,7 @@ var file_services_vehicles_vehicles_proto_depIdxs = []int32{
 	14, // 3: services.vehicles.ListVehiclesResponse.pagination:type_name -> resources.common.database.PaginationResponse
 	15, // 4: services.vehicles.ListVehiclesResponse.vehicles:type_name -> resources.vehicles.Vehicle
 	16, // 5: services.vehicles.SetVehiclePropsRequest.props:type_name -> resources.vehicles.props.VehicleProps
-	17, // 6: services.vehicles.SetVehiclePropsRequest.property_changes:type_name -> resources.properties.PropertyChange
+	17, // 6: services.vehicles.SetVehiclePropsRequest.property_mutations:type_name -> resources.properties.PropertyMutation
 	16, // 7: services.vehicles.SetVehiclePropsResponse.props:type_name -> resources.vehicles.props.VehicleProps
 	11, // 8: services.vehicles.ListVehicleActivityRequest.pagination:type_name -> resources.common.database.PaginationRequest
 	12, // 9: services.vehicles.ListVehicleActivityRequest.sort:type_name -> resources.common.database.Sort

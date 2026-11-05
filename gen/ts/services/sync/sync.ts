@@ -33,8 +33,8 @@ import { TimeclockUpdate } from "../../resources/sync/activity/activity";
 import { ColleagueProps } from "../../resources/sync/activity/activity";
 import { ColleagueActivity } from "../../resources/jobs/colleagues/activity/activity";
 import { VehicleProps } from "../../resources/vehicles/props/props";
-import { PropertyChange } from "../../resources/properties/properties";
 import { UserProps as UserProps$ } from "../../resources/users/props/props";
+import { PropertyMutation } from "../../resources/properties/properties";
 import { UserProps } from "../../resources/sync/activity/activity";
 import { UserActivity } from "../../resources/users/activity/activity";
 import { Coords } from "../../resources/livemap/coords";
@@ -267,7 +267,7 @@ export interface AddUserPropsRequest {
     sourceUser?: SourceUser;
 }
 /**
- * Applies managed and generic custom user properties.
+ * Applies generic and managed user property mutations.
  *
  * @generated from protobuf message services.sync.SetUserPropertiesRequest
  */
@@ -277,22 +277,15 @@ export interface SetUserPropertiesRequest {
      */
     userId: number;
     /**
-     * Only Sync-writable managed fields are accepted. Source-synchronized
-     * character fields are rejected.
-     *
-     * @generated from protobuf field: optional resources.users.props.UserProps managed_props = 2
+     * @generated from protobuf field: repeated resources.properties.PropertyMutation property_mutations = 2
      */
-    managedProps?: UserProps$;
+    propertyMutations: PropertyMutation[];
     /**
-     * @generated from protobuf field: repeated resources.properties.PropertyChange property_changes = 3
-     */
-    propertyChanges: PropertyChange[];
-    /**
-     * @generated from protobuf field: optional string reason = 4
+     * @generated from protobuf field: optional string reason = 3
      */
     reason?: string;
     /**
-     * @generated from protobuf field: optional services.sync.SourceUser source_user = 5
+     * @generated from protobuf field: optional services.sync.SourceUser source_user = 4
      */
     sourceUser?: SourceUser;
 }
@@ -342,47 +335,19 @@ export interface GetVehiclePropsResponse {
     vehicleProps?: VehicleProps;
 }
 /**
- * @generated from protobuf message services.sync.SetVehiclePropsRequest
- */
-export interface SetVehiclePropsRequest {
-    /**
-     * @generated from protobuf field: resources.vehicles.props.VehicleProps vehicle_props = 1
-     */
-    vehicleProps?: VehicleProps;
-    /**
-     * @generated from protobuf field: optional string reason = 2
-     */
-    reason?: string;
-    /**
-     * @generated from protobuf field: optional services.sync.SourceUser source_user = 3
-     */
-    sourceUser?: SourceUser;
-}
-/**
- * @generated from protobuf message services.sync.SetVehiclePropsResponse
- */
-export interface SetVehiclePropsResponse {
-    /**
-     * @generated from protobuf field: resources.vehicles.props.VehicleProps vehicle_props = 1
-     */
-    vehicleProps?: VehicleProps;
-}
-/**
- * Applies managed and generic custom vehicle properties.
+ * Applies generic and managed vehicle property mutations.
  *
  * @generated from protobuf message services.sync.SetVehiclePropertiesRequest
  */
 export interface SetVehiclePropertiesRequest {
     /**
-     * Only Sync-writable managed fields are accepted.
-     *
-     * @generated from protobuf field: resources.vehicles.props.VehicleProps managed_props = 1
+     * @generated from protobuf field: string plate = 1
      */
-    managedProps?: VehicleProps;
+    plate: string;
     /**
-     * @generated from protobuf field: repeated resources.properties.PropertyChange property_changes = 2
+     * @generated from protobuf field: repeated resources.properties.PropertyMutation property_mutations = 2
      */
-    propertyChanges: PropertyChange[];
+    propertyMutations: PropertyMutation[];
     /**
      * @generated from protobuf field: optional string reason = 3
      */
@@ -1691,16 +1656,15 @@ class SetUserPropertiesRequest$Type extends MessageType<SetUserPropertiesRequest
     constructor() {
         super("services.sync.SetUserPropertiesRequest", [
             { no: 1, name: "user_id", kind: "scalar", T: 5 /*ScalarType.INT32*/, options: { "buf.validate.field": { int32: { gt: 0 } } } },
-            { no: 2, name: "managed_props", kind: "message", T: () => UserProps$ },
-            { no: 3, name: "property_changes", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => PropertyChange, options: { "buf.validate.field": { repeated: { maxItems: "20" } } } },
-            { no: 4, name: "reason", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "255" } }, "codegen.sanitizer.sanitizer": { enabled: true } } },
-            { no: 5, name: "source_user", kind: "message", T: () => SourceUser }
+            { no: 2, name: "property_mutations", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => PropertyMutation, options: { "buf.validate.field": { repeated: { minItems: "1", maxItems: "20" } } } },
+            { no: 3, name: "reason", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "255" } }, "codegen.sanitizer.sanitizer": { enabled: true } } },
+            { no: 4, name: "source_user", kind: "message", T: () => SourceUser }
         ]);
     }
     create(value?: PartialMessage<SetUserPropertiesRequest>): SetUserPropertiesRequest {
         const message = globalThis.Object.create((this.messagePrototype!));
         message.userId = 0;
-        message.propertyChanges = [];
+        message.propertyMutations = [];
         if (value !== undefined)
             reflectionMergePartial<SetUserPropertiesRequest>(this, message, value);
         return message;
@@ -1713,16 +1677,13 @@ class SetUserPropertiesRequest$Type extends MessageType<SetUserPropertiesRequest
                 case /* int32 user_id */ 1:
                     message.userId = reader.int32();
                     break;
-                case /* optional resources.users.props.UserProps managed_props */ 2:
-                    message.managedProps = UserProps$.internalBinaryRead(reader, reader.uint32(), options, message.managedProps);
+                case /* repeated resources.properties.PropertyMutation property_mutations */ 2:
+                    message.propertyMutations.push(PropertyMutation.internalBinaryRead(reader, reader.uint32(), options));
                     break;
-                case /* repeated resources.properties.PropertyChange property_changes */ 3:
-                    message.propertyChanges.push(PropertyChange.internalBinaryRead(reader, reader.uint32(), options));
-                    break;
-                case /* optional string reason */ 4:
+                case /* optional string reason */ 3:
                     message.reason = reader.string();
                     break;
-                case /* optional services.sync.SourceUser source_user */ 5:
+                case /* optional services.sync.SourceUser source_user */ 4:
                     message.sourceUser = SourceUser.internalBinaryRead(reader, reader.uint32(), options, message.sourceUser);
                     break;
                 default:
@@ -1740,18 +1701,15 @@ class SetUserPropertiesRequest$Type extends MessageType<SetUserPropertiesRequest
         /* int32 user_id = 1; */
         if (message.userId !== 0)
             writer.tag(1, WireType.Varint).int32(message.userId);
-        /* optional resources.users.props.UserProps managed_props = 2; */
-        if (message.managedProps)
-            UserProps$.internalBinaryWrite(message.managedProps, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
-        /* repeated resources.properties.PropertyChange property_changes = 3; */
-        for (let i = 0; i < message.propertyChanges.length; i++)
-            PropertyChange.internalBinaryWrite(message.propertyChanges[i], writer.tag(3, WireType.LengthDelimited).fork(), options).join();
-        /* optional string reason = 4; */
+        /* repeated resources.properties.PropertyMutation property_mutations = 2; */
+        for (let i = 0; i < message.propertyMutations.length; i++)
+            PropertyMutation.internalBinaryWrite(message.propertyMutations[i], writer.tag(2, WireType.LengthDelimited).fork(), options).join();
+        /* optional string reason = 3; */
         if (message.reason !== undefined)
-            writer.tag(4, WireType.LengthDelimited).string(message.reason);
-        /* optional services.sync.SourceUser source_user = 5; */
+            writer.tag(3, WireType.LengthDelimited).string(message.reason);
+        /* optional services.sync.SourceUser source_user = 4; */
         if (message.sourceUser)
-            SourceUser.internalBinaryWrite(message.sourceUser, writer.tag(5, WireType.LengthDelimited).fork(), options).join();
+            SourceUser.internalBinaryWrite(message.sourceUser, writer.tag(4, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -1995,124 +1953,19 @@ class GetVehiclePropsResponse$Type extends MessageType<GetVehiclePropsResponse> 
  */
 export const GetVehiclePropsResponse = new GetVehiclePropsResponse$Type();
 // @generated message type with reflection information, may provide speed optimized methods
-class SetVehiclePropsRequest$Type extends MessageType<SetVehiclePropsRequest> {
-    constructor() {
-        super("services.sync.SetVehiclePropsRequest", [
-            { no: 1, name: "vehicle_props", kind: "message", T: () => VehicleProps, options: { "buf.validate.field": { required: true } } },
-            { no: 2, name: "reason", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "255" } }, "codegen.sanitizer.sanitizer": { enabled: true } } },
-            { no: 3, name: "source_user", kind: "message", T: () => SourceUser }
-        ]);
-    }
-    create(value?: PartialMessage<SetVehiclePropsRequest>): SetVehiclePropsRequest {
-        const message = globalThis.Object.create((this.messagePrototype!));
-        if (value !== undefined)
-            reflectionMergePartial<SetVehiclePropsRequest>(this, message, value);
-        return message;
-    }
-    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: SetVehiclePropsRequest): SetVehiclePropsRequest {
-        let message = target ?? this.create(), end = reader.pos + length;
-        while (reader.pos < end) {
-            let [fieldNo, wireType] = reader.tag();
-            switch (fieldNo) {
-                case /* resources.vehicles.props.VehicleProps vehicle_props */ 1:
-                    message.vehicleProps = VehicleProps.internalBinaryRead(reader, reader.uint32(), options, message.vehicleProps);
-                    break;
-                case /* optional string reason */ 2:
-                    message.reason = reader.string();
-                    break;
-                case /* optional services.sync.SourceUser source_user */ 3:
-                    message.sourceUser = SourceUser.internalBinaryRead(reader, reader.uint32(), options, message.sourceUser);
-                    break;
-                default:
-                    let u = options.readUnknownField;
-                    if (u === "throw")
-                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
-                    let d = reader.skip(wireType);
-                    if (u !== false)
-                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
-            }
-        }
-        return message;
-    }
-    internalBinaryWrite(message: SetVehiclePropsRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* resources.vehicles.props.VehicleProps vehicle_props = 1; */
-        if (message.vehicleProps)
-            VehicleProps.internalBinaryWrite(message.vehicleProps, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
-        /* optional string reason = 2; */
-        if (message.reason !== undefined)
-            writer.tag(2, WireType.LengthDelimited).string(message.reason);
-        /* optional services.sync.SourceUser source_user = 3; */
-        if (message.sourceUser)
-            SourceUser.internalBinaryWrite(message.sourceUser, writer.tag(3, WireType.LengthDelimited).fork(), options).join();
-        let u = options.writeUnknownFields;
-        if (u !== false)
-            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
-        return writer;
-    }
-}
-/**
- * @generated MessageType for protobuf message services.sync.SetVehiclePropsRequest
- */
-export const SetVehiclePropsRequest = new SetVehiclePropsRequest$Type();
-// @generated message type with reflection information, may provide speed optimized methods
-class SetVehiclePropsResponse$Type extends MessageType<SetVehiclePropsResponse> {
-    constructor() {
-        super("services.sync.SetVehiclePropsResponse", [
-            { no: 1, name: "vehicle_props", kind: "message", T: () => VehicleProps }
-        ]);
-    }
-    create(value?: PartialMessage<SetVehiclePropsResponse>): SetVehiclePropsResponse {
-        const message = globalThis.Object.create((this.messagePrototype!));
-        if (value !== undefined)
-            reflectionMergePartial<SetVehiclePropsResponse>(this, message, value);
-        return message;
-    }
-    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: SetVehiclePropsResponse): SetVehiclePropsResponse {
-        let message = target ?? this.create(), end = reader.pos + length;
-        while (reader.pos < end) {
-            let [fieldNo, wireType] = reader.tag();
-            switch (fieldNo) {
-                case /* resources.vehicles.props.VehicleProps vehicle_props */ 1:
-                    message.vehicleProps = VehicleProps.internalBinaryRead(reader, reader.uint32(), options, message.vehicleProps);
-                    break;
-                default:
-                    let u = options.readUnknownField;
-                    if (u === "throw")
-                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
-                    let d = reader.skip(wireType);
-                    if (u !== false)
-                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
-            }
-        }
-        return message;
-    }
-    internalBinaryWrite(message: SetVehiclePropsResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* resources.vehicles.props.VehicleProps vehicle_props = 1; */
-        if (message.vehicleProps)
-            VehicleProps.internalBinaryWrite(message.vehicleProps, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
-        let u = options.writeUnknownFields;
-        if (u !== false)
-            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
-        return writer;
-    }
-}
-/**
- * @generated MessageType for protobuf message services.sync.SetVehiclePropsResponse
- */
-export const SetVehiclePropsResponse = new SetVehiclePropsResponse$Type();
-// @generated message type with reflection information, may provide speed optimized methods
 class SetVehiclePropertiesRequest$Type extends MessageType<SetVehiclePropertiesRequest> {
     constructor() {
         super("services.sync.SetVehiclePropertiesRequest", [
-            { no: 1, name: "managed_props", kind: "message", T: () => VehicleProps, options: { "buf.validate.field": { required: true } } },
-            { no: 2, name: "property_changes", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => PropertyChange, options: { "buf.validate.field": { repeated: { maxItems: "20" } } } },
+            { no: 1, name: "plate", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { minLen: "1", maxLen: "32" } } } },
+            { no: 2, name: "property_mutations", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => PropertyMutation, options: { "buf.validate.field": { repeated: { minItems: "1", maxItems: "20" } } } },
             { no: 3, name: "reason", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "255" } }, "codegen.sanitizer.sanitizer": { enabled: true } } },
             { no: 4, name: "source_user", kind: "message", T: () => SourceUser }
         ]);
     }
     create(value?: PartialMessage<SetVehiclePropertiesRequest>): SetVehiclePropertiesRequest {
         const message = globalThis.Object.create((this.messagePrototype!));
-        message.propertyChanges = [];
+        message.plate = "";
+        message.propertyMutations = [];
         if (value !== undefined)
             reflectionMergePartial<SetVehiclePropertiesRequest>(this, message, value);
         return message;
@@ -2122,11 +1975,11 @@ class SetVehiclePropertiesRequest$Type extends MessageType<SetVehiclePropertiesR
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* resources.vehicles.props.VehicleProps managed_props */ 1:
-                    message.managedProps = VehicleProps.internalBinaryRead(reader, reader.uint32(), options, message.managedProps);
+                case /* string plate */ 1:
+                    message.plate = reader.string();
                     break;
-                case /* repeated resources.properties.PropertyChange property_changes */ 2:
-                    message.propertyChanges.push(PropertyChange.internalBinaryRead(reader, reader.uint32(), options));
+                case /* repeated resources.properties.PropertyMutation property_mutations */ 2:
+                    message.propertyMutations.push(PropertyMutation.internalBinaryRead(reader, reader.uint32(), options));
                     break;
                 case /* optional string reason */ 3:
                     message.reason = reader.string();
@@ -2146,12 +1999,12 @@ class SetVehiclePropertiesRequest$Type extends MessageType<SetVehiclePropertiesR
         return message;
     }
     internalBinaryWrite(message: SetVehiclePropertiesRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* resources.vehicles.props.VehicleProps managed_props = 1; */
-        if (message.managedProps)
-            VehicleProps.internalBinaryWrite(message.managedProps, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
-        /* repeated resources.properties.PropertyChange property_changes = 2; */
-        for (let i = 0; i < message.propertyChanges.length; i++)
-            PropertyChange.internalBinaryWrite(message.propertyChanges[i], writer.tag(2, WireType.LengthDelimited).fork(), options).join();
+        /* string plate = 1; */
+        if (message.plate !== "")
+            writer.tag(1, WireType.LengthDelimited).string(message.plate);
+        /* repeated resources.properties.PropertyMutation property_mutations = 2; */
+        for (let i = 0; i < message.propertyMutations.length; i++)
+            PropertyMutation.internalBinaryWrite(message.propertyMutations[i], writer.tag(2, WireType.LengthDelimited).fork(), options).join();
         /* optional string reason = 3; */
         if (message.reason !== undefined)
             writer.tag(3, WireType.LengthDelimited).string(message.reason);
@@ -3594,11 +3447,9 @@ export const SyncService = new ServiceType("services.sync.SyncService", [
     { name: "AddAccountUpdate", options: {}, I: AddAccountUpdateRequest, O: AddActivityResponse },
     { name: "AddUserUpdate", options: {}, I: AddUserUpdateRequest, O: AddActivityResponse },
     { name: "AddUserActivity", options: {}, I: AddUserActivityRequest, O: AddActivityResponse },
-    { name: "AddUserProps", options: {}, I: AddUserPropsRequest, O: AddActivityResponse },
     { name: "SetUserProperties", options: {}, I: SetUserPropertiesRequest, O: SetUserPropertiesResponse },
     { name: "GetUserProps", options: {}, I: GetUserPropsRequest, O: GetUserPropsResponse },
     { name: "GetVehicleProps", options: {}, I: GetVehiclePropsRequest, O: GetVehiclePropsResponse },
-    { name: "SetVehicleProps", options: {}, I: SetVehiclePropsRequest, O: SetVehiclePropsResponse },
     { name: "SetVehicleProperties", options: {}, I: SetVehiclePropertiesRequest, O: SetVehiclePropertiesResponse },
     { name: "AddColleagueActivity", options: {}, I: AddColleagueActivityRequest, O: AddActivityResponse },
     { name: "AddColleagueProps", options: {}, I: AddColleaguePropsRequest, O: AddActivityResponse },

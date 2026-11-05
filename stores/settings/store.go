@@ -13,7 +13,9 @@ import (
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/timestamp"
 	pbsettings "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/settings"
 	propertyregistry "github.com/fivenet-app/fivenet/v2026/pkg/properties"
+	propertyevents "github.com/fivenet-app/fivenet/v2026/pkg/properties/events"
 	"github.com/go-jet/jet/v2/mysql"
+	"go.uber.org/zap"
 )
 
 type ViewAuditLogOptions struct {
@@ -135,11 +137,14 @@ type IStore interface {
 		key string,
 	) (*properties.PropertyDefinition, error)
 	ReconcileSystemPropertyOverrides(ctx context.Context) error
+	ScanPropertyValueConstraints(ctx context.Context) error
 }
 
 type Store struct {
 	db             *sql.DB
 	propertyCache  *propertyregistry.DefinitionCache
+	propertyEvents propertyevents.Publisher
+	logger         *zap.Logger
 	accountSorter  *database.SorterBuilder
 	auditLogSorter *database.SorterBuilder
 }
@@ -149,9 +154,19 @@ func New(db *sql.DB) IStore {
 }
 
 func NewWithCache(db *sql.DB, propertyCache *propertyregistry.DefinitionCache) IStore {
+	return NewWithCacheAndEvents(db, propertyCache, nil)
+}
+
+func NewWithCacheAndEvents(
+	db *sql.DB,
+	propertyCache *propertyregistry.DefinitionCache,
+	propertyEvents propertyevents.Publisher,
+) IStore {
 	return &Store{
-		db:            db,
-		propertyCache: propertyCache,
+		db:             db,
+		propertyCache:  propertyCache,
+		propertyEvents: propertyEvents,
+		logger:         zap.L(),
 		accountSorter: database.New(
 			database.SpecMap{
 				"license":  database.Column{Col: tAccounts.License},

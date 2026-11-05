@@ -60,6 +60,15 @@ func (m *Property) Sanitize() error {
 	// Field: Key
 	m.Key = htmlsanitizer.SanitizeAndUnescape(m.Key)
 
+	// Field: State
+	if m.State != nil {
+		if v, ok := any(m.GetState()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+	}
+
 	// Field: UpdatedAt
 	if m.UpdatedAt != nil {
 		if v, ok := any(m.GetUpdatedAt()).(interface{ Sanitize() error }); ok {
@@ -68,28 +77,6 @@ func (m *Property) Sanitize() error {
 			}
 		}
 	}
-
-	// Field: Value
-	if m.Value != nil {
-		if v, ok := any(m.GetValue()).(interface{ Sanitize() error }); ok {
-			if err := v.Sanitize(); err != nil {
-				return err
-			}
-		}
-	}
-
-	return nil
-}
-
-// Sanitize sanitizes the message's fields, in case of complex types it calls
-// their Sanitize() method recursively.
-func (m *PropertyChange) Sanitize() error {
-	if m == nil {
-		return nil
-	}
-
-	// Field: Key
-	m.Key = htmlsanitizer.SanitizeAndUnescape(m.Key)
 
 	// Field: Value
 	if m.Value != nil {
@@ -141,6 +128,11 @@ func (m *PropertyDefinition) Sanitize() error {
 	// Field: Label
 	m.Label = htmlsanitizer.SanitizeAndUnescape(m.Label)
 
+	// Field: ManagedHandler
+	if m.ManagedHandler != nil {
+		*m.ManagedHandler = htmlsanitizer.SanitizeAndUnescape(*m.ManagedHandler)
+	}
+
 	// Field: RendererConfig
 	if m.RendererConfig != nil {
 		if v, ok := any(m.GetRendererConfig()).(interface{ Sanitize() error }); ok {
@@ -150,9 +142,27 @@ func (m *PropertyDefinition) Sanitize() error {
 		}
 	}
 
+	// Field: StatePolicy
+	if m.StatePolicy != nil {
+		if v, ok := any(m.GetStatePolicy()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+	}
+
 	// Field: Unit
 	if m.Unit != nil {
 		*m.Unit = htmlsanitizer.SanitizeAndUnescape(*m.Unit)
+	}
+
+	// Field: ValueConstraints
+	if m.ValueConstraints != nil {
+		if v, ok := any(m.GetValueConstraints()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
 	}
 
 	return nil
@@ -231,6 +241,63 @@ func (m *PropertyIntegerRendererConfig) Sanitize() error {
 
 // Sanitize sanitizes the message's fields, in case of complex types it calls
 // their Sanitize() method recursively.
+func (m *PropertyMutation) Sanitize() error {
+	if m == nil {
+		return nil
+	}
+
+	// Field: ClearValue
+	switch v := m.ValueChange.(type) {
+
+	case *PropertyMutation_ClearValue:
+
+		if v.ClearValue != nil {
+			if s, ok := any(v.ClearValue).(interface{ Sanitize() error }); ok {
+				if err := s.Sanitize(); err != nil {
+					return err
+				}
+			}
+		}
+
+	}
+
+	// Field: Key
+	m.Key = htmlsanitizer.SanitizeAndUnescape(m.Key)
+
+	// Field: Reason
+	if m.Reason != nil {
+		*m.Reason = htmlsanitizer.SanitizeAndUnescape(*m.Reason)
+	}
+
+	// Field: SetValue
+	switch v := m.ValueChange.(type) {
+
+	case *PropertyMutation_SetValue:
+
+		if v.SetValue != nil {
+			if s, ok := any(v.SetValue).(interface{ Sanitize() error }); ok {
+				if err := s.Sanitize(); err != nil {
+					return err
+				}
+			}
+		}
+
+	}
+
+	// Field: State
+	if m.State != nil {
+		if v, ok := any(m.GetState()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+	}
+
+	return nil
+}
+
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *PropertyNumberRendererConfig) Sanitize() error {
 	if m == nil {
 		return nil
@@ -299,6 +366,89 @@ func (m *PropertyRendererConfig) Sanitize() error {
 
 // Sanitize sanitizes the message's fields, in case of complex types it calls
 // their Sanitize() method recursively.
+func (m *PropertyState) Sanitize() error {
+	if m == nil {
+		return nil
+	}
+
+	// Field: ActiveAt
+	if m.ActiveAt != nil {
+		if v, ok := any(m.GetActiveAt()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+	}
+
+	// Field: ExpiresAt
+	if m.ExpiresAt != nil {
+		if v, ok := any(m.GetExpiresAt()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+	}
+
+	// Field: Key
+	if m.Key != nil {
+		*m.Key = htmlsanitizer.SanitizeAndUnescape(*m.Key)
+	}
+
+	// Field: Reason
+	if m.Reason != nil {
+		*m.Reason = htmlsanitizer.SanitizeAndUnescape(*m.Reason)
+	}
+
+	// Field: UpdatedAt
+	if m.UpdatedAt != nil {
+		if v, ok := any(m.GetUpdatedAt()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+	}
+
+	return nil
+}
+
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
+func (m *PropertyStatePatch) Sanitize() error {
+	if m == nil {
+		return nil
+	}
+
+	// Field: ClearExpiry
+	switch v := m.ExpiryChange.(type) {
+
+	case *PropertyStatePatch_ClearExpiry:
+
+		if v.ClearExpiry != nil {
+			if s, ok := any(v.ClearExpiry).(interface{ Sanitize() error }); ok {
+				if err := s.Sanitize(); err != nil {
+					return err
+				}
+			}
+		}
+
+		// Field: ExpiresAt
+	case *PropertyStatePatch_ExpiresAt:
+
+		if v.ExpiresAt != nil {
+			if s, ok := any(v.ExpiresAt).(interface{ Sanitize() error }); ok {
+				if err := s.Sanitize(); err != nil {
+					return err
+				}
+			}
+		}
+
+	}
+
+	return nil
+}
+
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *PropertyStringRendererConfig) Sanitize() error {
 	if m == nil {
 		return nil
@@ -349,6 +499,60 @@ func (m *PropertyValue) Sanitize() error {
 			}
 		}
 
+	}
+
+	return nil
+}
+
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
+func (m *PropertyValueConstraints) Sanitize() error {
+	if m == nil {
+		return nil
+	}
+
+	// Field: DateMax
+	if m.DateMax != nil {
+		if v, ok := any(m.GetDateMax()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+	}
+
+	// Field: DateMin
+	if m.DateMin != nil {
+		if v, ok := any(m.GetDateMin()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+	}
+
+	// Field: StringAllowedValues
+	for idx, item := range m.StringAllowedValues {
+		_, _ = idx, item
+
+		m.StringAllowedValues[idx] = htmlsanitizer.SanitizeAndUnescape(m.StringAllowedValues[idx])
+
+	}
+
+	// Field: TimestampMax
+	if m.TimestampMax != nil {
+		if v, ok := any(m.GetTimestampMax()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+	}
+
+	// Field: TimestampMin
+	if m.TimestampMin != nil {
+		if v, ok := any(m.GetTimestampMin()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
 	}
 
 	return nil

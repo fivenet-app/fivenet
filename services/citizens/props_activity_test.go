@@ -54,6 +54,17 @@ func TestUserPropertyActivities(t *testing.T) {
 			false,
 		},
 		{
+			"state-only",
+			citizensstore.PropertyChange{
+				Property: stringProperty("user.rank", "cadet"),
+				Cause:    usersactivity.PropertyChangeCause_PROPERTY_CHANGE_CAUSE_MANUAL,
+			},
+			true,
+			"cadet",
+			"cadet",
+			false,
+		},
+		{
 			"clear",
 			citizensstore.PropertyChange{
 				Property: &properties.Property{Key: "user.rank"},

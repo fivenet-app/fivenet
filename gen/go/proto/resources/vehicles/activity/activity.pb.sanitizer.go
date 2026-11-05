@@ -39,6 +39,15 @@ func (m *PropertyChange) Sanitize() error {
 	// Field: Key
 	m.Key = htmlsanitizer.SanitizeAndUnescape(m.Key)
 
+	// Field: Lifecycle
+	if m.Lifecycle != nil {
+		if v, ok := any(m.GetLifecycle()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+	}
+
 	// Field: NewValue
 	if m.NewValue != nil {
 		if v, ok := any(m.GetNewValue()).(interface{ Sanitize() error }); ok {
@@ -55,6 +64,30 @@ func (m *PropertyChange) Sanitize() error {
 				return err
 			}
 		}
+	}
+
+	return nil
+}
+
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
+func (m *PropertyLifecycleChange) Sanitize() error {
+	if m == nil {
+		return nil
+	}
+
+	// Field: ExpiresAt
+	if m.ExpiresAt != nil {
+		if v, ok := any(m.GetExpiresAt()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+	}
+
+	// Field: StateReason
+	if m.StateReason != nil {
+		*m.StateReason = htmlsanitizer.SanitizeAndUnescape(*m.StateReason)
 	}
 
 	return nil

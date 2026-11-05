@@ -116,6 +116,41 @@ func (s *Store) GetUserProps(
 	return dest, nil
 }
 
+// ClearWantedTx clears wanted state and records its canonical activity in the
+// caller's transaction. The housekeeper locks and rechecks lifecycle state
+// before calling this method.
+func (s *Store) ClearWantedTx(ctx context.Context, tx qrm.DB, userID int32) error {
+	props, err := s.GetUserProps(ctx, tx, userID)
+	if err != nil {
+		return err
+	}
+	if props.Wanted == nil || !props.GetWanted() {
+		return nil
+	}
+
+	in := proto.Clone(props).(*usersprops.UserProps)
+	wanted := false
+	in.Wanted = &wanted
+
+	if _, err := s.HandleUserPropsChanges(ctx, tx, props, in, nil, ""); err != nil {
+		return err
+	}
+
+	return usersactivity.CreateUserActivities(ctx, tx, &usersactivity.UserActivity{
+		TargetUserId: userID,
+		Type:         usersactivity.UserActivityType_USER_ACTIVITY_TYPE_WANTED,
+		Reason:       "",
+		Data: &usersactivity.UserActivityData{
+			Data: &usersactivity.UserActivityData_WantedChange{
+				WantedChange: &usersactivity.WantedChange{
+					Wanted: wanted,
+					Auto:   true,
+				},
+			},
+		},
+	})
+}
+
 func (s *Store) PrepareUserPropsLabelsForUpdate(
 	ctx context.Context,
 	q qrm.Queryable,
@@ -168,7 +203,10 @@ func (s *Store) HandleUserPropsChanges(
 
 	updateSets := []mysql.ColumnAssigment{}
 
-	if in.Wanted != nil {
+	// A managed state-only wanted mutation may patch WantedTill while leaving
+	// Wanted unset. Treat that as a wanted projection update so the legacy
+	// wanted_till column stays in lockstep with property state.
+	if in.Wanted != nil || in.WantedTill != nil {
 		normalizeWantedChange(x, in)
 		updateSets = append(updateSets, tUserProps.Wanted.SET(mysql.Bool(in.GetWanted())))
 		updateSets = append(updateSets,
@@ -617,8 +655,9 @@ func normalizeWantedChange(current *usersprops.UserProps, in *usersprops.UserPro
 	if in.Wanted == nil {
 		in.SetWanted(current.GetWanted())
 		in.SetWantedAt(current.GetWantedAt())
-		in.SetWantedTill(current.GetWantedTill())
-		return
+		if in.GetWantedTill() == nil {
+			in.SetWantedTill(current.GetWantedTill())
+		}
 	}
 
 	if !in.GetWanted() {

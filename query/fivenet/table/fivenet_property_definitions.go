@@ -17,28 +17,31 @@ type fivenetPropertyDefinitionsTable struct {
 	mysql.Table
 
 	// Columns
-	Scope          mysql.ColumnString
-	PropertyKey    mysql.ColumnString
-	ValueType      mysql.ColumnInteger
-	Label          mysql.ColumnString
-	Description    mysql.ColumnString
-	Enabled        mysql.ColumnBool
-	Searchable     mysql.ColumnBool
-	ValueFormat    mysql.ColumnInteger
-	Behavior       mysql.ColumnInteger
-	GroupKey       mysql.ColumnString
-	SortOrder      mysql.ColumnInteger
-	Pinned         mysql.ColumnBool
-	Renderer       mysql.ColumnInteger
-	RendererConfig mysql.ColumnString
-	DisplayMode    mysql.ColumnInteger
-	Implicit       mysql.ColumnBool
-	Unit           mysql.ColumnString
-	DecimalPlaces  mysql.ColumnInteger
-	Currency       mysql.ColumnString
-	DeletedAt      mysql.ColumnTimestamp
-	CreatedAt      mysql.ColumnTimestamp
-	UpdatedAt      mysql.ColumnTimestamp
+	Scope            mysql.ColumnString
+	PropertyKey      mysql.ColumnString
+	ValueType        mysql.ColumnInteger
+	Label            mysql.ColumnString
+	Description      mysql.ColumnString
+	Enabled          mysql.ColumnBool
+	Searchable       mysql.ColumnBool
+	ValueFormat      mysql.ColumnInteger
+	Behavior         mysql.ColumnInteger
+	GroupKey         mysql.ColumnString
+	SortOrder        mysql.ColumnInteger
+	Pinned           mysql.ColumnBool
+	Renderer         mysql.ColumnInteger
+	RendererConfig   mysql.ColumnString
+	DisplayMode      mysql.ColumnInteger
+	Implicit         mysql.ColumnBool
+	StatePolicy      mysql.ColumnString
+	ValueConstraints mysql.ColumnString
+	ReasonMode       mysql.ColumnInteger
+	Unit             mysql.ColumnString
+	DecimalPlaces    mysql.ColumnInteger
+	Currency         mysql.ColumnString
+	DeletedAt        mysql.ColumnTimestamp
+	CreatedAt        mysql.ColumnTimestamp
+	UpdatedAt        mysql.ColumnTimestamp
 
 	AllColumns     mysql.ColumnList
 	MutableColumns mysql.ColumnList
@@ -80,59 +83,65 @@ func newFivenetPropertyDefinitionsTable(schemaName, tableName, alias string) *Fi
 
 func newFivenetPropertyDefinitionsTableImpl(schemaName, tableName, alias string) fivenetPropertyDefinitionsTable {
 	var (
-		ScopeColumn          = mysql.StringColumn("scope")
-		PropertyKeyColumn    = mysql.StringColumn("property_key")
-		ValueTypeColumn      = mysql.IntegerColumn("value_type")
-		LabelColumn          = mysql.StringColumn("label")
-		DescriptionColumn    = mysql.StringColumn("description")
-		EnabledColumn        = mysql.BoolColumn("enabled")
-		SearchableColumn     = mysql.BoolColumn("searchable")
-		ValueFormatColumn    = mysql.IntegerColumn("value_format")
-		BehaviorColumn       = mysql.IntegerColumn("behavior")
-		GroupKeyColumn       = mysql.StringColumn("group_key")
-		SortOrderColumn      = mysql.IntegerColumn("sort_order")
-		PinnedColumn         = mysql.BoolColumn("pinned")
-		RendererColumn       = mysql.IntegerColumn("renderer")
-		RendererConfigColumn = mysql.StringColumn("renderer_config")
-		DisplayModeColumn    = mysql.IntegerColumn("display_mode")
-		ImplicitColumn       = mysql.BoolColumn("implicit")
-		UnitColumn           = mysql.StringColumn("unit")
-		DecimalPlacesColumn  = mysql.IntegerColumn("decimal_places")
-		CurrencyColumn       = mysql.StringColumn("currency")
-		DeletedAtColumn      = mysql.TimestampColumn("deleted_at")
-		CreatedAtColumn      = mysql.TimestampColumn("created_at")
-		UpdatedAtColumn      = mysql.TimestampColumn("updated_at")
-		allColumns           = mysql.ColumnList{ScopeColumn, PropertyKeyColumn, ValueTypeColumn, LabelColumn, DescriptionColumn, EnabledColumn, SearchableColumn, ValueFormatColumn, BehaviorColumn, GroupKeyColumn, SortOrderColumn, PinnedColumn, RendererColumn, RendererConfigColumn, DisplayModeColumn, ImplicitColumn, UnitColumn, DecimalPlacesColumn, CurrencyColumn, DeletedAtColumn, CreatedAtColumn, UpdatedAtColumn}
-		mutableColumns       = mysql.ColumnList{ValueTypeColumn, LabelColumn, DescriptionColumn, EnabledColumn, SearchableColumn, ValueFormatColumn, BehaviorColumn, GroupKeyColumn, SortOrderColumn, PinnedColumn, RendererColumn, RendererConfigColumn, DisplayModeColumn, ImplicitColumn, UnitColumn, DecimalPlacesColumn, CurrencyColumn, DeletedAtColumn, CreatedAtColumn, UpdatedAtColumn}
-		defaultColumns       = mysql.ColumnList{LabelColumn, EnabledColumn, SearchableColumn, ValueFormatColumn, BehaviorColumn, GroupKeyColumn, SortOrderColumn, PinnedColumn, RendererColumn, DisplayModeColumn, ImplicitColumn, CreatedAtColumn, UpdatedAtColumn}
+		ScopeColumn            = mysql.StringColumn("scope")
+		PropertyKeyColumn      = mysql.StringColumn("property_key")
+		ValueTypeColumn        = mysql.IntegerColumn("value_type")
+		LabelColumn            = mysql.StringColumn("label")
+		DescriptionColumn      = mysql.StringColumn("description")
+		EnabledColumn          = mysql.BoolColumn("enabled")
+		SearchableColumn       = mysql.BoolColumn("searchable")
+		ValueFormatColumn      = mysql.IntegerColumn("value_format")
+		BehaviorColumn         = mysql.IntegerColumn("behavior")
+		GroupKeyColumn         = mysql.StringColumn("group_key")
+		SortOrderColumn        = mysql.IntegerColumn("sort_order")
+		PinnedColumn           = mysql.BoolColumn("pinned")
+		RendererColumn         = mysql.IntegerColumn("renderer")
+		RendererConfigColumn   = mysql.StringColumn("renderer_config")
+		DisplayModeColumn      = mysql.IntegerColumn("display_mode")
+		ImplicitColumn         = mysql.BoolColumn("implicit")
+		StatePolicyColumn      = mysql.StringColumn("state_policy")
+		ValueConstraintsColumn = mysql.StringColumn("value_constraints")
+		ReasonModeColumn       = mysql.IntegerColumn("reason_mode")
+		UnitColumn             = mysql.StringColumn("unit")
+		DecimalPlacesColumn    = mysql.IntegerColumn("decimal_places")
+		CurrencyColumn         = mysql.StringColumn("currency")
+		DeletedAtColumn        = mysql.TimestampColumn("deleted_at")
+		CreatedAtColumn        = mysql.TimestampColumn("created_at")
+		UpdatedAtColumn        = mysql.TimestampColumn("updated_at")
+		allColumns             = mysql.ColumnList{ScopeColumn, PropertyKeyColumn, ValueTypeColumn, LabelColumn, DescriptionColumn, EnabledColumn, SearchableColumn, ValueFormatColumn, BehaviorColumn, GroupKeyColumn, SortOrderColumn, PinnedColumn, RendererColumn, RendererConfigColumn, DisplayModeColumn, ImplicitColumn, StatePolicyColumn, ValueConstraintsColumn, ReasonModeColumn, UnitColumn, DecimalPlacesColumn, CurrencyColumn, DeletedAtColumn, CreatedAtColumn, UpdatedAtColumn}
+		mutableColumns         = mysql.ColumnList{ValueTypeColumn, LabelColumn, DescriptionColumn, EnabledColumn, SearchableColumn, ValueFormatColumn, BehaviorColumn, GroupKeyColumn, SortOrderColumn, PinnedColumn, RendererColumn, RendererConfigColumn, DisplayModeColumn, ImplicitColumn, StatePolicyColumn, ValueConstraintsColumn, ReasonModeColumn, UnitColumn, DecimalPlacesColumn, CurrencyColumn, DeletedAtColumn, CreatedAtColumn, UpdatedAtColumn}
+		defaultColumns         = mysql.ColumnList{LabelColumn, EnabledColumn, SearchableColumn, ValueFormatColumn, BehaviorColumn, GroupKeyColumn, SortOrderColumn, PinnedColumn, RendererColumn, DisplayModeColumn, ImplicitColumn, ReasonModeColumn, CreatedAtColumn, UpdatedAtColumn}
 	)
 
 	return fivenetPropertyDefinitionsTable{
 		Table: mysql.NewTable(schemaName, tableName, alias, allColumns...),
 
 		//Columns
-		Scope:          ScopeColumn,
-		PropertyKey:    PropertyKeyColumn,
-		ValueType:      ValueTypeColumn,
-		Label:          LabelColumn,
-		Description:    DescriptionColumn,
-		Enabled:        EnabledColumn,
-		Searchable:     SearchableColumn,
-		ValueFormat:    ValueFormatColumn,
-		Behavior:       BehaviorColumn,
-		GroupKey:       GroupKeyColumn,
-		SortOrder:      SortOrderColumn,
-		Pinned:         PinnedColumn,
-		Renderer:       RendererColumn,
-		RendererConfig: RendererConfigColumn,
-		DisplayMode:    DisplayModeColumn,
-		Implicit:       ImplicitColumn,
-		Unit:           UnitColumn,
-		DecimalPlaces:  DecimalPlacesColumn,
-		Currency:       CurrencyColumn,
-		DeletedAt:      DeletedAtColumn,
-		CreatedAt:      CreatedAtColumn,
-		UpdatedAt:      UpdatedAtColumn,
+		Scope:            ScopeColumn,
+		PropertyKey:      PropertyKeyColumn,
+		ValueType:        ValueTypeColumn,
+		Label:            LabelColumn,
+		Description:      DescriptionColumn,
+		Enabled:          EnabledColumn,
+		Searchable:       SearchableColumn,
+		ValueFormat:      ValueFormatColumn,
+		Behavior:         BehaviorColumn,
+		GroupKey:         GroupKeyColumn,
+		SortOrder:        SortOrderColumn,
+		Pinned:           PinnedColumn,
+		Renderer:         RendererColumn,
+		RendererConfig:   RendererConfigColumn,
+		DisplayMode:      DisplayModeColumn,
+		Implicit:         ImplicitColumn,
+		StatePolicy:      StatePolicyColumn,
+		ValueConstraints: ValueConstraintsColumn,
+		ReasonMode:       ReasonModeColumn,
+		Unit:             UnitColumn,
+		DecimalPlaces:    DecimalPlacesColumn,
+		Currency:         CurrencyColumn,
+		DeletedAt:        DeletedAtColumn,
+		CreatedAt:        CreatedAtColumn,
+		UpdatedAt:        UpdatedAtColumn,
 
 		AllColumns:     allColumns,
 		MutableColumns: mutableColumns,

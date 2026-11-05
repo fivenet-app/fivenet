@@ -13,6 +13,9 @@ import (
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/timestamp"
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/users"
 	usersactivity "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/users/activity"
+	usersprops "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/users/props"
+	vehiclesactivity "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/vehicles/activity"
+	vehiclesprops "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/vehicles/props"
 	pbcitizens "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/citizens"
 	pbsync "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/sync"
 	"github.com/fivenet-app/fivenet/v2026/pkg/dbutils"
@@ -110,48 +113,54 @@ func (s *Store) AddUserUpdate(
 	return &pbsync.AddActivityResponse{}, nil
 }
 
-func (s *Store) AddUserProps(
-	ctx context.Context,
-	req *pbsync.AddUserPropsRequest,
-) (*pbsync.AddActivityResponse, error) {
-	if err := s.handleUserProps(ctx, req.GetUserProps(), req.GetSourceUser()); err != nil {
-		return nil, fmt.Errorf("failed to handle UserProps activity. %w", err)
-	}
-	return &pbsync.AddActivityResponse{}, nil
-}
-
 // SetUserProperties applies managed and generic property changes from a
 // trusted Sync client.
 func (s *Store) SetUserProperties(
 	ctx context.Context,
 	req *pbsync.SetUserPropertiesRequest,
 ) (*pbsync.SetUserPropertiesResponse, error) {
-	if managedProps := req.GetManagedProps(); managedProps != nil &&
-		(managedProps.BloodType != nil || managedProps.Email != nil || managedProps.Mugshot != nil ||
-			managedProps.GetProperties() != nil) {
-		return nil, errors.New("source-synchronized or generic managed properties are not supported")
+	s.normalizeSyncWantedExpiries(
+		properties.PropertyScope_PROPERTY_SCOPE_USER,
+		req.GetPropertyMutations(),
+	)
+	if err := s.validateSyncManagedProperties(
+		ctx,
+		properties.PropertyScope_PROPERTY_SCOPE_USER,
+		req.GetPropertyMutations(),
+	); err != nil {
+		return nil, err
+	}
+	managedProps, propertyChanges, err := splitUserPropertyMutations(req)
+	if err != nil {
+		return nil, err
 	}
 	if err := propertyregistry.ValidateCustomPropertyChanges(
 		ctx,
 		properties.PropertyScope_PROPERTY_SCOPE_USER,
-		req.GetPropertyChanges(),
+		propertyChanges,
 		func(string) bool { return true },
 		s.citizensStore.ResolvePropertyDefinitions,
 	); err != nil {
 		return nil, fmt.Errorf("failed to validate user property changes: %w", err)
 	}
 
-	changes := make([]citizensstore.PropertyChange, 0, len(req.GetPropertyChanges()))
-	for _, change := range req.GetPropertyChanges() {
-		if change.GetValue() == nil {
+	changes := make([]citizensstore.PropertyChange, 0, len(propertyChanges))
+	for _, change := range propertyChanges {
+		mutation := findPropertyMutation(req.GetPropertyMutations(), change.Key)
+		lifecycle, cause := userMutationActivityMetadata(mutation)
+		if change.Value == nil {
 			changes = append(changes, citizensstore.PropertyChange{
-				Property: &properties.Property{Key: change.GetKey()},
-				Delete:   true,
+				Property:  &properties.Property{Key: change.Key},
+				Delete:    true,
+				Lifecycle: lifecycle,
+				Cause:     cause,
 			})
 			continue
 		}
 		changes = append(changes, citizensstore.PropertyChange{
-			Property: &properties.Property{Key: change.GetKey(), Value: change.GetValue()},
+			Property:  &properties.Property{Key: change.Key, Value: change.Value},
+			Lifecycle: lifecycle,
+			Cause:     cause,
 		})
 	}
 
@@ -168,8 +177,7 @@ func (s *Store) SetUserProperties(
 	defer tx.Rollback()
 
 	activities := make([]*usersactivity.UserActivity, 0, len(changes))
-	if managedProps := req.GetManagedProps(); managedProps != nil {
-		managedProps.UserId = req.GetUserId()
+	if managedProps != nil {
 		current, err := s.citizensStore.GetUserProps(ctx, tx, req.GetUserId())
 		if err != nil {
 			return nil, fmt.Errorf("failed to get current user props: %w", err)
@@ -181,12 +189,29 @@ func (s *Store) SetUserProperties(
 			return nil, fmt.Errorf("failed to apply managed user property changes: %w", err)
 		}
 		activities = append(activities, managedActivities...)
+		activities = append(activities, citizensstore.UserWantedMutationActivities(
+			current, managedProps, req.GetPropertyMutations(), sourceUserID, req.GetReason(),
+		)...)
+		if err := s.citizensStore.ApplyWantedMutationState(
+			ctx,
+			tx,
+			req.GetUserId(),
+			req.GetPropertyMutations(),
+		); err != nil {
+			return nil, err
+		}
 	}
-	propertyActivities, err := s.citizensStore.ApplyPropertyChangesWithActivity(
-		ctx, tx, req.GetUserId(), changes, sourceUserID, req.GetReason(),
+	propertyActivities, err := s.citizensStore.ApplyPropertyMutationsWithActivity(
+		ctx,
+		tx,
+		req.GetUserId(),
+		changes,
+		req.GetPropertyMutations(),
+		sourceUserID,
+		req.GetReason(),
 	)
 	if err != nil {
-		return nil, fmt.Errorf("failed to apply user property changes: %w", err)
+		return nil, fmt.Errorf("failed to apply user property mutations: %w", err)
 	}
 	activities = append(activities, propertyActivities...)
 	if err := usersactivity.CreateUserActivities(ctx, tx, activities...); err != nil {
@@ -200,7 +225,72 @@ func (s *Store) SetUserProperties(
 	if err != nil {
 		return nil, fmt.Errorf("failed to get updated user props: %w", err)
 	}
+	if err := s.attachUserProperties(ctx, props); err != nil {
+		return nil, err
+	}
 	return &pbsync.SetUserPropertiesResponse{UserProps: props}, nil
+}
+
+func findPropertyMutation(
+	mutations []*properties.PropertyMutation,
+	key string,
+) *properties.PropertyMutation {
+	for _, mutation := range mutations {
+		if mutation != nil && mutation.GetKey() == key {
+			return mutation
+		}
+	}
+	return nil
+}
+
+func userMutationActivityMetadata(
+	mutation *properties.PropertyMutation,
+) (*usersactivity.PropertyLifecycleChange, usersactivity.PropertyChangeCause) {
+	if mutation == nil || (mutation.GetSetValue() == nil && mutation.GetClearValue() == nil) {
+		return nil, usersactivity.PropertyChangeCause_PROPERTY_CHANGE_CAUSE_UNSPECIFIED
+	}
+	lifecycle := propertyregistry.MutationLifecycleForMutation(mutation)
+	if lifecycle == nil {
+		return nil, usersactivity.PropertyChangeCause_PROPERTY_CHANGE_CAUSE_MANUAL
+	}
+	return &usersactivity.PropertyLifecycleChange{
+		ExpiresAt: lifecycle.ExpiresAt, ExpiryCleared: lifecycle.ExpiryCleared,
+		StateReason: lifecycle.StateReason, StateReasonCleared: lifecycle.StateReasonCleared,
+	}, usersactivity.PropertyChangeCause_PROPERTY_CHANGE_CAUSE_MANUAL
+}
+
+func vehicleMutationActivities(
+	mutations []*properties.PropertyMutation,
+) map[string]*vehiclesactivity.PropertyChange {
+	activities := make(map[string]*vehiclesactivity.PropertyChange, len(mutations))
+	for _, mutation := range mutations {
+		if mutation == nil || (mutation.GetSetValue() == nil && mutation.GetClearValue() == nil) ||
+			isManagedMutation(properties.PropertyScope_PROPERTY_SCOPE_VEHICLE, mutation.GetKey()) {
+			continue
+		}
+		activity := &vehiclesactivity.PropertyChange{
+			Key:       mutation.GetKey(),
+			Lifecycle: vehicleMutationLifecycle(mutation),
+			Cause:     vehiclesactivity.PropertyChangeCause_PROPERTY_CHANGE_CAUSE_MANUAL,
+		}
+		activities[mutation.GetKey()] = activity
+	}
+	return activities
+}
+
+func vehicleMutationLifecycle(
+	mutation *properties.PropertyMutation,
+) *vehiclesactivity.PropertyLifecycleChange {
+	lifecycle := propertyregistry.MutationLifecycleForMutation(mutation)
+	if lifecycle == nil {
+		return nil
+	}
+	return &vehiclesactivity.PropertyLifecycleChange{
+		ExpiresAt:          lifecycle.ExpiresAt,
+		ExpiryCleared:      lifecycle.ExpiryCleared,
+		StateReason:        lifecycle.StateReason,
+		StateReasonCleared: lifecycle.StateReasonCleared,
+	}
 }
 
 func (s *Store) GetUserProps(
@@ -210,6 +300,9 @@ func (s *Store) GetUserProps(
 	props, err := s.citizensStore.GetUserProps(ctx, s.db, req.GetUserId())
 	if err != nil {
 		return nil, fmt.Errorf("failed to get user props. %w", err)
+	}
+	if err := s.attachUserProperties(ctx, props); err != nil {
+		return nil, err
 	}
 	return &pbsync.GetUserPropsResponse{
 		UserProps: props,
@@ -224,47 +317,12 @@ func (s *Store) GetVehicleProps(
 	if err != nil {
 		return nil, fmt.Errorf("failed to get vehicle props. %w", err)
 	}
+	if err := s.attachVehicleProperties(ctx, vehicleProps); err != nil {
+		return nil, err
+	}
 	return &pbsync.GetVehiclePropsResponse{
 		VehicleProps: vehicleProps,
 	}, nil
-}
-
-func (s *Store) SetVehicleProps(
-	ctx context.Context,
-	req *pbsync.SetVehiclePropsRequest,
-) (*pbsync.SetVehiclePropsResponse, error) {
-	var creatorID *int32
-	if req.GetSourceUser() != nil && req.GetSourceUser().UserId != nil {
-		sourceUserID := req.GetSourceUser().GetUserId()
-		creatorID = &sourceUserID
-	}
-
-	sourceJob := req.GetSourceUser().GetJob()
-	if sourceJob == "" && creatorID != nil {
-		sourceUser, err := s.citizensStore.GetUser(
-			ctx,
-			&pbcitizens.GetUserRequest{UserId: *creatorID},
-			citizensstore.GetUserOptions{IncludeJob: true},
-		)
-		if err != nil {
-			return nil, fmt.Errorf("failed to get source user. %w", err)
-		}
-		if sourceUser == nil || sourceUser.GetUser() == nil {
-			return nil, fmt.Errorf("source user %d not found", *creatorID)
-		}
-		sourceJob = sourceUser.GetUser().GetJob()
-	}
-
-	props, err := s.vehiclesStore.UpdateProps(ctx, vehiclesstore.PropsUpdate{
-		Props:      req.GetVehicleProps(),
-		CreatorID:  creatorID,
-		CreatorJob: sourceJob,
-		Reason:     req.GetReason(),
-	})
-	if err != nil {
-		return nil, fmt.Errorf("failed to set vehicle props. %w", err)
-	}
-	return &pbsync.SetVehiclePropsResponse{VehicleProps: props}, nil
 }
 
 // SetVehicleProperties applies managed and generic property changes from a
@@ -273,13 +331,25 @@ func (s *Store) SetVehicleProperties(
 	ctx context.Context,
 	req *pbsync.SetVehiclePropertiesRequest,
 ) (*pbsync.SetVehiclePropertiesResponse, error) {
-	if req.GetManagedProps().GetProperties() != nil {
-		return nil, errors.New("managed_props.properties is not supported; use property_changes")
+	s.normalizeSyncWantedExpiries(
+		properties.PropertyScope_PROPERTY_SCOPE_VEHICLE,
+		req.GetPropertyMutations(),
+	)
+	if err := s.validateSyncManagedProperties(
+		ctx,
+		properties.PropertyScope_PROPERTY_SCOPE_VEHICLE,
+		req.GetPropertyMutations(),
+	); err != nil {
+		return nil, err
+	}
+	managedProps, propertyChanges, updateWanted, err := splitVehiclePropertyMutations(req)
+	if err != nil {
+		return nil, err
 	}
 	if err := propertyregistry.ValidateCustomPropertyChanges(
 		ctx,
 		properties.PropertyScope_PROPERTY_SCOPE_VEHICLE,
-		req.GetPropertyChanges(),
+		propertyChanges,
 		func(string) bool { return true },
 		s.vehiclesStore.ResolvePropertyDefinitions,
 	); err != nil {
@@ -309,16 +379,270 @@ func (s *Store) SetVehicleProperties(
 	}
 
 	props, err := s.vehiclesStore.UpdateProps(ctx, vehiclesstore.PropsUpdate{
-		Props:           req.GetManagedProps(),
-		CreatorID:       creatorID,
-		CreatorJob:      sourceJob,
-		Reason:          req.GetReason(),
-		PropertyChanges: req.GetPropertyChanges(),
+		Props:             managedProps,
+		CreatorID:         creatorID,
+		CreatorJob:        sourceJob,
+		Reason:            req.GetReason(),
+		WantedStateReason: wantedStateReason(req.GetPropertyMutations()),
+		WantedStateClearReason: wantedStateClearReason(
+			req.GetPropertyMutations(),
+		),
+		PropertyChanges:    propertyChanges,
+		PropertyMutations:  req.GetPropertyMutations(),
+		PropertyActivities: vehicleMutationActivities(req.GetPropertyMutations()),
+		UpdateWanted:       updateWanted,
 	})
 	if err != nil {
 		return nil, fmt.Errorf("failed to apply vehicle property changes: %w", err)
 	}
+	if err := s.attachVehicleProperties(ctx, props); err != nil {
+		return nil, err
+	}
 	return &pbsync.SetVehiclePropertiesResponse{VehicleProps: props}, nil
+}
+
+// normalizeSyncWantedExpiries gives explicit Sync wanted expiries the same
+// configured upper bound as the authenticated Citizen and Vehicle APIs.
+// clear_expiry intentionally remains a clear: the dedicated wanted
+// housekeeper still enforces the maximum duration for no-expiry records.
+func (s *Store) normalizeSyncWantedExpiries(
+	scope properties.PropertyScope,
+	mutations []*properties.PropertyMutation,
+) {
+	game := s.appCfg.Get().GetGame()
+	var maxDuration time.Duration
+	switch scope {
+	case properties.PropertyScope_PROPERTY_SCOPE_USER:
+		if !game.GetMaxWantedDurationUserEnabled() || game.GetMaxWantedDurationUser() == nil {
+			return
+		}
+		maxDuration = game.GetMaxWantedDurationUser().AsDuration()
+	case properties.PropertyScope_PROPERTY_SCOPE_VEHICLE:
+		if !game.GetMaxWantedDurationVehicleEnabled() || game.GetMaxWantedDurationVehicle() == nil {
+			return
+		}
+		maxDuration = game.GetMaxWantedDurationVehicle().AsDuration()
+	default:
+		return
+	}
+
+	propertyregistry.ClampWantedExpiry(scope, mutations, time.Now().UTC().Add(maxDuration))
+}
+
+func (s *Store) validateSyncManagedProperties(
+	ctx context.Context,
+	scope properties.PropertyScope,
+	mutations []*properties.PropertyMutation,
+) error {
+	for _, mutation := range mutations {
+		if mutation == nil || !propertyregistry.IsSystemProperty(scope, mutation.GetKey()) {
+			continue
+		}
+		if _, ok := propertyregistry.ManagedMutation(scope, mutation.GetKey()); !ok {
+			return fmt.Errorf("system property %q is not Sync-mutable", mutation.GetKey())
+		}
+		var (
+			enabled bool
+			err     error
+		)
+		switch scope {
+		case properties.PropertyScope_PROPERTY_SCOPE_USER:
+			enabled, err = s.citizensStore.IsSystemPropertyEnabled(ctx, mutation.GetKey())
+		case properties.PropertyScope_PROPERTY_SCOPE_VEHICLE:
+			enabled, err = s.vehiclesStore.IsSystemPropertyEnabled(ctx, mutation.GetKey())
+		}
+		if err != nil {
+			return err
+		}
+		if !enabled {
+			return fmt.Errorf("system property %q is disabled", mutation.GetKey())
+		}
+	}
+	return nil
+}
+
+func wantedStateReason(mutations []*properties.PropertyMutation) *string {
+	for _, mutation := range mutations {
+		if mutation.GetKey() == "vehicle.wanted" && mutation.Reason != nil {
+			return mutation.Reason
+		}
+	}
+	return nil
+}
+
+func wantedStateClearReason(mutations []*properties.PropertyMutation) bool {
+	for _, mutation := range mutations {
+		if mutation.GetKey() == "vehicle.wanted" && mutation.GetClearReason() {
+			return true
+		}
+	}
+	return false
+}
+
+// Sync clients are trusted but still receive the same fully resolved
+// properties resource as application clients. This is particularly important
+// for lifecycle state, which is projected on Property rather than UserProps or
+// VehicleProps' legacy fields.
+func (s *Store) attachUserProperties(ctx context.Context, props *usersprops.UserProps) error {
+	if props == nil {
+		return nil
+	}
+	values, err := s.citizensStore.GetProperties(ctx, props.GetUserId())
+	if err != nil {
+		return fmt.Errorf("failed to get user properties: %w", err)
+	}
+	keys := make([]string, 0, len(values))
+	for _, value := range values {
+		keys = append(keys, value.GetKey())
+	}
+	catalog, err := s.citizensStore.ResolvePropertyCatalog(ctx, keys)
+	if err != nil {
+		return fmt.Errorf("failed to resolve user property definitions: %w", err)
+	}
+	props.Properties = propertyregistry.ResolvePropertiesResourceWithGroups(
+		values,
+		catalog.Definitions,
+		catalog.Groups,
+	)
+	return nil
+}
+
+func (s *Store) attachVehicleProperties(
+	ctx context.Context,
+	props *vehiclesprops.VehicleProps,
+) error {
+	if props == nil {
+		return nil
+	}
+	values, err := s.vehiclesStore.GetProperties(ctx, props.GetPlate())
+	if err != nil {
+		return fmt.Errorf("failed to get vehicle properties: %w", err)
+	}
+	keys := make([]string, 0, len(values))
+	for _, value := range values {
+		keys = append(keys, value.GetKey())
+	}
+	catalog, err := s.vehiclesStore.ResolvePropertyCatalog(ctx, keys)
+	if err != nil {
+		return fmt.Errorf("failed to resolve vehicle property definitions: %w", err)
+	}
+	props.Properties = propertyregistry.ResolvePropertiesResourceWithGroups(
+		values,
+		catalog.Definitions,
+		catalog.Groups,
+	)
+	return nil
+}
+
+func splitUserPropertyMutations(
+	req *pbsync.SetUserPropertiesRequest,
+) (*usersprops.UserProps, []*propertyregistry.ScalarChange, error) {
+	managed := &usersprops.UserProps{UserId: req.GetUserId()}
+	var hasManaged bool
+	changes := make([]*propertyregistry.ScalarChange, 0, len(req.GetPropertyMutations()))
+	seen := make(map[string]struct{}, len(req.GetPropertyMutations()))
+	for _, mutation := range req.GetPropertyMutations() {
+		if err := propertyregistry.ValidateMutationShape(mutation); err != nil {
+			return nil, nil, err
+		}
+		if _, ok := seen[mutation.GetKey()]; ok {
+			return nil, nil, fmt.Errorf("duplicate property mutation %q", mutation.GetKey())
+		}
+		seen[mutation.GetKey()] = struct{}{}
+		if managedDefinition, ok := propertyregistry.ManagedMutation(
+			properties.PropertyScope_PROPERTY_SCOPE_USER,
+			mutation.GetKey(),
+		); ok {
+			definition, _ := propertyregistry.SystemPropertyDefinition(
+				properties.PropertyScope_PROPERTY_SCOPE_USER,
+				mutation.GetKey(),
+			)
+			if err := propertyregistry.ValidateMutationState(definition, mutation); err != nil {
+				return nil, nil, fmt.Errorf(
+					"invalid state for property %q: %w",
+					mutation.GetKey(),
+					err,
+				)
+			}
+			if err := managedDefinition.Apply(managed, mutation); err != nil {
+				return nil, nil, err
+			}
+			hasManaged = true
+			continue
+		}
+		if value := mutation.GetSetValue(); value != nil {
+			changes = append(
+				changes,
+				&propertyregistry.ScalarChange{Key: mutation.GetKey(), Value: value},
+			)
+		} else if mutation.GetClearValue() != nil {
+			changes = append(changes, &propertyregistry.ScalarChange{Key: mutation.GetKey()})
+		} else if mutation.GetState() == nil && mutation.Reason == nil && mutation.ClearReason == nil {
+			return nil, nil, fmt.Errorf("property %q has no mutation", mutation.GetKey())
+		}
+	}
+	if !hasManaged {
+		managed = nil
+	}
+	return managed, changes, nil
+}
+
+func splitVehiclePropertyMutations(
+	req *pbsync.SetVehiclePropertiesRequest,
+) (*vehiclesprops.VehicleProps, []*propertyregistry.ScalarChange, bool, error) {
+	managed := &vehiclesprops.VehicleProps{Plate: req.GetPlate()}
+	var hasManaged bool
+	changes := make([]*propertyregistry.ScalarChange, 0, len(req.GetPropertyMutations()))
+	seen := make(map[string]struct{}, len(req.GetPropertyMutations()))
+	for _, mutation := range req.GetPropertyMutations() {
+		if err := propertyregistry.ValidateMutationShape(mutation); err != nil {
+			return nil, nil, false, err
+		}
+		if _, ok := seen[mutation.GetKey()]; ok {
+			return nil, nil, false, fmt.Errorf("duplicate property mutation %q", mutation.GetKey())
+		}
+		seen[mutation.GetKey()] = struct{}{}
+		if managedDefinition, ok := propertyregistry.ManagedMutation(
+			properties.PropertyScope_PROPERTY_SCOPE_VEHICLE,
+			mutation.GetKey(),
+		); ok {
+			definition, _ := propertyregistry.SystemPropertyDefinition(
+				properties.PropertyScope_PROPERTY_SCOPE_VEHICLE,
+				mutation.GetKey(),
+			)
+			if err := propertyregistry.ValidateMutationState(definition, mutation); err != nil {
+				return nil, nil, false, fmt.Errorf(
+					"invalid state for property %q: %w",
+					mutation.GetKey(),
+					err,
+				)
+			}
+			if err := managedDefinition.Apply(managed, mutation); err != nil {
+				return nil, nil, false, err
+			}
+			hasManaged = true
+			continue
+		}
+		if value := mutation.GetSetValue(); value != nil {
+			changes = append(
+				changes,
+				&propertyregistry.ScalarChange{Key: mutation.GetKey(), Value: value},
+			)
+		} else if mutation.GetClearValue() != nil {
+			changes = append(changes, &propertyregistry.ScalarChange{Key: mutation.GetKey()})
+		} else if mutation.GetState() == nil && mutation.Reason == nil && mutation.ClearReason == nil {
+			return nil, nil, false, fmt.Errorf("property %q has no mutation", mutation.GetKey())
+		}
+	}
+	if !hasManaged {
+		managed = &vehiclesprops.VehicleProps{Plate: req.GetPlate()}
+	}
+	return managed, changes, hasManaged, nil
+}
+
+func isManagedMutation(scope properties.PropertyScope, key string) bool {
+	_, ok := propertyregistry.ManagedMutation(scope, key)
+	return ok
 }
 
 func (s *Store) AddColleagueActivity(

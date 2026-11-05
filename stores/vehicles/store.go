@@ -25,6 +25,9 @@ type IStore interface {
 	GetProperties(ctx context.Context, plate string) ([]*properties.Property, error)
 	ListProperties(ctx context.Context, plates []string) (map[string][]*properties.Property, error)
 	ListCustomPropertyKeys(ctx context.Context) ([]string, error)
+	ListExpiringCustomPropertyKeys(ctx context.Context) ([]string, error)
+	ListExpiredCustomPropertyPlates(ctx context.Context, key string, limit int64) ([]string, error)
+	ClearExpiredCustomProperty(ctx context.Context, plate string, key string) (bool, error)
 	ResolvePropertyDefinitions(
 		ctx context.Context,
 		keys []string,
@@ -47,8 +50,8 @@ type IStore interface {
 		opts ListVehicleActivityOptions,
 	) ([]*vehiclesactivity.VehicleActivity, error)
 	CountVehicleActivity(ctx context.Context, opts CountVehicleActivityOptions) (int64, error)
-	ListExpiredWanted(ctx context.Context, maxDays int64, limit int64) ([]string, error)
-	ClearWanted(ctx context.Context, plate string) error
+	ListExpiredWanted(ctx context.Context, maxSeconds int64, limit int64) ([]string, error)
+	ClearWantedTx(ctx context.Context, tx qrm.DB, plate string) error
 	AddActivity(ctx context.Context, activity *vehiclesactivity.VehicleActivity) error
 	AddActivityWithDB(
 		ctx context.Context,

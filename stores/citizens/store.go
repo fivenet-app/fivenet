@@ -84,13 +84,17 @@ type IStore interface {
 		labels []*citizenslabels.Label,
 	) (bool, error)
 	GetUserAccess(ctx context.Context, userId int32) (*users.User, error)
-	ListExpiredWantedUserProps(ctx context.Context, maxDays int64, limit int64) ([]int32, error)
+	ListExpiredWantedUserProps(ctx context.Context, maxSeconds int64, limit int64) ([]int32, error)
+	ClearWantedTx(ctx context.Context, tx qrm.DB, userID int32) error
 	GetAvatarFileID(ctx context.Context, userId int32) (*int64, error)
 	GetUserProps(ctx context.Context, tx qrm.DB, userId int32) (*usersprops.UserProps, error)
 	GetProperties(ctx context.Context, userId int32) ([]*properties.Property, error)
 	ListProperties(ctx context.Context, userIds []int32) (map[int32][]*properties.Property, error)
 	GetPropertiesTx(ctx context.Context, tx qrm.DB, userId int32) ([]*properties.Property, error)
 	ListCustomPropertyKeys(ctx context.Context) ([]string, error)
+	ListExpiringCustomPropertyKeys(ctx context.Context) ([]string, error)
+	ListExpiredCustomPropertyUserIDs(ctx context.Context, key string, limit int64) ([]int32, error)
+	ClearExpiredCustomProperty(ctx context.Context, userID int32, key string) (bool, error)
 	ResolvePropertyDefinitions(
 		ctx context.Context,
 		keys []string,
@@ -117,6 +121,21 @@ type IStore interface {
 		sourceUserId *int32,
 		reason string,
 	) ([]*usersactivity.UserActivity, error)
+	ApplyPropertyMutationsWithActivity(
+		ctx context.Context,
+		tx qrm.DB,
+		userID int32,
+		changes []PropertyChange,
+		mutations []*properties.PropertyMutation,
+		sourceUserID *int32,
+		reason string,
+	) ([]*usersactivity.UserActivity, error)
+	ApplyWantedMutationState(
+		ctx context.Context,
+		tx qrm.DB,
+		userID int32,
+		mutations []*properties.PropertyMutation,
+	) error
 	IsSystemPropertyEnabled(ctx context.Context, key string) (bool, error)
 	PrepareUserPropsLabelsForUpdate(
 		ctx context.Context,

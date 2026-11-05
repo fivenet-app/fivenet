@@ -79,6 +79,50 @@ func (x VehicleActivityType) Number() protoreflect.EnumNumber {
 	return protoreflect.EnumNumber(x)
 }
 
+type PropertyChangeCause int32
+
+const (
+	PropertyChangeCause_PROPERTY_CHANGE_CAUSE_UNSPECIFIED PropertyChangeCause = 0
+	PropertyChangeCause_PROPERTY_CHANGE_CAUSE_MANUAL      PropertyChangeCause = 1
+	PropertyChangeCause_PROPERTY_CHANGE_CAUSE_EXPIRED     PropertyChangeCause = 2
+)
+
+// Enum value maps for PropertyChangeCause.
+var (
+	PropertyChangeCause_name = map[int32]string{
+		0: "PROPERTY_CHANGE_CAUSE_UNSPECIFIED",
+		1: "PROPERTY_CHANGE_CAUSE_MANUAL",
+		2: "PROPERTY_CHANGE_CAUSE_EXPIRED",
+	}
+	PropertyChangeCause_value = map[string]int32{
+		"PROPERTY_CHANGE_CAUSE_UNSPECIFIED": 0,
+		"PROPERTY_CHANGE_CAUSE_MANUAL":      1,
+		"PROPERTY_CHANGE_CAUSE_EXPIRED":     2,
+	}
+)
+
+func (x PropertyChangeCause) Enum() *PropertyChangeCause {
+	p := new(PropertyChangeCause)
+	*p = x
+	return p
+}
+
+func (x PropertyChangeCause) String() string {
+	return protoimpl.X.EnumStringOf(x.Descriptor(), protoreflect.EnumNumber(x))
+}
+
+func (PropertyChangeCause) Descriptor() protoreflect.EnumDescriptor {
+	return file_resources_vehicles_activity_activity_proto_enumTypes[1].Descriptor()
+}
+
+func (PropertyChangeCause) Type() protoreflect.EnumType {
+	return &file_resources_vehicles_activity_activity_proto_enumTypes[1]
+}
+
+func (x PropertyChangeCause) Number() protoreflect.EnumNumber {
+	return protoreflect.EnumNumber(x)
+}
+
 type VehicleActivity struct {
 	state                      protoimpl.MessageState `protogen:"opaque.v1"`
 	xxx_hidden_Id              int64                  `protobuf:"varint,1,opt,name=id,proto3"`
@@ -789,12 +833,14 @@ func (b0 WantedChange_builder) Build() *WantedChange {
 // PropertyChange is used only for custom, generic properties. Managed system
 // properties retain their dedicated activity types and richer payloads.
 type PropertyChange struct {
-	state               protoimpl.MessageState    `protogen:"opaque.v1"`
-	xxx_hidden_Key      string                    `protobuf:"bytes,1,opt,name=key,proto3"`
-	xxx_hidden_OldValue *properties.PropertyValue `protobuf:"bytes,2,opt,name=old_value,json=oldValue,proto3,oneof"`
-	xxx_hidden_NewValue *properties.PropertyValue `protobuf:"bytes,3,opt,name=new_value,json=newValue,proto3,oneof"`
-	unknownFields       protoimpl.UnknownFields
-	sizeCache           protoimpl.SizeCache
+	state                protoimpl.MessageState    `protogen:"opaque.v1"`
+	xxx_hidden_Key       string                    `protobuf:"bytes,1,opt,name=key,proto3"`
+	xxx_hidden_OldValue  *properties.PropertyValue `protobuf:"bytes,2,opt,name=old_value,json=oldValue,proto3,oneof"`
+	xxx_hidden_NewValue  *properties.PropertyValue `protobuf:"bytes,3,opt,name=new_value,json=newValue,proto3,oneof"`
+	xxx_hidden_Lifecycle *PropertyLifecycleChange  `protobuf:"bytes,4,opt,name=lifecycle,proto3,oneof"`
+	xxx_hidden_Cause     PropertyChangeCause       `protobuf:"varint,5,opt,name=cause,proto3,enum=resources.vehicles.activity.PropertyChangeCause"`
+	unknownFields        protoimpl.UnknownFields
+	sizeCache            protoimpl.SizeCache
 }
 
 func (x *PropertyChange) Reset() {
@@ -843,6 +889,20 @@ func (x *PropertyChange) GetNewValue() *properties.PropertyValue {
 	return nil
 }
 
+func (x *PropertyChange) GetLifecycle() *PropertyLifecycleChange {
+	if x != nil {
+		return x.xxx_hidden_Lifecycle
+	}
+	return nil
+}
+
+func (x *PropertyChange) GetCause() PropertyChangeCause {
+	if x != nil {
+		return x.xxx_hidden_Cause
+	}
+	return PropertyChangeCause_PROPERTY_CHANGE_CAUSE_UNSPECIFIED
+}
+
 func (x *PropertyChange) SetKey(v string) {
 	x.xxx_hidden_Key = v
 }
@@ -853,6 +913,14 @@ func (x *PropertyChange) SetOldValue(v *properties.PropertyValue) {
 
 func (x *PropertyChange) SetNewValue(v *properties.PropertyValue) {
 	x.xxx_hidden_NewValue = v
+}
+
+func (x *PropertyChange) SetLifecycle(v *PropertyLifecycleChange) {
+	x.xxx_hidden_Lifecycle = v
+}
+
+func (x *PropertyChange) SetCause(v PropertyChangeCause) {
+	x.xxx_hidden_Cause = v
 }
 
 func (x *PropertyChange) HasOldValue() bool {
@@ -869,6 +937,13 @@ func (x *PropertyChange) HasNewValue() bool {
 	return x.xxx_hidden_NewValue != nil
 }
 
+func (x *PropertyChange) HasLifecycle() bool {
+	if x == nil {
+		return false
+	}
+	return x.xxx_hidden_Lifecycle != nil
+}
+
 func (x *PropertyChange) ClearOldValue() {
 	x.xxx_hidden_OldValue = nil
 }
@@ -877,12 +952,18 @@ func (x *PropertyChange) ClearNewValue() {
 	x.xxx_hidden_NewValue = nil
 }
 
+func (x *PropertyChange) ClearLifecycle() {
+	x.xxx_hidden_Lifecycle = nil
+}
+
 type PropertyChange_builder struct {
 	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
 
-	Key      string
-	OldValue *properties.PropertyValue
-	NewValue *properties.PropertyValue
+	Key       string
+	OldValue  *properties.PropertyValue
+	NewValue  *properties.PropertyValue
+	Lifecycle *PropertyLifecycleChange
+	Cause     PropertyChangeCause
 }
 
 func (b0 PropertyChange_builder) Build() *PropertyChange {
@@ -892,6 +973,141 @@ func (b0 PropertyChange_builder) Build() *PropertyChange {
 	x.xxx_hidden_Key = b.Key
 	x.xxx_hidden_OldValue = b.OldValue
 	x.xxx_hidden_NewValue = b.NewValue
+	x.xxx_hidden_Lifecycle = b.Lifecycle
+	x.xxx_hidden_Cause = b.Cause
+	return m0
+}
+
+// PropertyLifecycleChange records the lifecycle fields changed by this
+// activity, including the resulting state reason when it changed.
+type PropertyLifecycleChange struct {
+	state                         protoimpl.MessageState `protogen:"opaque.v1"`
+	xxx_hidden_ExpiresAt          *timestamp.Timestamp   `protobuf:"bytes,1,opt,name=expires_at,json=expiresAt,proto3,oneof"`
+	xxx_hidden_ExpiryCleared      bool                   `protobuf:"varint,2,opt,name=expiry_cleared,json=expiryCleared,proto3"`
+	xxx_hidden_StateReason        *string                `protobuf:"bytes,3,opt,name=state_reason,json=stateReason,proto3,oneof"`
+	xxx_hidden_StateReasonCleared bool                   `protobuf:"varint,4,opt,name=state_reason_cleared,json=stateReasonCleared,proto3"`
+	XXX_raceDetectHookData        protoimpl.RaceDetectHookData
+	XXX_presence                  [1]uint32
+	unknownFields                 protoimpl.UnknownFields
+	sizeCache                     protoimpl.SizeCache
+}
+
+func (x *PropertyLifecycleChange) Reset() {
+	*x = PropertyLifecycleChange{}
+	mi := &file_resources_vehicles_activity_activity_proto_msgTypes[4]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *PropertyLifecycleChange) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*PropertyLifecycleChange) ProtoMessage() {}
+
+func (x *PropertyLifecycleChange) ProtoReflect() protoreflect.Message {
+	mi := &file_resources_vehicles_activity_activity_proto_msgTypes[4]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+func (x *PropertyLifecycleChange) GetExpiresAt() *timestamp.Timestamp {
+	if x != nil {
+		return x.xxx_hidden_ExpiresAt
+	}
+	return nil
+}
+
+func (x *PropertyLifecycleChange) GetExpiryCleared() bool {
+	if x != nil {
+		return x.xxx_hidden_ExpiryCleared
+	}
+	return false
+}
+
+func (x *PropertyLifecycleChange) GetStateReason() string {
+	if x != nil {
+		if x.xxx_hidden_StateReason != nil {
+			return *x.xxx_hidden_StateReason
+		}
+		return ""
+	}
+	return ""
+}
+
+func (x *PropertyLifecycleChange) GetStateReasonCleared() bool {
+	if x != nil {
+		return x.xxx_hidden_StateReasonCleared
+	}
+	return false
+}
+
+func (x *PropertyLifecycleChange) SetExpiresAt(v *timestamp.Timestamp) {
+	x.xxx_hidden_ExpiresAt = v
+}
+
+func (x *PropertyLifecycleChange) SetExpiryCleared(v bool) {
+	x.xxx_hidden_ExpiryCleared = v
+}
+
+func (x *PropertyLifecycleChange) SetStateReason(v string) {
+	x.xxx_hidden_StateReason = &v
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 2, 4)
+}
+
+func (x *PropertyLifecycleChange) SetStateReasonCleared(v bool) {
+	x.xxx_hidden_StateReasonCleared = v
+}
+
+func (x *PropertyLifecycleChange) HasExpiresAt() bool {
+	if x == nil {
+		return false
+	}
+	return x.xxx_hidden_ExpiresAt != nil
+}
+
+func (x *PropertyLifecycleChange) HasStateReason() bool {
+	if x == nil {
+		return false
+	}
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 2)
+}
+
+func (x *PropertyLifecycleChange) ClearExpiresAt() {
+	x.xxx_hidden_ExpiresAt = nil
+}
+
+func (x *PropertyLifecycleChange) ClearStateReason() {
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 2)
+	x.xxx_hidden_StateReason = nil
+}
+
+type PropertyLifecycleChange_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	ExpiresAt          *timestamp.Timestamp
+	ExpiryCleared      bool
+	StateReason        *string
+	StateReasonCleared bool
+}
+
+func (b0 PropertyLifecycleChange_builder) Build() *PropertyLifecycleChange {
+	m0 := &PropertyLifecycleChange{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.xxx_hidden_ExpiresAt = b.ExpiresAt
+	x.xxx_hidden_ExpiryCleared = b.ExpiryCleared
+	if b.StateReason != nil {
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 2, 4)
+		x.xxx_hidden_StateReason = b.StateReason
+	}
+	x.xxx_hidden_StateReasonCleared = b.StateReasonCleared
 	return m0
 }
 
@@ -906,7 +1122,7 @@ type FileChange struct {
 
 func (x *FileChange) Reset() {
 	*x = FileChange{}
-	mi := &file_resources_vehicles_activity_activity_proto_msgTypes[4]
+	mi := &file_resources_vehicles_activity_activity_proto_msgTypes[5]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -918,7 +1134,7 @@ func (x *FileChange) String() string {
 func (*FileChange) ProtoMessage() {}
 
 func (x *FileChange) ProtoReflect() protoreflect.Message {
-	mi := &file_resources_vehicles_activity_activity_proto_msgTypes[4]
+	mi := &file_resources_vehicles_activity_activity_proto_msgTypes[5]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -995,7 +1211,7 @@ var File_resources_vehicles_activity_activity_proto protoreflect.FileDescriptor
 
 const file_resources_vehicles_activity_activity_proto_rawDesc = "" +
 	"\n" +
-	"*resources/vehicles/activity/activity.proto\x12\x1bresources.vehicles.activity\x1a!codegen/dbscanner/dbscanner.proto\x1a!codegen/sanitizer/sanitizer.proto\x1a%resources/properties/properties.proto\x1a\x19resources/file/file.proto\x1a#resources/timestamp/timestamp.proto\x1a resources/users/short/user.proto\x1a\x13tagger/tagger.proto\"\xb4\a\n" +
+	"*resources/vehicles/activity/activity.proto\x12\x1bresources.vehicles.activity\x1a!codegen/dbscanner/dbscanner.proto\x1a!codegen/sanitizer/sanitizer.proto\x1a\x19resources/file/file.proto\x1a%resources/properties/properties.proto\x1a#resources/timestamp/timestamp.proto\x1a resources/users/short/user.proto\x1a\x13tagger/tagger.proto\"\xb4\a\n" +
 	"\x0fVehicleActivity\x120\n" +
 	"\x02id\x18\x01 \x01(\x03B \x9a\x84\x9e\x03\x1balias:\"vehicle_activity.id\"R\x02id\x12l\n" +
 	"\n" +
@@ -1038,15 +1254,27 @@ const file_resources_vehicles_activity_activity_proto_rawDesc = "" +
 	"\x0e_wanted_reasonB\f\n" +
 	"\n" +
 	"_wanted_atB\x0e\n" +
-	"\f_wanted_till\"\xcc\x01\n" +
+	"\f_wanted_till\"\xfb\x02\n" +
 	"\x0ePropertyChange\x12\x10\n" +
 	"\x03key\x18\x01 \x01(\tR\x03key\x12E\n" +
 	"\told_value\x18\x02 \x01(\v2#.resources.properties.PropertyValueH\x00R\boldValue\x88\x01\x01\x12E\n" +
-	"\tnew_value\x18\x03 \x01(\v2#.resources.properties.PropertyValueH\x01R\bnewValue\x88\x01\x01B\f\n" +
+	"\tnew_value\x18\x03 \x01(\v2#.resources.properties.PropertyValueH\x01R\bnewValue\x88\x01\x01\x12W\n" +
+	"\tlifecycle\x18\x04 \x01(\v24.resources.vehicles.activity.PropertyLifecycleChangeH\x02R\tlifecycle\x88\x01\x01\x12F\n" +
+	"\x05cause\x18\x05 \x01(\x0e20.resources.vehicles.activity.PropertyChangeCauseR\x05causeB\f\n" +
 	"\n" +
 	"_old_valueB\f\n" +
 	"\n" +
-	"_new_value\"`\n" +
+	"_new_valueB\f\n" +
+	"\n" +
+	"_lifecycle\"\xfe\x01\n" +
+	"\x17PropertyLifecycleChange\x12B\n" +
+	"\n" +
+	"expires_at\x18\x01 \x01(\v2\x1e.resources.timestamp.TimestampH\x00R\texpiresAt\x88\x01\x01\x12%\n" +
+	"\x0eexpiry_cleared\x18\x02 \x01(\bR\rexpiryCleared\x12&\n" +
+	"\fstate_reason\x18\x03 \x01(\tH\x01R\vstateReason\x88\x01\x01\x120\n" +
+	"\x14state_reason_cleared\x18\x04 \x01(\bR\x12stateReasonClearedB\r\n" +
+	"\v_expires_atB\x0f\n" +
+	"\r_state_reason\"`\n" +
 	"\n" +
 	"FileChange\x12\x14\n" +
 	"\x05added\x18\x01 \x01(\bR\x05added\x12\x12\n" +
@@ -1056,40 +1284,49 @@ const file_resources_vehicles_activity_activity_proto_rawDesc = "" +
 	"!VEHICLE_ACTIVITY_TYPE_UNSPECIFIED\x10\x00\x12 \n" +
 	"\x1cVEHICLE_ACTIVITY_TYPE_WANTED\x10\x01\x12\x1e\n" +
 	"\x1aVEHICLE_ACTIVITY_TYPE_FILE\x10\x02\x12\"\n" +
-	"\x1eVEHICLE_ACTIVITY_TYPE_PROPERTY\x10\x03B`Z^github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/vehicles/activity;vehiclesactivityb\x06proto3"
+	"\x1eVEHICLE_ACTIVITY_TYPE_PROPERTY\x10\x03*\x81\x01\n" +
+	"\x13PropertyChangeCause\x12%\n" +
+	"!PROPERTY_CHANGE_CAUSE_UNSPECIFIED\x10\x00\x12 \n" +
+	"\x1cPROPERTY_CHANGE_CAUSE_MANUAL\x10\x01\x12!\n" +
+	"\x1dPROPERTY_CHANGE_CAUSE_EXPIRED\x10\x02B`Z^github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/vehicles/activity;vehiclesactivityb\x06proto3"
 
-var file_resources_vehicles_activity_activity_proto_enumTypes = make([]protoimpl.EnumInfo, 1)
-var file_resources_vehicles_activity_activity_proto_msgTypes = make([]protoimpl.MessageInfo, 5)
+var file_resources_vehicles_activity_activity_proto_enumTypes = make([]protoimpl.EnumInfo, 2)
+var file_resources_vehicles_activity_activity_proto_msgTypes = make([]protoimpl.MessageInfo, 6)
 var file_resources_vehicles_activity_activity_proto_goTypes = []any{
 	(VehicleActivityType)(0),         // 0: resources.vehicles.activity.VehicleActivityType
-	(*VehicleActivity)(nil),          // 1: resources.vehicles.activity.VehicleActivity
-	(*VehicleActivityData)(nil),      // 2: resources.vehicles.activity.VehicleActivityData
-	(*WantedChange)(nil),             // 3: resources.vehicles.activity.WantedChange
-	(*PropertyChange)(nil),           // 4: resources.vehicles.activity.PropertyChange
-	(*FileChange)(nil),               // 5: resources.vehicles.activity.FileChange
-	(*timestamp.Timestamp)(nil),      // 6: resources.timestamp.Timestamp
-	(*short.UserShort)(nil),          // 7: resources.users.short.UserShort
-	(*properties.PropertyValue)(nil), // 8: resources.properties.PropertyValue
-	(*file.File)(nil),                // 9: resources.file.File
+	(PropertyChangeCause)(0),         // 1: resources.vehicles.activity.PropertyChangeCause
+	(*VehicleActivity)(nil),          // 2: resources.vehicles.activity.VehicleActivity
+	(*VehicleActivityData)(nil),      // 3: resources.vehicles.activity.VehicleActivityData
+	(*WantedChange)(nil),             // 4: resources.vehicles.activity.WantedChange
+	(*PropertyChange)(nil),           // 5: resources.vehicles.activity.PropertyChange
+	(*PropertyLifecycleChange)(nil),  // 6: resources.vehicles.activity.PropertyLifecycleChange
+	(*FileChange)(nil),               // 7: resources.vehicles.activity.FileChange
+	(*timestamp.Timestamp)(nil),      // 8: resources.timestamp.Timestamp
+	(*short.UserShort)(nil),          // 9: resources.users.short.UserShort
+	(*properties.PropertyValue)(nil), // 10: resources.properties.PropertyValue
+	(*file.File)(nil),                // 11: resources.file.File
 }
 var file_resources_vehicles_activity_activity_proto_depIdxs = []int32{
-	6,  // 0: resources.vehicles.activity.VehicleActivity.created_at:type_name -> resources.timestamp.Timestamp
+	8,  // 0: resources.vehicles.activity.VehicleActivity.created_at:type_name -> resources.timestamp.Timestamp
 	0,  // 1: resources.vehicles.activity.VehicleActivity.activity_type:type_name -> resources.vehicles.activity.VehicleActivityType
-	7,  // 2: resources.vehicles.activity.VehicleActivity.creator:type_name -> resources.users.short.UserShort
-	2,  // 3: resources.vehicles.activity.VehicleActivity.data:type_name -> resources.vehicles.activity.VehicleActivityData
-	3,  // 4: resources.vehicles.activity.VehicleActivityData.wanted_change:type_name -> resources.vehicles.activity.WantedChange
-	4,  // 5: resources.vehicles.activity.VehicleActivityData.property_change:type_name -> resources.vehicles.activity.PropertyChange
-	5,  // 6: resources.vehicles.activity.VehicleActivityData.file_change:type_name -> resources.vehicles.activity.FileChange
-	6,  // 7: resources.vehicles.activity.WantedChange.wanted_at:type_name -> resources.timestamp.Timestamp
-	6,  // 8: resources.vehicles.activity.WantedChange.wanted_till:type_name -> resources.timestamp.Timestamp
-	8,  // 9: resources.vehicles.activity.PropertyChange.old_value:type_name -> resources.properties.PropertyValue
-	8,  // 10: resources.vehicles.activity.PropertyChange.new_value:type_name -> resources.properties.PropertyValue
-	9,  // 11: resources.vehicles.activity.FileChange.file:type_name -> resources.file.File
-	12, // [12:12] is the sub-list for method output_type
-	12, // [12:12] is the sub-list for method input_type
-	12, // [12:12] is the sub-list for extension type_name
-	12, // [12:12] is the sub-list for extension extendee
-	0,  // [0:12] is the sub-list for field type_name
+	9,  // 2: resources.vehicles.activity.VehicleActivity.creator:type_name -> resources.users.short.UserShort
+	3,  // 3: resources.vehicles.activity.VehicleActivity.data:type_name -> resources.vehicles.activity.VehicleActivityData
+	4,  // 4: resources.vehicles.activity.VehicleActivityData.wanted_change:type_name -> resources.vehicles.activity.WantedChange
+	5,  // 5: resources.vehicles.activity.VehicleActivityData.property_change:type_name -> resources.vehicles.activity.PropertyChange
+	7,  // 6: resources.vehicles.activity.VehicleActivityData.file_change:type_name -> resources.vehicles.activity.FileChange
+	8,  // 7: resources.vehicles.activity.WantedChange.wanted_at:type_name -> resources.timestamp.Timestamp
+	8,  // 8: resources.vehicles.activity.WantedChange.wanted_till:type_name -> resources.timestamp.Timestamp
+	10, // 9: resources.vehicles.activity.PropertyChange.old_value:type_name -> resources.properties.PropertyValue
+	10, // 10: resources.vehicles.activity.PropertyChange.new_value:type_name -> resources.properties.PropertyValue
+	6,  // 11: resources.vehicles.activity.PropertyChange.lifecycle:type_name -> resources.vehicles.activity.PropertyLifecycleChange
+	1,  // 12: resources.vehicles.activity.PropertyChange.cause:type_name -> resources.vehicles.activity.PropertyChangeCause
+	8,  // 13: resources.vehicles.activity.PropertyLifecycleChange.expires_at:type_name -> resources.timestamp.Timestamp
+	11, // 14: resources.vehicles.activity.FileChange.file:type_name -> resources.file.File
+	15, // [15:15] is the sub-list for method output_type
+	15, // [15:15] is the sub-list for method input_type
+	15, // [15:15] is the sub-list for extension type_name
+	15, // [15:15] is the sub-list for extension extendee
+	0,  // [0:15] is the sub-list for field type_name
 }
 
 func init() { file_resources_vehicles_activity_activity_proto_init() }
@@ -1105,13 +1342,14 @@ func file_resources_vehicles_activity_activity_proto_init() {
 	}
 	file_resources_vehicles_activity_activity_proto_msgTypes[2].OneofWrappers = []any{}
 	file_resources_vehicles_activity_activity_proto_msgTypes[3].OneofWrappers = []any{}
+	file_resources_vehicles_activity_activity_proto_msgTypes[4].OneofWrappers = []any{}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_resources_vehicles_activity_activity_proto_rawDesc), len(file_resources_vehicles_activity_activity_proto_rawDesc)),
-			NumEnums:      1,
-			NumMessages:   5,
+			NumEnums:      2,
+			NumMessages:   6,
 			NumExtensions: 0,
 			NumServices:   0,
 		},

@@ -13,6 +13,7 @@ import (
 	timestamp "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/timestamp"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
+	emptypb "google.golang.org/protobuf/types/known/emptypb"
 	reflect "reflect"
 	unsafe "unsafe"
 )
@@ -236,6 +237,144 @@ func (x PropertyBehavior) Number() protoreflect.EnumNumber {
 	return protoreflect.EnumNumber(x)
 }
 
+type PropertyExpiryAction int32
+
+const (
+	PropertyExpiryAction_PROPERTY_EXPIRY_ACTION_UNSPECIFIED PropertyExpiryAction = 0
+	PropertyExpiryAction_PROPERTY_EXPIRY_ACTION_CLEAR_VALUE PropertyExpiryAction = 1
+)
+
+// Enum value maps for PropertyExpiryAction.
+var (
+	PropertyExpiryAction_name = map[int32]string{
+		0: "PROPERTY_EXPIRY_ACTION_UNSPECIFIED",
+		1: "PROPERTY_EXPIRY_ACTION_CLEAR_VALUE",
+	}
+	PropertyExpiryAction_value = map[string]int32{
+		"PROPERTY_EXPIRY_ACTION_UNSPECIFIED": 0,
+		"PROPERTY_EXPIRY_ACTION_CLEAR_VALUE": 1,
+	}
+)
+
+func (x PropertyExpiryAction) Enum() *PropertyExpiryAction {
+	p := new(PropertyExpiryAction)
+	*p = x
+	return p
+}
+
+func (x PropertyExpiryAction) String() string {
+	return protoimpl.X.EnumStringOf(x.Descriptor(), protoreflect.EnumNumber(x))
+}
+
+func (PropertyExpiryAction) Descriptor() protoreflect.EnumDescriptor {
+	return file_resources_properties_properties_proto_enumTypes[4].Descriptor()
+}
+
+func (PropertyExpiryAction) Type() protoreflect.EnumType {
+	return &file_resources_properties_properties_proto_enumTypes[4]
+}
+
+func (x PropertyExpiryAction) Number() protoreflect.EnumNumber {
+	return protoreflect.EnumNumber(x)
+}
+
+// PropertyReasonMode controls the per-property rationale supplied with a
+// mutation. The server treats UNSPECIFIED as REQUIRED for compatibility with
+// omitted configuration.
+type PropertyReasonMode int32
+
+const (
+	PropertyReasonMode_PROPERTY_REASON_MODE_UNSPECIFIED PropertyReasonMode = 0
+	PropertyReasonMode_PROPERTY_REASON_MODE_REQUIRED    PropertyReasonMode = 1
+	PropertyReasonMode_PROPERTY_REASON_MODE_OPTIONAL    PropertyReasonMode = 2
+	PropertyReasonMode_PROPERTY_REASON_MODE_NONE        PropertyReasonMode = 3
+)
+
+// Enum value maps for PropertyReasonMode.
+var (
+	PropertyReasonMode_name = map[int32]string{
+		0: "PROPERTY_REASON_MODE_UNSPECIFIED",
+		1: "PROPERTY_REASON_MODE_REQUIRED",
+		2: "PROPERTY_REASON_MODE_OPTIONAL",
+		3: "PROPERTY_REASON_MODE_NONE",
+	}
+	PropertyReasonMode_value = map[string]int32{
+		"PROPERTY_REASON_MODE_UNSPECIFIED": 0,
+		"PROPERTY_REASON_MODE_REQUIRED":    1,
+		"PROPERTY_REASON_MODE_OPTIONAL":    2,
+		"PROPERTY_REASON_MODE_NONE":        3,
+	}
+)
+
+func (x PropertyReasonMode) Enum() *PropertyReasonMode {
+	p := new(PropertyReasonMode)
+	*p = x
+	return p
+}
+
+func (x PropertyReasonMode) String() string {
+	return protoimpl.X.EnumStringOf(x.Descriptor(), protoreflect.EnumNumber(x))
+}
+
+func (PropertyReasonMode) Descriptor() protoreflect.EnumDescriptor {
+	return file_resources_properties_properties_proto_enumTypes[5].Descriptor()
+}
+
+func (PropertyReasonMode) Type() protoreflect.EnumType {
+	return &file_resources_properties_properties_proto_enumTypes[5]
+}
+
+func (x PropertyReasonMode) Number() protoreflect.EnumNumber {
+	return protoreflect.EnumNumber(x)
+}
+
+type PropertyStringAllowedValuesMode int32
+
+const (
+	PropertyStringAllowedValuesMode_PROPERTY_STRING_ALLOWED_VALUES_MODE_UNSPECIFIED PropertyStringAllowedValuesMode = 0
+	// The list is presented as a convenience, but callers may enter another
+	// value as long as it meets the remaining string constraints.
+	PropertyStringAllowedValuesMode_PROPERTY_STRING_ALLOWED_VALUES_MODE_SUGGEST PropertyStringAllowedValuesMode = 1
+	// The value must exactly match one entry in string_allowed_values.
+	PropertyStringAllowedValuesMode_PROPERTY_STRING_ALLOWED_VALUES_MODE_STRICT PropertyStringAllowedValuesMode = 2
+)
+
+// Enum value maps for PropertyStringAllowedValuesMode.
+var (
+	PropertyStringAllowedValuesMode_name = map[int32]string{
+		0: "PROPERTY_STRING_ALLOWED_VALUES_MODE_UNSPECIFIED",
+		1: "PROPERTY_STRING_ALLOWED_VALUES_MODE_SUGGEST",
+		2: "PROPERTY_STRING_ALLOWED_VALUES_MODE_STRICT",
+	}
+	PropertyStringAllowedValuesMode_value = map[string]int32{
+		"PROPERTY_STRING_ALLOWED_VALUES_MODE_UNSPECIFIED": 0,
+		"PROPERTY_STRING_ALLOWED_VALUES_MODE_SUGGEST":     1,
+		"PROPERTY_STRING_ALLOWED_VALUES_MODE_STRICT":      2,
+	}
+)
+
+func (x PropertyStringAllowedValuesMode) Enum() *PropertyStringAllowedValuesMode {
+	p := new(PropertyStringAllowedValuesMode)
+	*p = x
+	return p
+}
+
+func (x PropertyStringAllowedValuesMode) String() string {
+	return protoimpl.X.EnumStringOf(x.Descriptor(), protoreflect.EnumNumber(x))
+}
+
+func (PropertyStringAllowedValuesMode) Descriptor() protoreflect.EnumDescriptor {
+	return file_resources_properties_properties_proto_enumTypes[6].Descriptor()
+}
+
+func (PropertyStringAllowedValuesMode) Type() protoreflect.EnumType {
+	return &file_resources_properties_properties_proto_enumTypes[6]
+}
+
+func (x PropertyStringAllowedValuesMode) Number() protoreflect.EnumNumber {
+	return protoreflect.EnumNumber(x)
+}
+
 type PropertyDefinitionSource int32
 
 const (
@@ -272,11 +411,11 @@ func (x PropertyDefinitionSource) String() string {
 }
 
 func (PropertyDefinitionSource) Descriptor() protoreflect.EnumDescriptor {
-	return file_resources_properties_properties_proto_enumTypes[4].Descriptor()
+	return file_resources_properties_properties_proto_enumTypes[7].Descriptor()
 }
 
 func (PropertyDefinitionSource) Type() protoreflect.EnumType {
-	return &file_resources_properties_properties_proto_enumTypes[4]
+	return &file_resources_properties_properties_proto_enumTypes[7]
 }
 
 func (x PropertyDefinitionSource) Number() protoreflect.EnumNumber {
@@ -352,11 +491,11 @@ func (x PropertyRenderer) String() string {
 }
 
 func (PropertyRenderer) Descriptor() protoreflect.EnumDescriptor {
-	return file_resources_properties_properties_proto_enumTypes[5].Descriptor()
+	return file_resources_properties_properties_proto_enumTypes[8].Descriptor()
 }
 
 func (PropertyRenderer) Type() protoreflect.EnumType {
-	return &file_resources_properties_properties_proto_enumTypes[5]
+	return &file_resources_properties_properties_proto_enumTypes[8]
 }
 
 func (x PropertyRenderer) Number() protoreflect.EnumNumber {
@@ -401,11 +540,11 @@ func (x PropertyDisplayMode) String() string {
 }
 
 func (PropertyDisplayMode) Descriptor() protoreflect.EnumDescriptor {
-	return file_resources_properties_properties_proto_enumTypes[6].Descriptor()
+	return file_resources_properties_properties_proto_enumTypes[9].Descriptor()
 }
 
 func (PropertyDisplayMode) Type() protoreflect.EnumType {
-	return &file_resources_properties_properties_proto_enumTypes[6]
+	return &file_resources_properties_properties_proto_enumTypes[9]
 }
 
 func (x PropertyDisplayMode) Number() protoreflect.EnumNumber {
@@ -460,11 +599,11 @@ func (x PropertyFilterOperation) String() string {
 }
 
 func (PropertyFilterOperation) Descriptor() protoreflect.EnumDescriptor {
-	return file_resources_properties_properties_proto_enumTypes[7].Descriptor()
+	return file_resources_properties_properties_proto_enumTypes[10].Descriptor()
 }
 
 func (PropertyFilterOperation) Type() protoreflect.EnumType {
-	return &file_resources_properties_properties_proto_enumTypes[7]
+	return &file_resources_properties_properties_proto_enumTypes[10]
 }
 
 func (x PropertyFilterOperation) Number() protoreflect.EnumNumber {
@@ -898,6 +1037,7 @@ type Property struct {
 	xxx_hidden_Value      *PropertyValue         `protobuf:"bytes,2,opt,name=value,proto3,oneof"`
 	xxx_hidden_UpdatedAt  *timestamp.Timestamp   `protobuf:"bytes,3,opt,name=updated_at,json=updatedAt,proto3,oneof"`
 	xxx_hidden_Definition *PropertyDefinition    `protobuf:"bytes,4,opt,name=definition,proto3,oneof"`
+	xxx_hidden_State      *PropertyState         `protobuf:"bytes,5,opt,name=state,proto3,oneof"`
 	unknownFields         protoimpl.UnknownFields
 	sizeCache             protoimpl.SizeCache
 }
@@ -955,6 +1095,13 @@ func (x *Property) GetDefinition() *PropertyDefinition {
 	return nil
 }
 
+func (x *Property) GetState() *PropertyState {
+	if x != nil {
+		return x.xxx_hidden_State
+	}
+	return nil
+}
+
 func (x *Property) SetKey(v string) {
 	x.xxx_hidden_Key = v
 }
@@ -969,6 +1116,10 @@ func (x *Property) SetUpdatedAt(v *timestamp.Timestamp) {
 
 func (x *Property) SetDefinition(v *PropertyDefinition) {
 	x.xxx_hidden_Definition = v
+}
+
+func (x *Property) SetState(v *PropertyState) {
+	x.xxx_hidden_State = v
 }
 
 func (x *Property) HasValue() bool {
@@ -992,6 +1143,13 @@ func (x *Property) HasDefinition() bool {
 	return x.xxx_hidden_Definition != nil
 }
 
+func (x *Property) HasState() bool {
+	if x == nil {
+		return false
+	}
+	return x.xxx_hidden_State != nil
+}
+
 func (x *Property) ClearValue() {
 	x.xxx_hidden_Value = nil
 }
@@ -1002,6 +1160,10 @@ func (x *Property) ClearUpdatedAt() {
 
 func (x *Property) ClearDefinition() {
 	x.xxx_hidden_Definition = nil
+}
+
+func (x *Property) ClearState() {
+	x.xxx_hidden_State = nil
 }
 
 type Property_builder struct {
@@ -1016,6 +1178,7 @@ type Property_builder struct {
 	UpdatedAt *timestamp.Timestamp
 	// Resolved definition metadata for detail/profile renderers.
 	Definition *PropertyDefinition
+	State      *PropertyState
 }
 
 func (b0 Property_builder) Build() *Property {
@@ -1026,32 +1189,40 @@ func (b0 Property_builder) Build() *Property {
 	x.xxx_hidden_Value = b.Value
 	x.xxx_hidden_UpdatedAt = b.UpdatedAt
 	x.xxx_hidden_Definition = b.Definition
+	x.xxx_hidden_State = b.State
 	return m0
 }
 
-// PropertyChange updates a generic scalar property. An absent value clears it.
-type PropertyChange struct {
-	state            protoimpl.MessageState `protogen:"opaque.v1"`
-	xxx_hidden_Key   string                 `protobuf:"bytes,1,opt,name=key,proto3"`
-	xxx_hidden_Value *PropertyValue         `protobuf:"bytes,2,opt,name=value,proto3,oneof"`
-	unknownFields    protoimpl.UnknownFields
-	sizeCache        protoimpl.SizeCache
+// PropertyState is lifecycle metadata associated with a state-enabled property.
+// key is redundant when embedded in Property, but permits independent state
+// records to remain self-describing.
+type PropertyState struct {
+	state                  protoimpl.MessageState `protogen:"opaque.v1"`
+	xxx_hidden_Key         *string                `protobuf:"bytes,1,opt,name=key,proto3,oneof"`
+	xxx_hidden_Reason      *string                `protobuf:"bytes,2,opt,name=reason,proto3,oneof"`
+	xxx_hidden_ActiveAt    *timestamp.Timestamp   `protobuf:"bytes,3,opt,name=active_at,json=activeAt,proto3,oneof"`
+	xxx_hidden_ExpiresAt   *timestamp.Timestamp   `protobuf:"bytes,4,opt,name=expires_at,json=expiresAt,proto3,oneof"`
+	xxx_hidden_UpdatedAt   *timestamp.Timestamp   `protobuf:"bytes,5,opt,name=updated_at,json=updatedAt,proto3,oneof"`
+	XXX_raceDetectHookData protoimpl.RaceDetectHookData
+	XXX_presence           [1]uint32
+	unknownFields          protoimpl.UnknownFields
+	sizeCache              protoimpl.SizeCache
 }
 
-func (x *PropertyChange) Reset() {
-	*x = PropertyChange{}
+func (x *PropertyState) Reset() {
+	*x = PropertyState{}
 	mi := &file_resources_properties_properties_proto_msgTypes[3]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *PropertyChange) String() string {
+func (x *PropertyState) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*PropertyChange) ProtoMessage() {}
+func (*PropertyState) ProtoMessage() {}
 
-func (x *PropertyChange) ProtoReflect() protoreflect.Message {
+func (x *PropertyState) ProtoReflect() protoreflect.Message {
 	mi := &file_resources_properties_properties_proto_msgTypes[3]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -1063,54 +1234,606 @@ func (x *PropertyChange) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-func (x *PropertyChange) GetKey() string {
+func (x *PropertyState) GetKey() string {
+	if x != nil {
+		if x.xxx_hidden_Key != nil {
+			return *x.xxx_hidden_Key
+		}
+		return ""
+	}
+	return ""
+}
+
+func (x *PropertyState) GetReason() string {
+	if x != nil {
+		if x.xxx_hidden_Reason != nil {
+			return *x.xxx_hidden_Reason
+		}
+		return ""
+	}
+	return ""
+}
+
+func (x *PropertyState) GetActiveAt() *timestamp.Timestamp {
+	if x != nil {
+		return x.xxx_hidden_ActiveAt
+	}
+	return nil
+}
+
+func (x *PropertyState) GetExpiresAt() *timestamp.Timestamp {
+	if x != nil {
+		return x.xxx_hidden_ExpiresAt
+	}
+	return nil
+}
+
+func (x *PropertyState) GetUpdatedAt() *timestamp.Timestamp {
+	if x != nil {
+		return x.xxx_hidden_UpdatedAt
+	}
+	return nil
+}
+
+func (x *PropertyState) SetKey(v string) {
+	x.xxx_hidden_Key = &v
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 0, 5)
+}
+
+func (x *PropertyState) SetReason(v string) {
+	x.xxx_hidden_Reason = &v
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 1, 5)
+}
+
+func (x *PropertyState) SetActiveAt(v *timestamp.Timestamp) {
+	x.xxx_hidden_ActiveAt = v
+}
+
+func (x *PropertyState) SetExpiresAt(v *timestamp.Timestamp) {
+	x.xxx_hidden_ExpiresAt = v
+}
+
+func (x *PropertyState) SetUpdatedAt(v *timestamp.Timestamp) {
+	x.xxx_hidden_UpdatedAt = v
+}
+
+func (x *PropertyState) HasKey() bool {
+	if x == nil {
+		return false
+	}
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 0)
+}
+
+func (x *PropertyState) HasReason() bool {
+	if x == nil {
+		return false
+	}
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 1)
+}
+
+func (x *PropertyState) HasActiveAt() bool {
+	if x == nil {
+		return false
+	}
+	return x.xxx_hidden_ActiveAt != nil
+}
+
+func (x *PropertyState) HasExpiresAt() bool {
+	if x == nil {
+		return false
+	}
+	return x.xxx_hidden_ExpiresAt != nil
+}
+
+func (x *PropertyState) HasUpdatedAt() bool {
+	if x == nil {
+		return false
+	}
+	return x.xxx_hidden_UpdatedAt != nil
+}
+
+func (x *PropertyState) ClearKey() {
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 0)
+	x.xxx_hidden_Key = nil
+}
+
+func (x *PropertyState) ClearReason() {
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 1)
+	x.xxx_hidden_Reason = nil
+}
+
+func (x *PropertyState) ClearActiveAt() {
+	x.xxx_hidden_ActiveAt = nil
+}
+
+func (x *PropertyState) ClearExpiresAt() {
+	x.xxx_hidden_ExpiresAt = nil
+}
+
+func (x *PropertyState) ClearUpdatedAt() {
+	x.xxx_hidden_UpdatedAt = nil
+}
+
+type PropertyState_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Key       *string
+	Reason    *string
+	ActiveAt  *timestamp.Timestamp
+	ExpiresAt *timestamp.Timestamp
+	UpdatedAt *timestamp.Timestamp
+}
+
+func (b0 PropertyState_builder) Build() *PropertyState {
+	m0 := &PropertyState{}
+	b, x := &b0, m0
+	_, _ = b, x
+	if b.Key != nil {
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 0, 5)
+		x.xxx_hidden_Key = b.Key
+	}
+	if b.Reason != nil {
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 1, 5)
+		x.xxx_hidden_Reason = b.Reason
+	}
+	x.xxx_hidden_ActiveAt = b.ActiveAt
+	x.xxx_hidden_ExpiresAt = b.ExpiresAt
+	x.xxx_hidden_UpdatedAt = b.UpdatedAt
+	return m0
+}
+
+// PropertyMutation is the sole scalar and lifecycle property write contract.
+// Omitting value_change means this is a state-only mutation.
+type PropertyMutation struct {
+	state                  protoimpl.MessageState         `protogen:"opaque.v1"`
+	xxx_hidden_Key         string                         `protobuf:"bytes,1,opt,name=key,proto3"`
+	xxx_hidden_ValueChange isPropertyMutation_ValueChange `protobuf_oneof:"value_change"`
+	xxx_hidden_State       *PropertyStatePatch            `protobuf:"bytes,4,opt,name=state,proto3,oneof"`
+	xxx_hidden_Reason      *string                        `protobuf:"bytes,5,opt,name=reason,proto3,oneof"`
+	xxx_hidden_ClearReason bool                           `protobuf:"varint,6,opt,name=clear_reason,json=clearReason,proto3,oneof"`
+	XXX_raceDetectHookData protoimpl.RaceDetectHookData
+	XXX_presence           [1]uint32
+	unknownFields          protoimpl.UnknownFields
+	sizeCache              protoimpl.SizeCache
+}
+
+func (x *PropertyMutation) Reset() {
+	*x = PropertyMutation{}
+	mi := &file_resources_properties_properties_proto_msgTypes[4]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *PropertyMutation) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*PropertyMutation) ProtoMessage() {}
+
+func (x *PropertyMutation) ProtoReflect() protoreflect.Message {
+	mi := &file_resources_properties_properties_proto_msgTypes[4]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+func (x *PropertyMutation) GetKey() string {
 	if x != nil {
 		return x.xxx_hidden_Key
 	}
 	return ""
 }
 
-func (x *PropertyChange) GetValue() *PropertyValue {
+func (x *PropertyMutation) GetSetValue() *PropertyValue {
 	if x != nil {
-		return x.xxx_hidden_Value
+		if x, ok := x.xxx_hidden_ValueChange.(*propertyMutation_SetValue); ok {
+			return x.SetValue
+		}
 	}
 	return nil
 }
 
-func (x *PropertyChange) SetKey(v string) {
+func (x *PropertyMutation) GetClearValue() *emptypb.Empty {
+	if x != nil {
+		if x, ok := x.xxx_hidden_ValueChange.(*propertyMutation_ClearValue); ok {
+			return x.ClearValue
+		}
+	}
+	return nil
+}
+
+func (x *PropertyMutation) GetState() *PropertyStatePatch {
+	if x != nil {
+		return x.xxx_hidden_State
+	}
+	return nil
+}
+
+func (x *PropertyMutation) GetReason() string {
+	if x != nil {
+		if x.xxx_hidden_Reason != nil {
+			return *x.xxx_hidden_Reason
+		}
+		return ""
+	}
+	return ""
+}
+
+func (x *PropertyMutation) GetClearReason() bool {
+	if x != nil {
+		return x.xxx_hidden_ClearReason
+	}
+	return false
+}
+
+func (x *PropertyMutation) SetKey(v string) {
 	x.xxx_hidden_Key = v
 }
 
-func (x *PropertyChange) SetValue(v *PropertyValue) {
-	x.xxx_hidden_Value = v
+func (x *PropertyMutation) SetSetValue(v *PropertyValue) {
+	if v == nil {
+		x.xxx_hidden_ValueChange = nil
+		return
+	}
+	x.xxx_hidden_ValueChange = &propertyMutation_SetValue{v}
 }
 
-func (x *PropertyChange) HasValue() bool {
+func (x *PropertyMutation) SetClearValue(v *emptypb.Empty) {
+	if v == nil {
+		x.xxx_hidden_ValueChange = nil
+		return
+	}
+	x.xxx_hidden_ValueChange = &propertyMutation_ClearValue{v}
+}
+
+func (x *PropertyMutation) SetState(v *PropertyStatePatch) {
+	x.xxx_hidden_State = v
+}
+
+func (x *PropertyMutation) SetReason(v string) {
+	x.xxx_hidden_Reason = &v
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 3, 5)
+}
+
+func (x *PropertyMutation) SetClearReason(v bool) {
+	x.xxx_hidden_ClearReason = v
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 4, 5)
+}
+
+func (x *PropertyMutation) HasValueChange() bool {
 	if x == nil {
 		return false
 	}
-	return x.xxx_hidden_Value != nil
+	return x.xxx_hidden_ValueChange != nil
 }
 
-func (x *PropertyChange) ClearValue() {
-	x.xxx_hidden_Value = nil
+func (x *PropertyMutation) HasSetValue() bool {
+	if x == nil {
+		return false
+	}
+	_, ok := x.xxx_hidden_ValueChange.(*propertyMutation_SetValue)
+	return ok
 }
 
-type PropertyChange_builder struct {
+func (x *PropertyMutation) HasClearValue() bool {
+	if x == nil {
+		return false
+	}
+	_, ok := x.xxx_hidden_ValueChange.(*propertyMutation_ClearValue)
+	return ok
+}
+
+func (x *PropertyMutation) HasState() bool {
+	if x == nil {
+		return false
+	}
+	return x.xxx_hidden_State != nil
+}
+
+func (x *PropertyMutation) HasReason() bool {
+	if x == nil {
+		return false
+	}
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 3)
+}
+
+func (x *PropertyMutation) HasClearReason() bool {
+	if x == nil {
+		return false
+	}
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 4)
+}
+
+func (x *PropertyMutation) ClearValueChange() {
+	x.xxx_hidden_ValueChange = nil
+}
+
+func (x *PropertyMutation) ClearSetValue() {
+	if _, ok := x.xxx_hidden_ValueChange.(*propertyMutation_SetValue); ok {
+		x.xxx_hidden_ValueChange = nil
+	}
+}
+
+func (x *PropertyMutation) ClearClearValue() {
+	if _, ok := x.xxx_hidden_ValueChange.(*propertyMutation_ClearValue); ok {
+		x.xxx_hidden_ValueChange = nil
+	}
+}
+
+func (x *PropertyMutation) ClearState() {
+	x.xxx_hidden_State = nil
+}
+
+func (x *PropertyMutation) ClearReason() {
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 3)
+	x.xxx_hidden_Reason = nil
+}
+
+func (x *PropertyMutation) ClearClearReason() {
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 4)
+	x.xxx_hidden_ClearReason = false
+}
+
+const PropertyMutation_ValueChange_not_set_case case_PropertyMutation_ValueChange = 0
+const PropertyMutation_SetValue_case case_PropertyMutation_ValueChange = 2
+const PropertyMutation_ClearValue_case case_PropertyMutation_ValueChange = 3
+
+func (x *PropertyMutation) WhichValueChange() case_PropertyMutation_ValueChange {
+	if x == nil {
+		return PropertyMutation_ValueChange_not_set_case
+	}
+	switch x.xxx_hidden_ValueChange.(type) {
+	case *propertyMutation_SetValue:
+		return PropertyMutation_SetValue_case
+	case *propertyMutation_ClearValue:
+		return PropertyMutation_ClearValue_case
+	default:
+		return PropertyMutation_ValueChange_not_set_case
+	}
+}
+
+type PropertyMutation_builder struct {
 	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
 
-	Key   string
-	Value *PropertyValue
+	Key string
+	// Fields of oneof xxx_hidden_ValueChange:
+	SetValue   *PropertyValue
+	ClearValue *emptypb.Empty
+	// -- end of xxx_hidden_ValueChange
+	State *PropertyStatePatch
+	// The property-specific rationale/state reason. It is intentionally scoped
+	// to this mutation so batched edits can retain distinct reasons.
+	Reason *string
+	// Explicitly clears the persisted state reason. This is not a oneof because
+	// the sanitizer generator supports one oneof per message; validation
+	// rejects combining it with reason.
+	ClearReason *bool
 }
 
-func (b0 PropertyChange_builder) Build() *PropertyChange {
-	m0 := &PropertyChange{}
+func (b0 PropertyMutation_builder) Build() *PropertyMutation {
+	m0 := &PropertyMutation{}
 	b, x := &b0, m0
 	_, _ = b, x
 	x.xxx_hidden_Key = b.Key
-	x.xxx_hidden_Value = b.Value
+	if b.SetValue != nil {
+		x.xxx_hidden_ValueChange = &propertyMutation_SetValue{b.SetValue}
+	}
+	if b.ClearValue != nil {
+		x.xxx_hidden_ValueChange = &propertyMutation_ClearValue{b.ClearValue}
+	}
+	x.xxx_hidden_State = b.State
+	if b.Reason != nil {
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 3, 5)
+		x.xxx_hidden_Reason = b.Reason
+	}
+	if b.ClearReason != nil {
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 4, 5)
+		x.xxx_hidden_ClearReason = *b.ClearReason
+	}
 	return m0
 }
+
+type case_PropertyMutation_ValueChange protoreflect.FieldNumber
+
+func (x case_PropertyMutation_ValueChange) String() string {
+	md := file_resources_properties_properties_proto_msgTypes[4].Descriptor()
+	if x == 0 {
+		return "not set"
+	}
+	return protoimpl.X.MessageFieldStringOf(md, protoreflect.FieldNumber(x))
+}
+
+type isPropertyMutation_ValueChange interface {
+	isPropertyMutation_ValueChange()
+}
+
+type propertyMutation_SetValue struct {
+	SetValue *PropertyValue `protobuf:"bytes,2,opt,name=set_value,json=setValue,proto3,oneof"`
+}
+
+type propertyMutation_ClearValue struct {
+	ClearValue *emptypb.Empty `protobuf:"bytes,3,opt,name=clear_value,json=clearValue,proto3,oneof"`
+}
+
+func (*propertyMutation_SetValue) isPropertyMutation_ValueChange() {}
+
+func (*propertyMutation_ClearValue) isPropertyMutation_ValueChange() {}
+
+type PropertyStatePatch struct {
+	state                   protoimpl.MessageState            `protogen:"opaque.v1"`
+	xxx_hidden_ExpiryChange isPropertyStatePatch_ExpiryChange `protobuf_oneof:"expiry_change"`
+	unknownFields           protoimpl.UnknownFields
+	sizeCache               protoimpl.SizeCache
+}
+
+func (x *PropertyStatePatch) Reset() {
+	*x = PropertyStatePatch{}
+	mi := &file_resources_properties_properties_proto_msgTypes[5]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *PropertyStatePatch) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*PropertyStatePatch) ProtoMessage() {}
+
+func (x *PropertyStatePatch) ProtoReflect() protoreflect.Message {
+	mi := &file_resources_properties_properties_proto_msgTypes[5]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+func (x *PropertyStatePatch) GetExpiresAt() *timestamp.Timestamp {
+	if x != nil {
+		if x, ok := x.xxx_hidden_ExpiryChange.(*propertyStatePatch_ExpiresAt); ok {
+			return x.ExpiresAt
+		}
+	}
+	return nil
+}
+
+func (x *PropertyStatePatch) GetClearExpiry() *emptypb.Empty {
+	if x != nil {
+		if x, ok := x.xxx_hidden_ExpiryChange.(*propertyStatePatch_ClearExpiry); ok {
+			return x.ClearExpiry
+		}
+	}
+	return nil
+}
+
+func (x *PropertyStatePatch) SetExpiresAt(v *timestamp.Timestamp) {
+	if v == nil {
+		x.xxx_hidden_ExpiryChange = nil
+		return
+	}
+	x.xxx_hidden_ExpiryChange = &propertyStatePatch_ExpiresAt{v}
+}
+
+func (x *PropertyStatePatch) SetClearExpiry(v *emptypb.Empty) {
+	if v == nil {
+		x.xxx_hidden_ExpiryChange = nil
+		return
+	}
+	x.xxx_hidden_ExpiryChange = &propertyStatePatch_ClearExpiry{v}
+}
+
+func (x *PropertyStatePatch) HasExpiryChange() bool {
+	if x == nil {
+		return false
+	}
+	return x.xxx_hidden_ExpiryChange != nil
+}
+
+func (x *PropertyStatePatch) HasExpiresAt() bool {
+	if x == nil {
+		return false
+	}
+	_, ok := x.xxx_hidden_ExpiryChange.(*propertyStatePatch_ExpiresAt)
+	return ok
+}
+
+func (x *PropertyStatePatch) HasClearExpiry() bool {
+	if x == nil {
+		return false
+	}
+	_, ok := x.xxx_hidden_ExpiryChange.(*propertyStatePatch_ClearExpiry)
+	return ok
+}
+
+func (x *PropertyStatePatch) ClearExpiryChange() {
+	x.xxx_hidden_ExpiryChange = nil
+}
+
+func (x *PropertyStatePatch) ClearExpiresAt() {
+	if _, ok := x.xxx_hidden_ExpiryChange.(*propertyStatePatch_ExpiresAt); ok {
+		x.xxx_hidden_ExpiryChange = nil
+	}
+}
+
+func (x *PropertyStatePatch) ClearClearExpiry() {
+	if _, ok := x.xxx_hidden_ExpiryChange.(*propertyStatePatch_ClearExpiry); ok {
+		x.xxx_hidden_ExpiryChange = nil
+	}
+}
+
+const PropertyStatePatch_ExpiryChange_not_set_case case_PropertyStatePatch_ExpiryChange = 0
+const PropertyStatePatch_ExpiresAt_case case_PropertyStatePatch_ExpiryChange = 1
+const PropertyStatePatch_ClearExpiry_case case_PropertyStatePatch_ExpiryChange = 2
+
+func (x *PropertyStatePatch) WhichExpiryChange() case_PropertyStatePatch_ExpiryChange {
+	if x == nil {
+		return PropertyStatePatch_ExpiryChange_not_set_case
+	}
+	switch x.xxx_hidden_ExpiryChange.(type) {
+	case *propertyStatePatch_ExpiresAt:
+		return PropertyStatePatch_ExpiresAt_case
+	case *propertyStatePatch_ClearExpiry:
+		return PropertyStatePatch_ClearExpiry_case
+	default:
+		return PropertyStatePatch_ExpiryChange_not_set_case
+	}
+}
+
+type PropertyStatePatch_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	// Fields of oneof xxx_hidden_ExpiryChange:
+	ExpiresAt   *timestamp.Timestamp
+	ClearExpiry *emptypb.Empty
+	// -- end of xxx_hidden_ExpiryChange
+}
+
+func (b0 PropertyStatePatch_builder) Build() *PropertyStatePatch {
+	m0 := &PropertyStatePatch{}
+	b, x := &b0, m0
+	_, _ = b, x
+	if b.ExpiresAt != nil {
+		x.xxx_hidden_ExpiryChange = &propertyStatePatch_ExpiresAt{b.ExpiresAt}
+	}
+	if b.ClearExpiry != nil {
+		x.xxx_hidden_ExpiryChange = &propertyStatePatch_ClearExpiry{b.ClearExpiry}
+	}
+	return m0
+}
+
+type case_PropertyStatePatch_ExpiryChange protoreflect.FieldNumber
+
+func (x case_PropertyStatePatch_ExpiryChange) String() string {
+	md := file_resources_properties_properties_proto_msgTypes[5].Descriptor()
+	if x == 0 {
+		return "not set"
+	}
+	return protoimpl.X.MessageFieldStringOf(md, protoreflect.FieldNumber(x))
+}
+
+type isPropertyStatePatch_ExpiryChange interface {
+	isPropertyStatePatch_ExpiryChange()
+}
+
+type propertyStatePatch_ExpiresAt struct {
+	ExpiresAt *timestamp.Timestamp `protobuf:"bytes,1,opt,name=expires_at,json=expiresAt,proto3,oneof"`
+}
+
+type propertyStatePatch_ClearExpiry struct {
+	ClearExpiry *emptypb.Empty `protobuf:"bytes,2,opt,name=clear_expiry,json=clearExpiry,proto3,oneof"`
+}
+
+func (*propertyStatePatch_ExpiresAt) isPropertyStatePatch_ExpiryChange() {}
+
+func (*propertyStatePatch_ClearExpiry) isPropertyStatePatch_ExpiryChange() {}
 
 type Properties struct {
 	state                 protoimpl.MessageState `protogen:"opaque.v1"`
@@ -1122,7 +1845,7 @@ type Properties struct {
 
 func (x *Properties) Reset() {
 	*x = Properties{}
-	mi := &file_resources_properties_properties_proto_msgTypes[4]
+	mi := &file_resources_properties_properties_proto_msgTypes[6]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1134,7 +1857,7 @@ func (x *Properties) String() string {
 func (*Properties) ProtoMessage() {}
 
 func (x *Properties) ProtoReflect() protoreflect.Message {
-	mi := &file_resources_properties_properties_proto_msgTypes[4]
+	mi := &file_resources_properties_properties_proto_msgTypes[6]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1188,40 +1911,487 @@ func (b0 Properties_builder) Build() *Properties {
 	return m0
 }
 
-type PropertyDefinition struct {
-	state                     protoimpl.MessageState   `protogen:"opaque.v1"`
-	xxx_hidden_Scope          PropertyScope            `protobuf:"varint,1,opt,name=scope,proto3,enum=resources.properties.PropertyScope"`
-	xxx_hidden_Key            string                   `protobuf:"bytes,2,opt,name=key,proto3"`
-	xxx_hidden_ValueType      PropertyValueType        `protobuf:"varint,3,opt,name=value_type,json=valueType,proto3,enum=resources.properties.PropertyValueType"`
-	xxx_hidden_Source         PropertyDefinitionSource `protobuf:"varint,4,opt,name=source,proto3,enum=resources.properties.PropertyDefinitionSource"`
-	xxx_hidden_Enabled        bool                     `protobuf:"varint,5,opt,name=enabled,proto3"`
-	xxx_hidden_DisplayKey     string                   `protobuf:"bytes,6,opt,name=display_key,json=displayKey,proto3"`
-	xxx_hidden_Label          string                   `protobuf:"bytes,7,opt,name=label,proto3"`
-	xxx_hidden_Description    *string                  `protobuf:"bytes,8,opt,name=description,proto3,oneof"`
-	xxx_hidden_Searchable     bool                     `protobuf:"varint,9,opt,name=searchable,proto3"`
-	xxx_hidden_ValueFormat    PropertyValueFormat      `protobuf:"varint,10,opt,name=value_format,json=valueFormat,proto3,enum=resources.properties.PropertyValueFormat"`
-	xxx_hidden_Behavior       PropertyBehavior         `protobuf:"varint,11,opt,name=behavior,proto3,enum=resources.properties.PropertyBehavior"`
-	xxx_hidden_Renderer       PropertyRenderer         `protobuf:"varint,19,opt,name=renderer,proto3,enum=resources.properties.PropertyRenderer"`
-	xxx_hidden_Unit           *string                  `protobuf:"bytes,12,opt,name=unit,proto3,oneof"`
-	xxx_hidden_DecimalPlaces  uint32                   `protobuf:"varint,13,opt,name=decimal_places,json=decimalPlaces,proto3,oneof"`
-	xxx_hidden_Currency       *string                  `protobuf:"bytes,14,opt,name=currency,proto3,oneof"`
-	xxx_hidden_DeletedAt      *timestamp.Timestamp     `protobuf:"bytes,15,opt,name=deleted_at,json=deletedAt,proto3,oneof"`
-	xxx_hidden_GroupKey       string                   `protobuf:"bytes,16,opt,name=group_key,json=groupKey,proto3"`
-	xxx_hidden_SortOrder      int32                    `protobuf:"varint,17,opt,name=sort_order,json=sortOrder,proto3"`
-	xxx_hidden_GroupSortOrder int32                    `protobuf:"varint,22,opt,name=group_sort_order,json=groupSortOrder,proto3"`
-	xxx_hidden_Pinned         bool                     `protobuf:"varint,18,opt,name=pinned,proto3"`
-	xxx_hidden_RendererConfig *PropertyRendererConfig  `protobuf:"bytes,20,opt,name=renderer_config,json=rendererConfig,proto3,oneof"`
-	xxx_hidden_DisplayMode    PropertyDisplayMode      `protobuf:"varint,21,opt,name=display_mode,json=displayMode,proto3,enum=resources.properties.PropertyDisplayMode"`
-	xxx_hidden_Implicit       bool                     `protobuf:"varint,23,opt,name=implicit,proto3"`
-	XXX_raceDetectHookData    protoimpl.RaceDetectHookData
-	XXX_presence              [1]uint32
+type PropertyStatePolicy struct {
+	state                     protoimpl.MessageState `protogen:"opaque.v1"`
+	xxx_hidden_Enabled        bool                   `protobuf:"varint,1,opt,name=enabled,proto3"`
+	xxx_hidden_SupportsExpiry bool                   `protobuf:"varint,2,opt,name=supports_expiry,json=supportsExpiry,proto3"`
+	xxx_hidden_ExpiryAction   PropertyExpiryAction   `protobuf:"varint,3,opt,name=expiry_action,json=expiryAction,proto3,enum=resources.properties.PropertyExpiryAction"`
 	unknownFields             protoimpl.UnknownFields
 	sizeCache                 protoimpl.SizeCache
 }
 
+func (x *PropertyStatePolicy) Reset() {
+	*x = PropertyStatePolicy{}
+	mi := &file_resources_properties_properties_proto_msgTypes[7]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *PropertyStatePolicy) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*PropertyStatePolicy) ProtoMessage() {}
+
+func (x *PropertyStatePolicy) ProtoReflect() protoreflect.Message {
+	mi := &file_resources_properties_properties_proto_msgTypes[7]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+func (x *PropertyStatePolicy) GetEnabled() bool {
+	if x != nil {
+		return x.xxx_hidden_Enabled
+	}
+	return false
+}
+
+func (x *PropertyStatePolicy) GetSupportsExpiry() bool {
+	if x != nil {
+		return x.xxx_hidden_SupportsExpiry
+	}
+	return false
+}
+
+func (x *PropertyStatePolicy) GetExpiryAction() PropertyExpiryAction {
+	if x != nil {
+		return x.xxx_hidden_ExpiryAction
+	}
+	return PropertyExpiryAction_PROPERTY_EXPIRY_ACTION_UNSPECIFIED
+}
+
+func (x *PropertyStatePolicy) SetEnabled(v bool) {
+	x.xxx_hidden_Enabled = v
+}
+
+func (x *PropertyStatePolicy) SetSupportsExpiry(v bool) {
+	x.xxx_hidden_SupportsExpiry = v
+}
+
+func (x *PropertyStatePolicy) SetExpiryAction(v PropertyExpiryAction) {
+	x.xxx_hidden_ExpiryAction = v
+}
+
+type PropertyStatePolicy_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Enabled        bool
+	SupportsExpiry bool
+	ExpiryAction   PropertyExpiryAction
+}
+
+func (b0 PropertyStatePolicy_builder) Build() *PropertyStatePolicy {
+	m0 := &PropertyStatePolicy{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.xxx_hidden_Enabled = b.Enabled
+	x.xxx_hidden_SupportsExpiry = b.SupportsExpiry
+	x.xxx_hidden_ExpiryAction = b.ExpiryAction
+	return m0
+}
+
+// PropertyValueConstraints narrows the accepted scalar values for a custom
+// definition. Only fields compatible with the definition's value_type may be
+// populated. Constraints never rewrite existing stored values.
+type PropertyValueConstraints struct {
+	state                              protoimpl.MessageState          `protogen:"opaque.v1"`
+	xxx_hidden_StringMinLength         uint32                          `protobuf:"varint,1,opt,name=string_min_length,json=stringMinLength,proto3,oneof"`
+	xxx_hidden_StringMaxLength         uint32                          `protobuf:"varint,2,opt,name=string_max_length,json=stringMaxLength,proto3,oneof"`
+	xxx_hidden_StringAllowedValues     []string                        `protobuf:"bytes,3,rep,name=string_allowed_values,json=stringAllowedValues,proto3"`
+	xxx_hidden_IntegerMin              int64                           `protobuf:"varint,4,opt,name=integer_min,json=integerMin,proto3,oneof"`
+	xxx_hidden_IntegerMax              int64                           `protobuf:"varint,5,opt,name=integer_max,json=integerMax,proto3,oneof"`
+	xxx_hidden_NumberMin               float64                         `protobuf:"fixed64,6,opt,name=number_min,json=numberMin,proto3,oneof"`
+	xxx_hidden_NumberMax               float64                         `protobuf:"fixed64,7,opt,name=number_max,json=numberMax,proto3,oneof"`
+	xxx_hidden_TimestampMin            *timestamp.Timestamp            `protobuf:"bytes,8,opt,name=timestamp_min,json=timestampMin,proto3,oneof"`
+	xxx_hidden_TimestampMax            *timestamp.Timestamp            `protobuf:"bytes,9,opt,name=timestamp_max,json=timestampMax,proto3,oneof"`
+	xxx_hidden_DateMin                 *LocalDate                      `protobuf:"bytes,10,opt,name=date_min,json=dateMin,proto3,oneof"`
+	xxx_hidden_DateMax                 *LocalDate                      `protobuf:"bytes,11,opt,name=date_max,json=dateMax,proto3,oneof"`
+	xxx_hidden_StringAllowedValuesMode PropertyStringAllowedValuesMode `protobuf:"varint,12,opt,name=string_allowed_values_mode,json=stringAllowedValuesMode,proto3,enum=resources.properties.PropertyStringAllowedValuesMode"`
+	XXX_raceDetectHookData             protoimpl.RaceDetectHookData
+	XXX_presence                       [1]uint32
+	unknownFields                      protoimpl.UnknownFields
+	sizeCache                          protoimpl.SizeCache
+}
+
+func (x *PropertyValueConstraints) Reset() {
+	*x = PropertyValueConstraints{}
+	mi := &file_resources_properties_properties_proto_msgTypes[8]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *PropertyValueConstraints) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*PropertyValueConstraints) ProtoMessage() {}
+
+func (x *PropertyValueConstraints) ProtoReflect() protoreflect.Message {
+	mi := &file_resources_properties_properties_proto_msgTypes[8]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+func (x *PropertyValueConstraints) GetStringMinLength() uint32 {
+	if x != nil {
+		return x.xxx_hidden_StringMinLength
+	}
+	return 0
+}
+
+func (x *PropertyValueConstraints) GetStringMaxLength() uint32 {
+	if x != nil {
+		return x.xxx_hidden_StringMaxLength
+	}
+	return 0
+}
+
+func (x *PropertyValueConstraints) GetStringAllowedValues() []string {
+	if x != nil {
+		return x.xxx_hidden_StringAllowedValues
+	}
+	return nil
+}
+
+func (x *PropertyValueConstraints) GetIntegerMin() int64 {
+	if x != nil {
+		return x.xxx_hidden_IntegerMin
+	}
+	return 0
+}
+
+func (x *PropertyValueConstraints) GetIntegerMax() int64 {
+	if x != nil {
+		return x.xxx_hidden_IntegerMax
+	}
+	return 0
+}
+
+func (x *PropertyValueConstraints) GetNumberMin() float64 {
+	if x != nil {
+		return x.xxx_hidden_NumberMin
+	}
+	return 0
+}
+
+func (x *PropertyValueConstraints) GetNumberMax() float64 {
+	if x != nil {
+		return x.xxx_hidden_NumberMax
+	}
+	return 0
+}
+
+func (x *PropertyValueConstraints) GetTimestampMin() *timestamp.Timestamp {
+	if x != nil {
+		return x.xxx_hidden_TimestampMin
+	}
+	return nil
+}
+
+func (x *PropertyValueConstraints) GetTimestampMax() *timestamp.Timestamp {
+	if x != nil {
+		return x.xxx_hidden_TimestampMax
+	}
+	return nil
+}
+
+func (x *PropertyValueConstraints) GetDateMin() *LocalDate {
+	if x != nil {
+		return x.xxx_hidden_DateMin
+	}
+	return nil
+}
+
+func (x *PropertyValueConstraints) GetDateMax() *LocalDate {
+	if x != nil {
+		return x.xxx_hidden_DateMax
+	}
+	return nil
+}
+
+func (x *PropertyValueConstraints) GetStringAllowedValuesMode() PropertyStringAllowedValuesMode {
+	if x != nil {
+		return x.xxx_hidden_StringAllowedValuesMode
+	}
+	return PropertyStringAllowedValuesMode_PROPERTY_STRING_ALLOWED_VALUES_MODE_UNSPECIFIED
+}
+
+func (x *PropertyValueConstraints) SetStringMinLength(v uint32) {
+	x.xxx_hidden_StringMinLength = v
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 0, 12)
+}
+
+func (x *PropertyValueConstraints) SetStringMaxLength(v uint32) {
+	x.xxx_hidden_StringMaxLength = v
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 1, 12)
+}
+
+func (x *PropertyValueConstraints) SetStringAllowedValues(v []string) {
+	x.xxx_hidden_StringAllowedValues = v
+}
+
+func (x *PropertyValueConstraints) SetIntegerMin(v int64) {
+	x.xxx_hidden_IntegerMin = v
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 3, 12)
+}
+
+func (x *PropertyValueConstraints) SetIntegerMax(v int64) {
+	x.xxx_hidden_IntegerMax = v
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 4, 12)
+}
+
+func (x *PropertyValueConstraints) SetNumberMin(v float64) {
+	x.xxx_hidden_NumberMin = v
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 5, 12)
+}
+
+func (x *PropertyValueConstraints) SetNumberMax(v float64) {
+	x.xxx_hidden_NumberMax = v
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 6, 12)
+}
+
+func (x *PropertyValueConstraints) SetTimestampMin(v *timestamp.Timestamp) {
+	x.xxx_hidden_TimestampMin = v
+}
+
+func (x *PropertyValueConstraints) SetTimestampMax(v *timestamp.Timestamp) {
+	x.xxx_hidden_TimestampMax = v
+}
+
+func (x *PropertyValueConstraints) SetDateMin(v *LocalDate) {
+	x.xxx_hidden_DateMin = v
+}
+
+func (x *PropertyValueConstraints) SetDateMax(v *LocalDate) {
+	x.xxx_hidden_DateMax = v
+}
+
+func (x *PropertyValueConstraints) SetStringAllowedValuesMode(v PropertyStringAllowedValuesMode) {
+	x.xxx_hidden_StringAllowedValuesMode = v
+}
+
+func (x *PropertyValueConstraints) HasStringMinLength() bool {
+	if x == nil {
+		return false
+	}
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 0)
+}
+
+func (x *PropertyValueConstraints) HasStringMaxLength() bool {
+	if x == nil {
+		return false
+	}
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 1)
+}
+
+func (x *PropertyValueConstraints) HasIntegerMin() bool {
+	if x == nil {
+		return false
+	}
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 3)
+}
+
+func (x *PropertyValueConstraints) HasIntegerMax() bool {
+	if x == nil {
+		return false
+	}
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 4)
+}
+
+func (x *PropertyValueConstraints) HasNumberMin() bool {
+	if x == nil {
+		return false
+	}
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 5)
+}
+
+func (x *PropertyValueConstraints) HasNumberMax() bool {
+	if x == nil {
+		return false
+	}
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 6)
+}
+
+func (x *PropertyValueConstraints) HasTimestampMin() bool {
+	if x == nil {
+		return false
+	}
+	return x.xxx_hidden_TimestampMin != nil
+}
+
+func (x *PropertyValueConstraints) HasTimestampMax() bool {
+	if x == nil {
+		return false
+	}
+	return x.xxx_hidden_TimestampMax != nil
+}
+
+func (x *PropertyValueConstraints) HasDateMin() bool {
+	if x == nil {
+		return false
+	}
+	return x.xxx_hidden_DateMin != nil
+}
+
+func (x *PropertyValueConstraints) HasDateMax() bool {
+	if x == nil {
+		return false
+	}
+	return x.xxx_hidden_DateMax != nil
+}
+
+func (x *PropertyValueConstraints) ClearStringMinLength() {
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 0)
+	x.xxx_hidden_StringMinLength = 0
+}
+
+func (x *PropertyValueConstraints) ClearStringMaxLength() {
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 1)
+	x.xxx_hidden_StringMaxLength = 0
+}
+
+func (x *PropertyValueConstraints) ClearIntegerMin() {
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 3)
+	x.xxx_hidden_IntegerMin = 0
+}
+
+func (x *PropertyValueConstraints) ClearIntegerMax() {
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 4)
+	x.xxx_hidden_IntegerMax = 0
+}
+
+func (x *PropertyValueConstraints) ClearNumberMin() {
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 5)
+	x.xxx_hidden_NumberMin = 0
+}
+
+func (x *PropertyValueConstraints) ClearNumberMax() {
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 6)
+	x.xxx_hidden_NumberMax = 0
+}
+
+func (x *PropertyValueConstraints) ClearTimestampMin() {
+	x.xxx_hidden_TimestampMin = nil
+}
+
+func (x *PropertyValueConstraints) ClearTimestampMax() {
+	x.xxx_hidden_TimestampMax = nil
+}
+
+func (x *PropertyValueConstraints) ClearDateMin() {
+	x.xxx_hidden_DateMin = nil
+}
+
+func (x *PropertyValueConstraints) ClearDateMax() {
+	x.xxx_hidden_DateMax = nil
+}
+
+type PropertyValueConstraints_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	StringMinLength     *uint32
+	StringMaxLength     *uint32
+	StringAllowedValues []string
+	IntegerMin          *int64
+	IntegerMax          *int64
+	NumberMin           *float64
+	NumberMax           *float64
+	TimestampMin        *timestamp.Timestamp
+	TimestampMax        *timestamp.Timestamp
+	DateMin             *LocalDate
+	DateMax             *LocalDate
+	// The listed string values are either suggestions or an exhaustive set.
+	// UNSPECIFIED retains the legacy strict behavior for existing definitions.
+	StringAllowedValuesMode PropertyStringAllowedValuesMode
+}
+
+func (b0 PropertyValueConstraints_builder) Build() *PropertyValueConstraints {
+	m0 := &PropertyValueConstraints{}
+	b, x := &b0, m0
+	_, _ = b, x
+	if b.StringMinLength != nil {
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 0, 12)
+		x.xxx_hidden_StringMinLength = *b.StringMinLength
+	}
+	if b.StringMaxLength != nil {
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 1, 12)
+		x.xxx_hidden_StringMaxLength = *b.StringMaxLength
+	}
+	x.xxx_hidden_StringAllowedValues = b.StringAllowedValues
+	if b.IntegerMin != nil {
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 3, 12)
+		x.xxx_hidden_IntegerMin = *b.IntegerMin
+	}
+	if b.IntegerMax != nil {
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 4, 12)
+		x.xxx_hidden_IntegerMax = *b.IntegerMax
+	}
+	if b.NumberMin != nil {
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 5, 12)
+		x.xxx_hidden_NumberMin = *b.NumberMin
+	}
+	if b.NumberMax != nil {
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 6, 12)
+		x.xxx_hidden_NumberMax = *b.NumberMax
+	}
+	x.xxx_hidden_TimestampMin = b.TimestampMin
+	x.xxx_hidden_TimestampMax = b.TimestampMax
+	x.xxx_hidden_DateMin = b.DateMin
+	x.xxx_hidden_DateMax = b.DateMax
+	x.xxx_hidden_StringAllowedValuesMode = b.StringAllowedValuesMode
+	return m0
+}
+
+type PropertyDefinition struct {
+	state                       protoimpl.MessageState    `protogen:"opaque.v1"`
+	xxx_hidden_Scope            PropertyScope             `protobuf:"varint,1,opt,name=scope,proto3,enum=resources.properties.PropertyScope"`
+	xxx_hidden_Key              string                    `protobuf:"bytes,2,opt,name=key,proto3"`
+	xxx_hidden_ValueType        PropertyValueType         `protobuf:"varint,3,opt,name=value_type,json=valueType,proto3,enum=resources.properties.PropertyValueType"`
+	xxx_hidden_Source           PropertyDefinitionSource  `protobuf:"varint,4,opt,name=source,proto3,enum=resources.properties.PropertyDefinitionSource"`
+	xxx_hidden_Enabled          bool                      `protobuf:"varint,5,opt,name=enabled,proto3"`
+	xxx_hidden_DisplayKey       string                    `protobuf:"bytes,6,opt,name=display_key,json=displayKey,proto3"`
+	xxx_hidden_Label            string                    `protobuf:"bytes,7,opt,name=label,proto3"`
+	xxx_hidden_Description      *string                   `protobuf:"bytes,8,opt,name=description,proto3,oneof"`
+	xxx_hidden_Searchable       bool                      `protobuf:"varint,9,opt,name=searchable,proto3"`
+	xxx_hidden_ValueFormat      PropertyValueFormat       `protobuf:"varint,10,opt,name=value_format,json=valueFormat,proto3,enum=resources.properties.PropertyValueFormat"`
+	xxx_hidden_Behavior         PropertyBehavior          `protobuf:"varint,11,opt,name=behavior,proto3,enum=resources.properties.PropertyBehavior"`
+	xxx_hidden_Renderer         PropertyRenderer          `protobuf:"varint,19,opt,name=renderer,proto3,enum=resources.properties.PropertyRenderer"`
+	xxx_hidden_Unit             *string                   `protobuf:"bytes,12,opt,name=unit,proto3,oneof"`
+	xxx_hidden_DecimalPlaces    uint32                    `protobuf:"varint,13,opt,name=decimal_places,json=decimalPlaces,proto3,oneof"`
+	xxx_hidden_Currency         *string                   `protobuf:"bytes,14,opt,name=currency,proto3,oneof"`
+	xxx_hidden_DeletedAt        *timestamp.Timestamp      `protobuf:"bytes,15,opt,name=deleted_at,json=deletedAt,proto3,oneof"`
+	xxx_hidden_GroupKey         string                    `protobuf:"bytes,16,opt,name=group_key,json=groupKey,proto3"`
+	xxx_hidden_SortOrder        int32                     `protobuf:"varint,17,opt,name=sort_order,json=sortOrder,proto3"`
+	xxx_hidden_GroupSortOrder   int32                     `protobuf:"varint,22,opt,name=group_sort_order,json=groupSortOrder,proto3"`
+	xxx_hidden_Pinned           bool                      `protobuf:"varint,18,opt,name=pinned,proto3"`
+	xxx_hidden_RendererConfig   *PropertyRendererConfig   `protobuf:"bytes,20,opt,name=renderer_config,json=rendererConfig,proto3,oneof"`
+	xxx_hidden_DisplayMode      PropertyDisplayMode       `protobuf:"varint,21,opt,name=display_mode,json=displayMode,proto3,enum=resources.properties.PropertyDisplayMode"`
+	xxx_hidden_Implicit         bool                      `protobuf:"varint,23,opt,name=implicit,proto3"`
+	xxx_hidden_StatePolicy      *PropertyStatePolicy      `protobuf:"bytes,24,opt,name=state_policy,json=statePolicy,proto3,oneof"`
+	xxx_hidden_ManagedHandler   *string                   `protobuf:"bytes,25,opt,name=managed_handler,json=managedHandler,proto3,oneof"`
+	xxx_hidden_ValueConstraints *PropertyValueConstraints `protobuf:"bytes,26,opt,name=value_constraints,json=valueConstraints,proto3,oneof"`
+	xxx_hidden_ReasonMode       PropertyReasonMode        `protobuf:"varint,27,opt,name=reason_mode,json=reasonMode,proto3,enum=resources.properties.PropertyReasonMode"`
+	XXX_raceDetectHookData      protoimpl.RaceDetectHookData
+	XXX_presence                [1]uint32
+	unknownFields               protoimpl.UnknownFields
+	sizeCache                   protoimpl.SizeCache
+}
+
 func (x *PropertyDefinition) Reset() {
 	*x = PropertyDefinition{}
-	mi := &file_resources_properties_properties_proto_msgTypes[5]
+	mi := &file_resources_properties_properties_proto_msgTypes[9]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1233,7 +2403,7 @@ func (x *PropertyDefinition) String() string {
 func (*PropertyDefinition) ProtoMessage() {}
 
 func (x *PropertyDefinition) ProtoReflect() protoreflect.Message {
-	mi := &file_resources_properties_properties_proto_msgTypes[5]
+	mi := &file_resources_properties_properties_proto_msgTypes[9]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1414,6 +2584,37 @@ func (x *PropertyDefinition) GetImplicit() bool {
 	return false
 }
 
+func (x *PropertyDefinition) GetStatePolicy() *PropertyStatePolicy {
+	if x != nil {
+		return x.xxx_hidden_StatePolicy
+	}
+	return nil
+}
+
+func (x *PropertyDefinition) GetManagedHandler() string {
+	if x != nil {
+		if x.xxx_hidden_ManagedHandler != nil {
+			return *x.xxx_hidden_ManagedHandler
+		}
+		return ""
+	}
+	return ""
+}
+
+func (x *PropertyDefinition) GetValueConstraints() *PropertyValueConstraints {
+	if x != nil {
+		return x.xxx_hidden_ValueConstraints
+	}
+	return nil
+}
+
+func (x *PropertyDefinition) GetReasonMode() PropertyReasonMode {
+	if x != nil {
+		return x.xxx_hidden_ReasonMode
+	}
+	return PropertyReasonMode_PROPERTY_REASON_MODE_UNSPECIFIED
+}
+
 func (x *PropertyDefinition) SetScope(v PropertyScope) {
 	x.xxx_hidden_Scope = v
 }
@@ -1444,7 +2645,7 @@ func (x *PropertyDefinition) SetLabel(v string) {
 
 func (x *PropertyDefinition) SetDescription(v string) {
 	x.xxx_hidden_Description = &v
-	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 7, 23)
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 7, 27)
 }
 
 func (x *PropertyDefinition) SetSearchable(v bool) {
@@ -1465,17 +2666,17 @@ func (x *PropertyDefinition) SetRenderer(v PropertyRenderer) {
 
 func (x *PropertyDefinition) SetUnit(v string) {
 	x.xxx_hidden_Unit = &v
-	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 12, 23)
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 12, 27)
 }
 
 func (x *PropertyDefinition) SetDecimalPlaces(v uint32) {
 	x.xxx_hidden_DecimalPlaces = v
-	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 13, 23)
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 13, 27)
 }
 
 func (x *PropertyDefinition) SetCurrency(v string) {
 	x.xxx_hidden_Currency = &v
-	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 14, 23)
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 14, 27)
 }
 
 func (x *PropertyDefinition) SetDeletedAt(v *timestamp.Timestamp) {
@@ -1508,6 +2709,23 @@ func (x *PropertyDefinition) SetDisplayMode(v PropertyDisplayMode) {
 
 func (x *PropertyDefinition) SetImplicit(v bool) {
 	x.xxx_hidden_Implicit = v
+}
+
+func (x *PropertyDefinition) SetStatePolicy(v *PropertyStatePolicy) {
+	x.xxx_hidden_StatePolicy = v
+}
+
+func (x *PropertyDefinition) SetManagedHandler(v string) {
+	x.xxx_hidden_ManagedHandler = &v
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 24, 27)
+}
+
+func (x *PropertyDefinition) SetValueConstraints(v *PropertyValueConstraints) {
+	x.xxx_hidden_ValueConstraints = v
+}
+
+func (x *PropertyDefinition) SetReasonMode(v PropertyReasonMode) {
+	x.xxx_hidden_ReasonMode = v
 }
 
 func (x *PropertyDefinition) HasDescription() bool {
@@ -1552,6 +2770,27 @@ func (x *PropertyDefinition) HasRendererConfig() bool {
 	return x.xxx_hidden_RendererConfig != nil
 }
 
+func (x *PropertyDefinition) HasStatePolicy() bool {
+	if x == nil {
+		return false
+	}
+	return x.xxx_hidden_StatePolicy != nil
+}
+
+func (x *PropertyDefinition) HasManagedHandler() bool {
+	if x == nil {
+		return false
+	}
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 24)
+}
+
+func (x *PropertyDefinition) HasValueConstraints() bool {
+	if x == nil {
+		return false
+	}
+	return x.xxx_hidden_ValueConstraints != nil
+}
+
 func (x *PropertyDefinition) ClearDescription() {
 	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 7)
 	x.xxx_hidden_Description = nil
@@ -1578,6 +2817,19 @@ func (x *PropertyDefinition) ClearDeletedAt() {
 
 func (x *PropertyDefinition) ClearRendererConfig() {
 	x.xxx_hidden_RendererConfig = nil
+}
+
+func (x *PropertyDefinition) ClearStatePolicy() {
+	x.xxx_hidden_StatePolicy = nil
+}
+
+func (x *PropertyDefinition) ClearManagedHandler() {
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 24)
+	x.xxx_hidden_ManagedHandler = nil
+}
+
+func (x *PropertyDefinition) ClearValueConstraints() {
+	x.xxx_hidden_ValueConstraints = nil
 }
 
 type PropertyDefinition_builder struct {
@@ -1623,7 +2875,13 @@ type PropertyDefinition_builder struct {
 	DisplayMode PropertyDisplayMode
 	// Implicit properties are available whenever the containing permission is
 	// granted, but are not selectable in role property lists.
-	Implicit bool
+	Implicit    bool
+	StatePolicy *PropertyStatePolicy
+	// Registry identifier for the server-side managed-property handler. Generic
+	// properties leave this unset; Sync routes managed mutations by this value.
+	ManagedHandler   *string
+	ValueConstraints *PropertyValueConstraints
+	ReasonMode       PropertyReasonMode
 }
 
 func (b0 PropertyDefinition_builder) Build() *PropertyDefinition {
@@ -1638,7 +2896,7 @@ func (b0 PropertyDefinition_builder) Build() *PropertyDefinition {
 	x.xxx_hidden_DisplayKey = b.DisplayKey
 	x.xxx_hidden_Label = b.Label
 	if b.Description != nil {
-		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 7, 23)
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 7, 27)
 		x.xxx_hidden_Description = b.Description
 	}
 	x.xxx_hidden_Searchable = b.Searchable
@@ -1646,15 +2904,15 @@ func (b0 PropertyDefinition_builder) Build() *PropertyDefinition {
 	x.xxx_hidden_Behavior = b.Behavior
 	x.xxx_hidden_Renderer = b.Renderer
 	if b.Unit != nil {
-		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 12, 23)
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 12, 27)
 		x.xxx_hidden_Unit = b.Unit
 	}
 	if b.DecimalPlaces != nil {
-		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 13, 23)
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 13, 27)
 		x.xxx_hidden_DecimalPlaces = *b.DecimalPlaces
 	}
 	if b.Currency != nil {
-		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 14, 23)
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 14, 27)
 		x.xxx_hidden_Currency = b.Currency
 	}
 	x.xxx_hidden_DeletedAt = b.DeletedAt
@@ -1665,6 +2923,13 @@ func (b0 PropertyDefinition_builder) Build() *PropertyDefinition {
 	x.xxx_hidden_RendererConfig = b.RendererConfig
 	x.xxx_hidden_DisplayMode = b.DisplayMode
 	x.xxx_hidden_Implicit = b.Implicit
+	x.xxx_hidden_StatePolicy = b.StatePolicy
+	if b.ManagedHandler != nil {
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 24, 27)
+		x.xxx_hidden_ManagedHandler = b.ManagedHandler
+	}
+	x.xxx_hidden_ValueConstraints = b.ValueConstraints
+	x.xxx_hidden_ReasonMode = b.ReasonMode
 	return m0
 }
 
@@ -1677,7 +2942,7 @@ type PropertyRendererConfig struct {
 
 func (x *PropertyRendererConfig) Reset() {
 	*x = PropertyRendererConfig{}
-	mi := &file_resources_properties_properties_proto_msgTypes[6]
+	mi := &file_resources_properties_properties_proto_msgTypes[10]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1689,7 +2954,7 @@ func (x *PropertyRendererConfig) String() string {
 func (*PropertyRendererConfig) ProtoMessage() {}
 
 func (x *PropertyRendererConfig) ProtoReflect() protoreflect.Message {
-	mi := &file_resources_properties_properties_proto_msgTypes[6]
+	mi := &file_resources_properties_properties_proto_msgTypes[10]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1854,7 +3119,7 @@ func (b0 PropertyRendererConfig_builder) Build() *PropertyRendererConfig {
 type case_PropertyRendererConfig_Config protoreflect.FieldNumber
 
 func (x case_PropertyRendererConfig_Config) String() string {
-	md := file_resources_properties_properties_proto_msgTypes[6].Descriptor()
+	md := file_resources_properties_properties_proto_msgTypes[10].Descriptor()
 	if x == 0 {
 		return "not set"
 	}
@@ -1894,7 +3159,7 @@ type PropertyStringRendererConfig struct {
 
 func (x *PropertyStringRendererConfig) Reset() {
 	*x = PropertyStringRendererConfig{}
-	mi := &file_resources_properties_properties_proto_msgTypes[7]
+	mi := &file_resources_properties_properties_proto_msgTypes[11]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1906,7 +3171,7 @@ func (x *PropertyStringRendererConfig) String() string {
 func (*PropertyStringRendererConfig) ProtoMessage() {}
 
 func (x *PropertyStringRendererConfig) ProtoReflect() protoreflect.Message {
-	mi := &file_resources_properties_properties_proto_msgTypes[7]
+	mi := &file_resources_properties_properties_proto_msgTypes[11]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1982,7 +3247,7 @@ type PropertyIntegerRendererConfig struct {
 
 func (x *PropertyIntegerRendererConfig) Reset() {
 	*x = PropertyIntegerRendererConfig{}
-	mi := &file_resources_properties_properties_proto_msgTypes[8]
+	mi := &file_resources_properties_properties_proto_msgTypes[12]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1994,7 +3259,7 @@ func (x *PropertyIntegerRendererConfig) String() string {
 func (*PropertyIntegerRendererConfig) ProtoMessage() {}
 
 func (x *PropertyIntegerRendererConfig) ProtoReflect() protoreflect.Message {
-	mi := &file_resources_properties_properties_proto_msgTypes[8]
+	mi := &file_resources_properties_properties_proto_msgTypes[12]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2118,7 +3383,7 @@ type PropertyNumberRendererConfig struct {
 
 func (x *PropertyNumberRendererConfig) Reset() {
 	*x = PropertyNumberRendererConfig{}
-	mi := &file_resources_properties_properties_proto_msgTypes[9]
+	mi := &file_resources_properties_properties_proto_msgTypes[13]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2130,7 +3395,7 @@ func (x *PropertyNumberRendererConfig) String() string {
 func (*PropertyNumberRendererConfig) ProtoMessage() {}
 
 func (x *PropertyNumberRendererConfig) ProtoReflect() protoreflect.Message {
-	mi := &file_resources_properties_properties_proto_msgTypes[9]
+	mi := &file_resources_properties_properties_proto_msgTypes[13]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2257,7 +3522,7 @@ type PropertyGroup struct {
 
 func (x *PropertyGroup) Reset() {
 	*x = PropertyGroup{}
-	mi := &file_resources_properties_properties_proto_msgTypes[10]
+	mi := &file_resources_properties_properties_proto_msgTypes[14]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2269,7 +3534,7 @@ func (x *PropertyGroup) String() string {
 func (*PropertyGroup) ProtoMessage() {}
 
 func (x *PropertyGroup) ProtoReflect() protoreflect.Message {
-	mi := &file_resources_properties_properties_proto_msgTypes[10]
+	mi := &file_resources_properties_properties_proto_msgTypes[14]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2392,7 +3657,7 @@ type PropertyFilter struct {
 
 func (x *PropertyFilter) Reset() {
 	*x = PropertyFilter{}
-	mi := &file_resources_properties_properties_proto_msgTypes[11]
+	mi := &file_resources_properties_properties_proto_msgTypes[15]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2404,7 +3669,7 @@ func (x *PropertyFilter) String() string {
 func (*PropertyFilter) ProtoMessage() {}
 
 func (x *PropertyFilter) ProtoReflect() protoreflect.Message {
-	mi := &file_resources_properties_properties_proto_msgTypes[11]
+	mi := &file_resources_properties_properties_proto_msgTypes[15]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2481,7 +3746,7 @@ var File_resources_properties_properties_proto protoreflect.FileDescriptor
 
 const file_resources_properties_properties_proto_rawDesc = "" +
 	"\n" +
-	"%resources/properties/properties.proto\x12\x14resources.properties\x1a!codegen/dbscanner/dbscanner.proto\x1a#resources/timestamp/timestamp.proto\"\xb7\x02\n" +
+	"%resources/properties/properties.proto\x12\x14resources.properties\x1a!codegen/dbscanner/dbscanner.proto\x1a\x1bgoogle/protobuf/empty.proto\x1a#resources/timestamp/timestamp.proto\"\xb7\x02\n" +
 	"\rPropertyValue\x12#\n" +
 	"\fstring_value\x18\x01 \x01(\tH\x00R\vstringValue\x12%\n" +
 	"\rinteger_value\x18\x02 \x01(\x03H\x00R\fintegerValue\x12#\n" +
@@ -2495,7 +3760,7 @@ const file_resources_properties_properties_proto_rawDesc = "" +
 	"\tLocalDate\x12\x12\n" +
 	"\x04year\x18\x01 \x01(\x05R\x04year\x12\x14\n" +
 	"\x05month\x18\x02 \x01(\x05R\x05month\x12\x10\n" +
-	"\x03day\x18\x03 \x01(\x05R\x03day\"\x97\x02\n" +
+	"\x03day\x18\x03 \x01(\x05R\x03day\"\xe1\x02\n" +
 	"\bProperty\x12\x10\n" +
 	"\x03key\x18\x01 \x01(\tR\x03key\x12>\n" +
 	"\x05value\x18\x02 \x01(\v2#.resources.properties.PropertyValueH\x00R\x05value\x88\x01\x01\x12B\n" +
@@ -2503,20 +3768,81 @@ const file_resources_properties_properties_proto_rawDesc = "" +
 	"updated_at\x18\x03 \x01(\v2\x1e.resources.timestamp.TimestampH\x01R\tupdatedAt\x88\x01\x01\x12M\n" +
 	"\n" +
 	"definition\x18\x04 \x01(\v2(.resources.properties.PropertyDefinitionH\x02R\n" +
-	"definition\x88\x01\x01B\b\n" +
+	"definition\x88\x01\x01\x12>\n" +
+	"\x05state\x18\x05 \x01(\v2#.resources.properties.PropertyStateH\x03R\x05state\x88\x01\x01B\b\n" +
 	"\x06_valueB\r\n" +
 	"\v_updated_atB\r\n" +
-	"\v_definition\"l\n" +
-	"\x0ePropertyChange\x12\x10\n" +
-	"\x03key\x18\x01 \x01(\tR\x03key\x12>\n" +
-	"\x05value\x18\x02 \x01(\v2#.resources.properties.PropertyValueH\x00R\x05value\x88\x01\x01B\b\n" +
-	"\x06_value\"\x91\x01\n" +
+	"\v_definitionB\b\n" +
+	"\x06_state\"\xcc\x02\n" +
+	"\rPropertyState\x12\x15\n" +
+	"\x03key\x18\x01 \x01(\tH\x00R\x03key\x88\x01\x01\x12\x1b\n" +
+	"\x06reason\x18\x02 \x01(\tH\x01R\x06reason\x88\x01\x01\x12@\n" +
+	"\tactive_at\x18\x03 \x01(\v2\x1e.resources.timestamp.TimestampH\x02R\bactiveAt\x88\x01\x01\x12B\n" +
+	"\n" +
+	"expires_at\x18\x04 \x01(\v2\x1e.resources.timestamp.TimestampH\x03R\texpiresAt\x88\x01\x01\x12B\n" +
+	"\n" +
+	"updated_at\x18\x05 \x01(\v2\x1e.resources.timestamp.TimestampH\x04R\tupdatedAt\x88\x01\x01B\x06\n" +
+	"\x04_keyB\t\n" +
+	"\a_reasonB\f\n" +
+	"\n" +
+	"_active_atB\r\n" +
+	"\v_expires_atB\r\n" +
+	"\v_updated_at\"\xe3\x02\n" +
+	"\x10PropertyMutation\x12\x10\n" +
+	"\x03key\x18\x01 \x01(\tR\x03key\x12B\n" +
+	"\tset_value\x18\x02 \x01(\v2#.resources.properties.PropertyValueH\x00R\bsetValue\x129\n" +
+	"\vclear_value\x18\x03 \x01(\v2\x16.google.protobuf.EmptyH\x00R\n" +
+	"clearValue\x12C\n" +
+	"\x05state\x18\x04 \x01(\v2(.resources.properties.PropertyStatePatchH\x01R\x05state\x88\x01\x01\x12\x1b\n" +
+	"\x06reason\x18\x05 \x01(\tH\x02R\x06reason\x88\x01\x01\x12&\n" +
+	"\fclear_reason\x18\x06 \x01(\bH\x03R\vclearReason\x88\x01\x01B\x0e\n" +
+	"\fvalue_changeB\b\n" +
+	"\x06_stateB\t\n" +
+	"\a_reasonB\x0f\n" +
+	"\r_clear_reason\"\xa3\x01\n" +
+	"\x12PropertyStatePatch\x12?\n" +
+	"\n" +
+	"expires_at\x18\x01 \x01(\v2\x1e.resources.timestamp.TimestampH\x00R\texpiresAt\x12;\n" +
+	"\fclear_expiry\x18\x02 \x01(\v2\x16.google.protobuf.EmptyH\x00R\vclearExpiryB\x0f\n" +
+	"\rexpiry_change\"\x91\x01\n" +
 	"\n" +
 	"Properties\x12>\n" +
 	"\n" +
 	"properties\x18\x01 \x03(\v2\x1e.resources.properties.PropertyR\n" +
 	"properties\x12;\n" +
-	"\x06groups\x18\x02 \x03(\v2#.resources.properties.PropertyGroupR\x06groups:\x06\xe2\xf3\x18\x02\b\x01\"\xa9\t\n" +
+	"\x06groups\x18\x02 \x03(\v2#.resources.properties.PropertyGroupR\x06groups:\x06\xe2\xf3\x18\x02\b\x01\"\xa9\x01\n" +
+	"\x13PropertyStatePolicy\x12\x18\n" +
+	"\aenabled\x18\x01 \x01(\bR\aenabled\x12'\n" +
+	"\x0fsupports_expiry\x18\x02 \x01(\bR\x0esupportsExpiry\x12O\n" +
+	"\rexpiry_action\x18\x03 \x01(\x0e2*.resources.properties.PropertyExpiryActionR\fexpiryAction\"\xf6\x06\n" +
+	"\x18PropertyValueConstraints\x12/\n" +
+	"\x11string_min_length\x18\x01 \x01(\rH\x00R\x0fstringMinLength\x88\x01\x01\x12/\n" +
+	"\x11string_max_length\x18\x02 \x01(\rH\x01R\x0fstringMaxLength\x88\x01\x01\x122\n" +
+	"\x15string_allowed_values\x18\x03 \x03(\tR\x13stringAllowedValues\x12$\n" +
+	"\vinteger_min\x18\x04 \x01(\x03H\x02R\n" +
+	"integerMin\x88\x01\x01\x12$\n" +
+	"\vinteger_max\x18\x05 \x01(\x03H\x03R\n" +
+	"integerMax\x88\x01\x01\x12\"\n" +
+	"\n" +
+	"number_min\x18\x06 \x01(\x01H\x04R\tnumberMin\x88\x01\x01\x12\"\n" +
+	"\n" +
+	"number_max\x18\a \x01(\x01H\x05R\tnumberMax\x88\x01\x01\x12H\n" +
+	"\rtimestamp_min\x18\b \x01(\v2\x1e.resources.timestamp.TimestampH\x06R\ftimestampMin\x88\x01\x01\x12H\n" +
+	"\rtimestamp_max\x18\t \x01(\v2\x1e.resources.timestamp.TimestampH\aR\ftimestampMax\x88\x01\x01\x12?\n" +
+	"\bdate_min\x18\n" +
+	" \x01(\v2\x1f.resources.properties.LocalDateH\bR\adateMin\x88\x01\x01\x12?\n" +
+	"\bdate_max\x18\v \x01(\v2\x1f.resources.properties.LocalDateH\tR\adateMax\x88\x01\x01\x12r\n" +
+	"\x1astring_allowed_values_mode\x18\f \x01(\x0e25.resources.properties.PropertyStringAllowedValuesModeR\x17stringAllowedValuesModeB\x14\n" +
+	"\x12_string_min_lengthB\x14\n" +
+	"\x12_string_max_lengthB\x0e\n" +
+	"\f_integer_minB\x0e\n" +
+	"\f_integer_maxB\r\n" +
+	"\v_number_minB\r\n" +
+	"\v_number_maxB\x10\n" +
+	"\x0e_timestamp_minB\x10\n" +
+	"\x0e_timestamp_maxB\v\n" +
+	"\t_date_minB\v\n" +
+	"\t_date_max\"\x92\f\n" +
 	"\x12PropertyDefinition\x129\n" +
 	"\x05scope\x18\x01 \x01(\x0e2#.resources.properties.PropertyScopeR\x05scope\x12\x10\n" +
 	"\x03key\x18\x02 \x01(\tR\x03key\x12F\n" +
@@ -2547,13 +3873,21 @@ const file_resources_properties_properties_proto_rawDesc = "" +
 	"\x06pinned\x18\x12 \x01(\bR\x06pinned\x12Z\n" +
 	"\x0frenderer_config\x18\x14 \x01(\v2,.resources.properties.PropertyRendererConfigH\x05R\x0erendererConfig\x88\x01\x01\x12L\n" +
 	"\fdisplay_mode\x18\x15 \x01(\x0e2).resources.properties.PropertyDisplayModeR\vdisplayMode\x12\x1a\n" +
-	"\bimplicit\x18\x17 \x01(\bR\bimplicitB\x0e\n" +
+	"\bimplicit\x18\x17 \x01(\bR\bimplicit\x12Q\n" +
+	"\fstate_policy\x18\x18 \x01(\v2).resources.properties.PropertyStatePolicyH\x06R\vstatePolicy\x88\x01\x01\x12,\n" +
+	"\x0fmanaged_handler\x18\x19 \x01(\tH\aR\x0emanagedHandler\x88\x01\x01\x12`\n" +
+	"\x11value_constraints\x18\x1a \x01(\v2..resources.properties.PropertyValueConstraintsH\bR\x10valueConstraints\x88\x01\x01\x12I\n" +
+	"\vreason_mode\x18\x1b \x01(\x0e2(.resources.properties.PropertyReasonModeR\n" +
+	"reasonModeB\x0e\n" +
 	"\f_descriptionB\a\n" +
 	"\x05_unitB\x11\n" +
 	"\x0f_decimal_placesB\v\n" +
 	"\t_currencyB\r\n" +
 	"\v_deleted_atB\x12\n" +
-	"\x10_renderer_config\"\x8f\x02\n" +
+	"\x10_renderer_configB\x0f\n" +
+	"\r_state_policyB\x12\n" +
+	"\x10_managed_handlerB\x14\n" +
+	"\x12_value_constraints\"\x8f\x02\n" +
 	"\x16PropertyRendererConfig\x12L\n" +
 	"\x06string\x18\x01 \x01(\v22.resources.properties.PropertyStringRendererConfigH\x00R\x06string\x12O\n" +
 	"\ainteger\x18\x02 \x01(\v23.resources.properties.PropertyIntegerRendererConfigH\x00R\ainteger\x12L\n" +
@@ -2617,7 +3951,19 @@ const file_resources_properties_properties_proto_rawDesc = "" +
 	"\x10PropertyBehavior\x12!\n" +
 	"\x1dPROPERTY_BEHAVIOR_UNSPECIFIED\x10\x00\x12\x1d\n" +
 	"\x19PROPERTY_BEHAVIOR_GENERIC\x10\x01\x12\x1d\n" +
-	"\x19PROPERTY_BEHAVIOR_MANAGED\x10\x02*\x94\x01\n" +
+	"\x19PROPERTY_BEHAVIOR_MANAGED\x10\x02*f\n" +
+	"\x14PropertyExpiryAction\x12&\n" +
+	"\"PROPERTY_EXPIRY_ACTION_UNSPECIFIED\x10\x00\x12&\n" +
+	"\"PROPERTY_EXPIRY_ACTION_CLEAR_VALUE\x10\x01*\x9f\x01\n" +
+	"\x12PropertyReasonMode\x12$\n" +
+	" PROPERTY_REASON_MODE_UNSPECIFIED\x10\x00\x12!\n" +
+	"\x1dPROPERTY_REASON_MODE_REQUIRED\x10\x01\x12!\n" +
+	"\x1dPROPERTY_REASON_MODE_OPTIONAL\x10\x02\x12\x1d\n" +
+	"\x19PROPERTY_REASON_MODE_NONE\x10\x03*\xb7\x01\n" +
+	"\x1fPropertyStringAllowedValuesMode\x123\n" +
+	"/PROPERTY_STRING_ALLOWED_VALUES_MODE_UNSPECIFIED\x10\x00\x12/\n" +
+	"+PROPERTY_STRING_ALLOWED_VALUES_MODE_SUGGEST\x10\x01\x12.\n" +
+	"*PROPERTY_STRING_ALLOWED_VALUES_MODE_STRICT\x10\x02*\x94\x01\n" +
 	"\x18PropertyDefinitionSource\x12*\n" +
 	"&PROPERTY_DEFINITION_SOURCE_UNSPECIFIED\x10\x00\x12%\n" +
 	"!PROPERTY_DEFINITION_SOURCE_SYSTEM\x10\x01\x12%\n" +
@@ -2653,61 +3999,86 @@ const file_resources_properties_properties_proto_rawDesc = "" +
 	",PROPERTY_FILTER_OPERATION_LESS_THAN_OR_EQUAL\x10\x06\x12&\n" +
 	"\"PROPERTY_FILTER_OPERATION_CONTAINS\x10\aBSZQgithub.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/properties;propertiesb\x06proto3"
 
-var file_resources_properties_properties_proto_enumTypes = make([]protoimpl.EnumInfo, 8)
-var file_resources_properties_properties_proto_msgTypes = make([]protoimpl.MessageInfo, 12)
+var file_resources_properties_properties_proto_enumTypes = make([]protoimpl.EnumInfo, 11)
+var file_resources_properties_properties_proto_msgTypes = make([]protoimpl.MessageInfo, 16)
 var file_resources_properties_properties_proto_goTypes = []any{
 	(PropertyScope)(0),                    // 0: resources.properties.PropertyScope
 	(PropertyValueType)(0),                // 1: resources.properties.PropertyValueType
 	(PropertyValueFormat)(0),              // 2: resources.properties.PropertyValueFormat
 	(PropertyBehavior)(0),                 // 3: resources.properties.PropertyBehavior
-	(PropertyDefinitionSource)(0),         // 4: resources.properties.PropertyDefinitionSource
-	(PropertyRenderer)(0),                 // 5: resources.properties.PropertyRenderer
-	(PropertyDisplayMode)(0),              // 6: resources.properties.PropertyDisplayMode
-	(PropertyFilterOperation)(0),          // 7: resources.properties.PropertyFilterOperation
-	(*PropertyValue)(nil),                 // 8: resources.properties.PropertyValue
-	(*LocalDate)(nil),                     // 9: resources.properties.LocalDate
-	(*Property)(nil),                      // 10: resources.properties.Property
-	(*PropertyChange)(nil),                // 11: resources.properties.PropertyChange
-	(*Properties)(nil),                    // 12: resources.properties.Properties
-	(*PropertyDefinition)(nil),            // 13: resources.properties.PropertyDefinition
-	(*PropertyRendererConfig)(nil),        // 14: resources.properties.PropertyRendererConfig
-	(*PropertyStringRendererConfig)(nil),  // 15: resources.properties.PropertyStringRendererConfig
-	(*PropertyIntegerRendererConfig)(nil), // 16: resources.properties.PropertyIntegerRendererConfig
-	(*PropertyNumberRendererConfig)(nil),  // 17: resources.properties.PropertyNumberRendererConfig
-	(*PropertyGroup)(nil),                 // 18: resources.properties.PropertyGroup
-	(*PropertyFilter)(nil),                // 19: resources.properties.PropertyFilter
-	(*timestamp.Timestamp)(nil),           // 20: resources.timestamp.Timestamp
+	(PropertyExpiryAction)(0),             // 4: resources.properties.PropertyExpiryAction
+	(PropertyReasonMode)(0),               // 5: resources.properties.PropertyReasonMode
+	(PropertyStringAllowedValuesMode)(0),  // 6: resources.properties.PropertyStringAllowedValuesMode
+	(PropertyDefinitionSource)(0),         // 7: resources.properties.PropertyDefinitionSource
+	(PropertyRenderer)(0),                 // 8: resources.properties.PropertyRenderer
+	(PropertyDisplayMode)(0),              // 9: resources.properties.PropertyDisplayMode
+	(PropertyFilterOperation)(0),          // 10: resources.properties.PropertyFilterOperation
+	(*PropertyValue)(nil),                 // 11: resources.properties.PropertyValue
+	(*LocalDate)(nil),                     // 12: resources.properties.LocalDate
+	(*Property)(nil),                      // 13: resources.properties.Property
+	(*PropertyState)(nil),                 // 14: resources.properties.PropertyState
+	(*PropertyMutation)(nil),              // 15: resources.properties.PropertyMutation
+	(*PropertyStatePatch)(nil),            // 16: resources.properties.PropertyStatePatch
+	(*Properties)(nil),                    // 17: resources.properties.Properties
+	(*PropertyStatePolicy)(nil),           // 18: resources.properties.PropertyStatePolicy
+	(*PropertyValueConstraints)(nil),      // 19: resources.properties.PropertyValueConstraints
+	(*PropertyDefinition)(nil),            // 20: resources.properties.PropertyDefinition
+	(*PropertyRendererConfig)(nil),        // 21: resources.properties.PropertyRendererConfig
+	(*PropertyStringRendererConfig)(nil),  // 22: resources.properties.PropertyStringRendererConfig
+	(*PropertyIntegerRendererConfig)(nil), // 23: resources.properties.PropertyIntegerRendererConfig
+	(*PropertyNumberRendererConfig)(nil),  // 24: resources.properties.PropertyNumberRendererConfig
+	(*PropertyGroup)(nil),                 // 25: resources.properties.PropertyGroup
+	(*PropertyFilter)(nil),                // 26: resources.properties.PropertyFilter
+	(*timestamp.Timestamp)(nil),           // 27: resources.timestamp.Timestamp
+	(*emptypb.Empty)(nil),                 // 28: google.protobuf.Empty
 }
 var file_resources_properties_properties_proto_depIdxs = []int32{
-	20, // 0: resources.properties.PropertyValue.timestamp_value:type_name -> resources.timestamp.Timestamp
-	9,  // 1: resources.properties.PropertyValue.date_value:type_name -> resources.properties.LocalDate
-	8,  // 2: resources.properties.Property.value:type_name -> resources.properties.PropertyValue
-	20, // 3: resources.properties.Property.updated_at:type_name -> resources.timestamp.Timestamp
-	13, // 4: resources.properties.Property.definition:type_name -> resources.properties.PropertyDefinition
-	8,  // 5: resources.properties.PropertyChange.value:type_name -> resources.properties.PropertyValue
-	10, // 6: resources.properties.Properties.properties:type_name -> resources.properties.Property
-	18, // 7: resources.properties.Properties.groups:type_name -> resources.properties.PropertyGroup
-	0,  // 8: resources.properties.PropertyDefinition.scope:type_name -> resources.properties.PropertyScope
-	1,  // 9: resources.properties.PropertyDefinition.value_type:type_name -> resources.properties.PropertyValueType
-	4,  // 10: resources.properties.PropertyDefinition.source:type_name -> resources.properties.PropertyDefinitionSource
-	2,  // 11: resources.properties.PropertyDefinition.value_format:type_name -> resources.properties.PropertyValueFormat
-	3,  // 12: resources.properties.PropertyDefinition.behavior:type_name -> resources.properties.PropertyBehavior
-	5,  // 13: resources.properties.PropertyDefinition.renderer:type_name -> resources.properties.PropertyRenderer
-	20, // 14: resources.properties.PropertyDefinition.deleted_at:type_name -> resources.timestamp.Timestamp
-	14, // 15: resources.properties.PropertyDefinition.renderer_config:type_name -> resources.properties.PropertyRendererConfig
-	6,  // 16: resources.properties.PropertyDefinition.display_mode:type_name -> resources.properties.PropertyDisplayMode
-	15, // 17: resources.properties.PropertyRendererConfig.string:type_name -> resources.properties.PropertyStringRendererConfig
-	16, // 18: resources.properties.PropertyRendererConfig.integer:type_name -> resources.properties.PropertyIntegerRendererConfig
-	17, // 19: resources.properties.PropertyRendererConfig.number:type_name -> resources.properties.PropertyNumberRendererConfig
-	0,  // 20: resources.properties.PropertyGroup.scope:type_name -> resources.properties.PropertyScope
-	20, // 21: resources.properties.PropertyGroup.deleted_at:type_name -> resources.timestamp.Timestamp
-	7,  // 22: resources.properties.PropertyFilter.operation:type_name -> resources.properties.PropertyFilterOperation
-	8,  // 23: resources.properties.PropertyFilter.value:type_name -> resources.properties.PropertyValue
-	24, // [24:24] is the sub-list for method output_type
-	24, // [24:24] is the sub-list for method input_type
-	24, // [24:24] is the sub-list for extension type_name
-	24, // [24:24] is the sub-list for extension extendee
-	0,  // [0:24] is the sub-list for field type_name
+	27, // 0: resources.properties.PropertyValue.timestamp_value:type_name -> resources.timestamp.Timestamp
+	12, // 1: resources.properties.PropertyValue.date_value:type_name -> resources.properties.LocalDate
+	11, // 2: resources.properties.Property.value:type_name -> resources.properties.PropertyValue
+	27, // 3: resources.properties.Property.updated_at:type_name -> resources.timestamp.Timestamp
+	20, // 4: resources.properties.Property.definition:type_name -> resources.properties.PropertyDefinition
+	14, // 5: resources.properties.Property.state:type_name -> resources.properties.PropertyState
+	27, // 6: resources.properties.PropertyState.active_at:type_name -> resources.timestamp.Timestamp
+	27, // 7: resources.properties.PropertyState.expires_at:type_name -> resources.timestamp.Timestamp
+	27, // 8: resources.properties.PropertyState.updated_at:type_name -> resources.timestamp.Timestamp
+	11, // 9: resources.properties.PropertyMutation.set_value:type_name -> resources.properties.PropertyValue
+	28, // 10: resources.properties.PropertyMutation.clear_value:type_name -> google.protobuf.Empty
+	16, // 11: resources.properties.PropertyMutation.state:type_name -> resources.properties.PropertyStatePatch
+	27, // 12: resources.properties.PropertyStatePatch.expires_at:type_name -> resources.timestamp.Timestamp
+	28, // 13: resources.properties.PropertyStatePatch.clear_expiry:type_name -> google.protobuf.Empty
+	13, // 14: resources.properties.Properties.properties:type_name -> resources.properties.Property
+	25, // 15: resources.properties.Properties.groups:type_name -> resources.properties.PropertyGroup
+	4,  // 16: resources.properties.PropertyStatePolicy.expiry_action:type_name -> resources.properties.PropertyExpiryAction
+	27, // 17: resources.properties.PropertyValueConstraints.timestamp_min:type_name -> resources.timestamp.Timestamp
+	27, // 18: resources.properties.PropertyValueConstraints.timestamp_max:type_name -> resources.timestamp.Timestamp
+	12, // 19: resources.properties.PropertyValueConstraints.date_min:type_name -> resources.properties.LocalDate
+	12, // 20: resources.properties.PropertyValueConstraints.date_max:type_name -> resources.properties.LocalDate
+	6,  // 21: resources.properties.PropertyValueConstraints.string_allowed_values_mode:type_name -> resources.properties.PropertyStringAllowedValuesMode
+	0,  // 22: resources.properties.PropertyDefinition.scope:type_name -> resources.properties.PropertyScope
+	1,  // 23: resources.properties.PropertyDefinition.value_type:type_name -> resources.properties.PropertyValueType
+	7,  // 24: resources.properties.PropertyDefinition.source:type_name -> resources.properties.PropertyDefinitionSource
+	2,  // 25: resources.properties.PropertyDefinition.value_format:type_name -> resources.properties.PropertyValueFormat
+	3,  // 26: resources.properties.PropertyDefinition.behavior:type_name -> resources.properties.PropertyBehavior
+	8,  // 27: resources.properties.PropertyDefinition.renderer:type_name -> resources.properties.PropertyRenderer
+	27, // 28: resources.properties.PropertyDefinition.deleted_at:type_name -> resources.timestamp.Timestamp
+	21, // 29: resources.properties.PropertyDefinition.renderer_config:type_name -> resources.properties.PropertyRendererConfig
+	9,  // 30: resources.properties.PropertyDefinition.display_mode:type_name -> resources.properties.PropertyDisplayMode
+	18, // 31: resources.properties.PropertyDefinition.state_policy:type_name -> resources.properties.PropertyStatePolicy
+	19, // 32: resources.properties.PropertyDefinition.value_constraints:type_name -> resources.properties.PropertyValueConstraints
+	5,  // 33: resources.properties.PropertyDefinition.reason_mode:type_name -> resources.properties.PropertyReasonMode
+	22, // 34: resources.properties.PropertyRendererConfig.string:type_name -> resources.properties.PropertyStringRendererConfig
+	23, // 35: resources.properties.PropertyRendererConfig.integer:type_name -> resources.properties.PropertyIntegerRendererConfig
+	24, // 36: resources.properties.PropertyRendererConfig.number:type_name -> resources.properties.PropertyNumberRendererConfig
+	0,  // 37: resources.properties.PropertyGroup.scope:type_name -> resources.properties.PropertyScope
+	27, // 38: resources.properties.PropertyGroup.deleted_at:type_name -> resources.timestamp.Timestamp
+	10, // 39: resources.properties.PropertyFilter.operation:type_name -> resources.properties.PropertyFilterOperation
+	11, // 40: resources.properties.PropertyFilter.value:type_name -> resources.properties.PropertyValue
+	41, // [41:41] is the sub-list for method output_type
+	41, // [41:41] is the sub-list for method input_type
+	41, // [41:41] is the sub-list for extension type_name
+	41, // [41:41] is the sub-list for extension extendee
+	0,  // [0:41] is the sub-list for field type_name
 }
 
 func init() { file_resources_properties_properties_proto_init() }
@@ -2725,22 +4096,31 @@ func file_resources_properties_properties_proto_init() {
 	}
 	file_resources_properties_properties_proto_msgTypes[2].OneofWrappers = []any{}
 	file_resources_properties_properties_proto_msgTypes[3].OneofWrappers = []any{}
-	file_resources_properties_properties_proto_msgTypes[5].OneofWrappers = []any{}
-	file_resources_properties_properties_proto_msgTypes[6].OneofWrappers = []any{
+	file_resources_properties_properties_proto_msgTypes[4].OneofWrappers = []any{
+		(*propertyMutation_SetValue)(nil),
+		(*propertyMutation_ClearValue)(nil),
+	}
+	file_resources_properties_properties_proto_msgTypes[5].OneofWrappers = []any{
+		(*propertyStatePatch_ExpiresAt)(nil),
+		(*propertyStatePatch_ClearExpiry)(nil),
+	}
+	file_resources_properties_properties_proto_msgTypes[8].OneofWrappers = []any{}
+	file_resources_properties_properties_proto_msgTypes[9].OneofWrappers = []any{}
+	file_resources_properties_properties_proto_msgTypes[10].OneofWrappers = []any{
 		(*propertyRendererConfig_String_)(nil),
 		(*propertyRendererConfig_Integer)(nil),
 		(*propertyRendererConfig_Number)(nil),
 	}
-	file_resources_properties_properties_proto_msgTypes[8].OneofWrappers = []any{}
-	file_resources_properties_properties_proto_msgTypes[9].OneofWrappers = []any{}
-	file_resources_properties_properties_proto_msgTypes[10].OneofWrappers = []any{}
+	file_resources_properties_properties_proto_msgTypes[12].OneofWrappers = []any{}
+	file_resources_properties_properties_proto_msgTypes[13].OneofWrappers = []any{}
+	file_resources_properties_properties_proto_msgTypes[14].OneofWrappers = []any{}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_resources_properties_properties_proto_rawDesc), len(file_resources_properties_properties_proto_rawDesc)),
-			NumEnums:      8,
-			NumMessages:   12,
+			NumEnums:      11,
+			NumMessages:   16,
 			NumExtensions: 0,
 			NumServices:   0,
 		},

@@ -3,10 +3,13 @@ package properties
 import (
 	"errors"
 	"math"
+	"slices"
 	"time"
+	"unicode/utf8"
 
 	propertypb "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/properties"
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/timestamp"
+	"github.com/fivenet-app/fivenet/v2026/pkg/utils"
 )
 
 var ErrInvalidValue = errors.New("invalid property value")
@@ -21,6 +24,79 @@ type StoredValue struct {
 	Bool      *bool
 	Timestamp *time.Time
 	Date      *time.Time
+}
+
+// ValidateValueConstraints checks a scalar value against its definition after
+// ValueColumns has established its type and basic representation validity.
+func ValidateValueConstraints(
+	definition *propertypb.PropertyDefinition,
+	value *propertypb.PropertyValue,
+) error {
+	if definition == nil || value == nil {
+		return ErrInvalidValue
+	}
+	valueType, stringValue, integerValue, numberValue, _, timestampValue, dateValue, err := ValueColumns(
+		value,
+	)
+	if err != nil || valueType != definition.GetValueType() {
+		return ErrInvalidValue
+	}
+	constraints := definition.GetValueConstraints()
+	if constraints == nil {
+		return nil
+	}
+	// Definitions normally pass this check when they are persisted. Rechecking
+	// here also protects write paths from manually corrupted legacy rows.
+	if !IsValueConstraintsValid(definition.GetValueType(), constraints) {
+		return ErrInvalidValue
+	}
+	switch valueType {
+	case propertypb.PropertyValueType_PROPERTY_VALUE_TYPE_STRING:
+		text := stringValue.(string)
+		length, ok := utils.ToUint32Checked(utf8.RuneCountInString(text))
+		if !ok || constraints.StringMinLength != nil && length < constraints.GetStringMinLength() ||
+			constraints.StringMaxLength != nil && length > constraints.GetStringMaxLength() ||
+			len(constraints.GetStringAllowedValues()) > 0 &&
+				constraints.GetStringAllowedValuesMode() != propertypb.PropertyStringAllowedValuesMode_PROPERTY_STRING_ALLOWED_VALUES_MODE_SUGGEST &&
+				!slices.Contains(constraints.GetStringAllowedValues(), text) {
+			return ErrInvalidValue
+		}
+	case propertypb.PropertyValueType_PROPERTY_VALUE_TYPE_INTEGER:
+		number := integerValue.(int64)
+		if constraints.IntegerMin != nil && number < constraints.GetIntegerMin() ||
+			constraints.IntegerMax != nil && number > constraints.GetIntegerMax() {
+			return ErrInvalidValue
+		}
+	case propertypb.PropertyValueType_PROPERTY_VALUE_TYPE_NUMBER:
+		number := numberValue.(float64)
+		if constraints.NumberMin != nil && number < constraints.GetNumberMin() ||
+			constraints.NumberMax != nil && number > constraints.GetNumberMax() {
+			return ErrInvalidValue
+		}
+	case propertypb.PropertyValueType_PROPERTY_VALUE_TYPE_TIMESTAMP:
+		timestamp := timestampValue.(time.Time)
+		if constraints.TimestampMin != nil &&
+			timestamp.Before(constraints.GetTimestampMin().AsTime()) ||
+			constraints.TimestampMax != nil &&
+				timestamp.After(constraints.GetTimestampMax().AsTime()) {
+			return ErrInvalidValue
+		}
+	case propertypb.PropertyValueType_PROPERTY_VALUE_TYPE_DATE:
+		date := dateValue.(time.Time)
+		if constraints.DateMin != nil {
+			minDate, err := LocalDateToTime(constraints.GetDateMin())
+			if err != nil || date.Before(minDate) {
+				return ErrInvalidValue
+			}
+		}
+		if constraints.DateMax != nil {
+			maxDate, err := LocalDateToTime(constraints.GetDateMax())
+			if err != nil || date.After(maxDate) {
+				return ErrInvalidValue
+			}
+		}
+	}
+	return nil
 }
 
 // ValueColumns returns the values used by the scalar property table columns.

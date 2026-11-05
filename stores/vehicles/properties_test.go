@@ -10,6 +10,7 @@ import (
 	properties "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/properties"
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/timestamp"
 	permsvehicles "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/vehicles/perms"
+	propertyregistry "github.com/fivenet-app/fivenet/v2026/pkg/properties"
 	"github.com/fivenet-app/fivenet/v2026/query/fivenet/model"
 	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
 	"github.com/go-jet/jet/v2/mysql"
@@ -216,4 +217,33 @@ func TestStoreListCustomPropertyKeysExcludesDisabledAndDeleted(t *testing.T) {
 	require.NoError(t, err)
 	assert.Equal(t, []string{"vehicle.color"}, keys)
 	require.NoError(t, mock.ExpectationsWereMet())
+}
+
+func TestStoreListExpiredCustomPropertyPlatesIsKeyScopedAndBounded(t *testing.T) {
+	t.Parallel()
+
+	db, mock, err := sqlmock.New()
+	require.NoError(t, err)
+	t.Cleanup(func() { _ = db.Close() })
+	store := New(db, nil, nil).(*Store)
+
+	mock.ExpectQuery(`(?s)FROM fivenet_vehicle_property_values AS value INNER JOIN fivenet_vehicle_property_state AS state.*value\.property_key = \?.*state\.expires_at IS NOT NULL.*state\.expires_at <= CURRENT_TIMESTAMP.*LIMIT \?`).
+		WithArgs("vehicle.inspection", int64(100)).
+		WillReturnRows(sqlmock.NewRows([]string{"plate"}).AddRow("ABC 123"))
+
+	plates, err := store.ListExpiredCustomPropertyPlates(t.Context(), "vehicle.inspection", 100)
+	require.NoError(t, err)
+	assert.Equal(t, []string{"ABC 123"}, plates)
+	require.NoError(t, mock.ExpectationsWereMet())
+}
+
+func TestPropertyStateReasonDiff(t *testing.T) {
+	t.Parallel()
+
+	reason := "reviewed"
+	other := "updated"
+	assert.True(t, propertyregistry.SameOptionalString(&reason, &reason))
+	assert.False(t, propertyregistry.SameOptionalString(&reason, &other))
+	assert.False(t, propertyregistry.SameOptionalString(&reason, nil))
+	assert.True(t, propertyregistry.SameOptionalString(nil, nil))
 }

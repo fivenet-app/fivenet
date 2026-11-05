@@ -3,8 +3,8 @@ syntax = "proto3";
 package resources.vehicles.props;
 
 import "buf/validate/validate.proto";
-import "resources/timestamp/timestamp.proto";
 import "resources/properties/properties.proto";
+import "resources/timestamp/timestamp.proto";
 
 option go_package = "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/vehicles/props;vehiclesprops";
 

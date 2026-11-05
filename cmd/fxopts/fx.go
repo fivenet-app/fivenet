@@ -28,6 +28,7 @@ import (
 	"github.com/fivenet-app/fivenet/v2026/pkg/notifi"
 	"github.com/fivenet-app/fivenet/v2026/pkg/perms"
 	propertyregistry "github.com/fivenet-app/fivenet/v2026/pkg/properties"
+	propertyevents "github.com/fivenet-app/fivenet/v2026/pkg/properties/events"
 	htmlsanitizer "github.com/fivenet-app/fivenet/v2026/pkg/sanitizer/html"
 	tiptapsanitizer "github.com/fivenet-app/fivenet/v2026/pkg/sanitizer/tiptap"
 	"github.com/fivenet-app/fivenet/v2026/pkg/server"
@@ -130,6 +131,7 @@ func GetFxBaseOpts(
 			access.NewCentrumUnitsSubjectObjectAccess,
 			access.NewJobGroupsSubjectObjectAccess,
 		),
+		propertyevents.Module,
 		centrumbot.Module,
 		croner.ExecutorModule,
 		croner.HandlersModule,
@@ -224,7 +226,7 @@ func GetFxBaseOpts(
 			mailerstore.New,
 			notificationsstore.New,
 			qualificationsstore.New,
-			settingsstore.NewWithCache,
+			settingsstore.NewWithCacheAndEvents,
 			statsstore.New,
 			documentsstore.New,
 			vehiclesstore.NewWithCache,
@@ -249,6 +251,7 @@ func GetFxBaseOpts(
 			pbqualifications.NewServer,
 			pbqualifications.NewExamHousekeeper,
 			grpc.AsService(pbsettings.NewServer),
+			pbsettings.NewCronRegister,
 			grpc.AsService(pbstats.NewServer),
 			pbsync.NewServer,
 			grpc.AsService(pbvehicles.NewServer),

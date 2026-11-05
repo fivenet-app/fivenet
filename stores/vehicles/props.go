@@ -85,8 +85,9 @@ func normalizeWantedChange(
 		in.SetWanted(current.GetWanted())
 		in.SetWantedReason(current.GetWantedReason())
 		in.SetWantedAt(current.GetWantedAt())
-		in.SetWantedTill(current.GetWantedTill())
-		return
+		if in.GetWantedTill() == nil {
+			in.SetWantedTill(current.GetWantedTill())
+		}
 	}
 
 	if !in.GetWanted() {

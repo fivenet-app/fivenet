@@ -245,8 +245,8 @@ func (m *SetVehiclePropsRequest) Sanitize() error {
 		return nil
 	}
 
-	// Field: PropertyChanges
-	for idx, item := range m.PropertyChanges {
+	// Field: PropertyMutations
+	for idx, item := range m.PropertyMutations {
 		_, _ = idx, item
 
 		if v, ok := any(item).(interface{ Sanitize() error }); ok {

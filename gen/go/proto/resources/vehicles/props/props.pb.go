@@ -235,7 +235,7 @@ var File_resources_vehicles_props_props_proto protoreflect.FileDescriptor
 
 const file_resources_vehicles_props_props_proto_rawDesc = "" +
 	"\n" +
-	"$resources/vehicles/props/props.proto\x12\x18resources.vehicles.props\x1a#resources/timestamp/timestamp.proto\x1a%resources/properties/properties.proto\"\xd7\x03\n" +
+	"$resources/vehicles/props/props.proto\x12\x18resources.vehicles.props\x1a%resources/properties/properties.proto\x1a#resources/timestamp/timestamp.proto\"\xd7\x03\n" +
 	"\fVehicleProps\x12\x14\n" +
 	"\x05plate\x18\x01 \x01(\tR\x05plate\x12B\n" +
 	"\n" +

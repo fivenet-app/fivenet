@@ -19,6 +19,7 @@ import (
 	"github.com/go-sprout/sprout/group/all"
 	pgs "github.com/lyft/protoc-gen-star/v2"
 	pgsgo "github.com/lyft/protoc-gen-star/v2/lang/go"
+	"google.golang.org/protobuf/encoding/protojson"
 )
 
 // PermifyModule holds all state for this plugin.
@@ -61,6 +62,7 @@ func (p *PermifyModule) InitContext(c pgs.BuildContext) {
 	templateFns["attrValueTypeName"] = attrValueTypeName
 	templateFns["attrValueConstName"] = attrValueConstName
 	templateFns["rendererConfigLiteral"] = rendererConfigLiteral
+	templateFns["valueConstraintsLiteral"] = valueConstraintsLiteral
 	funcs := templateHandler.Build()
 
 	tpl := template.New("permify").Funcs(funcs)
@@ -71,6 +73,36 @@ func (p *PermifyModule) InitContext(c pgs.BuildContext) {
 
 	remapTpl := template.New("permify_remap").Funcs(funcs)
 	p.remapTpl = template.Must(remapTpl.Parse(permifyRemapTpl))
+}
+
+func valueConstraintsLiteral(constraints *propertypb.PropertyValueConstraints) string {
+	if constraints == nil {
+		return ""
+	}
+	encoded, err := protojson.Marshal(constraints)
+	if err != nil {
+		panic(fmt.Sprintf("marshal system property value constraints: %v", err))
+	}
+	return fmt.Sprintf("propertyregistry.MustParseValueConstraintsJSON(%q)", encoded)
+}
+
+// systemPropertyReasonMode uses reflection so this generator can bootstrap
+// after its own input protobuf gains reason_mode. Omitted declarations retain
+// the public default of REQUIRED.
+func systemPropertyReasonMode(property *permspb.SystemProperty) propertypb.PropertyReasonMode {
+	if property == nil {
+		return propertypb.PropertyReasonMode_PROPERTY_REASON_MODE_REQUIRED
+	}
+	message := property.ProtoReflect()
+	field := message.Descriptor().Fields().ByName("reason_mode")
+	if field == nil {
+		return propertypb.PropertyReasonMode_PROPERTY_REASON_MODE_REQUIRED
+	}
+	mode := propertypb.PropertyReasonMode(message.Get(field).Enum())
+	if mode == propertypb.PropertyReasonMode_PROPERTY_REASON_MODE_UNSPECIFIED {
+		return propertypb.PropertyReasonMode_PROPERTY_REASON_MODE_REQUIRED
+	}
+	return mode
 }
 
 func rendererConfigLiteral(config *propertypb.PropertyRendererConfig) string {
@@ -236,26 +268,30 @@ type RemapImport struct {
 }
 
 type SystemProperty struct {
-	Scope          propertypb.PropertyScope
-	Key            string
-	ValueType      propertypb.PropertyValueType
-	Enabled        bool
-	DisplayKey     string
-	Label          string
-	Description    *string
-	Searchable     bool
-	ValueFormat    propertypb.PropertyValueFormat
-	Renderer       propertypb.PropertyRenderer
-	RendererConfig *propertypb.PropertyRendererConfig
-	DisplayMode    propertypb.PropertyDisplayMode
-	Behavior       propertypb.PropertyBehavior
-	Unit           *string
-	DecimalPlaces  *uint32
-	Currency       *string
-	GroupKey       string
-	SortOrder      int32
-	Pinned         bool
-	Implicit       bool
+	Scope            propertypb.PropertyScope
+	Key              string
+	ValueType        propertypb.PropertyValueType
+	Enabled          bool
+	DisplayKey       string
+	Label            string
+	Description      *string
+	Searchable       bool
+	ValueFormat      propertypb.PropertyValueFormat
+	Renderer         propertypb.PropertyRenderer
+	RendererConfig   *propertypb.PropertyRendererConfig
+	DisplayMode      propertypb.PropertyDisplayMode
+	Behavior         propertypb.PropertyBehavior
+	Unit             *string
+	DecimalPlaces    *uint32
+	Currency         *string
+	GroupKey         string
+	SortOrder        int32
+	Pinned           bool
+	Implicit         bool
+	StatePolicy      *propertypb.PropertyStatePolicy
+	ManagedHandler   *string
+	ValueConstraints *propertypb.PropertyValueConstraints
+	ReasonMode       propertypb.PropertyReasonMode
 }
 
 type SystemPropertyGroup struct {
@@ -479,27 +515,32 @@ func (p *PermifyModule) generate(fs []pgs.File) map[string]map[string]map[string
 				if displayMode == propertypb.PropertyDisplayMode_PROPERTY_DISPLAY_MODE_UNSPECIFIED {
 					displayMode = propertypb.PropertyDisplayMode_PROPERTY_DISPLAY_MODE_DEFAULT
 				}
+				reasonMode := systemPropertyReasonMode(property)
 				data.SystemProperties = append(data.SystemProperties, &SystemProperty{
-					Scope:          property.Scope,
-					Key:            property.Key,
-					ValueType:      property.ValueType,
-					Enabled:        property.Enabled,
-					DisplayKey:     property.DisplayKey,
-					Label:          property.Label,
-					Description:    property.Description,
-					Searchable:     property.Searchable,
-					ValueFormat:    valueFormat,
-					Renderer:       renderer,
-					RendererConfig: property.GetRendererConfig(),
-					DisplayMode:    displayMode,
-					Behavior:       behavior,
-					Unit:           property.Unit,
-					DecimalPlaces:  property.DecimalPlaces,
-					Currency:       property.Currency,
-					GroupKey:       property.GetGroupKey(),
-					SortOrder:      property.GetSortOrder(),
-					Pinned:         property.GetPinned(),
-					Implicit:       property.GetImplicit(),
+					Scope:            property.Scope,
+					Key:              property.Key,
+					ValueType:        property.ValueType,
+					Enabled:          property.Enabled,
+					DisplayKey:       property.DisplayKey,
+					Label:            property.Label,
+					Description:      property.Description,
+					Searchable:       property.Searchable,
+					ValueFormat:      valueFormat,
+					Renderer:         renderer,
+					RendererConfig:   property.GetRendererConfig(),
+					DisplayMode:      displayMode,
+					Behavior:         behavior,
+					Unit:             property.Unit,
+					DecimalPlaces:    property.DecimalPlaces,
+					Currency:         property.Currency,
+					GroupKey:         property.GetGroupKey(),
+					SortOrder:        property.GetSortOrder(),
+					Pinned:           property.GetPinned(),
+					Implicit:         property.GetImplicit(),
+					StatePolicy:      property.GetStatePolicy(),
+					ManagedHandler:   property.ManagedHandler,
+					ValueConstraints: property.GetValueConstraints(),
+					ReasonMode:       reasonMode,
 				})
 			}
 
@@ -835,6 +876,10 @@ func init() {
 			{{- with rendererConfigLiteral $property.RendererConfig }}RendererConfig: {{ . }},{{ end }}
 			DisplayMode: propertypb.PropertyDisplayMode_{{ $property.DisplayMode }},
 			Behavior: propertypb.PropertyBehavior_{{ $property.Behavior }},
+			{{- with $property.StatePolicy }}StatePolicy: &propertypb.PropertyStatePolicy{Enabled: {{ .Enabled }}, SupportsExpiry: {{ .SupportsExpiry }}, ExpiryAction: propertypb.PropertyExpiryAction_{{ .ExpiryAction }}},{{ end }}
+			{{- with $property.ManagedHandler }}ManagedHandler: proto.String("{{ . }}"),{{ end }}
+			{{- with valueConstraintsLiteral $property.ValueConstraints }}ValueConstraints: {{ . }},{{ end }}
+			ReasonMode: propertypb.PropertyReasonMode_{{ $property.ReasonMode }},
 			{{- with $property.Unit }}Unit: proto.String("{{ . }}"),{{ end }}
 			{{- with $property.DecimalPlaces }}DecimalPlaces: proto.Uint32({{ . }}),{{ end }}
 			{{- with $property.Currency }}Currency: proto.String("{{ . }}"),{{ end }}

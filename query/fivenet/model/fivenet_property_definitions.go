@@ -12,26 +12,29 @@ import (
 )
 
 type FivenetPropertyDefinitions struct {
-	Scope          string     `sql:"primary_key" json:"scope"`
-	PropertyKey    string     `sql:"primary_key" json:"property_key"`
-	ValueType      uint8      `json:"value_type"`
-	Label          string     `json:"label"`
-	Description    *string    `json:"description"`
-	Enabled        bool       `json:"enabled"`
-	Searchable     bool       `json:"searchable"`
-	ValueFormat    uint8      `json:"value_format"`
-	Behavior       uint8      `json:"behavior"`
-	GroupKey       string     `json:"group_key"`
-	SortOrder      int32      `json:"sort_order"`
-	Pinned         bool       `json:"pinned"`
-	Renderer       uint8      `json:"renderer"`
-	RendererConfig *string    `json:"renderer_config"`
-	DisplayMode    uint8      `json:"display_mode"`
-	Implicit       bool       `json:"implicit"`
-	Unit           *string    `json:"unit"`
-	DecimalPlaces  *uint8     `json:"decimal_places"`
-	Currency       *string    `json:"currency"`
-	DeletedAt      *time.Time `json:"deleted_at"`
-	CreatedAt      time.Time  `json:"created_at"`
-	UpdatedAt      time.Time  `json:"updated_at"`
+	Scope            string     `sql:"primary_key" json:"scope"`
+	PropertyKey      string     `sql:"primary_key" json:"property_key"`
+	ValueType        uint8      `json:"value_type"`
+	Label            string     `json:"label"`
+	Description      *string    `json:"description"`
+	Enabled          bool       `json:"enabled"`
+	Searchable       bool       `json:"searchable"`
+	ValueFormat      uint8      `json:"value_format"`
+	Behavior         uint8      `json:"behavior"`
+	GroupKey         string     `json:"group_key"`
+	SortOrder        int32      `json:"sort_order"`
+	Pinned           bool       `json:"pinned"`
+	Renderer         uint8      `json:"renderer"`
+	RendererConfig   *string    `json:"renderer_config"`
+	DisplayMode      uint8      `json:"display_mode"`
+	Implicit         bool       `json:"implicit"`
+	StatePolicy      *string    `json:"state_policy"`
+	ValueConstraints *string    `json:"value_constraints"`
+	ReasonMode       uint8      `json:"reason_mode"`
+	Unit             *string    `json:"unit"`
+	DecimalPlaces    *uint8     `json:"decimal_places"`
+	Currency         *string    `json:"currency"`
+	DeletedAt        *time.Time `json:"deleted_at"`
+	CreatedAt        time.Time  `json:"created_at"`
+	UpdatedAt        time.Time  `json:"updated_at"`
 }
