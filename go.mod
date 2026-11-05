@@ -16,7 +16,7 @@ require (
 	github.com/HugoSmits86/nativewebp v1.3.0
 	github.com/XSAM/otelsql v0.44.0
 	github.com/adhocore/gronx v1.20.5
-	github.com/alecthomas/kong v1.16.1
+	github.com/alecthomas/kong v1.17.0
 	github.com/blevesearch/bleve/v2 v2.6.1
 	github.com/brianvoe/gofakeit/v7 v7.18.1
 	github.com/cespare/xxhash/v2 v2.3.0
@@ -56,7 +56,7 @@ require (
 	github.com/nats-io/nats-server/v2 v2.15.2
 	github.com/nats-io/nats.go v1.55.0
 	github.com/ory/dockertest/v4 v4.0.1
-	github.com/paulmach/orb v0.13.0
+	github.com/paulmach/orb v0.14.0
 	github.com/pkg/errors v0.9.1
 	github.com/prometheus/client_golang v1.25.0
 	github.com/prometheus/client_model v0.6.3
