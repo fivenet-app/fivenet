@@ -19,7 +19,7 @@ overrides:
   "nuxt-typed-router>lodash-es": "4.18.1"
   "nuxt-typed-router>nanoid": "6.0.2"
   "release-it>undici": "^8.12.3"
-  "get-uri>basic-ftp": "^6.2.5"
+  "get-uri>basic-ftp": "^6.2.6"
   "unhead": "3.4.3"
   "vue": "3.5.44"
   # protobuf-ts relies on the TypeScript 3.9 compiler API.
