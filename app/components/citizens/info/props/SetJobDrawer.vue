@@ -70,7 +70,7 @@ async function setJobProp(values: Schema): Promise<void> {
         const call = citizensCitizensClient.setUserProps({
             props: userProps,
             reason: values.reason,
-            propertyChanges: [],
+            propertyMutations: [],
         });
         const { response } = await call;
 

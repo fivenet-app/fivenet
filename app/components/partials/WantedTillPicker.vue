@@ -78,7 +78,7 @@ function selectPermanent(): void {
                         v-for="quickPick in quickPicks"
                         :key="quickPick.key"
                         class="rounded-none px-4"
-                        :label="t(`common.wanted_duration.${quickPick.key}`)"
+                        :label="$t(`common.wanted_duration.${quickPick.key}`)"
                         color="neutral"
                         variant="ghost"
                         truncate

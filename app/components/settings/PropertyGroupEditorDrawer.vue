@@ -51,7 +51,7 @@ async function close(): Promise<void> {
 
 <template>
     <ResponsiveDrawerModal
-        :title="t('components.settings.property_definitions.group_editor_title')"
+        :title="$t('components.settings.property_definitions.group_editor_title')"
         :close="false"
         :dismissible="!hasUnsavedChanges"
     >
@@ -75,16 +75,16 @@ async function close(): Promise<void> {
             <UForm ref="formRef" class="flex flex-col gap-4" :schema="schema" :state="editor" @submit="submit">
                 <UFormField
                     name="key"
-                    :label="t('components.settings.property_definitions.group_key')"
-                    :description="t('components.settings.property_definitions.group_key_description')"
+                    :label="$t('components.settings.property_definitions.group_key')"
+                    :description="$t('components.settings.property_definitions.group_key_description')"
                     required
                 >
                     <UInput v-model="editor.key" class="w-full" :disabled="isEditing" />
                 </UFormField>
                 <UFormField
                     name="label"
-                    :label="t('components.settings.property_definitions.group_label')"
-                    :description="t('components.settings.property_definitions.group_label_description')"
+                    :label="$t('components.settings.property_definitions.group_label')"
+                    :description="$t('components.settings.property_definitions.group_label_description')"
                     required
                 >
                     <UInput v-model="editor.label" class="w-full" />

@@ -6,7 +6,7 @@ import GenericTime from '~/components/partials/elements/GenericTime.vue';
 import IDCopyBadge from '~/components/partials/IDCopyBadge.vue';
 import PropertyActivityChange from '~/components/partials/properties/PropertyActivityChange.vue';
 import { DocRelation } from '~~/gen/ts/resources/documents/relations/relations';
-import { type UserActivity, UserActivityType } from '~~/gen/ts/resources/users/activity/activity';
+import { PropertyChangeCause, type UserActivity, UserActivityType } from '~~/gen/ts/resources/users/activity/activity';
 
 defineProps<{
     activity: UserActivity;
@@ -154,6 +154,8 @@ const numberFormatter = useDisplayNumberFormat();
                     :property-key="activity.data.data.propertyChange.key"
                     :old-value="activity.data.data.propertyChange.oldValue"
                     :new-value="activity.data.data.propertyChange.newValue"
+                    :lifecycle="activity.data.data.propertyChange.lifecycle"
+                    :expired="activity.data.data.propertyChange.cause === PropertyChangeCause.EXPIRED"
                 />
                 <template v-else>{{ UserActivityType[activity.type] }}</template>
             </span>

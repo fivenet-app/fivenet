@@ -2,7 +2,7 @@
 import CitizenInfoPopover from '~/components/partials/citizens/CitizenInfoPopover.vue';
 import PropertyActivityChange from '~/components/partials/properties/PropertyActivityChange.vue';
 import GenericTime from '~/components/partials/elements/GenericTime.vue';
-import { VehicleActivityType, type VehicleActivity } from '~~/gen/ts/resources/vehicles/activity/activity';
+import { PropertyChangeCause, VehicleActivityType, type VehicleActivity } from '~~/gen/ts/resources/vehicles/activity/activity';
 
 const props = defineProps<{
     activity: VehicleActivity;
@@ -46,6 +46,8 @@ const reasonHtml = computed(() => {
                     :property-key="activity.data.data.propertyChange.key"
                     :old-value="activity.data.data.propertyChange.oldValue"
                     :new-value="activity.data.data.propertyChange.newValue"
+                    :lifecycle="activity.data.data.propertyChange.lifecycle"
+                    :expired="activity.data.data.propertyChange.cause === PropertyChangeCause.EXPIRED"
                 />
                 <template
                     v-else-if="

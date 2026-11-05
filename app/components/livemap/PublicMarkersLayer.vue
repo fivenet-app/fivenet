@@ -23,7 +23,7 @@ const { livemap } = storeToRefs(settingsStore);
 </script>
 
 <template>
-    <LLayerGroup :name="t('common.public')" layer-type="overlay" :visible="visible" :options="{ name: 'markers_public' }">
+    <LLayerGroup :name="$t('common.public')" layer-type="overlay" :visible="visible" :options="{ name: 'markers_public' }">
         <MapMarkerMarker
             v-for="marker in markers"
             :key="marker.id"

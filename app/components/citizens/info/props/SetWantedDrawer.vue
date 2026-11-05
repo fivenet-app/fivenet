@@ -3,6 +3,7 @@ import type { FormSubmitEvent } from '@nuxt/ui';
 import { z } from 'zod';
 import { getCitizensCitizensClient } from '~~/gen/ts/clients';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
+import type { PropertyMutation } from '~~/gen/ts/resources/properties/properties';
 import type { UserProps } from '~~/gen/ts/resources/users/props/props';
 import type { User } from '~~/gen/ts/resources/users/user';
 import WantedTillPicker from '~/components/partials/WantedTillPicker.vue';
@@ -39,17 +40,33 @@ const state = reactive<Schema>({
 const { hasUnsavedChanges, confirmLeave } = useSnapshotChanges(state);
 
 async function setWantedState(values: Schema): Promise<void> {
-    const userProps: UserProps = {
-        userId: props.user.userId,
-        wanted: props.user.props ? !props.user.props.wanted : true,
-        wantedTill: values.permanent ? toTimestamp(new Date(0)) : toTimestamp(values.wantedTill),
-    };
+    const wanted = !props.user.props?.wanted;
+    let propertyMutations: PropertyMutation[];
+    if (wanted) {
+        const mutation: PropertyMutation = {
+            key: 'user.wanted',
+            valueChange: {
+                oneofKind: 'setValue',
+                setValue: { value: { oneofKind: 'boolValue', boolValue: true } },
+            },
+            reason: values.reason,
+        };
+        if (!values.permanent && values.wantedTill) {
+            const expiresAt = toTimestamp(values.wantedTill);
+            if (expiresAt) mutation.state = { expiryChange: { oneofKind: 'expiresAt', expiresAt } };
+        }
+        propertyMutations = [mutation];
+    } else {
+        propertyMutations = [
+            { key: 'user.wanted', reason: values.reason, valueChange: { oneofKind: 'clearValue', clearValue: {} } },
+        ];
+    }
 
     try {
         const call = citizensCitizensClient.setUserProps({
-            props: userProps,
+            props: { userId: props.user.userId },
             reason: values.reason,
-            propertyChanges: [],
+            propertyMutations,
         });
         const { response } = await call;
 

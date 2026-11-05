@@ -3,6 +3,7 @@ import type { FormSubmitEvent } from '@nuxt/ui';
 import { z } from 'zod';
 import { getVehiclesVehiclesClient } from '~~/gen/ts/clients';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
+import type { PropertyMutation } from '~~/gen/ts/resources/properties/properties';
 import type { VehicleProps } from '~~/gen/ts/resources/vehicles/props/props';
 import { toTimestamp } from '~/utils/time';
 import WantedTillPicker from '~/components/partials/WantedTillPicker.vue';
@@ -41,20 +42,33 @@ const state = reactive<Schema>({
 const { hasUnsavedChanges, confirmLeave } = useSnapshotChanges(state);
 
 async function setWantedState(values: Schema): Promise<void> {
-    const vProps: VehicleProps = {
-        plate: props.plate,
-        wanted: vehicleProps.value ? !vehicleProps.value.wanted : true,
-        wantedTill: values.permanent ? toTimestamp(new Date(0)) : toTimestamp(values.wantedTill),
-    };
-    if (vProps.wanted) {
-        vProps.wantedReason = values.reason;
+    const wanted = !vehicleProps.value?.wanted;
+    let propertyMutations: PropertyMutation[];
+    if (wanted) {
+        const mutation: PropertyMutation = {
+            key: 'vehicle.wanted',
+            valueChange: {
+                oneofKind: 'setValue',
+                setValue: { value: { oneofKind: 'boolValue', boolValue: true } },
+            },
+            reason: values.reason,
+        };
+        if (!values.permanent && values.wantedTill) {
+            const expiresAt = toTimestamp(values.wantedTill);
+            if (expiresAt) mutation.state = { expiryChange: { oneofKind: 'expiresAt', expiresAt } };
+        }
+        propertyMutations = [mutation];
+    } else {
+        propertyMutations = [
+            { key: 'vehicle.wanted', reason: values.reason, valueChange: { oneofKind: 'clearValue', clearValue: {} } },
+        ];
     }
 
     try {
         const call = vehiclesVehiclesClient.setVehicleProps({
-            props: vProps,
+            props: { plate: props.plate },
             reason: values.reason,
-            propertyChanges: [],
+            propertyMutations,
         });
         const { response } = await call;
 

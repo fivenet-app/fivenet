@@ -8,12 +8,15 @@ import { NotificationType } from '~~/gen/ts/resources/notifications/notification
 import InputDatePicker from '~/components/partials/InputDatePicker.vue';
 import {
     PropertyScope,
+    PropertyReasonMode,
     PropertyValueType,
     type Properties,
     type Property,
+    type PropertyMutation,
     type PropertyValue,
 } from '~~/gen/ts/resources/properties/properties';
 import { toDate, toTimestamp } from '~/utils/time';
+import { stringPropertyInputMode } from '~/utils/propertyValueInput';
 
 const props = defineProps<{
     property: Property;
@@ -35,7 +38,12 @@ const vehiclesClient = await getVehiclesVehiclesClient();
 const overlay = useOverlay();
 const resetConfirmModal = overlay.create(ConfirmModal);
 
-const schema = z.object({ reason: z.coerce.string().min(3).max(255) });
+const reasonMode = computed(() => props.property.definition?.reasonMode ?? PropertyReasonMode.REQUIRED);
+const schema = z.object({ reason: z.coerce.string().max(255) }).superRefine((values, ctx) => {
+    if (reasonMode.value === PropertyReasonMode.REQUIRED && values.reason.trim().length < 3) {
+        ctx.addIssue({ code: z.ZodIssueCode.custom, path: ['reason'], message: t('components.properties.reason_required') });
+    }
+});
 type Schema = z.output<typeof schema>;
 
 const state = reactive({
@@ -49,6 +57,10 @@ const state = reactive({
 });
 
 const valueType = computed(() => props.property.definition?.valueType ?? PropertyValueType.UNSPECIFIED);
+const allowedStringValues = computed(() => props.property.definition?.valueConstraints?.stringAllowedValues ?? []);
+const stringInputMode = computed(() => stringPropertyInputMode(props.property.definition));
+const stringValueOptions = computed(() => allowedStringValues.value.map((value) => ({ label: value, value })));
+const stringValueSuggestionsId = computed(() => `property-value-suggestions-${props.property.key}`);
 const canReset = computed(() => canActOnDynamicProperty(props.property));
 const title = computed(() => `${t(canReset.value ? 'common.edit' : 'common.set')} ${propertyLabel(props.property)}`);
 const { hasUnsavedChanges, confirmLeave } = useSnapshotChanges(state);
@@ -106,21 +118,25 @@ async function save(values: Schema): Promise<void> {
     if (!state.reset && value === undefined) return;
 
     try {
-        const propertyChanges = [{ key: props.property.key, value }];
+        const mutation: PropertyMutation = value
+            ? { key: props.property.key, valueChange: { oneofKind: 'setValue', setValue: value }, state: undefined }
+            : { key: props.property.key, valueChange: { oneofKind: 'clearValue', clearValue: {} }, state: undefined };
+        if (reasonMode.value !== PropertyReasonMode.NONE && values.reason.trim() !== '') mutation.reason = values.reason.trim();
+        const propertyMutations: PropertyMutation[] = [mutation];
         if (props.scope === PropertyScope.USER) {
             if (props.userId === undefined) return;
             const { response } = await citizensClient.setUserProps({
                 props: { userId: props.userId },
-                reason: values.reason,
-                propertyChanges,
+                reason: values.reason.trim(),
+                propertyMutations,
             });
             emit('update:properties', response.props?.properties);
         } else if (props.scope === PropertyScope.VEHICLE) {
             if (!props.plate) return;
             const { response } = await vehiclesClient.setVehicleProps({
                 props: { plate: props.plate },
-                reason: values.reason,
-                propertyChanges,
+                reason: values.reason.trim(),
+                propertyMutations,
             });
             emit('update:properties', response.props?.properties);
         }
@@ -173,12 +189,36 @@ async function closeModal(): Promise<void> {
 
         <template #body>
             <UForm ref="formRef" class="grid gap-2" :schema="schema" :state="state" @submit="submit">
-                <UFormField name="reason" :label="$t('common.reason')" required>
+                <UFormField
+                    v-if="reasonMode !== PropertyReasonMode.NONE"
+                    name="reason"
+                    :label="$t('common.reason')"
+                    :required="reasonMode === PropertyReasonMode.REQUIRED"
+                >
                     <UInput v-model="state.reason" class="w-full" :placeholder="$t('common.reason')" />
                 </UFormField>
 
                 <UFormField :label="propertyLabel(property)" required>
-                    <UInput v-if="valueType === PropertyValueType.STRING" v-model="state.stringValue" class="w-full" />
+                    <USelectMenu
+                        v-if="valueType === PropertyValueType.STRING && stringInputMode === 'strict'"
+                        v-model="state.stringValue"
+                        class="w-full"
+                        :items="stringValueOptions"
+                        label-key="label"
+                        value-key="value"
+                    />
+                    <template v-else-if="valueType === PropertyValueType.STRING">
+                        <UInput
+                            v-model="state.stringValue"
+                            class="w-full"
+                            :list="stringInputMode === 'suggestions' ? stringValueSuggestionsId : undefined"
+                            :minlength="property.definition?.valueConstraints?.stringMinLength"
+                            :maxlength="property.definition?.valueConstraints?.stringMaxLength"
+                        />
+                        <datalist v-if="stringInputMode === 'suggestions'" :id="stringValueSuggestionsId">
+                            <option v-for="value in allowedStringValues" :key="value" :value="value" />
+                        </datalist>
+                    </template>
                     <UInputNumber
                         v-else-if="valueType === PropertyValueType.INTEGER || valueType === PropertyValueType.NUMBER"
                         v-model="state.numberValue"

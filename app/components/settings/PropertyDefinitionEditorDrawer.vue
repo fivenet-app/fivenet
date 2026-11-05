@@ -9,11 +9,17 @@ import {
     PropertyScope,
     PropertyValueFormat,
     PropertyValueType,
+    PropertyStringAllowedValuesMode,
+    PropertyExpiryAction,
+    PropertyReasonMode,
     type PropertyRendererConfig,
     type PropertyDefinition,
     type PropertyGroup,
+    type PropertyValueConstraints,
 } from '~~/gen/ts/resources/properties/properties';
 import ResponsiveDrawerModal from '~/components/partials/ResponsiveDrawerModal.vue';
+import InputDatePicker from '~/components/partials/InputDatePicker.vue';
+import { toDate, toTimestamp } from '~/utils/time';
 
 const props = defineProps<{
     definition?: PropertyDefinition;
@@ -64,6 +70,9 @@ const editor = reactive<PropertyDefinition>({
     description: undefined,
     displayKey: '',
     rendererConfig: undefined,
+    statePolicy: undefined,
+    reasonMode: PropertyReasonMode.REQUIRED,
+    valueConstraints: undefined,
 });
 
 const rendererConfigDraft = reactive<{
@@ -73,6 +82,171 @@ const rendererConfigDraft = reactive<{
     decimalPlaces?: number;
     unit?: string;
 }>({ prefix: '', suffix: '', truncate: false });
+
+// Constraints deliberately live in a presentation draft: date pickers use
+// Date while the definition API uses LocalDate/Timestamp scalar messages.
+const constraintsDraft = reactive<{
+    stringMinLength?: number;
+    stringMaxLength?: number;
+    stringAllowedValues: string;
+    stringAllowedValuesMode: PropertyStringAllowedValuesMode;
+    integerMin?: number;
+    integerMax?: number;
+    numberMin?: number;
+    numberMax?: number;
+    timestampMin?: Date;
+    timestampMax?: Date;
+    dateMin?: Date;
+    dateMax?: Date;
+}>({
+    stringAllowedValues: '',
+    stringAllowedValuesMode: PropertyStringAllowedValuesMode.STRICT,
+});
+
+function dateToLocalDate(date: Date | undefined) {
+    if (!date) return undefined;
+    return { year: date.getFullYear(), month: date.getMonth() + 1, day: date.getDate() };
+}
+
+function localDateToDate(date: PropertyValueConstraints['dateMin']): Date | undefined {
+    if (!date) return undefined;
+    return new Date(date.year, date.month - 1, date.day);
+}
+
+function allowedValues(): string[] {
+    return constraintsDraft.stringAllowedValues
+        .replaceAll('\r\n', '\n')
+        .split('\n')
+        .filter((value) => value.length > 0);
+}
+
+const allowedValuesLimit = 50;
+
+const reasonModeOptions = [PropertyReasonMode.REQUIRED, PropertyReasonMode.OPTIONAL, PropertyReasonMode.NONE].map((value) => ({
+    label: t(`components.settings.property_definitions.reason_mode_${PropertyReasonMode[value].toLowerCase()}`),
+    value,
+}));
+
+const allowedValuesModeOptions = [PropertyStringAllowedValuesMode.STRICT, PropertyStringAllowedValuesMode.SUGGEST].map(
+    (value) => ({
+        label: t(
+            `components.settings.property_definitions.constraint_allowed_values_mode_${PropertyStringAllowedValuesMode[value].toLowerCase()}`,
+        ),
+        value,
+    }),
+);
+
+const constraintErrors = computed(() => {
+    const errors: Partial<Record<'stringLength' | 'allowedValues' | 'integer' | 'number' | 'timestamp' | 'date', string>> = {};
+    if (
+        constraintsDraft.stringMinLength !== undefined &&
+        constraintsDraft.stringMaxLength !== undefined &&
+        constraintsDraft.stringMinLength > constraintsDraft.stringMaxLength
+    ) {
+        errors.stringLength = t('components.settings.property_definitions.constraint_min_max_error');
+    }
+    const values = allowedValues();
+    if (new Set(values).size !== values.length) {
+        errors.allowedValues = t('components.settings.property_definitions.constraint_duplicate_values_error');
+    } else if (values.length > allowedValuesLimit) {
+        errors.allowedValues = t('components.settings.property_definitions.constraint_allowed_values_limit_error', {
+            limit: allowedValuesLimit,
+        });
+    }
+    if (
+        constraintsDraft.integerMin !== undefined &&
+        constraintsDraft.integerMax !== undefined &&
+        constraintsDraft.integerMin > constraintsDraft.integerMax
+    ) {
+        errors.integer = t('components.settings.property_definitions.constraint_min_max_error');
+    }
+    if (
+        constraintsDraft.numberMin !== undefined &&
+        constraintsDraft.numberMax !== undefined &&
+        constraintsDraft.numberMin > constraintsDraft.numberMax
+    ) {
+        errors.number = t('components.settings.property_definitions.constraint_min_max_error');
+    }
+    if (
+        constraintsDraft.timestampMin !== undefined &&
+        constraintsDraft.timestampMax !== undefined &&
+        constraintsDraft.timestampMin > constraintsDraft.timestampMax
+    ) {
+        errors.timestamp = t('components.settings.property_definitions.constraint_min_max_error');
+    }
+    if (
+        constraintsDraft.dateMin !== undefined &&
+        constraintsDraft.dateMax !== undefined &&
+        constraintsDraft.dateMin > constraintsDraft.dateMax
+    ) {
+        errors.date = t('components.settings.property_definitions.constraint_min_max_error');
+    }
+    return errors;
+});
+
+const hasConstraintErrors = computed(() => Object.keys(constraintErrors.value).length > 0);
+
+function buildValueConstraints(): PropertyValueConstraints | undefined {
+    switch (editor.valueType) {
+        case PropertyValueType.STRING: {
+            const stringAllowedValues = allowedValues();
+            if (
+                constraintsDraft.stringMinLength === undefined &&
+                constraintsDraft.stringMaxLength === undefined &&
+                stringAllowedValues.length === 0
+            ) {
+                return undefined;
+            }
+            return {
+                stringMinLength: constraintsDraft.stringMinLength,
+                stringMaxLength: constraintsDraft.stringMaxLength,
+                stringAllowedValues,
+                stringAllowedValuesMode:
+                    stringAllowedValues.length > 0
+                        ? constraintsDraft.stringAllowedValuesMode
+                        : PropertyStringAllowedValuesMode.UNSPECIFIED,
+            };
+        }
+        case PropertyValueType.INTEGER:
+            return constraintsDraft.integerMin === undefined && constraintsDraft.integerMax === undefined
+                ? undefined
+                : {
+                      stringAllowedValues: [],
+                      stringAllowedValuesMode: PropertyStringAllowedValuesMode.UNSPECIFIED,
+                      integerMin: constraintsDraft.integerMin,
+                      integerMax: constraintsDraft.integerMax,
+                  };
+        case PropertyValueType.NUMBER:
+            return constraintsDraft.numberMin === undefined && constraintsDraft.numberMax === undefined
+                ? undefined
+                : {
+                      stringAllowedValues: [],
+                      stringAllowedValuesMode: PropertyStringAllowedValuesMode.UNSPECIFIED,
+                      numberMin: constraintsDraft.numberMin,
+                      numberMax: constraintsDraft.numberMax,
+                  };
+        case PropertyValueType.TIMESTAMP:
+            return constraintsDraft.timestampMin === undefined && constraintsDraft.timestampMax === undefined
+                ? undefined
+                : {
+                      stringAllowedValues: [],
+                      stringAllowedValuesMode: PropertyStringAllowedValuesMode.UNSPECIFIED,
+                      timestampMin: toTimestamp(constraintsDraft.timestampMin),
+                      timestampMax: toTimestamp(constraintsDraft.timestampMax),
+                  };
+        case PropertyValueType.DATE:
+            return constraintsDraft.dateMin === undefined && constraintsDraft.dateMax === undefined
+                ? undefined
+                : {
+                      stringAllowedValues: [],
+                      stringAllowedValuesMode: PropertyStringAllowedValuesMode.UNSPECIFIED,
+                      dateMin: dateToLocalDate(constraintsDraft.dateMin),
+                      dateMax: dateToLocalDate(constraintsDraft.dateMax),
+                  };
+        default:
+            return undefined;
+    }
+}
 
 function buildRendererConfig(): PropertyRendererConfig | undefined {
     if (editor.renderer === PropertyRenderer.STRING) {
@@ -113,9 +287,10 @@ function buildRendererConfig(): PropertyRendererConfig | undefined {
     return undefined;
 }
 
-const { submit, isSubmitting, canSubmit } = useSubmitGuard(async () =>
-    props.onSave({ ...editor, rendererConfig: buildRendererConfig() }),
-);
+const { submit, isSubmitting, canSubmit } = useSubmitGuard(async () => {
+    if (hasConstraintErrors.value) return;
+    await props.onSave({ ...editor, rendererConfig: buildRendererConfig(), valueConstraints: buildValueConstraints() });
+});
 
 const valueTypeOptions = [
     PropertyValueType.STRING,
@@ -246,6 +421,9 @@ function resetEditor(): void {
         description: definition?.description,
         displayKey: '',
         rendererConfig: definition?.rendererConfig,
+        statePolicy: definition?.statePolicy,
+        reasonMode: definition?.reasonMode ?? PropertyReasonMode.REQUIRED,
+        valueConstraints: definition?.valueConstraints,
     });
     Object.assign(rendererConfigDraft, {
         prefix: '',
@@ -258,11 +436,30 @@ function resetEditor(): void {
     if (config?.oneofKind === 'string') Object.assign(rendererConfigDraft, config.string);
     if (config?.oneofKind === 'integer') Object.assign(rendererConfigDraft, config.integer);
     if (config?.oneofKind === 'number') Object.assign(rendererConfigDraft, config.number);
+    const constraints = definition?.valueConstraints;
+    Object.assign(constraintsDraft, {
+        stringMinLength: constraints?.stringMinLength,
+        stringMaxLength: constraints?.stringMaxLength,
+        stringAllowedValues: constraints?.stringAllowedValues.join('\n') ?? '',
+        stringAllowedValuesMode:
+            constraints?.stringAllowedValuesMode === PropertyStringAllowedValuesMode.SUGGEST
+                ? PropertyStringAllowedValuesMode.SUGGEST
+                : PropertyStringAllowedValuesMode.STRICT,
+        integerMin: constraints?.integerMin,
+        integerMax: constraints?.integerMax,
+        numberMin: constraints?.numberMin,
+        numberMax: constraints?.numberMax,
+        timestampMin: constraints?.timestampMin ? toDate(constraints.timestampMin) : undefined,
+        timestampMax: constraints?.timestampMax ? toDate(constraints.timestampMax) : undefined,
+        dateMin: localDateToDate(constraints?.dateMin),
+        dateMax: localDateToDate(constraints?.dateMax),
+    });
 }
 
 const { hasUnsavedChanges, confirmLeave, syncSnapshot } = useSnapshotChanges(() => ({
     editor: { ...editor },
     rendererConfigDraft: { ...rendererConfigDraft },
+    constraintsDraft: { ...constraintsDraft },
 }));
 
 watch([() => props.definition, () => props.scope], resetEditor, { immediate: true });
@@ -294,7 +491,7 @@ async function close(): Promise<void> {
 
 <template>
     <ResponsiveDrawerModal
-        :title="t('components.settings.property_definitions.editor_title')"
+        :title="$t('components.settings.property_definitions.editor_title')"
         :close="false"
         :dismissible="!hasUnsavedChanges"
     >
@@ -316,10 +513,12 @@ async function close(): Promise<void> {
 
         <template #body>
             <UForm ref="formRef" class="flex flex-col gap-4" :schema="schema" :state="editor" @submit="submit">
+                <USeparator :label="$t('components.settings.property_definitions.section_identity')" />
+
                 <UFormField
                     name="key"
-                    :label="t('components.settings.property_definitions.key')"
-                    :description="t('components.settings.property_definitions.key_description')"
+                    :label="$t('components.settings.property_definitions.key')"
+                    :description="$t('components.settings.property_definitions.key_description')"
                     required
                 >
                     <div class="flex items-center gap-1">
@@ -335,8 +534,8 @@ async function close(): Promise<void> {
 
                 <UFormField
                     name="label"
-                    :label="t('components.settings.property_definitions.label')"
-                    :description="t('components.settings.property_definitions.label_description')"
+                    :label="$t('components.settings.property_definitions.label')"
+                    :description="$t('components.settings.property_definitions.label_description')"
                     required
                 >
                     <UInput v-model="editor.label" class="w-full" />
@@ -344,16 +543,17 @@ async function close(): Promise<void> {
 
                 <UFormField
                     name="description"
-                    :label="t('components.settings.property_definitions.description')"
-                    :description="t('components.settings.property_definitions.description_description')"
+                    :label="$t('components.settings.property_definitions.description')"
+                    :description="$t('components.settings.property_definitions.description_description')"
                 >
                     <UTextarea v-model="editor.description" class="w-full" />
                 </UFormField>
 
+                <USeparator :label="$t('components.settings.property_definitions.section_organization')" />
                 <UFormField
                     name="groupKey"
-                    :label="t('components.settings.property_definitions.group')"
-                    :description="t('components.settings.property_definitions.group_description')"
+                    :label="$t('components.settings.property_definitions.group')"
+                    :description="$t('components.settings.property_definitions.group_description')"
                 >
                     <USelectMenu
                         v-model="selectedGroupKey"
@@ -364,10 +564,13 @@ async function close(): Promise<void> {
                     />
                 </UFormField>
 
+                <div class="space-y-2">
+                    <USeparator :label="$t('components.settings.property_definitions.section_value')" />
+                </div>
                 <UFormField
                     name="valueType"
-                    :label="t('components.settings.property_definitions.value_type')"
-                    :description="t('components.settings.property_definitions.value_type_description')"
+                    :label="$t('components.settings.property_definitions.value_type')"
+                    :description="$t('components.settings.property_definitions.value_type_description')"
                 >
                     <USelectMenu
                         v-model="editor.valueType"
@@ -379,10 +582,114 @@ async function close(): Promise<void> {
                     />
                 </UFormField>
 
+                <template v-if="editor.valueType === PropertyValueType.STRING">
+                    <div class="grid gap-3 sm:grid-cols-2">
+                        <UFormField
+                            :label="$t('components.settings.property_definitions.constraint_min_characters')"
+                            :error="constraintErrors.stringLength"
+                        >
+                            <UInputNumber v-model="constraintsDraft.stringMinLength" class="w-full" :min="0" :max="2048" />
+                        </UFormField>
+                        <UFormField
+                            :label="$t('components.settings.property_definitions.constraint_max_characters')"
+                            :error="constraintErrors.stringLength"
+                        >
+                            <UInputNumber v-model="constraintsDraft.stringMaxLength" class="w-full" :min="0" :max="2048" />
+                        </UFormField>
+                    </div>
+                    <UFormField
+                        :label="$t('components.settings.property_definitions.constraint_allowed_values')"
+                        :description="$t('components.settings.property_definitions.constraint_allowed_values_description')"
+                        :error="constraintErrors.allowedValues"
+                    >
+                        <UTextarea v-model="constraintsDraft.stringAllowedValues" class="w-full" :rows="5" />
+                    </UFormField>
+                    <UFormField
+                        v-if="allowedValues().length > 0"
+                        :label="$t('components.settings.property_definitions.constraint_allowed_values_mode')"
+                    >
+                        <USelectMenu
+                            v-model="constraintsDraft.stringAllowedValuesMode"
+                            class="w-full"
+                            :items="allowedValuesModeOptions"
+                            label-key="label"
+                            value-key="value"
+                        />
+                    </UFormField>
+                </template>
+
+                <template v-else-if="editor.valueType === PropertyValueType.INTEGER">
+                    <div class="grid gap-3 sm:grid-cols-2">
+                        <UFormField
+                            :label="$t('components.settings.property_definitions.constraint_minimum')"
+                            :error="constraintErrors.integer"
+                        >
+                            <UInputNumber v-model="constraintsDraft.integerMin" class="w-full" :step="1" />
+                        </UFormField>
+                        <UFormField
+                            :label="$t('components.settings.property_definitions.constraint_maximum')"
+                            :error="constraintErrors.integer"
+                        >
+                            <UInputNumber v-model="constraintsDraft.integerMax" class="w-full" :step="1" />
+                        </UFormField>
+                    </div>
+                </template>
+
+                <template v-else-if="editor.valueType === PropertyValueType.NUMBER">
+                    <div class="grid gap-3 sm:grid-cols-2">
+                        <UFormField
+                            :label="$t('components.settings.property_definitions.constraint_minimum')"
+                            :error="constraintErrors.number"
+                        >
+                            <UInputNumber v-model="constraintsDraft.numberMin" class="w-full" :step="0.01" />
+                        </UFormField>
+                        <UFormField
+                            :label="$t('components.settings.property_definitions.constraint_maximum')"
+                            :error="constraintErrors.number"
+                        >
+                            <UInputNumber v-model="constraintsDraft.numberMax" class="w-full" :step="0.01" />
+                        </UFormField>
+                    </div>
+                </template>
+
+                <template v-else-if="editor.valueType === PropertyValueType.DATE">
+                    <div class="grid gap-3 sm:grid-cols-2">
+                        <UFormField
+                            :label="$t('components.settings.property_definitions.constraint_earliest_date')"
+                            :error="constraintErrors.date"
+                        >
+                            <InputDatePicker v-model="constraintsDraft.dateMin" class="w-full" clearable />
+                        </UFormField>
+                        <UFormField
+                            :label="$t('components.settings.property_definitions.constraint_latest_date')"
+                            :error="constraintErrors.date"
+                        >
+                            <InputDatePicker v-model="constraintsDraft.dateMax" class="w-full" clearable />
+                        </UFormField>
+                    </div>
+                </template>
+
+                <template v-else-if="editor.valueType === PropertyValueType.TIMESTAMP">
+                    <div class="grid gap-3 sm:grid-cols-2">
+                        <UFormField
+                            :label="$t('components.settings.property_definitions.constraint_earliest_instant')"
+                            :error="constraintErrors.timestamp"
+                        >
+                            <InputDatePicker v-model="constraintsDraft.timestampMin" class="w-full" clearable time />
+                        </UFormField>
+                        <UFormField
+                            :label="$t('components.settings.property_definitions.constraint_latest_instant')"
+                            :error="constraintErrors.timestamp"
+                        >
+                            <InputDatePicker v-model="constraintsDraft.timestampMax" class="w-full" clearable time />
+                        </UFormField>
+                    </div>
+                </template>
+
                 <UFormField
                     name="valueFormat"
-                    :label="t('components.settings.property_definitions.value_format')"
-                    :description="t('components.settings.property_definitions.value_format_description')"
+                    :label="$t('components.settings.property_definitions.value_format')"
+                    :description="$t('components.settings.property_definitions.value_format_description')"
                 >
                     <USelectMenu
                         v-model="editor.valueFormat"
@@ -394,9 +701,34 @@ async function close(): Promise<void> {
                 </UFormField>
 
                 <UFormField
+                    v-if="editor.valueFormat === PropertyValueFormat.MONEY"
+                    :label="$t('components.settings.property_definitions.currency')"
+                    :description="$t('components.settings.property_definitions.currency_description')"
+                >
+                    <UInput v-model="editor.currency" class="w-full uppercase" maxlength="3" />
+                </UFormField>
+
+                <UFormField
+                    v-if="editor.valueFormat === PropertyValueFormat.DISTANCE"
+                    :label="$t('components.settings.property_definitions.unit')"
+                    :description="$t('components.settings.property_definitions.unit_description')"
+                >
+                    <UInput v-model="editor.unit" class="w-full" maxlength="32" />
+                </UFormField>
+
+                <UFormField
+                    v-if="editor.valueType === PropertyValueType.NUMBER || editor.valueFormat === PropertyValueFormat.MONEY"
+                    :label="$t('components.settings.property_definitions.decimal_places')"
+                    :description="$t('components.settings.property_definitions.decimal_places_description')"
+                >
+                    <UInputNumber v-model="editor.decimalPlaces" class="w-full" :min="0" :max="9" />
+                </UFormField>
+
+                <USeparator :label="$t('components.settings.property_definitions.section_presentation')" />
+                <UFormField
                     name="renderer"
-                    :label="t('components.settings.property_definitions.renderer')"
-                    :description="t('components.settings.property_definitions.renderer_description')"
+                    :label="$t('components.settings.property_definitions.renderer')"
+                    :description="$t('components.settings.property_definitions.renderer_description')"
                 >
                     <USelectMenu
                         v-model="editor.renderer"
@@ -409,96 +741,115 @@ async function close(): Promise<void> {
 
                 <template v-if="hasRendererConfig">
                     <UFormField
-                        :label="t('components.settings.property_definitions.renderer_prefix')"
-                        :description="t('components.settings.property_definitions.renderer_prefix_description')"
+                        :label="$t('components.settings.property_definitions.renderer_prefix')"
+                        :description="$t('components.settings.property_definitions.renderer_prefix_description')"
                     >
                         <UInput v-model="rendererConfigDraft.prefix" class="w-full" />
                     </UFormField>
                     <UFormField
-                        :label="t('components.settings.property_definitions.renderer_suffix')"
-                        :description="t('components.settings.property_definitions.renderer_suffix_description')"
+                        :label="$t('components.settings.property_definitions.renderer_suffix')"
+                        :description="$t('components.settings.property_definitions.renderer_suffix_description')"
                     >
                         <UInput v-model="rendererConfigDraft.suffix" class="w-full" />
                     </UFormField>
                     <UFormField
                         v-if="hasNumberRendererConfig"
-                        :label="t('components.settings.property_definitions.renderer_unit')"
-                        :description="t('components.settings.property_definitions.renderer_unit_description')"
+                        :label="$t('components.settings.property_definitions.renderer_unit')"
+                        :description="$t('components.settings.property_definitions.renderer_unit_description')"
                     >
                         <UInput v-model="rendererConfigDraft.unit" class="w-full" />
                     </UFormField>
                     <UFormField
                         v-if="hasNumberRendererConfig"
-                        :label="t('components.settings.property_definitions.renderer_decimal_places')"
-                        :description="t('components.settings.property_definitions.renderer_decimal_places_description')"
+                        :label="$t('components.settings.property_definitions.renderer_decimal_places')"
+                        :description="$t('components.settings.property_definitions.renderer_decimal_places_description')"
                     >
-                        <UInput
-                            v-model.number="rendererConfigDraft.decimalPlaces"
-                            class="w-full"
-                            type="number"
-                            min="0"
-                            max="9"
-                        />
+                        <UInputNumber v-model="rendererConfigDraft.decimalPlaces" class="w-full" :min="0" :max="9" />
                     </UFormField>
                     <UFormField
                         v-if="editor.renderer === PropertyRenderer.STRING"
-                        :label="t('components.settings.property_definitions.renderer_truncate')"
-                        :description="t('components.settings.property_definitions.renderer_truncate_description')"
+                        :label="$t('components.settings.property_definitions.renderer_truncate')"
+                        :description="$t('components.settings.property_definitions.renderer_truncate_description')"
                     >
                         <USwitch v-model="rendererConfigDraft.truncate" />
                     </UFormField>
                 </template>
 
-                <UFormField
-                    v-if="editor.valueFormat === PropertyValueFormat.MONEY"
-                    :label="t('components.settings.property_definitions.currency')"
-                    :description="t('components.settings.property_definitions.currency_description')"
-                >
-                    <UInput v-model="editor.currency" class="w-full uppercase" maxlength="3" />
-                </UFormField>
-
-                <UFormField
-                    v-if="editor.valueFormat === PropertyValueFormat.DISTANCE"
-                    :label="t('components.settings.property_definitions.unit')"
-                    :description="t('components.settings.property_definitions.unit_description')"
-                >
-                    <UInput v-model="editor.unit" class="w-full" maxlength="32" />
-                </UFormField>
-
-                <UFormField
-                    v-if="editor.valueType === PropertyValueType.NUMBER || editor.valueFormat === PropertyValueFormat.MONEY"
-                    :label="t('components.settings.property_definitions.decimal_places')"
-                    :description="t('components.settings.property_definitions.decimal_places_description')"
-                >
-                    <UInput v-model.number="editor.decimalPlaces" class="w-full" type="number" min="0" max="9" />
-                </UFormField>
-
+                <USeparator :label="$t('components.settings.property_definitions.section_lifecycle')" />
                 <div class="flex flex-col gap-2">
                     <UFormField
+                        :label="$t('components.settings.property_definitions.state_policy')"
+                        :description="$t('components.settings.property_definitions.state_policy_description')"
+                    >
+                        <USwitch
+                            :model-value="editor.statePolicy?.enabled ?? false"
+                            @update:model-value="
+                                (enabled) =>
+                                    (editor.statePolicy = enabled
+                                        ? {
+                                              enabled: true,
+                                              supportsExpiry: false,
+                                              expiryAction: PropertyExpiryAction.UNSPECIFIED,
+                                          }
+                                        : undefined)
+                            "
+                        />
+                    </UFormField>
+                    <template v-if="editor.statePolicy?.enabled">
+                        <UFormField
+                            :label="$t('components.settings.property_definitions.state_policy_expiry')"
+                            :description="$t('components.settings.property_definitions.state_policy_expiry_description')"
+                        >
+                            <USwitch
+                                v-model="editor.statePolicy.supportsExpiry"
+                                @update:model-value="
+                                    (enabled) =>
+                                        (editor.statePolicy!.expiryAction = enabled
+                                            ? PropertyExpiryAction.CLEAR_VALUE
+                                            : PropertyExpiryAction.UNSPECIFIED)
+                                "
+                            />
+                        </UFormField>
+                    </template>
+                    <UFormField
+                        :label="$t('components.settings.property_definitions.reason_mode')"
+                        :description="$t('components.settings.property_definitions.reason_mode_description')"
+                    >
+                        <USelectMenu
+                            v-model="editor.reasonMode"
+                            class="w-full"
+                            :items="reasonModeOptions"
+                            label-key="label"
+                            value-key="value"
+                        />
+                    </UFormField>
+
+                    <USeparator class="pt-2" :label="$t('components.settings.property_definitions.section_availability')" />
+                    <UFormField
                         name="enabled"
-                        :label="t('components.settings.property_definitions.enabled')"
-                        :description="t('components.settings.property_definitions.enabled_description')"
+                        :label="$t('components.settings.property_definitions.enabled')"
+                        :description="$t('components.settings.property_definitions.enabled_description')"
                     >
                         <USwitch v-model="editor.enabled" />
                     </UFormField>
                     <UFormField
                         name="searchable"
-                        :label="t('components.settings.property_definitions.searchable')"
-                        :description="t('components.settings.property_definitions.searchable_description')"
+                        :label="$t('components.settings.property_definitions.searchable')"
+                        :description="$t('components.settings.property_definitions.searchable_description')"
                     >
                         <USwitch v-model="editor.searchable" />
                     </UFormField>
                     <UFormField
                         name="pinned"
-                        :label="t('components.settings.property_definitions.pinned')"
-                        :description="t('components.settings.property_definitions.pinned_description')"
+                        :label="$t('components.settings.property_definitions.pinned')"
+                        :description="$t('components.settings.property_definitions.pinned_description')"
                     >
                         <USwitch v-model="editor.pinned" />
                     </UFormField>
                     <UFormField
                         name="implicit"
-                        :label="t('components.settings.property_definitions.implicit')"
-                        :description="t('components.settings.property_definitions.implicit_description')"
+                        :label="$t('components.settings.property_definitions.implicit')"
+                        :description="$t('components.settings.property_definitions.implicit_description')"
                     >
                         <USwitch v-model="editor.implicit" />
                     </UFormField>
@@ -519,7 +870,7 @@ async function close(): Promise<void> {
                 <UButton
                     class="flex-1"
                     block
-                    :disabled="!canSubmit"
+                    :disabled="!canSubmit || hasConstraintErrors"
                     :loading="isSubmitting"
                     :label="$t('common.save')"
                     @click="formRef?.submit()"

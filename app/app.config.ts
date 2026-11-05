@@ -254,8 +254,4 @@ export default defineAppConfig({
             base: 'gap-4',
         },
     },
-
-    icon: {
-        mode: 'svg',
-    },
 });

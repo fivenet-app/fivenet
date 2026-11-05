@@ -393,7 +393,7 @@ async function restoreCustomDefinition(definition: PropertyDefinition): Promise<
 <template>
     <UDashboardPanel :ui="{ root: 'pb-(--page-content-bottom-offset)' }">
         <template #header>
-            <UDashboardNavbar :title="t('components.settings.property_definitions.title')">
+            <UDashboardNavbar :title="$t('components.settings.property_definitions.title')">
                 <template #leading>
                     <UDashboardSidebarCollapse />
                 </template>
@@ -437,7 +437,7 @@ async function restoreCustomDefinition(definition: PropertyDefinition): Promise<
                     :state="query"
                     @submit="commitValidatedQuery"
                 >
-                    <UFormField name="scope" class="flex-1" :label="t('components.settings.property_definitions.scope')">
+                    <UFormField name="scope" class="flex-1" :label="$t('components.settings.property_definitions.scope')">
                         <USelectMenu
                             v-model="query.scope"
                             class="w-full"
@@ -456,7 +456,7 @@ async function restoreCustomDefinition(definition: PropertyDefinition): Promise<
                     <UFormField
                         name="showDeleted"
                         class="shrink-0"
-                        :label="t('components.settings.property_definitions.show_deleted')"
+                        :label="$t('components.settings.property_definitions.show_deleted')"
                     >
                         <USwitch v-model="query.showDeleted" />
                     </UFormField>
@@ -471,7 +471,7 @@ async function restoreCustomDefinition(definition: PropertyDefinition): Promise<
             />
             <DataErrorBlock
                 v-else-if="error"
-                :title="t('components.settings.property_definitions.load_error')"
+                :title="$t('components.settings.property_definitions.load_error')"
                 :error="error"
                 :retry="refresh"
             />
@@ -480,10 +480,10 @@ async function restoreCustomDefinition(definition: PropertyDefinition): Promise<
                     v-if="pinnedCount >= 6"
                     color="warning"
                     icon="i-mdi-pin"
-                    :title="t('components.settings.property_definitions.pinned_warning', { count: pinnedCount })"
+                    :title="$t('components.settings.property_definitions.pinned_warning', { count: pinnedCount })"
                 />
 
-                <DataNoDataBlock v-if="definitions.length === 0" :type="t('components.settings.property_definitions.title')" />
+                <DataNoDataBlock v-if="definitions.length === 0" :type="$t('components.settings.property_definitions.title')" />
 
                 <div v-for="group in definitionGroups" :key="group.key" class="space-y-3">
                     <div class="flex items-center justify-between gap-2">
