@@ -14,14 +14,31 @@ import (
 func TestTargetURL(t *testing.T) {
 	t.Parallel()
 
-	request := &http.Request{URL: &url.URL{
-		Path:    Path + "/https://example.com/image.png",
-		RawPath: Path + "/https%3A%2F%2Fexample.com%2Fimage.png",
-	}}
-	target, err := targetURL(request)
+	for _, test := range []struct {
+		name    string
+		path    string
+		rawPath string
+		want    string
+	}{
+		{
+			name:    "literal URL",
+			path:    Path + "/https://example.com/image.png",
+			rawPath: Path + "/https%3A%2F%2Fexample.com%2Fimage.png",
+			want:    "https://example.com/image.png",
+		},
+		{
+			name: "raw URL-safe base64 URL",
+			path: Path + "/aHR0cHM6Ly9jZG4uZGlzY29yZGFwcC5jb20vYXR0YWNobWVudHMvMTE0OTI5NzkwNzE0OTg0ODU5Ny8xMzIzMDkwNDg2ODUyMDU5MTY2L2xzcGQtbG9nb18xLnBuZz9leD02NzczM2Y4OSZpcz02NzcxZWUwOSZobT1kMzQwMjZlZGQ2OWU5ZjlmMmJmMjM0M2FiMWZlODkyZGZlMDBkZWQ5NzVmZDI0NDFlZTk1YmY4NWJlNDg4MDlkJg",
+			want: "https://cdn.discordapp.com/attachments/1149297907149848597/1323090486852059166/lspd-logo_1.png?ex=67733f89&is=6771ee09&hm=d34026edd69e9f9f2bf2343ab1fe892dfe00ded975fd2441ee95bf85be48809d&",
+		},
+	} {
+		t.Run(test.name, func(t *testing.T) {
+			target, err := targetURL(&http.Request{URL: &url.URL{Path: test.path, RawPath: test.rawPath}})
 
-	require.NoError(t, err)
-	require.Equal(t, "https://example.com/image.png", target.String())
+			require.NoError(t, err)
+			require.Equal(t, test.want, target.String())
+		})
+	}
 }
 
 func TestTargetURLRejectsCredentialsAndUnsupportedSchemes(t *testing.T) {

@@ -2,6 +2,7 @@ package images
 
 import (
 	"context"
+	"encoding/base64"
 	"errors"
 	"fmt"
 	"io"
@@ -202,15 +203,34 @@ func targetURL(request *http.Request) (*url.URL, error) {
 	if err != nil {
 		return nil, err
 	}
-	target, err := url.Parse(decoded)
-	if err != nil || target.Scheme == "" || target.Hostname() == "" {
-		return nil, errors.New("target is not an absolute URL")
+
+	// The sanitizer stores remote image URLs as raw URL-safe base64 to keep
+	// reserved URL characters out of the path. Keep accepting literal URLs for
+	// compatibility with older links, then fall back to the encoded form.
+	target, err := parseAbsoluteURL(decoded)
+	if err != nil {
+		encoded, decodeErr := base64.RawURLEncoding.DecodeString(decoded)
+		if decodeErr != nil {
+			return nil, errors.New("target is not an absolute URL")
+		}
+		target, err = parseAbsoluteURL(string(encoded))
+		if err != nil {
+			return nil, errors.New("target is not an absolute URL")
+		}
 	}
 	if target.Scheme != "http" && target.Scheme != "https" {
 		return nil, errors.New("unsupported target scheme")
 	}
 	if target.User != nil {
 		return nil, errors.New("target credentials are not allowed")
+	}
+	return target, nil
+}
+
+func parseAbsoluteURL(raw string) (*url.URL, error) {
+	target, err := url.Parse(raw)
+	if err != nil || target.Scheme == "" || target.Hostname() == "" {
+		return nil, errors.New("target is not an absolute URL")
 	}
 	return target, nil
 }
