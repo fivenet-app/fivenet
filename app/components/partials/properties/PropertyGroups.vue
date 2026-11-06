@@ -1,11 +1,7 @@
 <script lang="ts" setup>
 import PropertyRender from './PropertyRender.vue';
-import {
-    PropertyDisplayMode,
-    PropertyRenderer,
-    type Property,
-    type PropertyGroup,
-} from '~~/gen/ts/resources/properties/properties';
+import { PropertyDisplayMode, type Property, type PropertyGroup } from '~~/gen/ts/resources/properties/properties';
+import { propertyHasDisplayValue } from '~/composables/usePropertyRenderer';
 
 const props = defineProps<{ properties?: Property[]; groups?: PropertyGroup[] }>();
 const { t, te } = useI18n();
@@ -17,7 +13,7 @@ const groups = computed(() => {
     const grouped = new Map<string, Property[]>();
     for (const property of props.properties ?? []) {
         if (property.definition?.displayMode && property.definition.displayMode !== PropertyDisplayMode.DEFAULT) continue;
-        if (property.value?.value.oneofKind === undefined && property.definition?.renderer !== PropertyRenderer.EMAIL) continue;
+        if (!propertyHasDisplayValue(property)) continue;
         const key = property.definition?.groupKey || '';
         grouped.set(key, [...(grouped.get(key) ?? []), property]);
     }

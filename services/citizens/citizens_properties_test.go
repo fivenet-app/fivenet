@@ -10,6 +10,7 @@ import (
 	usersprops "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/users/props"
 	pbcitizens "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/citizens"
 	errorscitizens "github.com/fivenet-app/fivenet/v2026/services/citizens/errors"
+	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
 
@@ -46,6 +47,31 @@ func TestDerivedCitizenProperties(t *testing.T) {
 	require.Equal(t, "555-0100", properties[3].GetValue().GetStringValue())
 	require.Equal(t, "citizen@example.invalid", properties[4].GetValue().GetStringValue())
 	require.Equal(t, int64(2), properties[5].GetValue().GetIntegerValue())
+}
+
+func TestResolveCitizenPropertiesIncludesPermittedUnsetSystemProperty(t *testing.T) {
+	t.Parallel()
+
+	user := &users.User{UserId: 42}
+	definition := &properties.PropertyDefinition{
+		Scope:             properties.PropertyScope_PROPERTY_SCOPE_USER,
+		Source:            properties.PropertyDefinitionSource_PROPERTY_DEFINITION_SOURCE_SYSTEM,
+		Key:               "user.email",
+		ValueType:         properties.PropertyValueType_PROPERTY_VALUE_TYPE_STRING,
+		Enabled:           true,
+		EmptyValueDisplay: properties.PropertyEmptyValueDisplay_PROPERTY_EMPTY_VALUE_DISPLAY_NA,
+	}
+
+	resolveCitizenProperties(
+		[]*users.User{user},
+		nil,
+		&permissionsattributes.PropertyList{Keys: []string{"user.email"}},
+		map[string]*properties.PropertyDefinition{"user.email": definition},
+	)
+
+	require.Len(t, user.GetProperties().GetProperties(), 1)
+	assert.Equal(t, "user.email", user.GetProperties().GetProperties()[0].GetKey())
+	assert.Nil(t, user.GetProperties().GetProperties()[0].GetValue())
 }
 
 func TestCitizenFilterAccessRequiresEnabledDefinitionAndGrant(t *testing.T) {

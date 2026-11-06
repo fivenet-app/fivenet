@@ -88,6 +88,7 @@ func (s *Store) ListPropertyDefinitions(
 			tDefinitions.StatePolicy,
 			tDefinitions.ValueConstraints,
 			tDefinitions.ReasonMode,
+			tDefinitions.EmptyValueDisplay,
 			tDefinitions.DeletedAt,
 		).
 		FROM(tDefinitions).
@@ -588,6 +589,7 @@ func (s *Store) CreatePropertyDefinition(
 		tDefinitions.StatePolicy,
 		tDefinitions.ValueConstraints,
 		tDefinitions.ReasonMode,
+		tDefinitions.EmptyValueDisplay,
 	).VALUES(
 		scopeName, definition.GetKey(), definition.GetValueType(), definition.GetLabel(), definition.Description,
 		definition.GetEnabled(),
@@ -601,6 +603,7 @@ func (s *Store) CreatePropertyDefinition(
 		statePolicy,
 		valueConstraints,
 		definition.GetReasonMode(),
+		definition.GetEmptyValueDisplay(),
 	).
 		ExecContext(ctx, s.db)
 	if err != nil {
@@ -652,6 +655,7 @@ func (s *Store) UpdatePropertyDefinition(
 		tDefinitions.StatePolicy.SET(rendererConfigValue(statePolicy)),
 		tDefinitions.ValueConstraints.SET(rendererConfigValue(valueConstraints)),
 		tDefinitions.ReasonMode.SET(mysql.Int32(int32(definition.GetReasonMode()))),
+		tDefinitions.EmptyValueDisplay.SET(mysql.Int32(int32(definition.GetEmptyValueDisplay()))),
 	).WHERE(
 		tDefinitions.Scope.EQ(mysql.String(scopeName)).AND(
 			tDefinitions.PropertyKey.EQ(mysql.String(definition.GetKey())).AND(

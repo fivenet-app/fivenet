@@ -114,6 +114,9 @@ func NormalizeDefinition(definition *propertypb.PropertyDefinition) *propertypb.
 	if normalized.GetReasonMode() == propertypb.PropertyReasonMode_PROPERTY_REASON_MODE_UNSPECIFIED {
 		normalized.ReasonMode = propertypb.PropertyReasonMode_PROPERTY_REASON_MODE_REQUIRED
 	}
+	if normalized.GetEmptyValueDisplay() == propertypb.PropertyEmptyValueDisplay_PROPERTY_EMPTY_VALUE_DISPLAY_UNSPECIFIED {
+		normalized.EmptyValueDisplay = propertypb.PropertyEmptyValueDisplay_PROPERTY_EMPTY_VALUE_DISPLAY_HIDE
+	}
 	return normalized
 }
 
@@ -406,14 +409,18 @@ func ResolveProperties(
 		resolved[value.GetKey()] = struct{}{}
 	}
 	// Include empty custom definitions so callers can create their first value
-	// without separately loading the definition catalog. System properties
-	// retain their dedicated resource-specific editing flows.
+	// without separately loading the definition catalog. System properties are
+	// included only when their definition explicitly asks to display an empty
+	// value; they otherwise retain their dedicated resource-specific flows.
 	for key, definition := range definitions {
-		if definition == nil || !definition.GetEnabled() ||
-			definition.GetSource() != propertypb.PropertyDefinitionSource_PROPERTY_DEFINITION_SOURCE_CUSTOM {
+		if definition == nil || !definition.GetEnabled() {
 			continue
 		}
 		if _, ok := resolved[key]; ok {
+			continue
+		}
+		if definition.GetSource() != propertypb.PropertyDefinitionSource_PROPERTY_DEFINITION_SOURCE_CUSTOM &&
+			definition.GetEmptyValueDisplay() != propertypb.PropertyEmptyValueDisplay_PROPERTY_EMPTY_VALUE_DISPLAY_NA {
 			continue
 		}
 		result = append(result, &propertypb.Property{Key: key, Definition: definition})

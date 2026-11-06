@@ -88,6 +88,8 @@ message SystemProperty {
   resources.properties.PropertyReasonMode reason_mode = 24;
   // Locked properties keep their generated group and order on every instance.
   bool placement_locked = 25;
+  // Omitted system properties retain the default HIDE behavior when registered.
+  resources.properties.PropertyEmptyValueDisplay empty_value_display = 26;
 }
 
 message AdditionalServicePerm {

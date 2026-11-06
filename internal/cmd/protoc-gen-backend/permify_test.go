@@ -62,6 +62,7 @@ message SystemProperty {
   string group_key = 14;
   int32 sort_order = 15;
   bool placement_locked = 25;
+  resources.properties.PropertyEmptyValueDisplay empty_value_display = 26;
 }
 
 message AdditionalServicePerm {
@@ -100,6 +101,12 @@ enum PropertyValueType {
   PROPERTY_VALUE_TYPE_INTEGER = 2;
 }
 
+enum PropertyEmptyValueDisplay {
+  PROPERTY_EMPTY_VALUE_DISPLAY_UNSPECIFIED = 0;
+  PROPERTY_EMPTY_VALUE_DISPLAY_HIDE = 1;
+  PROPERTY_EMPTY_VALUE_DISPLAY_NA = 2;
+}
+
 message PropertyGroup {
   PropertyScope scope = 1;
   string key = 2;
@@ -130,6 +137,7 @@ service DocumentsService {
       group_key: "personal"
       sort_order: 100
       placement_locked: true
+      empty_value_display: PROPERTY_EMPTY_VALUE_DISPLAY_NA
     }]
     additional_perms: [
       {
@@ -341,6 +349,7 @@ func TestPermifyModule_Execute_MergesDocumentAttrs(t *testing.T) {
 	mustContainBackend(t, serviceOut, "propertyregistry.AddSystemPropertyGroups")
 	mustContainBackend(t, serviceOut, `GroupKey: "personal"`)
 	mustContainBackend(t, serviceOut, "PlacementLocked: true")
+	mustContainBackend(t, serviceOut, "EmptyValueDisplay: propertypb.PropertyEmptyValueDisplay_PROPERTY_EMPTY_VALUE_DISPLAY_NA")
 	mustContainBackend(t, serviceOut, "ValidValues: []string{\"user.name\"")
 	mustContainBackend(t, serviceOut, "PropertyScope: propertypb.PropertyScope_PROPERTY_SCOPE_USER,")
 	mustContainBackend(t, constOut, "DocumentsServiceUpdateDocumentPropertiesPermValueUserName")

@@ -2,6 +2,7 @@
 import { PropertyDisplayMode, type Property } from '~~/gen/ts/resources/properties/properties';
 import type { User } from '~~/gen/ts/resources/users/user';
 import WantedBadge from '~/components/partials/WantedBadge.vue';
+import { propertyHasDisplayValue } from '~/composables/usePropertyRenderer';
 
 const props = defineProps<{ properties?: Property[]; user?: User; keyOrder?: string[] }>();
 const { t } = useI18n();
@@ -10,8 +11,7 @@ const { propertyLabel, propertyScalarValue, renderProperty } = usePropertyRender
 const badges = computed(() => {
     const badges = (props.properties ?? []).filter(
         (property) =>
-            property.definition?.displayMode === PropertyDisplayMode.PROFILE_BADGE &&
-            property.value?.value.oneofKind !== undefined,
+            property.definition?.displayMode === PropertyDisplayMode.PROFILE_BADGE && propertyHasDisplayValue(property),
     );
     if (!props.keyOrder?.length) return badges;
 

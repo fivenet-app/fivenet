@@ -356,6 +356,7 @@ LocalDate deliberately has no timezone. Use it for calendar dates such as an ins
 | `reason_mode` | [PropertyReasonMode](#resourcespropertiesPropertyReasonMode) |  |  |
 | `placement_overridden` | [bool](#bool) |  | True when a system property has an instance-specific group or order. This is effective response metadata and is never persisted on definitions. |
 | `placement_locked` | [bool](#bool) |  | System properties with this flag retain their generated group and order. |
+| `empty_value_display` | [PropertyEmptyValueDisplay](#resourcespropertiesPropertyEmptyValueDisplay) |  | Controls whether an available property with no value is included in property responses for display. |
 
 
 
@@ -587,6 +588,18 @@ PropertyDisplayMode controls placement independently from the value renderer. Sp
 
 
 
+### resources.properties.PropertyEmptyValueDisplay
+PropertyEmptyValueDisplay controls how an available property without a scalar value participates in generic property displays.
+
+
+| Name | Number | Description |
+| ---- | ------ | ----------- |
+| `PROPERTY_EMPTY_VALUE_DISPLAY_UNSPECIFIED` | 0 |  |
+| `PROPERTY_EMPTY_VALUE_DISPLAY_HIDE` | 1 | Preserve the existing behavior: omit properties that have no value. |
+| `PROPERTY_EMPTY_VALUE_DISPLAY_NA` | 2 | Include the property and let renderers display the localized N/A state. |
+
+
+
 ### resources.properties.PropertyExpiryAction
 
 | Name | Number | Description |
@@ -804,6 +817,7 @@ SystemProperty declares a property whose key and semantics are owned by FiveNet 
 | `value_constraints` | [resources.properties.PropertyValueConstraints](#resourcespropertiesPropertyValueConstraints) | optional |  |
 | `reason_mode` | [resources.properties.PropertyReasonMode](#resourcespropertiesPropertyReasonMode) |  | Omitted system properties inherit REQUIRED when registered. |
 | `placement_locked` | [bool](#bool) |  | Locked properties keep their generated group and order on every instance. |
+| `empty_value_display` | [resources.properties.PropertyEmptyValueDisplay](#resourcespropertiesPropertyEmptyValueDisplay) |  | Omitted system properties retain the default HIDE behavior when registered. |
 
 
 

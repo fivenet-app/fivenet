@@ -268,31 +268,32 @@ type RemapImport struct {
 }
 
 type SystemProperty struct {
-	Scope            propertypb.PropertyScope
-	Key              string
-	ValueType        propertypb.PropertyValueType
-	Enabled          bool
-	DisplayKey       string
-	Label            string
-	Description      *string
-	Searchable       bool
-	ValueFormat      propertypb.PropertyValueFormat
-	Renderer         propertypb.PropertyRenderer
-	RendererConfig   *propertypb.PropertyRendererConfig
-	DisplayMode      propertypb.PropertyDisplayMode
-	Behavior         propertypb.PropertyBehavior
-	Unit             *string
-	DecimalPlaces    *uint32
-	Currency         *string
-	GroupKey         string
-	SortOrder        int32
-	Pinned           bool
-	Implicit         bool
-	StatePolicy      *propertypb.PropertyStatePolicy
-	ManagedHandler   *string
-	ValueConstraints *propertypb.PropertyValueConstraints
-	ReasonMode       propertypb.PropertyReasonMode
-	PlacementLocked  bool
+	Scope             propertypb.PropertyScope
+	Key               string
+	ValueType         propertypb.PropertyValueType
+	Enabled           bool
+	DisplayKey        string
+	Label             string
+	Description       *string
+	Searchable        bool
+	ValueFormat       propertypb.PropertyValueFormat
+	Renderer          propertypb.PropertyRenderer
+	RendererConfig    *propertypb.PropertyRendererConfig
+	DisplayMode       propertypb.PropertyDisplayMode
+	Behavior          propertypb.PropertyBehavior
+	Unit              *string
+	DecimalPlaces     *uint32
+	Currency          *string
+	GroupKey          string
+	SortOrder         int32
+	Pinned            bool
+	Implicit          bool
+	StatePolicy       *propertypb.PropertyStatePolicy
+	ManagedHandler    *string
+	ValueConstraints  *propertypb.PropertyValueConstraints
+	ReasonMode        propertypb.PropertyReasonMode
+	PlacementLocked   bool
+	EmptyValueDisplay propertypb.PropertyEmptyValueDisplay
 }
 
 type SystemPropertyGroup struct {
@@ -517,32 +518,37 @@ func (p *PermifyModule) generate(fs []pgs.File) map[string]map[string]map[string
 					displayMode = propertypb.PropertyDisplayMode_PROPERTY_DISPLAY_MODE_DEFAULT
 				}
 				reasonMode := systemPropertyReasonMode(property)
+				emptyValueDisplay := property.GetEmptyValueDisplay()
+				if emptyValueDisplay == propertypb.PropertyEmptyValueDisplay_PROPERTY_EMPTY_VALUE_DISPLAY_UNSPECIFIED {
+					emptyValueDisplay = propertypb.PropertyEmptyValueDisplay_PROPERTY_EMPTY_VALUE_DISPLAY_HIDE
+				}
 				data.SystemProperties = append(data.SystemProperties, &SystemProperty{
-					Scope:            property.Scope,
-					Key:              property.Key,
-					ValueType:        property.ValueType,
-					Enabled:          property.Enabled,
-					DisplayKey:       property.DisplayKey,
-					Label:            property.Label,
-					Description:      property.Description,
-					Searchable:       property.Searchable,
-					ValueFormat:      valueFormat,
-					Renderer:         renderer,
-					RendererConfig:   property.GetRendererConfig(),
-					DisplayMode:      displayMode,
-					Behavior:         behavior,
-					Unit:             property.Unit,
-					DecimalPlaces:    property.DecimalPlaces,
-					Currency:         property.Currency,
-					GroupKey:         property.GetGroupKey(),
-					SortOrder:        property.GetSortOrder(),
-					Pinned:           property.GetPinned(),
-					Implicit:         property.GetImplicit(),
-					StatePolicy:      property.GetStatePolicy(),
-					ManagedHandler:   property.ManagedHandler,
-					ValueConstraints: property.GetValueConstraints(),
-					ReasonMode:       reasonMode,
-					PlacementLocked:  property.GetPlacementLocked(),
+					Scope:             property.Scope,
+					Key:               property.Key,
+					ValueType:         property.ValueType,
+					Enabled:           property.Enabled,
+					DisplayKey:        property.DisplayKey,
+					Label:             property.Label,
+					Description:       property.Description,
+					Searchable:        property.Searchable,
+					ValueFormat:       valueFormat,
+					Renderer:          renderer,
+					RendererConfig:    property.GetRendererConfig(),
+					DisplayMode:       displayMode,
+					Behavior:          behavior,
+					Unit:              property.Unit,
+					DecimalPlaces:     property.DecimalPlaces,
+					Currency:          property.Currency,
+					GroupKey:          property.GetGroupKey(),
+					SortOrder:         property.GetSortOrder(),
+					Pinned:            property.GetPinned(),
+					Implicit:          property.GetImplicit(),
+					StatePolicy:       property.GetStatePolicy(),
+					ManagedHandler:    property.ManagedHandler,
+					ValueConstraints:  property.GetValueConstraints(),
+					ReasonMode:        reasonMode,
+					PlacementLocked:   property.GetPlacementLocked(),
+					EmptyValueDisplay: emptyValueDisplay,
 				})
 			}
 
@@ -882,6 +888,7 @@ func init() {
 			{{- with $property.ManagedHandler }}ManagedHandler: proto.String("{{ . }}"),{{ end }}
 			{{- with valueConstraintsLiteral $property.ValueConstraints }}ValueConstraints: {{ . }},{{ end }}
 			ReasonMode: propertypb.PropertyReasonMode_{{ $property.ReasonMode }},
+			EmptyValueDisplay: propertypb.PropertyEmptyValueDisplay_{{ $property.EmptyValueDisplay }},
 			{{- if $property.PlacementLocked }}PlacementLocked: true,{{ end }}
 			{{- with $property.Unit }}Unit: proto.String("{{ . }}"),{{ end }}
 			{{- with $property.DecimalPlaces }}DecimalPlaces: proto.Uint32({{ . }}),{{ end }}

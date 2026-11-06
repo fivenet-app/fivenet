@@ -344,6 +344,7 @@ service CitizensService {
         key: "user.email"
         value_type: PROPERTY_VALUE_TYPE_STRING
         renderer: PROPERTY_RENDERER_EMAIL
+        empty_value_display: PROPERTY_EMPTY_VALUE_DISPLAY_NA
         behavior: PROPERTY_BEHAVIOR_MANAGED
         enabled: true
         display_key: "common.mail"

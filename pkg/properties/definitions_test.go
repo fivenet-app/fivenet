@@ -139,6 +139,26 @@ func TestResolvePropertiesResourceIncludesValuesAndGroups(t *testing.T) {
 	assert.Equal(t, "contact", resource.GetGroups()[0].GetKey())
 }
 
+func TestResolvePropertiesIncludesSystemDefinitionConfiguredForEmptyValueDisplay(t *testing.T) {
+	t.Parallel()
+
+	definitions := map[string]*propertypb.PropertyDefinition{
+		"user.email": {
+			Scope:             propertypb.PropertyScope_PROPERTY_SCOPE_USER,
+			Source:            propertypb.PropertyDefinitionSource_PROPERTY_DEFINITION_SOURCE_SYSTEM,
+			Enabled:           true,
+			EmptyValueDisplay: propertypb.PropertyEmptyValueDisplay_PROPERTY_EMPTY_VALUE_DISPLAY_NA,
+		},
+	}
+
+	resolved := ResolveProperties(nil, definitions)
+
+	require.Len(t, resolved, 1)
+	assert.Equal(t, "user.email", resolved[0].GetKey())
+	assert.Nil(t, resolved[0].GetValue())
+	assert.Same(t, definitions["user.email"], resolved[0].GetDefinition())
+}
+
 func TestResolvePropertyGroupsSortsAndDeduplicates(t *testing.T) {
 	t.Parallel()
 
@@ -270,6 +290,11 @@ func TestNormalizeDefinitionReturnsCopy(t *testing.T) {
 		t,
 		propertypb.PropertyDisplayMode_PROPERTY_DISPLAY_MODE_DEFAULT,
 		normalized.GetDisplayMode(),
+	)
+	assert.Equal(
+		t,
+		propertypb.PropertyEmptyValueDisplay_PROPERTY_EMPTY_VALUE_DISPLAY_HIDE,
+		normalized.GetEmptyValueDisplay(),
 	)
 }
 

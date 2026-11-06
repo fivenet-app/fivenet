@@ -422,6 +422,54 @@ func (x PropertyDefinitionSource) Number() protoreflect.EnumNumber {
 	return protoreflect.EnumNumber(x)
 }
 
+// PropertyEmptyValueDisplay controls how an available property without a
+// scalar value participates in generic property displays.
+type PropertyEmptyValueDisplay int32
+
+const (
+	PropertyEmptyValueDisplay_PROPERTY_EMPTY_VALUE_DISPLAY_UNSPECIFIED PropertyEmptyValueDisplay = 0
+	// Preserve the existing behavior: omit properties that have no value.
+	PropertyEmptyValueDisplay_PROPERTY_EMPTY_VALUE_DISPLAY_HIDE PropertyEmptyValueDisplay = 1
+	// Include the property and let renderers display the localized N/A state.
+	PropertyEmptyValueDisplay_PROPERTY_EMPTY_VALUE_DISPLAY_NA PropertyEmptyValueDisplay = 2
+)
+
+// Enum value maps for PropertyEmptyValueDisplay.
+var (
+	PropertyEmptyValueDisplay_name = map[int32]string{
+		0: "PROPERTY_EMPTY_VALUE_DISPLAY_UNSPECIFIED",
+		1: "PROPERTY_EMPTY_VALUE_DISPLAY_HIDE",
+		2: "PROPERTY_EMPTY_VALUE_DISPLAY_NA",
+	}
+	PropertyEmptyValueDisplay_value = map[string]int32{
+		"PROPERTY_EMPTY_VALUE_DISPLAY_UNSPECIFIED": 0,
+		"PROPERTY_EMPTY_VALUE_DISPLAY_HIDE":        1,
+		"PROPERTY_EMPTY_VALUE_DISPLAY_NA":          2,
+	}
+)
+
+func (x PropertyEmptyValueDisplay) Enum() *PropertyEmptyValueDisplay {
+	p := new(PropertyEmptyValueDisplay)
+	*p = x
+	return p
+}
+
+func (x PropertyEmptyValueDisplay) String() string {
+	return protoimpl.X.EnumStringOf(x.Descriptor(), protoreflect.EnumNumber(x))
+}
+
+func (PropertyEmptyValueDisplay) Descriptor() protoreflect.EnumDescriptor {
+	return file_resources_properties_properties_proto_enumTypes[8].Descriptor()
+}
+
+func (PropertyEmptyValueDisplay) Type() protoreflect.EnumType {
+	return &file_resources_properties_properties_proto_enumTypes[8]
+}
+
+func (x PropertyEmptyValueDisplay) Number() protoreflect.EnumNumber {
+	return protoreflect.EnumNumber(x)
+}
+
 // PropertyRenderer selects a predefined UI treatment for a property.
 // It is separate from PropertyValueFormat, which describes the value's
 // semantic formatting rather than its component-level presentation.
@@ -491,11 +539,11 @@ func (x PropertyRenderer) String() string {
 }
 
 func (PropertyRenderer) Descriptor() protoreflect.EnumDescriptor {
-	return file_resources_properties_properties_proto_enumTypes[8].Descriptor()
+	return file_resources_properties_properties_proto_enumTypes[9].Descriptor()
 }
 
 func (PropertyRenderer) Type() protoreflect.EnumType {
-	return &file_resources_properties_properties_proto_enumTypes[8]
+	return &file_resources_properties_properties_proto_enumTypes[9]
 }
 
 func (x PropertyRenderer) Number() protoreflect.EnumNumber {
@@ -540,11 +588,11 @@ func (x PropertyDisplayMode) String() string {
 }
 
 func (PropertyDisplayMode) Descriptor() protoreflect.EnumDescriptor {
-	return file_resources_properties_properties_proto_enumTypes[9].Descriptor()
+	return file_resources_properties_properties_proto_enumTypes[10].Descriptor()
 }
 
 func (PropertyDisplayMode) Type() protoreflect.EnumType {
-	return &file_resources_properties_properties_proto_enumTypes[9]
+	return &file_resources_properties_properties_proto_enumTypes[10]
 }
 
 func (x PropertyDisplayMode) Number() protoreflect.EnumNumber {
@@ -599,11 +647,11 @@ func (x PropertyFilterOperation) String() string {
 }
 
 func (PropertyFilterOperation) Descriptor() protoreflect.EnumDescriptor {
-	return file_resources_properties_properties_proto_enumTypes[10].Descriptor()
+	return file_resources_properties_properties_proto_enumTypes[11].Descriptor()
 }
 
 func (PropertyFilterOperation) Type() protoreflect.EnumType {
-	return &file_resources_properties_properties_proto_enumTypes[10]
+	return &file_resources_properties_properties_proto_enumTypes[11]
 }
 
 func (x PropertyFilterOperation) Number() protoreflect.EnumNumber {
@@ -2388,6 +2436,7 @@ type PropertyDefinition struct {
 	xxx_hidden_ReasonMode          PropertyReasonMode        `protobuf:"varint,27,opt,name=reason_mode,json=reasonMode,proto3,enum=resources.properties.PropertyReasonMode"`
 	xxx_hidden_PlacementOverridden bool                      `protobuf:"varint,28,opt,name=placement_overridden,json=placementOverridden,proto3"`
 	xxx_hidden_PlacementLocked     bool                      `protobuf:"varint,29,opt,name=placement_locked,json=placementLocked,proto3"`
+	xxx_hidden_EmptyValueDisplay   PropertyEmptyValueDisplay `protobuf:"varint,30,opt,name=empty_value_display,json=emptyValueDisplay,proto3,enum=resources.properties.PropertyEmptyValueDisplay"`
 	XXX_raceDetectHookData         protoimpl.RaceDetectHookData
 	XXX_presence                   [1]uint32
 	unknownFields                  protoimpl.UnknownFields
@@ -2634,6 +2683,13 @@ func (x *PropertyDefinition) GetPlacementLocked() bool {
 	return false
 }
 
+func (x *PropertyDefinition) GetEmptyValueDisplay() PropertyEmptyValueDisplay {
+	if x != nil {
+		return x.xxx_hidden_EmptyValueDisplay
+	}
+	return PropertyEmptyValueDisplay_PROPERTY_EMPTY_VALUE_DISPLAY_UNSPECIFIED
+}
+
 func (x *PropertyDefinition) SetScope(v PropertyScope) {
 	x.xxx_hidden_Scope = v
 }
@@ -2664,7 +2720,7 @@ func (x *PropertyDefinition) SetLabel(v string) {
 
 func (x *PropertyDefinition) SetDescription(v string) {
 	x.xxx_hidden_Description = &v
-	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 7, 29)
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 7, 30)
 }
 
 func (x *PropertyDefinition) SetSearchable(v bool) {
@@ -2685,17 +2741,17 @@ func (x *PropertyDefinition) SetRenderer(v PropertyRenderer) {
 
 func (x *PropertyDefinition) SetUnit(v string) {
 	x.xxx_hidden_Unit = &v
-	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 12, 29)
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 12, 30)
 }
 
 func (x *PropertyDefinition) SetDecimalPlaces(v uint32) {
 	x.xxx_hidden_DecimalPlaces = v
-	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 13, 29)
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 13, 30)
 }
 
 func (x *PropertyDefinition) SetCurrency(v string) {
 	x.xxx_hidden_Currency = &v
-	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 14, 29)
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 14, 30)
 }
 
 func (x *PropertyDefinition) SetDeletedAt(v *timestamp.Timestamp) {
@@ -2736,7 +2792,7 @@ func (x *PropertyDefinition) SetStatePolicy(v *PropertyStatePolicy) {
 
 func (x *PropertyDefinition) SetManagedHandler(v string) {
 	x.xxx_hidden_ManagedHandler = &v
-	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 24, 29)
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 24, 30)
 }
 
 func (x *PropertyDefinition) SetValueConstraints(v *PropertyValueConstraints) {
@@ -2753,6 +2809,10 @@ func (x *PropertyDefinition) SetPlacementOverridden(v bool) {
 
 func (x *PropertyDefinition) SetPlacementLocked(v bool) {
 	x.xxx_hidden_PlacementLocked = v
+}
+
+func (x *PropertyDefinition) SetEmptyValueDisplay(v PropertyEmptyValueDisplay) {
+	x.xxx_hidden_EmptyValueDisplay = v
 }
 
 func (x *PropertyDefinition) HasDescription() bool {
@@ -2914,6 +2974,9 @@ type PropertyDefinition_builder struct {
 	PlacementOverridden bool
 	// System properties with this flag retain their generated group and order.
 	PlacementLocked bool
+	// Controls whether an available property with no value is included in
+	// property responses for display.
+	EmptyValueDisplay PropertyEmptyValueDisplay
 }
 
 func (b0 PropertyDefinition_builder) Build() *PropertyDefinition {
@@ -2928,7 +2991,7 @@ func (b0 PropertyDefinition_builder) Build() *PropertyDefinition {
 	x.xxx_hidden_DisplayKey = b.DisplayKey
 	x.xxx_hidden_Label = b.Label
 	if b.Description != nil {
-		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 7, 29)
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 7, 30)
 		x.xxx_hidden_Description = b.Description
 	}
 	x.xxx_hidden_Searchable = b.Searchable
@@ -2936,15 +2999,15 @@ func (b0 PropertyDefinition_builder) Build() *PropertyDefinition {
 	x.xxx_hidden_Behavior = b.Behavior
 	x.xxx_hidden_Renderer = b.Renderer
 	if b.Unit != nil {
-		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 12, 29)
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 12, 30)
 		x.xxx_hidden_Unit = b.Unit
 	}
 	if b.DecimalPlaces != nil {
-		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 13, 29)
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 13, 30)
 		x.xxx_hidden_DecimalPlaces = *b.DecimalPlaces
 	}
 	if b.Currency != nil {
-		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 14, 29)
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 14, 30)
 		x.xxx_hidden_Currency = b.Currency
 	}
 	x.xxx_hidden_DeletedAt = b.DeletedAt
@@ -2957,13 +3020,14 @@ func (b0 PropertyDefinition_builder) Build() *PropertyDefinition {
 	x.xxx_hidden_Implicit = b.Implicit
 	x.xxx_hidden_StatePolicy = b.StatePolicy
 	if b.ManagedHandler != nil {
-		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 24, 29)
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 24, 30)
 		x.xxx_hidden_ManagedHandler = b.ManagedHandler
 	}
 	x.xxx_hidden_ValueConstraints = b.ValueConstraints
 	x.xxx_hidden_ReasonMode = b.ReasonMode
 	x.xxx_hidden_PlacementOverridden = b.PlacementOverridden
 	x.xxx_hidden_PlacementLocked = b.PlacementLocked
+	x.xxx_hidden_EmptyValueDisplay = b.EmptyValueDisplay
 	return m0
 }
 
@@ -3876,7 +3940,7 @@ const file_resources_properties_properties_proto_rawDesc = "" +
 	"\x0e_timestamp_minB\x10\n" +
 	"\x0e_timestamp_maxB\v\n" +
 	"\t_date_minB\v\n" +
-	"\t_date_max\"\xf0\f\n" +
+	"\t_date_max\"\xd1\r\n" +
 	"\x12PropertyDefinition\x129\n" +
 	"\x05scope\x18\x01 \x01(\x0e2#.resources.properties.PropertyScopeR\x05scope\x12\x10\n" +
 	"\x03key\x18\x02 \x01(\tR\x03key\x12F\n" +
@@ -3914,7 +3978,8 @@ const file_resources_properties_properties_proto_rawDesc = "" +
 	"\vreason_mode\x18\x1b \x01(\x0e2(.resources.properties.PropertyReasonModeR\n" +
 	"reasonMode\x121\n" +
 	"\x14placement_overridden\x18\x1c \x01(\bR\x13placementOverridden\x12)\n" +
-	"\x10placement_locked\x18\x1d \x01(\bR\x0fplacementLockedB\x0e\n" +
+	"\x10placement_locked\x18\x1d \x01(\bR\x0fplacementLocked\x12_\n" +
+	"\x13empty_value_display\x18\x1e \x01(\x0e2/.resources.properties.PropertyEmptyValueDisplayR\x11emptyValueDisplayB\x0e\n" +
 	"\f_descriptionB\a\n" +
 	"\x05_unitB\x11\n" +
 	"\x0f_decimal_placesB\v\n" +
@@ -4003,7 +4068,11 @@ const file_resources_properties_properties_proto_rawDesc = "" +
 	"\x18PropertyDefinitionSource\x12*\n" +
 	"&PROPERTY_DEFINITION_SOURCE_UNSPECIFIED\x10\x00\x12%\n" +
 	"!PROPERTY_DEFINITION_SOURCE_SYSTEM\x10\x01\x12%\n" +
-	"!PROPERTY_DEFINITION_SOURCE_CUSTOM\x10\x02*\xc0\x03\n" +
+	"!PROPERTY_DEFINITION_SOURCE_CUSTOM\x10\x02*\x95\x01\n" +
+	"\x19PropertyEmptyValueDisplay\x12,\n" +
+	"(PROPERTY_EMPTY_VALUE_DISPLAY_UNSPECIFIED\x10\x00\x12%\n" +
+	"!PROPERTY_EMPTY_VALUE_DISPLAY_HIDE\x10\x01\x12#\n" +
+	"\x1fPROPERTY_EMPTY_VALUE_DISPLAY_NA\x10\x02*\xc0\x03\n" +
 	"\x10PropertyRenderer\x12!\n" +
 	"\x1dPROPERTY_RENDERER_UNSPECIFIED\x10\x00\x12\x1d\n" +
 	"\x19PROPERTY_RENDERER_DEFAULT\x10\x01\x12\x1b\n" +
@@ -4035,7 +4104,7 @@ const file_resources_properties_properties_proto_rawDesc = "" +
 	",PROPERTY_FILTER_OPERATION_LESS_THAN_OR_EQUAL\x10\x06\x12&\n" +
 	"\"PROPERTY_FILTER_OPERATION_CONTAINS\x10\aBSZQgithub.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/properties;propertiesb\x06proto3"
 
-var file_resources_properties_properties_proto_enumTypes = make([]protoimpl.EnumInfo, 11)
+var file_resources_properties_properties_proto_enumTypes = make([]protoimpl.EnumInfo, 12)
 var file_resources_properties_properties_proto_msgTypes = make([]protoimpl.MessageInfo, 16)
 var file_resources_properties_properties_proto_goTypes = []any{
 	(PropertyScope)(0),                    // 0: resources.properties.PropertyScope
@@ -4046,75 +4115,77 @@ var file_resources_properties_properties_proto_goTypes = []any{
 	(PropertyReasonMode)(0),               // 5: resources.properties.PropertyReasonMode
 	(PropertyStringAllowedValuesMode)(0),  // 6: resources.properties.PropertyStringAllowedValuesMode
 	(PropertyDefinitionSource)(0),         // 7: resources.properties.PropertyDefinitionSource
-	(PropertyRenderer)(0),                 // 8: resources.properties.PropertyRenderer
-	(PropertyDisplayMode)(0),              // 9: resources.properties.PropertyDisplayMode
-	(PropertyFilterOperation)(0),          // 10: resources.properties.PropertyFilterOperation
-	(*PropertyValue)(nil),                 // 11: resources.properties.PropertyValue
-	(*LocalDate)(nil),                     // 12: resources.properties.LocalDate
-	(*Property)(nil),                      // 13: resources.properties.Property
-	(*PropertyState)(nil),                 // 14: resources.properties.PropertyState
-	(*PropertyMutation)(nil),              // 15: resources.properties.PropertyMutation
-	(*PropertyStatePatch)(nil),            // 16: resources.properties.PropertyStatePatch
-	(*Properties)(nil),                    // 17: resources.properties.Properties
-	(*PropertyStatePolicy)(nil),           // 18: resources.properties.PropertyStatePolicy
-	(*PropertyValueConstraints)(nil),      // 19: resources.properties.PropertyValueConstraints
-	(*PropertyDefinition)(nil),            // 20: resources.properties.PropertyDefinition
-	(*PropertyRendererConfig)(nil),        // 21: resources.properties.PropertyRendererConfig
-	(*PropertyStringRendererConfig)(nil),  // 22: resources.properties.PropertyStringRendererConfig
-	(*PropertyIntegerRendererConfig)(nil), // 23: resources.properties.PropertyIntegerRendererConfig
-	(*PropertyNumberRendererConfig)(nil),  // 24: resources.properties.PropertyNumberRendererConfig
-	(*PropertyGroup)(nil),                 // 25: resources.properties.PropertyGroup
-	(*PropertyFilter)(nil),                // 26: resources.properties.PropertyFilter
-	(*timestamp.Timestamp)(nil),           // 27: resources.timestamp.Timestamp
-	(*emptypb.Empty)(nil),                 // 28: google.protobuf.Empty
+	(PropertyEmptyValueDisplay)(0),        // 8: resources.properties.PropertyEmptyValueDisplay
+	(PropertyRenderer)(0),                 // 9: resources.properties.PropertyRenderer
+	(PropertyDisplayMode)(0),              // 10: resources.properties.PropertyDisplayMode
+	(PropertyFilterOperation)(0),          // 11: resources.properties.PropertyFilterOperation
+	(*PropertyValue)(nil),                 // 12: resources.properties.PropertyValue
+	(*LocalDate)(nil),                     // 13: resources.properties.LocalDate
+	(*Property)(nil),                      // 14: resources.properties.Property
+	(*PropertyState)(nil),                 // 15: resources.properties.PropertyState
+	(*PropertyMutation)(nil),              // 16: resources.properties.PropertyMutation
+	(*PropertyStatePatch)(nil),            // 17: resources.properties.PropertyStatePatch
+	(*Properties)(nil),                    // 18: resources.properties.Properties
+	(*PropertyStatePolicy)(nil),           // 19: resources.properties.PropertyStatePolicy
+	(*PropertyValueConstraints)(nil),      // 20: resources.properties.PropertyValueConstraints
+	(*PropertyDefinition)(nil),            // 21: resources.properties.PropertyDefinition
+	(*PropertyRendererConfig)(nil),        // 22: resources.properties.PropertyRendererConfig
+	(*PropertyStringRendererConfig)(nil),  // 23: resources.properties.PropertyStringRendererConfig
+	(*PropertyIntegerRendererConfig)(nil), // 24: resources.properties.PropertyIntegerRendererConfig
+	(*PropertyNumberRendererConfig)(nil),  // 25: resources.properties.PropertyNumberRendererConfig
+	(*PropertyGroup)(nil),                 // 26: resources.properties.PropertyGroup
+	(*PropertyFilter)(nil),                // 27: resources.properties.PropertyFilter
+	(*timestamp.Timestamp)(nil),           // 28: resources.timestamp.Timestamp
+	(*emptypb.Empty)(nil),                 // 29: google.protobuf.Empty
 }
 var file_resources_properties_properties_proto_depIdxs = []int32{
-	27, // 0: resources.properties.PropertyValue.timestamp_value:type_name -> resources.timestamp.Timestamp
-	12, // 1: resources.properties.PropertyValue.date_value:type_name -> resources.properties.LocalDate
-	11, // 2: resources.properties.Property.value:type_name -> resources.properties.PropertyValue
-	27, // 3: resources.properties.Property.updated_at:type_name -> resources.timestamp.Timestamp
-	20, // 4: resources.properties.Property.definition:type_name -> resources.properties.PropertyDefinition
-	14, // 5: resources.properties.Property.state:type_name -> resources.properties.PropertyState
-	27, // 6: resources.properties.PropertyState.active_at:type_name -> resources.timestamp.Timestamp
-	27, // 7: resources.properties.PropertyState.expires_at:type_name -> resources.timestamp.Timestamp
-	27, // 8: resources.properties.PropertyState.updated_at:type_name -> resources.timestamp.Timestamp
-	11, // 9: resources.properties.PropertyMutation.set_value:type_name -> resources.properties.PropertyValue
-	28, // 10: resources.properties.PropertyMutation.clear_value:type_name -> google.protobuf.Empty
-	16, // 11: resources.properties.PropertyMutation.state:type_name -> resources.properties.PropertyStatePatch
-	27, // 12: resources.properties.PropertyStatePatch.expires_at:type_name -> resources.timestamp.Timestamp
-	28, // 13: resources.properties.PropertyStatePatch.clear_expiry:type_name -> google.protobuf.Empty
-	13, // 14: resources.properties.Properties.properties:type_name -> resources.properties.Property
-	25, // 15: resources.properties.Properties.groups:type_name -> resources.properties.PropertyGroup
+	28, // 0: resources.properties.PropertyValue.timestamp_value:type_name -> resources.timestamp.Timestamp
+	13, // 1: resources.properties.PropertyValue.date_value:type_name -> resources.properties.LocalDate
+	12, // 2: resources.properties.Property.value:type_name -> resources.properties.PropertyValue
+	28, // 3: resources.properties.Property.updated_at:type_name -> resources.timestamp.Timestamp
+	21, // 4: resources.properties.Property.definition:type_name -> resources.properties.PropertyDefinition
+	15, // 5: resources.properties.Property.state:type_name -> resources.properties.PropertyState
+	28, // 6: resources.properties.PropertyState.active_at:type_name -> resources.timestamp.Timestamp
+	28, // 7: resources.properties.PropertyState.expires_at:type_name -> resources.timestamp.Timestamp
+	28, // 8: resources.properties.PropertyState.updated_at:type_name -> resources.timestamp.Timestamp
+	12, // 9: resources.properties.PropertyMutation.set_value:type_name -> resources.properties.PropertyValue
+	29, // 10: resources.properties.PropertyMutation.clear_value:type_name -> google.protobuf.Empty
+	17, // 11: resources.properties.PropertyMutation.state:type_name -> resources.properties.PropertyStatePatch
+	28, // 12: resources.properties.PropertyStatePatch.expires_at:type_name -> resources.timestamp.Timestamp
+	29, // 13: resources.properties.PropertyStatePatch.clear_expiry:type_name -> google.protobuf.Empty
+	14, // 14: resources.properties.Properties.properties:type_name -> resources.properties.Property
+	26, // 15: resources.properties.Properties.groups:type_name -> resources.properties.PropertyGroup
 	4,  // 16: resources.properties.PropertyStatePolicy.expiry_action:type_name -> resources.properties.PropertyExpiryAction
-	27, // 17: resources.properties.PropertyValueConstraints.timestamp_min:type_name -> resources.timestamp.Timestamp
-	27, // 18: resources.properties.PropertyValueConstraints.timestamp_max:type_name -> resources.timestamp.Timestamp
-	12, // 19: resources.properties.PropertyValueConstraints.date_min:type_name -> resources.properties.LocalDate
-	12, // 20: resources.properties.PropertyValueConstraints.date_max:type_name -> resources.properties.LocalDate
+	28, // 17: resources.properties.PropertyValueConstraints.timestamp_min:type_name -> resources.timestamp.Timestamp
+	28, // 18: resources.properties.PropertyValueConstraints.timestamp_max:type_name -> resources.timestamp.Timestamp
+	13, // 19: resources.properties.PropertyValueConstraints.date_min:type_name -> resources.properties.LocalDate
+	13, // 20: resources.properties.PropertyValueConstraints.date_max:type_name -> resources.properties.LocalDate
 	6,  // 21: resources.properties.PropertyValueConstraints.string_allowed_values_mode:type_name -> resources.properties.PropertyStringAllowedValuesMode
 	0,  // 22: resources.properties.PropertyDefinition.scope:type_name -> resources.properties.PropertyScope
 	1,  // 23: resources.properties.PropertyDefinition.value_type:type_name -> resources.properties.PropertyValueType
 	7,  // 24: resources.properties.PropertyDefinition.source:type_name -> resources.properties.PropertyDefinitionSource
 	2,  // 25: resources.properties.PropertyDefinition.value_format:type_name -> resources.properties.PropertyValueFormat
 	3,  // 26: resources.properties.PropertyDefinition.behavior:type_name -> resources.properties.PropertyBehavior
-	8,  // 27: resources.properties.PropertyDefinition.renderer:type_name -> resources.properties.PropertyRenderer
-	27, // 28: resources.properties.PropertyDefinition.deleted_at:type_name -> resources.timestamp.Timestamp
-	21, // 29: resources.properties.PropertyDefinition.renderer_config:type_name -> resources.properties.PropertyRendererConfig
-	9,  // 30: resources.properties.PropertyDefinition.display_mode:type_name -> resources.properties.PropertyDisplayMode
-	18, // 31: resources.properties.PropertyDefinition.state_policy:type_name -> resources.properties.PropertyStatePolicy
-	19, // 32: resources.properties.PropertyDefinition.value_constraints:type_name -> resources.properties.PropertyValueConstraints
+	9,  // 27: resources.properties.PropertyDefinition.renderer:type_name -> resources.properties.PropertyRenderer
+	28, // 28: resources.properties.PropertyDefinition.deleted_at:type_name -> resources.timestamp.Timestamp
+	22, // 29: resources.properties.PropertyDefinition.renderer_config:type_name -> resources.properties.PropertyRendererConfig
+	10, // 30: resources.properties.PropertyDefinition.display_mode:type_name -> resources.properties.PropertyDisplayMode
+	19, // 31: resources.properties.PropertyDefinition.state_policy:type_name -> resources.properties.PropertyStatePolicy
+	20, // 32: resources.properties.PropertyDefinition.value_constraints:type_name -> resources.properties.PropertyValueConstraints
 	5,  // 33: resources.properties.PropertyDefinition.reason_mode:type_name -> resources.properties.PropertyReasonMode
-	22, // 34: resources.properties.PropertyRendererConfig.string:type_name -> resources.properties.PropertyStringRendererConfig
-	23, // 35: resources.properties.PropertyRendererConfig.integer:type_name -> resources.properties.PropertyIntegerRendererConfig
-	24, // 36: resources.properties.PropertyRendererConfig.number:type_name -> resources.properties.PropertyNumberRendererConfig
-	0,  // 37: resources.properties.PropertyGroup.scope:type_name -> resources.properties.PropertyScope
-	27, // 38: resources.properties.PropertyGroup.deleted_at:type_name -> resources.timestamp.Timestamp
-	10, // 39: resources.properties.PropertyFilter.operation:type_name -> resources.properties.PropertyFilterOperation
-	11, // 40: resources.properties.PropertyFilter.value:type_name -> resources.properties.PropertyValue
-	41, // [41:41] is the sub-list for method output_type
-	41, // [41:41] is the sub-list for method input_type
-	41, // [41:41] is the sub-list for extension type_name
-	41, // [41:41] is the sub-list for extension extendee
-	0,  // [0:41] is the sub-list for field type_name
+	8,  // 34: resources.properties.PropertyDefinition.empty_value_display:type_name -> resources.properties.PropertyEmptyValueDisplay
+	23, // 35: resources.properties.PropertyRendererConfig.string:type_name -> resources.properties.PropertyStringRendererConfig
+	24, // 36: resources.properties.PropertyRendererConfig.integer:type_name -> resources.properties.PropertyIntegerRendererConfig
+	25, // 37: resources.properties.PropertyRendererConfig.number:type_name -> resources.properties.PropertyNumberRendererConfig
+	0,  // 38: resources.properties.PropertyGroup.scope:type_name -> resources.properties.PropertyScope
+	28, // 39: resources.properties.PropertyGroup.deleted_at:type_name -> resources.timestamp.Timestamp
+	11, // 40: resources.properties.PropertyFilter.operation:type_name -> resources.properties.PropertyFilterOperation
+	12, // 41: resources.properties.PropertyFilter.value:type_name -> resources.properties.PropertyValue
+	42, // [42:42] is the sub-list for method output_type
+	42, // [42:42] is the sub-list for method input_type
+	42, // [42:42] is the sub-list for extension type_name
+	42, // [42:42] is the sub-list for extension extendee
+	0,  // [0:42] is the sub-list for field type_name
 }
 
 func init() { file_resources_properties_properties_proto_init() }
@@ -4155,7 +4226,7 @@ func file_resources_properties_properties_proto_init() {
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_resources_properties_properties_proto_rawDesc), len(file_resources_properties_properties_proto_rawDesc)),
-			NumEnums:      11,
+			NumEnums:      12,
 			NumMessages:   16,
 			NumExtensions: 0,
 			NumServices:   0,

@@ -548,8 +548,10 @@ type SystemProperty struct {
 	ReasonMode properties.PropertyReasonMode `protobuf:"varint,24,opt,name=reason_mode,json=reasonMode,proto3,enum=resources.properties.PropertyReasonMode" json:"reason_mode,omitempty"`
 	// Locked properties keep their generated group and order on every instance.
 	PlacementLocked bool `protobuf:"varint,25,opt,name=placement_locked,json=placementLocked,proto3" json:"placement_locked,omitempty"`
-	unknownFields   protoimpl.UnknownFields
-	sizeCache       protoimpl.SizeCache
+	// Omitted system properties retain the default HIDE behavior when registered.
+	EmptyValueDisplay properties.PropertyEmptyValueDisplay `protobuf:"varint,26,opt,name=empty_value_display,json=emptyValueDisplay,proto3,enum=resources.properties.PropertyEmptyValueDisplay" json:"empty_value_display,omitempty"`
+	unknownFields     protoimpl.UnknownFields
+	sizeCache         protoimpl.SizeCache
 }
 
 func (x *SystemProperty) Reset() {
@@ -752,6 +754,13 @@ func (x *SystemProperty) GetPlacementLocked() bool {
 	return false
 }
 
+func (x *SystemProperty) GetEmptyValueDisplay() properties.PropertyEmptyValueDisplay {
+	if x != nil {
+		return x.EmptyValueDisplay
+	}
+	return properties.PropertyEmptyValueDisplay(0)
+}
+
 func (x *SystemProperty) SetScope(v properties.PropertyScope) {
 	x.Scope = v
 }
@@ -850,6 +859,10 @@ func (x *SystemProperty) SetReasonMode(v properties.PropertyReasonMode) {
 
 func (x *SystemProperty) SetPlacementLocked(v bool) {
 	x.PlacementLocked = v
+}
+
+func (x *SystemProperty) SetEmptyValueDisplay(v properties.PropertyEmptyValueDisplay) {
+	x.EmptyValueDisplay = v
 }
 
 func (x *SystemProperty) HasDescription() bool {
@@ -970,6 +983,8 @@ type SystemProperty_builder struct {
 	ReasonMode properties.PropertyReasonMode
 	// Locked properties keep their generated group and order on every instance.
 	PlacementLocked bool
+	// Omitted system properties retain the default HIDE behavior when registered.
+	EmptyValueDisplay properties.PropertyEmptyValueDisplay
 }
 
 func (b0 SystemProperty_builder) Build() *SystemProperty {
@@ -1001,6 +1016,7 @@ func (b0 SystemProperty_builder) Build() *SystemProperty {
 	x.ValueConstraints = b.ValueConstraints
 	x.ReasonMode = b.ReasonMode
 	x.PlacementLocked = b.PlacementLocked
+	x.EmptyValueDisplay = b.EmptyValueDisplay
 	return m0
 }
 
@@ -1158,8 +1174,7 @@ const file_codegen_perms_perms_proto_rawDesc = "" +
 	"\n" +
 	"_namespaceB\n" +
 	"\n" +
-	"\b_service\"\xdb\n" +
-	"\n" +
+	"\b_service\"\xbc\v\n" +
 	"\x0eSystemProperty\x129\n" +
 	"\x05scope\x18\x01 \x01(\x0e2#.resources.properties.PropertyScopeR\x05scope\x12\x10\n" +
 	"\x03key\x18\x02 \x01(\tR\x03key\x12F\n" +
@@ -1192,7 +1207,8 @@ const file_codegen_perms_perms_proto_rawDesc = "" +
 	"\x11value_constraints\x18\x17 \x01(\v2..resources.properties.PropertyValueConstraintsH\x06R\x10valueConstraints\x88\x01\x01\x12I\n" +
 	"\vreason_mode\x18\x18 \x01(\x0e2(.resources.properties.PropertyReasonModeR\n" +
 	"reasonMode\x12)\n" +
-	"\x10placement_locked\x18\x19 \x01(\bR\x0fplacementLockedB\x0e\n" +
+	"\x10placement_locked\x18\x19 \x01(\bR\x0fplacementLocked\x12_\n" +
+	"\x13empty_value_display\x18\x1a \x01(\x0e2/.resources.properties.PropertyEmptyValueDisplayR\x11emptyValueDisplayB\x0e\n" +
 	"\f_descriptionB\a\n" +
 	"\x05_unitB\x11\n" +
 	"\x0f_decimal_placesB\v\n" +
@@ -1226,8 +1242,9 @@ var file_codegen_perms_perms_proto_goTypes = []any{
 	(*properties.PropertyStatePolicy)(nil),      // 14: resources.properties.PropertyStatePolicy
 	(*properties.PropertyValueConstraints)(nil), // 15: resources.properties.PropertyValueConstraints
 	(properties.PropertyReasonMode)(0),          // 16: resources.properties.PropertyReasonMode
-	(*descriptorpb.MethodOptions)(nil),          // 17: google.protobuf.MethodOptions
-	(*descriptorpb.ServiceOptions)(nil),         // 18: google.protobuf.ServiceOptions
+	(properties.PropertyEmptyValueDisplay)(0),   // 17: resources.properties.PropertyEmptyValueDisplay
+	(*descriptorpb.MethodOptions)(nil),          // 18: google.protobuf.MethodOptions
+	(*descriptorpb.ServiceOptions)(nil),         // 19: google.protobuf.ServiceOptions
 }
 var file_codegen_perms_perms_proto_depIdxs = []int32{
 	1,  // 0: codegen.perms.PermsOptions.attrs:type_name -> codegen.perms.Attr
@@ -1246,16 +1263,17 @@ var file_codegen_perms_perms_proto_depIdxs = []int32{
 	14, // 13: codegen.perms.SystemProperty.state_policy:type_name -> resources.properties.PropertyStatePolicy
 	15, // 14: codegen.perms.SystemProperty.value_constraints:type_name -> resources.properties.PropertyValueConstraints
 	16, // 15: codegen.perms.SystemProperty.reason_mode:type_name -> resources.properties.PropertyReasonMode
-	1,  // 16: codegen.perms.AdditionalServicePerm.attrs:type_name -> codegen.perms.Attr
-	17, // 17: codegen.perms.perms:extendee -> google.protobuf.MethodOptions
-	18, // 18: codegen.perms.perms_svc:extendee -> google.protobuf.ServiceOptions
-	0,  // 19: codegen.perms.perms:type_name -> codegen.perms.PermsOptions
-	2,  // 20: codegen.perms.perms_svc:type_name -> codegen.perms.ServiceOptions
-	21, // [21:21] is the sub-list for method output_type
-	21, // [21:21] is the sub-list for method input_type
-	19, // [19:21] is the sub-list for extension type_name
-	17, // [17:19] is the sub-list for extension extendee
-	0,  // [0:17] is the sub-list for field type_name
+	17, // 16: codegen.perms.SystemProperty.empty_value_display:type_name -> resources.properties.PropertyEmptyValueDisplay
+	1,  // 17: codegen.perms.AdditionalServicePerm.attrs:type_name -> codegen.perms.Attr
+	18, // 18: codegen.perms.perms:extendee -> google.protobuf.MethodOptions
+	19, // 19: codegen.perms.perms_svc:extendee -> google.protobuf.ServiceOptions
+	0,  // 20: codegen.perms.perms:type_name -> codegen.perms.PermsOptions
+	2,  // 21: codegen.perms.perms_svc:type_name -> codegen.perms.ServiceOptions
+	22, // [22:22] is the sub-list for method output_type
+	22, // [22:22] is the sub-list for method input_type
+	20, // [20:22] is the sub-list for extension type_name
+	18, // [18:20] is the sub-list for extension extendee
+	0,  // [0:18] is the sub-list for field type_name
 }
 
 func init() { file_codegen_perms_perms_proto_init() }

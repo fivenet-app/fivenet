@@ -70,6 +70,8 @@ func TestListPropertyDefinitionsMergesSystemOverridesAndCustomDefinitions(t *tes
 			"fivenet_property_definitions.implicit",
 			"fivenet_property_definitions.state_policy",
 			"fivenet_property_definitions.value_constraints",
+			"fivenet_property_definitions.reason_mode",
+			"fivenet_property_definitions.empty_value_display",
 			"fivenet_property_definitions.deleted_at",
 		}).AddRow(
 			"vehicle.inspection_due",
@@ -92,6 +94,8 @@ func TestListPropertyDefinitionsMergesSystemOverridesAndCustomDefinitions(t *tes
 			false,
 			nil,
 			nil,
+			properties.PropertyReasonMode_PROPERTY_REASON_MODE_REQUIRED,
+			properties.PropertyEmptyValueDisplay_PROPERTY_EMPTY_VALUE_DISPLAY_NA,
 			nil,
 		))
 	mock.ExpectQuery(regexp.QuoteMeta("FROM fivenet_property_group_overrides")).
@@ -132,6 +136,11 @@ func TestListPropertyDefinitionsMergesSystemOverridesAndCustomDefinitions(t *tes
 		definitionsByKey["vehicle.inspection_due"].GetSource(),
 	)
 	assert.True(t, definitionsByKey["vehicle.inspection_due"].GetSearchable())
+	assert.Equal(
+		t,
+		properties.PropertyEmptyValueDisplay_PROPERTY_EMPTY_VALUE_DISPLAY_NA,
+		definitionsByKey["vehicle.inspection_due"].GetEmptyValueDisplay(),
+	)
 	require.NoError(t, mock.ExpectationsWereMet())
 }
 
@@ -154,6 +163,7 @@ func TestCreatePropertyDefinitionPersistsCustomDefinition(t *testing.T) {
 			Enabled: true, SupportsExpiry: true,
 			ExpiryAction: properties.PropertyExpiryAction_PROPERTY_EXPIRY_ACTION_CLEAR_VALUE,
 		},
+		EmptyValueDisplay: properties.PropertyEmptyValueDisplay_PROPERTY_EMPTY_VALUE_DISPLAY_NA,
 	}
 
 	mock.ExpectExec(regexp.QuoteMeta("INSERT INTO fivenet_property_definitions")).
@@ -179,6 +189,7 @@ func TestCreatePropertyDefinitionPersistsCustomDefinition(t *testing.T) {
 			),
 			nil,
 			properties.PropertyReasonMode_PROPERTY_REASON_MODE_REQUIRED,
+			properties.PropertyEmptyValueDisplay_PROPERTY_EMPTY_VALUE_DISPLAY_NA,
 		).
 		WillReturnResult(sqlmock.NewResult(1, 1))
 

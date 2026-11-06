@@ -1,10 +1,21 @@
 import { toDate } from '~/utils/time';
-import { PropertyRenderer, PropertyValueFormat, type Property } from '~~/gen/ts/resources/properties/properties';
+import {
+    PropertyEmptyValueDisplay,
+    PropertyRenderer,
+    PropertyValueFormat,
+    type Property,
+} from '~~/gen/ts/resources/properties/properties';
+
+export function propertyHasValue(property: Property): boolean {
+    return property.value?.value.oneofKind !== undefined;
+}
+
+export function propertyHasDisplayValue(property: Property): boolean {
+    return propertyHasValue(property) || property.definition?.emptyValueDisplay === PropertyEmptyValueDisplay.NA;
+}
 
 export function pinnedProperties(properties: readonly Property[] | undefined): Property[] {
-    return (properties ?? []).filter(
-        (property) => property.definition?.pinned && property.value?.value.oneofKind !== undefined,
-    );
+    return (properties ?? []).filter((property) => property.definition?.pinned && propertyHasDisplayValue(property));
 }
 
 export function usePropertyRenderer() {

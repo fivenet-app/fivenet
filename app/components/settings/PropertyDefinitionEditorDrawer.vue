@@ -12,6 +12,7 @@ import {
     PropertyStringAllowedValuesMode,
     PropertyExpiryAction,
     PropertyReasonMode,
+    PropertyEmptyValueDisplay,
     type PropertyRendererConfig,
     type PropertyDefinition,
     type PropertyGroup,
@@ -76,6 +77,7 @@ const editor = reactive<PropertyDefinition>({
     rendererConfig: undefined,
     statePolicy: undefined,
     reasonMode: PropertyReasonMode.REQUIRED,
+    emptyValueDisplay: PropertyEmptyValueDisplay.HIDE,
     valueConstraints: undefined,
 });
 
@@ -128,6 +130,11 @@ const allowedValuesLimit = 50;
 
 const reasonModeOptions = [PropertyReasonMode.REQUIRED, PropertyReasonMode.OPTIONAL, PropertyReasonMode.NONE].map((value) => ({
     label: t(`components.settings.property_definitions.reason_mode_${PropertyReasonMode[value].toLowerCase()}`),
+    value,
+}));
+
+const emptyValueDisplayOptions = [PropertyEmptyValueDisplay.HIDE, PropertyEmptyValueDisplay.NA].map((value) => ({
+    label: t(`components.settings.property_definitions.empty_value_display_${PropertyEmptyValueDisplay[value].toLowerCase()}`),
     value,
 }));
 
@@ -431,6 +438,7 @@ function resetEditor(): void {
         rendererConfig: definition?.rendererConfig,
         statePolicy: definition?.statePolicy,
         reasonMode: definition?.reasonMode ?? PropertyReasonMode.REQUIRED,
+        emptyValueDisplay: definition?.emptyValueDisplay ?? PropertyEmptyValueDisplay.HIDE,
         valueConstraints: definition?.valueConstraints,
     });
     Object.assign(rendererConfigDraft, {
@@ -825,6 +833,19 @@ const { submit: restoreDefaultPlacement, isSubmitting: isRestoringDefaultPlaceme
                             <USwitch v-model="rendererConfigDraft.truncate" />
                         </UFormField>
                     </template>
+
+                    <UFormField
+                        :label="$t('components.settings.property_definitions.empty_value_display')"
+                        :description="$t('components.settings.property_definitions.empty_value_display_description')"
+                    >
+                        <USelectMenu
+                            v-model="editor.emptyValueDisplay"
+                            class="w-full"
+                            :items="emptyValueDisplayOptions"
+                            label-key="label"
+                            value-key="value"
+                        />
+                    </UFormField>
 
                     <USeparator :label="$t('components.settings.property_definitions.section_lifecycle')" />
                     <div class="flex flex-col gap-2">

@@ -14,6 +14,7 @@ import {
     PropertyBehavior,
     PropertyDefinitionSource,
     PropertyDisplayMode,
+    PropertyEmptyValueDisplay,
     PropertyRenderer,
     PropertyScope,
     PropertyValueType,
@@ -666,6 +667,11 @@ async function restoreCustomDefinition(definition: PropertyDefinition): Promise<
                                             "
                                         />
                                         <UBadge color="neutral" :label="displayModeLabel(definition)" />
+                                        <UBadge
+                                            v-if="definition.emptyValueDisplay === PropertyEmptyValueDisplay.NA"
+                                            color="info"
+                                            :label="$t('components.settings.property_definitions.empty_value_display_na')"
+                                        />
                                         <UBadge
                                             :label="
                                                 $t('components.settings.property_definitions.renderer_label', {

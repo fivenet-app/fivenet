@@ -11,6 +11,7 @@ import { UnknownFieldHandler } from "@protobuf-ts/runtime";
 import type { PartialMessage } from "@protobuf-ts/runtime";
 import { reflectionMergePartial } from "@protobuf-ts/runtime";
 import { MessageType } from "@protobuf-ts/runtime";
+import { PropertyEmptyValueDisplay } from "../../resources/properties/properties";
 import { PropertyReasonMode } from "../../resources/properties/properties";
 import { PropertyValueConstraints } from "../../resources/properties/properties";
 import { PropertyStatePolicy } from "../../resources/properties/properties";
@@ -234,6 +235,12 @@ export interface SystemProperty {
      * @generated from protobuf field: bool placement_locked = 25
      */
     placementLocked: boolean;
+    /**
+     * Omitted system properties retain the default HIDE behavior when registered.
+     *
+     * @generated from protobuf field: resources.properties.PropertyEmptyValueDisplay empty_value_display = 26
+     */
+    emptyValueDisplay: PropertyEmptyValueDisplay;
 }
 /**
  * @generated from protobuf message codegen.perms.AdditionalServicePerm
@@ -550,7 +557,8 @@ class SystemProperty$Type extends MessageType<SystemProperty> {
             { no: 22, name: "managed_handler", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/ },
             { no: 23, name: "value_constraints", kind: "message", T: () => PropertyValueConstraints },
             { no: 24, name: "reason_mode", kind: "enum", T: () => ["resources.properties.PropertyReasonMode", PropertyReasonMode, "PROPERTY_REASON_MODE_"] },
-            { no: 25, name: "placement_locked", kind: "scalar", T: 8 /*ScalarType.BOOL*/ }
+            { no: 25, name: "placement_locked", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
+            { no: 26, name: "empty_value_display", kind: "enum", T: () => ["resources.properties.PropertyEmptyValueDisplay", PropertyEmptyValueDisplay, "PROPERTY_EMPTY_VALUE_DISPLAY_"] }
         ]);
     }
     create(value?: PartialMessage<SystemProperty>): SystemProperty {
@@ -572,6 +580,7 @@ class SystemProperty$Type extends MessageType<SystemProperty> {
         message.implicit = false;
         message.reasonMode = 0;
         message.placementLocked = false;
+        message.emptyValueDisplay = 0;
         if (value !== undefined)
             reflectionMergePartial<SystemProperty>(this, message, value);
         return message;
@@ -655,6 +664,9 @@ class SystemProperty$Type extends MessageType<SystemProperty> {
                     break;
                 case /* bool placement_locked */ 25:
                     message.placementLocked = reader.bool();
+                    break;
+                case /* resources.properties.PropertyEmptyValueDisplay empty_value_display */ 26:
+                    message.emptyValueDisplay = reader.int32();
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -743,6 +755,9 @@ class SystemProperty$Type extends MessageType<SystemProperty> {
         /* bool placement_locked = 25; */
         if (message.placementLocked !== false)
             writer.tag(25, WireType.Varint).bool(message.placementLocked);
+        /* resources.properties.PropertyEmptyValueDisplay empty_value_display = 26; */
+        if (message.emptyValueDisplay !== 0)
+            writer.tag(26, WireType.Varint).int32(message.emptyValueDisplay);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);

@@ -470,6 +470,13 @@ export interface PropertyDefinition {
      * @generated from protobuf field: bool placement_locked = 29
      */
     placementLocked: boolean;
+    /**
+     * Controls whether an available property with no value is included in
+     * property responses for display.
+     *
+     * @generated from protobuf field: resources.properties.PropertyEmptyValueDisplay empty_value_display = 30
+     */
+    emptyValueDisplay: PropertyEmptyValueDisplay;
 }
 /**
  * @generated from protobuf message resources.properties.PropertyRendererConfig
@@ -807,6 +814,30 @@ export enum PropertyDefinitionSource {
      * @generated from protobuf enum value: PROPERTY_DEFINITION_SOURCE_CUSTOM = 2;
      */
     CUSTOM = 2
+}
+/**
+ * PropertyEmptyValueDisplay controls how an available property without a
+ * scalar value participates in generic property displays.
+ *
+ * @generated from protobuf enum resources.properties.PropertyEmptyValueDisplay
+ */
+export enum PropertyEmptyValueDisplay {
+    /**
+     * @generated from protobuf enum value: PROPERTY_EMPTY_VALUE_DISPLAY_UNSPECIFIED = 0;
+     */
+    UNSPECIFIED = 0,
+    /**
+     * Preserve the existing behavior: omit properties that have no value.
+     *
+     * @generated from protobuf enum value: PROPERTY_EMPTY_VALUE_DISPLAY_HIDE = 1;
+     */
+    HIDE = 1,
+    /**
+     * Include the property and let renderers display the localized N/A state.
+     *
+     * @generated from protobuf enum value: PROPERTY_EMPTY_VALUE_DISPLAY_NA = 2;
+     */
+    NA = 2
 }
 /**
  * PropertyRenderer selects a predefined UI treatment for a property.
@@ -1670,7 +1701,8 @@ class PropertyDefinition$Type extends MessageType<PropertyDefinition> {
             { no: 26, name: "value_constraints", kind: "message", T: () => PropertyValueConstraints },
             { no: 27, name: "reason_mode", kind: "enum", T: () => ["resources.properties.PropertyReasonMode", PropertyReasonMode, "PROPERTY_REASON_MODE_"], options: { "buf.validate.field": { enum: { definedOnly: true } } } },
             { no: 28, name: "placement_overridden", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
-            { no: 29, name: "placement_locked", kind: "scalar", T: 8 /*ScalarType.BOOL*/ }
+            { no: 29, name: "placement_locked", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
+            { no: 30, name: "empty_value_display", kind: "enum", T: () => ["resources.properties.PropertyEmptyValueDisplay", PropertyEmptyValueDisplay, "PROPERTY_EMPTY_VALUE_DISPLAY_"], options: { "buf.validate.field": { enum: { definedOnly: true } } } }
         ]);
     }
     create(value?: PartialMessage<PropertyDefinition>): PropertyDefinition {
@@ -1695,6 +1727,7 @@ class PropertyDefinition$Type extends MessageType<PropertyDefinition> {
         message.reasonMode = 0;
         message.placementOverridden = false;
         message.placementLocked = false;
+        message.emptyValueDisplay = 0;
         if (value !== undefined)
             reflectionMergePartial<PropertyDefinition>(this, message, value);
         return message;
@@ -1790,6 +1823,9 @@ class PropertyDefinition$Type extends MessageType<PropertyDefinition> {
                     break;
                 case /* bool placement_locked */ 29:
                     message.placementLocked = reader.bool();
+                    break;
+                case /* resources.properties.PropertyEmptyValueDisplay empty_value_display */ 30:
+                    message.emptyValueDisplay = reader.int32();
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -1890,6 +1926,9 @@ class PropertyDefinition$Type extends MessageType<PropertyDefinition> {
         /* bool placement_locked = 29; */
         if (message.placementLocked !== false)
             writer.tag(29, WireType.Varint).bool(message.placementLocked);
+        /* resources.properties.PropertyEmptyValueDisplay empty_value_display = 30; */
+        if (message.emptyValueDisplay !== 0)
+            writer.tag(30, WireType.Varint).int32(message.emptyValueDisplay);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);

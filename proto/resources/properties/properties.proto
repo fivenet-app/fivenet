@@ -282,6 +282,19 @@ message PropertyDefinition {
   bool placement_overridden = 28;
   // System properties with this flag retain their generated group and order.
   bool placement_locked = 29;
+  // Controls whether an available property with no value is included in
+  // property responses for display.
+  PropertyEmptyValueDisplay empty_value_display = 30 [(buf.validate.field).enum.defined_only = true];
+}
+
+// PropertyEmptyValueDisplay controls how an available property without a
+// scalar value participates in generic property displays.
+enum PropertyEmptyValueDisplay {
+  PROPERTY_EMPTY_VALUE_DISPLAY_UNSPECIFIED = 0;
+  // Preserve the existing behavior: omit properties that have no value.
+  PROPERTY_EMPTY_VALUE_DISPLAY_HIDE = 1;
+  // Include the property and let renderers display the localized N/A state.
+  PROPERTY_EMPTY_VALUE_DISPLAY_NA = 2;
 }
 
 // PropertyRenderer selects a predefined UI treatment for a property.
