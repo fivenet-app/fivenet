@@ -168,7 +168,7 @@ watch(
                             <ClientOnly>
                                 <USelectMenu
                                     v-model="query.types"
-                                    class="w-full min-w-40 flex-1 sm:w-48 sm:flex-initial"
+                                    class="w-full min-w-40 flex-1 sm:min-w-48 sm:flex-initial"
                                     multiple
                                     nullable
                                     :items="
