@@ -21,6 +21,8 @@ import (
 type ToolsDBCmd struct {
 	Version DBVersionCmd `cmd:"" help:"Display db migration version info"`
 	Up      UpCmd        `cmd:"" help:"Run any outstanding migrations"`
+	Force   ForceCmd     `cmd:"" help:"Set the migration version and mark it clean"`
+	Clean   CleanCmd     `cmd:"" help:"Mark the current migration version clean"`
 }
 
 type DBVersionCmd struct{}
@@ -151,4 +153,123 @@ func (c *UpCmd) run(_ context.Context, logger *zap.Logger, cfg *config.Config) e
 	}
 
 	return nil
+}
+
+// ForceCmd sets the migration version directly. A version of -1 resets the
+// database to its initial, unmigrated state.
+type ForceCmd struct {
+	Version int `arg:"" help:"Migration version to set (-1 for no migration)"`
+}
+
+func (c *ForceCmd) Run(cli *CLI) error {
+	fxOpts := fxopts.GetFxBaseOpts(cli.StartTimeout, false, false, true)
+
+	if err := os.Setenv(envs.SkipDBMigrationsEnv, "true"); err != nil {
+		return err
+	}
+
+	fxOpts = append(fxOpts,
+		fx.Invoke(func(lifecycle fx.Lifecycle, cfg *config.Config, shutdowner fx.Shutdowner) {
+			lifecycle.Append(fx.StartHook(func(ctx context.Context) error {
+				go func() {
+					exitCode := 0
+					if err := c.run(ctx, cfg); err != nil {
+						exitCode = 1
+					}
+					_ = shutdowner.Shutdown(fx.ExitCode(exitCode))
+				}()
+				return nil
+			}))
+		}),
+	)
+
+	fx.New(fxOpts...).Run()
+
+	return nil
+}
+
+func (c *ForceCmd) run(_ context.Context, cfg *config.Config) error {
+	m, err := newMigrate(cfg)
+	if err != nil {
+		return err
+	}
+
+	if err := m.Force(c.Version); err != nil {
+		return fmt.Errorf("failed to force migration version: %w", err)
+	}
+
+	fmt.Printf("Migration version forced to %d (Dirty: false)\n", c.Version)
+	return nil
+}
+
+// CleanCmd clears the dirty flag without changing the current migration version.
+type CleanCmd struct{}
+
+func (c *CleanCmd) Run(cli *CLI) error {
+	fxOpts := fxopts.GetFxBaseOpts(cli.StartTimeout, false, false, true)
+
+	if err := os.Setenv(envs.SkipDBMigrationsEnv, "true"); err != nil {
+		return err
+	}
+
+	fxOpts = append(fxOpts,
+		fx.Invoke(func(lifecycle fx.Lifecycle, cfg *config.Config, shutdowner fx.Shutdowner) {
+			lifecycle.Append(fx.StartHook(func(ctx context.Context) error {
+				go func() {
+					exitCode := 0
+					if err := c.run(ctx, cfg); err != nil {
+						exitCode = 1
+					}
+					_ = shutdowner.Shutdown(fx.ExitCode(exitCode))
+				}()
+				return nil
+			}))
+		}),
+	)
+
+	fx.New(fxOpts...).Run()
+
+	return nil
+}
+
+func (c *CleanCmd) run(_ context.Context, cfg *config.Config) error {
+	m, err := newMigrate(cfg)
+	if err != nil {
+		return err
+	}
+
+	version, _, err := m.Version()
+	if err != nil {
+		return fmt.Errorf("failed to get current migration version: %w", err)
+	}
+
+	if err := m.Force(int(version)); err != nil {
+		return fmt.Errorf("failed to mark migration clean: %w", err)
+	}
+
+	fmt.Printf("Migration version %d marked clean\n", version)
+	return nil
+}
+
+func newMigrate(cfg *config.Config) (*migrate.Migrate, error) {
+	dsn, err := dsn.PrepareDSN(
+		cfg.Database.DSN,
+		cfg.Database.DisableLocking,
+		dsn.WithMultiStatements(),
+	)
+	if err != nil {
+		return nil, fmt.Errorf("failed to prepare dsn: %w", err)
+	}
+
+	db, err := sql.Open("mysql", dsn)
+	if err != nil {
+		return nil, fmt.Errorf("failed to open mysql db connection: %w", err)
+	}
+
+	m, err := query.NewMigrate(db, cfg.Database.DisableLocking)
+	if err != nil {
+		return nil, fmt.Errorf("failed to create migration client: %w", err)
+	}
+
+	return m, nil
 }
