@@ -296,6 +296,43 @@ func (m *SetSystemPropertyEnabledResponse) Sanitize() error {
 
 // Sanitize sanitizes the message's fields, in case of complex types it calls
 // their Sanitize() method recursively.
+func (m *SetSystemPropertyPlacementRequest) Sanitize() error {
+	if m == nil {
+		return nil
+	}
+
+	// Field: GroupKey
+	if m.GroupKey != nil {
+		*m.GroupKey = htmlsanitizer.SanitizeAndUnescape(*m.GroupKey)
+	}
+
+	// Field: Key
+	m.Key = htmlsanitizer.SanitizeAndUnescape(m.Key)
+
+	return nil
+}
+
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
+func (m *SetSystemPropertyPlacementResponse) Sanitize() error {
+	if m == nil {
+		return nil
+	}
+
+	// Field: Definition
+	if m.Definition != nil {
+		if v, ok := any(m.GetDefinition()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+	}
+
+	return nil
+}
+
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *UpdatePropertyDefinitionRequest) Sanitize() error {
 	if m == nil {
 		return nil

@@ -33,7 +33,11 @@ func TestTargetURL(t *testing.T) {
 		},
 	} {
 		t.Run(test.name, func(t *testing.T) {
-			target, err := targetURL(&http.Request{URL: &url.URL{Path: test.path, RawPath: test.rawPath}})
+			t.Parallel()
+
+			target, err := targetURL(
+				&http.Request{URL: &url.URL{Path: test.path, RawPath: test.rawPath}},
+			)
 
 			require.NoError(t, err)
 			require.Equal(t, test.want, target.String())

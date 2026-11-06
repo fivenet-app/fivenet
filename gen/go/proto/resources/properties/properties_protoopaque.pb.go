@@ -1664,6 +1664,9 @@ func (*propertyMutation_SetValue) isPropertyMutation_ValueChange() {}
 
 func (*propertyMutation_ClearValue) isPropertyMutation_ValueChange() {}
 
+// PropertyStatePatch carries an explicit lifecycle override. Omitting state,
+// or omitting expiry_change within it, leaves expiry server-managed; managed
+// properties may apply their configured maximum duration from active_at.
 type PropertyStatePatch struct {
 	state                   protoimpl.MessageState            `protogen:"opaque.v1"`
 	xxx_hidden_ExpiryChange isPropertyStatePatch_ExpiryChange `protobuf_oneof:"expiry_change"`
@@ -2355,38 +2358,40 @@ func (b0 PropertyValueConstraints_builder) Build() *PropertyValueConstraints {
 }
 
 type PropertyDefinition struct {
-	state                       protoimpl.MessageState    `protogen:"opaque.v1"`
-	xxx_hidden_Scope            PropertyScope             `protobuf:"varint,1,opt,name=scope,proto3,enum=resources.properties.PropertyScope"`
-	xxx_hidden_Key              string                    `protobuf:"bytes,2,opt,name=key,proto3"`
-	xxx_hidden_ValueType        PropertyValueType         `protobuf:"varint,3,opt,name=value_type,json=valueType,proto3,enum=resources.properties.PropertyValueType"`
-	xxx_hidden_Source           PropertyDefinitionSource  `protobuf:"varint,4,opt,name=source,proto3,enum=resources.properties.PropertyDefinitionSource"`
-	xxx_hidden_Enabled          bool                      `protobuf:"varint,5,opt,name=enabled,proto3"`
-	xxx_hidden_DisplayKey       string                    `protobuf:"bytes,6,opt,name=display_key,json=displayKey,proto3"`
-	xxx_hidden_Label            string                    `protobuf:"bytes,7,opt,name=label,proto3"`
-	xxx_hidden_Description      *string                   `protobuf:"bytes,8,opt,name=description,proto3,oneof"`
-	xxx_hidden_Searchable       bool                      `protobuf:"varint,9,opt,name=searchable,proto3"`
-	xxx_hidden_ValueFormat      PropertyValueFormat       `protobuf:"varint,10,opt,name=value_format,json=valueFormat,proto3,enum=resources.properties.PropertyValueFormat"`
-	xxx_hidden_Behavior         PropertyBehavior          `protobuf:"varint,11,opt,name=behavior,proto3,enum=resources.properties.PropertyBehavior"`
-	xxx_hidden_Renderer         PropertyRenderer          `protobuf:"varint,19,opt,name=renderer,proto3,enum=resources.properties.PropertyRenderer"`
-	xxx_hidden_Unit             *string                   `protobuf:"bytes,12,opt,name=unit,proto3,oneof"`
-	xxx_hidden_DecimalPlaces    uint32                    `protobuf:"varint,13,opt,name=decimal_places,json=decimalPlaces,proto3,oneof"`
-	xxx_hidden_Currency         *string                   `protobuf:"bytes,14,opt,name=currency,proto3,oneof"`
-	xxx_hidden_DeletedAt        *timestamp.Timestamp      `protobuf:"bytes,15,opt,name=deleted_at,json=deletedAt,proto3,oneof"`
-	xxx_hidden_GroupKey         string                    `protobuf:"bytes,16,opt,name=group_key,json=groupKey,proto3"`
-	xxx_hidden_SortOrder        int32                     `protobuf:"varint,17,opt,name=sort_order,json=sortOrder,proto3"`
-	xxx_hidden_GroupSortOrder   int32                     `protobuf:"varint,22,opt,name=group_sort_order,json=groupSortOrder,proto3"`
-	xxx_hidden_Pinned           bool                      `protobuf:"varint,18,opt,name=pinned,proto3"`
-	xxx_hidden_RendererConfig   *PropertyRendererConfig   `protobuf:"bytes,20,opt,name=renderer_config,json=rendererConfig,proto3,oneof"`
-	xxx_hidden_DisplayMode      PropertyDisplayMode       `protobuf:"varint,21,opt,name=display_mode,json=displayMode,proto3,enum=resources.properties.PropertyDisplayMode"`
-	xxx_hidden_Implicit         bool                      `protobuf:"varint,23,opt,name=implicit,proto3"`
-	xxx_hidden_StatePolicy      *PropertyStatePolicy      `protobuf:"bytes,24,opt,name=state_policy,json=statePolicy,proto3,oneof"`
-	xxx_hidden_ManagedHandler   *string                   `protobuf:"bytes,25,opt,name=managed_handler,json=managedHandler,proto3,oneof"`
-	xxx_hidden_ValueConstraints *PropertyValueConstraints `protobuf:"bytes,26,opt,name=value_constraints,json=valueConstraints,proto3,oneof"`
-	xxx_hidden_ReasonMode       PropertyReasonMode        `protobuf:"varint,27,opt,name=reason_mode,json=reasonMode,proto3,enum=resources.properties.PropertyReasonMode"`
-	XXX_raceDetectHookData      protoimpl.RaceDetectHookData
-	XXX_presence                [1]uint32
-	unknownFields               protoimpl.UnknownFields
-	sizeCache                   protoimpl.SizeCache
+	state                          protoimpl.MessageState    `protogen:"opaque.v1"`
+	xxx_hidden_Scope               PropertyScope             `protobuf:"varint,1,opt,name=scope,proto3,enum=resources.properties.PropertyScope"`
+	xxx_hidden_Key                 string                    `protobuf:"bytes,2,opt,name=key,proto3"`
+	xxx_hidden_ValueType           PropertyValueType         `protobuf:"varint,3,opt,name=value_type,json=valueType,proto3,enum=resources.properties.PropertyValueType"`
+	xxx_hidden_Source              PropertyDefinitionSource  `protobuf:"varint,4,opt,name=source,proto3,enum=resources.properties.PropertyDefinitionSource"`
+	xxx_hidden_Enabled             bool                      `protobuf:"varint,5,opt,name=enabled,proto3"`
+	xxx_hidden_DisplayKey          string                    `protobuf:"bytes,6,opt,name=display_key,json=displayKey,proto3"`
+	xxx_hidden_Label               string                    `protobuf:"bytes,7,opt,name=label,proto3"`
+	xxx_hidden_Description         *string                   `protobuf:"bytes,8,opt,name=description,proto3,oneof"`
+	xxx_hidden_Searchable          bool                      `protobuf:"varint,9,opt,name=searchable,proto3"`
+	xxx_hidden_ValueFormat         PropertyValueFormat       `protobuf:"varint,10,opt,name=value_format,json=valueFormat,proto3,enum=resources.properties.PropertyValueFormat"`
+	xxx_hidden_Behavior            PropertyBehavior          `protobuf:"varint,11,opt,name=behavior,proto3,enum=resources.properties.PropertyBehavior"`
+	xxx_hidden_Renderer            PropertyRenderer          `protobuf:"varint,19,opt,name=renderer,proto3,enum=resources.properties.PropertyRenderer"`
+	xxx_hidden_Unit                *string                   `protobuf:"bytes,12,opt,name=unit,proto3,oneof"`
+	xxx_hidden_DecimalPlaces       uint32                    `protobuf:"varint,13,opt,name=decimal_places,json=decimalPlaces,proto3,oneof"`
+	xxx_hidden_Currency            *string                   `protobuf:"bytes,14,opt,name=currency,proto3,oneof"`
+	xxx_hidden_DeletedAt           *timestamp.Timestamp      `protobuf:"bytes,15,opt,name=deleted_at,json=deletedAt,proto3,oneof"`
+	xxx_hidden_GroupKey            string                    `protobuf:"bytes,16,opt,name=group_key,json=groupKey,proto3"`
+	xxx_hidden_SortOrder           int32                     `protobuf:"varint,17,opt,name=sort_order,json=sortOrder,proto3"`
+	xxx_hidden_GroupSortOrder      int32                     `protobuf:"varint,22,opt,name=group_sort_order,json=groupSortOrder,proto3"`
+	xxx_hidden_Pinned              bool                      `protobuf:"varint,18,opt,name=pinned,proto3"`
+	xxx_hidden_RendererConfig      *PropertyRendererConfig   `protobuf:"bytes,20,opt,name=renderer_config,json=rendererConfig,proto3,oneof"`
+	xxx_hidden_DisplayMode         PropertyDisplayMode       `protobuf:"varint,21,opt,name=display_mode,json=displayMode,proto3,enum=resources.properties.PropertyDisplayMode"`
+	xxx_hidden_Implicit            bool                      `protobuf:"varint,23,opt,name=implicit,proto3"`
+	xxx_hidden_StatePolicy         *PropertyStatePolicy      `protobuf:"bytes,24,opt,name=state_policy,json=statePolicy,proto3,oneof"`
+	xxx_hidden_ManagedHandler      *string                   `protobuf:"bytes,25,opt,name=managed_handler,json=managedHandler,proto3,oneof"`
+	xxx_hidden_ValueConstraints    *PropertyValueConstraints `protobuf:"bytes,26,opt,name=value_constraints,json=valueConstraints,proto3,oneof"`
+	xxx_hidden_ReasonMode          PropertyReasonMode        `protobuf:"varint,27,opt,name=reason_mode,json=reasonMode,proto3,enum=resources.properties.PropertyReasonMode"`
+	xxx_hidden_PlacementOverridden bool                      `protobuf:"varint,28,opt,name=placement_overridden,json=placementOverridden,proto3"`
+	xxx_hidden_PlacementLocked     bool                      `protobuf:"varint,29,opt,name=placement_locked,json=placementLocked,proto3"`
+	XXX_raceDetectHookData         protoimpl.RaceDetectHookData
+	XXX_presence                   [1]uint32
+	unknownFields                  protoimpl.UnknownFields
+	sizeCache                      protoimpl.SizeCache
 }
 
 func (x *PropertyDefinition) Reset() {
@@ -2615,6 +2620,20 @@ func (x *PropertyDefinition) GetReasonMode() PropertyReasonMode {
 	return PropertyReasonMode_PROPERTY_REASON_MODE_UNSPECIFIED
 }
 
+func (x *PropertyDefinition) GetPlacementOverridden() bool {
+	if x != nil {
+		return x.xxx_hidden_PlacementOverridden
+	}
+	return false
+}
+
+func (x *PropertyDefinition) GetPlacementLocked() bool {
+	if x != nil {
+		return x.xxx_hidden_PlacementLocked
+	}
+	return false
+}
+
 func (x *PropertyDefinition) SetScope(v PropertyScope) {
 	x.xxx_hidden_Scope = v
 }
@@ -2645,7 +2664,7 @@ func (x *PropertyDefinition) SetLabel(v string) {
 
 func (x *PropertyDefinition) SetDescription(v string) {
 	x.xxx_hidden_Description = &v
-	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 7, 27)
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 7, 29)
 }
 
 func (x *PropertyDefinition) SetSearchable(v bool) {
@@ -2666,17 +2685,17 @@ func (x *PropertyDefinition) SetRenderer(v PropertyRenderer) {
 
 func (x *PropertyDefinition) SetUnit(v string) {
 	x.xxx_hidden_Unit = &v
-	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 12, 27)
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 12, 29)
 }
 
 func (x *PropertyDefinition) SetDecimalPlaces(v uint32) {
 	x.xxx_hidden_DecimalPlaces = v
-	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 13, 27)
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 13, 29)
 }
 
 func (x *PropertyDefinition) SetCurrency(v string) {
 	x.xxx_hidden_Currency = &v
-	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 14, 27)
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 14, 29)
 }
 
 func (x *PropertyDefinition) SetDeletedAt(v *timestamp.Timestamp) {
@@ -2717,7 +2736,7 @@ func (x *PropertyDefinition) SetStatePolicy(v *PropertyStatePolicy) {
 
 func (x *PropertyDefinition) SetManagedHandler(v string) {
 	x.xxx_hidden_ManagedHandler = &v
-	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 24, 27)
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 24, 29)
 }
 
 func (x *PropertyDefinition) SetValueConstraints(v *PropertyValueConstraints) {
@@ -2726,6 +2745,14 @@ func (x *PropertyDefinition) SetValueConstraints(v *PropertyValueConstraints) {
 
 func (x *PropertyDefinition) SetReasonMode(v PropertyReasonMode) {
 	x.xxx_hidden_ReasonMode = v
+}
+
+func (x *PropertyDefinition) SetPlacementOverridden(v bool) {
+	x.xxx_hidden_PlacementOverridden = v
+}
+
+func (x *PropertyDefinition) SetPlacementLocked(v bool) {
+	x.xxx_hidden_PlacementLocked = v
 }
 
 func (x *PropertyDefinition) HasDescription() bool {
@@ -2882,6 +2909,11 @@ type PropertyDefinition_builder struct {
 	ManagedHandler   *string
 	ValueConstraints *PropertyValueConstraints
 	ReasonMode       PropertyReasonMode
+	// True when a system property has an instance-specific group or order.
+	// This is effective response metadata and is never persisted on definitions.
+	PlacementOverridden bool
+	// System properties with this flag retain their generated group and order.
+	PlacementLocked bool
 }
 
 func (b0 PropertyDefinition_builder) Build() *PropertyDefinition {
@@ -2896,7 +2928,7 @@ func (b0 PropertyDefinition_builder) Build() *PropertyDefinition {
 	x.xxx_hidden_DisplayKey = b.DisplayKey
 	x.xxx_hidden_Label = b.Label
 	if b.Description != nil {
-		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 7, 27)
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 7, 29)
 		x.xxx_hidden_Description = b.Description
 	}
 	x.xxx_hidden_Searchable = b.Searchable
@@ -2904,15 +2936,15 @@ func (b0 PropertyDefinition_builder) Build() *PropertyDefinition {
 	x.xxx_hidden_Behavior = b.Behavior
 	x.xxx_hidden_Renderer = b.Renderer
 	if b.Unit != nil {
-		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 12, 27)
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 12, 29)
 		x.xxx_hidden_Unit = b.Unit
 	}
 	if b.DecimalPlaces != nil {
-		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 13, 27)
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 13, 29)
 		x.xxx_hidden_DecimalPlaces = *b.DecimalPlaces
 	}
 	if b.Currency != nil {
-		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 14, 27)
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 14, 29)
 		x.xxx_hidden_Currency = b.Currency
 	}
 	x.xxx_hidden_DeletedAt = b.DeletedAt
@@ -2925,11 +2957,13 @@ func (b0 PropertyDefinition_builder) Build() *PropertyDefinition {
 	x.xxx_hidden_Implicit = b.Implicit
 	x.xxx_hidden_StatePolicy = b.StatePolicy
 	if b.ManagedHandler != nil {
-		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 24, 27)
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 24, 29)
 		x.xxx_hidden_ManagedHandler = b.ManagedHandler
 	}
 	x.xxx_hidden_ValueConstraints = b.ValueConstraints
 	x.xxx_hidden_ReasonMode = b.ReasonMode
+	x.xxx_hidden_PlacementOverridden = b.PlacementOverridden
+	x.xxx_hidden_PlacementLocked = b.PlacementLocked
 	return m0
 }
 
@@ -3842,7 +3876,7 @@ const file_resources_properties_properties_proto_rawDesc = "" +
 	"\x0e_timestamp_minB\x10\n" +
 	"\x0e_timestamp_maxB\v\n" +
 	"\t_date_minB\v\n" +
-	"\t_date_max\"\x92\f\n" +
+	"\t_date_max\"\xf0\f\n" +
 	"\x12PropertyDefinition\x129\n" +
 	"\x05scope\x18\x01 \x01(\x0e2#.resources.properties.PropertyScopeR\x05scope\x12\x10\n" +
 	"\x03key\x18\x02 \x01(\tR\x03key\x12F\n" +
@@ -3878,7 +3912,9 @@ const file_resources_properties_properties_proto_rawDesc = "" +
 	"\x0fmanaged_handler\x18\x19 \x01(\tH\aR\x0emanagedHandler\x88\x01\x01\x12`\n" +
 	"\x11value_constraints\x18\x1a \x01(\v2..resources.properties.PropertyValueConstraintsH\bR\x10valueConstraints\x88\x01\x01\x12I\n" +
 	"\vreason_mode\x18\x1b \x01(\x0e2(.resources.properties.PropertyReasonModeR\n" +
-	"reasonModeB\x0e\n" +
+	"reasonMode\x121\n" +
+	"\x14placement_overridden\x18\x1c \x01(\bR\x13placementOverridden\x12)\n" +
+	"\x10placement_locked\x18\x1d \x01(\bR\x0fplacementLockedB\x0e\n" +
 	"\f_descriptionB\a\n" +
 	"\x05_unitB\x11\n" +
 	"\x0f_decimal_placesB\v\n" +

@@ -58,7 +58,8 @@ message ServiceOptions {
 
 // SystemProperty declares a property whose key and semantics are owned by
 // FiveNet code. The backend generator registers these definitions at startup;
-// only the enabled state may be overridden by an instance.
+// enabled state and, unless placement_locked, presentation placement may be
+// overridden by an instance.
 message SystemProperty {
   resources.properties.PropertyScope scope = 1;
   string key = 2;
@@ -85,6 +86,8 @@ message SystemProperty {
   optional resources.properties.PropertyValueConstraints value_constraints = 23;
   // Omitted system properties inherit REQUIRED when registered.
   resources.properties.PropertyReasonMode reason_mode = 24;
+  // Locked properties keep their generated group and order on every instance.
+  bool placement_locked = 25;
 }
 
 message AdditionalServicePerm {

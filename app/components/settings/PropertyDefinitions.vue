@@ -85,6 +85,9 @@ const groups = computed(() => data.value?.groups.filter((group) => group.scope =
 const pinnedCount = computed(
     () => definitions.value.filter((definition) => definition.pinned && !isDeletedDefinition(definition)).length,
 );
+const hasLockedSystemProperty = computed(() =>
+    definitions.value.some((definition) => isSystemDefinition(definition) && definition.placementLocked),
+);
 
 function groupLabel(group: PropertyGroup): string {
     if (group.label) return group.label;
@@ -155,6 +158,9 @@ async function savePropertyOrder(groupKey: string, ordered: PropertyDefinition[]
             groupKey: groupKey === 'ungrouped' ? '' : groupKey,
             propertyKeys: ordered.map((definition) => definition.key),
         });
+        for (const definition of ordered) {
+            if (isSystemDefinition(definition)) definition.placementOverridden = true;
+        }
     } catch (e) {
         handleGRPCError(e as RpcError);
         await refresh();
@@ -280,6 +286,10 @@ function isDeletedDefinition(definition: PropertyDefinition): boolean {
     return definition.deletedAt !== undefined;
 }
 
+function groupHasLockedSystemProperty(definitions: PropertyDefinition[]): boolean {
+    return definitions.some((definition) => isSystemDefinition(definition) && definition.placementLocked);
+}
+
 function isManagedDefinition(definition: PropertyDefinition): boolean {
     return definition.behavior === PropertyBehavior.MANAGED;
 }
@@ -314,6 +324,54 @@ function openEditor(definition?: PropertyDefinition): void {
         scope: query.scope,
         onSave: (value: PropertyDefinition) => saveCustomDefinition(value, definition !== undefined),
     });
+}
+
+function openSystemPlacementEditor(definition: PropertyDefinition): void {
+    propertyDefinitionEditorDrawer.open({
+        definition,
+        groups: groups.value,
+        scope: query.scope,
+        placementOnly: true,
+        onSave: (value: PropertyDefinition) => saveSystemDefinitionPlacement(definition, value.groupKey),
+        onRestoreDefaultPlacement: definition.placementOverridden
+            ? () => restoreSystemDefinitionPlacement(definition)
+            : undefined,
+    });
+}
+
+async function restoreSystemDefinitionPlacement(definition: PropertyDefinition): Promise<void> {
+    try {
+        const { response } = await settingsPropertyClient.setSystemPropertyPlacement({
+            scope: query.scope,
+            key: definition.key,
+        });
+        if (response.definition) {
+            const index = data.value?.definitions.findIndex((item) => item.key === definition.key) ?? -1;
+            if (data.value && index !== -1) data.value.definitions[index] = response.definition;
+        }
+        propertyDefinitionEditorDrawer.close();
+    } catch (e) {
+        handleGRPCError(e as RpcError);
+        throw e;
+    }
+}
+
+async function saveSystemDefinitionPlacement(definition: PropertyDefinition, groupKey: string): Promise<void> {
+    try {
+        const { response } = await settingsPropertyClient.setSystemPropertyPlacement({
+            scope: query.scope,
+            key: definition.key,
+            groupKey,
+        });
+        if (response.definition) {
+            const index = data.value?.definitions.findIndex((item) => item.key === definition.key) ?? -1;
+            if (data.value && index !== -1) data.value.definitions[index] = response.definition;
+        }
+        propertyDefinitionEditorDrawer.close();
+    } catch (e) {
+        handleGRPCError(e as RpcError);
+        throw e;
+    }
 }
 
 async function saveCustomDefinition(definition: PropertyDefinition, isEditing: boolean): Promise<void> {
@@ -487,18 +545,18 @@ async function restoreCustomDefinition(definition: PropertyDefinition): Promise<
 
                 <div v-for="group in definitionGroups" :key="group.key" class="space-y-3">
                     <div class="flex items-center justify-between gap-2">
-                        <ReorderButtons
-                            v-if="sortMode && group.key !== 'ungrouped'"
-                            :idx="groups.findIndex((item) => item.key === group.key)"
-                            :move-up="() => moveGroup(group.key, -1)"
-                            :move-down="() => moveGroup(group.key, 1)"
-                            :disable-up="groups.findIndex((item) => item.key === group.key) <= 0"
-                            :disable-down="
-                                groups.findIndex((item) => item.key === group.key) < 0 ||
-                                groups.findIndex((item) => item.key === group.key) >= groups.length - 1
-                            "
-                        />
                         <div class="flex min-w-0 items-center gap-2">
+                            <ReorderButtons
+                                v-if="sortMode && group.key !== 'ungrouped' && !hasLockedSystemProperty"
+                                :idx="groups.findIndex((item) => item.key === group.key)"
+                                :move-up="() => moveGroup(group.key, -1)"
+                                :move-down="() => moveGroup(group.key, 1)"
+                                :disable-up="groups.findIndex((item) => item.key === group.key) <= 0"
+                                :disable-down="
+                                    groups.findIndex((item) => item.key === group.key) < 0 ||
+                                    groups.findIndex((item) => item.key === group.key) >= groups.length - 1
+                                "
+                            />
                             <h2 class="text-lg font-semibold text-highlighted">{{ group.label }}</h2>
                             <UBadge
                                 v-if="isSystemGroup(group.group)"
@@ -540,7 +598,7 @@ async function restoreCustomDefinition(definition: PropertyDefinition): Promise<
                                     <div class="min-w-0">
                                         <div class="flex items-center gap-2">
                                             <ReorderButtons
-                                                v-if="sortMode"
+                                                v-if="sortMode && !groupHasLockedSystemProperty(group.definitions)"
                                                 :idx="definitionIndex"
                                                 :move-up="() => moveProperty(group.key, definitionIndex, -1)"
                                                 :move-down="() => moveProperty(group.key, definitionIndex, 1)"
@@ -580,54 +638,75 @@ async function restoreCustomDefinition(definition: PropertyDefinition): Promise<
                                     />
                                 </div>
 
-                                <div class="flex flex-wrap items-center gap-2">
-                                    <UBadge
-                                        :color="
-                                            isDeletedDefinition(definition)
-                                                ? 'error'
-                                                : isSystemDefinition(definition)
-                                                  ? 'primary'
-                                                  : 'neutral'
+                                <div class="flex items-start gap-2">
+                                    <div class="flex min-w-0 flex-1 flex-wrap items-center gap-2">
+                                        <UBadge
+                                            :color="
+                                                isDeletedDefinition(definition)
+                                                    ? 'error'
+                                                    : isSystemDefinition(definition)
+                                                      ? 'primary'
+                                                      : 'neutral'
+                                            "
+                                            :label="
+                                                isDeletedDefinition(definition)
+                                                    ? $t('components.settings.property_definitions.deleted')
+                                                    : isSystemDefinition(definition)
+                                                      ? $t('components.settings.property_definitions.system')
+                                                      : $t('components.settings.property_definitions.custom')
+                                            "
+                                        />
+                                        <UBadge
+                                            :color="definition.pinned ? 'warning' : 'neutral'"
+                                            :icon="definition.pinned ? 'i-mdi-pin' : 'i-mdi-pin-off-outline'"
+                                            :label="
+                                                definition.pinned
+                                                    ? $t('components.settings.property_definitions.pinned')
+                                                    : $t('components.settings.property_definitions.not_pinned')
+                                            "
+                                        />
+                                        <UBadge color="neutral" :label="displayModeLabel(definition)" />
+                                        <UBadge
+                                            :label="
+                                                $t('components.settings.property_definitions.renderer_label', {
+                                                    renderer: rendererLabel(definition),
+                                                })
+                                            "
+                                        />
+                                        <UBadge
+                                            v-if="definition.searchable"
+                                            color="primary"
+                                            :label="$t('components.settings.property_definitions.searchable')"
+                                        />
+                                        <UBadge
+                                            v-if="isManagedDefinition(definition)"
+                                            color="warning"
+                                            :label="$t('components.settings.property_definitions.managed')"
+                                        />
+                                    </div>
+                                    <UButton
+                                        v-if="
+                                            canEdit &&
+                                            isSystemDefinition(definition) &&
+                                            !isDeletedDefinition(definition) &&
+                                            !definition.placementLocked
                                         "
-                                        :label="
-                                            isDeletedDefinition(definition)
-                                                ? $t('components.settings.property_definitions.deleted')
-                                                : isSystemDefinition(definition)
-                                                  ? $t('components.settings.property_definitions.system')
-                                                  : $t('components.settings.property_definitions.custom')
-                                        "
-                                    />
-                                    <UBadge
-                                        :color="definition.pinned ? 'warning' : 'neutral'"
-                                        :icon="definition.pinned ? 'i-mdi-pin' : 'i-mdi-pin-off-outline'"
-                                        :label="
-                                            definition.pinned
-                                                ? $t('components.settings.property_definitions.pinned')
-                                                : $t('components.settings.property_definitions.not_pinned')
-                                        "
-                                    />
-                                    <UBadge color="neutral" :label="displayModeLabel(definition)" />
-                                    <UBadge
-                                        :label="
-                                            $t('components.settings.property_definitions.renderer_label', {
-                                                renderer: rendererLabel(definition),
-                                            })
-                                        "
-                                    />
-                                    <UBadge
-                                        v-if="definition.searchable"
-                                        color="primary"
-                                        :label="$t('components.settings.property_definitions.searchable')"
-                                    />
-                                    <UBadge
-                                        v-if="isManagedDefinition(definition)"
-                                        color="warning"
-                                        :label="$t('components.settings.property_definitions.managed')"
+                                        class="shrink-0"
+                                        icon="i-mdi-folder-move-outline"
+                                        color="neutral"
+                                        variant="ghost"
+                                        :aria-label="$t('components.settings.property_definitions.move_to_group')"
+                                        @click="openSystemPlacementEditor(definition)"
                                     />
                                 </div>
 
                                 <div
-                                    v-if="canEdit && (isCustomDefinition(definition) || isDeletedDefinition(definition))"
+                                    v-if="
+                                        canEdit &&
+                                        (isSystemDefinition(definition) ||
+                                            isCustomDefinition(definition) ||
+                                            isDeletedDefinition(definition))
+                                    "
                                     class="flex justify-end gap-2"
                                 >
                                     <template v-if="isCustomDefinition(definition) && !isDeletedDefinition(definition)">

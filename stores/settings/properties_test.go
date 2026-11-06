@@ -45,7 +45,8 @@ func TestListPropertyDefinitionsMergesSystemOverridesAndCustomDefinitions(t *tes
 		WillReturnRows(sqlmock.NewRows([]string{
 			"fivenet_property_system_overrides.property_key",
 			"fivenet_property_system_overrides.enabled",
-		}).AddRow(string(permsvehicles.VehiclesServiceListVehiclesPropertiesPermValueVehicleWanted), false))
+			"fivenet_property_system_overrides.group_key",
+		}).AddRow(string(permsvehicles.VehiclesServiceListVehiclesPropertiesPermValueVehicleWanted), false, ""))
 	mock.ExpectQuery(regexp.QuoteMeta("FROM fivenet_property_definitions")).
 		WithArgs(vehiclePropertyScopeName, false).
 		WillReturnRows(sqlmock.NewRows([]string{
@@ -113,20 +114,24 @@ func TestListPropertyDefinitionsMergesSystemOverridesAndCustomDefinitions(t *tes
 	)
 	require.NoError(t, err)
 	require.Len(t, definitions, 3)
-	assert.Equal(
+	definitionsByKey := definitionMap(definitions)
+	wanted := definitionsByKey[string(permsvehicles.VehiclesServiceListVehiclesPropertiesPermValueVehicleWanted)]
+	require.NotNil(t, wanted)
+	assert.False(t, wanted.GetEnabled())
+	assert.Empty(
 		t,
-		string(permsvehicles.VehiclesServiceListVehiclesPropertiesPermValueVehicleWanted),
-		definitions[0].GetKey(),
+		wanted.GetGroupKey(),
+		"an explicit empty override places a system property in Other",
 	)
-	assert.False(t, definitions[0].GetEnabled())
-	assert.Equal(t, "vehicle.files", definitions[1].GetKey())
-	assert.Equal(t, "vehicle.inspection_due", definitions[2].GetKey())
+	assert.True(t, wanted.GetPlacementOverridden())
+	assert.Contains(t, definitionsByKey, "vehicle.files")
+	assert.Contains(t, definitionsByKey, "vehicle.inspection_due")
 	assert.Equal(
 		t,
 		properties.PropertyDefinitionSource_PROPERTY_DEFINITION_SOURCE_CUSTOM,
-		definitions[2].GetSource(),
+		definitionsByKey["vehicle.inspection_due"].GetSource(),
 	)
-	assert.True(t, definitions[2].GetSearchable())
+	assert.True(t, definitionsByKey["vehicle.inspection_due"].GetSearchable())
 	require.NoError(t, mock.ExpectationsWereMet())
 }
 

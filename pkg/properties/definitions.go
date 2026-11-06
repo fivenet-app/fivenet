@@ -152,6 +152,11 @@ func NormalizeAndValidateCustomDefinition(
 	definition *propertypb.PropertyDefinition,
 ) (*propertypb.PropertyDefinition, error) {
 	normalized := NormalizeDefinition(definition)
+	if normalized != nil {
+		// This is server-derived system-property metadata, never client input.
+		normalized.PlacementOverridden = false
+		normalized.PlacementLocked = false
+	}
 	if normalized == nil ||
 		normalized.GetSource() != propertypb.PropertyDefinitionSource_PROPERTY_DEFINITION_SOURCE_CUSTOM ||
 		normalized.GetValueType() == propertypb.PropertyValueType_PROPERTY_VALUE_TYPE_UNSPECIFIED ||
@@ -519,10 +524,49 @@ func ApplySortOrderOverrides(
 	result := make([]*propertypb.PropertyDefinition, 0, len(definitions))
 	for _, definition := range definitions {
 		copyDefinition := proto.Clone(definition).(*propertypb.PropertyDefinition)
-		if order, ok := overrides[copyDefinition.GetKey()]; ok {
-			copyDefinition.SortOrder = order
+		if !copyDefinition.GetPlacementLocked() {
+			if order, ok := overrides[copyDefinition.GetKey()]; ok {
+				copyDefinition.SortOrder = order
+			}
 		}
 		result = append(result, copyDefinition)
 	}
 	return SortDefinitions(result)
+}
+
+// ApplyGroupOverrides applies instance-specific group placement to system
+// definitions. A nil/missing map entry leaves the generated placement intact.
+func ApplyGroupOverrides(
+	definitions []*propertypb.PropertyDefinition,
+	overrides map[string]*string,
+) []*propertypb.PropertyDefinition {
+	result := make([]*propertypb.PropertyDefinition, 0, len(definitions))
+	for _, definition := range definitions {
+		copyDefinition := proto.Clone(definition).(*propertypb.PropertyDefinition)
+		if groupKey, ok := overrides[copyDefinition.GetKey()]; ok && groupKey != nil &&
+			!copyDefinition.GetPlacementLocked() {
+			copyDefinition.GroupKey = *groupKey
+		}
+		result = append(result, copyDefinition)
+	}
+	return result
+}
+
+// ApplyPlacementOverrideStatus attaches effective system-property placement
+// metadata for clients that need to offer a reset-to-default action.
+func ApplyPlacementOverrideStatus(
+	definitions []*propertypb.PropertyDefinition,
+	overrides map[string]bool,
+) []*propertypb.PropertyDefinition {
+	result := make([]*propertypb.PropertyDefinition, 0, len(definitions))
+	for _, definition := range definitions {
+		copyDefinition := proto.Clone(definition).(*propertypb.PropertyDefinition)
+		copyDefinition.PlacementOverridden = false
+		if copyDefinition.GetSource() == propertypb.PropertyDefinitionSource_PROPERTY_DEFINITION_SOURCE_SYSTEM &&
+			!copyDefinition.GetPlacementLocked() {
+			copyDefinition.PlacementOverridden = overrides[copyDefinition.GetKey()]
+		}
+		result = append(result, copyDefinition)
+	}
+	return result
 }

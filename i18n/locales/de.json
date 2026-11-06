@@ -2878,6 +2878,8 @@
                 "system": "System",
                 "custom": "Benutzerdefiniert",
                 "editor_title": "Eigenschaftsdefinition",
+                "move_to_group": "In Gruppe verschieben",
+                "restore_default_placement": "Standardplatzierung wiederherstellen",
                 "group_editor_title": "Eigenschaftsgruppe",
                 "key": "Schlüssel",
                 "key_description": "Gib nach dem festen Bereichspräfix eine eindeutige Kennung ein.",

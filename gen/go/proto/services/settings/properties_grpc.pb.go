@@ -32,6 +32,7 @@ const (
 	PropertyService_DeletePropertyDefinition_FullMethodName   = "/services.settings.PropertyService/DeletePropertyDefinition"
 	PropertyService_RestorePropertyDefinition_FullMethodName  = "/services.settings.PropertyService/RestorePropertyDefinition"
 	PropertyService_SetSystemPropertyEnabled_FullMethodName   = "/services.settings.PropertyService/SetSystemPropertyEnabled"
+	PropertyService_SetSystemPropertyPlacement_FullMethodName = "/services.settings.PropertyService/SetSystemPropertyPlacement"
 )
 
 // PropertyServiceClient is the client API for PropertyService service.
@@ -51,6 +52,7 @@ type PropertyServiceClient interface {
 	DeletePropertyDefinition(ctx context.Context, in *DeletePropertyDefinitionRequest, opts ...grpc.CallOption) (*DeletePropertyDefinitionResponse, error)
 	RestorePropertyDefinition(ctx context.Context, in *RestorePropertyDefinitionRequest, opts ...grpc.CallOption) (*RestorePropertyDefinitionResponse, error)
 	SetSystemPropertyEnabled(ctx context.Context, in *SetSystemPropertyEnabledRequest, opts ...grpc.CallOption) (*SetSystemPropertyEnabledResponse, error)
+	SetSystemPropertyPlacement(ctx context.Context, in *SetSystemPropertyPlacementRequest, opts ...grpc.CallOption) (*SetSystemPropertyPlacementResponse, error)
 }
 
 type propertyServiceClient struct {
@@ -191,6 +193,16 @@ func (c *propertyServiceClient) SetSystemPropertyEnabled(ctx context.Context, in
 	return out, nil
 }
 
+func (c *propertyServiceClient) SetSystemPropertyPlacement(ctx context.Context, in *SetSystemPropertyPlacementRequest, opts ...grpc.CallOption) (*SetSystemPropertyPlacementResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(SetSystemPropertyPlacementResponse)
+	err := c.cc.Invoke(ctx, PropertyService_SetSystemPropertyPlacement_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // PropertyServiceServer is the server API for PropertyService service.
 // All implementations must embed UnimplementedPropertyServiceServer
 // for forward compatibility.
@@ -208,6 +220,7 @@ type PropertyServiceServer interface {
 	DeletePropertyDefinition(context.Context, *DeletePropertyDefinitionRequest) (*DeletePropertyDefinitionResponse, error)
 	RestorePropertyDefinition(context.Context, *RestorePropertyDefinitionRequest) (*RestorePropertyDefinitionResponse, error)
 	SetSystemPropertyEnabled(context.Context, *SetSystemPropertyEnabledRequest) (*SetSystemPropertyEnabledResponse, error)
+	SetSystemPropertyPlacement(context.Context, *SetSystemPropertyPlacementRequest) (*SetSystemPropertyPlacementResponse, error)
 	mustEmbedUnimplementedPropertyServiceServer()
 }
 
@@ -256,6 +269,9 @@ func (UnimplementedPropertyServiceServer) RestorePropertyDefinition(context.Cont
 }
 func (UnimplementedPropertyServiceServer) SetSystemPropertyEnabled(context.Context, *SetSystemPropertyEnabledRequest) (*SetSystemPropertyEnabledResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method SetSystemPropertyEnabled not implemented")
+}
+func (UnimplementedPropertyServiceServer) SetSystemPropertyPlacement(context.Context, *SetSystemPropertyPlacementRequest) (*SetSystemPropertyPlacementResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SetSystemPropertyPlacement not implemented")
 }
 func (UnimplementedPropertyServiceServer) mustEmbedUnimplementedPropertyServiceServer() {}
 func (UnimplementedPropertyServiceServer) testEmbeddedByValue()                         {}
@@ -512,6 +528,24 @@ func _PropertyService_SetSystemPropertyEnabled_Handler(srv interface{}, ctx cont
 	return interceptor(ctx, in, info, handler)
 }
 
+func _PropertyService_SetSystemPropertyPlacement_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SetSystemPropertyPlacementRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(PropertyServiceServer).SetSystemPropertyPlacement(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: PropertyService_SetSystemPropertyPlacement_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(PropertyServiceServer).SetSystemPropertyPlacement(ctx, req.(*SetSystemPropertyPlacementRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // PropertyService_ServiceDesc is the grpc.ServiceDesc for PropertyService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -570,6 +604,10 @@ var PropertyService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "SetSystemPropertyEnabled",
 			Handler:    _PropertyService_SetSystemPropertyEnabled_Handler,
+		},
+		{
+			MethodName: "SetSystemPropertyPlacement",
+			Handler:    _PropertyService_SetSystemPropertyPlacement_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

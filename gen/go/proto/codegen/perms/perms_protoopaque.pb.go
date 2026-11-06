@@ -584,7 +584,8 @@ func (b0 ServiceOptions_builder) Build() *ServiceOptions {
 
 // SystemProperty declares a property whose key and semantics are owned by
 // FiveNet code. The backend generator registers these definitions at startup;
-// only the enabled state may be overridden by an instance.
+// enabled state and, unless placement_locked, presentation placement may be
+// overridden by an instance.
 type SystemProperty struct {
 	state                       protoimpl.MessageState               `protogen:"opaque.v1"`
 	xxx_hidden_Scope            properties.PropertyScope             `protobuf:"varint,1,opt,name=scope,proto3,enum=resources.properties.PropertyScope"`
@@ -611,6 +612,7 @@ type SystemProperty struct {
 	xxx_hidden_ManagedHandler   *string                              `protobuf:"bytes,22,opt,name=managed_handler,json=managedHandler,proto3,oneof"`
 	xxx_hidden_ValueConstraints *properties.PropertyValueConstraints `protobuf:"bytes,23,opt,name=value_constraints,json=valueConstraints,proto3,oneof"`
 	xxx_hidden_ReasonMode       properties.PropertyReasonMode        `protobuf:"varint,24,opt,name=reason_mode,json=reasonMode,proto3,enum=resources.properties.PropertyReasonMode"`
+	xxx_hidden_PlacementLocked  bool                                 `protobuf:"varint,25,opt,name=placement_locked,json=placementLocked,proto3"`
 	XXX_raceDetectHookData      protoimpl.RaceDetectHookData
 	XXX_presence                [1]uint32
 	unknownFields               protoimpl.UnknownFields
@@ -822,6 +824,13 @@ func (x *SystemProperty) GetReasonMode() properties.PropertyReasonMode {
 	return properties.PropertyReasonMode(0)
 }
 
+func (x *SystemProperty) GetPlacementLocked() bool {
+	if x != nil {
+		return x.xxx_hidden_PlacementLocked
+	}
+	return false
+}
+
 func (x *SystemProperty) SetScope(v properties.PropertyScope) {
 	x.xxx_hidden_Scope = v
 }
@@ -848,7 +857,7 @@ func (x *SystemProperty) SetLabel(v string) {
 
 func (x *SystemProperty) SetDescription(v string) {
 	x.xxx_hidden_Description = &v
-	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 6, 24)
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 6, 25)
 }
 
 func (x *SystemProperty) SetSearchable(v bool) {
@@ -877,17 +886,17 @@ func (x *SystemProperty) SetDisplayMode(v properties.PropertyDisplayMode) {
 
 func (x *SystemProperty) SetUnit(v string) {
 	x.xxx_hidden_Unit = &v
-	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 13, 24)
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 13, 25)
 }
 
 func (x *SystemProperty) SetDecimalPlaces(v uint32) {
 	x.xxx_hidden_DecimalPlaces = v
-	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 14, 24)
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 14, 25)
 }
 
 func (x *SystemProperty) SetCurrency(v string) {
 	x.xxx_hidden_Currency = &v
-	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 15, 24)
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 15, 25)
 }
 
 func (x *SystemProperty) SetGroupKey(v string) {
@@ -912,7 +921,7 @@ func (x *SystemProperty) SetStatePolicy(v *properties.PropertyStatePolicy) {
 
 func (x *SystemProperty) SetManagedHandler(v string) {
 	x.xxx_hidden_ManagedHandler = &v
-	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 21, 24)
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 21, 25)
 }
 
 func (x *SystemProperty) SetValueConstraints(v *properties.PropertyValueConstraints) {
@@ -921,6 +930,10 @@ func (x *SystemProperty) SetValueConstraints(v *properties.PropertyValueConstrai
 
 func (x *SystemProperty) SetReasonMode(v properties.PropertyReasonMode) {
 	x.xxx_hidden_ReasonMode = v
+}
+
+func (x *SystemProperty) SetPlacementLocked(v bool) {
+	x.xxx_hidden_PlacementLocked = v
 }
 
 func (x *SystemProperty) HasDescription() bool {
@@ -1044,6 +1057,8 @@ type SystemProperty_builder struct {
 	ValueConstraints *properties.PropertyValueConstraints
 	// Omitted system properties inherit REQUIRED when registered.
 	ReasonMode properties.PropertyReasonMode
+	// Locked properties keep their generated group and order on every instance.
+	PlacementLocked bool
 }
 
 func (b0 SystemProperty_builder) Build() *SystemProperty {
@@ -1057,7 +1072,7 @@ func (b0 SystemProperty_builder) Build() *SystemProperty {
 	x.xxx_hidden_DisplayKey = b.DisplayKey
 	x.xxx_hidden_Label = b.Label
 	if b.Description != nil {
-		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 6, 24)
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 6, 25)
 		x.xxx_hidden_Description = b.Description
 	}
 	x.xxx_hidden_Searchable = b.Searchable
@@ -1067,15 +1082,15 @@ func (b0 SystemProperty_builder) Build() *SystemProperty {
 	x.xxx_hidden_RendererConfig = b.RendererConfig
 	x.xxx_hidden_DisplayMode = b.DisplayMode
 	if b.Unit != nil {
-		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 13, 24)
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 13, 25)
 		x.xxx_hidden_Unit = b.Unit
 	}
 	if b.DecimalPlaces != nil {
-		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 14, 24)
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 14, 25)
 		x.xxx_hidden_DecimalPlaces = *b.DecimalPlaces
 	}
 	if b.Currency != nil {
-		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 15, 24)
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 15, 25)
 		x.xxx_hidden_Currency = b.Currency
 	}
 	x.xxx_hidden_GroupKey = b.GroupKey
@@ -1084,11 +1099,12 @@ func (b0 SystemProperty_builder) Build() *SystemProperty {
 	x.xxx_hidden_Implicit = b.Implicit
 	x.xxx_hidden_StatePolicy = b.StatePolicy
 	if b.ManagedHandler != nil {
-		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 21, 24)
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 21, 25)
 		x.xxx_hidden_ManagedHandler = b.ManagedHandler
 	}
 	x.xxx_hidden_ValueConstraints = b.ValueConstraints
 	x.xxx_hidden_ReasonMode = b.ReasonMode
+	x.xxx_hidden_PlacementLocked = b.PlacementLocked
 	return m0
 }
 
@@ -1248,7 +1264,7 @@ const file_codegen_perms_perms_proto_rawDesc = "" +
 	"\n" +
 	"_namespaceB\n" +
 	"\n" +
-	"\b_service\"\xb0\n" +
+	"\b_service\"\xdb\n" +
 	"\n" +
 	"\x0eSystemProperty\x129\n" +
 	"\x05scope\x18\x01 \x01(\x0e2#.resources.properties.PropertyScopeR\x05scope\x12\x10\n" +
@@ -1281,7 +1297,8 @@ const file_codegen_perms_perms_proto_rawDesc = "" +
 	"\x0fmanaged_handler\x18\x16 \x01(\tH\x05R\x0emanagedHandler\x88\x01\x01\x12`\n" +
 	"\x11value_constraints\x18\x17 \x01(\v2..resources.properties.PropertyValueConstraintsH\x06R\x10valueConstraints\x88\x01\x01\x12I\n" +
 	"\vreason_mode\x18\x18 \x01(\x0e2(.resources.properties.PropertyReasonModeR\n" +
-	"reasonModeB\x0e\n" +
+	"reasonMode\x12)\n" +
+	"\x10placement_locked\x18\x19 \x01(\bR\x0fplacementLockedB\x0e\n" +
 	"\f_descriptionB\a\n" +
 	"\x05_unitB\x11\n" +
 	"\x0f_decimal_placesB\v\n" +

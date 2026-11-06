@@ -633,6 +633,9 @@ var PermsRemap = map[string][]perms.PermissionRef{
 	"settings.PropertyService/SetSystemPropertyEnabled": {
 		perms.PermConfigAdminRef,
 	},
+	"settings.PropertyService/SetSystemPropertyPlacement": {
+		perms.PermConfigAdminRef,
+	},
 	"settings.PropertyService/UpdatePropertyDefinition": {
 		perms.PermConfigAdminRef,
 	},

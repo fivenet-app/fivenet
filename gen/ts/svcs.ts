@@ -531,6 +531,7 @@ export const grpcMethods = [
 	'settings.PropertyService/DeletePropertyDefinition',
 	'settings.PropertyService/RestorePropertyDefinition',
 	'settings.PropertyService/SetSystemPropertyEnabled',
+	'settings.PropertyService/SetSystemPropertyPlacement',
 	'settings.SettingsService/GetJobProps',
 	'settings.SettingsService/SetJobProps',
 	'settings.SettingsService/GetRoles',

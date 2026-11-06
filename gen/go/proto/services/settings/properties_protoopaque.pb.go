@@ -1715,6 +1715,183 @@ func (b0 SetSystemPropertyEnabledResponse_builder) Build() *SetSystemPropertyEna
 	return m0
 }
 
+// Sets the instance-specific placement of a system property. An omitted
+// group_key restores both the generated group and generated property order;
+// an empty group_key explicitly places the property in Other.
+type SetSystemPropertyPlacementRequest struct {
+	state                  protoimpl.MessageState   `protogen:"opaque.v1"`
+	xxx_hidden_Scope       properties.PropertyScope `protobuf:"varint,1,opt,name=scope,proto3,enum=resources.properties.PropertyScope"`
+	xxx_hidden_Key         string                   `protobuf:"bytes,2,opt,name=key,proto3"`
+	xxx_hidden_GroupKey    *string                  `protobuf:"bytes,3,opt,name=group_key,json=groupKey,proto3,oneof"`
+	XXX_raceDetectHookData protoimpl.RaceDetectHookData
+	XXX_presence           [1]uint32
+	unknownFields          protoimpl.UnknownFields
+	sizeCache              protoimpl.SizeCache
+}
+
+func (x *SetSystemPropertyPlacementRequest) Reset() {
+	*x = SetSystemPropertyPlacementRequest{}
+	mi := &file_services_settings_properties_proto_msgTypes[26]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *SetSystemPropertyPlacementRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*SetSystemPropertyPlacementRequest) ProtoMessage() {}
+
+func (x *SetSystemPropertyPlacementRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_services_settings_properties_proto_msgTypes[26]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+func (x *SetSystemPropertyPlacementRequest) GetScope() properties.PropertyScope {
+	if x != nil {
+		return x.xxx_hidden_Scope
+	}
+	return properties.PropertyScope(0)
+}
+
+func (x *SetSystemPropertyPlacementRequest) GetKey() string {
+	if x != nil {
+		return x.xxx_hidden_Key
+	}
+	return ""
+}
+
+func (x *SetSystemPropertyPlacementRequest) GetGroupKey() string {
+	if x != nil {
+		if x.xxx_hidden_GroupKey != nil {
+			return *x.xxx_hidden_GroupKey
+		}
+		return ""
+	}
+	return ""
+}
+
+func (x *SetSystemPropertyPlacementRequest) SetScope(v properties.PropertyScope) {
+	x.xxx_hidden_Scope = v
+}
+
+func (x *SetSystemPropertyPlacementRequest) SetKey(v string) {
+	x.xxx_hidden_Key = v
+}
+
+func (x *SetSystemPropertyPlacementRequest) SetGroupKey(v string) {
+	x.xxx_hidden_GroupKey = &v
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 2, 3)
+}
+
+func (x *SetSystemPropertyPlacementRequest) HasGroupKey() bool {
+	if x == nil {
+		return false
+	}
+	return protoimpl.X.Present(&(x.XXX_presence[0]), 2)
+}
+
+func (x *SetSystemPropertyPlacementRequest) ClearGroupKey() {
+	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 2)
+	x.xxx_hidden_GroupKey = nil
+}
+
+type SetSystemPropertyPlacementRequest_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Scope    properties.PropertyScope
+	Key      string
+	GroupKey *string
+}
+
+func (b0 SetSystemPropertyPlacementRequest_builder) Build() *SetSystemPropertyPlacementRequest {
+	m0 := &SetSystemPropertyPlacementRequest{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.xxx_hidden_Scope = b.Scope
+	x.xxx_hidden_Key = b.Key
+	if b.GroupKey != nil {
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 2, 3)
+		x.xxx_hidden_GroupKey = b.GroupKey
+	}
+	return m0
+}
+
+type SetSystemPropertyPlacementResponse struct {
+	state                 protoimpl.MessageState         `protogen:"opaque.v1"`
+	xxx_hidden_Definition *properties.PropertyDefinition `protobuf:"bytes,1,opt,name=definition,proto3"`
+	unknownFields         protoimpl.UnknownFields
+	sizeCache             protoimpl.SizeCache
+}
+
+func (x *SetSystemPropertyPlacementResponse) Reset() {
+	*x = SetSystemPropertyPlacementResponse{}
+	mi := &file_services_settings_properties_proto_msgTypes[27]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *SetSystemPropertyPlacementResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*SetSystemPropertyPlacementResponse) ProtoMessage() {}
+
+func (x *SetSystemPropertyPlacementResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_services_settings_properties_proto_msgTypes[27]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+func (x *SetSystemPropertyPlacementResponse) GetDefinition() *properties.PropertyDefinition {
+	if x != nil {
+		return x.xxx_hidden_Definition
+	}
+	return nil
+}
+
+func (x *SetSystemPropertyPlacementResponse) SetDefinition(v *properties.PropertyDefinition) {
+	x.xxx_hidden_Definition = v
+}
+
+func (x *SetSystemPropertyPlacementResponse) HasDefinition() bool {
+	if x == nil {
+		return false
+	}
+	return x.xxx_hidden_Definition != nil
+}
+
+func (x *SetSystemPropertyPlacementResponse) ClearDefinition() {
+	x.xxx_hidden_Definition = nil
+}
+
+type SetSystemPropertyPlacementResponse_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Definition *properties.PropertyDefinition
+}
+
+func (b0 SetSystemPropertyPlacementResponse_builder) Build() *SetSystemPropertyPlacementResponse {
+	m0 := &SetSystemPropertyPlacementResponse{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.xxx_hidden_Definition = b.Definition
+	return m0
+}
+
 var File_services_settings_properties_proto protoreflect.FileDescriptor
 
 const file_services_settings_properties_proto_rawDesc = "" +
@@ -1790,7 +1967,17 @@ const file_services_settings_properties_proto_rawDesc = "" +
 	" SetSystemPropertyEnabledResponse\x12H\n" +
 	"\n" +
 	"definition\x18\x01 \x01(\v2(.resources.properties.PropertyDefinitionR\n" +
-	"definition2\xed\x0f\n" +
+	"definition\"\xa0\x01\n" +
+	"!SetSystemPropertyPlacementRequest\x129\n" +
+	"\x05scope\x18\x01 \x01(\x0e2#.resources.properties.PropertyScopeR\x05scope\x12\x10\n" +
+	"\x03key\x18\x02 \x01(\tR\x03key\x12 \n" +
+	"\tgroup_key\x18\x03 \x01(\tH\x00R\bgroupKey\x88\x01\x01B\f\n" +
+	"\n" +
+	"_group_key\"n\n" +
+	"\"SetSystemPropertyPlacementResponse\x12H\n" +
+	"\n" +
+	"definition\x18\x01 \x01(\v2(.resources.properties.PropertyDefinitionR\n" +
+	"definition2\x8e\x11\n" +
 	"\x0fPropertyService\x12\x90\x01\n" +
 	"\x12ListPropertyScopes\x12,.services.settings.ListPropertyScopesRequest\x1a-.services.settings.ListPropertyScopesResponse\"\x1d\xd2\xf3\x18\x19\b\x01*\bJobAdmin*\vConfigAdmin\x12\x9f\x01\n" +
 	"\x17ListPropertyDefinitions\x121.services.settings.ListPropertyDefinitionsRequest\x1a2.services.settings.ListPropertyDefinitionsResponse\"\x1d\xd2\xf3\x18\x19\b\x01*\bJobAdmin*\vConfigAdmin\x12\x9c\x01\n" +
@@ -1804,9 +1991,10 @@ const file_services_settings_properties_proto_rawDesc = "" +
 	"\x18UpdatePropertyDefinition\x122.services.settings.UpdatePropertyDefinitionRequest\x1a3.services.settings.UpdatePropertyDefinitionResponse\"\x13\xd2\xf3\x18\x0f\b\x01\"\vConfigAdmin\x12\x98\x01\n" +
 	"\x18DeletePropertyDefinition\x122.services.settings.DeletePropertyDefinitionRequest\x1a3.services.settings.DeletePropertyDefinitionResponse\"\x13\xd2\xf3\x18\x0f\b\x01\"\vConfigAdmin\x12\x9b\x01\n" +
 	"\x19RestorePropertyDefinition\x123.services.settings.RestorePropertyDefinitionRequest\x1a4.services.settings.RestorePropertyDefinitionResponse\"\x13\xd2\xf3\x18\x0f\b\x01\"\vConfigAdmin\x12\x98\x01\n" +
-	"\x18SetSystemPropertyEnabled\x122.services.settings.SetSystemPropertyEnabledRequest\x1a3.services.settings.SetSystemPropertyEnabledResponse\"\x13\xd2\xf3\x18\x0f\b\x01\"\vConfigAdmin\x1a\x1b\xea\xf3\x18\x17\b\x82\x01\x12\x12i-mdi-tune-variantBNZLgithub.com/fivenet-app/fivenet/v2026/gen/go/proto/services/settings;settingsb\x06proto3"
+	"\x18SetSystemPropertyEnabled\x122.services.settings.SetSystemPropertyEnabledRequest\x1a3.services.settings.SetSystemPropertyEnabledResponse\"\x13\xd2\xf3\x18\x0f\b\x01\"\vConfigAdmin\x12\x9e\x01\n" +
+	"\x1aSetSystemPropertyPlacement\x124.services.settings.SetSystemPropertyPlacementRequest\x1a5.services.settings.SetSystemPropertyPlacementResponse\"\x13\xd2\xf3\x18\x0f\b\x01\"\vConfigAdmin\x1a\x1b\xea\xf3\x18\x17\b\x82\x01\x12\x12i-mdi-tune-variantBNZLgithub.com/fivenet-app/fivenet/v2026/gen/go/proto/services/settings;settingsb\x06proto3"
 
-var file_services_settings_properties_proto_msgTypes = make([]protoimpl.MessageInfo, 26)
+var file_services_settings_properties_proto_msgTypes = make([]protoimpl.MessageInfo, 28)
 var file_services_settings_properties_proto_goTypes = []any{
 	(*ListPropertyScopesRequest)(nil),          // 0: services.settings.ListPropertyScopesRequest
 	(*ListPropertyScopesResponse)(nil),         // 1: services.settings.ListPropertyScopesResponse
@@ -1834,64 +2022,70 @@ var file_services_settings_properties_proto_goTypes = []any{
 	(*RestorePropertyDefinitionResponse)(nil),  // 23: services.settings.RestorePropertyDefinitionResponse
 	(*SetSystemPropertyEnabledRequest)(nil),    // 24: services.settings.SetSystemPropertyEnabledRequest
 	(*SetSystemPropertyEnabledResponse)(nil),   // 25: services.settings.SetSystemPropertyEnabledResponse
-	(properties.PropertyScope)(0),              // 26: resources.properties.PropertyScope
-	(*properties.PropertyDefinition)(nil),      // 27: resources.properties.PropertyDefinition
-	(*properties.PropertyGroup)(nil),           // 28: resources.properties.PropertyGroup
+	(*SetSystemPropertyPlacementRequest)(nil),  // 26: services.settings.SetSystemPropertyPlacementRequest
+	(*SetSystemPropertyPlacementResponse)(nil), // 27: services.settings.SetSystemPropertyPlacementResponse
+	(properties.PropertyScope)(0),              // 28: resources.properties.PropertyScope
+	(*properties.PropertyDefinition)(nil),      // 29: resources.properties.PropertyDefinition
+	(*properties.PropertyGroup)(nil),           // 30: resources.properties.PropertyGroup
 }
 var file_services_settings_properties_proto_depIdxs = []int32{
-	26, // 0: services.settings.ListPropertyScopesResponse.scopes:type_name -> resources.properties.PropertyScope
-	26, // 1: services.settings.ListPropertyDefinitionsRequest.scope:type_name -> resources.properties.PropertyScope
-	27, // 2: services.settings.ListPropertyDefinitionsResponse.definitions:type_name -> resources.properties.PropertyDefinition
-	28, // 3: services.settings.ListPropertyDefinitionsResponse.groups:type_name -> resources.properties.PropertyGroup
-	28, // 4: services.settings.CreatePropertyGroupRequest.group:type_name -> resources.properties.PropertyGroup
-	28, // 5: services.settings.CreatePropertyGroupResponse.group:type_name -> resources.properties.PropertyGroup
-	28, // 6: services.settings.UpdatePropertyGroupRequest.group:type_name -> resources.properties.PropertyGroup
-	28, // 7: services.settings.UpdatePropertyGroupResponse.group:type_name -> resources.properties.PropertyGroup
-	26, // 8: services.settings.DeletePropertyGroupRequest.scope:type_name -> resources.properties.PropertyScope
-	26, // 9: services.settings.RestorePropertyGroupRequest.scope:type_name -> resources.properties.PropertyScope
-	28, // 10: services.settings.RestorePropertyGroupResponse.group:type_name -> resources.properties.PropertyGroup
-	26, // 11: services.settings.ReorderPropertyGroupsRequest.scope:type_name -> resources.properties.PropertyScope
-	26, // 12: services.settings.ReorderPropertyDefinitionsRequest.scope:type_name -> resources.properties.PropertyScope
-	27, // 13: services.settings.CreatePropertyDefinitionRequest.definition:type_name -> resources.properties.PropertyDefinition
-	27, // 14: services.settings.CreatePropertyDefinitionResponse.definition:type_name -> resources.properties.PropertyDefinition
-	27, // 15: services.settings.UpdatePropertyDefinitionRequest.definition:type_name -> resources.properties.PropertyDefinition
-	27, // 16: services.settings.UpdatePropertyDefinitionResponse.definition:type_name -> resources.properties.PropertyDefinition
-	26, // 17: services.settings.DeletePropertyDefinitionRequest.scope:type_name -> resources.properties.PropertyScope
-	26, // 18: services.settings.RestorePropertyDefinitionRequest.scope:type_name -> resources.properties.PropertyScope
-	27, // 19: services.settings.RestorePropertyDefinitionResponse.definition:type_name -> resources.properties.PropertyDefinition
-	26, // 20: services.settings.SetSystemPropertyEnabledRequest.scope:type_name -> resources.properties.PropertyScope
-	27, // 21: services.settings.SetSystemPropertyEnabledResponse.definition:type_name -> resources.properties.PropertyDefinition
-	0,  // 22: services.settings.PropertyService.ListPropertyScopes:input_type -> services.settings.ListPropertyScopesRequest
-	2,  // 23: services.settings.PropertyService.ListPropertyDefinitions:input_type -> services.settings.ListPropertyDefinitionsRequest
-	12, // 24: services.settings.PropertyService.ReorderPropertyGroups:input_type -> services.settings.ReorderPropertyGroupsRequest
-	4,  // 25: services.settings.PropertyService.CreatePropertyGroup:input_type -> services.settings.CreatePropertyGroupRequest
-	6,  // 26: services.settings.PropertyService.UpdatePropertyGroup:input_type -> services.settings.UpdatePropertyGroupRequest
-	8,  // 27: services.settings.PropertyService.DeletePropertyGroup:input_type -> services.settings.DeletePropertyGroupRequest
-	10, // 28: services.settings.PropertyService.RestorePropertyGroup:input_type -> services.settings.RestorePropertyGroupRequest
-	14, // 29: services.settings.PropertyService.ReorderPropertyDefinitions:input_type -> services.settings.ReorderPropertyDefinitionsRequest
-	16, // 30: services.settings.PropertyService.CreatePropertyDefinition:input_type -> services.settings.CreatePropertyDefinitionRequest
-	18, // 31: services.settings.PropertyService.UpdatePropertyDefinition:input_type -> services.settings.UpdatePropertyDefinitionRequest
-	20, // 32: services.settings.PropertyService.DeletePropertyDefinition:input_type -> services.settings.DeletePropertyDefinitionRequest
-	22, // 33: services.settings.PropertyService.RestorePropertyDefinition:input_type -> services.settings.RestorePropertyDefinitionRequest
-	24, // 34: services.settings.PropertyService.SetSystemPropertyEnabled:input_type -> services.settings.SetSystemPropertyEnabledRequest
-	1,  // 35: services.settings.PropertyService.ListPropertyScopes:output_type -> services.settings.ListPropertyScopesResponse
-	3,  // 36: services.settings.PropertyService.ListPropertyDefinitions:output_type -> services.settings.ListPropertyDefinitionsResponse
-	13, // 37: services.settings.PropertyService.ReorderPropertyGroups:output_type -> services.settings.ReorderPropertyGroupsResponse
-	5,  // 38: services.settings.PropertyService.CreatePropertyGroup:output_type -> services.settings.CreatePropertyGroupResponse
-	7,  // 39: services.settings.PropertyService.UpdatePropertyGroup:output_type -> services.settings.UpdatePropertyGroupResponse
-	9,  // 40: services.settings.PropertyService.DeletePropertyGroup:output_type -> services.settings.DeletePropertyGroupResponse
-	11, // 41: services.settings.PropertyService.RestorePropertyGroup:output_type -> services.settings.RestorePropertyGroupResponse
-	15, // 42: services.settings.PropertyService.ReorderPropertyDefinitions:output_type -> services.settings.ReorderPropertyDefinitionsResponse
-	17, // 43: services.settings.PropertyService.CreatePropertyDefinition:output_type -> services.settings.CreatePropertyDefinitionResponse
-	19, // 44: services.settings.PropertyService.UpdatePropertyDefinition:output_type -> services.settings.UpdatePropertyDefinitionResponse
-	21, // 45: services.settings.PropertyService.DeletePropertyDefinition:output_type -> services.settings.DeletePropertyDefinitionResponse
-	23, // 46: services.settings.PropertyService.RestorePropertyDefinition:output_type -> services.settings.RestorePropertyDefinitionResponse
-	25, // 47: services.settings.PropertyService.SetSystemPropertyEnabled:output_type -> services.settings.SetSystemPropertyEnabledResponse
-	35, // [35:48] is the sub-list for method output_type
-	22, // [22:35] is the sub-list for method input_type
-	22, // [22:22] is the sub-list for extension type_name
-	22, // [22:22] is the sub-list for extension extendee
-	0,  // [0:22] is the sub-list for field type_name
+	28, // 0: services.settings.ListPropertyScopesResponse.scopes:type_name -> resources.properties.PropertyScope
+	28, // 1: services.settings.ListPropertyDefinitionsRequest.scope:type_name -> resources.properties.PropertyScope
+	29, // 2: services.settings.ListPropertyDefinitionsResponse.definitions:type_name -> resources.properties.PropertyDefinition
+	30, // 3: services.settings.ListPropertyDefinitionsResponse.groups:type_name -> resources.properties.PropertyGroup
+	30, // 4: services.settings.CreatePropertyGroupRequest.group:type_name -> resources.properties.PropertyGroup
+	30, // 5: services.settings.CreatePropertyGroupResponse.group:type_name -> resources.properties.PropertyGroup
+	30, // 6: services.settings.UpdatePropertyGroupRequest.group:type_name -> resources.properties.PropertyGroup
+	30, // 7: services.settings.UpdatePropertyGroupResponse.group:type_name -> resources.properties.PropertyGroup
+	28, // 8: services.settings.DeletePropertyGroupRequest.scope:type_name -> resources.properties.PropertyScope
+	28, // 9: services.settings.RestorePropertyGroupRequest.scope:type_name -> resources.properties.PropertyScope
+	30, // 10: services.settings.RestorePropertyGroupResponse.group:type_name -> resources.properties.PropertyGroup
+	28, // 11: services.settings.ReorderPropertyGroupsRequest.scope:type_name -> resources.properties.PropertyScope
+	28, // 12: services.settings.ReorderPropertyDefinitionsRequest.scope:type_name -> resources.properties.PropertyScope
+	29, // 13: services.settings.CreatePropertyDefinitionRequest.definition:type_name -> resources.properties.PropertyDefinition
+	29, // 14: services.settings.CreatePropertyDefinitionResponse.definition:type_name -> resources.properties.PropertyDefinition
+	29, // 15: services.settings.UpdatePropertyDefinitionRequest.definition:type_name -> resources.properties.PropertyDefinition
+	29, // 16: services.settings.UpdatePropertyDefinitionResponse.definition:type_name -> resources.properties.PropertyDefinition
+	28, // 17: services.settings.DeletePropertyDefinitionRequest.scope:type_name -> resources.properties.PropertyScope
+	28, // 18: services.settings.RestorePropertyDefinitionRequest.scope:type_name -> resources.properties.PropertyScope
+	29, // 19: services.settings.RestorePropertyDefinitionResponse.definition:type_name -> resources.properties.PropertyDefinition
+	28, // 20: services.settings.SetSystemPropertyEnabledRequest.scope:type_name -> resources.properties.PropertyScope
+	29, // 21: services.settings.SetSystemPropertyEnabledResponse.definition:type_name -> resources.properties.PropertyDefinition
+	28, // 22: services.settings.SetSystemPropertyPlacementRequest.scope:type_name -> resources.properties.PropertyScope
+	29, // 23: services.settings.SetSystemPropertyPlacementResponse.definition:type_name -> resources.properties.PropertyDefinition
+	0,  // 24: services.settings.PropertyService.ListPropertyScopes:input_type -> services.settings.ListPropertyScopesRequest
+	2,  // 25: services.settings.PropertyService.ListPropertyDefinitions:input_type -> services.settings.ListPropertyDefinitionsRequest
+	12, // 26: services.settings.PropertyService.ReorderPropertyGroups:input_type -> services.settings.ReorderPropertyGroupsRequest
+	4,  // 27: services.settings.PropertyService.CreatePropertyGroup:input_type -> services.settings.CreatePropertyGroupRequest
+	6,  // 28: services.settings.PropertyService.UpdatePropertyGroup:input_type -> services.settings.UpdatePropertyGroupRequest
+	8,  // 29: services.settings.PropertyService.DeletePropertyGroup:input_type -> services.settings.DeletePropertyGroupRequest
+	10, // 30: services.settings.PropertyService.RestorePropertyGroup:input_type -> services.settings.RestorePropertyGroupRequest
+	14, // 31: services.settings.PropertyService.ReorderPropertyDefinitions:input_type -> services.settings.ReorderPropertyDefinitionsRequest
+	16, // 32: services.settings.PropertyService.CreatePropertyDefinition:input_type -> services.settings.CreatePropertyDefinitionRequest
+	18, // 33: services.settings.PropertyService.UpdatePropertyDefinition:input_type -> services.settings.UpdatePropertyDefinitionRequest
+	20, // 34: services.settings.PropertyService.DeletePropertyDefinition:input_type -> services.settings.DeletePropertyDefinitionRequest
+	22, // 35: services.settings.PropertyService.RestorePropertyDefinition:input_type -> services.settings.RestorePropertyDefinitionRequest
+	24, // 36: services.settings.PropertyService.SetSystemPropertyEnabled:input_type -> services.settings.SetSystemPropertyEnabledRequest
+	26, // 37: services.settings.PropertyService.SetSystemPropertyPlacement:input_type -> services.settings.SetSystemPropertyPlacementRequest
+	1,  // 38: services.settings.PropertyService.ListPropertyScopes:output_type -> services.settings.ListPropertyScopesResponse
+	3,  // 39: services.settings.PropertyService.ListPropertyDefinitions:output_type -> services.settings.ListPropertyDefinitionsResponse
+	13, // 40: services.settings.PropertyService.ReorderPropertyGroups:output_type -> services.settings.ReorderPropertyGroupsResponse
+	5,  // 41: services.settings.PropertyService.CreatePropertyGroup:output_type -> services.settings.CreatePropertyGroupResponse
+	7,  // 42: services.settings.PropertyService.UpdatePropertyGroup:output_type -> services.settings.UpdatePropertyGroupResponse
+	9,  // 43: services.settings.PropertyService.DeletePropertyGroup:output_type -> services.settings.DeletePropertyGroupResponse
+	11, // 44: services.settings.PropertyService.RestorePropertyGroup:output_type -> services.settings.RestorePropertyGroupResponse
+	15, // 45: services.settings.PropertyService.ReorderPropertyDefinitions:output_type -> services.settings.ReorderPropertyDefinitionsResponse
+	17, // 46: services.settings.PropertyService.CreatePropertyDefinition:output_type -> services.settings.CreatePropertyDefinitionResponse
+	19, // 47: services.settings.PropertyService.UpdatePropertyDefinition:output_type -> services.settings.UpdatePropertyDefinitionResponse
+	21, // 48: services.settings.PropertyService.DeletePropertyDefinition:output_type -> services.settings.DeletePropertyDefinitionResponse
+	23, // 49: services.settings.PropertyService.RestorePropertyDefinition:output_type -> services.settings.RestorePropertyDefinitionResponse
+	25, // 50: services.settings.PropertyService.SetSystemPropertyEnabled:output_type -> services.settings.SetSystemPropertyEnabledResponse
+	27, // 51: services.settings.PropertyService.SetSystemPropertyPlacement:output_type -> services.settings.SetSystemPropertyPlacementResponse
+	38, // [38:52] is the sub-list for method output_type
+	24, // [24:38] is the sub-list for method input_type
+	24, // [24:24] is the sub-list for extension type_name
+	24, // [24:24] is the sub-list for extension extendee
+	0,  // [0:24] is the sub-list for field type_name
 }
 
 func init() { file_services_settings_properties_proto_init() }
@@ -1899,13 +2093,14 @@ func file_services_settings_properties_proto_init() {
 	if File_services_settings_properties_proto != nil {
 		return
 	}
+	file_services_settings_properties_proto_msgTypes[26].OneofWrappers = []any{}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_services_settings_properties_proto_rawDesc), len(file_services_settings_properties_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   26,
+			NumMessages:   28,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

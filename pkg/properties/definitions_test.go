@@ -273,6 +273,68 @@ func TestNormalizeDefinitionReturnsCopy(t *testing.T) {
 	)
 }
 
+func TestNormalizeAndValidateCustomDefinitionClearsPlacementOverride(t *testing.T) {
+	t.Parallel()
+
+	normalized, err := NormalizeAndValidateCustomDefinition(&propertypb.PropertyDefinition{
+		Scope:               propertypb.PropertyScope_PROPERTY_SCOPE_VEHICLE,
+		Key:                 "vehicle.example",
+		ValueType:           propertypb.PropertyValueType_PROPERTY_VALUE_TYPE_STRING,
+		Source:              propertypb.PropertyDefinitionSource_PROPERTY_DEFINITION_SOURCE_CUSTOM,
+		Label:               "Example",
+		PlacementOverridden: true,
+		PlacementLocked:     true,
+	})
+	require.NoError(t, err)
+	assert.False(t, normalized.GetPlacementOverridden())
+	assert.False(t, normalized.GetPlacementLocked())
+}
+
+func TestApplyPlacementOverrideStatusOnlyMarksSystemDefinitions(t *testing.T) {
+	t.Parallel()
+
+	definitions := ApplyPlacementOverrideStatus([]*propertypb.PropertyDefinition{
+		{
+			Key:    "vehicle.wanted",
+			Source: propertypb.PropertyDefinitionSource_PROPERTY_DEFINITION_SOURCE_SYSTEM,
+		},
+		{
+			Key:                 "vehicle.note",
+			Source:              propertypb.PropertyDefinitionSource_PROPERTY_DEFINITION_SOURCE_CUSTOM,
+			PlacementOverridden: true,
+		},
+	}, map[string]bool{"vehicle.wanted": true})
+
+	assert.True(t, definitions[0].GetPlacementOverridden())
+	assert.False(t, definitions[1].GetPlacementOverridden())
+}
+
+func TestPlacementOverridesIgnoreLockedSystemDefinitions(t *testing.T) {
+	t.Parallel()
+
+	overriddenGroup := "custom"
+	definitions := []*propertypb.PropertyDefinition{
+		{
+			Key:             "vehicle.locked",
+			Source:          propertypb.PropertyDefinitionSource_PROPERTY_DEFINITION_SOURCE_SYSTEM,
+			GroupKey:        "status",
+			SortOrder:       100,
+			PlacementLocked: true,
+		},
+	}
+
+	definitions = ApplyGroupOverrides(
+		definitions,
+		map[string]*string{"vehicle.locked": &overriddenGroup},
+	)
+	definitions = ApplySortOrderOverrides(definitions, map[string]int32{"vehicle.locked": 900})
+	definitions = ApplyPlacementOverrideStatus(definitions, map[string]bool{"vehicle.locked": true})
+
+	assert.Equal(t, "status", definitions[0].GetGroupKey())
+	assert.EqualValues(t, 100, definitions[0].GetSortOrder())
+	assert.False(t, definitions[0].GetPlacementOverridden())
+}
+
 func stringPointer(value string) *string {
 	return &value
 }

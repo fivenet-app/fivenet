@@ -517,7 +517,8 @@ func (b0 ServiceOptions_builder) Build() *ServiceOptions {
 
 // SystemProperty declares a property whose key and semantics are owned by
 // FiveNet code. The backend generator registers these definitions at startup;
-// only the enabled state may be overridden by an instance.
+// enabled state and, unless placement_locked, presentation placement may be
+// overridden by an instance.
 type SystemProperty struct {
 	state            protoimpl.MessageState               `protogen:"hybrid.v1"`
 	Scope            properties.PropertyScope             `protobuf:"varint,1,opt,name=scope,proto3,enum=resources.properties.PropertyScope" json:"scope,omitempty"`
@@ -544,9 +545,11 @@ type SystemProperty struct {
 	ManagedHandler   *string                              `protobuf:"bytes,22,opt,name=managed_handler,json=managedHandler,proto3,oneof" json:"managed_handler,omitempty"`
 	ValueConstraints *properties.PropertyValueConstraints `protobuf:"bytes,23,opt,name=value_constraints,json=valueConstraints,proto3,oneof" json:"value_constraints,omitempty"`
 	// Omitted system properties inherit REQUIRED when registered.
-	ReasonMode    properties.PropertyReasonMode `protobuf:"varint,24,opt,name=reason_mode,json=reasonMode,proto3,enum=resources.properties.PropertyReasonMode" json:"reason_mode,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
+	ReasonMode properties.PropertyReasonMode `protobuf:"varint,24,opt,name=reason_mode,json=reasonMode,proto3,enum=resources.properties.PropertyReasonMode" json:"reason_mode,omitempty"`
+	// Locked properties keep their generated group and order on every instance.
+	PlacementLocked bool `protobuf:"varint,25,opt,name=placement_locked,json=placementLocked,proto3" json:"placement_locked,omitempty"`
+	unknownFields   protoimpl.UnknownFields
+	sizeCache       protoimpl.SizeCache
 }
 
 func (x *SystemProperty) Reset() {
@@ -742,6 +745,13 @@ func (x *SystemProperty) GetReasonMode() properties.PropertyReasonMode {
 	return properties.PropertyReasonMode(0)
 }
 
+func (x *SystemProperty) GetPlacementLocked() bool {
+	if x != nil {
+		return x.PlacementLocked
+	}
+	return false
+}
+
 func (x *SystemProperty) SetScope(v properties.PropertyScope) {
 	x.Scope = v
 }
@@ -836,6 +846,10 @@ func (x *SystemProperty) SetValueConstraints(v *properties.PropertyValueConstrai
 
 func (x *SystemProperty) SetReasonMode(v properties.PropertyReasonMode) {
 	x.ReasonMode = v
+}
+
+func (x *SystemProperty) SetPlacementLocked(v bool) {
+	x.PlacementLocked = v
 }
 
 func (x *SystemProperty) HasDescription() bool {
@@ -954,6 +968,8 @@ type SystemProperty_builder struct {
 	ValueConstraints *properties.PropertyValueConstraints
 	// Omitted system properties inherit REQUIRED when registered.
 	ReasonMode properties.PropertyReasonMode
+	// Locked properties keep their generated group and order on every instance.
+	PlacementLocked bool
 }
 
 func (b0 SystemProperty_builder) Build() *SystemProperty {
@@ -984,6 +1000,7 @@ func (b0 SystemProperty_builder) Build() *SystemProperty {
 	x.ManagedHandler = b.ManagedHandler
 	x.ValueConstraints = b.ValueConstraints
 	x.ReasonMode = b.ReasonMode
+	x.PlacementLocked = b.PlacementLocked
 	return m0
 }
 
@@ -1141,7 +1158,7 @@ const file_codegen_perms_perms_proto_rawDesc = "" +
 	"\n" +
 	"_namespaceB\n" +
 	"\n" +
-	"\b_service\"\xb0\n" +
+	"\b_service\"\xdb\n" +
 	"\n" +
 	"\x0eSystemProperty\x129\n" +
 	"\x05scope\x18\x01 \x01(\x0e2#.resources.properties.PropertyScopeR\x05scope\x12\x10\n" +
@@ -1174,7 +1191,8 @@ const file_codegen_perms_perms_proto_rawDesc = "" +
 	"\x0fmanaged_handler\x18\x16 \x01(\tH\x05R\x0emanagedHandler\x88\x01\x01\x12`\n" +
 	"\x11value_constraints\x18\x17 \x01(\v2..resources.properties.PropertyValueConstraintsH\x06R\x10valueConstraints\x88\x01\x01\x12I\n" +
 	"\vreason_mode\x18\x18 \x01(\x0e2(.resources.properties.PropertyReasonModeR\n" +
-	"reasonModeB\x0e\n" +
+	"reasonMode\x12)\n" +
+	"\x10placement_locked\x18\x19 \x01(\bR\x0fplacementLockedB\x0e\n" +
 	"\f_descriptionB\a\n" +
 	"\x05_unitB\x11\n" +
 	"\x0f_decimal_placesB\v\n" +

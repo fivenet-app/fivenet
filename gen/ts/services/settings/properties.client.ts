@@ -5,6 +5,8 @@
 import type { RpcTransport } from "@protobuf-ts/runtime-rpc";
 import type { ServiceInfo } from "@protobuf-ts/runtime-rpc";
 import { PropertyService } from "./properties";
+import type { SetSystemPropertyPlacementResponse } from "./properties";
+import type { SetSystemPropertyPlacementRequest } from "./properties";
 import type { SetSystemPropertyEnabledResponse } from "./properties";
 import type { SetSystemPropertyEnabledRequest } from "./properties";
 import type { RestorePropertyDefinitionResponse } from "./properties";
@@ -90,6 +92,10 @@ export interface IPropertyServiceClient {
      * @generated from protobuf rpc: SetSystemPropertyEnabled
      */
     setSystemPropertyEnabled(input: SetSystemPropertyEnabledRequest, options?: RpcOptions): UnaryCall<SetSystemPropertyEnabledRequest, SetSystemPropertyEnabledResponse>;
+    /**
+     * @generated from protobuf rpc: SetSystemPropertyPlacement
+     */
+    setSystemPropertyPlacement(input: SetSystemPropertyPlacementRequest, options?: RpcOptions): UnaryCall<SetSystemPropertyPlacementRequest, SetSystemPropertyPlacementResponse>;
 }
 /**
  * @generated from protobuf service services.settings.PropertyService
@@ -190,5 +196,12 @@ export class PropertyServiceClient implements IPropertyServiceClient, ServiceInf
     setSystemPropertyEnabled(input: SetSystemPropertyEnabledRequest, options?: RpcOptions): UnaryCall<SetSystemPropertyEnabledRequest, SetSystemPropertyEnabledResponse> {
         const method = this.methods[12], opt = this._transport.mergeOptions(options);
         return stackIntercept<SetSystemPropertyEnabledRequest, SetSystemPropertyEnabledResponse>("unary", this._transport, method, opt, input);
+    }
+    /**
+     * @generated from protobuf rpc: SetSystemPropertyPlacement
+     */
+    setSystemPropertyPlacement(input: SetSystemPropertyPlacementRequest, options?: RpcOptions): UnaryCall<SetSystemPropertyPlacementRequest, SetSystemPropertyPlacementResponse> {
+        const method = this.methods[13], opt = this._transport.mergeOptions(options);
+        return stackIntercept<SetSystemPropertyPlacementRequest, SetSystemPropertyPlacementResponse>("unary", this._transport, method, opt, input);
     }
 }

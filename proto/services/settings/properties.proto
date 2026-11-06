@@ -175,6 +175,29 @@ message SetSystemPropertyEnabledResponse {
   resources.properties.PropertyDefinition definition = 1;
 }
 
+// Sets the instance-specific placement of a system property. An omitted
+// group_key restores both the generated group and generated property order;
+// an empty group_key explicitly places the property in Other.
+message SetSystemPropertyPlacementRequest {
+  resources.properties.PropertyScope scope = 1 [(buf.validate.field).enum = {
+    defined_only: true
+    not_in: [0]
+  }];
+  string key = 2 [(buf.validate.field).string = {
+    min_len: 1
+    max_len: 64
+    pattern: "^[a-z][a-z0-9_.-]*$"
+  }];
+  optional string group_key = 3 [(buf.validate.field).string = {
+    max_len: 64
+    pattern: "^$|^[a-z][a-z0-9_.-]*$"
+  }];
+}
+
+message SetSystemPropertyPlacementResponse {
+  resources.properties.PropertyDefinition definition = 1;
+}
+
 service PropertyService {
   option (codegen.perms.perms_svc) = {
     order: 130
@@ -260,6 +283,12 @@ service PropertyService {
     };
   }
   rpc SetSystemPropertyEnabled(SetSystemPropertyEnabledRequest) returns (SetSystemPropertyEnabledResponse) {
+    option (codegen.perms.perms) = {
+      enabled: true
+      name: "ConfigAdmin"
+    };
+  }
+  rpc SetSystemPropertyPlacement(SetSystemPropertyPlacementRequest) returns (SetSystemPropertyPlacementResponse) {
     option (codegen.perms.perms) = {
       enabled: true
       name: "ConfigAdmin"

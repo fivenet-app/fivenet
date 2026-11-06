@@ -131,6 +131,12 @@ type IStore interface {
 		key string,
 		enabled bool,
 	) (*properties.PropertyDefinition, error)
+	SetSystemPropertyPlacement(
+		ctx context.Context,
+		scope properties.PropertyScope,
+		key string,
+		groupKey *string,
+	) (*properties.PropertyDefinition, error)
 	RestorePropertyDefinition(
 		ctx context.Context,
 		scope properties.PropertyScope,

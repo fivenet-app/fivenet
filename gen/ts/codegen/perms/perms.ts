@@ -124,7 +124,8 @@ export interface ServiceOptions {
 /**
  * SystemProperty declares a property whose key and semantics are owned by
  * FiveNet code. The backend generator registers these definitions at startup;
- * only the enabled state may be overridden by an instance.
+ * enabled state and, unless placement_locked, presentation placement may be
+ * overridden by an instance.
  *
  * @generated from protobuf message codegen.perms.SystemProperty
  */
@@ -227,6 +228,12 @@ export interface SystemProperty {
      * @generated from protobuf field: resources.properties.PropertyReasonMode reason_mode = 24
      */
     reasonMode: PropertyReasonMode;
+    /**
+     * Locked properties keep their generated group and order on every instance.
+     *
+     * @generated from protobuf field: bool placement_locked = 25
+     */
+    placementLocked: boolean;
 }
 /**
  * @generated from protobuf message codegen.perms.AdditionalServicePerm
@@ -542,7 +549,8 @@ class SystemProperty$Type extends MessageType<SystemProperty> {
             { no: 21, name: "state_policy", kind: "message", T: () => PropertyStatePolicy },
             { no: 22, name: "managed_handler", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/ },
             { no: 23, name: "value_constraints", kind: "message", T: () => PropertyValueConstraints },
-            { no: 24, name: "reason_mode", kind: "enum", T: () => ["resources.properties.PropertyReasonMode", PropertyReasonMode, "PROPERTY_REASON_MODE_"] }
+            { no: 24, name: "reason_mode", kind: "enum", T: () => ["resources.properties.PropertyReasonMode", PropertyReasonMode, "PROPERTY_REASON_MODE_"] },
+            { no: 25, name: "placement_locked", kind: "scalar", T: 8 /*ScalarType.BOOL*/ }
         ]);
     }
     create(value?: PartialMessage<SystemProperty>): SystemProperty {
@@ -563,6 +571,7 @@ class SystemProperty$Type extends MessageType<SystemProperty> {
         message.pinned = false;
         message.implicit = false;
         message.reasonMode = 0;
+        message.placementLocked = false;
         if (value !== undefined)
             reflectionMergePartial<SystemProperty>(this, message, value);
         return message;
@@ -643,6 +652,9 @@ class SystemProperty$Type extends MessageType<SystemProperty> {
                     break;
                 case /* resources.properties.PropertyReasonMode reason_mode */ 24:
                     message.reasonMode = reader.int32();
+                    break;
+                case /* bool placement_locked */ 25:
+                    message.placementLocked = reader.bool();
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -728,6 +740,9 @@ class SystemProperty$Type extends MessageType<SystemProperty> {
         /* resources.properties.PropertyReasonMode reason_mode = 24; */
         if (message.reasonMode !== 0)
             writer.tag(24, WireType.Varint).int32(message.reasonMode);
+        /* bool placement_locked = 25; */
+        if (message.placementLocked !== false)
+            writer.tag(25, WireType.Varint).bool(message.placementLocked);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);

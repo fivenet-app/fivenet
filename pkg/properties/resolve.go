@@ -69,6 +69,7 @@ func ResolveDefinitions(
 	overrideStmt := table.FivenetPropertySystemOverrides.SELECT(
 		table.FivenetPropertySystemOverrides.PropertyKey,
 		table.FivenetPropertySystemOverrides.Enabled,
+		table.FivenetPropertySystemOverrides.GroupKey,
 		table.FivenetPropertySystemOverrides.SortOrder,
 	).FROM(table.FivenetPropertySystemOverrides).WHERE(
 		table.FivenetPropertySystemOverrides.Scope.EQ(mysql.String(scopeName)).AND(
@@ -82,8 +83,15 @@ func ResolveDefinitions(
 		if definition, ok := result[override.PropertyKey]; ok &&
 			definition.GetSource() == propertypb.PropertyDefinitionSource_PROPERTY_DEFINITION_SOURCE_SYSTEM {
 			definition.Enabled = override.Enabled
-			if override.SortOrder != nil {
-				definition.SortOrder = *override.SortOrder
+			if !definition.GetPlacementLocked() {
+				if override.GroupKey != nil {
+					definition.GroupKey = *override.GroupKey
+				}
+				if override.SortOrder != nil {
+					definition.SortOrder = *override.SortOrder
+				}
+				definition.PlacementOverridden = override.GroupKey != nil ||
+					override.SortOrder != nil
 			}
 		}
 	}

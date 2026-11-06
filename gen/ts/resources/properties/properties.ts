@@ -196,6 +196,10 @@ export interface PropertyMutation {
     clearReason?: boolean;
 }
 /**
+ * PropertyStatePatch carries an explicit lifecycle override. Omitting state,
+ * or omitting expiry_change within it, leaves expiry server-managed; managed
+ * properties may apply their configured maximum duration from active_at.
+ *
  * @generated from protobuf message resources.properties.PropertyStatePatch
  */
 export interface PropertyStatePatch {
@@ -453,6 +457,19 @@ export interface PropertyDefinition {
      * @generated from protobuf field: resources.properties.PropertyReasonMode reason_mode = 27
      */
     reasonMode: PropertyReasonMode;
+    /**
+     * True when a system property has an instance-specific group or order.
+     * This is effective response metadata and is never persisted on definitions.
+     *
+     * @generated from protobuf field: bool placement_overridden = 28
+     */
+    placementOverridden: boolean;
+    /**
+     * System properties with this flag retain their generated group and order.
+     *
+     * @generated from protobuf field: bool placement_locked = 29
+     */
+    placementLocked: boolean;
 }
 /**
  * @generated from protobuf message resources.properties.PropertyRendererConfig
@@ -1651,7 +1668,9 @@ class PropertyDefinition$Type extends MessageType<PropertyDefinition> {
             { no: 24, name: "state_policy", kind: "message", T: () => PropertyStatePolicy },
             { no: 25, name: "managed_handler", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "64" } } } },
             { no: 26, name: "value_constraints", kind: "message", T: () => PropertyValueConstraints },
-            { no: 27, name: "reason_mode", kind: "enum", T: () => ["resources.properties.PropertyReasonMode", PropertyReasonMode, "PROPERTY_REASON_MODE_"], options: { "buf.validate.field": { enum: { definedOnly: true } } } }
+            { no: 27, name: "reason_mode", kind: "enum", T: () => ["resources.properties.PropertyReasonMode", PropertyReasonMode, "PROPERTY_REASON_MODE_"], options: { "buf.validate.field": { enum: { definedOnly: true } } } },
+            { no: 28, name: "placement_overridden", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
+            { no: 29, name: "placement_locked", kind: "scalar", T: 8 /*ScalarType.BOOL*/ }
         ]);
     }
     create(value?: PartialMessage<PropertyDefinition>): PropertyDefinition {
@@ -1674,6 +1693,8 @@ class PropertyDefinition$Type extends MessageType<PropertyDefinition> {
         message.displayMode = 0;
         message.implicit = false;
         message.reasonMode = 0;
+        message.placementOverridden = false;
+        message.placementLocked = false;
         if (value !== undefined)
             reflectionMergePartial<PropertyDefinition>(this, message, value);
         return message;
@@ -1763,6 +1784,12 @@ class PropertyDefinition$Type extends MessageType<PropertyDefinition> {
                     break;
                 case /* resources.properties.PropertyReasonMode reason_mode */ 27:
                     message.reasonMode = reader.int32();
+                    break;
+                case /* bool placement_overridden */ 28:
+                    message.placementOverridden = reader.bool();
+                    break;
+                case /* bool placement_locked */ 29:
+                    message.placementLocked = reader.bool();
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -1857,6 +1884,12 @@ class PropertyDefinition$Type extends MessageType<PropertyDefinition> {
         /* resources.properties.PropertyReasonMode reason_mode = 27; */
         if (message.reasonMode !== 0)
             writer.tag(27, WireType.Varint).int32(message.reasonMode);
+        /* bool placement_overridden = 28; */
+        if (message.placementOverridden !== false)
+            writer.tag(28, WireType.Varint).bool(message.placementOverridden);
+        /* bool placement_locked = 29; */
+        if (message.placementLocked !== false)
+            writer.tag(29, WireType.Varint).bool(message.placementLocked);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);

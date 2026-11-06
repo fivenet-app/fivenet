@@ -189,6 +189,23 @@ func (s *Server) SetSystemPropertyEnabled(
 	return &pbsettings.SetSystemPropertyEnabledResponse{Definition: definition}, nil
 }
 
+func (s *Server) SetSystemPropertyPlacement(
+	ctx context.Context,
+	req *pbsettings.SetSystemPropertyPlacementRequest,
+) (*pbsettings.SetSystemPropertyPlacementResponse, error) {
+	definition, err := s.store.SetSystemPropertyPlacement(
+		ctx,
+		req.GetScope(),
+		req.GetKey(),
+		req.GroupKey,
+	)
+	if err != nil {
+		return nil, propertyDefinitionError(err)
+	}
+	grpc_audit.SetAction(ctx, audit.EventAction_EVENT_ACTION_UPDATED)
+	return &pbsettings.SetSystemPropertyPlacementResponse{Definition: definition}, nil
+}
+
 func propertyDefinitionError(err error) error {
 	if errors.Is(err, settingsstore.ErrInvalidPropertyDefinition) ||
 		errors.Is(err, settingsstore.ErrPropertyDefinitionNotFound) ||

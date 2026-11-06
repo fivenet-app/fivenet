@@ -292,6 +292,7 @@ type SystemProperty struct {
 	ManagedHandler   *string
 	ValueConstraints *propertypb.PropertyValueConstraints
 	ReasonMode       propertypb.PropertyReasonMode
+	PlacementLocked  bool
 }
 
 type SystemPropertyGroup struct {
@@ -541,6 +542,7 @@ func (p *PermifyModule) generate(fs []pgs.File) map[string]map[string]map[string
 					ManagedHandler:   property.ManagedHandler,
 					ValueConstraints: property.GetValueConstraints(),
 					ReasonMode:       reasonMode,
+					PlacementLocked:  property.GetPlacementLocked(),
 				})
 			}
 
@@ -880,6 +882,7 @@ func init() {
 			{{- with $property.ManagedHandler }}ManagedHandler: proto.String("{{ . }}"),{{ end }}
 			{{- with valueConstraintsLiteral $property.ValueConstraints }}ValueConstraints: {{ . }},{{ end }}
 			ReasonMode: propertypb.PropertyReasonMode_{{ $property.ReasonMode }},
+			{{- if $property.PlacementLocked }}PlacementLocked: true,{{ end }}
 			{{- with $property.Unit }}Unit: proto.String("{{ . }}"),{{ end }}
 			{{- with $property.DecimalPlaces }}DecimalPlaces: proto.Uint32({{ . }}),{{ end }}
 			{{- with $property.Currency }}Currency: proto.String("{{ . }}"),{{ end }}

@@ -61,6 +61,7 @@ message SystemProperty {
   bool searchable = 8;
   string group_key = 14;
   int32 sort_order = 15;
+  bool placement_locked = 25;
 }
 
 message AdditionalServicePerm {
@@ -128,6 +129,7 @@ service DocumentsService {
       display_key: "common.name"
       group_key: "personal"
       sort_order: 100
+      placement_locked: true
     }]
     additional_perms: [
       {
@@ -338,6 +340,7 @@ func TestPermifyModule_Execute_MergesDocumentAttrs(t *testing.T) {
 	mustContainBackend(t, serviceOut, "propertyregistry.AddSystemPropertyDefinitions")
 	mustContainBackend(t, serviceOut, "propertyregistry.AddSystemPropertyGroups")
 	mustContainBackend(t, serviceOut, `GroupKey: "personal"`)
+	mustContainBackend(t, serviceOut, "PlacementLocked: true")
 	mustContainBackend(t, serviceOut, "ValidValues: []string{\"user.name\"")
 	mustContainBackend(t, serviceOut, "PropertyScope: propertypb.PropertyScope_PROPERTY_SCOPE_USER,")
 	mustContainBackend(t, constOut, "DocumentsServiceUpdateDocumentPropertiesPermValueUserName")

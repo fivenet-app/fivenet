@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"slices"
 	"sort"
 	"strconv"
 	"strings"
@@ -111,7 +112,9 @@ func (s *Store) ListPropertyDefinitions(
 		customDefinitions,
 		overrides.enabled,
 	)
+	definitions = propertyregistry.ApplyGroupOverrides(definitions, overrides.groupKeys)
 	definitions = propertyregistry.ApplySortOrderOverrides(definitions, overrides.sortOrders)
+	definitions = propertyregistry.ApplyPlacementOverrideStatus(definitions, overrides.placements)
 	if err := propertyregistry.ApplyGroupSortOrders(
 		ctx,
 		s.db,
@@ -273,6 +276,19 @@ func (s *Store) DeletePropertyGroup(
 		ExecContext(ctx, tx); err != nil {
 		return err
 	}
+	// Match the custom-definition behavior: properties assigned to a deleted
+	// group become ungrouped. Keep the enabled override intact.
+	overrides := table.FivenetPropertySystemOverrides
+	if _, err := overrides.UPDATE().SET(
+		overrides.GroupKey.SET(mysql.StringExp(mysql.NULL)),
+		overrides.SortOrder.SET(mysql.IntExp(mysql.NULL)),
+	).WHERE(
+		overrides.Scope.EQ(mysql.String(scopeName)).AND(
+			overrides.GroupKey.EQ(mysql.String(key)),
+		),
+	).ExecContext(ctx, tx); err != nil {
+		return err
+	}
 	if err := tx.Commit(); err != nil {
 		return err
 	}
@@ -371,6 +387,16 @@ func (s *Store) ReorderPropertyGroups(
 	for _, group := range groups {
 		valid[group.GetKey()] = struct{}{}
 	}
+	definitions, err := s.ListPropertyDefinitions(ctx, scope, false)
+	if err != nil {
+		return err
+	}
+	for _, definition := range definitions {
+		if definition.GetSource() == properties.PropertyDefinitionSource_PROPERTY_DEFINITION_SOURCE_SYSTEM &&
+			definition.GetPlacementLocked() {
+			return ErrInvalidPropertyDefinition
+		}
+	}
 	seen := make(map[string]struct{}, len(keys))
 	for _, key := range keys {
 		if _, ok := valid[key]; !ok {
@@ -442,14 +468,6 @@ func (s *Store) ReorderPropertyDefinitions(
 		if propertyregistry.ValidateKey(key) != nil {
 			return ErrInvalidPropertyDefinition
 		}
-		if systemDefinition, isSystem := propertyregistry.SystemPropertyDefinition(
-			scope,
-			key,
-		); isSystem {
-			if systemDefinition.GetGroupKey() != groupKey {
-				return ErrInvalidPropertyDefinition
-			}
-		}
 		if _, exists := seen[key]; exists {
 			return ErrInvalidPropertyDefinition
 		}
@@ -473,6 +491,13 @@ func (s *Store) ReorderPropertyDefinitions(
 			return ErrInvalidPropertyDefinition
 		}
 	}
+	for _, definition := range definitions {
+		if definition.GetSource() == properties.PropertyDefinitionSource_PROPERTY_DEFINITION_SOURCE_SYSTEM &&
+			definition.GetPlacementLocked() &&
+			definition.GetGroupKey() == groupKey {
+			return ErrInvalidPropertyDefinition
+		}
+	}
 	tx, err := s.db.BeginTx(ctx, nil)
 	if err != nil {
 		return err
@@ -483,6 +508,10 @@ func (s *Store) ReorderPropertyDefinitions(
 	for index, key := range keys {
 		order := int32((index + 1) * 100)
 		if propertyregistry.IsSystemProperty(scope, key) {
+			definition := definitionMap(definitions)[key]
+			if definition == nil {
+				return ErrInvalidPropertyDefinition
+			}
 			if _, err := tOverrides.
 				INSERT(
 					tOverrides.Scope,
@@ -490,7 +519,7 @@ func (s *Store) ReorderPropertyDefinitions(
 					tOverrides.Enabled,
 					tOverrides.SortOrder,
 				).
-				VALUES(name, key, true, order).
+				VALUES(name, key, definition.GetEnabled(), order).
 				ON_DUPLICATE_KEY_UPDATE(
 					tOverrides.SortOrder.SET(mysql.IntExp(mysql.RawString("VALUES(`sort_order`)"))),
 				).
@@ -882,7 +911,7 @@ func (s *Store) SetSystemPropertyEnabled(
 	enabled bool,
 ) (*properties.PropertyDefinition, error) {
 	scopeName, ok := propertyScopeName(scope)
-	definition, found := systemPropertyDefinition(scope, key)
+	_, found := systemPropertyDefinition(scope, key)
 	if !ok || !found {
 		return nil, ErrInvalidPropertyDefinition
 	}
@@ -897,14 +926,104 @@ func (s *Store) SetSystemPropertyEnabled(
 		return nil, err
 	}
 	s.invalidatePropertyScope(ctx, scope)
-	defCopy := proto.Clone(definition).(*properties.PropertyDefinition)
-	defCopy.Enabled = enabled
-	return defCopy, nil
+	definitions, err := s.ListPropertyDefinitions(ctx, scope, false)
+	if err != nil {
+		return nil, err
+	}
+	for _, resolved := range definitions {
+		if resolved.GetKey() == key {
+			return resolved, nil
+		}
+	}
+	return nil, ErrPropertyDefinitionNotFound
+}
+
+// SetSystemPropertyPlacement changes only the presentation placement of a
+// system property. A nil group key restores its generated placement and order.
+func (s *Store) SetSystemPropertyPlacement(
+	ctx context.Context,
+	scope properties.PropertyScope,
+	key string,
+	groupKey *string,
+) (*properties.PropertyDefinition, error) {
+	scopeName, ok := propertyScopeName(scope)
+	definition, found := systemPropertyDefinition(scope, key)
+	if !ok || !found {
+		return nil, ErrInvalidPropertyDefinition
+	}
+	if definition.GetPlacementLocked() {
+		return nil, ErrInvalidPropertyDefinition
+	}
+
+	tOverrides := table.FivenetPropertySystemOverrides
+	if groupKey == nil {
+		if _, err := tOverrides.UPDATE().SET(
+			tOverrides.GroupKey.SET(mysql.StringExp(mysql.NULL)),
+			tOverrides.SortOrder.SET(mysql.IntExp(mysql.NULL)),
+		).WHERE(tOverrides.Scope.EQ(mysql.String(scopeName)).AND(
+			tOverrides.PropertyKey.EQ(mysql.String(key)),
+		)).ExecContext(ctx, s.db); err != nil {
+			return nil, err
+		}
+	} else {
+		if propertyregistry.ValidateKey(*groupKey) != nil && *groupKey != "" {
+			return nil, ErrInvalidPropertyDefinition
+		}
+		if *groupKey != "" {
+			groups, err := s.ListPropertyGroups(ctx, scope, false)
+			if err != nil {
+				return nil, err
+			}
+			if !slices.ContainsFunc(
+				groups,
+				func(group *properties.PropertyGroup) bool { return group.GetKey() == *groupKey },
+			) {
+				return nil, ErrPropertyGroupNotFound
+			}
+		}
+		definitions, err := s.ListPropertyDefinitions(ctx, scope, false)
+		if err != nil {
+			return nil, err
+		}
+		order := int32(100)
+		for _, candidate := range definitions {
+			if candidate.GetKey() != key && candidate.GetGroupKey() == *groupKey &&
+				candidate.GetSortOrder() >= order {
+				order = candidate.GetSortOrder() + 100
+			}
+		}
+		if _, err := tOverrides.INSERT(
+			tOverrides.Scope,
+			tOverrides.PropertyKey,
+			tOverrides.Enabled,
+			tOverrides.GroupKey,
+			tOverrides.SortOrder,
+		).VALUES(scopeName, key, definition.GetEnabled(), *groupKey, order).
+			ON_DUPLICATE_KEY_UPDATE(
+				tOverrides.GroupKey.SET(mysql.StringExp(mysql.RawString("VALUES(`group_key`)"))),
+				tOverrides.SortOrder.SET(mysql.IntExp(mysql.RawString("VALUES(`sort_order`)"))),
+			).ExecContext(ctx, s.db); err != nil {
+			return nil, err
+		}
+	}
+	s.invalidatePropertyScope(ctx, scope)
+	definitions, err := s.ListPropertyDefinitions(ctx, scope, false)
+	if err != nil {
+		return nil, err
+	}
+	for _, resolved := range definitions {
+		if resolved.GetKey() == key {
+			return resolved, nil
+		}
+	}
+	return nil, ErrPropertyDefinitionNotFound
 }
 
 type propertySystemOverrides struct {
 	enabled    map[string]bool
+	groupKeys  map[string]*string
 	sortOrders map[string]int32
+	placements map[string]bool
 }
 
 func (s *Store) systemPropertyOverrides(
@@ -913,7 +1032,12 @@ func (s *Store) systemPropertyOverrides(
 ) (propertySystemOverrides, error) {
 	tOverrides := table.FivenetPropertySystemOverrides
 	stmt := tOverrides.
-		SELECT(tOverrides.PropertyKey, tOverrides.Enabled, tOverrides.SortOrder).
+		SELECT(
+			tOverrides.PropertyKey,
+			tOverrides.Enabled,
+			tOverrides.GroupKey,
+			tOverrides.SortOrder,
+		).
 		FROM(tOverrides).
 		WHERE(tOverrides.Scope.EQ(mysql.String(scopeName)))
 	rows := []model.FivenetPropertySystemOverrides{}
@@ -924,13 +1048,20 @@ func (s *Store) systemPropertyOverrides(
 
 	overrides := propertySystemOverrides{
 		enabled:    make(map[string]bool),
+		groupKeys:  make(map[string]*string),
 		sortOrders: make(map[string]int32),
+		placements: make(map[string]bool),
 	}
 	for _, row := range rows {
 		overrides.enabled[row.PropertyKey] = row.Enabled
+		if row.GroupKey != nil {
+			groupKey := *row.GroupKey
+			overrides.groupKeys[row.PropertyKey] = &groupKey
+		}
 		if row.SortOrder != nil {
 			overrides.sortOrders[row.PropertyKey] = *row.SortOrder
 		}
+		overrides.placements[row.PropertyKey] = row.GroupKey != nil || row.SortOrder != nil
 	}
 	return overrides, nil
 }
@@ -1060,6 +1191,8 @@ func customPropertyDefinitionCopy(
 	copyDef := proto.Clone(definition).(*properties.PropertyDefinition)
 	copyDef.Source = properties.PropertyDefinitionSource_PROPERTY_DEFINITION_SOURCE_CUSTOM
 	copyDef.DisplayKey = ""
+	copyDef.PlacementOverridden = false
+	copyDef.PlacementLocked = false
 	return copyDef
 }
 

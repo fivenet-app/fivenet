@@ -15,6 +15,7 @@ type FivenetPropertySystemOverrides struct {
 	Scope       string    `sql:"primary_key" json:"scope"`
 	PropertyKey string    `sql:"primary_key" json:"property_key"`
 	Enabled     bool      `json:"enabled"`
+	GroupKey    *string   `json:"group_key"`
 	UpdatedAt   time.Time `json:"updated_at"`
 	SortOrder   *int32    `json:"sort_order"`
 }

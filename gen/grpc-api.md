@@ -354,6 +354,8 @@ LocalDate deliberately has no timezone. Use it for calendar dates such as an ins
 | `managed_handler` | [string](#string) | optional | Registry identifier for the server-side managed-property handler. Generic properties leave this unset; Sync routes managed mutations by this value. |
 | `value_constraints` | [PropertyValueConstraints](#resourcespropertiesPropertyValueConstraints) | optional |  |
 | `reason_mode` | [PropertyReasonMode](#resourcespropertiesPropertyReasonMode) |  |  |
+| `placement_overridden` | [bool](#bool) |  | True when a system property has an instance-specific group or order. This is effective response metadata and is never persisted on definitions. |
+| `placement_locked` | [bool](#bool) |  | System properties with this flag retain their generated group and order. |
 
 
 
@@ -467,6 +469,8 @@ PropertyState is lifecycle metadata associated with a state-enabled property. ke
 
 
 ### resources.properties.PropertyStatePatch
+PropertyStatePatch carries an explicit lifecycle override. Omitting state, or omitting expiry_change within it, leaves expiry server-managed; managed properties may apply their configured maximum duration from active_at.
+
 
 
 | Field | Type | Label | Description |
@@ -769,7 +773,7 @@ PropertyValueFormat describes the semantic rendering and input convention for a 
 
 
 ### codegen.perms.SystemProperty
-SystemProperty declares a property whose key and semantics are owned by FiveNet code. The backend generator registers these definitions at startup; only the enabled state may be overridden by an instance.
+SystemProperty declares a property whose key and semantics are owned by FiveNet code. The backend generator registers these definitions at startup; enabled state and, unless placement_locked, presentation placement may be overridden by an instance.
 
 
 
@@ -799,6 +803,7 @@ SystemProperty declares a property whose key and semantics are owned by FiveNet 
 | `managed_handler` | [string](#string) | optional |  |
 | `value_constraints` | [resources.properties.PropertyValueConstraints](#resourcespropertiesPropertyValueConstraints) | optional |  |
 | `reason_mode` | [resources.properties.PropertyReasonMode](#resourcespropertiesPropertyReasonMode) |  | Omitted system properties inherit REQUIRED when registered. |
+| `placement_locked` | [bool](#bool) |  | Locked properties keep their generated group and order on every instance. |
 
 
 
@@ -15389,6 +15394,32 @@ Updates one preference scope. Fields omitted from preference inherit from a less
 
 
 
+### services.settings.SetSystemPropertyPlacementRequest
+Sets the instance-specific placement of a system property. An omitted group_key restores both the generated group and generated property order; an empty group_key explicitly places the property in Other.
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `scope` | [resources.properties.PropertyScope](#resourcespropertiesPropertyScope) |  |  |
+| `key` | [string](#string) |  |  |
+| `group_key` | [string](#string) | optional |  |
+
+
+
+
+
+### services.settings.SetSystemPropertyPlacementResponse
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `definition` | [resources.properties.PropertyDefinition](#resourcespropertiesPropertyDefinition) |  |  |
+
+
+
+
+
 ### services.settings.UpdatePropertyDefinitionRequest
 
 
@@ -15456,6 +15487,7 @@ Updates one preference scope. Fields omitted from preference inherit from a less
 | `DeletePropertyDefinition` | [DeletePropertyDefinitionRequest](#servicessettingsDeletePropertyDefinitionRequest) | [DeletePropertyDefinitionResponse](#servicessettingsDeletePropertyDefinitionResponse) | |
 | `RestorePropertyDefinition` | [RestorePropertyDefinitionRequest](#servicessettingsRestorePropertyDefinitionRequest) | [RestorePropertyDefinitionResponse](#servicessettingsRestorePropertyDefinitionResponse) | |
 | `SetSystemPropertyEnabled` | [SetSystemPropertyEnabledRequest](#servicessettingsSetSystemPropertyEnabledRequest) | [SetSystemPropertyEnabledResponse](#servicessettingsSetSystemPropertyEnabledResponse) | |
+| `SetSystemPropertyPlacement` | [SetSystemPropertyPlacementRequest](#servicessettingsSetSystemPropertyPlacementRequest) | [SetSystemPropertyPlacementResponse](#servicessettingsSetSystemPropertyPlacementResponse) | |
 
  <!-- end services -->
 

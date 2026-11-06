@@ -1672,6 +1672,9 @@ func (*PropertyMutation_SetValue) isPropertyMutation_ValueChange() {}
 
 func (*PropertyMutation_ClearValue) isPropertyMutation_ValueChange() {}
 
+// PropertyStatePatch carries an explicit lifecycle override. Omitting state,
+// or omitting expiry_change within it, leaves expiry server-managed; managed
+// properties may apply their configured maximum duration from active_at.
 type PropertyStatePatch struct {
 	state protoimpl.MessageState `protogen:"hybrid.v1"`
 	// Types that are valid to be assigned to ExpiryChange:
@@ -2389,8 +2392,13 @@ type PropertyDefinition struct {
 	ManagedHandler   *string                   `protobuf:"bytes,25,opt,name=managed_handler,json=managedHandler,proto3,oneof" json:"managed_handler,omitempty"`
 	ValueConstraints *PropertyValueConstraints `protobuf:"bytes,26,opt,name=value_constraints,json=valueConstraints,proto3,oneof" json:"value_constraints,omitempty"`
 	ReasonMode       PropertyReasonMode        `protobuf:"varint,27,opt,name=reason_mode,json=reasonMode,proto3,enum=resources.properties.PropertyReasonMode" json:"reason_mode,omitempty"`
-	unknownFields    protoimpl.UnknownFields
-	sizeCache        protoimpl.SizeCache
+	// True when a system property has an instance-specific group or order.
+	// This is effective response metadata and is never persisted on definitions.
+	PlacementOverridden bool `protobuf:"varint,28,opt,name=placement_overridden,json=placementOverridden,proto3" json:"placement_overridden,omitempty"`
+	// System properties with this flag retain their generated group and order.
+	PlacementLocked bool `protobuf:"varint,29,opt,name=placement_locked,json=placementLocked,proto3" json:"placement_locked,omitempty"`
+	unknownFields   protoimpl.UnknownFields
+	sizeCache       protoimpl.SizeCache
 }
 
 func (x *PropertyDefinition) Reset() {
@@ -2607,6 +2615,20 @@ func (x *PropertyDefinition) GetReasonMode() PropertyReasonMode {
 	return PropertyReasonMode_PROPERTY_REASON_MODE_UNSPECIFIED
 }
 
+func (x *PropertyDefinition) GetPlacementOverridden() bool {
+	if x != nil {
+		return x.PlacementOverridden
+	}
+	return false
+}
+
+func (x *PropertyDefinition) GetPlacementLocked() bool {
+	if x != nil {
+		return x.PlacementLocked
+	}
+	return false
+}
+
 func (x *PropertyDefinition) SetScope(v PropertyScope) {
 	x.Scope = v
 }
@@ -2713,6 +2735,14 @@ func (x *PropertyDefinition) SetValueConstraints(v *PropertyValueConstraints) {
 
 func (x *PropertyDefinition) SetReasonMode(v PropertyReasonMode) {
 	x.ReasonMode = v
+}
+
+func (x *PropertyDefinition) SetPlacementOverridden(v bool) {
+	x.PlacementOverridden = v
+}
+
+func (x *PropertyDefinition) SetPlacementLocked(v bool) {
+	x.PlacementLocked = v
 }
 
 func (x *PropertyDefinition) HasDescription() bool {
@@ -2864,6 +2894,11 @@ type PropertyDefinition_builder struct {
 	ManagedHandler   *string
 	ValueConstraints *PropertyValueConstraints
 	ReasonMode       PropertyReasonMode
+	// True when a system property has an instance-specific group or order.
+	// This is effective response metadata and is never persisted on definitions.
+	PlacementOverridden bool
+	// System properties with this flag retain their generated group and order.
+	PlacementLocked bool
 }
 
 func (b0 PropertyDefinition_builder) Build() *PropertyDefinition {
@@ -2897,6 +2932,8 @@ func (b0 PropertyDefinition_builder) Build() *PropertyDefinition {
 	x.ManagedHandler = b.ManagedHandler
 	x.ValueConstraints = b.ValueConstraints
 	x.ReasonMode = b.ReasonMode
+	x.PlacementOverridden = b.PlacementOverridden
+	x.PlacementLocked = b.PlacementLocked
 	return m0
 }
 
@@ -3796,7 +3833,7 @@ const file_resources_properties_properties_proto_rawDesc = "" +
 	"\x0e_timestamp_minB\x10\n" +
 	"\x0e_timestamp_maxB\v\n" +
 	"\t_date_minB\v\n" +
-	"\t_date_max\"\x92\f\n" +
+	"\t_date_max\"\xf0\f\n" +
 	"\x12PropertyDefinition\x129\n" +
 	"\x05scope\x18\x01 \x01(\x0e2#.resources.properties.PropertyScopeR\x05scope\x12\x10\n" +
 	"\x03key\x18\x02 \x01(\tR\x03key\x12F\n" +
@@ -3832,7 +3869,9 @@ const file_resources_properties_properties_proto_rawDesc = "" +
 	"\x0fmanaged_handler\x18\x19 \x01(\tH\aR\x0emanagedHandler\x88\x01\x01\x12`\n" +
 	"\x11value_constraints\x18\x1a \x01(\v2..resources.properties.PropertyValueConstraintsH\bR\x10valueConstraints\x88\x01\x01\x12I\n" +
 	"\vreason_mode\x18\x1b \x01(\x0e2(.resources.properties.PropertyReasonModeR\n" +
-	"reasonModeB\x0e\n" +
+	"reasonMode\x121\n" +
+	"\x14placement_overridden\x18\x1c \x01(\bR\x13placementOverridden\x12)\n" +
+	"\x10placement_locked\x18\x1d \x01(\bR\x0fplacementLockedB\x0e\n" +
 	"\f_descriptionB\a\n" +
 	"\x05_unitB\x11\n" +
 	"\x0f_decimal_placesB\v\n" +

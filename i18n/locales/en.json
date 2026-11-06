@@ -2878,6 +2878,8 @@
                 "system": "System",
                 "custom": "Custom",
                 "editor_title": "Property Definition",
+                "move_to_group": "Move to Group",
+                "restore_default_placement": "Restore Default Placement",
                 "group_editor_title": "Property Group",
                 "key": "Key",
                 "key_description": "Enter a unique identifier after the fixed scope prefix.",

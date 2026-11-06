@@ -20,6 +20,7 @@ type fivenetPropertySystemOverridesTable struct {
 	Scope       mysql.ColumnString
 	PropertyKey mysql.ColumnString
 	Enabled     mysql.ColumnBool
+	GroupKey    mysql.ColumnString
 	UpdatedAt   mysql.ColumnTimestamp
 	SortOrder   mysql.ColumnInteger
 
@@ -66,10 +67,11 @@ func newFivenetPropertySystemOverridesTableImpl(schemaName, tableName, alias str
 		ScopeColumn       = mysql.StringColumn("scope")
 		PropertyKeyColumn = mysql.StringColumn("property_key")
 		EnabledColumn     = mysql.BoolColumn("enabled")
+		GroupKeyColumn    = mysql.StringColumn("group_key")
 		UpdatedAtColumn   = mysql.TimestampColumn("updated_at")
 		SortOrderColumn   = mysql.IntegerColumn("sort_order")
-		allColumns        = mysql.ColumnList{ScopeColumn, PropertyKeyColumn, EnabledColumn, UpdatedAtColumn, SortOrderColumn}
-		mutableColumns    = mysql.ColumnList{EnabledColumn, UpdatedAtColumn, SortOrderColumn}
+		allColumns        = mysql.ColumnList{ScopeColumn, PropertyKeyColumn, EnabledColumn, GroupKeyColumn, UpdatedAtColumn, SortOrderColumn}
+		mutableColumns    = mysql.ColumnList{EnabledColumn, GroupKeyColumn, UpdatedAtColumn, SortOrderColumn}
 		defaultColumns    = mysql.ColumnList{UpdatedAtColumn}
 	)
 
@@ -80,6 +82,7 @@ func newFivenetPropertySystemOverridesTableImpl(schemaName, tableName, alias str
 		Scope:       ScopeColumn,
 		PropertyKey: PropertyKeyColumn,
 		Enabled:     EnabledColumn,
+		GroupKey:    GroupKeyColumn,
 		UpdatedAt:   UpdatedAtColumn,
 		SortOrder:   SortOrderColumn,
 

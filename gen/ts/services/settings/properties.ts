@@ -273,6 +273,36 @@ export interface SetSystemPropertyEnabledResponse {
      */
     definition?: PropertyDefinition;
 }
+/**
+ * Sets the instance-specific placement of a system property. An omitted
+ * group_key restores both the generated group and generated property order;
+ * an empty group_key explicitly places the property in Other.
+ *
+ * @generated from protobuf message services.settings.SetSystemPropertyPlacementRequest
+ */
+export interface SetSystemPropertyPlacementRequest {
+    /**
+     * @generated from protobuf field: resources.properties.PropertyScope scope = 1
+     */
+    scope: PropertyScope;
+    /**
+     * @generated from protobuf field: string key = 2
+     */
+    key: string;
+    /**
+     * @generated from protobuf field: optional string group_key = 3
+     */
+    groupKey?: string;
+}
+/**
+ * @generated from protobuf message services.settings.SetSystemPropertyPlacementResponse
+ */
+export interface SetSystemPropertyPlacementResponse {
+    /**
+     * @generated from protobuf field: resources.properties.PropertyDefinition definition = 1
+     */
+    definition?: PropertyDefinition;
+}
 // @generated message type with reflection information, may provide speed optimized methods
 class ListPropertyScopesRequest$Type extends MessageType<ListPropertyScopesRequest> {
     constructor() {
@@ -1535,6 +1565,114 @@ class SetSystemPropertyEnabledResponse$Type extends MessageType<SetSystemPropert
  * @generated MessageType for protobuf message services.settings.SetSystemPropertyEnabledResponse
  */
 export const SetSystemPropertyEnabledResponse = new SetSystemPropertyEnabledResponse$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class SetSystemPropertyPlacementRequest$Type extends MessageType<SetSystemPropertyPlacementRequest> {
+    constructor() {
+        super("services.settings.SetSystemPropertyPlacementRequest", [
+            { no: 1, name: "scope", kind: "enum", T: () => ["resources.properties.PropertyScope", PropertyScope, "PROPERTY_SCOPE_"], options: { "buf.validate.field": { enum: { definedOnly: true, notIn: [0] } } } },
+            { no: 2, name: "key", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { minLen: "1", maxLen: "64", pattern: "^[a-z][a-z0-9_.-]*$" } } } },
+            { no: 3, name: "group_key", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "64", pattern: "^$|^[a-z][a-z0-9_.-]*$" } } } }
+        ]);
+    }
+    create(value?: PartialMessage<SetSystemPropertyPlacementRequest>): SetSystemPropertyPlacementRequest {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        message.scope = 0;
+        message.key = "";
+        if (value !== undefined)
+            reflectionMergePartial<SetSystemPropertyPlacementRequest>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: SetSystemPropertyPlacementRequest): SetSystemPropertyPlacementRequest {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* resources.properties.PropertyScope scope */ 1:
+                    message.scope = reader.int32();
+                    break;
+                case /* string key */ 2:
+                    message.key = reader.string();
+                    break;
+                case /* optional string group_key */ 3:
+                    message.groupKey = reader.string();
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: SetSystemPropertyPlacementRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* resources.properties.PropertyScope scope = 1; */
+        if (message.scope !== 0)
+            writer.tag(1, WireType.Varint).int32(message.scope);
+        /* string key = 2; */
+        if (message.key !== "")
+            writer.tag(2, WireType.LengthDelimited).string(message.key);
+        /* optional string group_key = 3; */
+        if (message.groupKey !== undefined)
+            writer.tag(3, WireType.LengthDelimited).string(message.groupKey);
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message services.settings.SetSystemPropertyPlacementRequest
+ */
+export const SetSystemPropertyPlacementRequest = new SetSystemPropertyPlacementRequest$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class SetSystemPropertyPlacementResponse$Type extends MessageType<SetSystemPropertyPlacementResponse> {
+    constructor() {
+        super("services.settings.SetSystemPropertyPlacementResponse", [
+            { no: 1, name: "definition", kind: "message", T: () => PropertyDefinition }
+        ]);
+    }
+    create(value?: PartialMessage<SetSystemPropertyPlacementResponse>): SetSystemPropertyPlacementResponse {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        if (value !== undefined)
+            reflectionMergePartial<SetSystemPropertyPlacementResponse>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: SetSystemPropertyPlacementResponse): SetSystemPropertyPlacementResponse {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* resources.properties.PropertyDefinition definition */ 1:
+                    message.definition = PropertyDefinition.internalBinaryRead(reader, reader.uint32(), options, message.definition);
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: SetSystemPropertyPlacementResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* resources.properties.PropertyDefinition definition = 1; */
+        if (message.definition)
+            PropertyDefinition.internalBinaryWrite(message.definition, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message services.settings.SetSystemPropertyPlacementResponse
+ */
+export const SetSystemPropertyPlacementResponse = new SetSystemPropertyPlacementResponse$Type();
 /**
  * @generated ServiceType for protobuf service services.settings.PropertyService
  */
@@ -1551,5 +1689,6 @@ export const PropertyService = new ServiceType("services.settings.PropertyServic
     { name: "UpdatePropertyDefinition", options: { "codegen.perms.perms": { enabled: true, name: "ConfigAdmin" } }, I: UpdatePropertyDefinitionRequest, O: UpdatePropertyDefinitionResponse },
     { name: "DeletePropertyDefinition", options: { "codegen.perms.perms": { enabled: true, name: "ConfigAdmin" } }, I: DeletePropertyDefinitionRequest, O: DeletePropertyDefinitionResponse },
     { name: "RestorePropertyDefinition", options: { "codegen.perms.perms": { enabled: true, name: "ConfigAdmin" } }, I: RestorePropertyDefinitionRequest, O: RestorePropertyDefinitionResponse },
-    { name: "SetSystemPropertyEnabled", options: { "codegen.perms.perms": { enabled: true, name: "ConfigAdmin" } }, I: SetSystemPropertyEnabledRequest, O: SetSystemPropertyEnabledResponse }
+    { name: "SetSystemPropertyEnabled", options: { "codegen.perms.perms": { enabled: true, name: "ConfigAdmin" } }, I: SetSystemPropertyEnabledRequest, O: SetSystemPropertyEnabledResponse },
+    { name: "SetSystemPropertyPlacement", options: { "codegen.perms.perms": { enabled: true, name: "ConfigAdmin" } }, I: SetSystemPropertyPlacementRequest, O: SetSystemPropertyPlacementResponse }
 ], { "codegen.perms.perms_svc": { order: 130, icon: "i-mdi-tune-variant" } });
