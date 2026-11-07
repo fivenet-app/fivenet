@@ -11,6 +11,7 @@ import (
 	jobscolleagues "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/jobs/colleagues"
 	groupsshort "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/jobs/groups/short"
 	permissionsattributes "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/permissions/attributes"
+	propertypb "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/properties"
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/userinfo"
 	permsjobs "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/jobs/perms"
 	"github.com/fivenet-app/fivenet/v2026/internal/tests/permsstub"
@@ -251,7 +252,9 @@ func expectFallbackQuery(mock sqlmock.Sqlmock, userIDs ...int32) {
 		)
 	}
 
-	args := make([]driver.Value, 0, len(userIDs)+1)
+	args := make([]driver.Value, 0, len(userIDs)+3)
+	args = append(args, "user.email")
+	args = append(args, uint8(propertypb.PropertyValueType_PROPERTY_VALUE_TYPE_STRING))
 	for _, userID := range userIDs {
 		args = append(args, userID)
 	}
@@ -437,7 +440,7 @@ func TestListByUserIDSkipsDeletedColleagueRows(t *testing.T) {
 	mock.ExpectQuery(
 		`(?s)^SELECT .*FROM fivenet_user AS colleague .*colleague\.deleted_at IS NULL.*LIMIT \?;$`,
 	).
-		WithArgs(int32(7), int64(1)).
+		WithArgs("user.email", uint8(propertypb.PropertyValueType_PROPERTY_VALUE_TYPE_STRING), int32(7), int64(1)).
 		WillReturnRows(sqlmock.NewRows([]string{
 			"colleague.id",
 			"colleague.job",

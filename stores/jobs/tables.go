@@ -3,7 +3,7 @@ package jobsstore
 import "github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
 
 var (
-	tUserProps         = table.FivenetUserProps
+	tUserEmail         = table.FivenetUserPropertyValues.AS("user_email")
 	tUserJobs          = table.FivenetUserJobs
 	tJobProps          = table.FivenetJobProps
 	tJobLabels         = table.FivenetJobLabels.AS("label")

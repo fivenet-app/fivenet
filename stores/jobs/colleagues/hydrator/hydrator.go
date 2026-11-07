@@ -8,10 +8,12 @@ import (
 	"slices"
 
 	jobscolleagues "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/jobs/colleagues"
+	propertypb "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/properties"
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/userinfo"
 	permsjobs "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/jobs/perms"
 	"github.com/fivenet-app/fivenet/v2026/pkg/mstlystcdata"
 	"github.com/fivenet-app/fivenet/v2026/pkg/perms"
+	propertyregistry "github.com/fivenet-app/fivenet/v2026/pkg/properties"
 	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
 	jobsstore "github.com/fivenet-app/fivenet/v2026/stores/jobs"
 	"github.com/go-jet/jet/v2/mysql"
@@ -286,7 +288,7 @@ func (h *Hydrator) loadFallbackByUserID(
 	}
 
 	tColleague := table.FivenetUser.AS("colleague")
-	tUserProps := table.FivenetUserProps.AS("colleague_user_props")
+	tUserEmail := table.FivenetUserPropertyValues.AS("colleague_user_email")
 	tAvatar := table.FivenetFiles.AS("colleague_profile_picture")
 
 	userIdExprs := make([]mysql.Expression, 0, len(userIDs))
@@ -305,11 +307,17 @@ func (h *Hydrator) loadFallbackByUserID(
 			tColleague.PhoneNumber,
 			tColleague.AvatarFileID.AS("colleague.profile_picture_file_id"),
 			tAvatar.FilePath.AS("colleague.profile_picture"),
-			tUserProps.Email.AS("colleague.email"),
+			tUserEmail.ValueString.AS("colleague.email"),
 		).
 		FROM(
 			tColleague.
-				LEFT_JOIN(tUserProps, tUserProps.UserID.EQ(tColleague.ID)).
+				LEFT_JOIN(tUserEmail, mysql.AND(
+					tUserEmail.UserID.EQ(tColleague.ID),
+					tUserEmail.PropertyKey.EQ(mysql.String(propertyregistry.UserPropertyKeyEmail)),
+					tUserEmail.ValueType.EQ(
+						mysql.Uint8(uint8(propertypb.PropertyValueType_PROPERTY_VALUE_TYPE_STRING)),
+					),
+				)).
 				LEFT_JOIN(tAvatar, tAvatar.ID.EQ(tColleague.AvatarFileID)),
 		).
 		WHERE(mysql.AND(

@@ -9,7 +9,9 @@ import (
 	jobscolleagues "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/jobs/colleagues"
 	colleaguesactivity "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/jobs/colleagues/activity"
 	jobslabels "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/jobs/labels"
+	propertypb "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/properties"
 	"github.com/fivenet-app/fivenet/v2026/pkg/dbutils"
+	propertyregistry "github.com/fivenet-app/fivenet/v2026/pkg/properties"
 	"github.com/fivenet-app/fivenet/v2026/pkg/utils"
 	"github.com/fivenet-app/fivenet/v2026/query/fivenet/model"
 	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
@@ -262,7 +264,7 @@ func (s *Store) ListColleagues(
 			tColleague.PhoneNumber,
 			tColleague.AvatarFileID.AS("colleague.profile_picture_file_id"),
 			tAvatar.FilePath.AS("colleague.profile_picture"),
-			tUserProps.Email.AS("colleague.email"),
+			tUserEmail.ValueString.AS("colleague.email"),
 			tColleagueProps.UserID,
 			tColleagueProps.Job,
 			tColleagueProps.AbsenceBegin,
@@ -275,8 +277,18 @@ func (s *Store) ListColleagues(
 				INNER_JOIN(tUserJobs,
 					tUserJobs.UserID.EQ(tColleague.ID),
 				).
-				LEFT_JOIN(tUserProps,
-					tUserProps.UserID.EQ(tColleague.ID),
+				LEFT_JOIN(tUserEmail,
+					mysql.AND(
+						tUserEmail.UserID.EQ(tColleague.ID),
+						tUserEmail.PropertyKey.EQ(
+							mysql.String(propertyregistry.UserPropertyKeyEmail),
+						),
+						tUserEmail.ValueType.EQ(
+							mysql.Uint8(
+								uint8(propertypb.PropertyValueType_PROPERTY_VALUE_TYPE_STRING),
+							),
+						),
+					),
 				).
 				LEFT_JOIN(tColleagueProps,
 					mysql.AND(
@@ -328,7 +340,7 @@ func (s *Store) ListColleaguesByUserIDs(
 		tColleague.PhoneNumber,
 		tColleague.AvatarFileID.AS("colleague.profile_picture_file_id"),
 		tAvatar.FilePath.AS("colleague.profile_picture"),
-		tUserProps.Email.AS("colleague.email"),
+		tUserEmail.ValueString.AS("colleague.email"),
 		tColleagueProps.UserID,
 		tColleagueProps.Job,
 		tColleagueProps.AbsenceBegin,
@@ -348,8 +360,18 @@ func (s *Store) ListColleaguesByUserIDs(
 						tUserJobs.Job.EQ(mysql.String(q.Job)),
 					),
 				).
-				LEFT_JOIN(tUserProps,
-					tUserProps.UserID.EQ(tColleague.ID),
+				LEFT_JOIN(tUserEmail,
+					mysql.AND(
+						tUserEmail.UserID.EQ(tColleague.ID),
+						tUserEmail.PropertyKey.EQ(
+							mysql.String(propertyregistry.UserPropertyKeyEmail),
+						),
+						tUserEmail.ValueType.EQ(
+							mysql.Uint8(
+								uint8(propertypb.PropertyValueType_PROPERTY_VALUE_TYPE_STRING),
+							),
+						),
+					),
 				).
 				LEFT_JOIN(tColleagueProps,
 					mysql.AND(
@@ -405,7 +427,7 @@ func (s *Store) GetColleague(
 		tColleague.PhoneNumber,
 		tColleague.AvatarFileID.AS("colleague.profile_picture_file_id"),
 		tAvatar.FilePath.AS("colleague.profile_picture"),
-		tUserProps.Email.AS("colleague.email"),
+		tUserEmail.ValueString.AS("colleague.email"),
 		tColleagueProps.UserID,
 		tColleagueProps.Job,
 		tColleagueProps.AbsenceBegin,
@@ -425,8 +447,18 @@ func (s *Store) GetColleague(
 						tUserJobs.Job.EQ(mysql.String(job)),
 					),
 				).
-				LEFT_JOIN(tUserProps,
-					tUserProps.UserID.EQ(tColleague.ID),
+				LEFT_JOIN(tUserEmail,
+					mysql.AND(
+						tUserEmail.UserID.EQ(tColleague.ID),
+						tUserEmail.PropertyKey.EQ(
+							mysql.String(propertyregistry.UserPropertyKeyEmail),
+						),
+						tUserEmail.ValueType.EQ(
+							mysql.Uint8(
+								uint8(propertypb.PropertyValueType_PROPERTY_VALUE_TYPE_STRING),
+							),
+						),
+					),
 				).
 				LEFT_JOIN(tColleagueProps,
 					mysql.AND(
@@ -530,10 +562,8 @@ func (s *Store) ListColleagueActivity(
 	tTargetUserJobs := table.FivenetUserJobs.AS("target_user_jobs")
 	tSourceUser := tTargetColleague.AS("source_user")
 	tSourceUserJobs := table.FivenetUserJobs.AS("source_user_jobs")
-	tTargetUserProps := tUserProps.AS("target_user_props")
 	tTargetUserAvatar := tAvatar.AS("target_user_profile_picture")
 	tTargetColleagueProps := tColleagueProps.AS("fivenet_colleague_props")
-	tSourceUserProps := tUserProps.AS("source_user_props")
 	tSourceUserAvatar := tAvatar.AS("source_user_profile_picture")
 
 	stmt := tActivity.
@@ -581,9 +611,6 @@ func (s *Store) ListColleagueActivity(
 					tTargetUserJobs.Job.EQ(mysql.String(q.Job)),
 				),
 				).
-				LEFT_JOIN(tTargetUserProps,
-					tTargetUserProps.UserID.EQ(tTargetColleague.ID),
-				).
 				LEFT_JOIN(tTargetUserAvatar,
 					tTargetUserAvatar.ID.EQ(tTargetColleague.AvatarFileID),
 				).
@@ -598,9 +625,6 @@ func (s *Store) ListColleagueActivity(
 					mysql.AND(
 						tSourceUserJobs.UserID.EQ(tSourceUser.ID),
 						tSourceUserJobs.Job.EQ(mysql.String(q.Job))),
-				).
-				LEFT_JOIN(tSourceUserProps,
-					tSourceUserProps.UserID.EQ(tSourceUser.ID),
 				).
 				LEFT_JOIN(tSourceUserAvatar,
 					tSourceUserAvatar.ID.EQ(tSourceUser.AvatarFileID),
