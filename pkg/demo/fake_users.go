@@ -50,22 +50,24 @@ type fakeUserJob struct {
 }
 
 type fakeUserProfile struct {
-	Identifier      string
-	AccountID       *int64
-	License         string
-	Firstname       string
-	Lastname        string
-	DateOfBirth     string
-	Sex             string
-	Height          float64
-	PhoneNumber     string
-	Visum           int32
-	Playtime        int32
-	PrimaryJob      string
-	PrimaryJobGrade int32
-	Jobs            []fakeUserJob
-	Licenses        []string
-	BloodType       string
+	Identifier              string
+	AccountID               *int64
+	License                 string
+	Firstname               string
+	Lastname                string
+	DateOfBirth             string
+	Sex                     string
+	Height                  float64
+	PhoneNumber             string
+	Visum                   int32
+	Playtime                int32
+	PrimaryJob              string
+	PrimaryJobGrade         int32
+	Jobs                    []fakeUserJob
+	Licenses                []string
+	BloodType               string
+	TrafficInfractionPoints uint32
+	OpenFines               int64
 }
 
 type fakeUsersGenerator struct{}
@@ -756,7 +758,7 @@ func (d *Demo) newAccountCharProfile(
 	identifier := d.charIdentifier(charIndex, license)
 	primary := jobs[0]
 
-	return &fakeUserProfile{
+	profile := &fakeUserProfile{
 		Identifier:      identifier,
 		AccountID:       &accountID,
 		License:         license,
@@ -774,6 +776,20 @@ func (d *Demo) newAccountCharProfile(
 		Licenses:        nil,
 		BloodType:       syncstore.BloodTypes[d.randIntN(len(syncstore.BloodTypes))],
 	}
+	d.addFakeCitizenProps(profile)
+
+	return profile
+}
+
+func (d *Demo) addFakeCitizenProps(profile *fakeUserProfile) {
+	if profile.PrimaryJob == PoliceJob {
+		return
+	}
+
+	// Keep the values small enough for demo citizens while still making the
+	// citizen-property views useful to explore.
+	profile.TrafficInfractionPoints = uint32(d.fake.Number(1, 5))
+	profile.OpenFines = int64(d.fake.Number(100, 1_000))
 }
 
 func (d *Demo) highestJobGrade(jobName string) int32 {
@@ -856,7 +872,7 @@ func (d *Demo) buildFakeUserProfile(
 		sex = "f"
 	}
 
-	return &fakeUserProfile{
+	profile := &fakeUserProfile{
 		Identifier:      identifier,
 		License:         license,
 		Firstname:       first,
@@ -873,6 +889,9 @@ func (d *Demo) buildFakeUserProfile(
 		Licenses:        d.pickUserLicenses(availableLicenses),
 		BloodType:       syncstore.BloodTypes[d.randIntN(len(syncstore.BloodTypes))],
 	}
+	d.addFakeCitizenProps(profile)
+
+	return profile
 }
 
 func (d *Demo) buildTargetJobUserProfile(index int, availableLicenses []string) *fakeUserProfile {
@@ -891,6 +910,9 @@ func (d *Demo) buildTargetJobUserProfile(index int, availableLicenses []string) 
 			IsPrimary: true,
 		},
 	}
+	profile.TrafficInfractionPoints = 0
+	profile.OpenFines = 0
+	d.addFakeCitizenProps(profile)
 
 	return profile
 }
@@ -1336,23 +1358,38 @@ func (d *Demo) upsertFakeUserProps(
 		jobGrade = &profile.PrimaryJobGrade
 	}
 
+	var trafficPointsUpdatedAt *time.Time
+	if profile.TrafficInfractionPoints > 0 {
+		now := time.Now()
+		trafficPointsUpdatedAt = &now
+	}
+
 	insertStmt := tUserProps.
 		INSERT(
 			tUserProps.UserID,
 			tUserProps.BloodType,
 			tUserProps.Job,
 			tUserProps.JobGrade,
+			tUserProps.TrafficInfractionPoints,
+			tUserProps.TrafficInfractionPointsUpdatedAt,
+			tUserProps.OpenFines,
 		).
 		VALUES(
 			userID,
 			profile.BloodType,
 			job,
 			jobGrade,
+			profile.TrafficInfractionPoints,
+			trafficPointsUpdatedAt,
+			profile.OpenFines,
 		).
 		ON_DUPLICATE_KEY_UPDATE(
 			tUserProps.BloodType.SET(mysql.RawString("VALUES(`blood_type`)")),
 			tUserProps.Job.SET(mysql.RawString("VALUES(`job`)")),
 			tUserProps.JobGrade.SET(mysql.RawInt("VALUES(`job_grade`)")),
+			tUserProps.TrafficInfractionPoints.SET(mysql.RawInt("VALUES(`traffic_infraction_points`)")),
+			tUserProps.TrafficInfractionPointsUpdatedAt.SET(mysql.RawTimestamp("VALUES(`traffic_infraction_points_updated_at`)")),
+			tUserProps.OpenFines.SET(mysql.RawInt("VALUES(`open_fines`)")),
 		)
 
 	if _, err := insertStmt.ExecContext(ctx, tx); err != nil {

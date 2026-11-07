@@ -207,3 +207,20 @@ func TestBuildTargetJobUserProfileUsesTargetJob(t *testing.T) {
 		profile.Identifier,
 	)
 }
+
+func TestFakeCitizenPropsFavorNonPoliceCitizens(t *testing.T) {
+	t.Parallel()
+	d := newTestDemo(42)
+
+	citizen := &fakeUserProfile{PrimaryJob: mechanicJob}
+	d.addFakeCitizenProps(citizen)
+	assert.GreaterOrEqual(t, citizen.TrafficInfractionPoints, uint32(1))
+	assert.LessOrEqual(t, citizen.TrafficInfractionPoints, uint32(5))
+	assert.GreaterOrEqual(t, citizen.OpenFines, int64(100))
+	assert.LessOrEqual(t, citizen.OpenFines, int64(1_000))
+
+	police := &fakeUserProfile{PrimaryJob: PoliceJob}
+	d.addFakeCitizenProps(police)
+	assert.Zero(t, police.TrafficInfractionPoints)
+	assert.Zero(t, police.OpenFines)
+}
