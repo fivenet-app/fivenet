@@ -2,6 +2,43 @@
 
 All notable changes to this project will be documented in this file.
 
+## [2026.11.0] - 2026-11-07
+
+### 🚀 Features
+
+- *(props)* Add dynamic properties support for citizens/vehicles
+- *(filestore)* Add citizen and vehicle attachment management
+- *(ui)* Switch activity feeds to use UTimeline from Nuxt UI
+- *(centrum)* Switch to field level updates for dispatches and units
+- *(sync)* Add new set property apis and deprecate prop ones
+- *(properties)* Add managed mutation lifecycle
+- *(ui)* Configure property constraints and lifecycle
+- *(imageproxy)* Allow base64 urls as well
+- *(properties)* Allow instance-specific system property placement
+- *(properties)* Add empty property value display
+- *(tools)* Add database migration force and clean commands
+- *(properties)* Improve system property displays and ordering
+
+### 🐛 Bug Fixes
+
+- *(renovate)* Config issue
+- *(filestore)* Make uploads and activity logging atomic
+- *(citizens)* Use wanted badge component
+- *(citizens)* Move wanted to its own column and fix quali i18n issue
+- *(events)* Move nats migrations to separate sub package
+- *(centrum)* Resolve review issues
+- *(container)* Node build missing corepack
+- Cleanup some code and resolve some outstanding FIXMEs
+- Add gen/ts/pnpm-lock.yaml
+- *(js)* Add gen package to workspace
+- *(ui)* Use short time format for activity feeds and add smart compact-today
+- *(jobs)* Activity feed select menu
+- *(demo)* Generate random open fines and traffic points
+- *(ui)* Improve editor reload and perm templates
+- *(property)* Show scope for property group
+- *(demo)* Seed dynamic citizen properties
+- *(jobs)* Read colleague email properties dynamically
+
 ## [2026.10.2] - 2026-10-28
 
 ### 🚀 Features
