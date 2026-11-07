@@ -9,6 +9,7 @@ const props = withDefaults(
     defineProps<{
         modelValue?: UserSelector;
         groupsOnly?: boolean;
+        clear?: boolean;
     }>(),
     {
         modelValue: () => ({ userIds: [] }),
@@ -49,6 +50,14 @@ function toGroupItem(id: number, label?: string): SearchGroupItem {
         value: toGroupValue(id),
         kind: 'group',
         label: label ?? String(id),
+    };
+}
+
+function toMissingItem(value: string): SearchMissingItem {
+    return {
+        value,
+        kind: 'missing',
+        label: value,
     };
 }
 
@@ -163,7 +172,13 @@ interface SearchGroupItem {
     id: number;
 }
 
-type SearchItem = SearchUserItem | SearchGroupItem;
+interface SearchMissingItem {
+    value: string;
+    kind: 'missing';
+    label: string;
+}
+
+type SearchItem = SearchUserItem | SearchGroupItem | SearchMissingItem;
 
 async function searchItems(q: string): Promise<SearchItem[]> {
     const restoredItems = await loadRestoredItems();
@@ -241,6 +256,11 @@ async function loadRestoredItems(): Promise<SearchItem[]> {
                     label: userToLabel(u),
                 });
             }
+
+            const restoredUserIds = new Set((users ?? []).map((u) => u.userId));
+            for (const id of userIds) {
+                if (!restoredUserIds.has(id)) items.push(toMissingItem(toUserValue(id)));
+            }
         }
 
         if (targetGroupIds.size > 0) {
@@ -254,6 +274,11 @@ async function loadRestoredItems(): Promise<SearchItem[]> {
                     if (targetGroupIds.has(g.id)) {
                         items.push(toGroupItem(g.id, g.shortName ? `${g.shortName}: ${g.name}` : g.name || String(g.id)));
                     }
+                }
+
+                const restoredGroupIds = new Set((groups ?? []).map((g) => g.id));
+                for (const id of targetGroupIds) {
+                    if (!restoredGroupIds.has(id)) items.push(toMissingItem(toGroupValue(id)));
                 }
             }
         }
@@ -288,6 +313,7 @@ async function loadRestoredItems(): Promise<SearchItem[]> {
                         :searchable="searchItems"
                         multiple
                         :search-input="{ placeholder: searchInputPlaceholder }"
+                        :clear="props.clear"
                         :placeholder="props.groupsOnly ? $t('common.group', 2) : $t('common.colleague', 2)"
                         label-key="label"
                         :searchable-key="props.groupsOnly ? 'user-group-select-groups' : 'user-group-select'"
@@ -297,7 +323,7 @@ async function loadRestoredItems(): Promise<SearchItem[]> {
                     >
                         <template #item-label="{ item }">
                             <ColleagueName v-if="item.kind === 'user'" class="truncate" :colleague="item" birthday />
-                            <span v-else class="truncate">@{{ item.label }}</span>
+                            <span v-else class="truncate">{{ item.kind === 'group' ? `@${item.label}` : item.label }}</span>
                         </template>
 
                         <template #item-leading="{ item }">

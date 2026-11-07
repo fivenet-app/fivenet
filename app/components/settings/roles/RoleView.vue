@@ -289,6 +289,10 @@ function resetRole(): void {
                 attr.value.validValues.jobGradeList.jobs = {};
                 attr.value.validValues.jobGradeList.grades = {};
                 break;
+            case 'propertyList':
+                attr.value.validValues.propertyList.keys = [];
+                attr.value.validValues.propertyList.properties = [];
+                break;
         }
     });
     markChanged();

@@ -594,9 +594,12 @@ provide('yjsProvider', provider);
                 :state="state"
                 @submit="submit"
             >
-                <DataPendingBlock v-if="isRequestPending(status)" :message="$t('common.loading', [$t('common.document', 1)])" />
+                <DataPendingBlock
+                    v-if="isRequestPending(status) && !document"
+                    :message="$t('common.loading', [$t('common.document', 1)])"
+                />
                 <DataErrorBlock
-                    v-else-if="error"
+                    v-else-if="error && !document"
                     :title="$t('common.unable_to_load', [$t('common.page', 1)])"
                     :error="error"
                     :retry="refresh"

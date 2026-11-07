@@ -51,6 +51,16 @@ const templateAttribute = <P extends PermAttrPerm, K extends PermAttrKey<P>>(
                         },
                     },
                 };
+            case 'propertyList':
+                return {
+                    validValues: {
+                        oneofKind: 'propertyList',
+                        propertyList: {
+                            keys: [],
+                            properties: [],
+                        },
+                    },
+                };
         }
     };
 

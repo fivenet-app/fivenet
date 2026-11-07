@@ -160,7 +160,10 @@ if (!props.disableImages) {
 const ydoc = inject<Y.Doc | undefined>('yjsDoc', undefined);
 const yjsProvider = inject<GrpcProvider | undefined>('yjsProvider', undefined);
 
-const loading = ref(props.enableCollab && ydoc !== undefined && yjsProvider !== undefined);
+// This component can remount while its parent keeps the provider alive (for
+// example, when document data is refreshed). Do not wait for another sync
+// event when that provider has already completed its handshake.
+const loading = ref(props.enableCollab && ydoc !== undefined && yjsProvider !== undefined && !yjsProvider.isSynced);
 
 function seedDocument(schema: Schema, value: JSONContent | string): void {
     let seedDoc: Y.Doc;
@@ -279,7 +282,14 @@ if (props.enableCollab && ydoc && yjsProvider) {
         yjsProvider.off('promoted', onPromoted);
         yjsProvider.off('loading', onLoading);
     });
-    onMounted(() => yjsProvider.connect());
+    onMounted(() => {
+        if (yjsProvider.isSynced) {
+            loading.value = false;
+            return;
+        }
+
+        yjsProvider.connect();
+    });
 } else {
     extensions.push(UndoRedo);
 }

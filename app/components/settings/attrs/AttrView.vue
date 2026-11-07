@@ -430,6 +430,16 @@ function applyTemplate(permissions: Perms[], attributes: TemplateAttribute[], gr
                         },
                     },
                 };
+            } else if (attr.maxValues?.validValues.oneofKind === 'propertyList') {
+                attr.maxValues = {
+                    validValues: {
+                        oneofKind: 'propertyList',
+                        propertyList: {
+                            keys: [],
+                            properties: [],
+                        },
+                    },
+                };
             }
         });
         return;
@@ -444,6 +454,8 @@ function applyTemplate(permissions: Perms[], attributes: TemplateAttribute[], gr
             if (!attr.validValues) return;
 
             if (attr.validValues.validValues.oneofKind === 'stringList') {
+                attr.maxValues = AttributeValues.clone(attr.validValues);
+            } else if (attr.validValues.validValues.oneofKind === 'propertyList') {
                 attr.maxValues = AttributeValues.clone(attr.validValues);
             } else if (attr.validValues.validValues.oneofKind === 'jobList') {
                 attr.maxValues = {
@@ -491,6 +503,10 @@ function applyTemplate(permissions: Perms[], attributes: TemplateAttribute[], gr
             a.maxValues = undefined;
         } else if (attr.validValues?.validValues.oneofKind === 'stringList') {
             a.maxValues = AttributeValues.clone(attr.validValues);
+        } else if (attr.validValues?.validValues.oneofKind === 'propertyList') {
+            // Property definitions are resolved at runtime, so use the attribute's
+            // current valid values instead of the template's empty type marker.
+            a.maxValues = a.validValues ? AttributeValues.clone(a.validValues) : undefined;
         } else if (attr.validValues?.validValues.oneofKind === 'jobList') {
             a.maxValues = {
                 validValues: {
