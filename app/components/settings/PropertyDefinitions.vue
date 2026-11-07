@@ -33,6 +33,7 @@ const settingsPropertyClient = await getSettingsPropertyClient();
 
 const canEdit = can('internal.Superuser/ConfigAdmin');
 const sortMode = ref(false);
+const groupSortMode = ref(false);
 
 const schema = z.object({
     scope: z.coerce.number().pipe(z.enum(PropertyScope)).default(PropertyScope.VEHICLE),
@@ -90,6 +91,13 @@ const hasLockedSystemProperty = computed(() =>
     definitions.value.some((definition) => isSystemDefinition(definition) && definition.placementLocked),
 );
 
+const globalDefinitions = computed(() =>
+    [...definitions.value].sort(
+        (left, right) =>
+            left.sortOrder - right.sortOrder || left.groupSortOrder - right.groupSortOrder || left.key.localeCompare(right.key),
+    ),
+);
+
 function groupLabel(group: PropertyGroup): string {
     if (group.label) return group.label;
     const key = group.displayKey || `components.settings.property_definitions.groups.${group.key}`;
@@ -111,6 +119,15 @@ const definitionGroups = computed(() => {
         definitions: PropertyDefinition[];
         group?: PropertyGroup;
     };
+    if (sortMode.value) {
+        return [
+            {
+                key: 'global',
+                label: t('components.settings.property_definitions.global_display_order'),
+                definitions: globalDefinitions.value,
+            },
+        ];
+    }
     const definitionsByGroup = new Map<string, PropertyDefinition[]>();
     for (const definition of definitions.value) {
         const group = definitionsByGroup.get(definition.groupKey) ?? [];
@@ -149,15 +166,16 @@ function moveProperty(groupKey: string, index: number, direction: -1 | 1): void 
     if (currentIndex < 0 || nextIndex < 0) return;
     [data.value.definitions[currentIndex], data.value.definitions[nextIndex]] = [next, current];
     group.definitions.forEach((definition, order) => (definition.sortOrder = (order + 1) * 100));
-    void savePropertyOrder(groupKey, group.definitions);
+    void savePropertyOrder(group.definitions);
 }
 
-async function savePropertyOrder(groupKey: string, ordered: PropertyDefinition[]): Promise<void> {
+async function savePropertyOrder(ordered: PropertyDefinition[]): Promise<void> {
     try {
         await settingsPropertyClient.reorderPropertyDefinitions({
             scope: query.scope,
-            groupKey: groupKey === 'ungrouped' ? '' : groupKey,
+            groupKey: '',
             propertyKeys: ordered.map((definition) => definition.key),
+            global: true,
         });
         for (const definition of ordered) {
             if (isSystemDefinition(definition)) definition.placementOverridden = true;
@@ -169,7 +187,7 @@ async function savePropertyOrder(groupKey: string, ordered: PropertyDefinition[]
 }
 
 function moveGroup(groupKey: string, direction: -1 | 1): void {
-    if (!data.value || groupKey === 'ungrouped' || !sortMode.value) return;
+    if (!data.value || groupKey === 'ungrouped' || !groupSortMode.value) return;
     const ordered = [...groups.value];
     const index = ordered.findIndex((group) => group.key === groupKey);
     const target = index + direction;
@@ -190,6 +208,16 @@ async function saveGroupOrder(ordered: PropertyGroup[]): Promise<void> {
         handleGRPCError(e as RpcError);
         await refresh();
     }
+}
+
+function toggleGlobalSortMode(): void {
+    sortMode.value = !sortMode.value;
+    if (sortMode.value) groupSortMode.value = false;
+}
+
+function toggleGroupSortMode(): void {
+    groupSortMode.value = !groupSortMode.value;
+    if (groupSortMode.value) sortMode.value = false;
 }
 
 const propertyDefinitionEditorDrawer = overlay.create(PropertyDefinitionEditorDrawer);
@@ -460,12 +488,39 @@ async function restoreCustomDefinition(definition: PropertyDefinition): Promise<
                 <template #right>
                     <PartialsBackButton fallback-to="/settings" />
 
-                    <UTooltip v-if="canEdit" :text="$t('common.change_order')">
+                    <UTooltip
+                        v-if="canEdit"
+                        :text="
+                            $t(
+                                sortMode
+                                    ? 'components.settings.property_definitions.finish_reordering'
+                                    : 'components.settings.property_definitions.reorder_global_display_order',
+                            )
+                        "
+                    >
                         <UButton
                             color="neutral"
                             variant="outline"
                             :icon="sortMode ? 'i-mdi-check' : 'i-mdi-sort'"
-                            @click="sortMode = !sortMode"
+                            @click="toggleGlobalSortMode"
+                        />
+                    </UTooltip>
+
+                    <UTooltip
+                        v-if="canEdit && !sortMode"
+                        :text="
+                            $t(
+                                groupSortMode
+                                    ? 'components.settings.property_definitions.finish_reordering'
+                                    : 'components.settings.property_definitions.reorder_groups',
+                            )
+                        "
+                    >
+                        <UButton
+                            color="neutral"
+                            variant="outline"
+                            :icon="groupSortMode ? 'i-mdi-check' : 'i-mdi-folder-swap-outline'"
+                            @click="toggleGroupSortMode"
                         />
                     </UTooltip>
 
@@ -548,7 +603,7 @@ async function restoreCustomDefinition(definition: PropertyDefinition): Promise<
                     <div class="flex items-center justify-between gap-2">
                         <div class="flex min-w-0 items-center gap-2">
                             <ReorderButtons
-                                v-if="sortMode && group.key !== 'ungrouped' && !hasLockedSystemProperty"
+                                v-if="groupSortMode && group.key !== 'ungrouped' && !hasLockedSystemProperty"
                                 :idx="groups.findIndex((item) => item.key === group.key)"
                                 :move-up="() => moveGroup(group.key, -1)"
                                 :move-down="() => moveGroup(group.key, 1)"
@@ -570,6 +625,9 @@ async function restoreCustomDefinition(definition: PropertyDefinition): Promise<
                                 :label="$t('components.settings.property_definitions.deleted')"
                             />
                         </div>
+                        <p v-if="group.key === 'global'" class="text-sm text-muted">
+                            {{ $t('components.settings.property_definitions.global_display_order_description') }}
+                        </p>
                         <div v-if="group.group && canEdit && !isSystemGroup(group.group)" class="flex shrink-0 gap-1">
                             <UButton
                                 v-if="!isDeletedGroup(group.group)"

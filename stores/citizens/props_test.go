@@ -186,6 +186,33 @@ func TestStoreHandleUserPropsChangesUpdatesWanted(t *testing.T) {
 	require.NoError(t, mock.ExpectationsWereMet())
 }
 
+func TestStoreHandleUserPropsChangesClearsInactiveWanted(t *testing.T) {
+	t.Parallel()
+
+	db, mock, err := sqlmock.New()
+	require.NoError(t, err)
+	t.Cleanup(func() { _ = db.Close() })
+
+	store := New(testParams(db))
+	wanted := true
+	cleared := false
+	x := &usersprops.UserProps{UserId: 42, Wanted: &wanted}
+	in := &usersprops.UserProps{UserId: 42, Wanted: &cleared}
+
+	mock.ExpectExec(regexp.QuoteMeta(`DELETE FROM fivenet_user_property_values`)).
+		WithArgs(int32(42), "user.wanted").
+		WillReturnResult(sqlmock.NewResult(0, 1))
+	mock.ExpectExec(regexp.QuoteMeta(`DELETE FROM fivenet_user_property_state`)).
+		WithArgs(int32(42), "user.wanted").
+		WillReturnResult(sqlmock.NewResult(0, 1))
+
+	activities, err := store.HandleUserPropsChanges(t.Context(), db, x, in, nil, "manual")
+	require.NoError(t, err)
+	require.Len(t, activities, 1)
+	assert.False(t, activities[0].GetData().GetWantedChange().GetWanted())
+	require.NoError(t, mock.ExpectationsWereMet())
+}
+
 func TestSyncUserMugshotFileRespectsTotalUserFileLimit(t *testing.T) {
 	t.Parallel()
 

@@ -2,10 +2,11 @@
 import type { Property } from '~~/gen/ts/resources/properties/properties';
 import type { User } from '~~/gen/ts/resources/users/user';
 import GenericTime from '~/components/partials/elements/GenericTime.vue';
-import { pinnedProperties } from '~/composables/usePropertyRenderer';
+import { pinnedProperties, propertyHasValue } from '~/composables/usePropertyRenderer';
 
 const props = defineProps<{ properties?: Property[]; user?: User }>();
 const { t } = useI18n();
+const { game } = useAppConfig();
 const { propertyLabel, propertyScalarValue, renderProperty } = usePropertyRenderer();
 
 const pinned = computed(() => pinnedProperties(props.properties));
@@ -20,8 +21,21 @@ function isWanted(property: Property): boolean {
     return property.key === 'user.wanted' && Boolean(propertyScalarValue(property));
 }
 
+function hasJobPropertyOverride(property: Property): boolean {
+    return property.key === 'user.job' && propertyHasValue(property);
+}
+
 function valueFor(property: Property): string {
-    if (property.key === 'user.job' && props.user?.jobLabel) return props.user.jobLabel;
+    if (property.key === 'user.job') {
+        const job = props.user?.props?.job?.label || props.user?.jobLabel || String(propertyScalarValue(property) ?? '');
+        const jobName = props.user?.props?.jobName ?? props.user?.job;
+        const grade =
+            props.user?.props?.jobGrade?.label ||
+            (props.user?.props?.jobGradeNumber !== undefined ? String(props.user.props.jobGradeNumber) : '') ||
+            props.user?.jobGradeLabel ||
+            (props.user?.jobGrade !== undefined ? String(props.user.jobGrade) : '');
+        return grade && jobName !== game.unemployedJobName ? `${job} (${grade})` : job;
+    }
     if (property.key === 'user.traffic_infraction_points' && props.user?.props?.trafficInfractionPoints !== undefined) {
         return t('common.point', props.user.props.trafficInfractionPoints);
     }
@@ -72,7 +86,9 @@ function valueFor(property: Property): string {
                             v-if="['user.email', 'user.phone_number', 'user.sex', 'user.height'].includes(property.key)"
                             :property="property"
                         />
-                        <template v-else>{{ valueFor(property) }}</template>
+                        <template v-else>
+                            {{ valueFor(property) }}<span v-if="hasJobPropertyOverride(property)">*</span>
+                        </template>
                     </p>
                     <p
                         v-if="property.key === 'user.wanted' && isWanted(property) && props.user?.props?.wantedTill"

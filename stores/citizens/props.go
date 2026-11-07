@@ -265,39 +265,47 @@ func (s *Store) HandleUserPropsChanges(
 	}
 
 	if in.Wanted != nil {
-		if err := upsertUserPropertyValue(
-			ctx,
-			tx,
-			in.GetUserId(),
-			"user.wanted",
-			userPropertyValueTypeBool,
-			nil,
-			nil,
-			nil,
-			in.GetWanted(),
-			nil,
-			nil,
-		); err != nil {
-			return nil, err
-		}
-
 		tState := table.FivenetUserPropertyState
 		if !in.GetWanted() {
+			tValues := table.FivenetUserPropertyValues
+			if _, err := tValues.DELETE().WHERE(mysql.AND(
+				tValues.UserID.EQ(mysql.Int32(in.GetUserId())),
+				tValues.PropertyKey.EQ(mysql.String("user.wanted")),
+			)).ExecContext(ctx, tx); err != nil {
+				return nil, err
+			}
 			if _, err := tState.DELETE().WHERE(mysql.AND(
 				tState.UserID.EQ(mysql.Int32(in.GetUserId())),
 				tState.PropertyKey.EQ(mysql.String("user.wanted")),
 			)).ExecContext(ctx, tx); err != nil {
 				return nil, err
 			}
-		} else if _, err := tState.
-			INSERT(tState.UserID, tState.PropertyKey, tState.ActiveAt, tState.ExpiresAt).
-			VALUES(in.GetUserId(), "user.wanted", propertyStateTime(in.GetWantedAt()), propertyStateTime(in.GetWantedTill())).
-			ON_DUPLICATE_KEY_UPDATE(
-				tState.ActiveAt.SET(mysql.TimestampExp(mysql.RawString("VALUES(`active_at`)"))),
-				tState.ExpiresAt.SET(mysql.TimestampExp(mysql.RawString("VALUES(`expires_at`)"))),
-			).
-			ExecContext(ctx, tx); err != nil {
-			return nil, err
+		} else {
+			if err := upsertUserPropertyValue(
+				ctx,
+				tx,
+				in.GetUserId(),
+				"user.wanted",
+				userPropertyValueTypeBool,
+				nil,
+				nil,
+				nil,
+				true,
+				nil,
+				nil,
+			); err != nil {
+				return nil, err
+			}
+			if _, err := tState.
+				INSERT(tState.UserID, tState.PropertyKey, tState.ActiveAt, tState.ExpiresAt).
+				VALUES(in.GetUserId(), "user.wanted", propertyStateTime(in.GetWantedAt()), propertyStateTime(in.GetWantedTill())).
+				ON_DUPLICATE_KEY_UPDATE(
+					tState.ActiveAt.SET(mysql.TimestampExp(mysql.RawString("VALUES(`active_at`)"))),
+					tState.ExpiresAt.SET(mysql.TimestampExp(mysql.RawString("VALUES(`expires_at`)"))),
+				).
+				ExecContext(ctx, tx); err != nil {
+				return nil, err
+			}
 		}
 	}
 

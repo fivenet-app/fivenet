@@ -1,0 +1,1 @@
+-- No rollback available: absence is the canonical representation for inactive properties.

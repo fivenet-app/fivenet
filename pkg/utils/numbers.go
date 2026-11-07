@@ -3,7 +3,7 @@ package utils
 import "math"
 
 type signedInteger interface {
-	~int | ~int64
+	~int | ~int32 | ~int64
 }
 
 // ToUint32Saturated converts int to uint32 and clamps out-of-range values.
@@ -26,6 +26,14 @@ func ToUint32Checked[T signedInteger](v T) (uint32, bool) {
 		return 0, false
 	}
 	return uint32(v), true
+}
+
+// ToUint8Checked converts a signed integer to uint8 and reports whether the value was in range.
+func ToUint8Checked[T signedInteger](v T) (uint8, bool) {
+	if v < 0 || uint64(v) > math.MaxUint8 {
+		return 0, false
+	}
+	return uint8(v), true
 }
 
 // ToInt32Checked converts an integer to int32 and reports whether the value was in range.

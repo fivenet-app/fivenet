@@ -83,6 +83,32 @@ func TestToUint32Checked(t *testing.T) {
 	}
 }
 
+func TestToUint8Checked(t *testing.T) {
+	t.Parallel()
+
+	tests := []struct {
+		name string
+		in   int32
+		want uint8
+		ok   bool
+	}{
+		{name: "zero", in: 0, want: 0, ok: true},
+		{name: "max", in: math.MaxUint8, want: math.MaxUint8, ok: true},
+		{name: "negative", in: -1, want: 0, ok: false},
+		{name: "above max", in: math.MaxUint8 + 1, want: 0, ok: false},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
+			got, ok := ToUint8Checked(tt.in)
+			assert.Equal(t, tt.want, got)
+			assert.Equal(t, tt.ok, ok)
+		})
+	}
+}
+
 func TestCheckedNarrowingFromInt64(t *testing.T) {
 	t.Parallel()
 

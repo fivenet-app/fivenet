@@ -114,6 +114,7 @@ type IStore interface {
 		ctx context.Context,
 		scope properties.PropertyScope,
 		groupKey string,
+		global bool,
 		keys []string,
 	) error
 	CreatePropertyDefinition(

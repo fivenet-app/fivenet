@@ -361,8 +361,10 @@ func SortDefinitions(
 	return result
 }
 
-// SortProperties orders resolved property values by their definition order.
-// Values without a definition are kept after defined values and sorted by key.
+// SortProperties orders resolved property values by their global definition
+// order. Group placement only breaks equal property orders; grouped views
+// arrange their containers separately. Values without a definition are kept
+// after defined values and sorted by key.
 func SortProperties(values []*propertypb.Property) []*propertypb.Property {
 	result := append([]*propertypb.Property(nil), values...)
 	sort.SliceStable(result, func(i, j int) bool {
@@ -377,11 +379,11 @@ func SortProperties(values []*propertypb.Property) []*propertypb.Property {
 			rightGroupOrder = right.GetDefinition().GetGroupSortOrder()
 			rightOrder = right.GetDefinition().GetSortOrder()
 		}
-		if leftGroupOrder != rightGroupOrder {
-			return leftGroupOrder < rightGroupOrder
-		}
 		if leftOrder != rightOrder {
 			return leftOrder < rightOrder
+		}
+		if leftGroupOrder != rightGroupOrder {
+			return leftGroupOrder < rightGroupOrder
 		}
 		return left.GetKey() < right.GetKey()
 	})

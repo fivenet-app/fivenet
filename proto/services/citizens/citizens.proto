@@ -257,6 +257,7 @@ service CitizensService {
         managed_handler: "wanted"
         enabled: true
         pinned: true
+        empty_value_display: PROPERTY_EMPTY_VALUE_DISPLAY_NA
         display_mode: PROPERTY_DISPLAY_MODE_PROFILE_BADGE
         display_key: "common.wanted"
         searchable: true
@@ -269,6 +270,7 @@ service CitizensService {
         value_type: PROPERTY_VALUE_TYPE_STRING
         enabled: true
         pinned: true
+        empty_value_display: PROPERTY_EMPTY_VALUE_DISPLAY_NA
         display_mode: PROPERTY_DISPLAY_MODE_PROFILE_BADGE
         display_key: "common.job"
         searchable: true
@@ -282,6 +284,7 @@ service CitizensService {
         renderer: PROPERTY_RENDERER_TRAFFIC_POINTS
         enabled: true
         pinned: true
+        empty_value_display: PROPERTY_EMPTY_VALUE_DISPLAY_NA
         display_key: "common.traffic_infraction_points"
         searchable: true
         group_key: "status"
@@ -295,6 +298,7 @@ service CitizensService {
         renderer: PROPERTY_RENDERER_MONEY
         enabled: true
         pinned: true
+        empty_value_display: PROPERTY_EMPTY_VALUE_DISPLAY_HIDE
         display_key: "common.fine"
         searchable: true
         group_key: "status"

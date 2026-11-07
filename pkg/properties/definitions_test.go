@@ -25,7 +25,7 @@ func TestSortPropertiesByDefinitionSortOrder(t *testing.T) {
 	assert.Equal(t, "user.second", values[0].GetKey())
 }
 
-func TestSortPropertiesByGroupThenDefinitionOrder(t *testing.T) {
+func TestSortPropertiesByGlobalDefinitionOrderThenGroupOrder(t *testing.T) {
 	t.Parallel()
 
 	values := []*propertypb.Property{
@@ -44,7 +44,7 @@ func TestSortPropertiesByGroupThenDefinitionOrder(t *testing.T) {
 	}
 
 	sorted := SortProperties(values)
-	assert.Equal(t, []string{"user.earlier_first", "user.earlier", "user.later"}, []string{
+	assert.Equal(t, []string{"user.later", "user.earlier_first", "user.earlier"}, []string{
 		sorted[0].GetKey(), sorted[1].GetKey(), sorted[2].GetKey(),
 	})
 }

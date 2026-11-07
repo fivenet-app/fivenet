@@ -2,10 +2,11 @@
 import { PropertyDisplayMode, type Property } from '~~/gen/ts/resources/properties/properties';
 import type { User } from '~~/gen/ts/resources/users/user';
 import WantedBadge from '~/components/partials/WantedBadge.vue';
-import { propertyHasDisplayValue } from '~/composables/usePropertyRenderer';
+import { propertyHasDisplayValue, propertyHasValue } from '~/composables/usePropertyRenderer';
 
 const props = defineProps<{ properties?: Property[]; user?: User; keyOrder?: string[] }>();
 const { t } = useI18n();
+const { game } = useAppConfig();
 const { propertyLabel, propertyScalarValue, renderProperty } = usePropertyRenderer();
 
 const badges = computed(() => {
@@ -25,13 +26,22 @@ function isWanted(property: Property): boolean {
     return property.key === 'user.wanted' && Boolean(propertyScalarValue(property));
 }
 
+function hasJobPropertyOverride(property: Property): boolean {
+    return property.key === 'user.job' && propertyHasValue(property);
+}
+
 function valueFor(property: Property): string {
     if (property.key === 'user.wanted') return isWanted(property) ? t('common.yes') : t('common.no');
 
     if (property.key === 'user.job') {
-        const job = props.user?.jobLabel ?? String(propertyScalarValue(property) ?? '');
-        const grade = props.user?.jobGradeLabel ?? (props.user?.jobGrade !== undefined ? String(props.user.jobGrade) : '');
-        return [job, grade].filter(Boolean).join(' · ');
+        const job = props.user?.props?.job?.label || props.user?.jobLabel || String(propertyScalarValue(property) ?? '');
+        const jobName = props.user?.props?.jobName ?? props.user?.job;
+        const grade =
+            props.user?.props?.jobGrade?.label ||
+            (props.user?.props?.jobGradeNumber !== undefined ? String(props.user.props.jobGradeNumber) : '') ||
+            props.user?.jobGradeLabel ||
+            (props.user?.jobGrade !== undefined ? String(props.user.jobGrade) : '');
+        return grade && jobName !== game.unemployedJobName ? `${job} (${grade})` : job;
     }
 
     return renderProperty(property);
@@ -47,6 +57,7 @@ function valueFor(property: Property): string {
                 <UIcon v-else name="i-mdi-tag-outline" />
                 <span class="font-medium">{{ propertyLabel(property) }}:</span>
                 <span>{{ valueFor(property) }}</span>
+                <span v-if="hasJobPropertyOverride(property)">*</span>
             </UBadge>
         </template>
     </div>

@@ -165,6 +165,12 @@ export interface ReorderPropertyDefinitionsRequest {
      * @generated from protobuf field: repeated string property_keys = 3
      */
     propertyKeys: string[];
+    /**
+     * Reorders every definition in the scope. group_key is ignored when set.
+     *
+     * @generated from protobuf field: bool global = 4
+     */
+    global: boolean;
 }
 /**
  * @generated from protobuf message services.settings.ReorderPropertyDefinitionsResponse
@@ -983,7 +989,8 @@ class ReorderPropertyDefinitionsRequest$Type extends MessageType<ReorderProperty
         super("services.settings.ReorderPropertyDefinitionsRequest", [
             { no: 1, name: "scope", kind: "enum", T: () => ["resources.properties.PropertyScope", PropertyScope, "PROPERTY_SCOPE_"], options: { "buf.validate.field": { enum: { definedOnly: true, notIn: [0] } } } },
             { no: 2, name: "group_key", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "64" } } } },
-            { no: 3, name: "property_keys", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { repeated: { minItems: "1", maxItems: "200", items: { string: { minLen: "1", maxLen: "64" } } } } } }
+            { no: 3, name: "property_keys", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { repeated: { minItems: "1", maxItems: "200", items: { string: { minLen: "1", maxLen: "64" } } } } } },
+            { no: 4, name: "global", kind: "scalar", T: 8 /*ScalarType.BOOL*/ }
         ]);
     }
     create(value?: PartialMessage<ReorderPropertyDefinitionsRequest>): ReorderPropertyDefinitionsRequest {
@@ -991,6 +998,7 @@ class ReorderPropertyDefinitionsRequest$Type extends MessageType<ReorderProperty
         message.scope = 0;
         message.groupKey = "";
         message.propertyKeys = [];
+        message.global = false;
         if (value !== undefined)
             reflectionMergePartial<ReorderPropertyDefinitionsRequest>(this, message, value);
         return message;
@@ -1008,6 +1016,9 @@ class ReorderPropertyDefinitionsRequest$Type extends MessageType<ReorderProperty
                     break;
                 case /* repeated string property_keys */ 3:
                     message.propertyKeys.push(reader.string());
+                    break;
+                case /* bool global */ 4:
+                    message.global = reader.bool();
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -1030,6 +1041,9 @@ class ReorderPropertyDefinitionsRequest$Type extends MessageType<ReorderProperty
         /* repeated string property_keys = 3; */
         for (let i = 0; i < message.propertyKeys.length; i++)
             writer.tag(3, WireType.LengthDelimited).string(message.propertyKeys[i]);
+        /* bool global = 4; */
+        if (message.global !== false)
+            writer.tag(4, WireType.Varint).bool(message.global);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);

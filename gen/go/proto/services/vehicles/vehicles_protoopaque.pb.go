@@ -1198,7 +1198,7 @@ const file_services_vehicles_vehicles_proto_rawDesc = "" +
 	"\x05plate\x18\x01 \x01(\tR\x05plate\x12\x17\n" +
 	"\afile_id\x18\x02 \x01(\x03R\x06fileId\x12\x1e\n" +
 	"\x06reason\x18\x03 \x01(\tB\x06\xda\xf3\x18\x02\b\x01R\x06reason\"\x1b\n" +
-	"\x19DeleteVehicleFileResponse2\x80\b\n" +
+	"\x19DeleteVehicleFileResponse2\x83\b\n" +
 	"\x0fVehiclesService\x12y\n" +
 	"\fListVehicles\x12&.services.vehicles.ListVehiclesRequest\x1a'.services.vehicles.ListVehiclesResponse\"\x18\xd2\xf3\x18\x14\b\x01:\x10\n" +
 	"\n" +
@@ -1210,7 +1210,7 @@ const file_services_vehicles_vehicles_proto_rawDesc = "" +
 	"\x06Fields\x18\x01\"\aCreator\"\x03Own\x12u\n" +
 	"\x11UploadVehicleFile\x12!.resources.file.UploadFileRequest\x1a\".resources.file.UploadFileResponse\"\x17\xd2\xf3\x18\x13\b\x01\"\x0fSetVehicleProps(\x01\x12\x81\x01\n" +
 	"\x10ListVehicleFiles\x12*.services.vehicles.ListVehicleFilesRequest\x1a+.services.vehicles.ListVehicleFilesResponse\"\x14\xd2\xf3\x18\x10\b\x01\"\fListVehicles\x12v\n" +
-	"\x11DeleteVehicleFile\x12+.services.vehicles.DeleteVehicleFileRequest\x1a,.services.vehicles.DeleteVehicleFileResponse\"\x06\xd2\xf3\x18\x02\b\x01\x1a\xe0\x01\xea\xf3\x18\xdb\x01\b(\x12\x11i-mdi-car-outline2M\b\x01\x12\x0evehicle.wanted\x18\x04 \x01*\rcommon.wanted@\x01H\x01P\x02r\x06statusxd\x80\x01\x01\x98\x01\x03\xaa\x01\x06\b\x01\x10\x01\x18\x01\xb2\x01\x06wanted2/\b\x01\x12\rvehicle.files\x18\x01 \x01*\vcommon.fileP\x02r\x06statusx\xc8\x01:D\b\x01\x12\x06status\x1a6components.settings.property_definitions.groups.status dBNZLgithub.com/fivenet-app/fivenet/v2026/gen/go/proto/services/vehicles;vehiclesb\x06proto3"
+	"\x11DeleteVehicleFile\x12+.services.vehicles.DeleteVehicleFileRequest\x1a,.services.vehicles.DeleteVehicleFileResponse\"\x06\xd2\xf3\x18\x02\b\x01\x1a\xe3\x01\xea\xf3\x18\xde\x01\b(\x12\x11i-mdi-car-outline2P\b\x01\x12\x0evehicle.wanted\x18\x04 \x01*\rcommon.wanted@\x01H\x01P\x02r\x06statusxd\x80\x01\x01\x98\x01\x03\xaa\x01\x06\b\x01\x10\x01\x18\x01\xb2\x01\x06wanted\xd0\x01\x012/\b\x01\x12\rvehicle.files\x18\x01 \x01*\vcommon.fileP\x02r\x06statusx\xc8\x01:D\b\x01\x12\x06status\x1a6components.settings.property_definitions.groups.status dBNZLgithub.com/fivenet-app/fivenet/v2026/gen/go/proto/services/vehicles;vehiclesb\x06proto3"
 
 var file_services_vehicles_vehicles_proto_msgTypes = make([]protoimpl.MessageInfo, 11)
 var file_services_vehicles_vehicles_proto_goTypes = []any{

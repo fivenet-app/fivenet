@@ -147,6 +147,7 @@ service VehiclesService {
         managed_handler: "wanted"
         enabled: true
         pinned: true
+        empty_value_display: PROPERTY_EMPTY_VALUE_DISPLAY_HIDE
         display_mode: PROPERTY_DISPLAY_MODE_PROFILE_BADGE
         display_key: "common.wanted"
         searchable: true

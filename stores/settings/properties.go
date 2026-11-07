@@ -455,6 +455,7 @@ func (s *Store) ReorderPropertyDefinitions(
 	ctx context.Context,
 	scope properties.PropertyScope,
 	groupKey string,
+	global bool,
 	keys []string,
 ) error {
 	if len(keys) == 0 {
@@ -480,7 +481,7 @@ func (s *Store) ReorderPropertyDefinitions(
 	}
 	expected := make(map[string]struct{})
 	for _, definition := range definitions {
-		if definition.GetGroupKey() == groupKey {
+		if global || definition.GetGroupKey() == groupKey {
 			expected[definition.GetKey()] = struct{}{}
 		}
 	}
@@ -495,7 +496,7 @@ func (s *Store) ReorderPropertyDefinitions(
 	for _, definition := range definitions {
 		if definition.GetSource() == properties.PropertyDefinitionSource_PROPERTY_DEFINITION_SOURCE_SYSTEM &&
 			definition.GetPlacementLocked() &&
-			definition.GetGroupKey() == groupKey {
+			(global || definition.GetGroupKey() == groupKey) {
 			return ErrInvalidPropertyDefinition
 		}
 	}
@@ -529,17 +530,15 @@ func (s *Store) ReorderPropertyDefinitions(
 			}
 			continue
 		}
+		condition := tDefinitions.Scope.EQ(mysql.String(name)).AND(
+			tDefinitions.PropertyKey.EQ(mysql.String(key)).AND(tDefinitions.DeletedAt.IS_NULL()),
+		)
+		if !global {
+			condition = condition.AND(tDefinitions.GroupKey.EQ(mysql.String(groupKey)))
+		}
 		result, err := tDefinitions.UPDATE().SET(
 			tDefinitions.SortOrder.SET(mysql.Int32(order)),
-		).WHERE(
-			tDefinitions.Scope.EQ(mysql.String(name)).AND(
-				tDefinitions.PropertyKey.EQ(mysql.String(key)).AND(
-					tDefinitions.GroupKey.EQ(mysql.String(groupKey)).AND(
-						tDefinitions.DeletedAt.IS_NULL(),
-					),
-				),
-			),
-		).ExecContext(ctx, tx)
+		).WHERE(condition).ExecContext(ctx, tx)
 		if err != nil {
 			return err
 		}

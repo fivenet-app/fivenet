@@ -906,10 +906,12 @@ func (b0 ReorderPropertyGroupsResponse_builder) Build() *ReorderPropertyGroupsRe
 }
 
 type ReorderPropertyDefinitionsRequest struct {
-	state         protoimpl.MessageState   `protogen:"hybrid.v1"`
-	Scope         properties.PropertyScope `protobuf:"varint,1,opt,name=scope,proto3,enum=resources.properties.PropertyScope" json:"scope,omitempty"`
-	GroupKey      string                   `protobuf:"bytes,2,opt,name=group_key,json=groupKey,proto3" json:"group_key,omitempty"`
-	PropertyKeys  []string                 `protobuf:"bytes,3,rep,name=property_keys,json=propertyKeys,proto3" json:"property_keys,omitempty"`
+	state        protoimpl.MessageState   `protogen:"hybrid.v1"`
+	Scope        properties.PropertyScope `protobuf:"varint,1,opt,name=scope,proto3,enum=resources.properties.PropertyScope" json:"scope,omitempty"`
+	GroupKey     string                   `protobuf:"bytes,2,opt,name=group_key,json=groupKey,proto3" json:"group_key,omitempty"`
+	PropertyKeys []string                 `protobuf:"bytes,3,rep,name=property_keys,json=propertyKeys,proto3" json:"property_keys,omitempty"`
+	// Reorders every definition in the scope. group_key is ignored when set.
+	Global        bool `protobuf:"varint,4,opt,name=global,proto3" json:"global,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -960,6 +962,13 @@ func (x *ReorderPropertyDefinitionsRequest) GetPropertyKeys() []string {
 	return nil
 }
 
+func (x *ReorderPropertyDefinitionsRequest) GetGlobal() bool {
+	if x != nil {
+		return x.Global
+	}
+	return false
+}
+
 func (x *ReorderPropertyDefinitionsRequest) SetScope(v properties.PropertyScope) {
 	x.Scope = v
 }
@@ -972,12 +981,18 @@ func (x *ReorderPropertyDefinitionsRequest) SetPropertyKeys(v []string) {
 	x.PropertyKeys = v
 }
 
+func (x *ReorderPropertyDefinitionsRequest) SetGlobal(v bool) {
+	x.Global = v
+}
+
 type ReorderPropertyDefinitionsRequest_builder struct {
 	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
 
 	Scope        properties.PropertyScope
 	GroupKey     string
 	PropertyKeys []string
+	// Reorders every definition in the scope. group_key is ignored when set.
+	Global bool
 }
 
 func (b0 ReorderPropertyDefinitionsRequest_builder) Build() *ReorderPropertyDefinitionsRequest {
@@ -987,6 +1002,7 @@ func (b0 ReorderPropertyDefinitionsRequest_builder) Build() *ReorderPropertyDefi
 	x.Scope = b.Scope
 	x.GroupKey = b.GroupKey
 	x.PropertyKeys = b.PropertyKeys
+	x.Global = b.Global
 	return m0
 }
 
@@ -1913,11 +1929,12 @@ const file_services_settings_properties_proto_rawDesc = "" +
 	"\x05scope\x18\x01 \x01(\x0e2#.resources.properties.PropertyScopeR\x05scope\x12\x1d\n" +
 	"\n" +
 	"group_keys\x18\x02 \x03(\tR\tgroupKeys\"\x1f\n" +
-	"\x1dReorderPropertyGroupsResponse\"\xa0\x01\n" +
+	"\x1dReorderPropertyGroupsResponse\"\xb8\x01\n" +
 	"!ReorderPropertyDefinitionsRequest\x129\n" +
 	"\x05scope\x18\x01 \x01(\x0e2#.resources.properties.PropertyScopeR\x05scope\x12\x1b\n" +
 	"\tgroup_key\x18\x02 \x01(\tR\bgroupKey\x12#\n" +
-	"\rproperty_keys\x18\x03 \x03(\tR\fpropertyKeys\"$\n" +
+	"\rproperty_keys\x18\x03 \x03(\tR\fpropertyKeys\x12\x16\n" +
+	"\x06global\x18\x04 \x01(\bR\x06global\"$\n" +
 	"\"ReorderPropertyDefinitionsResponse\"k\n" +
 	"\x1fCreatePropertyDefinitionRequest\x12H\n" +
 	"\n" +

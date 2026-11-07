@@ -15309,6 +15309,7 @@ Updates one preference scope. Fields omitted from preference inherit from a less
 | `scope` | [resources.properties.PropertyScope](#resourcespropertiesPropertyScope) |  |  |
 | `group_key` | [string](#string) |  |  |
 | `property_keys` | [string](#string) | repeated |  |
+| `global` | [bool](#bool) |  | Reorders every definition in the scope. group_key is ignored when set. |
 
 
 

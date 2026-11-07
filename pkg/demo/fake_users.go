@@ -17,6 +17,7 @@ import (
 	colleaguesactivity "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/jobs/colleagues/activity"
 	properties "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/properties"
 	propertyregistry "github.com/fivenet-app/fivenet/v2026/pkg/properties"
+	"github.com/fivenet-app/fivenet/v2026/pkg/utils"
 	syncstore "github.com/fivenet-app/fivenet/v2026/stores/sync"
 	"github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
@@ -790,7 +791,7 @@ func (d *Demo) addFakeCitizenProps(profile *fakeUserProfile) {
 
 	// Keep the values small enough for demo citizens while still making the
 	// citizen-property views useful to explore.
-	profile.TrafficInfractionPoints = uint32(d.fake.Number(1, 5))
+	profile.TrafficInfractionPoints = utils.ToUint32Saturated(d.fake.Number(1, 5))
 	profile.OpenFines = int64(d.fake.Number(100, 1_000))
 }
 
@@ -1459,6 +1460,11 @@ func upsertFakeUserPropertyValue(
 	stringValue any,
 	integerValue any,
 ) error {
+	valueTypeUint8, ok := utils.ToUint8Checked(valueType)
+	if !ok {
+		return fmt.Errorf("invalid fake user property value type: %d", valueType)
+	}
+
 	_, err := tUserPropertyValues.
 		INSERT(
 			tUserPropertyValues.UserID,
@@ -1467,9 +1473,9 @@ func upsertFakeUserPropertyValue(
 			tUserPropertyValues.ValueString,
 			tUserPropertyValues.ValueInteger,
 		).
-		VALUES(userID, key, uint8(valueType), stringValue, integerValue).
+		VALUES(userID, key, valueTypeUint8, stringValue, integerValue).
 		ON_DUPLICATE_KEY_UPDATE(
-			tUserPropertyValues.ValueType.SET(mysql.Uint8(uint8(valueType))),
+			tUserPropertyValues.ValueType.SET(mysql.Uint8(valueTypeUint8)),
 			tUserPropertyValues.ValueString.SET(mysql.StringExp(mysql.RawString("VALUES(`value_string`)"))),
 			tUserPropertyValues.ValueInteger.SET(mysql.IntExp(mysql.RawString("VALUES(`value_integer`)"))),
 		).

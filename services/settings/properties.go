@@ -117,6 +117,7 @@ func (s *Server) ReorderPropertyDefinitions(
 		ctx,
 		req.GetScope(),
 		req.GetGroupKey(),
+		req.GetGlobal(),
 		req.GetPropertyKeys(),
 	); err != nil {
 		return nil, propertyDefinitionError(err)
