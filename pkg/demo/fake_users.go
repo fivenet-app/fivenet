@@ -15,6 +15,8 @@ import (
 
 	database "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/common/database"
 	colleaguesactivity "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/jobs/colleagues/activity"
+	properties "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/properties"
+	propertyregistry "github.com/fivenet-app/fivenet/v2026/pkg/properties"
 	syncstore "github.com/fivenet-app/fivenet/v2026/stores/sync"
 	"github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
@@ -1358,43 +1360,119 @@ func (d *Demo) upsertFakeUserProps(
 		jobGrade = &profile.PrimaryJobGrade
 	}
 
-	var trafficPointsUpdatedAt *time.Time
-	if profile.TrafficInfractionPoints > 0 {
-		now := time.Now()
-		trafficPointsUpdatedAt = &now
+	if err := upsertFakeUserPropertyValue(
+		ctx,
+		tx,
+		userID,
+		propertyregistry.UserPropertyKeyBloodType,
+		properties.PropertyValueType_PROPERTY_VALUE_TYPE_STRING,
+		profile.BloodType,
+		nil,
+	); err != nil {
+		return fmt.Errorf("failed to upsert fake user blood type property. %w", err)
 	}
 
-	insertStmt := tUserProps.
-		INSERT(
-			tUserProps.UserID,
-			tUserProps.BloodType,
-			tUserProps.Job,
-			tUserProps.JobGrade,
-			tUserProps.TrafficInfractionPoints,
-			tUserProps.TrafficInfractionPointsUpdatedAt,
-			tUserProps.OpenFines,
-		).
-		VALUES(
+	if job == nil {
+		if _, err := tUserPropertyValues.DELETE().WHERE(mysql.AND(
+			tUserPropertyValues.UserID.EQ(mysql.Int32(userID)),
+			tUserPropertyValues.PropertyKey.IN(
+				mysql.String(propertyregistry.UserPropertyKeyJob),
+				mysql.String(propertyregistry.UserPropertyKeyJobGrade),
+			),
+		)).ExecContext(ctx, tx); err != nil {
+			return fmt.Errorf("failed to clear fake user job properties. %w", err)
+		}
+	} else {
+		if err := upsertFakeUserPropertyValue(
+			ctx,
+			tx,
 			userID,
-			profile.BloodType,
-			job,
-			jobGrade,
-			profile.TrafficInfractionPoints,
-			trafficPointsUpdatedAt,
-			profile.OpenFines,
-		).
-		ON_DUPLICATE_KEY_UPDATE(
-			tUserProps.BloodType.SET(mysql.RawString("VALUES(`blood_type`)")),
-			tUserProps.Job.SET(mysql.RawString("VALUES(`job`)")),
-			tUserProps.JobGrade.SET(mysql.RawInt("VALUES(`job_grade`)")),
-			tUserProps.TrafficInfractionPoints.SET(mysql.RawInt("VALUES(`traffic_infraction_points`)")),
-			tUserProps.TrafficInfractionPointsUpdatedAt.SET(mysql.RawTimestamp("VALUES(`traffic_infraction_points_updated_at`)")),
-			tUserProps.OpenFines.SET(mysql.RawInt("VALUES(`open_fines`)")),
-		)
+			propertyregistry.UserPropertyKeyJob,
+			properties.PropertyValueType_PROPERTY_VALUE_TYPE_STRING,
+			*job,
+			nil,
+		); err != nil {
+			return fmt.Errorf("failed to upsert fake user job property. %w", err)
+		}
+		if err := upsertFakeUserPropertyValue(
+			ctx,
+			tx,
+			userID,
+			propertyregistry.UserPropertyKeyJobGrade,
+			properties.PropertyValueType_PROPERTY_VALUE_TYPE_INTEGER,
+			"",
+			int64(*jobGrade),
+		); err != nil {
+			return fmt.Errorf("failed to upsert fake user job grade property. %w", err)
+		}
+	}
 
-	if _, err := insertStmt.ExecContext(ctx, tx); err != nil {
-		return fmt.Errorf("failed to upsert fake user props. %w", err)
+	if err := upsertFakeUserPropertyValue(
+		ctx,
+		tx,
+		userID,
+		propertyregistry.UserPropertyKeyTrafficInfractionPoints,
+		properties.PropertyValueType_PROPERTY_VALUE_TYPE_INTEGER,
+		"",
+		int64(profile.TrafficInfractionPoints),
+	); err != nil {
+		return fmt.Errorf("failed to upsert fake user traffic points property. %w", err)
+	}
+	if err := upsertFakeUserPropertyValue(
+		ctx,
+		tx,
+		userID,
+		propertyregistry.UserPropertyKeyOpenFines,
+		properties.PropertyValueType_PROPERTY_VALUE_TYPE_INTEGER,
+		"",
+		profile.OpenFines,
+	); err != nil {
+		return fmt.Errorf("failed to upsert fake user open fines property. %w", err)
+	}
+
+	if profile.TrafficInfractionPoints == 0 {
+		if _, err := tUserPropertyState.DELETE().WHERE(mysql.AND(
+			tUserPropertyState.UserID.EQ(mysql.Int32(userID)),
+			tUserPropertyState.PropertyKey.EQ(
+				mysql.String(propertyregistry.UserPropertyKeyTrafficInfractionPoints),
+			),
+		)).ExecContext(ctx, tx); err != nil {
+			return fmt.Errorf("failed to clear fake user traffic points state. %w", err)
+		}
+	} else if _, err := tUserPropertyState.
+		INSERT(tUserPropertyState.UserID, tUserPropertyState.PropertyKey).
+		VALUES(userID, propertyregistry.UserPropertyKeyTrafficInfractionPoints).
+		ON_DUPLICATE_KEY_UPDATE(tUserPropertyState.UpdatedAt.SET(mysql.CURRENT_TIMESTAMP())).
+		ExecContext(ctx, tx); err != nil {
+		return fmt.Errorf("failed to upsert fake user traffic points state. %w", err)
 	}
 
 	return nil
+}
+
+func upsertFakeUserPropertyValue(
+	ctx context.Context,
+	tx *sql.Tx,
+	userID int32,
+	key string,
+	valueType properties.PropertyValueType,
+	stringValue any,
+	integerValue any,
+) error {
+	_, err := tUserPropertyValues.
+		INSERT(
+			tUserPropertyValues.UserID,
+			tUserPropertyValues.PropertyKey,
+			tUserPropertyValues.ValueType,
+			tUserPropertyValues.ValueString,
+			tUserPropertyValues.ValueInteger,
+		).
+		VALUES(userID, key, uint8(valueType), stringValue, integerValue).
+		ON_DUPLICATE_KEY_UPDATE(
+			tUserPropertyValues.ValueType.SET(mysql.Uint8(uint8(valueType))),
+			tUserPropertyValues.ValueString.SET(mysql.StringExp(mysql.RawString("VALUES(`value_string`)"))),
+			tUserPropertyValues.ValueInteger.SET(mysql.IntExp(mysql.RawString("VALUES(`value_integer`)"))),
+		).
+		ExecContext(ctx, tx)
+	return err
 }

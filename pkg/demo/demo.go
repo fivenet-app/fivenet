@@ -54,7 +54,8 @@ var (
 	tUserJobs             = table.FivenetUserJobs
 	tUserLicenses         = table.FivenetUserLicenses
 	tUserPhoneNumbers     = table.FivenetUserPhoneNumbers
-	tUserProps            = table.FivenetUserProps
+	tUserPropertyState    = table.FivenetUserPropertyState
+	tUserPropertyValues   = table.FivenetUserPropertyValues
 	tVehicles             = table.FivenetVehicle
 )
 
