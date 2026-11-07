@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import type { Form } from '@nuxt/ui';
 import { z } from 'zod';
-import type { PropertyGroup, PropertyScope } from '~~/gen/ts/resources/properties/properties';
+import { type PropertyGroup, PropertyScope } from '~~/gen/ts/resources/properties/properties';
 import ResponsiveDrawerModal from '~/components/partials/ResponsiveDrawerModal.vue';
 
 const props = defineProps<{
@@ -24,6 +24,10 @@ const schema = z.object({
 });
 const formRef = useTemplateRef<Form<typeof schema>>('formRef');
 const editor = reactive<PropertyGroup>({ scope: props.scope, key: '', label: '', displayKey: '', sortOrder: 0 });
+
+function scopeKeyPrefix(scope: PropertyScope): string {
+    return scope === PropertyScope.USER ? 'user.' : 'vehicle.';
+}
 
 const { submit, isSubmitting, canSubmit } = useSubmitGuard(async () => props.onSave({ ...editor, displayKey: '' }));
 const { hasUnsavedChanges, confirmLeave, syncSnapshot } = useSnapshotChanges(() => ({ editor: { ...editor } }));
@@ -79,7 +83,10 @@ async function close(): Promise<void> {
                     :description="$t('components.settings.property_definitions.group_key_description')"
                     required
                 >
-                    <UInput v-model="editor.key" class="w-full" :disabled="isEditing" />
+                    <div class="flex items-center gap-1">
+                        <span class="shrink-0 font-mono text-muted">{{ scopeKeyPrefix(props.scope) }}</span>
+                        <UInput v-model="editor.key" class="min-w-0 flex-1 font-mono" :disabled="isEditing" />
+                    </div>
                 </UFormField>
                 <UFormField
                     name="label"
