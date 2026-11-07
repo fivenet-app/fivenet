@@ -424,8 +424,8 @@ importers:
         specifier: 1.9.4
         version: 1.9.4
       leaflet.heat:
-        specifier: 0.2.0
-        version: 0.2.0
+        specifier: 1.0.0
+        version: 1.0.0(leaflet@1.9.4)
       maska:
         specifier: 3.2.2
         version: 3.2.2
@@ -6885,8 +6885,10 @@ packages:
     resolution: {integrity: sha512-b94GiNHQNy6JNTrt5w6zNyffMrNkXZb3KTkCZJb2V1xaEGCk093vkZ2jk3tpaeP33/OiXC+WvK9AxUebnf5nbw==}
     engines: {node: '>= 0.6.3'}
 
-  leaflet.heat@0.2.0:
-    resolution: {integrity: sha512-Cd5PbAA/rX3X3XKxfDoUGi9qp78FyhWYurFg3nsfhntcM/MCNK08pRkf4iEenO1KNqwVPKCmkyktjW3UD+h9bQ==}
+  leaflet.heat@1.0.0:
+    resolution: {integrity: sha512-sjEmSRlT6XdrftqVkS/+bS+bM36Px4QsZhDlgABY3udZobCs+6VRYvWyhMloznr6dBk9sDbR4ZDuWcLoakwSDg==}
+    peerDependencies:
+      leaflet: ^1.9.0 || ^2.0.0-beta.1
 
   leaflet@1.7.1:
     resolution: {integrity: sha512-/xwPEBidtg69Q3HlqPdU3DnrXQOvQU/CCHA1tcDQVzOwm91YMYaILjNp7L4Eaw5Z4sOYdbBz6koWyibppd8Zqw==}
@@ -8514,6 +8516,9 @@ packages:
 
   simple-get@4.0.1:
     resolution: {integrity: sha512-brv7p5WgH0jmQJr1ZDDfKDOSeWWg+OVypG99A/5vYGPqJ6pxiaHLy8nxtFjBA7oMa01ebA9gfh1uMCFqOuXxvA==}
+
+  simpleheat@1.0.0:
+    resolution: {integrity: sha512-hCGl1lj+IR+CymAouYf5ZQ7NguSQq+w1PWu1WvHgZWkdzmyS/xbN1T2TpwlSC8nEDDK2JRVPcdgV0a6652aP2Q==}
 
   sirv@3.0.2:
     resolution: {integrity: sha512-2wcC/oGxHis/BoHkkPwldgiPSYcpZK3JU28WoMVv55yHJgcZ8rlXvuG9iZggz+sU1d4bRgIGASwyWqjxu3FM0g==}
@@ -16628,7 +16633,10 @@ snapshots:
     dependencies:
       readable-stream: 2.3.8
 
-  leaflet.heat@0.2.0: {}
+  leaflet.heat@1.0.0(leaflet@1.9.4):
+    dependencies:
+      leaflet: 1.9.4
+      simpleheat: 1.0.0
 
   leaflet@1.7.1: {}
 
@@ -19033,6 +19041,8 @@ snapshots:
       decompress-response: 6.0.0
       once: 1.4.0
       simple-concat: 1.0.1
+
+  simpleheat@1.0.0: {}
 
   sirv@3.0.2:
     dependencies:
