@@ -173,8 +173,6 @@ func TestHousekeeperMaxWantedDurationHandling_QueryCondition(t *testing.T) {
 	expectCanonicalWantedProps(mock, 42)
 
 	// Make sure the query flips wanted to false for matched user.
-	mock.ExpectExec(`(?s)INSERT INTO .*fivenet_user_props.*ON DUPLICATE KEY UPDATE.*wanted = \\?.*`).
-		WillReturnResult(sqlmock.NewResult(0, 1))
 	mock.ExpectExec(`(?s)INSERT INTO fivenet_user_property_values`).
 		WillReturnResult(sqlmock.NewResult(0, 1))
 	mock.ExpectExec(`(?s)DELETE FROM fivenet_user_property_state`).
@@ -256,8 +254,6 @@ func TestHousekeeperMaxWantedDurationHandling_ResetMultipleUsers(t *testing.T) {
 	expectLockedExpiredWanted(mock, 42)
 	expectCanonicalWantedProps(mock, 42)
 
-	mock.ExpectExec(`(?s)INSERT INTO .*fivenet_user_props.*ON DUPLICATE KEY UPDATE.*wanted = \\?.*`).
-		WillReturnResult(sqlmock.NewResult(0, 1))
 	mock.ExpectExec(`(?s)INSERT INTO fivenet_user_property_values`).
 		WillReturnResult(sqlmock.NewResult(0, 1))
 	mock.ExpectExec(`(?s)DELETE FROM fivenet_user_property_state`).
@@ -270,8 +266,6 @@ func TestHousekeeperMaxWantedDurationHandling_ResetMultipleUsers(t *testing.T) {
 	expectLockedExpiredWanted(mock, 43)
 	expectCanonicalWantedProps(mock, 43)
 
-	mock.ExpectExec(`(?s)INSERT INTO .*fivenet_user_props.*ON DUPLICATE KEY UPDATE.*wanted = \\?.*`).
-		WillReturnResult(sqlmock.NewResult(0, 1))
 	mock.ExpectExec(`(?s)INSERT INTO fivenet_user_property_values`).
 		WillReturnResult(sqlmock.NewResult(0, 1))
 	mock.ExpectExec(`(?s)DELETE FROM fivenet_user_property_state`).

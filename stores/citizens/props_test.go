@@ -170,8 +170,6 @@ func TestStoreHandleUserPropsChangesUpdatesWanted(t *testing.T) {
 	wantedTill := timestamp.New(time.Date(2026, 7, 24, 10, 0, 0, 0, time.UTC))
 	in.SetWantedTill(wantedTill)
 
-	mock.ExpectExec(regexp.QuoteMeta(`INSERT INTO fivenet_user_props`) + `(?s).*` + regexp.QuoteMeta(`ON DUPLICATE KEY UPDATE`)).
-		WillReturnResult(sqlmock.NewResult(0, 1))
 	mock.ExpectExec(regexp.QuoteMeta(`DELETE FROM fivenet_user_files`)).
 		WithArgs(int32(42), "mugshot").
 		WillReturnResult(sqlmock.NewResult(0, 1))

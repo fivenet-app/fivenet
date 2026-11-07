@@ -10,9 +10,11 @@ import (
 	maileremails "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/mailer/emails"
 	mailersettings "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/mailer/settings"
 	mailerthreads "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/mailer/threads"
+	propertypb "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/properties"
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/timestamp"
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/userinfo"
 	"github.com/fivenet-app/fivenet/v2026/pkg/dbutils"
+	propertyregistry "github.com/fivenet-app/fivenet/v2026/pkg/properties"
 	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
 	"github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
@@ -395,24 +397,12 @@ func (s *Store) UpdateUserEmailProperty(
 	userID int32,
 	email string,
 ) error {
-	tUserProps := table.FivenetUserProps
-	upStmt := tUserProps.
-		INSERT(tUserProps.UserID, tUserProps.Email).
-		VALUES(userID, email).
-		ON_DUPLICATE_KEY_UPDATE(
-			tUserProps.Email.SET(mysql.String(email)),
-		)
-
-	_, err := upStmt.ExecContext(ctx, s.dbOr(q))
-	if err != nil {
-		return err
-	}
 	tValues := table.FivenetUserPropertyValues
-	_, err = tValues.
+	_, err := tValues.
 		INSERT(tValues.UserID, tValues.PropertyKey, tValues.ValueType, tValues.ValueString).
-		VALUES(userID, "user.email", uint8(1), email).
+		VALUES(userID, propertyregistry.UserPropertyKeyEmail, uint8(propertypb.PropertyValueType_PROPERTY_VALUE_TYPE_STRING), email).
 		ON_DUPLICATE_KEY_UPDATE(
-			tValues.ValueType.SET(mysql.Uint8(uint8(1))),
+			tValues.ValueType.SET(mysql.Uint8(uint8(propertypb.PropertyValueType_PROPERTY_VALUE_TYPE_STRING))),
 			tValues.ValueString.SET(mysql.String(email)),
 		).
 		ExecContext(ctx, s.dbOr(q))

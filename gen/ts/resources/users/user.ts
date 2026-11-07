@@ -186,7 +186,7 @@ class User$Type extends MessageType<User> {
             { no: 19, name: "phone_numbers", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => PhoneNumber, options: { "buf.validate.field": { ignore: "IGNORE_IF_ZERO_VALUE", repeated: { maxItems: "5" } } } },
             { no: 13, name: "visum", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/, options: { "buf.validate.field": { int32: { gte: 0 } } } },
             { no: 14, name: "playtime", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/, options: { "buf.validate.field": { int32: { gte: 0 } } } },
-            { no: 15, name: "props", kind: "message", T: () => UserProps, options: { "tagger.tags": "alias:\"fivenet_user_props\"" } },
+            { no: 15, name: "props", kind: "message", T: () => UserProps },
             { no: 16, name: "licenses", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => License, options: { "tagger.tags": "alias:\"user_licenses\"" } },
             { no: 17, name: "profile_picture_file_id", kind: "scalar", opt: true, T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ },
             { no: 18, name: "profile_picture", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/ },

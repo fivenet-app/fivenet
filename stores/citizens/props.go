@@ -199,20 +199,10 @@ func (s *Store) HandleUserPropsChanges(
 	x.Default()
 	mugshotChanged := in.MugshotFileId != nil
 
-	tUserProps := table.FivenetUserProps
-
-	updateSets := []mysql.ColumnAssigment{}
-
 	// A managed state-only wanted mutation may patch WantedTill while leaving
-	// Wanted unset. Treat that as a wanted projection update so the legacy
-	// wanted_till column stays in lockstep with property state.
+	// Wanted unset. Treat that as a managed-property update.
 	if in.Wanted != nil || in.WantedTill != nil {
 		normalizeWantedChange(x, in)
-		updateSets = append(updateSets, tUserProps.Wanted.SET(mysql.Bool(in.GetWanted())))
-		updateSets = append(updateSets,
-			tUserProps.WantedAt.SET(dbutils.TimestampToMySQL(in.GetWantedAt())),
-			tUserProps.WantedTill.SET(dbutils.TimestampToMySQL(in.GetWantedTill())),
-		)
 	} else {
 		in.Wanted = x.Wanted
 		in.SetWantedAt(x.GetWantedAt())
@@ -228,11 +218,6 @@ func (s *Store) HandleUserPropsChanges(
 		if in.GetJob() == nil || in.GetJobGrade() == nil {
 			return nil, errors.New("invalid job")
 		}
-
-		updateSets = append(updateSets,
-			tUserProps.Job.SET(mysql.String(in.GetJobName())),
-			tUserProps.JobGrade.SET(mysql.Int32(in.GetJobGradeNumber())),
-		)
 	} else {
 		in.JobName = x.JobName
 		in.Job = x.GetJob()
@@ -243,11 +228,6 @@ func (s *Store) HandleUserPropsChanges(
 	if in.TrafficInfractionPoints != nil &&
 		(x.TrafficInfractionPoints == nil ||
 			x.GetTrafficInfractionPoints() != in.GetTrafficInfractionPoints()) {
-		updateSets = append(
-			updateSets,
-			tUserProps.TrafficInfractionPoints.SET(mysql.Uint32(in.GetTrafficInfractionPoints())),
-		)
-
 		if in.GetTrafficInfractionPoints() > 0 {
 			in.TrafficInfractionPointsUpdatedAt = timestamp.Now()
 		} else {
@@ -258,27 +238,11 @@ func (s *Store) HandleUserPropsChanges(
 		in.TrafficInfractionPointsUpdatedAt = x.GetTrafficInfractionPointsUpdatedAt()
 	}
 
-	if in.OpenFines != nil && in.GetOpenFines() != 0 {
-		updateSets = append(updateSets, tUserProps.OpenFines.SET(
-			mysql.IntExp(mysql.Raw(
-				"CASE WHEN COALESCE(`open_fines`, 0) + $amount < 0 THEN 0 ELSE COALESCE(`open_fines`, 0) + $amount END",
-				mysql.RawArgs{
-					"$amount": in.GetOpenFines(),
-				},
-			)),
-		))
-	} else {
+	if in.OpenFines == nil || in.GetOpenFines() == 0 {
 		in.OpenFines = x.OpenFines
 	}
 
-	if in.MugshotFileId != nil {
-		updateSets = append(
-			updateSets,
-			tUserProps.MugshotFileID.SET(
-				mysql.IntExp(mysql.RawString("VALUES(`mugshot_file_id`)")),
-			),
-		)
-	} else {
+	if in.MugshotFileId == nil {
 		in.MugshotFileId = x.MugshotFileId
 	}
 
@@ -292,41 +256,6 @@ func (s *Store) HandleUserPropsChanges(
 		})
 	} else {
 		in.Labels = x.GetLabels()
-	}
-
-	if len(updateSets) > 0 {
-		stmt := tUserProps.
-			INSERT(
-				tUserProps.UserID,
-				tUserProps.Wanted,
-				tUserProps.WantedAt,
-				tUserProps.WantedTill,
-				tUserProps.Job,
-				tUserProps.JobGrade,
-				tUserProps.TrafficInfractionPoints,
-				tUserProps.TrafficInfractionPointsUpdatedAt,
-				tUserProps.OpenFines,
-				tUserProps.MugshotFileID,
-			).
-			VALUES(
-				in.GetUserId(),
-				in.Wanted,
-				in.GetWantedAt(),
-				in.GetWantedTill(),
-				in.JobName,
-				in.JobGradeNumber,
-				in.TrafficInfractionPoints,
-				in.GetTrafficInfractionPointsUpdatedAt(),
-				in.OpenFines,
-				in.MugshotFileId,
-			).
-			ON_DUPLICATE_KEY_UPDATE(
-				updateSets...,
-			)
-
-		if _, err := stmt.ExecContext(ctx, tx); err != nil {
-			return nil, err
-		}
 	}
 
 	if mugshotChanged {

@@ -45,7 +45,7 @@ type User struct {
 	PhoneNumbers         []*PhoneNumber         `protobuf:"bytes,19,rep,name=phone_numbers,json=phoneNumbers,proto3" json:"phone_numbers,omitempty"`
 	Visum                *int32                 `protobuf:"varint,13,opt,name=visum,proto3,oneof" json:"visum,omitempty"`
 	Playtime             *int32                 `protobuf:"varint,14,opt,name=playtime,proto3,oneof" json:"playtime,omitempty"`
-	Props                *props.UserProps       `protobuf:"bytes,15,opt,name=props,proto3" json:"props,omitempty" alias:"fivenet_user_props"`
+	Props                *props.UserProps       `protobuf:"bytes,15,opt,name=props,proto3" json:"props,omitempty"`
 	Licenses             []*licenses.License    `protobuf:"bytes,16,rep,name=licenses,proto3" json:"licenses,omitempty" alias:"user_licenses"`
 	ProfilePictureFileId *int64                 `protobuf:"varint,17,opt,name=profile_picture_file_id,json=profilePictureFileId,proto3,oneof" json:"profile_picture_file_id,omitempty"`
 	ProfilePicture       *string                `protobuf:"bytes,18,opt,name=profile_picture,json=profilePicture,proto3,oneof" json:"profile_picture,omitempty"`
@@ -823,7 +823,7 @@ var File_resources_users_user_proto protoreflect.FileDescriptor
 
 const file_resources_users_user_proto_rawDesc = "" +
 	"\n" +
-	"\x1aresources/users/user.proto\x12\x0fresources.users\x1a*resources/citizens/licenses/licenses.proto\x1a%resources/properties/properties.proto\x1a#resources/timestamp/timestamp.proto\x1a!resources/users/props/props.proto\x1a\x13tagger/tagger.proto\"\xb7\b\n" +
+	"\x1aresources/users/user.proto\x12\x0fresources.users\x1a*resources/citizens/licenses/licenses.proto\x1a%resources/properties/properties.proto\x1a#resources/timestamp/timestamp.proto\x1a!resources/users/props/props.proto\x1a\x13tagger/tagger.proto\"\x96\b\n" +
 	"\x04User\x12(\n" +
 	"\auser_id\x18\x01 \x01(\x05B\x0f\x9a\x84\x9e\x03\n" +
 	"alias:\"id\"R\x06userId\x12\x1e\n" +
@@ -844,8 +844,8 @@ const file_resources_users_user_proto_rawDesc = "" +
 	"\fphone_number\x18\f \x01(\tH\x04R\vphoneNumber\x88\x01\x01\x12A\n" +
 	"\rphone_numbers\x18\x13 \x03(\v2\x1c.resources.users.PhoneNumberR\fphoneNumbers\x12\x19\n" +
 	"\x05visum\x18\r \x01(\x05H\x05R\x05visum\x88\x01\x01\x12\x1f\n" +
-	"\bplaytime\x18\x0e \x01(\x05H\x06R\bplaytime\x88\x01\x01\x12W\n" +
-	"\x05props\x18\x0f \x01(\v2 .resources.users.props.UserPropsB\x1f\x9a\x84\x9e\x03\x1aalias:\"fivenet_user_props\"R\x05props\x12\\\n" +
+	"\bplaytime\x18\x0e \x01(\x05H\x06R\bplaytime\x88\x01\x01\x126\n" +
+	"\x05props\x18\x0f \x01(\v2 .resources.users.props.UserPropsR\x05props\x12\\\n" +
 	"\blicenses\x18\x10 \x03(\v2$.resources.citizens.licenses.LicenseB\x1a\x9a\x84\x9e\x03\x15alias:\"user_licenses\"R\blicenses\x12:\n" +
 	"\x17profile_picture_file_id\x18\x11 \x01(\x03H\aR\x14profilePictureFileId\x88\x01\x01\x12,\n" +
 	"\x0fprofile_picture\x18\x12 \x01(\tH\bR\x0eprofilePicture\x88\x01\x01\x12E\n" +

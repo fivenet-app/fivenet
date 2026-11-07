@@ -9,8 +9,10 @@ import (
 	"github.com/DATA-DOG/go-sqlmock"
 	database "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/common/database"
 	maileremails "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/mailer/emails"
+	propertypb "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/properties"
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/timestamp"
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/userinfo"
+	propertyregistry "github.com/fivenet-app/fivenet/v2026/pkg/properties"
 	"github.com/go-jet/jet/v2/mysql"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -297,16 +299,15 @@ func TestStoreUpdateUserEmailProperty(t *testing.T) {
 	t.Cleanup(func() { _ = db.Close() })
 
 	store := New(testParams(db))
-	expectedQuery := regexp.QuoteMeta(
-		`INSERT INTO fivenet_user_props`,
-	) + `(?s).*` + regexp.QuoteMeta(
-		`ON DUPLICATE KEY UPDATE`,
-	)
-	mock.ExpectExec(expectedQuery).
-		WithArgs(int32(7), "user@example.com", "user@example.com").
-		WillReturnResult(sqlmock.NewResult(0, 1))
 	mock.ExpectExec(`(?s)INSERT INTO fivenet_user_property_values`).
-		WithArgs(int32(7), "user.email", uint8(1), "user@example.com", uint8(1), "user@example.com").
+		WithArgs(
+			int32(7),
+			propertyregistry.UserPropertyKeyEmail,
+			uint8(propertypb.PropertyValueType_PROPERTY_VALUE_TYPE_STRING),
+			"user@example.com",
+			uint8(propertypb.PropertyValueType_PROPERTY_VALUE_TYPE_STRING),
+			"user@example.com",
+		).
 		WillReturnResult(sqlmock.NewResult(0, 1))
 
 	require.NoError(t, store.UpdateUserEmailProperty(t.Context(), db, 7, "user@example.com"))

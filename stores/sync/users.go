@@ -12,6 +12,7 @@ import (
 
 	userslicenses "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/citizens/licenses"
 	notificationsevents "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/notifications/events"
+	propertypb "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/properties"
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/settings"
 	syncdata "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/sync/data"
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/timestamp"
@@ -20,6 +21,7 @@ import (
 	"github.com/fivenet-app/fivenet/v2026/pkg/config/appconfig"
 	dbsyncutils "github.com/fivenet-app/fivenet/v2026/pkg/dbsync/utils"
 	"github.com/fivenet-app/fivenet/v2026/pkg/dbutils"
+	propertyregistry "github.com/fivenet-app/fivenet/v2026/pkg/properties"
 	pkguserinfo "github.com/fivenet-app/fivenet/v2026/pkg/userinfo"
 	"github.com/fivenet-app/fivenet/v2026/pkg/utils"
 	"github.com/fivenet-app/fivenet/v2026/pkg/utils/protoutils"
@@ -596,25 +598,12 @@ func (s *Store) setUserBloodType(ctx context.Context, tx *sql.Tx, userId int32) 
 	idx := rand.IntN(len(BloodTypes))
 	bloodType := BloodTypes[idx]
 
-	tUserProps := table.FivenetUserProps
-	stmt := tUserProps.
-		INSERT(
-			tUserProps.UserID,
-			tUserProps.BloodType,
-		).
-		VALUES(userId, bloodType)
-	if _, err := stmt.ExecContext(ctx, tx); err != nil {
-		if !dbutils.IsDuplicateError(err) {
-			return fmt.Errorf("failed to execute user blood type insert statement. %w", err)
-		}
-	}
-
 	tValues := table.FivenetUserPropertyValues
 	if _, err := tValues.
 		INSERT(tValues.UserID, tValues.PropertyKey, tValues.ValueType, tValues.ValueString).
-		VALUES(userId, "user.blood_type", uint8(1), bloodType).
+		VALUES(userId, propertyregistry.UserPropertyKeyBloodType, uint8(propertypb.PropertyValueType_PROPERTY_VALUE_TYPE_STRING), bloodType).
 		ON_DUPLICATE_KEY_UPDATE(
-			tValues.ValueType.SET(mysql.Uint8(uint8(1))),
+			tValues.ValueType.SET(mysql.Uint8(uint8(propertypb.PropertyValueType_PROPERTY_VALUE_TYPE_STRING))),
 			tValues.ValueString.SET(mysql.String(bloodType)),
 		).
 		ExecContext(ctx, tx); err != nil {

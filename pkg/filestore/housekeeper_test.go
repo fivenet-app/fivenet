@@ -134,7 +134,7 @@ func TestHousekeeperRunIncludesDirectFileReferenceChecks(t *testing.T) {
 	h := newTestHousekeeper(db, &uploadStorage{})
 	h.getTablesListFn = func() []joinInfo {
 		return []joinInfo{{
-			Table:   table.FivenetUserProps,
+			Table:   table.FivenetUser,
 			FileCol: table.FivenetUser.AvatarFileID,
 		}}
 	}

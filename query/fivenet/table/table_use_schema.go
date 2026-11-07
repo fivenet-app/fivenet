@@ -147,7 +147,6 @@ func UseSchema(schema string) {
 	FivenetUserPhoneNumbers = FivenetUserPhoneNumbers.FromSchema(schema)
 	FivenetUserPropertyState = FivenetUserPropertyState.FromSchema(schema)
 	FivenetUserPropertyValues = FivenetUserPropertyValues.FromSchema(schema)
-	FivenetUserProps = FivenetUserProps.FromSchema(schema)
 	FivenetVehicle = FivenetVehicle.FromSchema(schema)
 	FivenetVehicleActivity = FivenetVehicleActivity.FromSchema(schema)
 	FivenetVehicleFiles = FivenetVehicleFiles.FromSchema(schema)
