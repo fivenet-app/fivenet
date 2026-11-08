@@ -173,6 +173,15 @@ export interface PropertyMutation {
          */
         clearValue: Empty;
     } | {
+        oneofKind: "integerMath";
+        /**
+         * Applies an integer operation to the value held under the property's
+         * row lock. It is accepted only for integer properties.
+         *
+         * @generated from protobuf field: resources.properties.IntegerMathOperation integer_math = 7
+         */
+        integerMath: IntegerMathOperation;
+    } | {
         oneofKind: undefined;
     };
     /**
@@ -194,6 +203,22 @@ export interface PropertyMutation {
      * @generated from protobuf field: optional bool clear_reason = 6
      */
     clearReason?: boolean;
+}
+/**
+ * IntegerMathOperation is evaluated atomically by the property store. The
+ * resulting value is constrained by the property's integer bounds.
+ *
+ * @generated from protobuf message resources.properties.IntegerMathOperation
+ */
+export interface IntegerMathOperation {
+    /**
+     * @generated from protobuf field: resources.properties.IntegerMathAction action = 1
+     */
+    action: IntegerMathAction;
+    /**
+     * @generated from protobuf field: int64 operand = 2
+     */
+    operand: number;
 }
 /**
  * PropertyStatePatch carries an explicit lifecycle override. Omitting state,
@@ -615,6 +640,23 @@ export interface PropertyFilter {
      * @generated from protobuf field: resources.properties.PropertyValue value = 3
      */
     value?: PropertyValue;
+}
+/**
+ * @generated from protobuf enum resources.properties.IntegerMathAction
+ */
+export enum IntegerMathAction {
+    /**
+     * @generated from protobuf enum value: INTEGER_MATH_ACTION_UNSPECIFIED = 0;
+     */
+    UNSPECIFIED = 0,
+    /**
+     * @generated from protobuf enum value: INTEGER_MATH_ACTION_ADD = 1;
+     */
+    ADD = 1,
+    /**
+     * @generated from protobuf enum value: INTEGER_MATH_ACTION_SUBTRACT = 2;
+     */
+    SUBTRACT = 2
 }
 /**
  * @generated from protobuf enum resources.properties.PropertyScope
@@ -1284,6 +1326,7 @@ class PropertyMutation$Type extends MessageType<PropertyMutation> {
             { no: 1, name: "key", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { minLen: "1", maxLen: "64", pattern: "^[a-z][a-z0-9_.-]*$" } } } },
             { no: 2, name: "set_value", kind: "message", oneof: "valueChange", T: () => PropertyValue },
             { no: 3, name: "clear_value", kind: "message", oneof: "valueChange", T: () => Empty },
+            { no: 7, name: "integer_math", kind: "message", oneof: "valueChange", T: () => IntegerMathOperation },
             { no: 4, name: "state", kind: "message", T: () => PropertyStatePatch },
             { no: 5, name: "reason", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { minLen: "3", maxLen: "255" } } } },
             { no: 6, name: "clear_reason", kind: "scalar", opt: true, T: 8 /*ScalarType.BOOL*/ }
@@ -1315,6 +1358,12 @@ class PropertyMutation$Type extends MessageType<PropertyMutation> {
                     message.valueChange = {
                         oneofKind: "clearValue",
                         clearValue: Empty.internalBinaryRead(reader, reader.uint32(), options, (message.valueChange as any).clearValue)
+                    };
+                    break;
+                case /* resources.properties.IntegerMathOperation integer_math */ 7:
+                    message.valueChange = {
+                        oneofKind: "integerMath",
+                        integerMath: IntegerMathOperation.internalBinaryRead(reader, reader.uint32(), options, (message.valueChange as any).integerMath)
                     };
                     break;
                 case /* optional resources.properties.PropertyStatePatch state */ 4:
@@ -1356,6 +1405,9 @@ class PropertyMutation$Type extends MessageType<PropertyMutation> {
         /* optional bool clear_reason = 6; */
         if (message.clearReason !== undefined)
             writer.tag(6, WireType.Varint).bool(message.clearReason);
+        /* resources.properties.IntegerMathOperation integer_math = 7; */
+        if (message.valueChange.oneofKind === "integerMath")
+            IntegerMathOperation.internalBinaryWrite(message.valueChange.integerMath, writer.tag(7, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -1366,6 +1418,61 @@ class PropertyMutation$Type extends MessageType<PropertyMutation> {
  * @generated MessageType for protobuf message resources.properties.PropertyMutation
  */
 export const PropertyMutation = new PropertyMutation$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class IntegerMathOperation$Type extends MessageType<IntegerMathOperation> {
+    constructor() {
+        super("resources.properties.IntegerMathOperation", [
+            { no: 1, name: "action", kind: "enum", T: () => ["resources.properties.IntegerMathAction", IntegerMathAction, "INTEGER_MATH_ACTION_"], options: { "buf.validate.field": { enum: { definedOnly: true, notIn: [0] } } } },
+            { no: 2, name: "operand", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/, options: { "buf.validate.field": { int64: { gt: "0" } } } }
+        ]);
+    }
+    create(value?: PartialMessage<IntegerMathOperation>): IntegerMathOperation {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        message.action = 0;
+        message.operand = 0;
+        if (value !== undefined)
+            reflectionMergePartial<IntegerMathOperation>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: IntegerMathOperation): IntegerMathOperation {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* resources.properties.IntegerMathAction action */ 1:
+                    message.action = reader.int32();
+                    break;
+                case /* int64 operand */ 2:
+                    message.operand = reader.int64().toNumber();
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: IntegerMathOperation, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* resources.properties.IntegerMathAction action = 1; */
+        if (message.action !== 0)
+            writer.tag(1, WireType.Varint).int32(message.action);
+        /* int64 operand = 2; */
+        if (message.operand !== 0)
+            writer.tag(2, WireType.Varint).int64(message.operand);
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message resources.properties.IntegerMathOperation
+ */
+export const IntegerMathOperation = new IntegerMathOperation$Type();
 // @generated message type with reflection information, may provide speed optimized methods
 class PropertyStatePatch$Type extends MessageType<PropertyStatePatch> {
     constructor() {

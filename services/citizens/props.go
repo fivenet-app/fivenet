@@ -374,10 +374,11 @@ func customMutationChanges(
 		if err := propertyregistry.ValidateMutationShape(mutation); err != nil {
 			return nil, errorscitizens.ErrInvalidProperty
 		}
+		isMath := mutation.GetIntegerMath() != nil
 		if !propertyregistry.IsCustomPropertyKey(
 			properties.PropertyScope_PROPERTY_SCOPE_USER,
 			mutation.GetKey(),
-		) {
+		) && !isMath {
 			if _, managed := propertyregistry.ManagedMutation(
 				properties.PropertyScope_PROPERTY_SCOPE_USER,
 				mutation.GetKey(),
@@ -403,6 +404,9 @@ func customMutationChanges(
 			)
 		} else if mutation.GetClearValue() != nil {
 			changes = append(changes, &propertyregistry.ScalarChange{Key: mutation.GetKey()})
+		} else if isMath {
+			// The store resolves integer operations under the property's lock.
+			continue
 		} else if mutation.GetState() == nil && mutation.Reason == nil && mutation.ClearReason == nil {
 			return nil, errorscitizens.ErrInvalidProperty
 		}

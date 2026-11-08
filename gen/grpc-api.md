@@ -280,6 +280,20 @@ Timestamp for storage messages. We've defined a new local type wrapper of google
 ## resources/properties/properties.proto
 
 
+### resources.properties.IntegerMathOperation
+IntegerMathOperation is evaluated atomically by the property store. The resulting value is constrained by the property's integer bounds.
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `action` | [IntegerMathAction](#resourcespropertiesIntegerMathAction) |  |  |
+| `operand` | [int64](#int64) |  |  |
+
+
+
+
+
 ### resources.properties.LocalDate
 LocalDate deliberately has no timezone. Use it for calendar dates such as an inspection due date; use timestamp_value for an instant in time.
 
@@ -417,6 +431,7 @@ PropertyMutation is the sole scalar and lifecycle property write contract. Omitt
 | `key` | [string](#string) |  |  |
 | `set_value` | [PropertyValue](#resourcespropertiesPropertyValue) |  |  |
 | `clear_value` | [google.protobuf.Empty](https://protobuf.dev/reference/protobuf/google.protobuf/#empty) |  |  |
+| `integer_math` | [IntegerMathOperation](#resourcespropertiesIntegerMathOperation) |  | Applies an integer operation to the value held under the property's row lock. It is accepted only for integer properties. |
 | `state` | [PropertyStatePatch](#resourcespropertiesPropertyStatePatch) | optional |  |
 | `reason` | [string](#string) | optional | The property-specific rationale/state reason. It is intentionally scoped to this mutation so batched edits can retain distinct reasons. |
 | `clear_reason` | [bool](#bool) | optional | Explicitly clears the persisted state reason. This is not a oneof because the sanitizer generator supports one oneof per message; validation rejects combining it with reason. |
@@ -551,6 +566,16 @@ PropertyValueConstraints narrows the accepted scalar values for a custom definit
 
 
  <!-- end messages -->
+
+
+### resources.properties.IntegerMathAction
+
+| Name | Number | Description |
+| ---- | ------ | ----------- |
+| `INTEGER_MATH_ACTION_UNSPECIFIED` | 0 |  |
+| `INTEGER_MATH_ACTION_ADD` | 1 |  |
+| `INTEGER_MATH_ACTION_SUBTRACT` | 2 |  |
+
 
 
 ### resources.properties.PropertyBehavior

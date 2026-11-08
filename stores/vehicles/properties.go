@@ -78,14 +78,15 @@ func (s *Store) applyPropertyMutationStates(
 			tValues.Plate.EQ(mysql.String(plate)),
 			tValues.PropertyKey.EQ(mysql.String(mutation.GetKey())),
 		)).LIMIT(1).FOR(mysql.UPDATE()).QueryContext(ctx, tx, &value)
-		if errors.Is(err, qrm.ErrNoRows) && mutation.GetSetValue() == nil {
+		if errors.Is(err, qrm.ErrNoRows) && mutation.GetSetValue() == nil &&
+			mutation.GetIntegerMath() == nil {
 			return fmt.Errorf("cannot set state for missing property %q", mutation.GetKey())
 		}
 		if err != nil && !errors.Is(err, qrm.ErrNoRows) {
 			return err
 		}
 		var existing *properties.Property
-		if mutation.GetSetValue() == nil {
+		if mutation.GetSetValue() == nil && mutation.GetIntegerMath() == nil {
 			propertiesByPlate, err := loadVehicleProperties(ctx, tx, []string{plate})
 			if err != nil {
 				return err
@@ -219,14 +220,142 @@ func (s *Store) applyPropertyMutationsWithActivity(
 	creatorJob, reason string,
 	activityMetadata map[string]*vehiclesactivity.PropertyChange,
 ) error {
+	if activityMetadata == nil {
+		activityMetadata = make(map[string]*vehiclesactivity.PropertyChange)
+	}
+	prelockedKeys, err := s.lockPropertyMutationKeys(ctx, tx, plate, values, mutations)
+	if err != nil {
+		return err
+	}
+	mathValues, err := s.resolveIntegerMathMutations(ctx, tx, plate, mutations, activityMetadata)
+	if err != nil {
+		return err
+	}
+	values = append(values, mathValues...)
 	if err := s.applyPropertyMutationStates(
 		ctx, tx, plate, mutations, creatorID, creatorJob, reason, activityMetadata,
 	); err != nil {
 		return err
 	}
 	return s.applyPropertiesWithActivity(
-		ctx, tx, plate, values, creatorID, creatorJob, reason, activityMetadata,
+		ctx, tx, plate, values, creatorID, creatorJob, reason, activityMetadata, prelockedKeys,
 	)
+}
+
+func (s *Store) lockPropertyMutationKeys(
+	ctx context.Context,
+	tx qrm.DB,
+	plate string,
+	values []*propertyregistry.ScalarChange,
+	mutations []*properties.PropertyMutation,
+) (map[string]struct{}, error) {
+	keys := map[string]struct{}{}
+	for _, value := range values {
+		if value == nil {
+			return nil, ErrInvalidProperty
+		}
+		keys[value.Key] = struct{}{}
+	}
+	for _, mutation := range mutations {
+		if mutation != nil {
+			keys[mutation.GetKey()] = struct{}{}
+		}
+	}
+	ordered := make([]string, 0, len(keys))
+	for key := range keys {
+		ordered = append(ordered, key)
+	}
+	slices.Sort(ordered)
+	tValues, tState := table.FivenetVehiclePropertyValues, table.FivenetVehiclePropertyState
+	for _, key := range ordered {
+		value := model.FivenetVehiclePropertyValues{}
+		if err := tValues.SELECT(tValues.Plate).
+			FROM(tValues).
+			WHERE(mysql.AND(tValues.Plate.EQ(mysql.String(plate)), tValues.PropertyKey.EQ(mysql.String(key)))).
+			LIMIT(1).
+			FOR(mysql.UPDATE()).
+			QueryContext(ctx, tx, &value); err != nil &&
+			!errors.Is(err, qrm.ErrNoRows) {
+			return nil, err
+		}
+		state := model.FivenetVehiclePropertyState{}
+		if err := tState.SELECT(tState.AllColumns).
+			FROM(tState).
+			WHERE(mysql.AND(tState.Plate.EQ(mysql.String(plate)), tState.PropertyKey.EQ(mysql.String(key)))).
+			LIMIT(1).
+			FOR(mysql.UPDATE()).
+			QueryContext(ctx, tx, &state); err != nil &&
+			!errors.Is(err, qrm.ErrNoRows) {
+			return nil, err
+		}
+	}
+	return keys, nil
+}
+
+func (s *Store) resolveIntegerMathMutations(
+	ctx context.Context,
+	tx qrm.DB,
+	plate string,
+	mutations []*properties.PropertyMutation,
+	activities map[string]*vehiclesactivity.PropertyChange,
+) ([]*propertyregistry.ScalarChange, error) {
+	result := make([]*propertyregistry.ScalarChange, 0, len(mutations))
+	ordered := append([]*properties.PropertyMutation(nil), mutations...)
+	slices.SortFunc(
+		ordered,
+		func(a, b *properties.PropertyMutation) int { return strings.Compare(a.GetKey(), b.GetKey()) },
+	)
+	tValues := table.FivenetVehiclePropertyValues
+	for _, mutation := range ordered {
+		if mutation == nil || mutation.GetIntegerMath() == nil {
+			continue
+		}
+		definitions, err := s.ResolvePropertyDefinitions(ctx, []string{mutation.GetKey()})
+		if err != nil {
+			return nil, err
+		}
+		definition := definitions[mutation.GetKey()]
+		if definition == nil {
+			return nil, ErrInvalidProperty
+		}
+		stored := model.FivenetVehiclePropertyValues{}
+		err = tValues.SELECT(tValues.AllColumns).
+			FROM(tValues).
+			WHERE(mysql.AND(tValues.Plate.EQ(mysql.String(plate)), tValues.PropertyKey.EQ(mysql.String(mutation.GetKey())))).
+			LIMIT(1).
+			FOR(mysql.UPDATE()).
+			QueryContext(ctx, tx, &stored)
+		if err != nil && !errors.Is(err, qrm.ErrNoRows) {
+			return nil, err
+		}
+		current := int64(0)
+		if err == nil {
+			if stored.ValueType != uint8(propertyValueTypeInteger) || stored.ValueInteger == nil {
+				return nil, ErrInvalidProperty
+			}
+			current = *stored.ValueInteger
+		}
+		value, err := propertyregistry.ApplyIntegerMath(
+			definition,
+			current,
+			mutation.GetIntegerMath(),
+		)
+		if err != nil {
+			return nil, ErrInvalidProperty
+		}
+		propertyValue := &properties.PropertyValue{}
+		propertyValue.SetIntegerValue(value)
+		result = append(
+			result,
+			&propertyregistry.ScalarChange{Key: mutation.GetKey(), Value: propertyValue},
+		)
+		activities[mutation.GetKey()] = &vehiclesactivity.PropertyChange{
+			Key:       mutation.GetKey(),
+			Lifecycle: vehicleMutationLifecycle(mutation),
+			Cause:     vehiclesactivity.PropertyChangeCause_PROPERTY_CHANGE_CAUSE_MANUAL,
+		}
+	}
+	return result, nil
 }
 
 const vehiclePropertyValuesTable = "fivenet_vehicle_property_values"
@@ -263,6 +392,7 @@ func (s *Store) applyPropertiesWithActivity(
 	creatorID *int32,
 	creatorJob, reason string,
 	activityMetadata map[string]*vehiclesactivity.PropertyChange,
+	prelockedKeys map[string]struct{},
 ) error {
 	if len(values) == 0 {
 		return nil
@@ -278,6 +408,9 @@ func (s *Store) applyPropertiesWithActivity(
 	for _, value := range ordered {
 		if value == nil {
 			return ErrInvalidProperty
+		}
+		if _, locked := prelockedKeys[value.Key]; locked {
+			continue
 		}
 		lockedValue := model.FivenetVehiclePropertyValues{}
 		err := tValues.SELECT(tValues.Plate).FROM(tValues).WHERE(mysql.AND(
@@ -554,7 +687,7 @@ func (s *Store) ClearExpiredCustomProperty(
 					ExpiresAt: property.GetState().GetExpiresAt(),
 				},
 				Cause: vehiclesactivity.PropertyChangeCause_PROPERTY_CHANGE_CAUSE_EXPIRED,
-			}}); err != nil {
+			}}, nil); err != nil {
 			return false, err
 		}
 		if err := tx.Commit(); err != nil {

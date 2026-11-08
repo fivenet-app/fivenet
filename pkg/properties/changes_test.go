@@ -2,13 +2,143 @@ package properties
 
 import (
 	"context"
+	"math"
 	"testing"
 
 	propertypb "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/properties"
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/timestamp"
+	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"google.golang.org/protobuf/types/known/emptypb"
 )
+
+func TestApplyIntegerMathClampsIntegerConstraints(t *testing.T) {
+	t.Parallel()
+	minimum, maximum := int64(0), int64(10)
+	definition := &propertypb.PropertyDefinition{
+		Enabled:   true,
+		ValueType: propertypb.PropertyValueType_PROPERTY_VALUE_TYPE_INTEGER,
+		ValueConstraints: &propertypb.PropertyValueConstraints{
+			IntegerMin: &minimum,
+			IntegerMax: &maximum,
+		},
+	}
+
+	value, err := ApplyIntegerMath(definition, 9, &propertypb.IntegerMathOperation{
+		Action:  propertypb.IntegerMathAction_INTEGER_MATH_ACTION_ADD,
+		Operand: 4,
+	})
+	require.NoError(t, err)
+	assert.Equal(t, int64(10), value)
+
+	value, err = ApplyIntegerMath(definition, 2, &propertypb.IntegerMathOperation{
+		Action:  propertypb.IntegerMathAction_INTEGER_MATH_ACTION_SUBTRACT,
+		Operand: 8,
+	})
+	require.NoError(t, err)
+	assert.Zero(t, value)
+}
+
+func TestApplyIntegerMathValidation(t *testing.T) {
+	t.Parallel()
+	integerDefinition := &propertypb.PropertyDefinition{
+		Enabled:   true,
+		ValueType: propertypb.PropertyValueType_PROPERTY_VALUE_TYPE_INTEGER,
+	}
+	stringDefinition := &propertypb.PropertyDefinition{
+		Enabled:   true,
+		ValueType: propertypb.PropertyValueType_PROPERTY_VALUE_TYPE_STRING,
+	}
+	operation := func(action propertypb.IntegerMathAction, operand int64) *propertypb.IntegerMathOperation {
+		return &propertypb.IntegerMathOperation{Action: action, Operand: operand}
+	}
+
+	tests := []struct {
+		name       string
+		definition *propertypb.PropertyDefinition
+		current    int64
+		operation  *propertypb.IntegerMathOperation
+		want       int64
+		wantErr    bool
+	}{
+		{
+			"missing defaults to zero",
+			integerDefinition,
+			0,
+			operation(propertypb.IntegerMathAction_INTEGER_MATH_ACTION_ADD, 3),
+			3,
+			false,
+		},
+		{
+			"subtract",
+			integerDefinition,
+			9,
+			operation(propertypb.IntegerMathAction_INTEGER_MATH_ACTION_SUBTRACT, 4),
+			5,
+			false,
+		},
+		{
+			"zero operand",
+			integerDefinition,
+			9,
+			operation(propertypb.IntegerMathAction_INTEGER_MATH_ACTION_ADD, 0),
+			0,
+			true,
+		},
+		{
+			"negative operand",
+			integerDefinition,
+			9,
+			operation(propertypb.IntegerMathAction_INTEGER_MATH_ACTION_ADD, -1),
+			0,
+			true,
+		},
+		{
+			"unspecified action",
+			integerDefinition,
+			9,
+			operation(propertypb.IntegerMathAction_INTEGER_MATH_ACTION_UNSPECIFIED, 1),
+			0,
+			true,
+		},
+		{
+			"non integer",
+			stringDefinition,
+			9,
+			operation(propertypb.IntegerMathAction_INTEGER_MATH_ACTION_ADD, 1),
+			0,
+			true,
+		},
+		{
+			"add overflow",
+			integerDefinition,
+			math.MaxInt64,
+			operation(propertypb.IntegerMathAction_INTEGER_MATH_ACTION_ADD, 1),
+			0,
+			true,
+		},
+		{
+			"subtract overflow",
+			integerDefinition,
+			math.MinInt64,
+			operation(propertypb.IntegerMathAction_INTEGER_MATH_ACTION_SUBTRACT, 1),
+			0,
+			true,
+		},
+	}
+	for _, test := range tests {
+		t.Run(test.name, func(t *testing.T) {
+			t.Parallel()
+			got, err := ApplyIntegerMath(test.definition, test.current, test.operation)
+			if test.wantErr {
+				require.ErrorIs(t, err, ErrInvalidPropertyChange)
+				return
+			}
+			require.NoError(t, err)
+			assert.Equal(t, test.want, got)
+		})
+	}
+}
 
 func TestValidateCustomPropertyChanges(t *testing.T) {
 	t.Parallel()

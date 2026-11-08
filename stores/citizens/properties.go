@@ -491,6 +491,18 @@ func (s *Store) ApplyPropertyChangesWithActivity(
 	sourceUserID *int32,
 	reason string,
 ) ([]*usersactivity.UserActivity, error) {
+	return s.applyPropertyChangesWithActivity(ctx, db, userID, changes, sourceUserID, reason, nil)
+}
+
+func (s *Store) applyPropertyChangesWithActivity(
+	ctx context.Context,
+	db qrm.DB,
+	userID int32,
+	changes []PropertyChange,
+	sourceUserID *int32,
+	reason string,
+	lockedKeys map[string]struct{},
+) ([]*usersactivity.UserActivity, error) {
 	if len(changes) == 0 {
 		return nil, nil
 	}
@@ -510,6 +522,9 @@ func (s *Store) ApplyPropertyChangesWithActivity(
 	tValues := table.FivenetUserPropertyValues
 	tState := table.FivenetUserPropertyState
 	for _, change := range ordered {
+		if _, locked := lockedKeys[change.Property.GetKey()]; locked {
+			continue
+		}
 		locked := model.FivenetUserPropertyValues{}
 		err := tValues.SELECT(tValues.UserID).FROM(tValues).WHERE(mysql.AND(
 			tValues.UserID.EQ(mysql.Int32(userID)),
@@ -595,8 +610,17 @@ func (s *Store) ApplyPropertyMutationsWithActivity(
 	sourceUserID *int32,
 	reason string,
 ) ([]*usersactivity.UserActivity, error) {
-	scalarActivities, err := s.ApplyPropertyChangesWithActivity(
-		ctx, tx, userID, changes, sourceUserID, reason,
+	lockedKeys, err := s.lockPropertyMutationKeys(ctx, tx, userID, changes, mutations)
+	if err != nil {
+		return nil, err
+	}
+	mathChanges, err := s.resolveIntegerMathMutations(ctx, tx, userID, mutations)
+	if err != nil {
+		return nil, err
+	}
+	changes = append(changes, mathChanges...)
+	scalarActivities, err := s.applyPropertyChangesWithActivity(
+		ctx, tx, userID, changes, sourceUserID, reason, lockedKeys,
 	)
 	if err != nil {
 		return nil, err
@@ -608,6 +632,127 @@ func (s *Store) ApplyPropertyMutationsWithActivity(
 		return nil, err
 	}
 	return mergePropertyMutationActivities(scalarActivities, lifecycleActivities), nil
+}
+
+func (s *Store) lockPropertyMutationKeys(
+	ctx context.Context,
+	tx qrm.DB,
+	userID int32,
+	changes []PropertyChange,
+	mutations []*properties.PropertyMutation,
+) (map[string]struct{}, error) {
+	keys := map[string]struct{}{}
+	for _, change := range changes {
+		if change.Property == nil {
+			return nil, ErrInvalidProperty
+		}
+		keys[change.Property.GetKey()] = struct{}{}
+	}
+	for _, mutation := range mutations {
+		if mutation != nil {
+			keys[mutation.GetKey()] = struct{}{}
+		}
+	}
+	ordered := make([]string, 0, len(keys))
+	for key := range keys {
+		ordered = append(ordered, key)
+	}
+	slices.Sort(ordered)
+	tValues, tState := table.FivenetUserPropertyValues, table.FivenetUserPropertyState
+	for _, key := range ordered {
+		value := model.FivenetUserPropertyValues{}
+		if err := tValues.SELECT(tValues.UserID).
+			FROM(tValues).
+			WHERE(mysql.AND(tValues.UserID.EQ(mysql.Int32(userID)), tValues.PropertyKey.EQ(mysql.String(key)))).
+			LIMIT(1).
+			FOR(mysql.UPDATE()).
+			QueryContext(ctx, tx, &value); err != nil &&
+			!errors.Is(err, qrm.ErrNoRows) {
+			return nil, err
+		}
+		state := model.FivenetUserPropertyState{}
+		if err := tState.SELECT(tState.AllColumns).
+			FROM(tState).
+			WHERE(mysql.AND(tState.UserID.EQ(mysql.Int32(userID)), tState.PropertyKey.EQ(mysql.String(key)))).
+			LIMIT(1).
+			FOR(mysql.UPDATE()).
+			QueryContext(ctx, tx, &state); err != nil &&
+			!errors.Is(err, qrm.ErrNoRows) {
+			return nil, err
+		}
+	}
+	return keys, nil
+}
+
+// resolveIntegerMathMutations derives canonical scalar changes only after the
+// value row is locked. This prevents a read/modify/write race across Sync
+// clients and server processes.
+func (s *Store) resolveIntegerMathMutations(
+	ctx context.Context,
+	tx qrm.DB,
+	userID int32,
+	mutations []*properties.PropertyMutation,
+) ([]PropertyChange, error) {
+	mathMutations := make([]*properties.PropertyMutation, 0, len(mutations))
+	for _, mutation := range mutations {
+		if mutation != nil && mutation.GetIntegerMath() != nil {
+			mathMutations = append(mathMutations, mutation)
+		}
+	}
+	if len(mathMutations) == 0 {
+		return nil, nil
+	}
+	slices.SortFunc(mathMutations, func(left, right *properties.PropertyMutation) int {
+		return strings.Compare(left.GetKey(), right.GetKey())
+	})
+
+	changes := make([]PropertyChange, 0, len(mathMutations))
+	stored, err := s.GetPropertiesTx(ctx, tx, userID)
+	if err != nil {
+		return nil, err
+	}
+	byKey := make(map[string]*properties.Property, len(stored))
+	for _, property := range stored {
+		byKey[property.GetKey()] = property
+	}
+	for _, mutation := range mathMutations {
+		definitions, err := s.ResolvePropertyDefinitions(ctx, []string{mutation.GetKey()})
+		if err != nil {
+			return nil, err
+		}
+		definition := definitions[mutation.GetKey()]
+		if definition == nil {
+			return nil, ErrInvalidProperty
+		}
+
+		current := int64(0)
+		if property := byKey[mutation.GetKey()]; property != nil {
+			if property.GetValue().GetIntegerValue() == 0 && property.GetValue().GetValue() == nil {
+				return nil, ErrInvalidProperty
+			}
+			integer, ok := property.GetValue().GetValue().(*properties.PropertyValue_IntegerValue)
+			if !ok {
+				return nil, ErrInvalidProperty
+			}
+			current = integer.IntegerValue
+		}
+		value, err := propertyregistry.ApplyIntegerMath(
+			definition,
+			current,
+			mutation.GetIntegerMath(),
+		)
+		if err != nil {
+			return nil, ErrInvalidProperty
+		}
+		propertyValue := &properties.PropertyValue{}
+		propertyValue.SetIntegerValue(value)
+		changes = append(changes, PropertyChange{
+			Property:  &properties.Property{Key: mutation.GetKey(), Value: propertyValue},
+			Cause:     usersactivity.PropertyChangeCause_PROPERTY_CHANGE_CAUSE_MANUAL,
+			Lifecycle: userMutationLifecycle(mutation),
+		})
+	}
+	return changes, nil
 }
 
 // applyPropertyMutationStates persists lifecycle patches after their scalar

@@ -259,6 +259,17 @@ func (m *PropertyMutation) Sanitize() error {
 			}
 		}
 
+		// Field: IntegerMath
+	case *PropertyMutation_IntegerMath:
+
+		if v.IntegerMath != nil {
+			if s, ok := any(v.IntegerMath).(interface{ Sanitize() error }); ok {
+				if err := s.Sanitize(); err != nil {
+					return err
+				}
+			}
+		}
+
 	}
 
 	// Field: Key

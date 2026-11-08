@@ -438,7 +438,8 @@ func (s *Store) validateSyncManagedProperties(
 		if mutation == nil || !propertyregistry.IsSystemProperty(scope, mutation.GetKey()) {
 			continue
 		}
-		if _, ok := propertyregistry.ManagedMutation(scope, mutation.GetKey()); !ok {
+		if _, ok := propertyregistry.ManagedMutation(scope, mutation.GetKey()); !ok &&
+			mutation.GetIntegerMath() == nil {
 			return fmt.Errorf("system property %q is not Sync-mutable", mutation.GetKey())
 		}
 		var (
@@ -577,6 +578,9 @@ func splitUserPropertyMutations(
 			)
 		} else if mutation.GetClearValue() != nil {
 			changes = append(changes, &propertyregistry.ScalarChange{Key: mutation.GetKey()})
+		} else if mutation.GetIntegerMath() != nil {
+			// Resolved by the citizen store while holding the value row lock.
+			continue
 		} else if mutation.GetState() == nil && mutation.Reason == nil && mutation.ClearReason == nil {
 			return nil, nil, fmt.Errorf("property %q has no mutation", mutation.GetKey())
 		}
@@ -630,6 +634,8 @@ func splitVehiclePropertyMutations(
 			)
 		} else if mutation.GetClearValue() != nil {
 			changes = append(changes, &propertyregistry.ScalarChange{Key: mutation.GetKey()})
+		} else if mutation.GetIntegerMath() != nil {
+			continue
 		} else if mutation.GetState() == nil && mutation.Reason == nil && mutation.ClearReason == nil {
 			return nil, nil, false, fmt.Errorf("property %q has no mutation", mutation.GetKey())
 		}

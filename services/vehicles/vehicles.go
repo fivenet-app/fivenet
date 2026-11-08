@@ -360,10 +360,11 @@ func customMutationChanges(
 		if err := propertyregistry.ValidateMutationShape(mutation); err != nil {
 			return nil, errorsvehicles.ErrInvalidProperty
 		}
+		isMath := mutation.GetIntegerMath() != nil
 		if !propertyregistry.IsCustomPropertyKey(
 			properties.PropertyScope_PROPERTY_SCOPE_VEHICLE,
 			mutation.GetKey(),
-		) {
+		) && !isMath {
 			if _, managed := propertyregistry.ManagedMutation(
 				properties.PropertyScope_PROPERTY_SCOPE_VEHICLE,
 				mutation.GetKey(),
@@ -389,6 +390,8 @@ func customMutationChanges(
 			)
 		} else if mutation.GetClearValue() != nil {
 			changes = append(changes, &propertyregistry.ScalarChange{Key: mutation.GetKey()})
+		} else if isMath {
+			continue
 		} else if mutation.GetState() == nil && mutation.Reason == nil && mutation.ClearReason == nil {
 			return nil, errorsvehicles.ErrInvalidProperty
 		}

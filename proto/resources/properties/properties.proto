@@ -83,6 +83,9 @@ message PropertyMutation {
   oneof value_change {
     PropertyValue set_value = 2;
     google.protobuf.Empty clear_value = 3;
+    // Applies an integer operation to the value held under the property's
+    // row lock. It is accepted only for integer properties.
+    IntegerMathOperation integer_math = 7;
   }
   optional PropertyStatePatch state = 4;
   // The property-specific rationale/state reason. It is intentionally scoped
@@ -95,6 +98,22 @@ message PropertyMutation {
   // the sanitizer generator supports one oneof per message; validation
   // rejects combining it with reason.
   optional bool clear_reason = 6;
+}
+
+// IntegerMathOperation is evaluated atomically by the property store. The
+// resulting value is constrained by the property's integer bounds.
+message IntegerMathOperation {
+  IntegerMathAction action = 1 [(buf.validate.field).enum = {
+    defined_only: true
+    not_in: 0
+  }];
+  int64 operand = 2 [(buf.validate.field).int64.gt = 0];
+}
+
+enum IntegerMathAction {
+  INTEGER_MATH_ACTION_UNSPECIFIED = 0;
+  INTEGER_MATH_ACTION_ADD = 1;
+  INTEGER_MATH_ACTION_SUBTRACT = 2;
 }
 
 // PropertyStatePatch carries an explicit lifecycle override. Omitting state,

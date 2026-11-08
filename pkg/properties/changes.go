@@ -3,6 +3,7 @@ package properties
 import (
 	"context"
 	"errors"
+	"math"
 	"time"
 
 	propertypb "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/properties"
@@ -126,13 +127,61 @@ func ValidateMutationShape(mutation *propertypb.PropertyMutation) error {
 		return ErrInvalidPropertyChange
 	}
 	if mutation.GetSetValue() == nil && mutation.GetClearValue() == nil &&
-		mutation.GetState() == nil && mutation.Reason == nil && mutation.ClearReason == nil {
+		mutation.GetIntegerMath() == nil &&
+		mutation.GetState() == nil &&
+		mutation.Reason == nil &&
+		mutation.ClearReason == nil {
 		return ErrInvalidPropertyChange
 	}
 	if mutation.GetClearValue() != nil && mutation.GetState() != nil {
 		return ErrInvalidPropertyChange
 	}
 	return nil
+}
+
+// ApplyIntegerMath calculates an integer mutation's effective value. Callers
+// must load currentValue while holding the property's row lock. Missing values
+// are represented by zero. The definition's integer bounds clamp the result.
+func ApplyIntegerMath(
+	definition *propertypb.PropertyDefinition,
+	currentValue int64,
+	operation *propertypb.IntegerMathOperation,
+) (int64, error) {
+	if definition == nil || !definition.GetEnabled() ||
+		definition.GetValueType() != propertypb.PropertyValueType_PROPERTY_VALUE_TYPE_INTEGER ||
+		operation == nil || operation.GetOperand() <= 0 {
+		return 0, ErrInvalidPropertyChange
+	}
+
+	operand := operation.GetOperand()
+	var value int64
+	switch operation.GetAction() {
+	case propertypb.IntegerMathAction_INTEGER_MATH_ACTION_ADD:
+		if (operand > 0 && currentValue > math.MaxInt64-operand) ||
+			(operand < 0 && currentValue < math.MinInt64-operand) {
+			return 0, ErrInvalidPropertyChange
+		}
+		value = currentValue + operand
+	case propertypb.IntegerMathAction_INTEGER_MATH_ACTION_SUBTRACT:
+		if (operand > 0 && currentValue < math.MinInt64+operand) ||
+			(operand < 0 && currentValue > math.MaxInt64+operand) {
+			return 0, ErrInvalidPropertyChange
+		}
+		value = currentValue - operand
+	default:
+		return 0, ErrInvalidPropertyChange
+	}
+
+	constraints := definition.GetValueConstraints()
+	if constraints != nil {
+		if constraints.IntegerMin != nil && value < constraints.GetIntegerMin() {
+			value = constraints.GetIntegerMin()
+		}
+		if constraints.IntegerMax != nil && value > constraints.GetIntegerMax() {
+			value = constraints.GetIntegerMax()
+		}
+	}
+	return value, nil
 }
 
 // ValidateMutationKeys rejects duplicate keys and malformed mutations in one request.
