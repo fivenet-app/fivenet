@@ -25,20 +25,6 @@ overrides:
   # protobuf-ts relies on the TypeScript 3.9 compiler API.
   "@protobuf-ts/plugin>typescript": 3.9.10
 
-onlyBuiltDependencies:
-  - '@parcel/watcher'
-  - '@tailwindcss/oxide'
-  - better-sqlite3
-  - core-js-pure
-  - esbuild
-  - sharp
-  - unrs-resolver
-  - v-code-diff
-  - vue-demi
-
-ignoredBuiltDependencies:
-  - maplibre-gl
-
 packageExtensions:
   '@nuxtjs/mdc@0.20.1':
     dependencies:
@@ -54,9 +40,13 @@ shellEmulator: true
 
 allowBuilds:
   '@parcel/watcher': false
+  '@tailwindcss/oxide': true
   better-sqlite3: true
+  canvas: false
+  core-js-pure: true
   esbuild: false
-  maplibre-gl: true
+  maplibre-gl: false
+  protobufjs: false
   sharp: true
   unrs-resolver: false
   v-code-diff: true
