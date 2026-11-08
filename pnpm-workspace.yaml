@@ -29,7 +29,6 @@ onlyBuiltDependencies:
   - '@parcel/watcher'
   - '@tailwindcss/oxide'
   - better-sqlite3
-  - canvas
   - core-js-pure
   - esbuild
   - sharp
@@ -56,7 +55,6 @@ shellEmulator: true
 allowBuilds:
   '@parcel/watcher': false
   better-sqlite3: true
-  canvas: true
   esbuild: false
   maplibre-gl: true
   sharp: true
