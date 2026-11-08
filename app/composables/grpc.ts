@@ -110,8 +110,12 @@ export function handleGRPCError(err: unknown, options: { authScope?: GRPCAuthSco
     const error = toError(err);
     const rpcErr = isRpcError(err) ? err : undefined;
     recordClientError(error, {
-        source: 'gRPC',
+        source:
+            rpcErr === undefined
+                ? 'gRPC'
+                : `gRPC ${rpcErr.serviceName ?? 'N/A'}/${rpcErr.methodName ?? 'N/A'} (${rpcErr.code.toUpperCase()})`,
         route: useRouter().currentRoute.value.fullPath,
+        statusCode: rpcErr?.code.toUpperCase(),
         dedupeWindowMs: 12_500,
     });
 

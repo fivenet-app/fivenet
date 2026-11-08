@@ -61,7 +61,10 @@ export function getClientErrors(): ClientError[] {
     }
 }
 
-export function recordClientError(error: unknown, options: { source: string; route?: string; dedupeWindowMs?: number }): void {
+export function recordClientError(
+    error: unknown,
+    options: { source: string; route?: string; statusCode?: string; dedupeWindowMs?: number },
+): void {
     if (!canUseStorage()) return;
     if (shouldIgnoreClientError(error)) return;
     const normalized = normalizeError(error);
@@ -70,7 +73,7 @@ export function recordClientError(error: unknown, options: { source: string; rou
         source: options.source,
         route: options.route ?? `${window.location.pathname}${window.location.search}${window.location.hash}`,
         message: normalized.message,
-        statusCode: normalized.statusCode,
+        statusCode: options.statusCode ?? normalized.statusCode,
         stack: normalized.stack,
     };
     try {

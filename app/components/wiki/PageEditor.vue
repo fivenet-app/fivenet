@@ -106,7 +106,7 @@ const schema = z.object({
     parentId: z.coerce.number(),
     meta: z.object({
         title: z.coerce.string().min(3).max(255),
-        description: z.coerce.string().max(255),
+        description: z.coerce.string().max(512),
         toc: z.coerce.boolean(),
         draft: z.coerce.boolean(),
         public: z.coerce.boolean(),

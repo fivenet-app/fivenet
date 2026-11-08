@@ -8,6 +8,7 @@ const mocks = vi.hoisted(() => ({
     notificationsStore: {
         add: vi.fn(),
     },
+    recordClientError: vi.fn(),
 }));
 
 vi.mock('~/stores/auth', () => ({
@@ -16,6 +17,10 @@ vi.mock('~/stores/auth', () => ({
 
 vi.mock('~/stores/notifications', () => ({
     useNotificationsStore: () => mocks.notificationsStore,
+}));
+
+vi.mock('~/utils/client-errors', () => ({
+    recordClientError: mocks.recordClientError,
 }));
 
 function rpcError(code: string, message: string = 'server rejected credentials') {
@@ -73,6 +78,18 @@ describe('handleGRPCError', () => {
         expect(mocks.notificationsStore.add).toHaveBeenCalledWith(
             expect.objectContaining({
                 actions: [expect.objectContaining({ label: { key: 'pages.error.copy_error' } })],
+            }),
+        );
+    });
+
+    it('records the RPC service, method, and status code', () => {
+        handleGRPCError(rpcError('INTERNAL'));
+
+        expect(mocks.recordClientError).toHaveBeenCalledWith(
+            expect.objectContaining({ name: 'RpcError' }),
+            expect.objectContaining({
+                source: 'gRPC test.AuthService/Test (INTERNAL)',
+                statusCode: 'INTERNAL',
             }),
         );
     });
