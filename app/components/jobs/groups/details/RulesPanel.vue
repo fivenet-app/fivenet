@@ -87,9 +87,7 @@ const canManageRules = computed(
 const policyNotice = computed(() => (supportsRules.value ? undefined : 'components.jobs.groups.policy.rules_disabled'));
 const activeJob = computed(() => jobs.value.find((job) => job.name === activeChar.value?.job));
 const activeJobGrades = computed(() => activeJob.value?.grades ?? []);
-const rangeMinGradeItems = computed(() =>
-    activeJobGrades.value.filter((grade) => ruleForm.maxGrade === 0 || grade.grade <= ruleForm.maxGrade),
-);
+const rangeMinGradeItems = computed(() => activeJobGrades.value.filter((grade) => grade.grade <= ruleForm.maxGrade));
 const rangeMaxGradeItems = computed(() => activeJobGrades.value.filter((grade) => grade.grade >= ruleForm.minGrade));
 const ruleGradeValid = computed(() => {
     if (ruleForm.type !== GroupRuleType.GRADE) return true;

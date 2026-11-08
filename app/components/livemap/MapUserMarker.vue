@@ -35,7 +35,7 @@ defineEmits<{
 
 const { can, activeChar } = useAuth();
 
-const { livemap } = useAppConfig();
+const { game, livemap } = useAppConfig();
 
 const overlay = useOverlay();
 
@@ -204,7 +204,13 @@ const unitDetailsSlideover = overlay.create(UnitDetailsSlideover);
                             <ColleagueName v-if="marker.user" :colleague="marker.user" />
                         </li>
 
-                        <li v-if="(marker.user?.jobGrade ?? 0) > 0 && marker.user?.jobGradeLabel">
+                        <li
+                            v-if="
+                                marker.user?.jobGrade !== undefined &&
+                                marker.user.jobGrade >= game.startJobGrade &&
+                                marker.user.jobGradeLabel
+                            "
+                        >
                             <span class="font-semibold">{{ $t('common.rank') }}:</span> {{ marker.user?.jobGradeLabel }} ({{
                                 marker.user?.jobGrade
                             }})

@@ -297,7 +297,7 @@ async function createOrUpdateTemplate(values: Schema, templateId?: number): Prom
                     ruleKind: task.ruleKind,
                     userId: task.userId,
                     job: task.job ?? '',
-                    minimumGrade: task.minimumGrade ?? 0,
+                    minimumGrade: task.minimumGrade ?? game.startJobGrade,
                     label: task.label,
                     signatureRequired: task.signatureRequired,
                     slots: task.slots,

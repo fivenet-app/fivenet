@@ -245,7 +245,6 @@ async function toggleJobListAll(): Promise<void> {
 async function toggleJobGradeValue(job: Job, checked: boolean): Promise<void> {
     if (attrValues.value.validValues.oneofKind !== 'jobGradeList') return;
 
-    attrValues.value.validValues.jobGradeList.jobs[job.name] = game.startJobGrade;
     if (!job.grades[0]) return;
 
     if (attrValues.value.validValues.jobGradeList.fineGrained) {
@@ -258,9 +257,9 @@ async function toggleJobGradeValue(job: Job, checked: boolean): Promise<void> {
             delete attrValues.value.validValues.jobGradeList.grades[job.name];
         }
     } else {
-        if (checked && !attrValues.value.validValues.jobGradeList.jobs[job.name]) {
+        if (checked && attrValues.value.validValues.jobGradeList.jobs[job.name] === undefined) {
             attrValues.value.validValues.jobGradeList.jobs[job.name] = job.grades[0].grade;
-        } else if (!checked && attrValues.value.validValues.jobGradeList.jobs[job.name]) {
+        } else if (!checked && attrValues.value.validValues.jobGradeList.jobs[job.name] !== undefined) {
             // eslint-disable-next-line @typescript-eslint/no-dynamic-delete
             delete attrValues.value.validValues.jobGradeList.jobs[job.name];
         }

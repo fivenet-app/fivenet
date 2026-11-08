@@ -199,7 +199,13 @@ watchOnce(opened, async () => {
                         <p v-if="user.jobLabel">
                             <span class="font-semibold">{{ $t('common.job') }}:</span>
                             {{ user.jobLabel }}
-                            <span v-if="(user.jobGrade ?? 0) > 0 && user.job !== game.unemployedJobName">
+                            <span
+                                v-if="
+                                    user.jobGrade !== undefined &&
+                                    user.jobGrade >= game.startJobGrade &&
+                                    user.job !== game.unemployedJobName
+                                "
+                            >
                                 ({{ user.jobGradeLabel }})</span
                             >
                         </p>

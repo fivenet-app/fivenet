@@ -289,9 +289,9 @@ async function toggleJobGradeValue(job: Job, checked: boolean): Promise<void> {
     if (!job.grades[0]) return;
 
     if (!attrValues.value.validValues.jobGradeList.fineGrained) {
-        if (checked && !attrValues.value.validValues.jobGradeList.jobs[job.name]) {
+        if (checked && attrValues.value.validValues.jobGradeList.jobs[job.name] === undefined) {
             attrValues.value.validValues.jobGradeList.jobs[job.name] = job.grades[0].grade;
-        } else if (!checked && attrValues.value.validValues.jobGradeList.jobs[job.name]) {
+        } else if (!checked && attrValues.value.validValues.jobGradeList.jobs[job.name] !== undefined) {
             // eslint-disable-next-line @typescript-eslint/no-dynamic-delete
             delete attrValues.value.validValues.jobGradeList.jobs[job.name];
         }
@@ -310,11 +310,39 @@ async function toggleJobGradeValue(job: Job, checked: boolean): Promise<void> {
 async function toggleJobGradeListFineGrained(checked: boolean): Promise<void> {
     if (attrValues.value.validValues.oneofKind !== 'jobGradeList') return;
 
-    if (!attrValues.value.validValues.jobGradeList.grades) {
-        attrValues.value.validValues.jobGradeList.grades = {};
+    const jobGradeList = attrValues.value.validValues.jobGradeList;
+    if (jobGradeList.fineGrained === checked) return;
+
+    if (checked) {
+        const fineGrainedGrades: Record<string, { grades: number[] }> = {};
+
+        for (const [jobName, minimumGrade] of Object.entries(jobGradeList.jobs)) {
+            const job = jobs.value.find((job) => job.name === jobName);
+            fineGrainedGrades[jobName] = {
+                // A threshold means every rank at or above it. Keep that exact
+                // meaning when changing to a list of individual ranks.
+                grades: job?.grades.filter((grade) => grade.grade >= minimumGrade).map((grade) => grade.grade) ?? [
+                    minimumGrade,
+                ],
+            };
+        }
+
+        jobGradeList.grades = fineGrainedGrades;
+    } else {
+        const minimumGrades: Record<string, number> = {};
+
+        for (const [jobName, selectedGrades] of Object.entries(jobGradeList.grades)) {
+            if (selectedGrades.grades.length === 0) continue;
+
+            // A threshold cannot represent a sparse list exactly. Its lowest
+            // selected rank preserves access to every previously selected rank.
+            minimumGrades[jobName] = Math.min(...selectedGrades.grades);
+        }
+
+        jobGradeList.jobs = minimumGrades;
     }
 
-    attrValues.value.validValues.jobGradeList.fineGrained = checked;
+    jobGradeList.fineGrained = checked;
 }
 
 onBeforeMount(async () => {
