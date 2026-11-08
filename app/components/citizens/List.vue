@@ -242,7 +242,7 @@ const columns = computed(() =>
                               label: t('common.traffic_infraction_points', 2),
                           });
                       },
-                      cell: ({ row }) => row.original.props?.trafficInfractionPoints,
+                      cell: ({ row }) => row.original.props?.trafficInfractionPoints ?? 0,
                   }
                 : undefined,
             attr('citizens.CitizensService/ListCitizens', 'Properties', 'user.open_fines').value
