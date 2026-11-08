@@ -29,7 +29,6 @@ import {
     rangeTitle,
     viewDateRange,
 } from '~/utils/calendar-view';
-import { unsafeRoute } from '~/utils/route';
 import Pagination from '~/components/partials/Pagination.vue';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
@@ -276,7 +275,7 @@ watch(
 const selectedDay = computed(() => selectedDate.value);
 
 function navigateToDate(date: Date, nextView = view.value): void {
-    void router.push(unsafeRoute(routeForCalendarView(nextView, date)));
+    void router.push(routeForCalendarView(nextView, date));
 }
 
 function shiftRange(direction: -1 | 1): void {

@@ -12,7 +12,7 @@ const emits = defineEmits<{
     (e: 'update:permanent', value: boolean): void;
 }>();
 
-const { d, t } = useI18n();
+const { d } = useI18n();
 
 const quickPicks = [
     { key: '30_minutes', seconds: 30 * 60 },

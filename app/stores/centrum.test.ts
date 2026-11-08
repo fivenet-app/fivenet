@@ -482,7 +482,11 @@ describe('useCentrumStore', () => {
 
     it('detects membership component joins and leaves against the previous snapshot', () => {
         const current = unit({ id: 7, users: [] });
-        const joined = replaceUnitMembersWithTransition(current, { unitId: 7, job: 'ambulance', users: [{ userId: 17 }] }, 17);
+        const joined = replaceUnitMembersWithTransition(
+            current,
+            { unitId: 7, job: 'ambulance', users: [{ userId: 17, unitId: 7 }] },
+            17,
+        );
 
         expect(joined).toEqual({ wasOwnUnit: false, isOwnUnit: true });
         expect(current.users.map((user) => user.userId)).toEqual([17]);

@@ -45,7 +45,6 @@ export default defineNuxtPlugin({
                 const account = await authStore.ensureAccountSession();
                 if (account.kind === 'ready' && to.meta.redirectIfAuthed !== false && username.value !== null) {
                     const url = getRedirect(from);
-                    // @ts-expect-error route is validated by parseRedirectURL/getRedirect
                     return navigateTo({ path: url.pathname, query: parseQuery(url.search), hash: url.hash, replace: true });
                 }
 

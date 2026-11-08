@@ -57,6 +57,8 @@ const completorStore = useCompletorStore();
 const { jobs } = storeToRefs(completorStore);
 const { listJobs } = completorStore;
 
+const notifications = useNotificationsStore();
+
 const attrChangedStates = ref(new Map<number, boolean>());
 const childHasUnsavedChanges = computed(() => attrChangedStates.value.size > 0);
 const { hasUnsavedChanges, markChanged, resetChanged } = useUnsavedChanges({

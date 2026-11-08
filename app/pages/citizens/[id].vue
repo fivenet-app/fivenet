@@ -42,6 +42,7 @@ const { open: openClipboardModal } = useClipboardModal();
 const notifications = useNotificationsStore();
 
 const route = useRoute('citizens-id');
+const userId = computed(() => (typeof route.params.id === 'string' ? parseInt(route.params.id) : 0));
 
 const citizensCitizensClient = await getCitizensCitizensClient();
 
@@ -52,8 +53,8 @@ const {
     error,
 } = useAuthedLazyAsyncData(
     'userState',
-    `citizen-${route.params.id}`,
-    ({ signal }) => getUser(parseInt(route.params.id), signal),
+    () => `citizen-${userId.value}`,
+    ({ signal }) => getUser(userId.value, signal),
     {
         watch: [() => route.params.id],
     },

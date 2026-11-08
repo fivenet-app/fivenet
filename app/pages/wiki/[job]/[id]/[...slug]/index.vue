@@ -28,6 +28,10 @@ const { activeChar } = useAuth();
 
 const route = useRoute('wiki-job-id-slug');
 
+function firstRouteParam(value: string | string[] | undefined): string | undefined {
+    return Array.isArray(value) ? value[0] : value;
+}
+
 const { getPage: getWikiPage, listPages: listWikiPages } = await useWikiWiki();
 
 const {
@@ -39,7 +43,7 @@ const {
     'userState',
     () => `wiki-pages:${route.params.job}`,
     async ({ signal }) => {
-        const job = route.params.job ?? activeChar.value?.job ?? '';
+        const job = firstRouteParam(route.params.job) ?? activeChar.value?.job ?? '';
         const response = await listWikiPages(
             {
                 pagination: {
@@ -63,7 +67,7 @@ const {
 } = useAuthedLazyAsyncData(
     'userState',
     () => `wiki-page:${route.path}`,
-    ({ signal }) => getWikiPage(parseInt(route.params.id), { abort: signal }),
+    ({ signal }) => getWikiPage(parseInt(firstRouteParam(route.params.id) ?? '0'), { abort: signal }),
 );
 
 useHead({
@@ -75,7 +79,7 @@ useHead({
 
 function mapPageToNavItem(page: PageShort): NavigationMenuItem {
     const isActive = (currentPage: PageShort): boolean => {
-        if (currentPage.id === parseInt(route.params.id)) {
+        if (currentPage.id === parseInt(firstRouteParam(route.params.id) ?? '0')) {
             return true;
         }
         return currentPage.children.some(isActive);

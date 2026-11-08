@@ -16,8 +16,6 @@ defineEmits<{
     (e: 'markerSelected', marker: MarkerMarker): void;
 }>();
 
-const { t } = useI18n();
-
 const settingsStore = useSettingsStore();
 const { livemap } = storeToRefs(settingsStore);
 </script>

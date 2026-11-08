@@ -191,7 +191,7 @@ export const useCentrumStore = defineStore(
                 }
                 if (revisions.size === 0) revisionsByResource.delete(id);
             }
-            tombstones.sort(([, a], [, b]) => a.deletedAt! - b.deletedAt!);
+            tombstones.sort(([, , a], [, , b]) => a.deletedAt! - b.deletedAt!);
             for (const [id, component] of tombstones.slice(0, Math.max(0, tombstones.length - maxRevisionTombstones))) {
                 revisionsByResource.get(id)?.delete(component);
             }

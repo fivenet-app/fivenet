@@ -10,13 +10,7 @@ export function extractShortcutsFromNavItems(
     return extractShortcuts(
         items.map((item) => ({
             ...item,
-            onSelect: item.to
-                ? () =>
-                      navigateTo(
-                          // @ts-expect-error ignore route type (is string here)
-                          item.to,
-                      )
-                : item.onSelect,
+            onSelect: item.to ? () => navigateTo(item.to) : item.onSelect,
         })),
         separator,
     );

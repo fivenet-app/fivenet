@@ -70,8 +70,8 @@ describe('GrpcProvider', () => {
 
             provider.connect();
             responses.emitMessage({
-                senderId: 1n,
-                msg: { oneofKind: 'handshake', handshake: { clientId: 1n } },
+                senderId: 1,
+                msg: { oneofKind: 'handshake', handshake: { clientId: 1 } },
             });
 
             await vi.advanceTimersByTimeAsync(15_000);

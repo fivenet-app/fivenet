@@ -20,7 +20,8 @@ defineEmits<{
     (e: 'deleted'): void;
 }>();
 
-const job = useRoute('settings-limiter-job').params.job;
+const route = useRoute('settings-limiter-job');
+const job = computed(() => (typeof route.params.job === 'string' ? route.params.job : undefined));
 </script>
 
 <template>

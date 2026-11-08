@@ -37,6 +37,7 @@ const { attr, can, activeChar } = useAuth();
 const { propertyLabel } = usePropertyRenderer();
 
 const clipboardStore = useClipboardStore();
+const notifications = useNotificationsStore();
 const { open: openClipboardModal } = useClipboardModal();
 
 const { notifyLinkCopied } = useClipboardNotifications();

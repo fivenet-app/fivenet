@@ -21,8 +21,9 @@ definePageMeta({
 });
 
 const route = useRoute('qualifications-id-edit');
+const qualificationId = computed(() => (typeof route.params.id === 'string' ? parseInt(route.params.id) : 0));
 </script>
 
 <template>
-    <Editor :qualification-id="parseInt(route.params.id)" />
+    <Editor :qualification-id="qualificationId" />
 </template>

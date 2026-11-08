@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { nextTick, ref } from 'vue';
 import * as Y from 'yjs';
-import { useYArray, useYArrayFiltered, useYMap, useYObject, useYStructure } from './useY';
+import { type MaybeMap, type Primitive, useYArray, useYArrayFiltered, useYMap, useYObject, useYStructure } from './useY';
 import type { YjsSyncOptions } from './useYPrimitives';
 
 function authoritativeProvider(): YjsSyncOptions['provider'] {
@@ -63,7 +63,7 @@ describe('useYArrayFiltered', () => {
 describe('useYArray', () => {
     it('hydrates primitive arrays from Yjs and writes local changes back', async () => {
         const doc = new Y.Doc();
-        const values = doc.getArray('values');
+        const values = doc.getArray<MaybeMap>('values');
         values.push(['remote']);
 
         const items = ref(['local']);
@@ -80,7 +80,7 @@ describe('useYArray', () => {
 
     it('seeds an empty authoritative primitive array', () => {
         const doc = new Y.Doc();
-        const values = doc.getArray('values');
+        const values = doc.getArray<MaybeMap>('values');
         const items = ref(['local', 'values']);
 
         useYArray(values, items, { provider: authoritativeProvider() });
@@ -90,7 +90,7 @@ describe('useYArray', () => {
 
     it('hydrates nested object arrays and syncs nested local changes', async () => {
         const doc = new Y.Doc();
-        const records = doc.getArray('records');
+        const records = doc.getArray<MaybeMap>('records');
         const record = new Y.Map<unknown>();
         record.set('name', 'remote');
         records.push([record]);
@@ -111,7 +111,7 @@ describe('useYArray', () => {
 describe('useYMap', () => {
     it('syncs only filtered keys in both directions', async () => {
         const doc = new Y.Doc();
-        const map = doc.getMap<unknown>('state');
+        const map = doc.getMap<Primitive>('state');
         map.set('name', 'remote');
         map.set('count', 4);
 

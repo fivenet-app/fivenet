@@ -21,8 +21,9 @@ definePageMeta({
 });
 
 const route = useRoute('documents-templates-id-edit');
+const templateId = computed(() => (typeof route.params.id === 'string' ? parseInt(route.params.id) : 0));
 </script>
 
 <template>
-    <Editor :template-id="parseInt(route.params.id)" />
+    <Editor :template-id="templateId" />
 </template>

@@ -7,7 +7,6 @@ import { pageToURL } from '~/components/wiki/helpers';
 import RefreshButton from '~/components/partials/RefreshButton.vue';
 import PageSearch from '~/components/wiki/PageSearch.vue';
 import { HELP_GUIDE_ACTION_EVENT, type HelpGuideActionDetail } from '~/composables/useHelpGuides';
-import { unsafeRoute } from '~/utils/route';
 
 useHead({
     title: 'common.wiki',
@@ -73,7 +72,7 @@ async function onHelpGuideAction(event: Event): Promise<void> {
     const wiki = pages.value?.find((page) => page.job === activeChar.value?.job) ?? pages.value?.[0];
     if (!wiki) return;
 
-    await router.push(unsafeRoute(pageToURL(wiki)));
+    await router.push(pageToURL(wiki));
 }
 
 onMounted(() => window.addEventListener(HELP_GUIDE_ACTION_EVENT, onHelpGuideAction));

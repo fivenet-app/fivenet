@@ -29,7 +29,8 @@ defineEmits<{
     (e: 'deleted'): void;
 }>();
 
-const roleId = useRoute('settings-roles-id').params.id;
+const route = useRoute('settings-roles-id');
+const roleId = computed(() => (typeof route.params.id === 'string' ? route.params.id : undefined));
 </script>
 
 <template>

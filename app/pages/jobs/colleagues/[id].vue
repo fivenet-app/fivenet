@@ -41,7 +41,7 @@ const notifications = useNotificationsStore();
 
 const route = useRoute('jobs-colleagues-id-info');
 
-const colleagueId = computed(() => parseInt(route.params?.id ?? '0'));
+const colleagueId = computed(() => (typeof route.params.id === 'string' ? parseInt(route.params.id) : 0));
 
 const jobsColleaguesClient = await getJobsColleaguesClient();
 

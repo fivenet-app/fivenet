@@ -21,8 +21,9 @@ definePageMeta({
 });
 
 const route = useRoute('documents-id');
+const documentId = computed(() => (typeof route.params.id === 'string' ? parseInt(route.params.id) : 0));
 </script>
 
 <template>
-    <View :document-id="parseInt(route.params.id)" />
+    <View :document-id="documentId" />
 </template>

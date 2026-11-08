@@ -49,6 +49,8 @@ const { notifyCopied } = useClipboardNotifications();
 const authStore = useAuthStore();
 const { impersonateJob } = authStore;
 
+const notifications = useNotificationsStore();
+
 const settingsSettingsClient = await getSettingsSettingsClient();
 
 const {

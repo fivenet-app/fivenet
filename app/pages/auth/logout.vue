@@ -27,7 +27,6 @@ onMounted(async () => {
                 if (route.query.redirect) {
                     const redirect = route.query.redirect as string;
                     if (redirect !== '/') {
-                        // @ts-expect-error 404 handler will handle wrong URLs..
                         await navigateTo(redirect);
                         return;
                     }

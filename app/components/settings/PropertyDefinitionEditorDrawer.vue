@@ -77,6 +77,8 @@ const editor = reactive<PropertyDefinition>({
     rendererConfig: undefined,
     statePolicy: undefined,
     reasonMode: PropertyReasonMode.REQUIRED,
+    placementOverridden: false,
+    placementLocked: false,
     emptyValueDisplay: PropertyEmptyValueDisplay.HIDE,
     valueConstraints: undefined,
 });

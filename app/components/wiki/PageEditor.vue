@@ -42,6 +42,15 @@ const { maxAccessEntries, maxContentLength } = useAppConfig();
 
 const route = useRoute<'wiki-job-id-slug-edit'>();
 
+function firstRouteParam(value: string | string[] | undefined): string | undefined {
+    return Array.isArray(value) ? value[0] : value;
+}
+
+function routeSegments(value: string | string[] | undefined): string[] {
+    if (Array.isArray(value)) return value;
+    return value === undefined ? [] : [value];
+}
+
 const logger = useLogger('📃 Wiki');
 
 const wikiClient = await getWikiWikiClient();
@@ -55,7 +64,7 @@ const {
 } = useAuthedLazyAsyncData(
     'userState',
     () => `wiki-page:${route.path}`,
-    ({ signal }) => getPage(parseInt(route.params.id), signal),
+    ({ signal }) => getPage(parseInt(firstRouteParam(route.params.id) ?? '0'), signal),
 );
 
 async function getPage(id: number, signal: AbortSignal): Promise<Page | undefined> {
@@ -66,7 +75,11 @@ async function getPage(id: number, signal: AbortSignal): Promise<Page | undefine
 
         await navigateTo({
             name: 'wiki-job-id-slug',
-            params: { job: route.params.job, id: route.params.id, slug: [route.params.slug] },
+            params: {
+                job: firstRouteParam(route.params.job) ?? '',
+                id: firstRouteParam(route.params.id) ?? '',
+                slug: routeSegments(route.params.slug),
+            },
         });
         return;
     }
@@ -137,7 +150,7 @@ const {
     'userState',
     () => `wiki-pages-id:${props.pageId}-editor`,
     async ({ signal }) => {
-        const job = route.params.job ?? activeChar.value?.job ?? '';
+        const job = firstRouteParam(route.params.job) ?? activeChar.value?.job ?? '';
         const response = await listWikiPages(
             {
                 pagination: {

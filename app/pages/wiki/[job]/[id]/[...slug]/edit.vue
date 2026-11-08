@@ -21,8 +21,9 @@ definePageMeta({
 });
 
 const route = useRoute('wiki-job-id-slug-edit');
+const pageId = computed(() => (typeof route.params.id === 'string' ? parseInt(route.params.id) : 0));
 </script>
 
 <template>
-    <PageEditor :page-id="parseInt(route.params.id)" />
+    <PageEditor :page-id="pageId" />
 </template>
