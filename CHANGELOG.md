@@ -2,6 +2,23 @@
 
 All notable changes to this project will be documented in this file.
 
+## [2026.11.1] - 2026-11-09
+
+### 🚀 Features
+
+- *(gen)* Add @grpc/grpc-js as optional dependency
+- *(properties)* Add atomic integer math mutations
+
+### 🐛 Bug Fixes
+
+- *(ui)* Lint issues
+- *(roles)* Support zero-based job grades
+- *(citizens)* Show 0 traffic points in list
+- *(wiki)* Page description limit issue
+- *(build)* Disable unnecessary canvas native build
+- *(build)* Deny unnecessary dependency build scripts
+- *(container)* Install package.json pnpm version automatically instead
+
 ## [2026.11.0] - 2026-11-07
 
 ### 🚀 Features
