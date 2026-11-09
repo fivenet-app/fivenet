@@ -45,7 +45,6 @@ async function getRoles(signal: AbortSignal): Promise<Role[]> {
 }
 
 const job = ref<Job | undefined>();
-watchOnce(roles, async () => (job.value = await getJobByName(activeChar.value!.job)));
 
 const schema = z.object({
     jobGrade: z.custom<JobGrade>().optional(),
@@ -56,6 +55,23 @@ type Schema = z.output<typeof schema>;
 const state = reactive<Schema>({
     jobGrade: undefined,
 });
+
+watch(
+    () => activeChar.value?.job,
+    async (jobName, _, onCleanup) => {
+        let cancelled = false;
+        onCleanup(() => (cancelled = true));
+
+        job.value = undefined;
+        state.jobGrade = undefined;
+
+        if (!jobName) return;
+
+        const nextJob = await getJobByName(jobName);
+        if (!cancelled) job.value = nextJob;
+    },
+    { immediate: true },
+);
 
 const availableJobGrades = computed(
     () => job.value?.grades.filter((g) => (roles.value?.findIndex((r) => r.grade === g.grade) ?? -1) === -1) ?? [],
