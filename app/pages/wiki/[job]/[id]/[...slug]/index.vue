@@ -113,7 +113,12 @@ const navItems = computed(() => pages.value?.map((p) => mapPageToNavItem(p)) ?? 
             <div data-tour="wiki-sidebar">
                 <DataErrorBlock v-if="pagesError" :error="pagesError" :retry="pagesRefresh" />
 
-                <UPageAside v-else :ui="{ root: 'px-0 lg:pe-3 lg:gap-2' }">
+                <UPageAside
+                    v-else
+                    :ui="{
+                        root: 'px-0 lg:top-0 lg:max-h-[calc(100dvh-var(--ui-header-height)-3rem-var(--page-content-bottom-offset))] lg:pe-3 lg:gap-2',
+                    }"
+                >
                     <ClientOnly>
                         <PageList :items="navItems" />
 

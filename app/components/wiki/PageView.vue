@@ -251,15 +251,22 @@ const scrollRef = useTemplateRef('scrollRef');
         </template>
 
         <template #body>
-            <UPage ref="scrollRef" :ui="{ left: 'lg:top-0', root: 'lg:gap-4' }">
+            <UPage ref="scrollRef" :ui="{ root: 'lg:gap-4' }">
                 <template #left>
                     <slot name="left" />
                 </template>
 
-                <UPage data-tour="wiki-content">
+                <UPage data-tour="wiki-content" :ui="{ root: 'lg:gap-4' }">
                     <UNavigationMenu data-tour="wiki-sidebar" class="mt-4 lg:hidden" :items="navItems" orientation="vertical" />
 
-                    <UBreadcrumb class="pt-4 lg:pt-0" :items="breadcrumbs" />
+                    <UBreadcrumb
+                        class="pt-4 lg:pt-0"
+                        :items="breadcrumbs"
+                        :ui="{
+                            list: 'flex flex-wrap items-center gap-x-1.5 gap-y-1',
+                            linkLabel: 'line-clamp-2 break-words whitespace-normal',
+                        }"
+                    />
 
                     <DataPendingBlock v-if="isRequestPending(status)" :message="$t('common.loading', [$t('common.page')])" />
                     <DataErrorBlock
@@ -306,7 +313,7 @@ const scrollRef = useTemplateRef('scrollRef');
                         <UPageHeader
                             v-if="page?.meta"
                             :title="!page.meta.title ? $t('common.untitled') : page.meta.title"
-                            :ui="{ root: 'py-4', wrapper: 'py-4', title: !page.meta.title ? 'italic' : '' }"
+                            :ui="{ root: 'py-4', wrapper: 'py-4', title: 'sm:text-5xl' + (!page.meta.title ? ' italic' : '') }"
                         >
                             <template #links>
                                 <RefreshButton :loading="isRequestPending(status)" icon-only @click="() => refresh()" />
@@ -500,7 +507,7 @@ const scrollRef = useTemplateRef('scrollRef');
                             class="lg:col-span-2"
                             :title="$t('common.toc')"
                             :links="tocLinks"
-                            :ui="{ root: 'top-0' }"
+                            :ui="{ root: 'top-0 lg:px-0 lg:pe-4', container: 'lg:py-4' }"
                         />
                     </template>
                 </UPage>
