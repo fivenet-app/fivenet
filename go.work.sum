@@ -1334,7 +1334,17 @@ github.com/galexrt/jet/v2 v2.0.0-20260617125839-18b39c5882d8 h1:gqjB4s1iT0cs6qq8
 github.com/galexrt/jet/v2 v2.0.0-20260617125839-18b39c5882d8/go.mod h1:+WUK1HdnzxYLpwYO24SjHGRSlD04+PFPG/GRMLiT24M=
 github.com/ghostiam/protogetter v0.3.20/go.mod h1:FjIu5Yfs6FT391m+Fjp3fbAYJ6rkL/J6ySpZBfnODuI=
 github.com/ghostiam/protogetter v1.0.1/go.mod h1:50Fh5yZfs6SFGrd1FlmT04NcguyEOxyjNK5zGD6/EvM=
+github.com/gin-contrib/cors v1.7.11 h1:x9saJz6JTX5ptFCxuxu3679Gva0VG5hEx2D/NQqUVJs=
+github.com/gin-contrib/cors v1.7.11/go.mod h1:rRuFhi164VfG88NyDi5ME/JHW8nCATRzV/VViLpvd6U=
+github.com/gin-contrib/pprof v1.5.8 h1:I8SJ+h9gbKdnytMSVTaG3HypvBU/L+ipWzd5fsRxdzA=
+github.com/gin-contrib/pprof v1.5.8/go.mod h1:ZfxrDdnTvx6RymksWtv8pVhZsfB181f8+kNSo9EbIk8=
+github.com/gin-contrib/sessions v1.1.4 h1:Sa7J/IezGn+u5BuKfvCwDPhk9wbYjaoqj1h4txFOV5c=
+github.com/gin-contrib/sessions v1.1.4/go.mod h1:ookhiYRLoBKVyGLB//uxOUUEm/5BW8K9c+9XElJ+Ffg=
 github.com/gin-contrib/sse v1.1.0/go.mod h1:hxRZ5gVpWMT7Z0B0gSNYqqsSCNIJMjzvm6fqCz9vjwM=
+github.com/gin-contrib/static v1.1.10 h1:r6B1iK8QkFRliJnjFExi4iUK8fMN9EIwBRFf2p03Z9E=
+github.com/gin-contrib/static v1.1.10/go.mod h1:YIUapWZAfxylRMrvYEEV+Q80XxIfD++3jT9L3n7akUo=
+github.com/gin-contrib/zap v1.1.11 h1:ux/Jlp+/crAaRttblGW/LuEQqU9v0m3xBxWeMvjbzOk=
+github.com/gin-contrib/zap v1.1.11/go.mod h1:AB0jRoTOkcNZRJdTYqRK7xEff67kHuRQ2wgJKlo013Q=
 github.com/gliderlabs/ssh v0.1.1/go.mod h1:U7qILu1NlMHj9FlMhZLlkCdDnU1DBEAqr0aevW3Awn0=
 github.com/globalsign/mgo v0.0.0-20181015135952-eeefdecb41b8/go.mod h1:xkRDCp4j0OGD1HRkm4kmhM+pmpv3AKq5SU7GMg4oO/Q=
 github.com/glycerine/go-unsnap-stream v0.0.0-20181221182339-f9677308dec2 h1:Ujru1hufTHVb++eG6OuNDKMxZnGIvF6o/u8q/8h2+I4=
