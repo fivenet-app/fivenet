@@ -1,4 +1,4 @@
-# syntax=docker/dockerfile:1.28-labs
+# syntax=docker/dockerfile:1.29-labs
 
 # Version helper, computed once for the whole image build.
 FROM docker.io/library/alpine:3.24.4 AS version
@@ -43,7 +43,7 @@ RUN apk add --no-cache git && \
     find . -type f ! -name '*.json' -delete
 
 # Frontend Build
-FROM docker.io/library/node:26.13.0-alpine3.24 AS frontendbuild
+FROM docker.io/library/node:26.13.1-alpine3.24 AS frontendbuild
 
 WORKDIR /app
 
@@ -60,7 +60,7 @@ RUN apk add --no-cache git python3 make gcc g++ pkgconfig && \
         COMMIT_REF="$version" pnpm generate
 
 # Backend Build
-FROM docker.io/library/golang:1.27.3 AS backendbuild
+FROM docker.io/library/golang:1.27.4 AS backendbuild
 
 WORKDIR /go/src/github.com/fivenet-app/fivenet/v2026/
 
