@@ -1334,17 +1334,7 @@ github.com/galexrt/jet/v2 v2.0.0-20260617125839-18b39c5882d8 h1:gqjB4s1iT0cs6qq8
 github.com/galexrt/jet/v2 v2.0.0-20260617125839-18b39c5882d8/go.mod h1:+WUK1HdnzxYLpwYO24SjHGRSlD04+PFPG/GRMLiT24M=
 github.com/ghostiam/protogetter v0.3.20/go.mod h1:FjIu5Yfs6FT391m+Fjp3fbAYJ6rkL/J6ySpZBfnODuI=
 github.com/ghostiam/protogetter v1.0.1/go.mod h1:50Fh5yZfs6SFGrd1FlmT04NcguyEOxyjNK5zGD6/EvM=
-github.com/gin-contrib/cors v1.7.11 h1:x9saJz6JTX5ptFCxuxu3679Gva0VG5hEx2D/NQqUVJs=
-github.com/gin-contrib/cors v1.7.11/go.mod h1:rRuFhi164VfG88NyDi5ME/JHW8nCATRzV/VViLpvd6U=
-github.com/gin-contrib/pprof v1.5.8 h1:I8SJ+h9gbKdnytMSVTaG3HypvBU/L+ipWzd5fsRxdzA=
-github.com/gin-contrib/pprof v1.5.8/go.mod h1:ZfxrDdnTvx6RymksWtv8pVhZsfB181f8+kNSo9EbIk8=
-github.com/gin-contrib/sessions v1.1.4 h1:Sa7J/IezGn+u5BuKfvCwDPhk9wbYjaoqj1h4txFOV5c=
-github.com/gin-contrib/sessions v1.1.4/go.mod h1:ookhiYRLoBKVyGLB//uxOUUEm/5BW8K9c+9XElJ+Ffg=
 github.com/gin-contrib/sse v1.1.0/go.mod h1:hxRZ5gVpWMT7Z0B0gSNYqqsSCNIJMjzvm6fqCz9vjwM=
-github.com/gin-contrib/static v1.1.10 h1:r6B1iK8QkFRliJnjFExi4iUK8fMN9EIwBRFf2p03Z9E=
-github.com/gin-contrib/static v1.1.10/go.mod h1:YIUapWZAfxylRMrvYEEV+Q80XxIfD++3jT9L3n7akUo=
-github.com/gin-contrib/zap v1.1.11 h1:ux/Jlp+/crAaRttblGW/LuEQqU9v0m3xBxWeMvjbzOk=
-github.com/gin-contrib/zap v1.1.11/go.mod h1:AB0jRoTOkcNZRJdTYqRK7xEff67kHuRQ2wgJKlo013Q=
 github.com/gliderlabs/ssh v0.1.1/go.mod h1:U7qILu1NlMHj9FlMhZLlkCdDnU1DBEAqr0aevW3Awn0=
 github.com/globalsign/mgo v0.0.0-20181015135952-eeefdecb41b8/go.mod h1:xkRDCp4j0OGD1HRkm4kmhM+pmpv3AKq5SU7GMg4oO/Q=
 github.com/glycerine/go-unsnap-stream v0.0.0-20181221182339-f9677308dec2 h1:Ujru1hufTHVb++eG6OuNDKMxZnGIvF6o/u8q/8h2+I4=
@@ -1478,6 +1468,7 @@ github.com/google/go-github v17.0.0+incompatible/go.mod h1:zLgOLi98H3fifZn+44m+u
 github.com/google/go-github/v39 v39.2.0/go.mod h1:C1s8C5aCC9L+JXIYpJM5GYytdX52vC1bLvHEF1IhBrE=
 github.com/google/go-github/v74 v74.0.0 h1:yZcddTUn8DPbj11GxnMrNiAnXH14gNs559AsUpNpPgM=
 github.com/google/go-github/v74 v74.0.0/go.mod h1:ubn/YdyftV80VPSI26nSJvaEsTOnsjrxG3o9kJhcyak=
+github.com/google/go-github/v86 v86.0.0/go.mod h1:zKv1l4SwDXNFMGByi2FWkq71KwSXqj/eQRZuqtmcot8=
 github.com/google/go-pkcs11 v0.2.1-0.20230907215043-c6f79328ddf9/go.mod h1:6eQoGcuNJpa7jnd5pMGdkSaQpNDYvPlXWMcjXXThLlY=
 github.com/google/go-pkcs11 v0.3.0/go.mod h1:6eQoGcuNJpa7jnd5pMGdkSaQpNDYvPlXWMcjXXThLlY=
 github.com/google/go-querystring v1.0.0/go.mod h1:odCYkC5MyYFN7vkCjXpyrEuKhc/BUO6wN/zVPAxq5ck=
@@ -2373,6 +2364,7 @@ golang.org/x/telemetry v0.0.0-20260708182218-49f421fb7959/go.mod h1:LV7u5Oco+Z/g
 golang.org/x/telemetry v0.0.0-20260811182544-a038080d80e5/go.mod h1:LVehoXe41cL5SCVQilsV7Gg6BNG+Js6P9PhSbYTIUkQ=
 golang.org/x/telemetry v0.0.0-20260908163034-4bcc4b2ee518/go.mod h1:i+ivNqjDnTF3WTElsdk5g9V5DTSBYgdNo7xTU9SDwYA=
 golang.org/x/telemetry v0.0.0-20260924152758-ed294f943157/go.mod h1:i+ivNqjDnTF3WTElsdk5g9V5DTSBYgdNo7xTU9SDwYA=
+golang.org/x/telemetry v0.0.0-20261009151841-97e8ea77aa2a/go.mod h1:i+ivNqjDnTF3WTElsdk5g9V5DTSBYgdNo7xTU9SDwYA=
 golang.org/x/term v0.1.0/go.mod h1:jbD1KX2456YbFQfuXm/mYQcufACuNUgVhRMnK/tPxf8=
 golang.org/x/term v0.5.0/go.mod h1:jMB1sMXY+tzblOD4FWmEbocvup2/aLOaQEp7JmGp78k=
 golang.org/x/term v0.7.0/go.mod h1:P32HKFT3hSsZrRxla30E9HqToFYAQPCMs/zFMBUFqPY=
