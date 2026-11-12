@@ -22,8 +22,8 @@ github.com/davecgh/go-spew v1.1.0/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSs
 github.com/davecgh/go-spew v1.1.1/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
 github.com/davecgh/go-spew v1.1.2-0.20180830191138-d8f796af33cc h1:U9qPSI2PIWSS1VwoXQT9A3Wy9MM3WgvqSxFWenqJduM=
 github.com/davecgh/go-spew v1.1.2-0.20180830191138-d8f796af33cc/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
-github.com/fivenet-app/fivenet/v2026 v2026.11.0 h1:qQat0BLd3syl4TgqeOPgw6e/lYPa8BlVvmd/tZ5h0S8=
-github.com/fivenet-app/fivenet/v2026 v2026.11.0/go.mod h1:APfDtlTs+LyyUAECpR1LQQtbvI0OafkGQqs6wqCUzck=
+github.com/fivenet-app/fivenet/v2026 v2026.11.1 h1:ck6dm3UML3UJuChw8V065Q/tI0OvteDVk0qngli2k4g=
+github.com/fivenet-app/fivenet/v2026 v2026.11.1/go.mod h1:odnh8+KgCXlgWhiZ38bNYaBUbl+3mRG8OkTRDqKwMBs=
 github.com/frankban/quicktest v1.14.6 h1:7Xjx+VpznH+oBnejlPUj8oUpdxnVs4f8XU8WnHkI4W8=
 github.com/frankban/quicktest v1.14.6/go.mod h1:4ptaffx2x8+WTWXmUCuVU6aPUX1/Mz7zb5vbUoiM6w0=
 github.com/fsnotify/fsnotify v1.10.1 h1:b0/UzAf9yR5rhf3RPm9gf3ehBPpf0oZKIjtpKrx59Ho=
