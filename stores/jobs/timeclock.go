@@ -99,8 +99,8 @@ func (s *Store) GetTimeclockWeeklyStats(
 		condition = condition.AND(tTimeClock.UserID.EQ(mysql.Int32(q.UserID)))
 	}
 
-	yearExpr := dbutils.YEAR(tTimeClock.Date)
-	weekExpr := dbutils.WEEK(tTimeClock.Date)
+	yearExpr := dbutils.ISOYEAR(tTimeClock.Date)
+	weekExpr := dbutils.ISOWEEK(tTimeClock.Date)
 
 	stmt := tTimeClock.
 		SELECT(
@@ -152,7 +152,10 @@ func (s *Store) GetTimeclockWeeklyStats(
 		}
 
 		slices.SortFunc(dest, func(a, b *jobstimeclock.TimeclockWeeklyStats) int {
-			return int(a.GetYear() - b.GetYear() + a.GetCalendarWeek() - b.GetCalendarWeek())
+			if a.GetYear() != b.GetYear() {
+				return int(a.GetYear() - b.GetYear())
+			}
+			return int(a.GetCalendarWeek() - b.GetCalendarWeek())
 		})
 
 		if dest[0].GetYear() == last.GetYear() && dest[0].GetCalendarWeek() > 1 {
@@ -163,10 +166,16 @@ func (s *Store) GetTimeclockWeeklyStats(
 				dest...)
 		}
 	} else {
-		year, week := time.Now().ISOWeek()
-		dest = append(dest,
+		now := time.Now()
+		year, week := now.ISOWeek()
+		nextYear, nextWeek := now.AddDate(0, 0, 7).ISOWeek()
+		dest = append(
+			dest,
 			&jobstimeclock.TimeclockWeeklyStats{Year: int32(year), CalendarWeek: int32(week)},
-			&jobstimeclock.TimeclockWeeklyStats{Year: int32(year), CalendarWeek: int32(week + 1)},
+			&jobstimeclock.TimeclockWeeklyStats{
+				Year:         int32(nextYear),
+				CalendarWeek: int32(nextWeek),
+			},
 		)
 	}
 
@@ -184,15 +193,6 @@ func (s *Store) CountInactiveEmployees(
 	jobExpr := mysql.String(q.Job)
 	cutoffDate := mysql.DateExp(mysql.CURRENT_DATE().SUB(mysql.INTERVAL(q.Days, mysql.DAY)))
 
-	anyTimeclockExists := mysql.EXISTS(
-		tTimeClock.
-			SELECT(mysql.RawString("1")).
-			FROM(tTimeClock).
-			WHERE(mysql.AND(
-				tTimeClock.Job.EQ(jobExpr),
-				tTimeClock.UserID.EQ(tUserJobs.UserID),
-			)),
-	)
 	recentTimeclockExists := mysql.EXISTS(
 		tTimeClock.
 			SELECT(mysql.RawString("1")).
@@ -211,7 +211,6 @@ func (s *Store) CountInactiveEmployees(
 			tColleagueProps.AbsenceBegin.LT_EQ(cutoffDate),
 			tColleagueProps.AbsenceEnd.LT_EQ(cutoffDate),
 		),
-		anyTimeclockExists,
 		mysql.NOT(recentTimeclockExists),
 	)
 	if len(q.UserIDs) > 0 {
@@ -267,7 +266,7 @@ func (s *Store) CountTimeclock(ctx context.Context, db qrm.DB, q TimeclockQuery)
 			if q.Date.GetEnd() != nil {
 				condition = condition.AND(
 					mysql.RawBool(
-						"YEARWEEK(`timeclock_entry`.`date`, 1) = YEARWEEK($date, 1)",
+						"YEARWEEK(`timeclock_entry`.`date`, 3) = YEARWEEK($date, 3)",
 						mysql.RawArgs{"$date": q.Date.GetEnd().AsTime()},
 					),
 				)
@@ -351,7 +350,7 @@ func (s *Store) ListTimeclock(
 			if q.Date.GetEnd() != nil {
 				condition = condition.AND(
 					mysql.RawBool(
-						"YEARWEEK(`timeclock_entry`.`date`, 1) = YEARWEEK($date, 1)",
+						"YEARWEEK(`timeclock_entry`.`date`, 3) = YEARWEEK($date, 3)",
 						mysql.RawArgs{"$date": q.Date.GetEnd().AsTime()},
 					),
 				)
@@ -588,15 +587,6 @@ func (s *Store) ListInactiveEmployees(
 	jobExpr := mysql.String(q.Job)
 	cutoffDate := mysql.DateExp(mysql.CURRENT_DATE().SUB(mysql.INTERVAL(q.Days, mysql.DAY)))
 
-	anyTimeclockExists := mysql.EXISTS(
-		tTimeClock.
-			SELECT(mysql.RawString("1")).
-			FROM(tTimeClock).
-			WHERE(mysql.AND(
-				tTimeClock.Job.EQ(jobExpr),
-				tTimeClock.UserID.EQ(tUserJobs.UserID),
-			)),
-	)
 	recentTimeclockExists := mysql.EXISTS(
 		tTimeClock.
 			SELECT(mysql.RawString("1")).
@@ -615,7 +605,6 @@ func (s *Store) ListInactiveEmployees(
 			tColleagueProps.AbsenceBegin.LT_EQ(cutoffDate),
 			tColleagueProps.AbsenceEnd.LT_EQ(cutoffDate),
 		),
-		anyTimeclockExists,
 		mysql.NOT(recentTimeclockExists),
 	)
 	if len(q.UserIDs) > 0 {

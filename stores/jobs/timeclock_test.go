@@ -39,13 +39,44 @@ func TestStoreListTimeclockDefaultOrderByUsesAggregatedColumns(t *testing.T) {
 	require.NoError(t, mock.ExpectationsWereMet())
 }
 
+func TestStoreGetTimeclockWeeklyStatsUsesISOWeeksAndSortsAcrossYears(t *testing.T) {
+	t.Parallel()
+
+	store, mock := newTestStore(t)
+
+	mock.ExpectQuery(`(?s)SELECT .*YEARWEEK\(timeclock_entry\.date, 3\) DIV 100.*WEEK\(timeclock_entry\.date, 3\).*`).
+		WithArgs("police", int64(10)).
+		WillReturnRows(sqlmock.NewRows([]string{
+			"timeclock_weekly_stats.year",
+			"timeclock_weekly_stats.calendar_week",
+			"timeclock_weekly_stats.sum",
+			"timeclock_weekly_stats.avg",
+			"timeclock_weekly_stats.max",
+		}).
+			AddRow(int32(2026), int32(1), float32(1), float32(1), float32(1)).
+			AddRow(int32(2025), int32(52), float32(1), float32(1), float32(1)))
+
+	stats, err := store.GetTimeclockWeeklyStats(
+		t.Context(),
+		store.db,
+		TimeclockQuery{Job: "police"},
+	)
+	require.NoError(t, err)
+	require.Len(t, stats, 2)
+	require.EqualValues(t, 2025, stats[0].GetYear())
+	require.EqualValues(t, 52, stats[0].GetCalendarWeek())
+	require.EqualValues(t, 2026, stats[1].GetYear())
+	require.EqualValues(t, 1, stats[1].GetCalendarWeek())
+	require.NoError(t, mock.ExpectationsWereMet())
+}
+
 func TestStoreCountInactiveEmployeesIgnoresUserPropsJoin(t *testing.T) {
 	t.Parallel()
 
 	store, mock := newTestStore(t)
 
-	mock.ExpectQuery(`(?s)SELECT COUNT\(fivenet_user_jobs\.user_id\).*FROM fivenet_user_jobs.*INNER JOIN fivenet_user AS colleague.*LEFT JOIN fivenet_job_colleague_props AS colleague_props.*WHERE .*fivenet_user_jobs\.job = \?.*EXISTS .*fivenet_job_timeclock.*NOT \(EXISTS .*fivenet_job_timeclock.*;`).
-		WithArgs("police", "police", "police", "police").
+	mock.ExpectQuery(`(?s)SELECT COUNT\(fivenet_user_jobs\.user_id\).*FROM fivenet_user_jobs.*INNER JOIN fivenet_user AS colleague.*LEFT JOIN fivenet_job_colleague_props AS colleague_props.*WHERE .*fivenet_user_jobs\.job = \?.*NOT \(EXISTS .*fivenet_job_timeclock.*;`).
+		WithArgs("police", "police", "police").
 		WillReturnRows(sqlmock.NewRows([]string{"data_count.total"}).AddRow(int64(3)))
 
 	got, err := store.CountInactiveEmployees(t.Context(), store.db, InactiveEmployeesQuery{
@@ -63,7 +94,7 @@ func TestStoreCountInactiveEmployeesFiltersUserIDs(t *testing.T) {
 	store, mock := newTestStore(t)
 
 	mock.ExpectQuery(`(?s)SELECT COUNT\(fivenet_user_jobs\.user_id\).*FROM fivenet_user_jobs.*fivenet_user_jobs\.user_id IN \(\?, \?\).*;`).
-		WithArgs("police", "police", "police", "police", int32(1), int32(2)).
+		WithArgs("police", "police", "police", int32(1), int32(2)).
 		WillReturnRows(sqlmock.NewRows([]string{"data_count.total"}).AddRow(int64(2)))
 
 	got, err := store.CountInactiveEmployees(t.Context(), store.db, InactiveEmployeesQuery{
@@ -81,8 +112,8 @@ func TestStoreListInactiveEmployeesUsesUserJobsBase(t *testing.T) {
 
 	store, mock := newTestStore(t)
 
-	mock.ExpectQuery(`(?s)SELECT .*FROM fivenet_user_jobs.*INNER JOIN fivenet_user AS colleague.*LEFT JOIN fivenet_job_colleague_props AS colleague_props.*WHERE .*fivenet_user_jobs\.job = \?.*EXISTS .*fivenet_job_timeclock.*NOT \(EXISTS .*fivenet_job_timeclock.*ORDER BY .*colleague\.job_grade ASC.*LIMIT \?.*;`).
-		WithArgs("police", "police", "police", "police", int64(20), int64(0)).
+	mock.ExpectQuery(`(?s)SELECT .*FROM fivenet_user_jobs.*INNER JOIN fivenet_user AS colleague.*LEFT JOIN fivenet_job_colleague_props AS colleague_props.*WHERE .*fivenet_user_jobs\.job = \?.*NOT \(EXISTS .*fivenet_job_timeclock.*ORDER BY .*colleague\.job_grade ASC.*LIMIT \?.*;`).
+		WithArgs("police", "police", "police", int64(20), int64(0)).
 		WillReturnRows(sqlmock.NewRows(nil))
 
 	_, err := store.ListInactiveEmployees(t.Context(), store.db, InactiveEmployeesQuery{
@@ -100,7 +131,7 @@ func TestStoreListInactiveEmployeesFiltersUserIDs(t *testing.T) {
 	store, mock := newTestStore(t)
 
 	mock.ExpectQuery(`(?s)SELECT .*FROM fivenet_user_jobs.*fivenet_user_jobs\.user_id IN \(\?, \?\).*ORDER BY .*colleague\.job_grade ASC.*LIMIT \?.*OFFSET \?.*;`).
-		WithArgs("police", "police", "police", "police", int32(1), int32(2), int64(20), int64(0)).
+		WithArgs("police", "police", "police", int32(1), int32(2), int64(20), int64(0)).
 		WillReturnRows(sqlmock.NewRows(nil))
 
 	_, err := store.ListInactiveEmployees(t.Context(), store.db, InactiveEmployeesQuery{

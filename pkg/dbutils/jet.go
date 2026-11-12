@@ -22,6 +22,24 @@ func WEEK(column mysql.Column) mysql.Expression {
 	)
 }
 
+// ISOYEAR returns the ISO 8601 calendar year for a date column.
+func ISOYEAR(column mysql.Column) mysql.Expression {
+	return mysql.CustomExpression(
+		mysql.Token("YEARWEEK("),
+		column,
+		mysql.Token(", 3) DIV 100"),
+	)
+}
+
+// ISOWEEK returns the ISO 8601 calendar week for a date column.
+func ISOWEEK(column mysql.Column) mysql.Expression {
+	return mysql.CustomExpression(
+		mysql.Token("WEEK("),
+		column,
+		mysql.Token(", 3)"),
+	)
+}
+
 // JSON_CONTAINS is a helper function to create a JSON_CONTAINS expression in go-jet.
 //
 //nolint:revive // Function name is all uppercase to be consistent with go-jet package.
