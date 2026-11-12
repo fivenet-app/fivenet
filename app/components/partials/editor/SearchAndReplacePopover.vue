@@ -151,8 +151,7 @@ const replaceAll = () => props.editor?.commands.replaceAll();
                         </UFieldGroup>
 
                         <div class="mt-1 block text-sm">
-                            <span class="font-semibold">{{ $t('common.result', 2) }}</span
-                            >:
+                            <span class="font-semibold">{{ $t('common.result', 2) }}</span>:
                             {{
                                 editor?.storage?.searchAndReplace?.results?.length > 0 &&
                                 (editor?.storage?.searchAndReplace?.resultIndex ?? -1) >= 0

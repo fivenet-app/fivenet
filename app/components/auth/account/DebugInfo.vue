@@ -176,8 +176,7 @@ function clearCollectedErrors(): void {
                         </div>
                     </template>
                     <div v-else>
-                        <code>{{ activeChar.job }}</code> ({{ $t('common.rank') }}: <code>{{ activeChar.jobGrade }}</code
-                        >)
+                        <code>{{ activeChar.job }}</code> ({{ $t('common.rank') }}: <code>{{ activeChar.jobGrade }}</code>)
                     </div>
                 </div>
 
