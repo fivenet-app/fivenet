@@ -15,7 +15,7 @@ require (
 	github.com/DeRuina/timberjack v1.4.10
 	github.com/HugoSmits86/nativewebp v1.3.0
 	github.com/XSAM/otelsql v0.44.0
-	github.com/adhocore/gronx v1.20.6
+	github.com/adhocore/gronx v1.20.7
 	github.com/alecthomas/kong v1.17.0
 	github.com/blevesearch/bleve/v2 v2.6.3
 	github.com/brianvoe/gofakeit/v7 v7.18.2
