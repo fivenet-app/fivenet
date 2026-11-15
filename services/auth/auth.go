@@ -58,7 +58,7 @@ func (s *Server) Login(
 
 	account, err := s.store.GetLoginAccountByUsername(ctx, req.GetUsername())
 	if err != nil {
-		auditAuthFailure(ctx, "login", "account_lookup_failed", map[string]string{
+		s.recordLoginFailure(ctx, "account_lookup_failed", map[string]string{
 			"username_present": boolString(req.GetUsername() != ""),
 		})
 		return nil, errswrap.NewError(err, errorsauth.ErrInvalidLogin)
@@ -66,7 +66,7 @@ func (s *Server) Login(
 
 	// No password set
 	if account.Password == nil {
-		auditAuthFailure(ctx, "login", "account_missing_password", map[string]string{
+		s.recordLoginFailure(ctx, "account_missing_password", map[string]string{
 			accountIDAuditFieldKey: strconv.FormatInt(account.ID, 10),
 		})
 		return nil, errorsauth.ErrInvalidLogin
@@ -74,7 +74,7 @@ func (s *Server) Login(
 
 	// Password check logic
 	if err := checkPassword(*account.Password, req.GetPassword()); err != nil {
-		auditAuthFailure(ctx, "login", "password_mismatch", map[string]string{
+		s.recordLoginFailure(ctx, "password_mismatch", map[string]string{
 			accountIDAuditFieldKey: strconv.FormatInt(account.ID, 10),
 		})
 		return nil, errswrap.NewError(err, errorsauth.ErrInvalidLogin)
@@ -92,7 +92,7 @@ func (s *Server) Login(
 	if s.appCfg.Get().GetAuth().GetLastCharLock() && account.LastChar != nil {
 		token, err := s.tm.FromAccClaims(accClaims)
 		if err != nil {
-			auditAuthFailure(ctx, "login", "account_token_creation_failed", map[string]string{
+			s.recordLoginFailure(ctx, "account_token_creation_failed", map[string]string{
 				accountIDAuditFieldKey: strconv.FormatInt(account.ID, 10),
 			})
 			return nil, errswrap.NewError(err, errorsauth.ErrGenericLogin)
@@ -115,12 +115,14 @@ func (s *Server) Login(
 	// If choose char response is null, set the basic login token
 	if chooseCharResp == nil {
 		if err := s.setCookies(ctx, accClaims); err != nil {
-			auditAuthFailure(ctx, "login", "session_cookie_set_failed", map[string]string{
+			s.recordLoginFailure(ctx, "session_cookie_set_failed", map[string]string{
 				accountIDAuditFieldKey: strconv.FormatInt(account.ID, 10),
 			})
 			return nil, errswrap.NewError(err, errorsauth.ErrGenericLogin)
 		}
 	}
+
+	s.getMetrics().loginAttempts.WithLabelValues("success", "none").Inc()
 
 	return &pbauth.LoginResponse{
 		Expires:   timestamp.New(accClaims.ExpiresAt.Time),
@@ -131,6 +133,11 @@ func (s *Server) Login(
 			accountProto.GetLicense(),
 		),
 	}, nil
+}
+
+func (s *Server) recordLoginFailure(ctx context.Context, reason string, attrs map[string]string) {
+	auditAuthFailure(ctx, "login", reason, attrs)
+	s.getMetrics().loginAttempts.WithLabelValues("failure", reason).Inc()
 }
 
 func (s *Server) Logout(

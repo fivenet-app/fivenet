@@ -9,6 +9,7 @@ import (
 	pbsync "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/sync"
 	"github.com/fivenet-app/fivenet/v2026/pkg/config"
 	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/auth"
+	"github.com/prometheus/client_golang/prometheus/testutil"
 	"github.com/stretchr/testify/require"
 )
 
@@ -26,6 +27,41 @@ func TestAuthFuncOverrideMarksAPITokenAuth(t *testing.T) {
 	kind, ok := auth.GetAuthKindFromContext(out)
 	require.True(t, ok)
 	require.Equal(t, auth.AuthKindAPIToken, kind)
+}
+
+func TestAuthFuncOverrideRecordsAPITokenAuthMetrics(t *testing.T) {
+	t.Parallel()
+
+	metrics := newSyncMetrics(nil)
+
+	server := &Server{
+		tokens:  []string{"sync-token"},
+		metrics: metrics,
+	}
+
+	_, err := server.AuthFuncOverride(t.Context(), "/services.sync.SyncService/SendData")
+	require.Error(t, err)
+
+	ctx := auth.SetTokenInGRPCContext(t.Context(), "invalid-token")
+	_, err = server.AuthFuncOverride(ctx, "/services.sync.SyncService/SendData")
+	require.Error(t, err)
+
+	ctx = auth.SetTokenInGRPCContext(t.Context(), "sync-token")
+	_, err = server.AuthFuncOverride(ctx, "/services.sync.SyncService/SendData")
+	require.NoError(t, err)
+
+	require.InDelta(
+		t,
+		float64(2),
+		testutil.ToFloat64(metrics.apiTokenAuthAttempts.WithLabelValues("failure")),
+		0,
+	)
+	require.InDelta(
+		t,
+		float64(1),
+		testutil.ToFloat64(metrics.apiTokenAuthAttempts.WithLabelValues("success")),
+		0,
+	)
 }
 
 func TestGetDBSyncStatusMirrorsNestedSyncState(t *testing.T) {

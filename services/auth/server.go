@@ -41,6 +41,7 @@ type Server struct {
 	ui       userinfo.UserInfoRetriever
 	appCfg   appconfig.IConfig
 	store    authstore.IStore
+	metrics  *authMetrics
 
 	domain            string
 	oauth2Providers   []*config.OAuth2Provider
@@ -74,6 +75,7 @@ func NewServer(p Params) *Server {
 		ui:       p.UI,
 		appCfg:   p.AppConfig,
 		store:    p.Store,
+		metrics:  getAuthMetrics(),
 
 		domain:            p.Config.HTTP.Sessions.Domain,
 		oauth2Providers:   p.Config.OAuth2.Providers,
@@ -82,6 +84,14 @@ func NewServer(p Params) *Server {
 		configAdminGroups: p.Config.Auth.ConfigAdminGroups,
 		configAdminUsers:  p.Config.Auth.ConfigAdminUsers,
 	}
+}
+
+func (s *Server) getMetrics() *authMetrics {
+	if s.metrics != nil {
+		return s.metrics
+	}
+
+	return getAuthMetrics()
 }
 
 func (s *Server) RegisterServer(srv *grpc.Server) {

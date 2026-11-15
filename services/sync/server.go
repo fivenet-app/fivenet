@@ -38,10 +38,11 @@ type Server struct {
 
 	logger *zap.Logger
 
-	js    *events.JSWrapper
-	auth  *auth.GRPCAuth
-	cfg   *config.Config
-	store syncstore.IStore
+	js      *events.JSWrapper
+	auth    *auth.GRPCAuth
+	cfg     *config.Config
+	store   syncstore.IStore
+	metrics *syncMetrics
 
 	tokens []string
 
@@ -100,6 +101,7 @@ func NewServer(p Params) Result {
 			p.Notifi,
 			p.UserInfoChanges,
 		),
+		metrics: getSyncMetrics(),
 
 		tokens: p.Config.Sync.APITokens,
 
@@ -120,6 +122,14 @@ func NewServer(p Params) Result {
 	}
 }
 
+func (s *Server) getMetrics() *syncMetrics {
+	if s.metrics != nil {
+		return s.metrics
+	}
+
+	return getSyncMetrics()
+}
+
 func (s *Server) RegisterServer(srv *grpc.Server) {
 	pbsync.RegisterSyncServiceServer(srv, s)
 }
@@ -135,12 +145,15 @@ func (s *Server) AuthFuncOverride(ctx context.Context, fullMethod string) (conte
 
 	t, err := auth.GetTokenFromAuthHeaderGRPCContext(ctx)
 	if err != nil {
+		s.getMetrics().apiTokenAuthAttempts.WithLabelValues("failure").Inc()
 		return nil, err
 	}
 
 	if !slices.Contains(s.tokens, t) {
+		s.getMetrics().apiTokenAuthAttempts.WithLabelValues("failure").Inc()
 		return nil, errorsgrpcauth.ErrInvalidToken
 	}
+	s.getMetrics().apiTokenAuthAttempts.WithLabelValues("success").Inc()
 
 	return auth.ContextWithAuthKind(ctx, auth.AuthKindAPIToken), nil
 }
