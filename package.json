@@ -87,8 +87,8 @@
         "@tiptap/y-tiptap": "3.3.0",
         "@unovis/ts": "1.8.1",
         "@unovis/vue": "1.8.1",
-        "@zxcvbn-ts/core": "4.2.0",
-        "better-sqlite3": "13.1.1",
+        "@zxcvbn-ts/core": "4.3.0",
+        "better-sqlite3": "13.2.0",
         "big.js": "7.0.1",
         "browser-headers": "0.4.1",
         "consola": "3.4.2",
@@ -137,7 +137,7 @@
         "@types/node": "26.6.6",
         "@types/pica": "9.0.5",
         "@types/zxcvbn": "4.4.5",
-        "@vue/test-utils": "2.5.1",
+        "@vue/test-utils": "2.6.0",
         "@vueuse/core": "15.0.0",
         "@vueuse/nuxt": "15.0.0",
         "@vueuse/router": "15.0.0",
@@ -175,5 +175,5 @@
         "@tiptap/pm": "3.34.0",
         "@tiptap/vue-3": "3.34.0"
     },
-    "packageManager": "pnpm@12.18.0"
+    "packageManager": "pnpm@12.21.0"
 }
