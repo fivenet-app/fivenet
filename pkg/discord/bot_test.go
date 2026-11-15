@@ -2,6 +2,7 @@ package discord
 
 import (
 	"context"
+	"database/sql/driver"
 	"regexp"
 	"testing"
 	"time"
@@ -17,7 +18,7 @@ import (
 	"go.uber.org/zap/zaptest"
 )
 
-func TestDebugUserUsesUserJobs(t *testing.T) {
+func TestDebugUserMapsAliasedUserJobColumns(t *testing.T) {
 	t.Parallel()
 
 	db, mock, err := sqlmock.New()
@@ -27,11 +28,17 @@ func TestDebugUserUsesUserJobs(t *testing.T) {
 		_ = db.Close()
 	})
 
-	// The legacy fivenet_user job is deliberately different. DebugUser must
-	// report the matching row from fivenet_user_jobs instead.
-	mock.ExpectQuery("SELECT .*fivenet_user_jobs.*").
+	// Keep the result column names aligned with the aliases declared by
+	// DebugUser. qrm uses these aliases to populate the anonymous result
+	// struct, so a table-qualified or otherwise changed alias would silently
+	// leave the debug output empty. The ORDER BY clause must prioritize this
+	// matching character over other linked characters without the guild job.
+	mock.ExpectQuery(
+		`(?s)SELECT .*AS "groups".*AS "enabled".*AS "user_id".*AS "job".*AS "job_grade".*fivenet_user_jobs.*ORDER BY.*fivenet_user_jobs\.job IS NOT NULL DESC.*fivenet_user\.id ASC.*LIMIT`,
+	).
+		WithArgs("ambulance", "discord", "456", 1).
 		WillReturnRows(sqlmock.NewRows([]string{"groups", "enabled", "user_id", "job", "job_grade"}).
-			AddRow(nil, true, int32(42), "police", int32(3)))
+			AddRow([]byte(`["fraktionsverwaltung"]`), true, int32(66616), "ambulance", int32(2)))
 
 	guildID := discord.GuildID(123)
 	userID := discord.UserID(456)
@@ -41,7 +48,7 @@ func TestDebugUserUsesUserJobs(t *testing.T) {
 		dc.Cabinet.MemberSet(guildID, &discord.Member{User: discord.User{ID: userID}}, false),
 	)
 
-	jobGuild := &Guild{job: "police", gid: guildID}
+	jobGuild := &Guild{job: "ambulance", gid: guildID}
 	b := &Bot{
 		db:           db,
 		dc:           dc,
@@ -55,10 +62,76 @@ func TestDebugUserUsesUserJobs(t *testing.T) {
 	require.NoError(t, err)
 	require.True(t, got.DiscordLinked)
 	require.True(t, got.AccountFound)
-	require.Equal(t, int32(42), got.UserID)
-	require.Equal(t, "police", got.Job)
-	require.Equal(t, int32(3), got.JobGrade)
+	require.Equal(t, int32(66616), got.UserID)
+	require.Equal(t, "ambulance", got.Job)
+	require.Equal(t, int32(2), got.JobGrade)
 	require.True(t, got.PartOfJob)
+	require.Equal(t, []string{"fraktionsverwaltung"}, got.Groups)
+}
+
+func TestDebugUserWithoutCharacterOrGuildJob(t *testing.T) {
+	t.Parallel()
+
+	tests := []struct {
+		name       string
+		row        []driver.Value
+		wantUserID int32
+	}{
+		{
+			name:       "without linked characters",
+			row:        []driver.Value{[]byte(`["fraktionsverwaltung"]`), true, nil, nil, nil},
+			wantUserID: 0,
+		},
+		{
+			name:       "with character that has no guild job",
+			row:        []driver.Value{[]byte(`["fraktionsverwaltung"]`), true, int32(43201), nil, nil},
+			wantUserID: 43201,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
+			db, mock, err := sqlmock.New()
+			require.NoError(t, err)
+			t.Cleanup(func() {
+				require.NoError(t, mock.ExpectationsWereMet())
+				_ = db.Close()
+			})
+
+			mock.ExpectQuery(
+				`(?s)SELECT .*fivenet_user_jobs.*ORDER BY.*fivenet_user_jobs\.job IS NOT NULL DESC.*fivenet_user\.id ASC.*LIMIT`,
+			).
+				WithArgs("ambulance", "discord", "456", 1).
+				WillReturnRows(sqlmock.NewRows([]string{"groups", "enabled", "user_id", "job", "job_grade"}).
+					AddRow(tt.row...))
+
+			guildID := discord.GuildID(123)
+			userID := discord.UserID(456)
+			dc := state.NewWithIntents("", gateway.IntentGuildMembers|gateway.IntentGuilds)
+			require.NoError(
+				t,
+				dc.Cabinet.MemberSet(guildID, &discord.Member{User: discord.User{ID: userID}}, false),
+			)
+			b := &Bot{
+				db:           db,
+				dc:           dc,
+				dcCfg:        &config.Discord{},
+				logger:       zaptest.NewLogger(t),
+				activeGuilds: xsync.NewMap[discord.GuildID, *Guild](),
+			}
+			b.activeGuilds.Store(guildID, &Guild{job: "ambulance", gid: guildID})
+
+			got, err := b.DebugUser(t.Context(), guildID, userID)
+			require.NoError(t, err)
+			require.True(t, got.AccountFound)
+			require.Equal(t, tt.wantUserID, got.UserID)
+			require.Empty(t, got.Job)
+			require.Zero(t, got.JobGrade)
+			require.False(t, got.PartOfJob)
+		})
+	}
 }
 
 func TestGetJobGuildsFromDB(t *testing.T) {

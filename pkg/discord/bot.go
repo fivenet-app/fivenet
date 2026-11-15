@@ -663,6 +663,10 @@ func (b *Bot) DebugUser(
 				mysql.String(strconv.FormatUint(uint64(memberID), 10)),
 			),
 		)).
+		// A linked account may own several characters. Prefer the character that
+		// belongs to this guild's job so the diagnostic reflects the same
+		// account-wide NotSameJob decision that group sync makes.
+		ORDER_BY(tUserJobs.Job.IS_NOT_NULL().DESC(), tUsers.ID.ASC()).
 		LIMIT(1)
 	if err := stmt.QueryContext(ctx, b.db, &row); err != nil {
 		if errors.Is(err, qrm.ErrNoRows) {
