@@ -18,7 +18,7 @@ require (
 	github.com/adhocore/gronx v1.20.7
 	github.com/alecthomas/kong v1.17.0
 	github.com/blevesearch/bleve/v2 v2.6.3
-	github.com/brianvoe/gofakeit/v7 v7.18.3
+	github.com/brianvoe/gofakeit/v7 v7.18.4
 	github.com/cespare/xxhash/v2 v2.3.0
 	github.com/coder/websocket v1.8.15
 	github.com/creasty/defaults v1.11.0
