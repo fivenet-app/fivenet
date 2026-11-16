@@ -83,8 +83,14 @@ func TestDebugUserWithoutCharacterOrGuildJob(t *testing.T) {
 			wantUserID: 0,
 		},
 		{
-			name:       "with character that has no guild job",
-			row:        []driver.Value{[]byte(`["fraktionsverwaltung"]`), true, int32(43201), nil, nil},
+			name: "with character that has no guild job",
+			row: []driver.Value{
+				[]byte(`["fraktionsverwaltung"]`),
+				true,
+				int32(43201),
+				nil,
+				nil,
+			},
 			wantUserID: 43201,
 		},
 	}
@@ -112,7 +118,11 @@ func TestDebugUserWithoutCharacterOrGuildJob(t *testing.T) {
 			dc := state.NewWithIntents("", gateway.IntentGuildMembers|gateway.IntentGuilds)
 			require.NoError(
 				t,
-				dc.Cabinet.MemberSet(guildID, &discord.Member{User: discord.User{ID: userID}}, false),
+				dc.Cabinet.MemberSet(
+					guildID,
+					&discord.Member{User: discord.User{ID: userID}},
+					false,
+				),
 			)
 			b := &Bot{
 				db:           db,

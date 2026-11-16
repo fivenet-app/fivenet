@@ -471,6 +471,123 @@ func (b0 UpdateJobLimitsResponse_builder) Build() *UpdateJobLimitsResponse {
 	return m0
 }
 
+// RenameJob moves all FiveNet references from source_job to target_job. The
+// target may already exist; in that case its conflicting configuration wins
+// and source-only configuration is merged into it.
+type RenameJobRequest struct {
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
+	SourceJob     string                 `protobuf:"bytes,1,opt,name=source_job,json=sourceJob,proto3" json:"source_job,omitempty"`
+	TargetJob     string                 `protobuf:"bytes,2,opt,name=target_job,json=targetJob,proto3" json:"target_job,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *RenameJobRequest) Reset() {
+	*x = RenameJobRequest{}
+	mi := &file_services_settings_system_proto_msgTypes[6]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *RenameJobRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*RenameJobRequest) ProtoMessage() {}
+
+func (x *RenameJobRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_services_settings_system_proto_msgTypes[6]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+func (x *RenameJobRequest) GetSourceJob() string {
+	if x != nil {
+		return x.SourceJob
+	}
+	return ""
+}
+
+func (x *RenameJobRequest) GetTargetJob() string {
+	if x != nil {
+		return x.TargetJob
+	}
+	return ""
+}
+
+func (x *RenameJobRequest) SetSourceJob(v string) {
+	x.SourceJob = v
+}
+
+func (x *RenameJobRequest) SetTargetJob(v string) {
+	x.TargetJob = v
+}
+
+type RenameJobRequest_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	SourceJob string
+	TargetJob string
+}
+
+func (b0 RenameJobRequest_builder) Build() *RenameJobRequest {
+	m0 := &RenameJobRequest{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.SourceJob = b.SourceJob
+	x.TargetJob = b.TargetJob
+	return m0
+}
+
+type RenameJobResponse struct {
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *RenameJobResponse) Reset() {
+	*x = RenameJobResponse{}
+	mi := &file_services_settings_system_proto_msgTypes[7]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *RenameJobResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*RenameJobResponse) ProtoMessage() {}
+
+func (x *RenameJobResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_services_settings_system_proto_msgTypes[7]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+type RenameJobResponse_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+}
+
+func (b0 RenameJobResponse_builder) Build() *RenameJobResponse {
+	m0 := &RenameJobResponse{}
+	b, x := &b0, m0
+	_, _ = b, x
+	return m0
+}
+
 type DeleteFactionRequest struct {
 	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	Job           string                 `protobuf:"bytes,1,opt,name=job,proto3" json:"job,omitempty"`
@@ -480,7 +597,7 @@ type DeleteFactionRequest struct {
 
 func (x *DeleteFactionRequest) Reset() {
 	*x = DeleteFactionRequest{}
-	mi := &file_services_settings_system_proto_msgTypes[6]
+	mi := &file_services_settings_system_proto_msgTypes[8]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -492,7 +609,7 @@ func (x *DeleteFactionRequest) String() string {
 func (*DeleteFactionRequest) ProtoMessage() {}
 
 func (x *DeleteFactionRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_services_settings_system_proto_msgTypes[6]
+	mi := &file_services_settings_system_proto_msgTypes[8]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -536,7 +653,7 @@ type DeleteFactionResponse struct {
 
 func (x *DeleteFactionResponse) Reset() {
 	*x = DeleteFactionResponse{}
-	mi := &file_services_settings_system_proto_msgTypes[7]
+	mi := &file_services_settings_system_proto_msgTypes[9]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -548,7 +665,7 @@ func (x *DeleteFactionResponse) String() string {
 func (*DeleteFactionResponse) ProtoMessage() {}
 
 func (x *DeleteFactionResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_services_settings_system_proto_msgTypes[7]
+	mi := &file_services_settings_system_proto_msgTypes[9]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -579,7 +696,7 @@ type GetStatusRequest struct {
 
 func (x *GetStatusRequest) Reset() {
 	*x = GetStatusRequest{}
-	mi := &file_services_settings_system_proto_msgTypes[8]
+	mi := &file_services_settings_system_proto_msgTypes[10]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -591,7 +708,7 @@ func (x *GetStatusRequest) String() string {
 func (*GetStatusRequest) ProtoMessage() {}
 
 func (x *GetStatusRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_services_settings_system_proto_msgTypes[8]
+	mi := &file_services_settings_system_proto_msgTypes[10]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -623,7 +740,7 @@ type GetStatusResponse struct {
 
 func (x *GetStatusResponse) Reset() {
 	*x = GetStatusResponse{}
-	mi := &file_services_settings_system_proto_msgTypes[9]
+	mi := &file_services_settings_system_proto_msgTypes[11]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -635,7 +752,7 @@ func (x *GetStatusResponse) String() string {
 func (*GetStatusResponse) ProtoMessage() {}
 
 func (x *GetStatusResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_services_settings_system_proto_msgTypes[9]
+	mi := &file_services_settings_system_proto_msgTypes[11]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -692,7 +809,7 @@ type TriggerUserSyncRequest struct {
 
 func (x *TriggerUserSyncRequest) Reset() {
 	*x = TriggerUserSyncRequest{}
-	mi := &file_services_settings_system_proto_msgTypes[10]
+	mi := &file_services_settings_system_proto_msgTypes[12]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -704,7 +821,7 @@ func (x *TriggerUserSyncRequest) String() string {
 func (*TriggerUserSyncRequest) ProtoMessage() {}
 
 func (x *TriggerUserSyncRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_services_settings_system_proto_msgTypes[10]
+	mi := &file_services_settings_system_proto_msgTypes[12]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -761,7 +878,7 @@ type TriggerUserSyncResponse struct {
 
 func (x *TriggerUserSyncResponse) Reset() {
 	*x = TriggerUserSyncResponse{}
-	mi := &file_services_settings_system_proto_msgTypes[11]
+	mi := &file_services_settings_system_proto_msgTypes[13]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -773,7 +890,7 @@ func (x *TriggerUserSyncResponse) String() string {
 func (*TriggerUserSyncResponse) ProtoMessage() {}
 
 func (x *TriggerUserSyncResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_services_settings_system_proto_msgTypes[11]
+	mi := &file_services_settings_system_proto_msgTypes[13]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -825,7 +942,13 @@ const file_services_settings_system_proto_rawDesc = "" +
 	"\x05attrs\x18\x03 \x01(\v2\x1f.resources.settings.AttrsUpdateH\x01R\x05attrs\x88\x01\x01B\b\n" +
 	"\x06_permsB\b\n" +
 	"\x06_attrs\"\x19\n" +
-	"\x17UpdateJobLimitsResponse\"(\n" +
+	"\x17UpdateJobLimitsResponse\"P\n" +
+	"\x10RenameJobRequest\x12\x1d\n" +
+	"\n" +
+	"source_job\x18\x01 \x01(\tR\tsourceJob\x12\x1d\n" +
+	"\n" +
+	"target_job\x18\x02 \x01(\tR\ttargetJob\"\x13\n" +
+	"\x11RenameJobResponse\"(\n" +
 	"\x14DeleteFactionRequest\x12\x10\n" +
 	"\x03job\x18\x01 \x01(\tR\x03job\"\x17\n" +
 	"\x15DeleteFactionResponse\"\x12\n" +
@@ -835,16 +958,17 @@ const file_services_settings_system_proto_rawDesc = "" +
 	"\x16TriggerUserSyncRequest\x12\x17\n" +
 	"\auser_id\x18\x01 \x03(\x05R\x06userId\x12 \n" +
 	"\videntifiers\x18\x02 \x03(\tR\videntifiers\"\x19\n" +
-	"\x17TriggerUserSyncResponse2\xe3\x05\n" +
+	"\x17TriggerUserSyncResponse2\xd0\x06\n" +
 	"\rSystemService\x12k\n" +
 	"\tGetStatus\x12#.services.settings.GetStatusRequest\x1a$.services.settings.GetStatusResponse\"\x13\xd2\xf3\x18\x0f\b\x01\"\vConfigAdmin\x12\x80\x01\n" +
 	"\x11GetAllPermissions\x12+.services.settings.GetAllPermissionsRequest\x1a,.services.settings.GetAllPermissionsResponse\"\x10\xd2\xf3\x18\f\b\x01\"\bJobAdmin\x12q\n" +
 	"\fGetJobLimits\x12&.services.settings.GetJobLimitsRequest\x1a'.services.settings.GetJobLimitsResponse\"\x10\xd2\xf3\x18\f\b\x01\"\bJobAdmin\x12z\n" +
-	"\x0fUpdateJobLimits\x12).services.settings.UpdateJobLimitsRequest\x1a*.services.settings.UpdateJobLimitsResponse\"\x10\xd2\xf3\x18\f\b\x01\"\bJobAdmin\x12t\n" +
+	"\x0fUpdateJobLimits\x12).services.settings.UpdateJobLimitsRequest\x1a*.services.settings.UpdateJobLimitsResponse\"\x10\xd2\xf3\x18\f\b\x01\"\bJobAdmin\x12k\n" +
+	"\tRenameJob\x12#.services.settings.RenameJobRequest\x1a$.services.settings.RenameJobResponse\"\x13\xd2\xf3\x18\x0f\b\x01\"\vConfigAdmin\x12t\n" +
 	"\rDeleteFaction\x12'.services.settings.DeleteFactionRequest\x1a(.services.settings.DeleteFactionResponse\"\x10\xd2\xf3\x18\f\b\x01\"\bJobAdmin\x12}\n" +
 	"\x0fTriggerUserSync\x12).services.settings.TriggerUserSyncRequest\x1a*.services.settings.TriggerUserSyncResponse\"\x13\xd2\xf3\x18\x0f\b\x01\"\vConfigAdminBNZLgithub.com/fivenet-app/fivenet/v2026/gen/go/proto/services/settings;settingsb\x06proto3"
 
-var file_services_settings_system_proto_msgTypes = make([]protoimpl.MessageInfo, 12)
+var file_services_settings_system_proto_msgTypes = make([]protoimpl.MessageInfo, 14)
 var file_services_settings_system_proto_goTypes = []any{
 	(*GetAllPermissionsRequest)(nil),  // 0: services.settings.GetAllPermissionsRequest
 	(*GetAllPermissionsResponse)(nil), // 1: services.settings.GetAllPermissionsResponse
@@ -852,40 +976,44 @@ var file_services_settings_system_proto_goTypes = []any{
 	(*GetJobLimitsResponse)(nil),      // 3: services.settings.GetJobLimitsResponse
 	(*UpdateJobLimitsRequest)(nil),    // 4: services.settings.UpdateJobLimitsRequest
 	(*UpdateJobLimitsResponse)(nil),   // 5: services.settings.UpdateJobLimitsResponse
-	(*DeleteFactionRequest)(nil),      // 6: services.settings.DeleteFactionRequest
-	(*DeleteFactionResponse)(nil),     // 7: services.settings.DeleteFactionResponse
-	(*GetStatusRequest)(nil),          // 8: services.settings.GetStatusRequest
-	(*GetStatusResponse)(nil),         // 9: services.settings.GetStatusResponse
-	(*TriggerUserSyncRequest)(nil),    // 10: services.settings.TriggerUserSyncRequest
-	(*TriggerUserSyncResponse)(nil),   // 11: services.settings.TriggerUserSyncResponse
-	(*permissions.Permission)(nil),    // 12: resources.permissions.permissions.Permission
-	(*attributes.RoleAttribute)(nil),  // 13: resources.permissions.attributes.RoleAttribute
-	(*settings.PermsUpdate)(nil),      // 14: resources.settings.PermsUpdate
-	(*settings.AttrsUpdate)(nil),      // 15: resources.settings.AttrsUpdate
-	(*settings.SystemStatus)(nil),     // 16: resources.settings.SystemStatus
+	(*RenameJobRequest)(nil),          // 6: services.settings.RenameJobRequest
+	(*RenameJobResponse)(nil),         // 7: services.settings.RenameJobResponse
+	(*DeleteFactionRequest)(nil),      // 8: services.settings.DeleteFactionRequest
+	(*DeleteFactionResponse)(nil),     // 9: services.settings.DeleteFactionResponse
+	(*GetStatusRequest)(nil),          // 10: services.settings.GetStatusRequest
+	(*GetStatusResponse)(nil),         // 11: services.settings.GetStatusResponse
+	(*TriggerUserSyncRequest)(nil),    // 12: services.settings.TriggerUserSyncRequest
+	(*TriggerUserSyncResponse)(nil),   // 13: services.settings.TriggerUserSyncResponse
+	(*permissions.Permission)(nil),    // 14: resources.permissions.permissions.Permission
+	(*attributes.RoleAttribute)(nil),  // 15: resources.permissions.attributes.RoleAttribute
+	(*settings.PermsUpdate)(nil),      // 16: resources.settings.PermsUpdate
+	(*settings.AttrsUpdate)(nil),      // 17: resources.settings.AttrsUpdate
+	(*settings.SystemStatus)(nil),     // 18: resources.settings.SystemStatus
 }
 var file_services_settings_system_proto_depIdxs = []int32{
-	12, // 0: services.settings.GetAllPermissionsResponse.permissions:type_name -> resources.permissions.permissions.Permission
-	13, // 1: services.settings.GetAllPermissionsResponse.attributes:type_name -> resources.permissions.attributes.RoleAttribute
-	12, // 2: services.settings.GetJobLimitsResponse.permissions:type_name -> resources.permissions.permissions.Permission
-	13, // 3: services.settings.GetJobLimitsResponse.attributes:type_name -> resources.permissions.attributes.RoleAttribute
-	14, // 4: services.settings.UpdateJobLimitsRequest.perms:type_name -> resources.settings.PermsUpdate
-	15, // 5: services.settings.UpdateJobLimitsRequest.attrs:type_name -> resources.settings.AttrsUpdate
-	16, // 6: services.settings.GetStatusResponse.status:type_name -> resources.settings.SystemStatus
-	8,  // 7: services.settings.SystemService.GetStatus:input_type -> services.settings.GetStatusRequest
+	14, // 0: services.settings.GetAllPermissionsResponse.permissions:type_name -> resources.permissions.permissions.Permission
+	15, // 1: services.settings.GetAllPermissionsResponse.attributes:type_name -> resources.permissions.attributes.RoleAttribute
+	14, // 2: services.settings.GetJobLimitsResponse.permissions:type_name -> resources.permissions.permissions.Permission
+	15, // 3: services.settings.GetJobLimitsResponse.attributes:type_name -> resources.permissions.attributes.RoleAttribute
+	16, // 4: services.settings.UpdateJobLimitsRequest.perms:type_name -> resources.settings.PermsUpdate
+	17, // 5: services.settings.UpdateJobLimitsRequest.attrs:type_name -> resources.settings.AttrsUpdate
+	18, // 6: services.settings.GetStatusResponse.status:type_name -> resources.settings.SystemStatus
+	10, // 7: services.settings.SystemService.GetStatus:input_type -> services.settings.GetStatusRequest
 	0,  // 8: services.settings.SystemService.GetAllPermissions:input_type -> services.settings.GetAllPermissionsRequest
 	2,  // 9: services.settings.SystemService.GetJobLimits:input_type -> services.settings.GetJobLimitsRequest
 	4,  // 10: services.settings.SystemService.UpdateJobLimits:input_type -> services.settings.UpdateJobLimitsRequest
-	6,  // 11: services.settings.SystemService.DeleteFaction:input_type -> services.settings.DeleteFactionRequest
-	10, // 12: services.settings.SystemService.TriggerUserSync:input_type -> services.settings.TriggerUserSyncRequest
-	9,  // 13: services.settings.SystemService.GetStatus:output_type -> services.settings.GetStatusResponse
-	1,  // 14: services.settings.SystemService.GetAllPermissions:output_type -> services.settings.GetAllPermissionsResponse
-	3,  // 15: services.settings.SystemService.GetJobLimits:output_type -> services.settings.GetJobLimitsResponse
-	5,  // 16: services.settings.SystemService.UpdateJobLimits:output_type -> services.settings.UpdateJobLimitsResponse
-	7,  // 17: services.settings.SystemService.DeleteFaction:output_type -> services.settings.DeleteFactionResponse
-	11, // 18: services.settings.SystemService.TriggerUserSync:output_type -> services.settings.TriggerUserSyncResponse
-	13, // [13:19] is the sub-list for method output_type
-	7,  // [7:13] is the sub-list for method input_type
+	6,  // 11: services.settings.SystemService.RenameJob:input_type -> services.settings.RenameJobRequest
+	8,  // 12: services.settings.SystemService.DeleteFaction:input_type -> services.settings.DeleteFactionRequest
+	12, // 13: services.settings.SystemService.TriggerUserSync:input_type -> services.settings.TriggerUserSyncRequest
+	11, // 14: services.settings.SystemService.GetStatus:output_type -> services.settings.GetStatusResponse
+	1,  // 15: services.settings.SystemService.GetAllPermissions:output_type -> services.settings.GetAllPermissionsResponse
+	3,  // 16: services.settings.SystemService.GetJobLimits:output_type -> services.settings.GetJobLimitsResponse
+	5,  // 17: services.settings.SystemService.UpdateJobLimits:output_type -> services.settings.UpdateJobLimitsResponse
+	7,  // 18: services.settings.SystemService.RenameJob:output_type -> services.settings.RenameJobResponse
+	9,  // 19: services.settings.SystemService.DeleteFaction:output_type -> services.settings.DeleteFactionResponse
+	13, // 20: services.settings.SystemService.TriggerUserSync:output_type -> services.settings.TriggerUserSyncResponse
+	14, // [14:21] is the sub-list for method output_type
+	7,  // [7:14] is the sub-list for method input_type
 	7,  // [7:7] is the sub-list for extension type_name
 	7,  // [7:7] is the sub-list for extension extendee
 	0,  // [0:7] is the sub-list for field type_name
@@ -904,7 +1032,7 @@ func file_services_settings_system_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_services_settings_system_proto_rawDesc), len(file_services_settings_system_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   12,
+			NumMessages:   14,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

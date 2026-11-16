@@ -23,6 +23,7 @@ const (
 	SystemService_GetAllPermissions_FullMethodName = "/services.settings.SystemService/GetAllPermissions"
 	SystemService_GetJobLimits_FullMethodName      = "/services.settings.SystemService/GetJobLimits"
 	SystemService_UpdateJobLimits_FullMethodName   = "/services.settings.SystemService/UpdateJobLimits"
+	SystemService_RenameJob_FullMethodName         = "/services.settings.SystemService/RenameJob"
 	SystemService_DeleteFaction_FullMethodName     = "/services.settings.SystemService/DeleteFaction"
 	SystemService_TriggerUserSync_FullMethodName   = "/services.settings.SystemService/TriggerUserSync"
 )
@@ -35,6 +36,7 @@ type SystemServiceClient interface {
 	GetAllPermissions(ctx context.Context, in *GetAllPermissionsRequest, opts ...grpc.CallOption) (*GetAllPermissionsResponse, error)
 	GetJobLimits(ctx context.Context, in *GetJobLimitsRequest, opts ...grpc.CallOption) (*GetJobLimitsResponse, error)
 	UpdateJobLimits(ctx context.Context, in *UpdateJobLimitsRequest, opts ...grpc.CallOption) (*UpdateJobLimitsResponse, error)
+	RenameJob(ctx context.Context, in *RenameJobRequest, opts ...grpc.CallOption) (*RenameJobResponse, error)
 	DeleteFaction(ctx context.Context, in *DeleteFactionRequest, opts ...grpc.CallOption) (*DeleteFactionResponse, error)
 	TriggerUserSync(ctx context.Context, in *TriggerUserSyncRequest, opts ...grpc.CallOption) (*TriggerUserSyncResponse, error)
 }
@@ -87,6 +89,16 @@ func (c *systemServiceClient) UpdateJobLimits(ctx context.Context, in *UpdateJob
 	return out, nil
 }
 
+func (c *systemServiceClient) RenameJob(ctx context.Context, in *RenameJobRequest, opts ...grpc.CallOption) (*RenameJobResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(RenameJobResponse)
+	err := c.cc.Invoke(ctx, SystemService_RenameJob_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *systemServiceClient) DeleteFaction(ctx context.Context, in *DeleteFactionRequest, opts ...grpc.CallOption) (*DeleteFactionResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(DeleteFactionResponse)
@@ -115,6 +127,7 @@ type SystemServiceServer interface {
 	GetAllPermissions(context.Context, *GetAllPermissionsRequest) (*GetAllPermissionsResponse, error)
 	GetJobLimits(context.Context, *GetJobLimitsRequest) (*GetJobLimitsResponse, error)
 	UpdateJobLimits(context.Context, *UpdateJobLimitsRequest) (*UpdateJobLimitsResponse, error)
+	RenameJob(context.Context, *RenameJobRequest) (*RenameJobResponse, error)
 	DeleteFaction(context.Context, *DeleteFactionRequest) (*DeleteFactionResponse, error)
 	TriggerUserSync(context.Context, *TriggerUserSyncRequest) (*TriggerUserSyncResponse, error)
 	mustEmbedUnimplementedSystemServiceServer()
@@ -138,6 +151,9 @@ func (UnimplementedSystemServiceServer) GetJobLimits(context.Context, *GetJobLim
 }
 func (UnimplementedSystemServiceServer) UpdateJobLimits(context.Context, *UpdateJobLimitsRequest) (*UpdateJobLimitsResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UpdateJobLimits not implemented")
+}
+func (UnimplementedSystemServiceServer) RenameJob(context.Context, *RenameJobRequest) (*RenameJobResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method RenameJob not implemented")
 }
 func (UnimplementedSystemServiceServer) DeleteFaction(context.Context, *DeleteFactionRequest) (*DeleteFactionResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DeleteFaction not implemented")
@@ -238,6 +254,24 @@ func _SystemService_UpdateJobLimits_Handler(srv interface{}, ctx context.Context
 	return interceptor(ctx, in, info, handler)
 }
 
+func _SystemService_RenameJob_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(RenameJobRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(SystemServiceServer).RenameJob(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: SystemService_RenameJob_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(SystemServiceServer).RenameJob(ctx, req.(*RenameJobRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _SystemService_DeleteFaction_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(DeleteFactionRequest)
 	if err := dec(in); err != nil {
@@ -296,6 +330,10 @@ var SystemService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "UpdateJobLimits",
 			Handler:    _SystemService_UpdateJobLimits_Handler,
+		},
+		{
+			MethodName: "RenameJob",
+			Handler:    _SystemService_RenameJob_Handler,
 		},
 		{
 			MethodName: "DeleteFaction",

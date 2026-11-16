@@ -92,6 +92,28 @@ export interface UpdateJobLimitsRequest {
 export interface UpdateJobLimitsResponse {
 }
 /**
+ * RenameJob moves all FiveNet references from source_job to target_job. The
+ * target may already exist; in that case its conflicting configuration wins
+ * and source-only configuration is merged into it.
+ *
+ * @generated from protobuf message services.settings.RenameJobRequest
+ */
+export interface RenameJobRequest {
+    /**
+     * @generated from protobuf field: string source_job = 1
+     */
+    sourceJob: string;
+    /**
+     * @generated from protobuf field: string target_job = 2
+     */
+    targetJob: string;
+}
+/**
+ * @generated from protobuf message services.settings.RenameJobResponse
+ */
+export interface RenameJobResponse {
+}
+/**
  * @generated from protobuf message services.settings.DeleteFactionRequest
  */
 export interface DeleteFactionRequest {
@@ -456,6 +478,99 @@ class UpdateJobLimitsResponse$Type extends MessageType<UpdateJobLimitsResponse> 
  */
 export const UpdateJobLimitsResponse = new UpdateJobLimitsResponse$Type();
 // @generated message type with reflection information, may provide speed optimized methods
+class RenameJobRequest$Type extends MessageType<RenameJobRequest> {
+    constructor() {
+        super("services.settings.RenameJobRequest", [
+            { no: 1, name: "source_job", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { minLen: "1", maxLen: "50" } } } },
+            { no: 2, name: "target_job", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { minLen: "1", maxLen: "50" } } } }
+        ]);
+    }
+    create(value?: PartialMessage<RenameJobRequest>): RenameJobRequest {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        message.sourceJob = "";
+        message.targetJob = "";
+        if (value !== undefined)
+            reflectionMergePartial<RenameJobRequest>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: RenameJobRequest): RenameJobRequest {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* string source_job */ 1:
+                    message.sourceJob = reader.string();
+                    break;
+                case /* string target_job */ 2:
+                    message.targetJob = reader.string();
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: RenameJobRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* string source_job = 1; */
+        if (message.sourceJob !== "")
+            writer.tag(1, WireType.LengthDelimited).string(message.sourceJob);
+        /* string target_job = 2; */
+        if (message.targetJob !== "")
+            writer.tag(2, WireType.LengthDelimited).string(message.targetJob);
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message services.settings.RenameJobRequest
+ */
+export const RenameJobRequest = new RenameJobRequest$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class RenameJobResponse$Type extends MessageType<RenameJobResponse> {
+    constructor() {
+        super("services.settings.RenameJobResponse", []);
+    }
+    create(value?: PartialMessage<RenameJobResponse>): RenameJobResponse {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        if (value !== undefined)
+            reflectionMergePartial<RenameJobResponse>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: RenameJobResponse): RenameJobResponse {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: RenameJobResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message services.settings.RenameJobResponse
+ */
+export const RenameJobResponse = new RenameJobResponse$Type();
+// @generated message type with reflection information, may provide speed optimized methods
 class DeleteFactionRequest$Type extends MessageType<DeleteFactionRequest> {
     constructor() {
         super("services.settings.DeleteFactionRequest", [
@@ -733,6 +848,7 @@ export const SystemService = new ServiceType("services.settings.SystemService", 
     { name: "GetAllPermissions", options: { "codegen.perms.perms": { enabled: true, name: "JobAdmin" } }, I: GetAllPermissionsRequest, O: GetAllPermissionsResponse },
     { name: "GetJobLimits", options: { "codegen.perms.perms": { enabled: true, name: "JobAdmin" } }, I: GetJobLimitsRequest, O: GetJobLimitsResponse },
     { name: "UpdateJobLimits", options: { "codegen.perms.perms": { enabled: true, name: "JobAdmin" } }, I: UpdateJobLimitsRequest, O: UpdateJobLimitsResponse },
+    { name: "RenameJob", options: { "codegen.perms.perms": { enabled: true, name: "ConfigAdmin" } }, I: RenameJobRequest, O: RenameJobResponse },
     { name: "DeleteFaction", options: { "codegen.perms.perms": { enabled: true, name: "JobAdmin" } }, I: DeleteFactionRequest, O: DeleteFactionResponse },
     { name: "TriggerUserSync", options: { "codegen.perms.perms": { enabled: true, name: "ConfigAdmin" } }, I: TriggerUserSyncRequest, O: TriggerUserSyncResponse }
 ]);

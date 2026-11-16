@@ -5,9 +5,14 @@ import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import Pagination from '~/components/partials/Pagination.vue';
 import TableSortButton from '~/components/partials/TableSortButton.vue';
+import JobRenameModal from '~/components/settings/jobs/JobRenameModal.vue';
 import type { Job } from '~~/gen/ts/resources/jobs/jobs';
 
 const { t } = useI18n();
+
+const { can } = useAuth();
+const canRenameJob = can('internal.Superuser/ConfigAdmin');
+const overlay = useOverlay();
 
 const settingsStore = useSettingsStore();
 const { streamerMode } = storeToRefs(settingsStore);
@@ -79,6 +84,15 @@ const sorting = ref([
 ]);
 
 const expanded = ref({});
+
+const renameJobModal = overlay.create(JobRenameModal);
+
+function openRenameJob(): void {
+    renameJobModal.open({
+        jobs: jobs.value ?? [],
+        onRenamed: refresh,
+    });
+}
 </script>
 
 <template>
@@ -90,6 +104,14 @@ const expanded = ref({});
                 </template>
 
                 <template #right>
+                    <UButton
+                        v-if="canRenameJob"
+                        icon="i-mdi-pencil"
+                        color="warning"
+                        :label="$t('pages.settings.jobs.rename.action')"
+                        :disabled="!jobs?.length"
+                        @click="openRenameJob"
+                    />
                     <PartialsBackButton fallback-to="/settings" />
                 </template>
             </UDashboardNavbar>

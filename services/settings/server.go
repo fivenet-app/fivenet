@@ -102,6 +102,7 @@ type Server struct {
 	updateChecker updatecheck.IChecker
 	store         settingsstore.IStore
 	jobsStore     jobsstore.IStore
+	jobs          mstlystcdata.IJobs
 	hydrator      citizenshydrator.IHydrator
 }
 
@@ -131,6 +132,7 @@ type Params struct {
 	UpdateChecker updatecheck.IChecker
 	Store         settingsstore.IStore
 	JobsStore     jobsstore.IStore
+	Jobs          mstlystcdata.IJobs
 	Hydrator      citizenshydrator.IHydrator
 }
 
@@ -195,6 +197,7 @@ func NewServer(p Params) *Server {
 		updateChecker: p.UpdateChecker,
 		store:         p.Store,
 		jobsStore:     p.JobsStore,
+		jobs:          p.Jobs,
 		hydrator:      p.Hydrator,
 	}
 

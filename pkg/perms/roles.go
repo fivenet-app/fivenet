@@ -327,6 +327,7 @@ func (ps *Perms) DeleteRole(ctx context.Context, id int64) error {
 
 func (ps *Perms) deleteRole(id int64, job string, grade int32) {
 	ps.permsRoleMap.Delete(id)
+	ps.attrsRoleMap.Delete(id)
 
 	grades, _ := ps.permsJobsRoleMap.LoadOrCompute(job, func() (*xsync.Map[int32, int64], bool) {
 		return xsync.NewMap[int32, int64](), false

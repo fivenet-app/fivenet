@@ -15917,6 +15917,26 @@ Sets the instance-specific placement of a system property. An omitted group_key 
 
 
 
+### services.settings.RenameJobRequest
+RenameJob moves all FiveNet references from source_job to target_job. The target may already exist; in that case its conflicting configuration wins and source-only configuration is merged into it.
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `source_job` | [string](#string) |  |  |
+| `target_job` | [string](#string) |  |  |
+
+
+
+
+
+### services.settings.RenameJobResponse
+
+
+
+
+
 ### services.settings.TriggerUserSyncRequest
 
 
@@ -15968,6 +15988,7 @@ Sets the instance-specific placement of a system property. An omitted group_key 
 | `GetAllPermissions` | [GetAllPermissionsRequest](#servicessettingsGetAllPermissionsRequest) | [GetAllPermissionsResponse](#servicessettingsGetAllPermissionsResponse) | |
 | `GetJobLimits` | [GetJobLimitsRequest](#servicessettingsGetJobLimitsRequest) | [GetJobLimitsResponse](#servicessettingsGetJobLimitsResponse) | |
 | `UpdateJobLimits` | [UpdateJobLimitsRequest](#servicessettingsUpdateJobLimitsRequest) | [UpdateJobLimitsResponse](#servicessettingsUpdateJobLimitsResponse) | |
+| `RenameJob` | [RenameJobRequest](#servicessettingsRenameJobRequest) | [RenameJobResponse](#servicessettingsRenameJobResponse) | |
 | `DeleteFaction` | [DeleteFactionRequest](#servicessettingsDeleteFactionRequest) | [DeleteFactionResponse](#servicessettingsDeleteFactionResponse) | |
 | `TriggerUserSync` | [TriggerUserSyncRequest](#servicessettingsTriggerUserSyncRequest) | [TriggerUserSyncResponse](#servicessettingsTriggerUserSyncResponse) | |
 

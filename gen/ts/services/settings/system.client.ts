@@ -9,6 +9,8 @@ import type { TriggerUserSyncResponse } from "./system";
 import type { TriggerUserSyncRequest } from "./system";
 import type { DeleteFactionResponse } from "./system";
 import type { DeleteFactionRequest } from "./system";
+import type { RenameJobResponse } from "./system";
+import type { RenameJobRequest } from "./system";
 import type { UpdateJobLimitsResponse } from "./system";
 import type { UpdateJobLimitsRequest } from "./system";
 import type { GetJobLimitsResponse } from "./system";
@@ -40,6 +42,10 @@ export interface ISystemServiceClient {
      * @generated from protobuf rpc: UpdateJobLimits
      */
     updateJobLimits(input: UpdateJobLimitsRequest, options?: RpcOptions): UnaryCall<UpdateJobLimitsRequest, UpdateJobLimitsResponse>;
+    /**
+     * @generated from protobuf rpc: RenameJob
+     */
+    renameJob(input: RenameJobRequest, options?: RpcOptions): UnaryCall<RenameJobRequest, RenameJobResponse>;
     /**
      * @generated from protobuf rpc: DeleteFaction
      */
@@ -87,17 +93,24 @@ export class SystemServiceClient implements ISystemServiceClient, ServiceInfo {
         return stackIntercept<UpdateJobLimitsRequest, UpdateJobLimitsResponse>("unary", this._transport, method, opt, input);
     }
     /**
+     * @generated from protobuf rpc: RenameJob
+     */
+    renameJob(input: RenameJobRequest, options?: RpcOptions): UnaryCall<RenameJobRequest, RenameJobResponse> {
+        const method = this.methods[4], opt = this._transport.mergeOptions(options);
+        return stackIntercept<RenameJobRequest, RenameJobResponse>("unary", this._transport, method, opt, input);
+    }
+    /**
      * @generated from protobuf rpc: DeleteFaction
      */
     deleteFaction(input: DeleteFactionRequest, options?: RpcOptions): UnaryCall<DeleteFactionRequest, DeleteFactionResponse> {
-        const method = this.methods[4], opt = this._transport.mergeOptions(options);
+        const method = this.methods[5], opt = this._transport.mergeOptions(options);
         return stackIntercept<DeleteFactionRequest, DeleteFactionResponse>("unary", this._transport, method, opt, input);
     }
     /**
      * @generated from protobuf rpc: TriggerUserSync
      */
     triggerUserSync(input: TriggerUserSyncRequest, options?: RpcOptions): UnaryCall<TriggerUserSyncRequest, TriggerUserSyncResponse> {
-        const method = this.methods[5], opt = this._transport.mergeOptions(options);
+        const method = this.methods[6], opt = this._transport.mergeOptions(options);
         return stackIntercept<TriggerUserSyncRequest, TriggerUserSyncResponse>("unary", this._transport, method, opt, input);
     }
 }

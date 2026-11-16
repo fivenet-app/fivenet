@@ -39,6 +39,22 @@ message UpdateJobLimitsRequest {
 
 message UpdateJobLimitsResponse {}
 
+// RenameJob moves all FiveNet references from source_job to target_job. The
+// target may already exist; in that case its conflicting configuration wins
+// and source-only configuration is merged into it.
+message RenameJobRequest {
+  string source_job = 1 [(buf.validate.field).string = {
+    min_len: 1
+    max_len: 50
+  }];
+  string target_job = 2 [(buf.validate.field).string = {
+    min_len: 1
+    max_len: 50
+  }];
+}
+
+message RenameJobResponse {}
+
 message DeleteFactionRequest {
   string job = 1 [(buf.validate.field).string.max_len = 20];
 }
@@ -88,6 +104,12 @@ service SystemService {
     option (codegen.perms.perms) = {
       enabled: true
       name: "JobAdmin"
+    };
+  }
+  rpc RenameJob(RenameJobRequest) returns (RenameJobResponse) {
+    option (codegen.perms.perms) = {
+      enabled: true
+      name: "ConfigAdmin"
     };
   }
   rpc DeleteFaction(DeleteFactionRequest) returns (DeleteFactionResponse) {

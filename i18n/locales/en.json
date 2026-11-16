@@ -831,7 +831,12 @@
                 "title": "Accounts"
             },
             "jobs": {
-                "title": "Jobs"
+                "title": "Jobs",
+                "rename": {
+                    "title": "Rename job",
+                    "description": "Moves FiveNet job references, permissions, roles and access rules to the new job name. Update the upstream job name first.",
+                    "action": "Rename job"
+                }
             },
             "job_assets": {
                 "title": "Job Assets",
@@ -6351,6 +6356,9 @@
                 "duplicate_job_grade": "A job and grade were selected multiple times. Please select each job and grade only once.",
                 "duplicate_user": "A citizen was selected multiple times. Please select each citizen only once.",
                 "duplicate_qualification": "A qualification was selected multiple times. Please select each qualification only once."
+            },
+            "job_rename": {
+                "target_different": "The target job must be different from the source job."
             },
             "qualification_editor": {
                 "maximum_length_order": "Maximum length must not be lower than minimum length.",

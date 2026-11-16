@@ -679,6 +679,9 @@ var PermsRemap = map[string][]perms.PermissionRef{
 	"settings.SystemService/GetStatus": {
 		perms.PermConfigAdminRef,
 	},
+	"settings.SystemService/RenameJob": {
+		perms.PermConfigAdminRef,
+	},
 	"settings.SystemService/TriggerUserSync": {
 		perms.PermConfigAdminRef,
 	},

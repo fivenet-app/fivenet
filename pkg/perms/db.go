@@ -363,6 +363,20 @@ func (ps *Perms) loadJobRoles(ctx context.Context, job string) error {
 		return err
 	}
 
+	// Reconciliation is important for external job changes: roles can be
+	// removed, or can have moved to another job while keeping their ID.
+	current := map[int32]int64{}
+	for _, role := range roles {
+		current[role.GetGrade()] = role.GetId()
+	}
+	if cached, ok := ps.permsJobsRoleMap.Load(job); ok {
+		for grade, roleID := range cached.All() {
+			if current[grade] != roleID {
+				ps.deleteRole(roleID, job, grade)
+			}
+		}
+	}
+
 	for _, role := range roles {
 		grades, _ := ps.permsJobsRoleMap.LoadOrCompute(
 			role.GetJob(),

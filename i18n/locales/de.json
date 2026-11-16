@@ -831,7 +831,12 @@
                 "title": "Konten"
             },
             "jobs": {
-                "title": "Berufe"
+                "title": "Berufe",
+                "rename": {
+                    "title": "Beruf umbenennen",
+                    "description": "Verschiebt FiveNet-Jobreferenzen, Berechtigungen, Rollen und Zugriffsregeln auf den neuen Jobnamen. Ändere zuerst den Jobnamen in der Quelle.",
+                    "action": "Beruf umbenennen"
+                }
             },
             "job_assets": {
                 "title": "Job-Dateien",
@@ -6351,6 +6356,9 @@
                 "duplicate_job_grade": "Ein Beruf und Rang wurden mehrfach ausgewählt. Bitte wählen Sie jeden Beruf und Rang nur einmal aus.",
                 "duplicate_user": "Ein Bürger wurde mehrfach ausgewählt. Bitte wählen Sie jeden Bürger nur einmal aus.",
                 "duplicate_qualification": "Eine Qualifikation wurde mehrfach ausgewählt. Bitte wählen Sie jede Qualifikation nur einmal aus."
+            },
+            "job_rename": {
+                "target_different": "Der Zielberuf muss sich vom Quellberuf unterscheiden."
             },
             "qualification_editor": {
                 "maximum_length_order": "Die maximale Länge darf nicht kleiner als die minimale Länge sein.",

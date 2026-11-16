@@ -143,6 +143,22 @@ func (m *GetStatusResponse) Sanitize() error {
 
 // Sanitize sanitizes the message's fields, in case of complex types it calls
 // their Sanitize() method recursively.
+func (m *RenameJobRequest) Sanitize() error {
+	if m == nil {
+		return nil
+	}
+
+	// Field: SourceJob
+	m.SourceJob = htmlsanitizer.SanitizeAndUnescape(m.SourceJob)
+
+	// Field: TargetJob
+	m.TargetJob = htmlsanitizer.SanitizeAndUnescape(m.TargetJob)
+
+	return nil
+}
+
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *TriggerUserSyncRequest) Sanitize() error {
 	if m == nil {
 		return nil
