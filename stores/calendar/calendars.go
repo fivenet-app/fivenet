@@ -398,7 +398,7 @@ func (s *Store) CreateCalendar(
 			tCalendar.CreatorJob,
 		).
 		VALUES(
-			cal.GetJob(),
+			dbutils.StringEmpty(cal.GetJob()),
 			systemKind,
 			cal.GetDiscordSettings(),
 			cal.GetName(),

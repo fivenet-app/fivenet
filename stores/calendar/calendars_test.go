@@ -138,6 +138,42 @@ func TestCreateCalendarIncludesIconColumn(t *testing.T) {
 	require.NoError(t, mock.ExpectationsWereMet())
 }
 
+func TestCreateCalendarNormalizesEmptyJobToNull(t *testing.T) {
+	t.Parallel()
+
+	db, mock, err := sqlmock.New()
+	require.NoError(t, err)
+	t.Cleanup(func() {
+		_ = db.Close()
+	})
+
+	store := New(testParams(db)).(*Store)
+	mock.ExpectExec(`(?s)INSERT INTO fivenet_calendar .*job.*`).
+		WithArgs(
+			sqlmock.AnyArg(),
+			"Private calendar",
+			sqlmock.AnyArg(),
+			sqlmock.AnyArg(),
+			sqlmock.AnyArg(),
+			"blue",
+			int32(9),
+			"police",
+		).
+		WillReturnResult(sqlmock.NewResult(42, 1))
+
+	_, err = store.CreateCalendar(
+		t.Context(),
+		db,
+		&calendarresource.Calendar{
+			Name:  "Private calendar",
+			Color: "blue",
+		},
+		&userinfo.UserInfo{UserId: 9, Job: "police"},
+	)
+	require.NoError(t, err)
+	require.NoError(t, mock.ExpectationsWereMet())
+}
+
 func TestUpdateCalendarIncludesIconColumn(t *testing.T) {
 	t.Parallel()
 
