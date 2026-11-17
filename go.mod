@@ -18,7 +18,7 @@ require (
 	github.com/adhocore/gronx v1.20.7
 	github.com/alecthomas/kong v1.17.0
 	github.com/blevesearch/bleve/v2 v2.6.3
-	github.com/brianvoe/gofakeit/v7 v7.18.4
+	github.com/brianvoe/gofakeit/v7 v7.18.7
 	github.com/cespare/xxhash/v2 v2.3.0
 	github.com/coder/websocket v1.8.15
 	github.com/creasty/defaults v1.11.0
@@ -62,7 +62,7 @@ require (
 	github.com/prometheus/client_model v0.6.3
 	github.com/puzpuzpuz/xsync/v4 v4.5.0
 	github.com/rs/cors v1.11.1
-	github.com/sergi/go-diff v1.4.0
+	github.com/sergi/go-diff v1.4.4
 	github.com/shopspring/decimal v1.6.0
 	github.com/spf13/viper v1.21.0
 	github.com/srikrsna/protoc-gen-gotag v1.0.2
