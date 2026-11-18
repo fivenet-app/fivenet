@@ -18,7 +18,7 @@ require (
 	github.com/adhocore/gronx v1.20.7
 	github.com/alecthomas/kong v1.17.0
 	github.com/blevesearch/bleve/v2 v2.6.3
-	github.com/brianvoe/gofakeit/v7 v7.18.7
+	github.com/brianvoe/gofakeit/v7 v7.18.9
 	github.com/cespare/xxhash/v2 v2.3.0
 	github.com/coder/websocket v1.8.15
 	github.com/creasty/defaults v1.11.0
@@ -36,7 +36,7 @@ require (
 	github.com/go-jet/jet/v2 v2.16.1
 	github.com/go-playground/validator/v10 v10.30.6
 	github.com/go-sprout/sprout v1.1.2
-	github.com/go-sql-driver/mysql v1.10.1
+	github.com/go-sql-driver/mysql v1.10.2
 	github.com/goccy/go-yaml v1.19.2
 	github.com/golang-jwt/jwt/v5 v5.3.1
 	github.com/golang-migrate/migrate/v4 v4.20.1
@@ -54,7 +54,7 @@ require (
 	github.com/moby/moby/client v0.6.3
 	github.com/mwitkow/go-conntrack v0.0.0-20190716064945-2f068394615f
 	github.com/nats-io/nats-server/v2 v2.15.3
-	github.com/nats-io/nats.go v1.55.0
+	github.com/nats-io/nats.go v1.56.0
 	github.com/ory/dockertest/v4 v4.0.1
 	github.com/paulmach/orb v0.14.0
 	github.com/pkg/errors v0.9.1
@@ -62,7 +62,7 @@ require (
 	github.com/prometheus/client_model v0.6.3
 	github.com/puzpuzpuz/xsync/v4 v4.5.0
 	github.com/rs/cors v1.11.1
-	github.com/sergi/go-diff v1.4.4
+	github.com/sergi/go-diff v1.4.5
 	github.com/shopspring/decimal v1.6.0
 	github.com/spf13/viper v1.21.0
 	github.com/srikrsna/protoc-gen-gotag v1.0.2
@@ -88,7 +88,7 @@ require (
 	go.uber.org/zap v1.28.0
 	golang.org/x/crypto v0.59.0
 	golang.org/x/image v0.48.0
-	golang.org/x/net v0.62.0
+	golang.org/x/net v0.63.0
 	golang.org/x/oauth2 v0.38.0
 	golang.org/x/sync v0.25.0
 	google.golang.org/grpc v1.85.0
