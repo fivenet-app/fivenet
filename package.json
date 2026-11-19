@@ -33,7 +33,7 @@
         "@nuxt/content": "3.17.0",
         "@nuxt/fonts": "1.2.0",
         "@nuxt/image": "2.2.1",
-        "@nuxt/ui": "4.12.2",
+        "@nuxt/ui": "4.13.0",
         "@nuxtjs/robots": "7.0.2",
         "@pinia/nuxt": "1.0.3",
         "@protobuf-ts/grpcweb-transport": "2.11.1",
@@ -163,7 +163,7 @@
         "tailwindcss": "4.3.5",
         "typescript": "catalog:",
         "vite": "8.3.8",
-        "vitest": "5.1.0",
+        "vitest": "5.1.1",
         "vue-router": "5.5.1",
         "vue-tsc": "3.3.14",
         "westures": "1.1.1"
