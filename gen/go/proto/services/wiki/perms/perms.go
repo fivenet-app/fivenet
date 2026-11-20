@@ -15,7 +15,6 @@ const (
 	WikiServicePerm   perms.Service = "WikiService"
 
 	// Service: wiki.WikiService
-	WikiServiceCreatePagePerm            perms.Name = "CreatePage"
 	WikiServiceDeletePagePerm            perms.Name = "DeletePage"
 	WikiServiceListPageActivityPerm      perms.Name = "ListPageActivity"
 	WikiServiceListPagesPerm             perms.Name = "ListPages"
@@ -31,15 +30,11 @@ const (
 )
 
 type WikiServicePerms struct {
-	CreatePage       WikiServiceCreatePagePermRef
 	DeletePage       WikiServiceDeletePagePermRef
 	ListPageActivity WikiServiceListPageActivityPermRef
 	ListPages        WikiServiceListPagesPermRef
 	MovePage         WikiServiceMovePagePermRef
 	UpdatePage       WikiServiceUpdatePagePermRef
-}
-type WikiServiceCreatePagePermRef struct {
-	Perm perms.PermissionRef
 }
 type WikiServiceDeletePagePermRef struct {
 	Perm perms.PermissionRef
@@ -60,9 +55,6 @@ type WikiServiceUpdatePagePermRef struct {
 }
 
 var WikiService = WikiServicePerms{
-	CreatePage: WikiServiceCreatePagePermRef{
-		Perm: perms.NewPermissionRef(Namespace, WikiServicePerm, WikiServiceCreatePagePerm),
-	},
 	DeletePage: WikiServiceDeletePagePermRef{
 		Perm: perms.NewPermissionRef(Namespace, WikiServicePerm, WikiServiceDeletePagePerm),
 	},

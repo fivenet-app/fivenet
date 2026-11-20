@@ -143,7 +143,6 @@ export type GRPCServicePerms =
 	| 'vehicles.VehiclesService/ListVehicleActivity'
 	| 'vehicles.VehiclesService/ListVehicles'
 	| 'vehicles.VehiclesService/SetVehicleProps'
-	| 'wiki.WikiService/CreatePage'
 	| 'wiki.WikiService/DeletePage'
 	| 'wiki.WikiService/ListPageActivity'
 	| 'wiki.WikiService/ListPages'
@@ -276,7 +275,6 @@ export const GRPCServiceMethods = [
 	'vehicles.VehiclesService/ListVehicleActivity',
 	'vehicles.VehiclesService/ListVehicles',
 	'vehicles.VehiclesService/SetVehicleProps',
-	'wiki.WikiService/CreatePage',
 	'wiki.WikiService/DeletePage',
 	'wiki.WikiService/ListPageActivity',
 	'wiki.WikiService/ListPages',
@@ -597,8 +595,6 @@ export const PermAttributes = {
 		'Properties': {
 			type: 'propertyList',
 		},
-	},
-	'wiki.WikiService/CreatePage': {
 	},
 	'wiki.WikiService/DeletePage': {
 	},

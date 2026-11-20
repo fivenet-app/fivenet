@@ -15,7 +15,10 @@ service CollabService {
     option (codegen.perms.perms) = {
       enabled: true
       service: "WikiService"
-      name: "UpdatePage"
+      names: [
+        "UpdatePage",
+        "ListPages"
+      ]
     };
   }
 }

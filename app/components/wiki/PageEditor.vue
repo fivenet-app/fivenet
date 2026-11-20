@@ -461,7 +461,7 @@ const formRef = useTemplateRef('formRef');
                     />
 
                     <UButton
-                        v-if="page?.meta?.draft"
+                        v-if="canDo.edit && page?.meta?.draft"
                         color="info"
                         trailing-icon="i-mdi-publish"
                         :disabled="!canSubmit"

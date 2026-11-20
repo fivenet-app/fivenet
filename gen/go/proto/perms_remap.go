@@ -699,17 +699,20 @@ var PermsRemap = map[string][]perms.PermissionRef{
 
 	// Service: wiki.CollabService
 	"wiki.CollabService/JoinRoom": {
-		permswiki.WikiService.UpdatePage.Perm,
+		permswiki.WikiService.UpdatePage.Perm, permswiki.WikiService.ListPages.Perm,
 	},
 
 	// Service: wiki.WikiService
+	"wiki.WikiService/CreatePage": {
+		permswiki.WikiService.UpdatePage.Perm,
+	},
 	"wiki.WikiService/GetPage": {
 		permswiki.WikiService.ListPages.Perm,
 	},
 	"wiki.WikiService/UpdatePage": {
-		permswiki.WikiService.UpdatePage.Perm, permswiki.WikiService.CreatePage.Perm,
+		permswiki.WikiService.UpdatePage.Perm, permswiki.WikiService.ListPages.Perm,
 	},
 	"wiki.WikiService/UploadFile": {
-		permswiki.WikiService.CreatePage.Perm, permswiki.WikiService.UpdatePage.Perm,
+		permswiki.WikiService.UpdatePage.Perm,
 	},
 }

@@ -18,14 +18,6 @@ func init() {
 		{
 			Namespace: permkeys.Namespace,
 			Service:   permkeys.WikiServicePerm,
-			Name:      permkeys.WikiServiceCreatePagePerm,
-			Attrs:     []perms.Attr{},
-			Order:     11000,
-			Icon:      "i-mdi-brain",
-		},
-		{
-			Namespace: permkeys.Namespace,
-			Service:   permkeys.WikiServicePerm,
 			Name:      permkeys.WikiServiceDeletePagePerm,
 			Attrs:     []perms.Attr{},
 			Order:     11000,

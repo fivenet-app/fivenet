@@ -6,6 +6,7 @@ import (
 
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/audit"
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/common/content"
+	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/file"
 	notificationsclientview "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/notifications/clientview"
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/timestamp"
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/userinfo"
@@ -26,6 +27,7 @@ import (
 	"github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
 	logging "github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/logging"
+	"google.golang.org/protobuf/proto"
 )
 
 var wikiPageSubjectAccessOptions = access.SubjectAccessOptions{
@@ -35,6 +37,40 @@ var wikiPageSubjectAccessOptions = access.SubjectAccessOptions{
 		int32(wikiaccess.AccessLevel_ACCESS_LEVEL_ACCESS),
 		int32(wikiaccess.AccessLevel_ACCESS_LEVEL_EDIT),
 	},
+}
+
+func pageFilesEqual(left, right []*file.File) bool {
+	if len(left) != len(right) {
+		return false
+	}
+
+	for i := range left {
+		if !proto.Equal(left[i], right[i]) {
+			return false
+		}
+	}
+
+	return true
+}
+
+// pageUpdateContentChanged reports whether an update changes any page data that
+// requires EDIT access. Access entries are intentionally excluded; managing
+// them requires ACCESS access instead.
+func pageUpdateContentChanged(oldPage, newPage *wiki.Page) bool {
+	if oldPage.GetParentId() != newPage.GetParentId() ||
+		!proto.Equal(oldPage.GetContent(), newPage.GetContent()) ||
+		!pageFilesEqual(oldPage.GetFiles(), newPage.GetFiles()) {
+		return true
+	}
+
+	oldMeta := oldPage.GetMeta()
+	newMeta := newPage.GetMeta()
+	return oldMeta.GetTitle() != newMeta.GetTitle() ||
+		oldMeta.GetDescription() != newMeta.GetDescription() ||
+		oldMeta.GetToc() != newMeta.GetToc() ||
+		oldMeta.GetPublic() != newMeta.GetPublic() ||
+		oldMeta.GetDraft() != newMeta.GetDraft() ||
+		oldMeta.GetStartpage() != newMeta.GetStartpage()
 }
 
 func (s *Server) ListPages(
@@ -310,16 +346,16 @@ func (s *Server) UpdatePage(
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
-	check, err := s.access.CanUserAccessTarget(
+	canAccessUpdate, err := s.access.CanUserAccessTarget(
 		ctx,
 		req.GetPage().GetId(),
 		userInfo,
-		int32(wikiaccess.AccessLevel_ACCESS_LEVEL_EDIT),
+		int32(wikiaccess.AccessLevel_ACCESS_LEVEL_ACCESS),
 	)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorswiki.ErrFailedQuery)
 	}
-	if !check {
+	if !canAccessUpdate {
 		return nil, errorswiki.ErrPageDenied
 	}
 
@@ -391,6 +427,21 @@ func (s *Server) UpdatePage(
 	}
 	if !fields.Contains(permswiki.WikiServiceUpdatePageFieldsPermValuePublic) {
 		req.Page.Meta.Public = oldPage.GetMeta().GetPublic()
+	}
+
+	if pageUpdateContentChanged(oldPage, req.GetPage()) {
+		canEditUpdate, err := s.access.CanUserAccessTarget(
+			ctx,
+			req.GetPage().GetId(),
+			userInfo,
+			int32(wikiaccess.AccessLevel_ACCESS_LEVEL_EDIT),
+		)
+		if err != nil {
+			return nil, errswrap.NewError(err, errorswiki.ErrFailedQuery)
+		}
+		if !canEditUpdate {
+			return nil, errorswiki.ErrPageDenied
+		}
 	}
 
 	// Begin transaction

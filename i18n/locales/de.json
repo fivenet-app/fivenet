@@ -2223,6 +2223,9 @@
             },
             "notification_sounds": {
                 "content": "In den Benutzereinstellungen können Sie die Lautstärke von Benachrichtigungen anpassen und unterschiedliche Töne für verschiedene Benachrichtigungsarten auswählen."
+            },
+            "discord_feedback": {
+                "content": "Haben Sie einen Bug, ein Problem oder einen Feature-Wunsch? Sagen Sie uns auf dem FiveNet Discord Bescheid."
             }
         },
         "notifications": {
@@ -5614,8 +5617,8 @@
                     "description": "Die mit einem Bürger verknüpften Dokumente anzeigen."
                 },
                 "UpdateDocument": {
-                    "key": "Dokument erstellen und aktualisieren",
-                    "description": "Neue Dokumente erstellen und vorhandenes Dokumente bearbeiten/ aktualisieren.",
+                    "key": "Dokumente erstellen und aktualisieren",
+                    "description": "Neue Dokumente erstellen und bestehende Dokumente aktualisieren.",
                     "attrs": {
                         "Own": "Eigene",
                         "Lower_Rank": "Niedrigerer Rang",
@@ -6133,18 +6136,14 @@
                     "description": "Historische Aktivität von Seiten anzeigen lassen."
                 },
                 "UpdatePage": {
-                    "key": "Seiten aktualisieren",
-                    "description": "Wiki Seiten aktualisieren können (erlaubt nicht das erstellen von Seiten).",
+                    "key": "Seiten erstellen und aktualisieren",
+                    "description": "Neue Wiki-Seiten erstellen und bestehende Wiki-Seiten aktualisieren.",
                     "attrs": {
                         "Public": "Öffentliche Seiten, die jeder aufrufen kann"
                     },
                     "attrs_types": {
-                        "Fields": "Zugriff auf spezielle Freigaben von Seiten"
+                        "Fields": "Berechtigung, spezielle Seiteneinstellungen zu verwenden"
                     }
-                },
-                "CreatePage": {
-                    "key": "Seiten erstellen",
-                    "description": "Wiki Seiten erstellen können (erlaubt implizit das Aktualisieren von Seiten)."
                 },
                 "MovePage": {
                     "key": "Seiten-Reihenfolge ändern",

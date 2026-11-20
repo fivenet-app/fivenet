@@ -107,7 +107,6 @@ const commonPermissions = [
     'settings.SettingsService/GetRoles',
     'settings.SettingsService/SetJobProps',
     'settings.SettingsService/UpdateRolePerms',
-    'wiki.WikiService/CreatePage',
     'wiki.WikiService/DeletePage',
     'wiki.WikiService/ListPageActivity',
     'wiki.WikiService/ListPages',

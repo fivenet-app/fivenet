@@ -139,8 +139,8 @@ const canDo = computed(() => ({
         can('wiki.WikiService/MovePage').value &&
         checkPageAccess(props.page?.access, props.page?.meta?.creator, AccessLevel.EDIT, props.page?.job),
     manage:
-        can('wiki.WikiService/UpdatePage').value &&
-        checkPageAccess(props.page?.access, props.page?.meta?.creator, AccessLevel.EDIT, props.page?.job),
+        can('wiki.WikiService/ListPages').value &&
+        checkPageAccess(props.page?.access, props.page?.meta?.creator, AccessLevel.ACCESS, props.page?.job),
     delete:
         can('wiki.WikiService/DeletePage').value &&
         checkPageAccess(props.page?.access, props.page?.meta?.creator, AccessLevel.EDIT, props?.page?.job),

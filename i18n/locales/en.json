@@ -2223,6 +2223,9 @@
             },
             "notification_sounds": {
                 "content": "You can adjust notification volume and choose separate sounds for different notification types in your user settings."
+            },
+            "discord_feedback": {
+                "content": "Got a bug, issue, or feature request? Let us know on the FiveNet Discord."
             }
         },
         "notifications": {
@@ -5614,8 +5617,8 @@
                     "description": "View the documents linked to a citizen."
                 },
                 "UpdateDocument": {
-                    "key": "Create and update Documents",
-                    "description": "Create documents and edit/ update existing documents.",
+                    "key": "Create and update documents",
+                    "description": "Create new documents and update existing documents.",
                     "attrs": {
                         "Own": "Own",
                         "Lower_Rank": "Lower Rank",
@@ -6133,18 +6136,14 @@
                     "description": "Viewing page history."
                 },
                 "UpdatePage": {
-                    "key": "Update Pages",
-                    "description": "Update wiki pages (does not allow creation of pages).",
+                    "key": "Create and update pages",
+                    "description": "Create new wiki pages and update existing wiki pages.",
                     "attrs": {
                         "Public": "Public pages for anyone to view"
                     },
                     "attrs_types": {
-                        "Fields": "Access to creating pages with specific access"
+                        "Fields": "Permission to use special page settings"
                     }
-                },
-                "CreatePage": {
-                    "key": "Create Pages",
-                    "description": "Creating wiki pages (does implicitly allow to update pages)"
                 },
                 "MovePage": {
                     "key": "Change Page Order",

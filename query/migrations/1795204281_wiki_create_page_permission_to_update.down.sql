@@ -1,0 +1,1 @@
+-- No rollback available: existing CreatePage grants are migrated into UpdatePage.
