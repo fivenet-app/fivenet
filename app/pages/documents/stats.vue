@@ -1,4 +1,5 @@
 <script lang="ts" setup>
+import type { NavigationMenuItem } from '@nuxt/ui';
 import { differenceInDays, sub } from 'date-fns';
 import { z } from 'zod';
 import ChartClient from '~/components/documents/stats/Chart.client.vue';
@@ -21,6 +22,11 @@ definePageMeta({
     requiresAuth: true,
     permission: 'documents.StatsService/GetStats',
 });
+
+defineProps<{
+    itemsLeft: NavigationMenuItem[];
+    itemsRight: NavigationMenuItem[];
+}>();
 
 const { t } = useI18n();
 
@@ -269,6 +275,18 @@ onBeforeMount(async () => listJobs());
                     :range="query.range"
                 />
             </template>
+        </template>
+
+        <template v-if="itemsLeft.length > 1 || itemsRight.length > 1" #footer>
+            <USeparator />
+
+            <UDashboardToolbar>
+                <div class="flex min-w-0 flex-1 flex-row flex-wrap justify-between gap-2">
+                    <UNavigationMenu v-if="itemsLeft.length > 0" class="-mx-1" orientation="horizontal" :items="itemsLeft" />
+
+                    <UNavigationMenu v-if="itemsRight.length > 0" class="-mx-1" orientation="horizontal" :items="itemsRight" />
+                </div>
+            </UDashboardToolbar>
         </template>
     </UDashboardPanel>
 </template>
