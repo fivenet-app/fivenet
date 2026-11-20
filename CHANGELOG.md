@@ -2,6 +2,27 @@
 
 All notable changes to this project will be documented in this file.
 
+## [2026.11.2] - 2026-11-20
+
+### 🚀 Features
+
+- *(metrics)* Add failed auth login and sync token metrics
+- *(settings)* Add job rename workflow
+- Add discord server hint for bugs and feature requests
+- Add discord link to help slideover footer buttons
+
+### 🐛 Bug Fixes
+
+- *(settings)* Refresh role grades on job switch
+- *(wiki)* Align and compact page navigation sidebars
+- *(timeclock)* Correct inactive colleagues and weekly stats
+- *(discord)* Show character causing group sync job exclusion in debug command
+- *(calendar)* Persist private calendars with a null job
+- Renovate config structure
+- *(documents)* Stats pages not having footer nav bar
+- *(wiki)* Align page permissions with document access model
+- *(documents)* Enforce template view access on document creation
+
 ## [2026.11.1] - 2026-11-09
 
 ### 🚀 Features
