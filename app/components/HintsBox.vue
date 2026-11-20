@@ -1,13 +1,21 @@
 <script lang="ts" setup>
 import type { RoutesNamedLocations } from '@typed-router';
 
-const { discord } = useAppConfig();
+const { discord, links } = useAppConfig();
 
 const settingsStore = useSettingsStore();
 const { eventsShowSnowflakes } = storeToRefs(settingsStore);
 const { startGuide } = useHelpGuides();
 
-type Hint = { key: string; keyboard?: boolean; to?: RoutesNamedLocations | string; guide?: string; hide?: boolean };
+type Hint = {
+    key: string;
+    label?: string;
+    keyboard?: boolean;
+    external?: boolean;
+    to?: RoutesNamedLocations | string;
+    guide?: string;
+    hide?: boolean;
+};
 
 const hints = computed(() =>
     shuffleArray(
@@ -37,6 +45,11 @@ const hints = computed(() =>
             {
                 key: 'notification_sounds',
                 to: '/user-settings/notifications#user-settings-notification-volume',
+            },
+            {
+                key: 'discord_feedback',
+                to: links.discord,
+                external: true,
             },
         ].flatMap((h) => (!h.hide ? [h] : [])) as Hint[],
     ),
@@ -78,11 +91,17 @@ function startHintGuide(guide?: string): void {
 
                     <div v-if="hint.keyboard || hint.to || hint.guide" class="shrink-0">
                         <UKbd v-if="hint.keyboard" size="md" :value="$t(`components.hints.${hint.key}.keyboard`)" />
-                        <UButton v-else-if="hint.to" size="sm" :to="hint.to" :label="$t('components.hints.click_me')" />
+                        <UButton
+                            v-else-if="hint.to"
+                            size="sm"
+                            :to="hint.to"
+                            :external="hint.external"
+                            :label="hint.label ?? $t('components.hints.click_me')"
+                        />
                         <UButton
                             v-else-if="hint.guide"
                             size="sm"
-                            :label="$t('components.hints.click_me')"
+                            :label="hint.label ?? $t('components.hints.click_me')"
                             @click="startHintGuide(hint.guide)"
                         />
                     </div>

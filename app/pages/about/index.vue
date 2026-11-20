@@ -4,6 +4,7 @@ import type { PageCardProps } from '@nuxt/ui';
 import StarsBg from '~/components/landing/StarsBg.vue';
 
 const { t } = useI18n();
+const { links } = useAppConfig();
 
 useHead({
     title: 'pages.about.title',
@@ -17,7 +18,7 @@ definePageMeta({
     showCookieOptions: true,
 });
 
-const discordLink = 'https://discord.gg/ASRPPr8CeT';
+const discordLink = links.discord;
 const repoLink = 'https://github.com/fivenet-app/fivenet';
 
 const introCards = computed<PageCardProps[]>(() => [

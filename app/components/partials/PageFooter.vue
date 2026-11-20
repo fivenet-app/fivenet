@@ -5,7 +5,7 @@ defineProps<{
 
 const { t } = useI18n();
 
-const { website } = useAppConfig();
+const { links, website } = useAppConfig();
 
 const settingsStore = useSettingsStore();
 const { eventsDisabled } = storeToRefs(settingsStore);
@@ -62,13 +62,7 @@ const year = new Date().getFullYear();
                     target="_blank"
                 />
 
-                <UButton
-                    icon="i-simple-icons-discord"
-                    color="neutral"
-                    variant="ghost"
-                    to="https://discord.gg/ASRPPr8CeT"
-                    target="_blank"
-                />
+                <UButton icon="i-simple-icons-discord" color="neutral" variant="ghost" :to="links.discord" external />
             </template>
         </UFooter>
     </div>

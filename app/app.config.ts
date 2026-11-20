@@ -8,6 +8,10 @@ export default defineAppConfig({
 
     defaultLocale: 'en',
 
+    links: {
+        discord: 'https://discord.gg/ASRPPr8CeT',
+    },
+
     setupComplete: false,
 
     auth: {
