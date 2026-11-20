@@ -1230,6 +1230,7 @@
         "goto": "Go to",
         "goto_item": "Go to {0}",
         "help": "Help",
+        "report_bug_or_feature_request": "Report a bug or request a feature",
         "shortcuts": "Shortcuts",
         "commandpalette": "Command Palette",
         "language": "Language | Languages",

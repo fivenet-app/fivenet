@@ -6,6 +6,7 @@ import { isRoute } from '~/utils/route';
 const { isHelpSlideoverOpen } = useDashboard();
 
 const { t } = useI18n();
+const { links: appLinks } = useAppConfig();
 
 const settingsStore = useSettingsStore();
 const { nuiEnabled } = storeToRefs(settingsStore);
@@ -28,6 +29,14 @@ const links = computed(() =>
                 onClick: () => {
                     shortcuts.value = true;
                 },
+            },
+            {
+                label: t('common.report_bug_or_feature_request'),
+                icon: 'i-mdi-bug-outline',
+                color: 'warning',
+                trailingIcon: 'i-mdi-external-link',
+                to: appLinks.discord,
+                external: true,
             },
             !nuiEnabled.value
                 ? {
