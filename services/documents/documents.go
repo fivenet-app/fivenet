@@ -328,6 +328,10 @@ func (s *Server) CreateDocument(
 	var tmpl *documentstemplates.Template
 	var resolvedData *resolvedTemplateData
 	if req.GetTemplateId() > 0 {
+		if err := s.requireTemplateView(ctx, req.GetTemplateId(), userInfo); err != nil {
+			return nil, err
+		}
+
 		var err error
 		tmpl, err = s.store.GetTemplate(ctx, req.GetTemplateId(), false)
 		if err != nil {

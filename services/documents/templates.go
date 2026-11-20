@@ -179,6 +179,30 @@ var templateSubjectAccessOptions = access.SubjectAccessOptions{
 	},
 }
 
+// requireTemplateView enforces the object-level permission needed to consume a
+// template. This is deliberately shared by retrieval and document creation so
+// callers cannot bypass the template ACL by supplying a template ID directly.
+func (s *Server) requireTemplateView(
+	ctx context.Context,
+	templateID int64,
+	userInfo *userinfo.UserInfo,
+) error {
+	check, err := s.templateAccess.CanUserAccessTarget(
+		ctx,
+		templateID,
+		userInfo,
+		int32(documentsaccess.AccessLevel_ACCESS_LEVEL_VIEW),
+	)
+	if err != nil {
+		return errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
+	}
+	if !check && !userInfo.GetJobAdmin() {
+		return errorsdocuments.ErrTemplateNoPerms
+	}
+
+	return nil
+}
+
 func (s *Server) sanitizeTemplateAccess(
 	tmpl *documentstemplates.Template,
 	sanitizeJobAccess bool,
@@ -262,20 +286,12 @@ func (s *Server) GetTemplate(
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
-	check, err := s.templateAccess.CanUserAccessTarget(
-		ctx,
-		req.GetTemplateId(),
-		userInfo,
-		int32(documentsaccess.AccessLevel_ACCESS_LEVEL_VIEW),
-	)
-	if err != nil {
-		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
-	}
-	if !check && !userInfo.GetJobAdmin() {
-		return nil, errorsdocuments.ErrTemplateNoPerms
+	if err := s.requireTemplateView(ctx, req.GetTemplateId(), userInfo); err != nil {
+		return nil, err
 	}
 
 	resp := &pbdocuments.GetTemplateResponse{}
+	var err error
 	resp.Template, err = s.store.GetTemplate(ctx, req.GetTemplateId(), userInfo.GetJobAdmin())
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
