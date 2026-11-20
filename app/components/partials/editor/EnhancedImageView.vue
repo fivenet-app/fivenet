@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { type NodeViewProps, NodeViewWrapper } from '@tiptap/vue-3';
 import { computed, ref, watch } from 'vue';
-import AlignmentBar from '~/components/partials/editor/AlignmentBar.vue';
+import ImageAlignmentBar from '~/components/partials/editor/ImageAlignmentBar.vue';
 import { getAlignStyle, removeStyleProperties, type ImageAlign } from '~/composables/tiptap/extensions/EnhancedImage';
 
 const props = defineProps<NodeViewProps>();
@@ -211,7 +211,7 @@ watch(
                         class="pointer-events-none absolute -top-4 left-1/2 z-20 w-full -translate-x-1/2 transform"
                     >
                         <div class="pointer-events-auto flex justify-center gap-1">
-                            <AlignmentBar
+                            <ImageAlignmentBar
                                 v-if="props.editor.isEditable"
                                 :model-value="currentAlignment"
                                 @update:model-value="setAlignment"

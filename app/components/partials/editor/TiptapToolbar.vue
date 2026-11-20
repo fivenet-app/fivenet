@@ -36,6 +36,75 @@ const files = defineModel<FileGrpc[]>('files', {
 const { can } = useAuth();
 const canListJobAssets = can('settings.JobsAssetsService/ListJobAssets');
 
+type TextAlign = 'left' | 'center' | 'right' | 'justify';
+type TextBlock = 'paragraph' | 'heading-1' | 'heading-2' | 'heading-3' | 'heading-4' | 'heading-5';
+type ListType = 'bullet' | 'ordered' | 'task';
+
+const { t } = useI18n();
+
+const textAlignItems = computed(() => [
+    {
+        value: 'left' as const,
+        icon: 'i-mdi-format-align-left',
+        'aria-label': t('components.partials.tiptap_editor.align_left'),
+        activeClass: 'bg-accented',
+    },
+    {
+        value: 'center' as const,
+        icon: 'i-mdi-format-align-center',
+        'aria-label': t('components.partials.tiptap_editor.align_center'),
+        activeClass: 'bg-accented',
+    },
+    {
+        value: 'right' as const,
+        icon: 'i-mdi-format-align-right',
+        'aria-label': t('components.partials.tiptap_editor.align_right'),
+        activeClass: 'bg-accented',
+    },
+    {
+        value: 'justify' as const,
+        icon: 'i-mdi-format-align-justify',
+        'aria-label': t('components.partials.tiptap_editor.align_justify'),
+        activeClass: 'bg-accented',
+    },
+]);
+
+const textBlockItems = computed(() => [
+    {
+        value: 'paragraph' as const,
+        icon: 'i-mdi-format-paragraph',
+        'aria-label': t('components.partials.tiptap_editor.paragraph'),
+        activeClass: 'bg-accented',
+    },
+    ...[1, 2, 3, 4, 5].map((level) => ({
+        value: `heading-${level}` as TextBlock,
+        icon: `i-mdi-format-header-${level}`,
+        'aria-label': t(`components.partials.tiptap_editor.heading_${level}`),
+        activeClass: 'bg-accented',
+    })),
+]);
+
+const listItems = computed(() => [
+    {
+        value: 'bullet' as const,
+        icon: 'i-mdi-format-list-bulleted',
+        'aria-label': t('components.partials.tiptap_editor.bullet_list'),
+        activeClass: 'bg-accented',
+    },
+    {
+        value: 'ordered' as const,
+        icon: 'i-mdi-format-list-numbered',
+        'aria-label': t('components.partials.tiptap_editor.ordered_list'),
+        activeClass: 'bg-accented',
+    },
+    {
+        value: 'task' as const,
+        icon: 'i-mdi-format-list-checks',
+        'aria-label': t('components.partials.tiptap_editor.task_list'),
+        activeClass: 'bg-accented',
+    },
+]);
+
 const overlay = useOverlay();
 
 const settingsStore = useSettingsStore();
@@ -47,6 +116,21 @@ const ed = shallowRef<Editor>(toRaw(props.editor));
 
 const { ui, attach, detach } = useTiptapToolbar(() => unref(ed));
 
+const activeTextBlock = computed<TextBlock | undefined>(() => {
+    if (ui.paragraph) return 'paragraph';
+    if (ui.headingLevel >= 1 && ui.headingLevel <= 5) return `heading-${ui.headingLevel}` as TextBlock;
+
+    return undefined;
+});
+
+const activeListType = computed<ListType | undefined>(() => {
+    if (ui.bulletList) return 'bullet';
+    if (ui.orderedList) return 'ordered';
+    if (ui.taskList) return 'task';
+
+    return undefined;
+});
+
 onMounted(attach);
 onBeforeUnmount(detach);
 
@@ -56,6 +140,44 @@ const versionHistoryModal = overlay.create(VersionHistoryModal);
 
 function setContent(value: string): void {
     ed.value?.commands.setContent(value, { emitUpdate: true });
+}
+
+function setTextAlign(value: unknown): void {
+    if (!['left', 'center', 'right', 'justify'].includes(value as TextAlign)) return;
+
+    ed.value
+        ?.chain()
+        .focus()
+        .setTextAlign(value as TextAlign)
+        .run();
+}
+
+function setTextBlock(value: unknown): void {
+    if (value === undefined || value === 'paragraph') {
+        ed.value?.chain().focus().setParagraph().run();
+        return;
+    }
+
+    const headingLevel = Number(String(value).replace('heading-', ''));
+    if (!Number.isInteger(headingLevel) || headingLevel < 1 || headingLevel > 5) return;
+
+    ed.value
+        ?.chain()
+        .focus()
+        .toggleHeading({ level: headingLevel as 1 | 2 | 3 | 4 | 5 })
+        .run();
+}
+
+function setListType(value: unknown): void {
+    const listType = value ?? activeListType.value;
+
+    if (listType === 'bullet') {
+        ed.value?.chain().focus().toggleBulletList().run();
+    } else if (listType === 'ordered') {
+        ed.value?.chain().focus().toggleOrderedList().run();
+    } else if (listType === 'task') {
+        ed.value?.chain().focus().toggleTaskList().run();
+    }
 }
 
 watch(
@@ -235,61 +357,34 @@ const isLinkOpen = ref<boolean>(false);
         <USeparator orientation="vertical" :ui="{ border: 'border-neutral-200 dark:border-neutral-700' }" />
 
         <!-- Text Align -->
-        <UFieldGroup>
-            <UTooltip :text="$t('components.partials.tiptap_editor.align_left')">
-                <UButton
-                    :class="{ 'bg-accented': ui.textAlign === 'left' }"
+        <UFormField>
+            <UTooltip :text="$t('components.partials.tiptap_editor.text_alignment')">
+                <UToggleGroup
+                    :model-value="ui.textAlign"
+                    :items="textAlignItems"
+                    :disabled="disabled"
+                    :aria-label="$t('components.partials.tiptap_editor.text_alignment')"
+                    type="single"
+                    attached
                     color="neutral"
                     variant="ghost"
-                    icon="i-mdi-format-align-left"
-                    :disabled="disabled"
-                    @click="() => ed?.chain().focus().setTextAlign('left').run()"
+                    active-color="neutral"
+                    active-variant="ghost"
+                    @update:model-value="setTextAlign"
                 />
             </UTooltip>
-
-            <UTooltip :text="$t('components.partials.tiptap_editor.align_center')">
-                <UButton
-                    :class="{ 'bg-accented': ui.textAlign === 'center' }"
-                    color="neutral"
-                    variant="ghost"
-                    icon="i-mdi-format-align-center"
-                    :disabled="disabled"
-                    @click="() => ed?.chain().focus().setTextAlign('center').run()"
-                />
-            </UTooltip>
-
-            <UTooltip :text="$t('components.partials.tiptap_editor.align_right')">
-                <UButton
-                    :class="{ 'bg-accented': ui.textAlign === 'right' }"
-                    color="neutral"
-                    variant="ghost"
-                    icon="i-mdi-format-align-right"
-                    :disabled="disabled"
-                    @click="() => ed?.chain().focus().setTextAlign('right').run()"
-                />
-            </UTooltip>
-
-            <UTooltip :text="$t('components.partials.tiptap_editor.align_justify')">
-                <UButton
-                    :class="{ 'bg-accented': ui.textAlign === 'justify' }"
-                    color="neutral"
-                    variant="ghost"
-                    icon="i-mdi-format-align-justify"
-                    :disabled="disabled"
-                    @click="() => ed?.chain().focus().setTextAlign('justify').run()"
-                />
-            </UTooltip>
-        </UFieldGroup>
+        </UFormField>
 
         <USeparator orientation="vertical" :ui="{ border: 'border-neutral-200 dark:border-neutral-700' }" />
 
         <!-- Font Family -->
-        <UFormField name="selectedFont">
+        <UFormField name="selectedFont" class="w-48 max-w-full shrink-0">
             <UTooltip :text="$t('components.partials.tiptap_editor.font_family')">
                 <USelectMenu
                     v-model="selectedFont"
-                    class="w-full max-w-44"
+                    class="w-full"
                     name="selectedFont"
+                    leading-icon="i-mdi-format-font"
                     :filter-fields="['label']"
                     :items="fonts"
                     :placeholder="$t('components.partials.tiptap_editor.font_family', 1)"
@@ -315,119 +410,67 @@ const isLinkOpen = ref<boolean>(false);
             </UTooltip>
         </UFormField>
 
-        <UFieldGroup>
-            <UPopover>
-                <UTooltip :text="$t('components.partials.tiptap_editor.font_color')">
+        <UPopover>
+            <UTooltip :text="$t('components.partials.tiptap_editor.font_color')">
+                <UButton
+                    :class="{
+                        'bg-accented': ui.fontColor === selectedFontColor,
+                    }"
+                    color="neutral"
+                    variant="ghost"
+                    :style="{ color: selectedFontColor }"
+                    icon="i-mdi-format-color-text"
+                    :disabled="disabled"
+                />
+            </UTooltip>
+
+            <template #content="{ close }">
+                <div class="inline-flex flex-col gap-1 p-4">
                     <UButton
-                        :class="{
-                            'bg-accented': ui.fontColor === selectedFontColor,
-                        }"
+                        class="rounded-md"
                         color="neutral"
-                        variant="ghost"
-                        :style="{ color: selectedFontColor }"
-                        icon="i-mdi-format-color-text"
+                        variant="outline"
+                        icon="i-mdi-water-off"
+                        :label="$t('components.partials.tiptap_editor.default')"
                         :disabled="disabled"
+                        @click="
+                            ed?.chain().focus().unsetColor().run();
+                            close();
+                        "
                     />
-                </UTooltip>
 
-                <template #content="{ close }">
-                    <div class="inline-flex flex-col gap-1 p-4">
-                        <UButton
-                            class="rounded-md"
-                            color="neutral"
-                            variant="outline"
-                            icon="i-mdi-water-off"
-                            :label="$t('components.partials.tiptap_editor.default')"
-                            :disabled="disabled"
-                            @click="
-                                ed?.chain().focus().unsetColor().run();
-                                close();
-                            "
-                        />
-
-                        <div v-for="(colors, idx) in fontColors" :key="idx">
-                            <div class="grid grid-cols-10 gap-0.5">
-                                <UButton
-                                    v-for="(col, cIdx) in colors"
-                                    :key="cIdx"
-                                    class="size-6 rounded-none border-0"
-                                    :style="{ backgroundColor: col }"
-                                    :disabled="disabled"
-                                    @click="selectedFontColor = col"
-                                />
-                            </div>
+                    <div v-for="(colors, idx) in fontColors" :key="idx">
+                        <div class="grid grid-cols-10 gap-0.5">
+                            <UButton
+                                v-for="(col, cIdx) in colors"
+                                :key="cIdx"
+                                class="size-6 rounded-none border-0"
+                                :style="{ backgroundColor: col }"
+                                :disabled="disabled"
+                                @click="selectedFontColor = col"
+                            />
                         </div>
                     </div>
-                </template>
-            </UPopover>
+                </div>
+            </template>
+        </UPopover>
 
-            <!-- Paragraph + Headers -->
-            <UTooltip :text="$t('components.partials.tiptap_editor.paragraph')">
-                <UButton
-                    :class="{ 'bg-accented': ui.paragraph }"
-                    color="neutral"
-                    variant="ghost"
-                    icon="i-mdi-format-paragraph"
-                    :disabled="disabled"
-                    @click="() => ed?.chain().focus().setParagraph().run()"
-                />
-            </UTooltip>
-
-            <UTooltip :text="$t('components.partials.tiptap_editor.heading_1')">
-                <UButton
-                    :class="{ 'bg-accented': ui.headingLevel === 1 }"
-                    color="neutral"
-                    variant="ghost"
-                    icon="i-mdi-format-header-1"
-                    :disabled="disabled"
-                    @click="() => ed?.chain().focus().toggleHeading({ level: 1 }).run()"
-                />
-            </UTooltip>
-
-            <UTooltip :text="$t('components.partials.tiptap_editor.heading_2')">
-                <UButton
-                    :class="{ 'bg-accented': ui.headingLevel === 2 }"
-                    color="neutral"
-                    variant="ghost"
-                    icon="i-mdi-format-header-2"
-                    :disabled="disabled"
-                    @click="() => ed?.chain().focus().toggleHeading({ level: 2 }).run()"
-                />
-            </UTooltip>
-
-            <UTooltip :text="$t('components.partials.tiptap_editor.heading_3')">
-                <UButton
-                    :class="{ 'bg-accented': ui.headingLevel === 3 }"
-                    color="neutral"
-                    variant="ghost"
-                    icon="i-mdi-format-header-3"
-                    :disabled="disabled"
-                    @click="() => ed?.chain().focus().toggleHeading({ level: 3 }).run()"
-                />
-            </UTooltip>
-
-            <UTooltip :text="$t('components.partials.tiptap_editor.heading_4')">
-                <UButton
-                    :class="{ 'bg-accented': ui.headingLevel === 4 }"
-                    color="neutral"
-                    variant="ghost"
-                    icon="i-mdi-format-header-4"
-                    :disabled="disabled"
-                    @click="() => ed?.chain().focus().toggleHeading({ level: 4 }).run()"
-                />
-            </UTooltip>
-
-            <UTooltip :text="$t('components.partials.tiptap_editor.heading_5')">
-                <UButton
-                    :class="{ 'bg-accented': ui.headingLevel === 5 }"
-                    color="neutral"
-                    variant="ghost"
-                    icon="i-mdi-format-header-5"
-                    :disabled="disabled"
-                    @click="() => ed?.chain().focus().toggleHeading({ level: 5 }).run()"
-                />
-            </UTooltip>
-        </UFieldGroup>
+        <!-- Paragraph + Headers -->
+        <UTooltip :text="$t('components.partials.tiptap_editor.text_block')">
+            <UToggleGroup
+                :model-value="activeTextBlock"
+                :items="textBlockItems"
+                :disabled="disabled"
+                :aria-label="$t('components.partials.tiptap_editor.text_block')"
+                type="single"
+                attached
+                color="neutral"
+                variant="ghost"
+                active-color="neutral"
+                active-variant="ghost"
+                @update:model-value="setTextBlock"
+            />
+        </UTooltip>
     </div>
 
     <div class="flex snap-x flex-wrap gap-1">
@@ -489,51 +532,36 @@ const isLinkOpen = ref<boolean>(false);
 
         <USeparator orientation="vertical" :ui="{ border: 'border-neutral-200 dark:border-neutral-700' }" />
 
-        <UFieldGroup>
-            <UTooltip :text="$t('components.partials.tiptap_editor.bullet_list')">
-                <UButton
-                    :class="{ 'bg-accented': ui.bulletList }"
+        <UFormField>
+            <UTooltip :text="$t('components.partials.tiptap_editor.lists')">
+                <UToggleGroup
+                    :model-value="activeListType"
+                    :items="listItems"
+                    :disabled="disabled"
+                    :aria-label="$t('components.partials.tiptap_editor.lists')"
+                    type="single"
+                    attached
                     color="neutral"
                     variant="ghost"
-                    icon="i-mdi-format-list-bulleted"
-                    :disabled="disabled"
-                    @click="() => ed?.chain().focus().toggleBulletList().run()"
+                    active-color="neutral"
+                    active-variant="ghost"
+                    @update:model-value="setListType"
                 />
             </UTooltip>
+        </UFormField>
 
-            <UTooltip :text="$t('components.partials.tiptap_editor.ordered_list')">
-                <UButton
-                    :class="{ 'bg-accented': ui.orderedList }"
-                    color="neutral"
-                    variant="ghost"
-                    icon="i-mdi-format-list-numbered"
-                    :disabled="disabled"
-                    @click="() => ed?.chain().focus().toggleOrderedList().run()"
-                />
-            </UTooltip>
+        <USeparator orientation="vertical" :ui="{ border: 'border-neutral-200 dark:border-neutral-700' }" />
 
-            <UTooltip :text="$t('components.partials.tiptap_editor.task_list')">
-                <UButton
-                    :class="{ 'bg-accented': ui.taskList }"
-                    icon="i-mdi-format-list-checks"
-                    color="neutral"
-                    variant="ghost"
-                    :disabled="disabled"
-                    @click="() => ed?.chain().focus().toggleTaskList().run()"
-                />
-            </UTooltip>
-
-            <UTooltip :text="$t('components.partials.tiptap_editor.checkbox')">
-                <UButton
-                    :class="{ 'bg-accented': ui.checkboxStandalone }"
-                    icon="i-mdi-checkbox-marked-outline"
-                    color="neutral"
-                    variant="ghost"
-                    :disabled="disabled"
-                    @click="() => ed?.chain().focus().addCheckboxStandalone().run()"
-                />
-            </UTooltip>
-        </UFieldGroup>
+        <UTooltip :text="$t('components.partials.tiptap_editor.checkbox')">
+            <UButton
+                :class="{ 'bg-accented': ui.checkboxStandalone }"
+                icon="i-mdi-checkbox-marked-outline"
+                color="neutral"
+                variant="ghost"
+                :disabled="disabled"
+                @click="() => ed?.chain().focus().addCheckboxStandalone().run()"
+            />
+        </UTooltip>
 
         <USeparator orientation="vertical" :ui="{ border: 'border-neutral-200 dark:border-neutral-700' }" />
 
