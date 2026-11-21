@@ -60,16 +60,19 @@ func (s *Server) ListVehicleActivity(
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsvehicles.ErrFailedQuery)
 	}
-	activityTypes := effectiveVehicleActivityTypes(
-		req.GetTypes(),
-		visiblePropertyKeys,
-	)
+	activityTypes := effectiveVehicleActivityTypes(req.GetTypes(), visiblePropertyKeys)
+	availableActivityTypes := effectiveVehicleActivityTypes(nil, visiblePropertyKeys)
 
 	queryOpts := vehiclesstore.CountVehicleActivityOptions{
 		VehicleActivityOptions: vehiclesstore.VehicleActivityOptions{
-			Plate:               req.GetPlate(),
-			Types:               activityTypes,
-			PropertyKeys:        req.GetPropertyKeys(),
+			Plate:        req.GetPlate(),
+			Types:        activityTypes,
+			PropertyKeys: req.GetPropertyKeys(),
+			PropertyTypes: vehicleActivityTypesForPropertyKeys(
+				req.GetPropertyKeys(),
+				availableActivityTypes,
+				visiblePropertyKeys,
+			),
 			VisiblePropertyKeys: visiblePropertyKeys,
 			From:                req.GetFrom(),
 			To:                  req.GetTo(),
@@ -155,6 +158,33 @@ func effectiveVehicleActivityTypes(
 		}
 	}
 	return allowed
+}
+
+// vehicleActivityTypesForPropertyKeys maps selected, visible system property
+// keys to their legacy activity types. Custom properties remain PROPERTY
+// activities and are filtered by key in the store.
+func vehicleActivityTypesForPropertyKeys(
+	propertyKeys []string,
+	allowedActivityTypes []vehiclesactivity.VehicleActivityType,
+	visiblePropertyKeys []string,
+) []vehiclesactivity.VehicleActivityType {
+	legacyTypes := make([]vehiclesactivity.VehicleActivityType, 0, len(propertyKeys))
+	for _, activityType := range allowedActivityTypes {
+		var propertyKey string
+		switch activityType {
+		case vehiclesactivity.VehicleActivityType_VEHICLE_ACTIVITY_TYPE_WANTED:
+			propertyKey = "vehicle.wanted"
+		case vehiclesactivity.VehicleActivityType_VEHICLE_ACTIVITY_TYPE_FILE:
+			propertyKey = vehicleFilesPropertyKey
+		default:
+			continue
+		}
+		if slices.Contains(propertyKeys, propertyKey) &&
+			slices.Contains(visiblePropertyKeys, propertyKey) {
+			legacyTypes = append(legacyTypes, activityType)
+		}
+	}
+	return legacyTypes
 }
 
 func (s *Server) effectiveActivityPropertyKeys(

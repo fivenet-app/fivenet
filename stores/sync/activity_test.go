@@ -24,7 +24,8 @@ func TestSplitPropertyMutationsUsesManagedRegistry(t *testing.T) {
 
 	userValue := &properties.PropertyValue{}
 	userValue.SetBoolValue(true)
-	userMutation := &properties.PropertyMutation{Key: "user.wanted"}
+	reason := "dispatch notice"
+	userMutation := &properties.PropertyMutation{Key: "user.wanted", Reason: &reason}
 	userMutation.SetSetValue(userValue)
 	userProps, userChanges, err := splitUserPropertyMutations(&pbsync.SetUserPropertiesRequest{
 		UserId:            42,
@@ -37,7 +38,7 @@ func TestSplitPropertyMutationsUsesManagedRegistry(t *testing.T) {
 
 	vehicleValue := &properties.PropertyValue{}
 	vehicleValue.SetBoolValue(true)
-	vehicleMutation := &properties.PropertyMutation{Key: "vehicle.wanted"}
+	vehicleMutation := &properties.PropertyMutation{Key: "vehicle.wanted", Reason: &reason}
 	vehicleMutation.SetSetValue(vehicleValue)
 	vehicleProps, vehicleChanges, hasManaged, err := splitVehiclePropertyMutations(
 		&pbsync.SetVehiclePropertiesRequest{
@@ -49,6 +50,29 @@ func TestSplitPropertyMutationsUsesManagedRegistry(t *testing.T) {
 	require.Empty(t, vehicleChanges)
 	require.True(t, hasManaged)
 	require.True(t, vehicleProps.GetWanted())
+}
+
+func TestSplitManagedPropertyMutationsRequireReason(t *testing.T) {
+	t.Parallel()
+
+	value := &properties.PropertyValue{}
+	value.SetBoolValue(true)
+
+	userMutation := &properties.PropertyMutation{Key: "user.wanted"}
+	userMutation.SetSetValue(value)
+	_, _, err := splitUserPropertyMutations(&pbsync.SetUserPropertiesRequest{
+		UserId:            42,
+		PropertyMutations: []*properties.PropertyMutation{userMutation},
+	})
+	require.Error(t, err)
+
+	vehicleMutation := &properties.PropertyMutation{Key: "vehicle.wanted"}
+	vehicleMutation.SetSetValue(value)
+	_, _, _, err = splitVehiclePropertyMutations(&pbsync.SetVehiclePropertiesRequest{
+		Plate:             "ABC123",
+		PropertyMutations: []*properties.PropertyMutation{vehicleMutation},
+	})
+	require.Error(t, err)
 }
 
 func TestWantedStateClearReason(t *testing.T) {

@@ -10,6 +10,7 @@ import Pagination from '~/components/partials/Pagination.vue';
 import SortButton from '~/components/partials/SortButton.vue';
 import { getVehiclesVehiclesClient } from '~~/gen/ts/clients';
 import type { SortByColumn } from '~~/gen/ts/resources/common/database/database';
+import { PropertyDefinitionSource, type Properties } from '~~/gen/ts/resources/properties/properties';
 import { VehicleActivityType } from '~~/gen/ts/resources/vehicles/activity/activity';
 import type { ListVehicleActivityResponse } from '~~/gen/ts/services/vehicles/vehicles';
 import ActivityFeedEntry from './ActivityFeedEntry.vue';
@@ -18,10 +19,12 @@ import { vehicleActivityIndicatorColor, vehicleActivityTypeColor, vehicleActivit
 const props = defineProps<{
     plate: string;
     ownerId?: number;
+    properties?: Properties;
 }>();
 
 const { t } = useI18n();
 const { attr, activeChar } = useAuth();
+const { propertyLabel } = usePropertyRenderer();
 
 const vehiclesVehiclesClientPromise = getVehiclesVehiclesClient();
 
@@ -31,23 +34,35 @@ const activityTypes = Object.keys(VehicleActivityType)
 
 const visibleActivityTypes = activityTypes.filter(
     (activityType) =>
+        activityType !== VehicleActivityType.PROPERTY &&
         (activityType !== VehicleActivityType.WANTED ||
             attr('vehicles.VehiclesService/ListVehicles', 'Properties', 'vehicle.wanted').value) &&
         (activityType !== VehicleActivityType.FILE ||
             attr('vehicles.VehiclesService/ListVehicles', 'Properties', 'vehicle.files').value),
 );
 
-const options = visibleActivityTypes.map((at) => ({
+const activityTypeOptions = visibleActivityTypes.map((at) => ({
     label: t(`enums.vehicles.VehicleActivityType.${VehicleActivityType[at]}`),
     icon: vehicleActivityTypeIcon(at),
-    value: at,
+    value: `type:${at}`,
     ui: {
         itemLeadingIcon: vehicleActivityTypeColor(at),
     },
 }));
+const propertyOptions = computed(() =>
+    (props.properties?.properties ?? [])
+        .filter((property) => property.definition?.source === PropertyDefinitionSource.CUSTOM && property.definition.enabled)
+        .map((property) => ({ label: propertyLabel(property), icon: 'i-mdi-tag-outline', value: `property:${property.key}` }))
+        .sort((left, right) => left.label.localeCompare(right.label)),
+);
+const activityFilterOptions = computed(() => [...activityTypeOptions, ...propertyOptions.value]);
 
 const schema = z.object({
-    types: z.enum(VehicleActivityType).array().max(activityTypes.length).default([]),
+    activityFilters: z
+        .string()
+        .array()
+        .max(activityTypes.length + 20)
+        .default([]),
     dateRange: z.custom<DateRange>().optional(),
     sorting: z
         .object({
@@ -121,10 +136,10 @@ async function listVehicleActivity(values: Schema, signal: AbortSignal): Promise
                 },
                 sort: values.sorting,
                 plate: props.plate,
-                types: values.types,
+                types: activityTypesForFilters(values.activityFilters),
                 from: toTimestamp(values.dateRange?.start),
                 to: toTimestamp(values.dateRange?.end),
-                propertyKeys: [],
+                propertyKeys: propertyKeysForFilters(values.activityFilters),
             },
             { abort: signal },
         );
@@ -135,6 +150,21 @@ async function listVehicleActivity(values: Schema, signal: AbortSignal): Promise
         handleGRPCError(e as RpcError);
         throw e;
     }
+}
+
+function activityTypesForFilters(filters: string[]): VehicleActivityType[] {
+    return filters.flatMap((filter) => {
+        if (!filter.startsWith('type:')) return [];
+        const activityType = Number(filter.slice('type:'.length)) as VehicleActivityType;
+        return visibleActivityTypes.includes(activityType) ? [activityType] : [];
+    });
+}
+
+function propertyKeysForFilters(filters: string[]): string[] {
+    const available = new Set(propertyOptions.value.map((option) => option.value));
+    return [
+        ...new Set(filters.filter((filter) => available.has(filter)).map((filter) => filter.slice('property:'.length))),
+    ].slice(0, 20);
 }
 </script>
 
@@ -151,18 +181,18 @@ async function listVehicleActivity(values: Schema, signal: AbortSignal): Promise
                         @submit="commitValidatedQuery"
                     >
                         <ActivityFeedFilterLayout :field-count="3">
-                            <UFormField class="w-full min-w-0" name="types" :label="$t('common.type', 2)">
+                            <UFormField class="w-full min-w-0" name="activityFilters" :label="$t('common.activity')">
                                 <ClientOnly>
                                     <USelectMenu
-                                        v-model="query.types"
+                                        v-model="query.activityFilters"
                                         class="w-full min-w-40 flex-1"
                                         multiple
                                         nullable
-                                        :items="options"
+                                        :items="activityFilterOptions"
                                         value-key="value"
-                                        :search-input="{ placeholder: $t('common.type', 2) }"
+                                        :search-input="{ placeholder: $t('common.activity') }"
                                     >
-                                        <template #empty> {{ $t('common.not_found', [$t('common.type', 2)]) }} </template>
+                                        <template #empty> {{ $t('common.not_found', [$t('common.activity')]) }} </template>
                                     </USelectMenu>
                                 </ClientOnly>
                             </UFormField>

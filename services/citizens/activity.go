@@ -66,11 +66,17 @@ func (s *Server) ListUserActivity(
 		}
 	}
 	activityTypes := effectiveUserActivityTypes(req.GetTypes(), visiblePropertyKeys, canViewFiles)
+	availableActivityTypes := effectiveUserActivityTypes(nil, visiblePropertyKeys, canViewFiles)
 	queryOpts := citizensstore.CountUserActivityOptions{
 		UserActivityOptions: citizensstore.UserActivityOptions{
-			UserID:              req.GetUserId(),
-			Types:               activityTypes,
-			PropertyKeys:        req.GetPropertyKeys(),
+			UserID:       req.GetUserId(),
+			Types:        activityTypes,
+			PropertyKeys: req.GetPropertyKeys(),
+			PropertyTypes: userActivityTypesForPropertyKeys(
+				req.GetPropertyKeys(),
+				availableActivityTypes,
+				visiblePropertyKeys,
+			),
 			VisiblePropertyKeys: visiblePropertyKeys,
 			From:                req.GetFrom(),
 			To:                  req.GetTo(),
@@ -192,30 +198,67 @@ func userActivityPropertyKey(activityType usersactivity.UserActivityType) string
 	}
 }
 
+// userActivityTypesForPropertyKeys maps selected, visible system property
+// keys to their legacy activity types. Custom properties remain PROPERTY
+// activities and are filtered by key in the store.
+func userActivityTypesForPropertyKeys(
+	propertyKeys []string,
+	allowedActivityTypes []usersactivity.UserActivityType,
+	visiblePropertyKeys []string,
+) []usersactivity.UserActivityType {
+	legacyTypes := make([]usersactivity.UserActivityType, 0, len(propertyKeys))
+	for _, activityType := range allowedActivityTypes {
+		propertyKey := userActivityPropertyKey(activityType)
+		if propertyKey == "" ||
+			!slices.Contains(propertyKeys, propertyKey) ||
+			!slices.Contains(visiblePropertyKeys, propertyKey) {
+			continue
+		}
+		legacyTypes = append(legacyTypes, activityType)
+	}
+	return legacyTypes
+}
+
 func (s *Server) effectiveActivityPropertyKeys(
 	ctx context.Context,
 	allowedKeys []string,
 	propertyAdmin bool,
 ) ([]string, error) {
-	keys := append([]string(nil), allowedKeys...)
-	if propertyAdmin {
-		for _, definition := range propertyregistry.SystemPropertyDefinitionsForScope(
-			properties.PropertyScope_PROPERTY_SCOPE_USER,
-		) {
-			keys = append(keys, definition.GetKey())
-		}
-		customKeys, err := s.store.ListCustomPropertyKeys(ctx)
-		if err != nil {
-			return nil, err
-		}
-		keys = append(keys, customKeys...)
+	keys, err := s.appendAdminCitizenPropertyKeys(ctx, propertyAdmin, allowedKeys)
+	if err != nil {
+		return nil, err
 	}
-	slices.Sort(keys)
-	keys = slices.Compact(keys)
 
 	definitions, err := s.store.ResolvePropertyDefinitions(ctx, keys)
 	if err != nil {
 		return nil, err
 	}
 	return propertyregistry.EnabledPropertyKeys(keys, definitions), nil
+}
+
+// appendAdminCitizenPropertyKeys gives a property administrator the complete
+// enabled catalog, matching vehicle behavior. Other callers retain their
+// explicit property-list grants.
+func (s *Server) appendAdminCitizenPropertyKeys(
+	ctx context.Context,
+	propertyAdmin bool,
+	keys []string,
+) ([]string, error) {
+	keys = append([]string(nil), keys...)
+	if !propertyAdmin {
+		return keys, nil
+	}
+
+	for _, definition := range propertyregistry.SystemPropertyDefinitionsForScope(
+		properties.PropertyScope_PROPERTY_SCOPE_USER,
+	) {
+		keys = append(keys, definition.GetKey())
+	}
+	customKeys, err := s.store.ListCustomPropertyKeys(ctx)
+	if err != nil {
+		return nil, err
+	}
+	keys = append(keys, customKeys...)
+	slices.Sort(keys)
+	return slices.Compact(keys), nil
 }

@@ -22,6 +22,7 @@ import (
 	propertyregistry "github.com/fivenet-app/fivenet/v2026/pkg/properties"
 	errorscitizens "github.com/fivenet-app/fivenet/v2026/services/citizens/errors"
 	citizensstore "github.com/fivenet-app/fivenet/v2026/stores/citizens"
+	"github.com/go-jet/jet/v2/qrm"
 	"github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/logging"
 )
 
@@ -42,8 +43,23 @@ func (s *Server) SetUserProps(
 		return nil, errorscitizens.ErrReasonRequired
 	}
 
+	// Validate and hold the parent in the same transaction as all dependent
+	// property and activity writes. In particular, GetUserAccess below cannot
+	// race an external hard-delete between its read and the activity insert.
+	tx, err := s.db.BeginTx(ctx, nil)
+	if err != nil {
+		return nil, errswrap.NewError(err, errorscitizens.ErrFailedQuery)
+	}
+	defer tx.Rollback()
+	if err := lockCitizenParent(ctx, tx, req.GetProps().GetUserId()); err != nil {
+		if errors.Is(err, qrm.ErrNoRows) {
+			return nil, errorscitizens.ErrJobGradeNoPermission
+		}
+		return nil, errswrap.NewError(err, errorscitizens.ErrFailedQuery)
+	}
+
 	// Get current user props to be able to compare
-	props, err := s.store.GetUserProps(ctx, s.db, req.GetProps().GetUserId())
+	props, err := s.store.GetUserProps(ctx, tx, req.GetProps().GetUserId())
 	if err != nil {
 		return nil, errswrap.NewError(err, errorscitizens.ErrFailedQuery)
 	}
@@ -203,13 +219,6 @@ func (s *Server) SetUserProps(
 	req.Props.BloodType = nil
 	req.Props.Email = nil
 
-	// Begin transaction
-	tx, err := s.db.BeginTx(ctx, nil)
-	if err != nil {
-		return nil, errswrap.NewError(err, errorscitizens.ErrFailedQuery)
-	}
-	// Defer a rollback in case anything fails
-	defer tx.Rollback()
 	if req.GetProps().GetLabels() != nil {
 		if !propertyList.Contains("user.labels") {
 			return nil, errorscitizens.ErrPropsLabelsDenied

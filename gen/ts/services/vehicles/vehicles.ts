@@ -139,7 +139,9 @@ export interface ListVehicleActivityRequest {
      */
     to?: Timestamp;
     /**
-     * Restricts generic PROPERTY activity entries to these custom property keys.
+     * Restricts property activity to these keys. Custom keys match generic
+     * PROPERTY entries; system keys also match their legacy dedicated activity
+     * type where one exists. When combined with types, the filters are additive.
      *
      * @generated from protobuf field: repeated string property_keys = 7
      */

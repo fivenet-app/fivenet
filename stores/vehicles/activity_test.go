@@ -52,6 +52,54 @@ func TestStoreCountVehicleActivityAppliesPlateAndTypeFilter(t *testing.T) {
 	require.NoError(t, mock.ExpectationsWereMet())
 }
 
+func TestStoreCountVehicleActivityCombinesTypeAndPropertyFilters(t *testing.T) {
+	t.Parallel()
+
+	db, mock, err := sqlmock.New()
+	require.NoError(t, err)
+	t.Cleanup(func() { _ = db.Close() })
+
+	store := New(db, &config.CustomDB{}, nil)
+	expectedQuery := regexp.QuoteMeta(`FROM fivenet_vehicle_activity AS vehicle_activity`) +
+		`(?s).*` + regexp.QuoteMeta(`vehicle_activity.type IN (?)`) +
+		`(?s).*` + regexp.QuoteMeta(`vehicle_activity.type = ?`) +
+		`(?s).*` + regexp.QuoteMeta("vehicle_activity.`key` IN (?)") +
+		`(?s).*` + regexp.QuoteMeta(`OR (vehicle_activity.type IN (?))`)
+	mock.ExpectQuery(expectedQuery).
+		WithArgs(
+			"ABC DEF1",
+			int32(vehiclesactivity.VehicleActivityType_VEHICLE_ACTIVITY_TYPE_FILE),
+			int32(vehiclesactivity.VehicleActivityType_VEHICLE_ACTIVITY_TYPE_PROPERTY),
+			"vehicle.wanted",
+			int32(vehiclesactivity.VehicleActivityType_VEHICLE_ACTIVITY_TYPE_WANTED),
+			int32(vehiclesactivity.VehicleActivityType_VEHICLE_ACTIVITY_TYPE_PROPERTY),
+			"vehicle.wanted",
+			int32(vehiclesactivity.VehicleActivityType_VEHICLE_ACTIVITY_TYPE_PROPERTY),
+			1,
+			"vehicle",
+			"vehicle.wanted",
+			"vehicle.files",
+		).
+		WillReturnRows(sqlmock.NewRows([]string{"data_count.total"}).AddRow(int64(2)))
+
+	total, err := store.CountVehicleActivity(t.Context(), CountVehicleActivityOptions{
+		VehicleActivityOptions: VehicleActivityOptions{
+			Plate: "ABC DEF1",
+			Types: []vehiclesactivity.VehicleActivityType{
+				vehiclesactivity.VehicleActivityType_VEHICLE_ACTIVITY_TYPE_FILE,
+			},
+			PropertyKeys: []string{"vehicle.wanted"},
+			PropertyTypes: []vehiclesactivity.VehicleActivityType{
+				vehiclesactivity.VehicleActivityType_VEHICLE_ACTIVITY_TYPE_WANTED,
+			},
+			VisiblePropertyKeys: []string{"vehicle.wanted"},
+		},
+	})
+	require.NoError(t, err)
+	assert.Equal(t, int64(2), total)
+	require.NoError(t, mock.ExpectationsWereMet())
+}
+
 func TestStoreListVehicleActivityAppliesSortWithoutCreatorJoin(t *testing.T) {
 	t.Parallel()
 
@@ -164,11 +212,14 @@ func TestStoreUpdatePropsWritesWantedActivity(t *testing.T) {
 
 	store := New(db, &config.CustomDB{}, nil)
 
+	mock.ExpectBegin()
+	mock.ExpectQuery(`(?s)SELECT fivenet_vehicle\.plate.*FROM fivenet_vehicle.*FOR UPDATE`).
+		WithArgs("ABC DEF1").
+		WillReturnRows(sqlmock.NewRows([]string{"fivenet_vehicle.plate"}).AddRow("ABC DEF1"))
 	mock.ExpectQuery(`(?s)FROM fivenet_vehicle_property_values value.*fivenet_vehicle_property_state`).
 		WithArgs(vehicleWantedPropertyKey, "ABC DEF1").
 		WillReturnRows(sqlmock.NewRows([]string{"plate", "updated_at", "value_bool", "reason", "active_at", "expires_at"}).
 			AddRow("ABC DEF1", time.Now(), false, nil, nil, nil))
-	mock.ExpectBegin()
 	mock.ExpectExec(`(?s)INSERT INTO fivenet_vehicle_property_values`).
 		WithArgs("ABC DEF1", vehicleWantedPropertyKey, propertyValueTypeBool, true).
 		WillReturnResult(sqlmock.NewResult(0, 1))
@@ -212,11 +263,14 @@ func TestStoreUpdatePropsNoOpDoesNotWriteWantedActivity(t *testing.T) {
 
 	wantedAt := time.Now().UTC()
 	wantedTill := time.Now().UTC().Add(time.Hour)
+	mock.ExpectBegin()
+	mock.ExpectQuery(`(?s)SELECT fivenet_vehicle\.plate.*FROM fivenet_vehicle.*FOR UPDATE`).
+		WithArgs("ABC DEF1").
+		WillReturnRows(sqlmock.NewRows([]string{"fivenet_vehicle.plate"}).AddRow("ABC DEF1"))
 	mock.ExpectQuery(`(?s)FROM fivenet_vehicle_property_values value.*fivenet_vehicle_property_state`).
 		WithArgs(vehicleWantedPropertyKey, "ABC DEF1").
 		WillReturnRows(sqlmock.NewRows([]string{"plate", "updated_at", "value_bool", "reason", "active_at", "expires_at"}).
 			AddRow("ABC DEF1", time.Now(), true, "stolen", wantedAt, wantedTill))
-	mock.ExpectBegin()
 	mock.ExpectExec(`(?s)INSERT INTO fivenet_vehicle_property_values`).
 		WithArgs("ABC DEF1", vehicleWantedPropertyKey, propertyValueTypeBool, true).
 		WillReturnResult(sqlmock.NewResult(0, 1))

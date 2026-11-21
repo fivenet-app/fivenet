@@ -10,14 +10,19 @@ import Pagination from '~/components/partials/Pagination.vue';
 import SortButton from '~/components/partials/SortButton.vue';
 import { getCitizensCitizensClient } from '~~/gen/ts/clients';
 import type { SortByColumn } from '~~/gen/ts/resources/common/database/database';
+import { PropertyDefinitionSource, type Properties } from '~~/gen/ts/resources/properties/properties';
 import { UserActivityType } from '~~/gen/ts/resources/users/activity/activity';
 import type { ListUserActivityResponse } from '~~/gen/ts/services/citizens/citizens';
 import ActivityFeedEntry from './ActivityFeedEntry.vue';
 import { citizenUserActivityIndicatorColor, citizenUserActivityTypeBGColor, citizenUserActivityTypeIcon } from './helpers';
 
-const props = defineProps<{ userId: number }>();
+const props = defineProps<{
+    userId: number;
+    properties?: Properties;
+}>();
 const { t } = useI18n();
 const { attr, activeChar } = useAuth();
+const { propertyLabel } = usePropertyRenderer();
 const citizensCitizensClient = await getCitizensCitizensClient();
 const activityTypes = Object.keys(UserActivityType)
     .map((t) => UserActivityType[t as keyof typeof UserActivityType])
@@ -33,17 +38,29 @@ const propertyActivityKeys: Partial<Record<UserActivityType, string>> = {
     [UserActivityType.FINE]: 'user.open_fines',
 };
 const visibleActivityTypes = activityTypes.filter((activityType) => {
+    if (activityType === UserActivityType.PROPERTY) return false;
     const propertyKey = propertyActivityKeys[activityType];
     return propertyKey === undefined || attr('citizens.CitizensService/ListCitizens', 'Properties', propertyKey).value;
 });
-const options = visibleActivityTypes.map((at) => ({
+const activityTypeOptions = visibleActivityTypes.map((at) => ({
     label: t(`enums.users.UserActivityType.${UserActivityType[at]}`),
     icon: citizenUserActivityTypeIcon(at),
-    value: at,
+    value: `type:${at}`,
     ui: { itemLeadingIcon: citizenUserActivityTypeBGColor(at) },
 }));
+const propertyOptions = computed(() =>
+    (props.properties?.properties ?? [])
+        .filter((property) => property.definition?.source === PropertyDefinitionSource.CUSTOM && property.definition.enabled)
+        .map((property) => ({ label: propertyLabel(property), icon: 'i-mdi-tag-outline', value: `property:${property.key}` }))
+        .sort((left, right) => left.label.localeCompare(right.label)),
+);
+const activityFilterOptions = computed(() => [...activityTypeOptions, ...propertyOptions.value]);
 const schema = z.object({
-    types: z.enum(UserActivityType).array().max(activityTypes.length).default([]),
+    activityFilters: z
+        .string()
+        .array()
+        .max(activityTypes.length + 20)
+        .default([]),
     dateRange: z.custom<DateRange>().optional(),
     sorting: z
         .object({
@@ -78,10 +95,10 @@ async function listUserActivity(values: Schema, signal: AbortSignal): Promise<Li
                 pagination: { offset: calculateOffset(values.page, data.value?.pagination) },
                 sort: values.sorting,
                 userId: props.userId,
-                types: values.types,
+                types: activityTypesForFilters(values.activityFilters),
                 from: toTimestamp(values.dateRange?.start),
                 to: toTimestamp(values.dateRange?.end),
-                propertyKeys: [],
+                propertyKeys: propertyKeysForFilters(values.activityFilters),
             },
             { abort: signal },
         );
@@ -90,6 +107,21 @@ async function listUserActivity(values: Schema, signal: AbortSignal): Promise<Li
         handleGRPCError(e as RpcError);
         throw e;
     }
+}
+
+function activityTypesForFilters(filters: string[]): UserActivityType[] {
+    return filters.flatMap((filter) => {
+        if (!filter.startsWith('type:')) return [];
+        const activityType = Number(filter.slice('type:'.length)) as UserActivityType;
+        return visibleActivityTypes.includes(activityType) ? [activityType] : [];
+    });
+}
+
+function propertyKeysForFilters(filters: string[]): string[] {
+    const available = new Set(propertyOptions.value.map((option) => option.value));
+    return [
+        ...new Set(filters.filter((filter) => available.has(filter)).map((filter) => filter.slice('property:'.length))),
+    ].slice(0, 20);
 }
 const denyView = computed(
     () =>
@@ -110,18 +142,18 @@ const denyView = computed(
                         @submit="commitValidatedQuery"
                     >
                         <ActivityFeedFilterLayout :field-count="3">
-                            <UFormField class="w-full min-w-0" name="types" :label="$t('common.type', 2)"
+                            <UFormField class="w-full min-w-0" name="activityFilters" :label="$t('common.activity')"
                                 ><ClientOnly
                                     ><USelectMenu
-                                        v-model="query.types"
+                                        v-model="query.activityFilters"
                                         class="w-full min-w-40 flex-1"
                                         multiple
                                         nullable
-                                        :items="options"
+                                        :items="activityFilterOptions"
                                         value-key="value"
-                                        :search-input="{ placeholder: $t('common.type', 2) }"
+                                        :search-input="{ placeholder: $t('common.activity') }"
                                         ><template #empty>{{
-                                            $t('common.not_found', [$t('common.type', 2)])
+                                            $t('common.not_found', [$t('common.activity')])
                                         }}</template></USelectMenu
                                     ></ClientOnly
                                 ></UFormField

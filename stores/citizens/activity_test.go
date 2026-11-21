@@ -65,6 +65,49 @@ func TestStoreCountUserActivityHidesInaccessibleProperties(t *testing.T) {
 	require.NoError(t, mock.ExpectationsWereMet())
 }
 
+func TestStoreCountUserActivityIncludesLegacySystemPropertyActivity(t *testing.T) {
+	t.Parallel()
+
+	db, mock, err := sqlmock.New()
+	require.NoError(t, err)
+	t.Cleanup(func() { _ = db.Close() })
+
+	store := New(testParams(db))
+	expectedQuery := regexp.QuoteMeta(`FROM fivenet_user_activity AS user_activity`) +
+		`(?s).*` + regexp.QuoteMeta(`user_activity.type IN (?)`) +
+		`(?s).*` + regexp.QuoteMeta(`user_activity.type = ?`) +
+		`(?s).*` + regexp.QuoteMeta("user_activity.`key` IN (?)") +
+		`(?s).*` + regexp.QuoteMeta(`OR (user_activity.type IN (?))`)
+	mock.ExpectQuery(expectedQuery).
+		WithArgs(
+			int32(42),
+			int32(usersactivity.UserActivityType_USER_ACTIVITY_TYPE_DOCUMENT),
+			int32(usersactivity.UserActivityType_USER_ACTIVITY_TYPE_PROPERTY),
+			"user.wanted",
+			int32(usersactivity.UserActivityType_USER_ACTIVITY_TYPE_WANTED),
+			int32(usersactivity.UserActivityType_USER_ACTIVITY_TYPE_PROPERTY),
+			"user.wanted",
+		).
+		WillReturnRows(sqlmock.NewRows([]string{"data_count.total"}).AddRow(int64(2)))
+
+	total, err := store.CountUserActivity(t.Context(), CountUserActivityOptions{
+		UserActivityOptions: UserActivityOptions{
+			UserID: 42,
+			Types: []usersactivity.UserActivityType{
+				usersactivity.UserActivityType_USER_ACTIVITY_TYPE_DOCUMENT,
+			},
+			PropertyKeys: []string{"user.wanted"},
+			PropertyTypes: []usersactivity.UserActivityType{
+				usersactivity.UserActivityType_USER_ACTIVITY_TYPE_WANTED,
+			},
+			VisiblePropertyKeys: []string{"user.wanted"},
+		},
+	})
+	require.NoError(t, err)
+	assert.Equal(t, int64(2), total)
+	require.NoError(t, mock.ExpectationsWereMet())
+}
+
 func TestStoreListUserActivityAppliesSortAndIdsOnly(t *testing.T) {
 	t.Parallel()
 

@@ -786,7 +786,9 @@ type ListUserActivityRequest_builder struct {
 	Types []activity.UserActivityType
 	From  *timestamp.Timestamp
 	To    *timestamp.Timestamp
-	// Restricts generic PROPERTY activity entries to these custom property keys.
+	// Restricts property activity to these keys. Custom keys match generic
+	// PROPERTY entries; system keys also match their legacy dedicated activity
+	// type where one exists. When combined with types, the filters are additive.
 	PropertyKeys []string
 }
 

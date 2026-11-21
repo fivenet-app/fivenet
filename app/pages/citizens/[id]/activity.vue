@@ -6,5 +6,5 @@ const user = defineModel<User>('user', { required: true });
 </script>
 
 <template>
-    <ActivityFeed :user-id="user.userId" />
+    <ActivityFeed :user-id="user.userId" :properties="user.properties" />
 </template>

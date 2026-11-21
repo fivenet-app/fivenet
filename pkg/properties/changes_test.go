@@ -381,6 +381,16 @@ func TestValidateMutationReason(t *testing.T) {
 			false,
 		},
 		{
+			"value clear rejects state-reason clear",
+			propertypb.PropertyReasonMode_PROPERTY_REASON_MODE_OPTIONAL,
+			func() *propertypb.PropertyMutation {
+				m := mutation(nil, new(true))
+				m.SetClearValue(&emptypb.Empty{})
+				return m
+			}(),
+			true,
+		},
+		{
 			"none accepts omitted",
 			propertypb.PropertyReasonMode_PROPERTY_REASON_MODE_NONE,
 			mutation(nil, nil),

@@ -147,7 +147,12 @@ const tabs = computed<TabsItem[]>(() => [
                     >
                         <template #activity>
                             <div class="min-h-full">
-                                <ActivityFeed ref="activityFeed" :plate="vehicle.plate" :owner-id="vehicle.ownerId" />
+                                <ActivityFeed
+                                    ref="activityFeed"
+                                    :plate="vehicle.plate"
+                                    :owner-id="vehicle.ownerId"
+                                    :properties="vehicle.properties"
+                                />
                             </div>
                         </template>
 

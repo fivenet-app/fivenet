@@ -353,6 +353,7 @@ func (s *Server) GetUser(
 	logging.InjectFields(ctx, logging.Fields{citizenIDLogFieldKey, req.GetUserId()})
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
+	propertyAdmin := userInfo.GetJobAdmin()
 
 	grpc_audit.SetTargetUser(ctx, req.GetUserId(), "")
 
@@ -416,14 +417,18 @@ func (s *Server) GetUser(
 	if err != nil {
 		return nil, errswrap.NewError(err, errorscitizens.ErrFailedQuery)
 	}
-	keys := append([]string(nil), propertyList.GetKeys()...)
+	keys, err := s.appendAdminCitizenPropertyKeys(ctx, propertyAdmin, propertyList.GetKeys())
+	if err != nil {
+		return nil, errswrap.NewError(err, errorscitizens.ErrFailedQuery)
+	}
 	catalog, err := s.store.ResolvePropertyCatalog(ctx, keys)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorscitizens.ErrFailedQuery)
 	}
 	visibleValues := make([]*properties.Property, 0, len(values))
 	for _, value := range values {
-		if !propertyList.Contains(value.GetKey()) || isDerivedCitizenPropertyKey(value.GetKey()) {
+		if (!propertyAdmin && !propertyList.Contains(value.GetKey())) ||
+			isDerivedCitizenPropertyKey(value.GetKey()) {
 			continue
 		}
 		visibleValues = append(visibleValues, value)

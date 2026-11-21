@@ -10248,7 +10248,7 @@ CitizenFile is a restricted investigation attachment. The public profile avatar 
 | `types` | [resources.users.activity.UserActivityType](#resourcesusersactivityUserActivityType) | repeated | Activity types to filter by. If empty, all activity types will be returned. |
 | `from` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
 | `to` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
-| `property_keys` | [string](#string) | repeated | Restricts generic PROPERTY activity entries to these custom property keys. |
+| `property_keys` | [string](#string) | repeated | Restricts property activity to these keys. Custom keys match generic PROPERTY entries; system keys also match their legacy dedicated activity type where one exists. When combined with types, the filters are additive. |
 
 
 
@@ -16708,7 +16708,7 @@ Sync Service handles the sync of data (e.g., users, jobs) to this FiveNet instan
 | `types` | [resources.vehicles.activity.VehicleActivityType](#resourcesvehiclesactivityVehicleActivityType) | repeated | Activity types to filter by. If empty, all activity types will be returned. |
 | `from` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
 | `to` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
-| `property_keys` | [string](#string) | repeated | Restricts generic PROPERTY activity entries to these custom property keys. |
+| `property_keys` | [string](#string) | repeated | Restricts property activity to these keys. Custom keys match generic PROPERTY entries; system keys also match their legacy dedicated activity type where one exists. When combined with types, the filters are additive. |
 
 
 

@@ -103,6 +103,12 @@ func ValidateMutationReason(
 	if hasReason && hasClear {
 		return ErrInvalidPropertyChange
 	}
+	// Clearing a value deletes its lifecycle state as well. clear_reason would
+	// therefore have no persisted target; callers may supply a regular reason
+	// for the immutable clear activity instead.
+	if mutation.GetClearValue() != nil && hasClear {
+		return ErrInvalidPropertyChange
+	}
 	switch definition.GetReasonMode() {
 	case propertypb.PropertyReasonMode_PROPERTY_REASON_MODE_NONE:
 		if hasReason || hasClear {

@@ -16,9 +16,11 @@ import (
 )
 
 type VehicleActivityOptions struct {
-	Plate               string
-	Types               []vehiclesactivity.VehicleActivityType
-	PropertyKeys        []string
+	Plate        string
+	Types        []vehiclesactivity.VehicleActivityType
+	PropertyKeys []string
+	// PropertyTypes include legacy dedicated types for visible system properties.
+	PropertyTypes       []vehiclesactivity.VehicleActivityType
 	VisiblePropertyKeys []string
 	From                *timestamp.Timestamp
 	To                  *timestamp.Timestamp
@@ -41,22 +43,41 @@ func buildVehicleActivityCondition(
 	opts VehicleActivityOptions,
 ) mysql.BoolExpression {
 	condition := tVehicleActivity.Plate.EQ(mysql.String(opts.Plate))
+	var typeCondition mysql.BoolExpression
 	if len(opts.Types) > 0 {
 		types := make([]mysql.Expression, 0, len(opts.Types))
 		for _, t := range opts.Types {
 			types = append(types, mysql.Int32(int32(*t.Enum())))
 		}
-		condition = condition.AND(tVehicleActivity.Type.IN(types...))
+		typeCondition = tVehicleActivity.Type.IN(types...)
 	}
+	var propertyCondition mysql.BoolExpression
 	if len(opts.PropertyKeys) > 0 {
 		keys := make([]mysql.Expression, 0, len(opts.PropertyKeys))
 		for _, key := range opts.PropertyKeys {
 			keys = append(keys, mysql.String(key))
 		}
-		condition = condition.AND(
-			tVehicleActivity.Type.EQ(mysql.Int32(int32(vehiclesactivity.VehicleActivityType_VEHICLE_ACTIVITY_TYPE_PROPERTY))).
-				AND(tVehicleActivity.Key.IN(keys...)),
-		)
+		propertyCondition = tVehicleActivity.Type.EQ(mysql.Int32(int32(vehiclesactivity.VehicleActivityType_VEHICLE_ACTIVITY_TYPE_PROPERTY))).
+			AND(tVehicleActivity.Key.IN(keys...))
+		if len(opts.PropertyTypes) > 0 {
+			legacyTypes := make([]mysql.Expression, 0, len(opts.PropertyTypes))
+			for _, activityType := range opts.PropertyTypes {
+				legacyTypes = append(legacyTypes, mysql.Int32(int32(*activityType.Enum())))
+			}
+			propertyCondition = mysql.OR(
+				propertyCondition,
+				tVehicleActivity.Type.IN(legacyTypes...),
+			)
+		}
+	}
+	if typeCondition != nil && propertyCondition != nil {
+		// See the citizen equivalent: selections from the combined activity filter
+		// are additive rather than an unintuitive intersection.
+		condition = condition.AND(mysql.OR(typeCondition, propertyCondition))
+	} else if typeCondition != nil {
+		condition = condition.AND(typeCondition)
+	} else if propertyCondition != nil {
+		condition = condition.AND(propertyCondition)
 	}
 	propertyActivityType := mysql.Int32(int32(
 		vehiclesactivity.VehicleActivityType_VEHICLE_ACTIVITY_TYPE_PROPERTY,

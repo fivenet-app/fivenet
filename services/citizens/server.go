@@ -30,7 +30,7 @@ import (
 
 const citizenIDLogFieldKey = "fivenet.citizens.user_id"
 
-func lockCitizenFileLimitParent(ctx context.Context, tx *sql.Tx, userID int32) error {
+func lockCitizenParent(ctx context.Context, tx *sql.Tx, userID int32) error {
 	tUser := table.FivenetUser
 	var user struct {
 		ID int32 `alias:"id"`
@@ -41,6 +41,10 @@ func lockCitizenFileLimitParent(ctx context.Context, tx *sql.Tx, userID int32) e
 		WHERE(tUser.ID.EQ(mysql.Int32(userID))).
 		FOR(mysql.UPDATE()).
 		QueryContext(ctx, tx, &user)
+}
+
+func lockCitizenFileLimitParent(ctx context.Context, tx *sql.Tx, userID int32) error {
+	return lockCitizenParent(ctx, tx, userID)
 }
 
 func replaceUserMugshot(

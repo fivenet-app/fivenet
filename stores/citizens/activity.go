@@ -17,22 +17,39 @@ func buildUserActivityCondition(
 	opts UserActivityOptions,
 ) mysql.BoolExpression {
 	condition := tUserActivity.TargetUserID.EQ(mysql.Int32(opts.UserID))
+	var typeCondition mysql.BoolExpression
 	if len(opts.Types) > 0 {
 		types := make([]mysql.Expression, 0, len(opts.Types))
 		for _, t := range opts.Types {
 			types = append(types, mysql.Int32(int32(*t.Enum())))
 		}
-		condition = condition.AND(tUserActivity.Type.IN(types...))
+		typeCondition = tUserActivity.Type.IN(types...)
 	}
+	var propertyCondition mysql.BoolExpression
 	if len(opts.PropertyKeys) > 0 {
 		keys := make([]mysql.Expression, 0, len(opts.PropertyKeys))
 		for _, key := range opts.PropertyKeys {
 			keys = append(keys, mysql.String(key))
 		}
-		condition = condition.AND(
-			tUserActivity.Type.EQ(mysql.Int32(int32(usersactivity.UserActivityType_USER_ACTIVITY_TYPE_PROPERTY))).
-				AND(tUserActivity.Key.IN(keys...)),
-		)
+		propertyCondition = tUserActivity.Type.EQ(mysql.Int32(int32(usersactivity.UserActivityType_USER_ACTIVITY_TYPE_PROPERTY))).
+			AND(tUserActivity.Key.IN(keys...))
+		if len(opts.PropertyTypes) > 0 {
+			legacyTypes := make([]mysql.Expression, 0, len(opts.PropertyTypes))
+			for _, activityType := range opts.PropertyTypes {
+				legacyTypes = append(legacyTypes, mysql.Int32(int32(*activityType.Enum())))
+			}
+			propertyCondition = mysql.OR(propertyCondition, tUserActivity.Type.IN(legacyTypes...))
+		}
+	}
+	if typeCondition != nil && propertyCondition != nil {
+		// A combined activity filter treats selected enum types and property keys
+		// as alternatives. This allows, for example, Wanted and a custom property
+		// to be selected together.
+		condition = condition.AND(mysql.OR(typeCondition, propertyCondition))
+	} else if typeCondition != nil {
+		condition = condition.AND(typeCondition)
+	} else if propertyCondition != nil {
+		condition = condition.AND(propertyCondition)
 	}
 	propertyActivityType := mysql.Int32(int32(
 		usersactivity.UserActivityType_USER_ACTIVITY_TYPE_PROPERTY,

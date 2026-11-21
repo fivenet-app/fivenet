@@ -118,9 +118,11 @@ func GetUserOptionsForProperties(
 }
 
 type UserActivityOptions struct {
-	UserID              int32
-	Types               []usersactivity.UserActivityType
-	PropertyKeys        []string
+	UserID       int32
+	Types        []usersactivity.UserActivityType
+	PropertyKeys []string
+	// PropertyTypes include legacy dedicated types for visible system properties.
+	PropertyTypes       []usersactivity.UserActivityType
 	VisiblePropertyKeys []string
 	From                *timestamp.Timestamp
 	To                  *timestamp.Timestamp

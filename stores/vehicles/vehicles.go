@@ -2,6 +2,7 @@ package vehiclesstore
 
 import (
 	"context"
+	"database/sql"
 	"errors"
 	"strings"
 	"time"
@@ -283,11 +284,24 @@ func (s *Store) UpdateProps(
 	update PropsUpdate,
 ) (*vehiclesprops.VehicleProps, error) {
 	in := update.Props
-	props, err := s.GetProps(ctx, s.db, in.GetPlate())
+	tx, err := s.db.BeginTx(ctx, nil)
 	if err != nil {
 		return nil, err
 	}
-
+	defer tx.Rollback()
+	// Keep the parent vehicle present until property values and their activity
+	// rows have been committed. This mirrors the citizen property write path
+	// and prevents a concurrent hard-delete from causing an activity FK error.
+	if err := lockVehicleParent(ctx, tx, in.GetPlate()); err != nil {
+		return nil, err
+	}
+	// Read the projection after taking the parent lock. This keeps the
+	// canonical wanted activity diff in the same serialization boundary as its
+	// write and the dependent property/activity rows.
+	props, err := s.GetProps(ctx, tx, in.GetPlate())
+	if err != nil {
+		return nil, err
+	}
 	if props.Wanted == nil {
 		wanted := false
 		props.Wanted = &wanted
@@ -310,12 +324,6 @@ func (s *Store) UpdateProps(
 			false,
 		)
 	}
-
-	tx, err := s.db.BeginTx(ctx, nil)
-	if err != nil {
-		return nil, err
-	}
-	defer tx.Rollback()
 
 	if updateWanted {
 		if err := handlePropsChanges(ctx, tx, props, in); err != nil {
@@ -346,6 +354,19 @@ func (s *Store) UpdateProps(
 	}
 
 	return s.GetProps(ctx, s.db, in.GetPlate())
+}
+
+func lockVehicleParent(ctx context.Context, tx *sql.Tx, plate string) error {
+	tVehicle := table.FivenetVehicle
+	var vehicle struct {
+		Plate string `alias:"plate"`
+	}
+	return tVehicle.
+		SELECT(tVehicle.Plate).
+		FROM(tVehicle).
+		WHERE(tVehicle.Plate.EQ(mysql.String(plate))).
+		FOR(mysql.UPDATE()).
+		QueryContext(ctx, tx, &vehicle)
 }
 
 func (s *Store) ListExpiredWanted(

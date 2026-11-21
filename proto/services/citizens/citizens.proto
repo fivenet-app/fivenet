@@ -62,7 +62,9 @@ message ListUserActivityRequest {
   }];
   optional resources.timestamp.Timestamp from = 5;
   optional resources.timestamp.Timestamp to = 6;
-  // Restricts generic PROPERTY activity entries to these custom property keys.
+  // Restricts property activity to these keys. Custom keys match generic
+  // PROPERTY entries; system keys also match their legacy dedicated activity
+  // type where one exists. When combined with types, the filters are additive.
   repeated string property_keys = 7 [(buf.validate.field).repeated = {
     max_items: 20
     items: {

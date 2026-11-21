@@ -22,8 +22,10 @@ func TestPageUpdateChanges(t *testing.T) {
 			Toc:         func() *bool { value := true; return &value }(),
 		},
 		Content: &content.Content{ContentType: content.ContentType_CONTENT_TYPE_HTML},
-		Access:  &resourcesaccess.Access{Users: []*resourcesaccess.UserAccess{{UserId: 1, Access: 3}}},
-		Files:   []*file.File{{Id: 1}},
+		Access: &resourcesaccess.Access{
+			Users: []*resourcesaccess.UserAccess{{UserId: 1, Access: 3}},
+		},
+		Files: []*file.File{{Id: 1}},
 	}
 
 	tests := []struct {

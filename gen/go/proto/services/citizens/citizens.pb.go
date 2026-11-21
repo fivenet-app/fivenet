@@ -574,7 +574,9 @@ type ListUserActivityRequest struct {
 	Types []activity.UserActivityType `protobuf:"varint,4,rep,packed,name=types,proto3,enum=resources.users.activity.UserActivityType" json:"types,omitempty"`
 	From  *timestamp.Timestamp        `protobuf:"bytes,5,opt,name=from,proto3,oneof" json:"from,omitempty"`
 	To    *timestamp.Timestamp        `protobuf:"bytes,6,opt,name=to,proto3,oneof" json:"to,omitempty"`
-	// Restricts generic PROPERTY activity entries to these custom property keys.
+	// Restricts property activity to these keys. Custom keys match generic
+	// PROPERTY entries; system keys also match their legacy dedicated activity
+	// type where one exists. When combined with types, the filters are additive.
 	PropertyKeys  []string `protobuf:"bytes,7,rep,name=property_keys,json=propertyKeys,proto3" json:"property_keys,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -737,7 +739,9 @@ type ListUserActivityRequest_builder struct {
 	Types []activity.UserActivityType
 	From  *timestamp.Timestamp
 	To    *timestamp.Timestamp
-	// Restricts generic PROPERTY activity entries to these custom property keys.
+	// Restricts property activity to these keys. Custom keys match generic
+	// PROPERTY entries; system keys also match their legacy dedicated activity
+	// type where one exists. When combined with types, the filters are additive.
 	PropertyKeys []string
 }
 

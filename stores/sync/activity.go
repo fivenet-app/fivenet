@@ -2,6 +2,7 @@ package syncstore
 
 import (
 	"context"
+	"database/sql"
 	"errors"
 	"fmt"
 	"time"
@@ -175,6 +176,12 @@ func (s *Store) SetUserProperties(
 		return nil, fmt.Errorf("failed to begin user property update: %w", err)
 	}
 	defer tx.Rollback()
+	if err := lockSyncUserParent(ctx, tx, req.GetUserId()); err != nil {
+		if errors.Is(err, qrm.ErrNoRows) {
+			return nil, fmt.Errorf("target user %d not found", req.GetUserId())
+		}
+		return nil, fmt.Errorf("failed to lock target user %d: %w", req.GetUserId(), err)
+	}
 
 	activities := make([]*usersactivity.UserActivity, 0, len(changes))
 	if managedProps != nil {
@@ -241,6 +248,21 @@ func findPropertyMutation(
 		}
 	}
 	return nil
+}
+
+// lockSyncUserParent prevents an external hard-delete from racing property
+// and activity writes made by the trusted Sync endpoint.
+func lockSyncUserParent(ctx context.Context, tx *sql.Tx, userID int32) error {
+	tUser := table.FivenetUser
+	var user struct {
+		ID int32 `alias:"id"`
+	}
+	return tUser.
+		SELECT(tUser.ID).
+		FROM(tUser).
+		WHERE(tUser.ID.EQ(mysql.Int32(userID))).
+		FOR(mysql.UPDATE()).
+		QueryContext(ctx, tx, &user)
 }
 
 func userMutationActivityMetadata(
@@ -565,6 +587,13 @@ func splitUserPropertyMutations(
 					err,
 				)
 			}
+			if err := propertyregistry.ValidateMutationReason(definition, mutation); err != nil {
+				return nil, nil, fmt.Errorf(
+					"invalid reason for property %q: %w",
+					mutation.GetKey(),
+					err,
+				)
+			}
 			if err := managedDefinition.Apply(managed, mutation); err != nil {
 				return nil, nil, err
 			}
@@ -617,6 +646,13 @@ func splitVehiclePropertyMutations(
 			if err := propertyregistry.ValidateMutationState(definition, mutation); err != nil {
 				return nil, nil, false, fmt.Errorf(
 					"invalid state for property %q: %w",
+					mutation.GetKey(),
+					err,
+				)
+			}
+			if err := propertyregistry.ValidateMutationReason(definition, mutation); err != nil {
+				return nil, nil, false, fmt.Errorf(
+					"invalid reason for property %q: %w",
 					mutation.GetKey(),
 					err,
 				)
