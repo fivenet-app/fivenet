@@ -87,7 +87,7 @@ const reasonHtml = computed(() => {
             <span class="text-xs/5 text-dimmed"><GenericTime :value="activity.createdAt" type="short" /></span>
 
             <span v-if="activity.creator" class="inline-flex items-center gap-1">
-                <span class="text-dimmed">{{ $t('common.created_by') }}:</span>
+                <span class="text-dimmed">{{ $t('common.created_by') }}</span>
                 <CitizenInfoPopover :user="activity.creator" />
             </span>
         </div>

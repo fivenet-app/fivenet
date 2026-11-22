@@ -609,7 +609,7 @@ const requestUserModal = overlay.create(RequestUserModal);
                                                         />
                                                     </div>
                                                     <div v-else-if="qualification.result?.creator" class="inline-flex gap-1">
-                                                        <span class="font-semibold">{{ $t('common.created_by') }}:</span>
+                                                        <span class="font-semibold">{{ $t('common.created_by') }}</span>
                                                         <CitizenInfoPopover :user="qualification.result?.creator" />
                                                     </div>
                                                 </div>

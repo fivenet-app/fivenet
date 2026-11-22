@@ -84,7 +84,7 @@ function ruleQualification(qualificationId: number): QualificationShort | undefi
             <span class="text-xs/5 text-dimmed"><GenericTime :value="activity.createdAt" type="short" /></span>
 
             <span class="inline-flex items-center gap-1">
-                <span class="text-dimmed">{{ $t('common.created_by') }}:</span>
+                <span class="text-dimmed">{{ $t('common.created_by') }}</span>
                 <ColleagueInfoPopover :user="activity.actorUser" :user-id="activity.actorUserId" />
             </span>
         </div>

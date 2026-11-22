@@ -237,7 +237,7 @@ const numberFormatter = useDisplayNumberFormat();
                 <span class="font-semibold">{{ $t('components.citizens.CitizenInfoActivityFeedEntry.automatic') }}</span>
             </span>
             <span v-if="activity.sourceUser" class="inline-flex items-center gap-1">
-                <span class="text-dimmed">{{ $t('common.created_by') }}:</span>
+                <span class="text-dimmed">{{ $t('common.created_by') }}</span>
                 <CitizenInfoPopover :user="activity.sourceUser" />
             </span>
         </div>

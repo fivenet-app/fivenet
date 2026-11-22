@@ -40,7 +40,7 @@ defineProps<{
             <span class="text-xs/5 text-dimmed"><GenericTime :value="activity.createdAt" type="short" /></span>
 
             <span class="inline-flex items-center gap-1">
-                <span class="text-dimmed">{{ $t('common.created_by') }}:</span>
+                <span class="text-dimmed">{{ $t('common.created_by') }}</span>
                 <CitizenInfoPopover v-if="activity.actorUser" :user="activity.actorUser" show-avatar />
                 <span v-else>{{ $t('common.system') }}</span>
             </span>

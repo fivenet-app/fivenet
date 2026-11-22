@@ -154,7 +154,7 @@ function canDeletePublicMarker(marker: MarkerMarker): boolean {
                     </li>
 
                     <li class="flex gap-1">
-                        <span class="font-semibold">{{ $t('common.created_by') }}:</span>
+                        <span class="font-semibold">{{ $t('common.created_by') }}</span>
 
                         <CitizenInfoPopover v-if="marker.creator" :user="marker.creator" size="sm" />
                         <template v-else>
