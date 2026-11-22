@@ -262,7 +262,7 @@ const faqs = computed(
                     :description="$t('pages.about.questions_or_issues.content')"
                     :links="[
                         {
-                            class: 'border-[#5865f2] bg-[#5865f2] text-white ring-[#5865f2]/50 hover:bg-[#5865f2]/10 focus:ring-[#5865f2]/50',
+                            class: 'border-[#5865f2] bg-[#5865f2] text-white ring-[#5865f2]/50 hover:bg-[#5865f2]/70 focus:ring-[#5865f2]/50',
                             variant: 'outline',
                             size: 'xl',
                             icon: 'i-simple-icons-discord',

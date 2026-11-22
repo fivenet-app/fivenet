@@ -37,6 +37,7 @@ const links = computed(() =>
                 trailingIcon: 'i-mdi-external-link',
                 to: appLinks.discord,
                 external: true,
+                class: 'border-[#5865f2] bg-[#5865f2] text-white ring-[#5865f2]/50 hover:bg-[#5865f2]/70 focus:ring-[#5865f2]/50',
             },
             !nuiEnabled.value
                 ? {

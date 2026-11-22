@@ -15,6 +15,8 @@ type Hint = {
     to?: RoutesNamedLocations | string;
     guide?: string;
     hide?: boolean;
+    icon?: string;
+    buttonClass?: string | undefined;
 };
 
 const hints = computed(() =>
@@ -27,15 +29,18 @@ const hints = computed(() =>
             {
                 key: 'startpage',
                 to: '/user-settings#user-settings-startpage',
+                icon: 'i-mdi-cog',
             },
             {
                 key: 'overview_quick_access',
                 guide: 'overview-quick-access',
+                icon: 'i-mdi-pin',
             },
             {
                 key: 'sociallogin_discord',
                 to: '/auth/account-info/oauth2',
                 hide: discord.botEnabled,
+                icon: 'i-simple-icons-discord',
             },
             {
                 key: 'toggle_event_effect',
@@ -45,11 +50,15 @@ const hints = computed(() =>
             {
                 key: 'notification_sounds',
                 to: '/user-settings/notifications#user-settings-notification-volume',
+                icon: 'i-mdi-notification-settings',
             },
             {
                 key: 'discord_feedback',
                 to: links.discord,
                 external: true,
+                icon: 'i-simple-icons-discord',
+                buttonClass:
+                    'border-[#5865f2] bg-[#5865f2] text-white ring-[#5865f2]/50 hover:bg-[#5865f2]/70 focus:ring-[#5865f2]/50',
             },
         ].flatMap((h) => (!h.hide ? [h] : [])) as Hint[],
     ),
@@ -93,15 +102,19 @@ function startHintGuide(guide?: string): void {
                         <UKbd v-if="hint.keyboard" size="md" :value="$t(`components.hints.${hint.key}.keyboard`)" />
                         <UButton
                             v-else-if="hint.to"
+                            :class="hint.buttonClass"
                             size="sm"
                             :to="hint.to"
                             :external="hint.external"
                             :label="hint.label ?? $t('components.hints.click_me')"
+                            :icon="hint.icon"
                         />
                         <UButton
                             v-else-if="hint.guide"
+                            :class="hint.buttonClass"
                             size="sm"
                             :label="hint.label ?? $t('components.hints.click_me')"
+                            :icon="hint.icon"
                             @click="startHintGuide(hint.guide)"
                         />
                     </div>
