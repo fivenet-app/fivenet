@@ -181,7 +181,11 @@ watch(
 </script>
 
 <template>
-    <USlideover v-model:open="isHelpSlideoverOpen" :title="shortcuts ? $t('common.shortcuts') : $t('common.help')">
+    <USlideover
+        v-model:open="isHelpSlideoverOpen"
+        :title="shortcuts ? $t('common.shortcuts') : $t('common.help')"
+        :ui="{ content: 'w-full sm:max-w-4xl' }"
+    >
         <template #actions>
             <UTooltip v-if="shortcuts" :text="$t('common.back')">
                 <UButton color="gray" icon="i-mdi-arrow-back" size="sm" variant="ghost" @click="shortcuts = false">
