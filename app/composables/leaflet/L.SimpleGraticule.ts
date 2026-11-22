@@ -1,5 +1,5 @@
-import type L from 'leaflet';
-import { LatLng, LayerGroup, type Marker, Polyline, Util, divIcon, marker } from 'leaflet';
+import type * as L from 'leaflet';
+import { DivIcon, LatLng, LayerGroup, Marker, Polyline, Util } from 'leaflet';
 /**
  * File: L.SimpleGraticule.js
  * Desc: A graticule for Leaflet maps in the L.CRS.Simple coordinate system.
@@ -23,9 +23,14 @@ interface SimpleGraticuleOptions extends L.LayerOptions {
 }
 
 export class SimpleGraticule extends LayerGroup {
-    declare _map: L.Map;
-    declare _bounds: L.LatLngBounds;
-    override options: SimpleGraticuleOptions = {};
+    static defaultOptions: SimpleGraticuleOptions = {
+        interval: 20,
+        showOriginLabel: false,
+        hidden: false,
+    };
+
+    override options: SimpleGraticuleOptions = { ...SimpleGraticule.defaultOptions };
+    private redrawFrame: number | undefined;
     lineStyle: L.PolylineOptions = {
         stroke: true,
         color: '#000000',
@@ -40,16 +45,17 @@ export class SimpleGraticule extends LayerGroup {
     }
 
     override onAdd(map: L.Map): this {
-        this._map = map;
+        super.onAdd(map);
+        map.on(this.getRedrawEvents(), this.scheduleRedraw, this);
         this.redraw();
-        this._map.on('viewreset ' + this.options.redraw, this.redraw, this);
-        this.eachLayer(map.addLayer, map);
         return this;
     }
 
     override onRemove(map: L.Map): this {
-        map.off('viewreset ' + this.options.redraw, this.redraw, this);
-        this.eachLayer(this.removeLayer, this);
+        map.off(this.getRedrawEvents(), this.scheduleRedraw, this);
+        this.cancelScheduledRedraw();
+        super.onRemove(map);
+        this.clearLayers();
         return this;
     }
 
@@ -64,85 +70,107 @@ export class SimpleGraticule extends LayerGroup {
     }
 
     redraw(): this {
-        this._bounds = this._map.getBounds().pad(0.5);
+        this.cancelScheduledRedraw();
+
+        if (!this._map) return this;
+
+        const bounds = this._map.getBounds().pad(0.5);
 
         this.clearLayers();
 
-        if (!this.options.hidden) {
-            const currentZoom = this._map.getZoom();
+        if (this.options.hidden) return this;
 
-            if (this.options.zoomIntervals) {
-                for (let i = 0; i < this.options.zoomIntervals.length; i++) {
-                    const zi = this.options.zoomIntervals[i]!;
-                    if (currentZoom >= zi.start && currentZoom <= zi.end) {
-                        this.options.interval = zi.interval;
-                        break;
-                    }
-                }
-            }
+        const interval = this.getInterval();
+        this.constructLines(bounds, interval);
 
-            this.constructLines(this.getMins(), this.getLineCounts());
-
-            if (this.options.showOriginLabel) {
-                this.addLayer(this.addOriginLabel());
-            }
+        if (this.options.showOriginLabel && bounds.contains([0, 0])) {
+            this.addLayer(this.addOriginLabel());
         }
 
         return this;
     }
 
-    getLineCounts(): { x: number; y: number } {
-        const interval = this.options.interval ?? 20;
+    private getRedrawEvents(): string {
+        return ['viewreset', this.options.redraw].filter((event): event is string => !!event).join(' ');
+    }
+
+    private scheduleRedraw(): void {
+        if (this.redrawFrame !== undefined) return;
+
+        this.redrawFrame = requestAnimationFrame(() => {
+            this.redrawFrame = undefined;
+            this.redraw();
+        });
+    }
+
+    private cancelScheduledRedraw(): void {
+        if (this.redrawFrame === undefined) return;
+
+        cancelAnimationFrame(this.redrawFrame);
+        this.redrawFrame = undefined;
+    }
+
+    private getInterval(): number {
+        const currentZoom = this._map.getZoom();
+        const interval =
+            this.options.zoomIntervals?.find(({ start, end }) => currentZoom >= start && currentZoom <= end)?.interval ??
+            this.options.interval ??
+            SimpleGraticule.defaultOptions.interval!;
+
+        if (!Number.isFinite(interval) || interval <= 0) {
+            throw new RangeError('SimpleGraticule interval must be a finite number greater than zero.');
+        }
+
+        return interval;
+    }
+
+    private getLineCounts(bounds: L.LatLngBounds, interval: number): { x: number; y: number } {
         return {
-            x: Math.ceil((this._bounds.getEast() - this._bounds.getWest()) / interval),
-            y: Math.ceil((this._bounds.getNorth() - this._bounds.getSouth()) / interval),
+            x: Math.ceil((bounds.getEast() - bounds.getWest()) / interval),
+            y: Math.ceil((bounds.getNorth() - bounds.getSouth()) / interval),
         };
     }
 
-    getMins(): { x: number; y: number } {
-        const s = this.options.interval ?? 20;
+    private getMins(bounds: L.LatLngBounds, interval: number): { x: number; y: number } {
         return {
-            x: Math.floor(this._bounds.getWest() / s) * s,
-            y: Math.floor(this._bounds.getSouth() / s) * s,
+            x: Math.floor(bounds.getWest() / interval) * interval,
+            y: Math.floor(bounds.getSouth() / interval) * interval,
         };
     }
 
-    constructLines(mins: { x: number; y: number }, counts: { x: number; y: number }): void {
-        const lines: L.Polyline[] = [];
-        const labels: L.Marker[] = [];
+    private constructLines(bounds: L.LatLngBounds, interval: number): void {
+        const mins = this.getMins(bounds, interval);
+        const counts = this.getLineCounts(bounds, interval);
+        const labelBounds = this._map.getBounds().pad(-0.003);
 
         // Horizontal lines
         for (let i = 0; i <= counts.x; i++) {
-            const x = mins.x + i * (this.options.interval ?? 20);
-            lines.push(this.buildXLine(x));
-            labels.push(this.buildLabel('gridlabel-horiz', x));
+            const x = mins.x + i * interval;
+            this.addLayer(this.buildXLine(bounds, x));
+            this.addLayer(this.buildLabel(labelBounds, 'gridlabel-horiz', x));
         }
 
         // Vertical lines
         for (let j = 0; j <= counts.y; j++) {
-            const y = mins.y + j * (this.options.interval ?? 20);
-            lines.push(this.buildYLine(y));
-            labels.push(this.buildLabel('gridlabel-vert', y));
+            const y = mins.y + j * interval;
+            this.addLayer(this.buildYLine(bounds, y));
+            this.addLayer(this.buildLabel(labelBounds, 'gridlabel-vert', y));
         }
-
-        lines.forEach((l) => this.addLayer(l));
-        labels.forEach((l) => this.addLayer(l));
     }
 
-    buildXLine(x: number): L.Polyline {
-        const bottomLL = new LatLng(this._bounds.getSouth(), x);
-        const topLL = new LatLng(this._bounds.getNorth(), x);
+    private buildXLine(bounds: L.LatLngBounds, x: number): L.Polyline {
+        const bottomLL = new LatLng(bounds.getSouth(), x);
+        const topLL = new LatLng(bounds.getNorth(), x);
         return new Polyline([bottomLL, topLL], this.lineStyle);
     }
 
-    buildYLine(y: number): L.Polyline {
-        const leftLL = new LatLng(y, this._bounds.getWest());
-        const rightLL = new LatLng(y, this._bounds.getEast());
+    private buildYLine(bounds: L.LatLngBounds, y: number): L.Polyline {
+        const leftLL = new LatLng(y, bounds.getWest());
+        const rightLL = new LatLng(y, bounds.getEast());
         return new Polyline([leftLL, rightLL], this.lineStyle);
     }
 
-    buildLabel(axis: 'gridlabel-horiz' | 'gridlabel-vert', val: number): Marker {
-        const bounds = this._map.getBounds().pad(-0.003);
+    private buildLabel(bounds: L.LatLngBounds, axis: 'gridlabel-horiz' | 'gridlabel-vert', val: number): Marker {
         let latLng: LatLng;
         if (axis === 'gridlabel-horiz') {
             latLng = new LatLng(bounds.getNorth(), val);
@@ -150,9 +178,9 @@ export class SimpleGraticule extends LayerGroup {
             latLng = new LatLng(val, bounds.getWest());
         }
 
-        return marker(latLng, {
+        return new Marker(latLng, {
             interactive: false,
-            icon: divIcon({
+            icon: new DivIcon({
                 iconSize: [0, 0],
                 className: 'leaflet-grid-label',
                 html: `<div class="${axis}">${val}</div>`,
@@ -160,19 +188,14 @@ export class SimpleGraticule extends LayerGroup {
         });
     }
 
-    addOriginLabel(): L.Marker {
-        return marker([0, 0], {
+    private addOriginLabel(): Marker {
+        return new Marker([0, 0], {
             interactive: false,
-            icon: divIcon({
+            icon: new DivIcon({
                 iconSize: [0, 0],
                 className: 'leaflet-grid-label',
                 html: '<div class="gridlabel-horiz">(0,0)</div>',
             }),
         });
     }
-}
-
-// Factory function for compatibility
-export function simpleGraticule(options?: SimpleGraticuleOptions): SimpleGraticule {
-    return new SimpleGraticule(options);
 }
