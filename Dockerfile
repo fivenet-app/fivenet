@@ -17,19 +17,17 @@ FROM docker.io/library/alpine:3.24.4 AS livemaptiles
 
 WORKDIR /app
 
-COPY ./public/images/livemap/ ./public/images/livemap/
-
-RUN find ./public/images/livemap/ \
-        ! -path '*/tiles*' -and ! -path '*/overlays*' -and ! -path './public/images/livemap/' \
-        -exec rm -rf {} +
+COPY ./public/images/livemap/tiles/ ./public/images/livemap/tiles/
+COPY ./public/images/livemap/overlays/ ./public/images/livemap/overlays/
 
 # Iconify icon sets for backend server
 FROM docker.io/library/alpine:3.24.4 AS iconsets
 
 WORKDIR /app
 
-# Load only the used icon set (see pkg/server/icons/iconify.go).
-ARG ICONIFY_ICON_SETS_REF=master
+# Load only the used icon sets (see pkg/server/icons/iconify.go).
+# Update this ref from https://github.com/iconify/icon-sets/commits/master.
+ARG ICONIFY_ICON_SETS_REF=d1fdcf54272b299075b4fbf21851147e8c3846f9
 RUN apk add --no-cache curl && \
     mkdir -p icons && \
     for icon_set in mdi simple-icons flagpack; do \
@@ -51,7 +49,7 @@ RUN apk add --no-cache git python3 make gcc g++ pkgconfig && \
     corepack enable && \
     corepack install && \
     version="$(cat /version)" && \
-    COMMIT_REF="$version" pnpm install && \
+    COMMIT_REF="$version" pnpm install --frozen-lockfile && \
     NODE_OPTIONS="--max-old-space-size=8192" \
         COMMIT_REF="$version" pnpm generate
 
