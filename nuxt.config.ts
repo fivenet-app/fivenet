@@ -253,19 +253,12 @@ export default defineNuxtConfig({
         },
         optimizeDeps: {
             include: [
-                '@iconify/vue',
-                '@internationalized/date',
                 '@nuxt/ui > prosemirror-gapcursor',
                 '@nuxt/ui > prosemirror-model',
                 '@nuxt/ui > prosemirror-state',
                 '@nuxt/ui > prosemirror-transform',
                 '@nuxt/ui > prosemirror-view',
-                '@protobuf-ts/grpcweb-transport',
-                '@protobuf-ts/runtime',
-                '@protobuf-ts/runtime-rpc',
                 '@samemichaeltadele/tiptap-compare',
-                '@selemondev/vue3-signature-pad',
-                '@tanstack/vue-table',
                 '@tiptap/extension-blockquote',
                 '@tiptap/extension-bold',
                 '@tiptap/extension-code',
@@ -299,29 +292,18 @@ export default defineNuxtConfig({
                 '@tiptap/pm/state',
                 '@tiptap/pm/view',
                 '@tiptap/y-tiptap',
-                '@unovis/ts',
-                '@unovis/vue',
-                '@vue-leaflet/vue-leaflet',
                 '@vue/devtools-core',
                 '@vue/devtools-kit',
                 '@vueuse/integrations/useSortable',
-                '@zxcvbn-ts/core',
                 'browser-headers', // CJS
                 'css-blank-pseudo/browser',
                 'css-has-pseudo/browser',
-                'date-fns',
                 'diff-match-patch',
-                'emoji-blast',
                 'fabric',
                 'fabric/extensions',
                 'howler', // CJS
                 'leaflet', // CJS
-                'leaflet.heat', // CJS
                 'lib0/observable',
-                'maska/vue',
-                'mdi-vue3',
-                'mitt',
-                'pica',
                 'prosemirror-commands',
                 'prosemirror-dropcursor',
                 'prosemirror-gapcursor',
@@ -333,16 +315,7 @@ export default defineNuxtConfig({
                 'prosemirror-state',
                 'prosemirror-transform',
                 'prosemirror-view',
-                'uuid',
-                'v-calendar',
-                'v-code-diff',
-                'vue-countup-v3',
-                'vue-draggable-plus',
-                'vue-json-pretty',
-                'vue-timeline-chart',
                 'y-protocols/awareness',
-                'yjs',
-                'zod',
             ],
         },
         server: {
@@ -439,8 +412,6 @@ export default defineNuxtConfig({
     leaflet: {
         // Disable global css injection
         injectCss: false,
-        // Plugins
-        heat: true,
     },
 
     $development: {

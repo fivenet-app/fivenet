@@ -14,7 +14,7 @@ const props = withDefaults(
     },
 );
 
-// Default ramp resembles the example used for L.heatLayer
+// Default ramp resembles the Leaflet heatmap example.
 const gradient = computed<Record<number, string>>(
     () => props.gradient ?? { 0.2: 'blue', 0.4: 'lime', 0.6: 'orange', 0.8: 'red' },
 );

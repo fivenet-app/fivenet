@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import type { HeatLayer } from 'leaflet';
+import type { HeatLayer } from 'leaflet.heat';
 import HeatmapLegend from '~/components/livemap/controls/HeatmapLegend.vue';
 import { getCentrumCentrumClient } from '~~/gen/ts/clients';
 import type { GetDispatchHeatmapResponse } from '~~/gen/ts/services/centrum/centrum';

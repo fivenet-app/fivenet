@@ -2,7 +2,6 @@
 import type { ContextMenuItem } from '@nuxt/ui';
 import { breakpointsTailwind } from '@vueuse/core';
 import {
-    type HeatLayer,
     LatLng,
     type LatLngExpression,
     type Layer,
@@ -15,10 +14,10 @@ import {
     type PointExpression,
     stamp,
 } from 'leaflet';
-import 'leaflet.heat';
+import { HeatLayer } from 'leaflet.heat';
 import LivemapMapShell from '~/components/livemap/LivemapMapShell.vue';
 import ZoomControls from '~/components/livemap/controls/ZoomControls.vue';
-import { simpleGraticule } from '~/composables/leaflet/L.SimpleGraticule';
+import { SimpleGraticule } from '~/composables/leaflet/L.SimpleGraticule';
 import { getZoomOffset } from '~/composables/livemap/useMapProjection';
 import { useLivemapStore } from '~/stores/livemap';
 import { overlayCayoPericoBounds, tileLayers, type LivemapContextMenuItem } from '~/types/livemap';
@@ -172,7 +171,7 @@ function parseLocationQuery(query: string): { latlng: LatLng; zoom: number } | u
     };
 }
 
-const graticuleLayer = simpleGraticule({
+const graticuleLayer = new SimpleGraticule({
     interval: 200,
     showOriginLabel: true,
     redraw: 'moveend',
@@ -362,11 +361,8 @@ async function onMapReady(m: Map): Promise<void> {
 
     emit('mapReady', map);
 
-    heat.value = await useLHeat({
-        leafletObject: map,
-        heatPoints: [],
-        radius: 10,
-    });
+    heat.value = new HeatLayer([], { radius: 10 });
+    map.addLayer(heat.value as unknown as Layer);
 
     if (livemapSettings.value.showGrid) {
         graticuleLayer.addTo(map);

@@ -433,8 +433,8 @@ importers:
         specifier: 1.9.4
         version: 1.9.4
       leaflet.heat:
-        specifier: 0.2.0
-        version: 0.2.0
+        specifier: 1.0.1
+        version: 1.0.1(leaflet@1.9.4)
       maska:
         specifier: 3.2.2
         version: 3.2.2
@@ -526,9 +526,6 @@ importers:
       '@types/leaflet':
         specifier: 1.9.22
         version: 1.9.22
-      '@types/leaflet.heat':
-        specifier: 0.2.5
-        version: 0.2.5
       '@types/node':
         specifier: 26.6.6
         version: 26.6.6
@@ -4279,9 +4276,6 @@ packages:
   '@types/json-schema@7.0.15':
     resolution: {integrity: sha512-5+fP8P8MFNC+AyZCDxrB2pkZFPGzqQWUzpSeuuVLvm8VMcorNYavBqoFcxK8bQz4Qsbn4oUEEem4wDLfcysGHA==}
 
-  '@types/leaflet.heat@0.2.5':
-    resolution: {integrity: sha512-wmDePJPn2vhW9BScsWTV4pSfWayhdDwXuWIQzUuaJkvk5DCHsYsIegTD7tybo38E/0mxpuWODKV/LhsxPESWJg==}
-
   '@types/leaflet@1.7.6':
     resolution: {integrity: sha512-Emkz3V08QnlelSbpT46OEAx+TBZYTOX2r1yM7W+hWg5+djHtQ1GbEXBDRLaqQDOYcDI51Ss0ayoqoKD4CtLUDA==}
 
@@ -6959,8 +6953,10 @@ packages:
     resolution: {integrity: sha512-b94GiNHQNy6JNTrt5w6zNyffMrNkXZb3KTkCZJb2V1xaEGCk093vkZ2jk3tpaeP33/OiXC+WvK9AxUebnf5nbw==}
     engines: {node: '>= 0.6.3'}
 
-  leaflet.heat@0.2.0:
-    resolution: {integrity: sha512-Cd5PbAA/rX3X3XKxfDoUGi9qp78FyhWYurFg3nsfhntcM/MCNK08pRkf4iEenO1KNqwVPKCmkyktjW3UD+h9bQ==}
+  leaflet.heat@1.0.1:
+    resolution: {integrity: sha512-F2o1QQbhEvsQJt7EooHPsydxSc746t79yQcDI8gB/K7wPirMowHpirSai6k9EDNZzUH7eKxucFDizoRSbV2Lzw==}
+    peerDependencies:
+      leaflet: ^1.9.0 || ^2.0.0-beta.1
 
   leaflet@1.7.1:
     resolution: {integrity: sha512-/xwPEBidtg69Q3HlqPdU3DnrXQOvQU/CCHA1tcDQVzOwm91YMYaILjNp7L4Eaw5Z4sOYdbBz6koWyibppd8Zqw==}
@@ -8592,6 +8588,9 @@ packages:
 
   simple-get@4.0.1:
     resolution: {integrity: sha512-brv7p5WgH0jmQJr1ZDDfKDOSeWWg+OVypG99A/5vYGPqJ6pxiaHLy8nxtFjBA7oMa01ebA9gfh1uMCFqOuXxvA==}
+
+  simpleheat@1.0.0:
+    resolution: {integrity: sha512-hCGl1lj+IR+CymAouYf5ZQ7NguSQq+w1PWu1WvHgZWkdzmyS/xbN1T2TpwlSC8nEDDK2JRVPcdgV0a6652aP2Q==}
 
   sirv@3.0.2:
     resolution: {integrity: sha512-2wcC/oGxHis/BoHkkPwldgiPSYcpZK3JU28WoMVv55yHJgcZ8rlXvuG9iZggz+sU1d4bRgIGASwyWqjxu3FM0g==}
@@ -13773,10 +13772,6 @@ snapshots:
 
   '@types/json-schema@7.0.15': {}
 
-  '@types/leaflet.heat@0.2.5':
-    dependencies:
-      '@types/leaflet': 1.9.22
-
   '@types/leaflet@1.7.6':
     dependencies:
       '@types/geojson': 7946.0.16
@@ -16614,7 +16609,10 @@ snapshots:
     dependencies:
       readable-stream: 2.3.8
 
-  leaflet.heat@0.2.0: {}
+  leaflet.heat@1.0.1(leaflet@1.9.4):
+    dependencies:
+      leaflet: 1.9.4
+      simpleheat: 1.0.0
 
   leaflet@1.7.1: {}
 
@@ -19048,6 +19046,8 @@ snapshots:
       decompress-response: 6.0.0
       once: 1.4.0
       simple-concat: 1.0.1
+
+  simpleheat@1.0.0: {}
 
   sirv@3.0.2:
     dependencies:
