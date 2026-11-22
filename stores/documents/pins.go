@@ -35,7 +35,7 @@ func (s *Store) ListDocumentPins(
 		SELECT(mysql.COUNT(tDPins.DocumentID).AS("data_count.total")).
 		FROM(tDPins).
 		WHERE(idCondition).
-		LIMIT(50)
+		LIMIT(resourcesdatabase.DocumentPinPageSize)
 
 	var count resourcesdatabase.DataCount
 	if err := countStmt.QueryContext(ctx, s.db, &count); err != nil {
@@ -44,7 +44,10 @@ func (s *Store) ListDocumentPins(
 		}
 	}
 
-	pag, limit := q.Pagination.GetResponseWithPageSize(count.Total, 50)
+	pag, limit := q.Pagination.GetResponseWithPageSize(
+		count.Total,
+		resourcesdatabase.DocumentPinPageSize,
+	)
 	if count.Total <= 0 {
 		return pag, []*resourcesdocuments.DocumentShort{}, nil
 	}
@@ -60,7 +63,7 @@ func (s *Store) ListDocumentPins(
 		).
 		FROM(tDPins).
 		WHERE(idCondition).
-		LIMIT(50)
+		LIMIT(resourcesdatabase.DocumentPinPageSize)
 
 	docPins := []*documentspins.DocumentPin{}
 	if err := idStmt.QueryContext(ctx, s.db, &docPins); err != nil {

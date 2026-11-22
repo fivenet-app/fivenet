@@ -81,7 +81,7 @@ export const useHelpGuides = () => {
         try {
             const documentsClient = await getDocumentsDocumentsClient();
             const { response } = await documentsClient.listDocuments({
-                pagination: { offset: 0, pageSize: 1 },
+                pagination: { offset: 0, pageSize: PAGINATION_PAGE_SIZE.helpGuideEligibility },
                 categoryIds: [],
                 creatorIds: [],
                 documentIds: [],

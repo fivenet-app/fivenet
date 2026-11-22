@@ -8,6 +8,7 @@ import (
 
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/audit"
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/common"
+	database "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/common/database"
 	documentsaccess "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/documents/access"
 	documentsactivity "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/documents/activity"
 	documentscomment "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/documents/comment"
@@ -30,8 +31,7 @@ import (
 )
 
 const (
-	CommentsDefaultPageSize = 8
-	CommentsMaxLength       = 2048
+	CommentsMaxLength = 2048
 )
 
 func (s *Server) GetComments(
@@ -60,7 +60,8 @@ func (s *Server) GetComments(
 		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 	}
 
-	pag, limit := req.GetPagination().GetResponseWithPageSize(int64(count), CommentsDefaultPageSize)
+	pag, limit := req.GetPagination().
+		GetResponseWithPageSize(int64(count), database.DocumentCommentPageSize)
 	resp := &pbdocuments.GetCommentsResponse{
 		Pagination: pag,
 		Comments:   []*documentscomment.Comment{},

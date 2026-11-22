@@ -127,7 +127,10 @@ func (s *Store) ListQualificationRequests(
 		}
 	}
 
-	pag, limit := opts.Pagination.GetResponseWithPageSize(count.Total, QualificationsPageSize)
+	pag, limit := opts.Pagination.GetResponseWithPageSize(
+		count.Total,
+		database.QualificationStorePageSize,
+	)
 	resp := &pbqualifications.ListQualificationRequestsResponse{
 		Pagination: pag,
 		Requests:   []*resqualifications.QualificationRequest{},

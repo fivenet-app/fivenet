@@ -64,7 +64,7 @@ func (s *Wrapper) List(
 	ctx context.Context,
 	key string,
 	offset int,
-	pageSize int,
+	pageSize int64,
 ) ([]*FileInfo, error) {
 	key, err := utils.CleanStoragePath(key, true)
 	if err != nil {

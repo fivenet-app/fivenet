@@ -3,6 +3,7 @@ package documents
 import (
 	context "context"
 
+	database "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/common/database"
 	documentsrelations "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/documents/relations"
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/userinfo"
 	usersactivity "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/users/activity"
@@ -40,7 +41,8 @@ func (s *Server) ListUserDocuments(
 		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 	}
 
-	pag, _ := req.GetPagination().GetResponseWithPageSize(count.Total, 20)
+	pag, _ := req.GetPagination().
+		GetResponseWithPageSize(count.Total, database.DocumentUserPageSize)
 
 	resp := &pbdocuments.ListUserDocumentsResponse{
 		Pagination: pag,

@@ -69,7 +69,10 @@ func (s *Store) ListAccounts(
 		}
 	}
 
-	pag, limit := opts.Pagination.GetResponseWithPageSize(count.Total, 30)
+	pag, limit := opts.Pagination.GetResponseWithPageSize(
+		count.Total,
+		database.SettingsAccountPageSize,
+	)
 	resp := &pbsettings.ListAccountsResponse{
 		Pagination: pag,
 	}

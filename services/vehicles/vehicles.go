@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/audit"
+	database "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/common/database"
 	permissionsattributes "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/permissions/attributes"
 	properties "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/properties"
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/userinfo"
@@ -101,7 +102,7 @@ func (s *Server) ListVehicles(
 		return nil, errswrap.NewError(err, errorsvehicles.ErrFailedQuery)
 	}
 
-	pag, limit := req.GetPagination().GetResponseWithPageSize(total, 20)
+	pag, limit := req.GetPagination().GetResponseWithPageSize(total, database.VehicleListPageSize)
 	resp := &pbvehicles.ListVehiclesResponse{
 		Pagination: pag,
 	}

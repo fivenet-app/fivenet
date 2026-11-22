@@ -23,8 +23,6 @@ import (
 	"github.com/gosimple/slug"
 )
 
-const defaultWikiUpperLimit = 250
-
 var wikiPageSubjectAccessOptions = objectaccess.SubjectAccessOptions{
 	BlockedAccess: int32(wikiaccess.AccessLevel_ACCESS_LEVEL_BLOCKED),
 	DeniedAccessLevels: []int32{
@@ -171,8 +169,11 @@ func (s *Store) listVisiblePages(
 	if q.Pagination != nil {
 		paginationReq = q.Pagination
 	}
-	paginationReq.SetPageSize(defaultWikiUpperLimit)
-	pagination, limit := paginationReq.GetResponseWithPageSize(count.Total, defaultWikiUpperLimit)
+	paginationReq.SetPageSize(database.WikiPageListPageSize)
+	pagination, limit := paginationReq.GetResponseWithPageSize(
+		count.Total,
+		database.WikiPageListPageSize,
+	)
 	result := &ListPagesResult{Pagination: pagination, Pages: []*reswiki.PageShort{}}
 	if count.Total <= 0 {
 		return result, nil
@@ -315,8 +316,11 @@ func (s *Store) listRootPages(
 	if q.Pagination != nil {
 		paginationReq = q.Pagination
 	}
-	paginationReq.SetPageSize(defaultWikiUpperLimit)
-	pagination, limit := paginationReq.GetResponseWithPageSize(count.Total, defaultWikiUpperLimit)
+	paginationReq.SetPageSize(database.WikiPageListPageSize)
+	pagination, limit := paginationReq.GetResponseWithPageSize(
+		count.Total,
+		database.WikiPageListPageSize,
+	)
 	result := &ListPagesResult{Pagination: pagination, Pages: []*reswiki.PageShort{}}
 	if count.Total <= 0 {
 		return result, nil
@@ -393,8 +397,11 @@ func (s *Store) listPagesSuperuser(
 	if q.Pagination != nil {
 		paginationReq = q.Pagination
 	}
-	paginationReq.SetPageSize(defaultWikiUpperLimit)
-	pagination, limit := paginationReq.GetResponseWithPageSize(count.Total, defaultWikiUpperLimit)
+	paginationReq.SetPageSize(database.WikiPageListPageSize)
+	pagination, limit := paginationReq.GetResponseWithPageSize(
+		count.Total,
+		database.WikiPageListPageSize,
+	)
 	result := &ListPagesResult{Pagination: pagination, Pages: []*reswiki.PageShort{}}
 	if count.Total <= 0 {
 		return result, nil

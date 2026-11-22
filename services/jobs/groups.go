@@ -6,6 +6,7 @@ import (
 
 	resourcesaccess "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/access"
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/audit"
+	database "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/common/database"
 	jobsgroups "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/jobs/groups"
 	groupsaccess "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/jobs/groups/access"
 	pbjobs "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/jobs"
@@ -86,7 +87,7 @@ func (s *Server) ListGroups(
 		return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
 	}
 
-	pag, limit := req.GetPagination().GetResponseWithPageSize(count, defaultPageSize)
+	pag, limit := req.GetPagination().GetResponseWithPageSize(count, database.JobPageSize)
 	resp := &pbjobs.ListGroupsResponse{
 		Pagination: pag,
 		Groups:     []*jobsgroups.Group{},

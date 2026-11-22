@@ -34,7 +34,7 @@ async function searchThreads(q: string, signal: AbortSignal): Promise<CommandPal
             {
                 pagination: {
                     offset: 0,
-                    pageSize: 6,
+                    pageSize: PAGINATION_PAGE_SIZE.mailerMessageSearch,
                 },
                 search: q.trim().substring(0, 64),
             },

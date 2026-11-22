@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"io"
 	"io/fs"
+	"math"
 	"net/http"
 	"os"
 	"path/filepath"
@@ -211,11 +212,15 @@ func (s *Filesystem) List(
 	ctx context.Context,
 	key string,
 	offset int,
-	pageSize int,
+	pageSize int64,
 ) ([]*FileInfo, error) {
 	key, err := utils.FSRootPath(s.prefix, key, true)
 	if err != nil {
 		return nil, ErrInvalidPath
+	}
+
+	if offset < 0 || pageSize <= 0 || pageSize > int64(math.MaxInt-offset) {
+		return nil, ErrInvalidPagination
 	}
 
 	// os.Root doesn't have a `ReadDir` method, so open the directory and read from it
@@ -224,7 +229,7 @@ func (s *Filesystem) List(
 		return nil, err
 	}
 	// combine offset + pageSize to improve performance
-	entries, err := f.ReadDir(offset + pageSize)
+	entries, err := f.ReadDir(offset + int(pageSize))
 	if err != nil {
 		if os.IsNotExist(err) {
 			return nil, ErrNotFound

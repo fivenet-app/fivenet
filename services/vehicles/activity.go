@@ -4,6 +4,7 @@ import (
 	context "context"
 	"slices"
 
+	database "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/common/database"
 	vehiclesactivity "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/vehicles/activity"
 	pbvehicles "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/vehicles"
 	permsvehicles "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/vehicles/perms"
@@ -83,7 +84,8 @@ func (s *Server) ListVehicleActivity(
 		return nil, errswrap.NewError(err, errorsvehicles.ErrFailedQuery)
 	}
 
-	pag, limit := req.GetPagination().GetResponseWithPageSize(count, 20)
+	pag, limit := req.GetPagination().
+		GetResponseWithPageSize(count, database.VehicleActivityPageSize)
 	resp.Pagination = pag
 	if count <= 0 {
 		return resp, nil

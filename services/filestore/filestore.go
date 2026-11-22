@@ -17,8 +17,6 @@ import (
 	"google.golang.org/grpc"
 )
 
-const listFilesPageSize = 50
-
 func (s *Server) ListFiles(
 	ctx context.Context,
 	req *pbfilestore.ListFilesRequest,
@@ -37,12 +35,18 @@ func (s *Server) ListFiles(
 		filePath = fp
 	}
 
-	pag, _ := req.GetPagination().GetResponseWithPageSize(database.NoTotalCount, listFilesPageSize)
+	pag, _ := req.GetPagination().
+		GetResponseWithPageSize(database.NoTotalCount, database.FileStoreListFilesPageSize)
 	resp := &pbfilestore.ListFilesResponse{
 		Pagination: pag,
 	}
 
-	files, err := s.st.List(ctx, filePath, int(req.GetPagination().GetOffset()), listFilesPageSize)
+	files, err := s.st.List(
+		ctx,
+		filePath,
+		int(req.GetPagination().GetOffset()),
+		database.FileStoreListFilesPageSize,
+	)
 	if err != nil {
 		if !errors.Is(err, storage.ErrNotFound) {
 			return nil, err

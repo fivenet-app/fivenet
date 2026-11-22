@@ -32,8 +32,6 @@ var (
 	tUnits      = table.FivenetCentrumUnits.AS("unit")
 )
 
-const unitActivityPageSize = 15
-
 func (s *Server) ListUnits(
 	ctx context.Context,
 	req *pbcentrum.ListUnitsRequest,
@@ -515,7 +513,8 @@ func (s *Server) ListUnitActivity(
 		}
 	}
 
-	pag, limit := req.GetPagination().GetResponseWithPageSize(count.Total, unitActivityPageSize)
+	pag, limit := req.GetPagination().
+		GetResponseWithPageSize(count.Total, database.CentrumUnitActivityPageSize)
 	resp := &pbcentrum.ListUnitActivityResponse{
 		Pagination: pag,
 	}

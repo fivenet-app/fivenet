@@ -17,7 +17,7 @@ async function listDocuments(search: string): Promise<DocumentShort[]> {
     const req: ListDocumentsRequest = {
         pagination: {
             offset: 0,
-            pageSize: 10,
+            pageSize: PAGINATION_PAGE_SIZE.mailerThreadAttachments,
         },
         search: search ?? '',
         documentIds: [],

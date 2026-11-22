@@ -4,6 +4,7 @@ import (
 	"context"
 	"strings"
 
+	database "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/common/database"
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/documents"
 	documentsaccess "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/documents/access"
 	documentsactivity "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/documents/activity"
@@ -19,10 +20,6 @@ import (
 	documentsstore "github.com/fivenet-app/fivenet/v2026/stores/documents"
 	"github.com/go-jet/jet/v2/qrm"
 	"github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/logging"
-)
-
-const (
-	ActivityDefaultPageSize = 10
 )
 
 var tDocActivity = table.FivenetDocumentsActivity
@@ -61,7 +58,8 @@ func (s *Server) ListDocumentActivity(
 		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 	}
 
-	pag, _ := req.GetPagination().GetResponseWithPageSize(count.Total, ActivityDefaultPageSize)
+	pag, _ := req.GetPagination().
+		GetResponseWithPageSize(count.Total, database.DocumentActivityPageSize)
 	resp := &pbdocuments.ListDocumentActivityResponse{
 		Pagination: pag,
 		Activity:   []*documentsactivity.DocActivity{},

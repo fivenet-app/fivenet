@@ -58,7 +58,7 @@ func (s *Server) ListApprovalTasksInbox(
 		Tasks: tasks,
 	}
 
-	pag, _ := pagReq.GetResponseWithPageSize(count.Total, 20)
+	pag, _ := pagReq.GetResponseWithPageSize(count.Total, database.DocumentApprovalTasksPageSize)
 	resp.Pagination = pag
 	if count.Total <= 0 {
 		return resp, nil

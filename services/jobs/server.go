@@ -192,7 +192,7 @@ func NewServer(p Params) *Server {
 		tJobAssets.Job,
 		tJobAssets.FileID,
 		5<<20,
-		jobAssetsPageSize,
+		jobAssetsMaxFiles,
 		func(job string) mysql.BoolExpression { return tJobAssets.Job.EQ(mysql.String(job)) },
 		filestore.InsertJoinRow,
 		false,

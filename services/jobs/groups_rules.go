@@ -7,6 +7,7 @@ import (
 	"strconv"
 
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/audit"
+	database "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/common/database"
 	jobsgroups "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/jobs/groups"
 	groupsaccess "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/jobs/groups/access"
 	qualificationsaccess "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/qualifications/access"
@@ -318,7 +319,7 @@ func (s *Server) ListGroupRules(
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
 	}
-	pag, limit := req.GetPagination().GetResponseWithPageSize(count, defaultPageSize)
+	pag, limit := req.GetPagination().GetResponseWithPageSize(count, database.JobPageSize)
 	resp := &pbjobs.ListGroupRulesResponse{
 		Pagination: pag,
 		Rules:      []*jobsgroups.GroupRule{},

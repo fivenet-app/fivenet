@@ -119,7 +119,7 @@ func (*testStorage) Put(context.Context, string, io.Reader, int64, string) (stri
 
 func (*testStorage) Delete(context.Context, string) error { return errors.New("not implemented") }
 
-func (*testStorage) List(context.Context, string, int, int) ([]*storage.FileInfo, error) {
+func (*testStorage) List(context.Context, string, int, int64) ([]*storage.FileInfo, error) {
 	return nil, errors.New("not implemented")
 }
 

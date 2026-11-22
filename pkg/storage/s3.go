@@ -199,14 +199,14 @@ func (s *S3) List(
 	ctx context.Context,
 	key string,
 	offset int,
-	pageSize int,
+	pageSize int64,
 ) ([]*FileInfo, error) {
 	key = path.Join(s.prefix, key)
 	if key == "." {
 		key = ""
 	}
 
-	i := 0
+	var i int64
 	files := []*FileInfo{}
 
 	opts := minio.ListObjectsOptions{
@@ -218,13 +218,13 @@ func (s *S3) List(
 			return nil, object.Err
 		}
 
-		if i < offset {
+		if i < int64(offset) {
 			i++
 			continue
 		}
 
 		// Verify if we have listed page size count of objects.
-		if i == offset+pageSize {
+		if i == int64(offset)+pageSize {
 			break
 		}
 

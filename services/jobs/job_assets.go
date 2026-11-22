@@ -9,6 +9,7 @@ import (
 	"time"
 
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/audit"
+	database "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/common/database"
 	file "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/file"
 	pbsettings "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/settings"
 	"github.com/fivenet-app/fivenet/v2026/pkg/filestore"
@@ -23,7 +24,7 @@ import (
 
 const (
 	jobAssetsNamespace = "jobassets"
-	jobAssetsPageSize  = 20
+	jobAssetsMaxFiles  = 20
 )
 
 func (s *Server) UploadJobAsset(
@@ -100,7 +101,7 @@ func (s *Server) ListJobAssets(
 		return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
 	}
 
-	pag, limit := req.GetPagination().GetResponseWithPageSize(count, jobAssetsPageSize)
+	pag, limit := req.GetPagination().GetResponseWithPageSize(count, database.JobAssetsPageSize)
 	assets, err := s.store.ListJobAssets(ctx, s.db, user.GetJob(), pag.GetOffset(), limit)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)

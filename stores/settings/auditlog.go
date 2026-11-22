@@ -12,8 +12,6 @@ import (
 	"github.com/go-jet/jet/v2/qrm"
 )
 
-const AuditLogPageSize = 30
-
 var tAuditLog = table.FivenetAuditLog.AS("audit_entry")
 
 func (s *Store) ViewAuditLog(
@@ -83,7 +81,10 @@ func (s *Store) ViewAuditLog(
 		}
 	}
 
-	pag, limit := opts.Pagination.GetResponseWithPageSize(count.Total, AuditLogPageSize)
+	pag, limit := opts.Pagination.GetResponseWithPageSize(
+		count.Total,
+		database.SettingsAuditLogPageSize,
+	)
 	resp := &pbsettings.ViewAuditLogResponse{Pagination: pag}
 	if count.Total <= 0 {
 		return resp, nil

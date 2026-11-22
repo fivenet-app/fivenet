@@ -120,7 +120,7 @@ func (s *Store) ListEmails(
 		}
 	}
 
-	pagination, limit := pag.GetResponseWithPageSize(count.Total, 20)
+	pagination, limit := pag.GetResponseWithPageSize(count.Total, database.MailerEmailPageSize)
 	if count.Total <= 0 {
 		return pagination, []*maileremails.Email{}, nil
 	}
@@ -179,7 +179,7 @@ func (s *Store) listAllEmails(
 		}
 	}
 
-	pagination, limit := pag.GetResponseWithPageSize(count.Total, 20)
+	pagination, limit := pag.GetResponseWithPageSize(count.Total, database.MailerEmailPageSize)
 	if count.Total <= 0 {
 		return pagination, []*maileremails.Email{}, nil
 	}

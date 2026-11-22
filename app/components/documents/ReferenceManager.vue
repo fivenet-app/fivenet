@@ -72,7 +72,7 @@ async function listDocuments(signal: AbortSignal): Promise<DocumentShort[]> {
             {
                 pagination: {
                     offset: 0,
-                    pageSize: 8,
+                    pageSize: PAGINATION_PAGE_SIZE.documentReferenceManager,
                 },
                 search: queryDoc.value,
                 categoryIds: [],

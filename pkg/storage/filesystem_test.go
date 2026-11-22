@@ -127,4 +127,13 @@ func TestFilesystem_Get(t *testing.T) {
 			require.NotEmpty(t, files)
 		}
 	})
+
+	t.Run("invalid pagination", func(t *testing.T) {
+		t.Parallel()
+		_, err := fs.List(t.Context(), "", -1, 50)
+		require.ErrorIs(t, err, ErrInvalidPagination)
+
+		_, err = fs.List(t.Context(), "", 0, 0)
+		require.ErrorIs(t, err, ErrInvalidPagination)
+	})
 }

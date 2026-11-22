@@ -104,7 +104,7 @@ func (s *Server) ListGroupActivity(
 		}
 		if len(types) == 0 {
 			resp := &pbjobs.ListGroupActivityResponse{
-				Pagination: &database.PaginationResponse{PageSize: defaultPageSize},
+				Pagination: &database.PaginationResponse{PageSize: database.JobPageSize},
 				Activity:   []*jobsgroups.GroupActivity{},
 			}
 			grpc_audit.SetAction(ctx, audit.EventAction_EVENT_ACTION_VIEWED)
@@ -139,7 +139,7 @@ func (s *Server) ListGroupActivity(
 		return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
 	}
 
-	pag, limit := req.GetPagination().GetResponseWithPageSize(count, defaultPageSize)
+	pag, limit := req.GetPagination().GetResponseWithPageSize(count, database.JobPageSize)
 	resp := &pbjobs.ListGroupActivityResponse{
 		Pagination: pag,
 		Activity:   []*jobsgroups.GroupActivity{},

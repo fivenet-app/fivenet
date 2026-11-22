@@ -33,10 +33,6 @@ import (
 	"github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/logging"
 )
 
-const (
-	defaultPageSize = 20
-)
-
 var (
 	tColleagueProps    = table.FivenetJobColleagueProps.AS("colleague_props")
 	tColleagueActivity = table.FivenetJobColleagueActivity
@@ -66,7 +62,7 @@ func (s *Server) ListColleagues(
 		return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
 	}
 	if usersel.HasSelection(selector) && len(resolvedUserIDs) == 0 {
-		pag, _ := req.GetPagination().GetResponseWithPageSize(0, defaultPageSize)
+		pag, _ := req.GetPagination().GetResponseWithPageSize(0, database.JobPageSize)
 		return &pbjobs.ListColleaguesResponse{Pagination: pag}, nil
 	}
 
@@ -94,7 +90,7 @@ func (s *Server) ListColleagues(
 		return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
 	}
 
-	pag, limit := req.GetPagination().GetResponseWithPageSize(count, defaultPageSize)
+	pag, limit := req.GetPagination().GetResponseWithPageSize(count, database.JobPageSize)
 	resp := &pbjobs.ListColleaguesResponse{Pagination: pag}
 	if count <= 0 {
 		return resp, nil
@@ -593,7 +589,7 @@ func (s *Server) ListColleagueActivity(
 		return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
 	}
 	if usersel.HasSelection(req.GetUsers()) && len(resolvedUserIDs) == 0 {
-		pag, _ := req.GetPagination().GetResponseWithPageSize(0, defaultPageSize)
+		pag, _ := req.GetPagination().GetResponseWithPageSize(0, database.JobPageSize)
 		resp := &pbjobs.ListColleagueActivityResponse{Pagination: pag}
 		return resp, nil
 	}
@@ -617,7 +613,7 @@ func (s *Server) ListColleagueActivity(
 
 	resp := &pbjobs.ListColleagueActivityResponse{
 		Pagination: &database.PaginationResponse{
-			PageSize: defaultPageSize,
+			PageSize: database.JobPageSize,
 		},
 	}
 
@@ -763,7 +759,7 @@ func (s *Server) ListColleagueActivity(
 		return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
 	}
 
-	pag, limit := req.GetPagination().GetResponseWithPageSize(count, defaultPageSize)
+	pag, limit := req.GetPagination().GetResponseWithPageSize(count, database.JobPageSize)
 	resp.Pagination = pag
 	if count <= 0 {
 		return resp, nil

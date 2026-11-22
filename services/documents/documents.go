@@ -43,8 +43,7 @@ import (
 )
 
 const (
-	DocsDefaultPageSize = 20
-	DocSummaryLength    = 128
+	DocSummaryLength = 128
 )
 
 var (
@@ -132,7 +131,7 @@ func (s *Server) ListDocuments(
 	}
 
 	pag, limit := req.GetPagination().
-		GetResponseWithPageSize(database.NoTotalCount, DocsDefaultPageSize)
+		GetResponseWithPageSize(database.NoTotalCount, database.DocumentListPageSize)
 	resp := &pbdocuments.ListDocumentsResponse{
 		Pagination: pag,
 	}

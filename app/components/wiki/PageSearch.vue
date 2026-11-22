@@ -27,7 +27,7 @@ async function listPages(q: string, signal: AbortSignal): Promise<CommandPalette
         {
             pagination: {
                 offset: 0,
-                pageSize: 6,
+                pageSize: PAGINATION_PAGE_SIZE.wikiPageSearch,
             },
             rootOnly: false,
             search: q.trim().substring(0, 64),

@@ -4,6 +4,7 @@ import (
 	context "context"
 	"slices"
 
+	database "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/common/database"
 	properties "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/properties"
 	usersactivity "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/users/activity"
 	usershort "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/users/short"
@@ -87,7 +88,8 @@ func (s *Server) ListUserActivity(
 		return nil, errswrap.NewError(err, errorscitizens.ErrFailedQuery)
 	}
 
-	pag, limit := req.GetPagination().GetResponseWithPageSize(count, 20)
+	pag, limit := req.GetPagination().
+		GetResponseWithPageSize(count, database.CitizenActivityPageSize)
 	resp.Pagination = pag
 	if count <= 0 {
 		return resp, nil

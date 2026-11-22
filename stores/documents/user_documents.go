@@ -82,7 +82,10 @@ func (s *Store) ListUserDocuments(
 		}
 	}
 
-	_, limit := q.Pagination.GetResponseWithPageSize(count.Total, 20)
+	_, limit := q.Pagination.GetResponseWithPageSize(
+		count.Total,
+		resourcesdatabase.DocumentUserPageSize,
+	)
 	if count.Total <= 0 {
 		return count, []*documentsrelations.DocumentRelation{}, nil
 	}

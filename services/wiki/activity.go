@@ -4,6 +4,7 @@ import (
 	"context"
 	"strings"
 
+	database "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/common/database"
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/wiki"
 	wikiaccess "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/wiki/access"
 	wikiactivity "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/wiki/activity"
@@ -46,7 +47,8 @@ func (s *Server) ListPageActivity(
 		return nil, errswrap.NewError(err, errorswiki.ErrFailedQuery)
 	}
 
-	pag, limit := req.GetPagination().GetResponseWithPageSize(count, 10)
+	pag, limit := req.GetPagination().
+		GetResponseWithPageSize(count, database.WikiPageActivityPageSize)
 	resp := &pbwiki.ListPageActivityResponse{
 		Pagination: pag,
 		Activity:   []*wikiactivity.PageActivity{},

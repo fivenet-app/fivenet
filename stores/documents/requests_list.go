@@ -30,7 +30,10 @@ func (s *Store) ListDocumentReqs(
 		}
 	}
 
-	pag, limit := q.Pagination.GetResponseWithPageSize(count.Total, 10)
+	pag, limit := q.Pagination.GetResponseWithPageSize(
+		count.Total,
+		resourcesdatabase.DocumentRequestPageSize,
+	)
 	_ = pag
 	if count.Total <= 0 {
 		return count, []*documentsrequests.DocRequest{}, nil

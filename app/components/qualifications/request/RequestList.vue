@@ -69,7 +69,7 @@ async function listQualificationRequests(
             {
                 pagination: {
                     offset: calculateOffset(values.page, data.value?.pagination),
-                    pageSize: 10,
+                    pageSize: PAGINATION_PAGE_SIZE.qualificationRequests,
                 },
                 sort: values.sorting,
                 qualificationId: qualificationId,

@@ -5,6 +5,7 @@ import (
 	"math"
 	"time"
 
+	database "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/common/database"
 	jobs "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/jobs"
 	jobscolleagues "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/jobs/colleagues"
 	jobstimeclock "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/jobs/timeclock"
@@ -126,7 +127,7 @@ func (s *Server) ListTimeclock(
 		return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
 	}
 	if usersel.HasSelection(selector) && len(resolvedUserIDs) == 0 {
-		pag, _ := req.GetPagination().GetResponseWithPageSize(0, 30)
+		pag, _ := req.GetPagination().GetResponseWithPageSize(0, database.JobTimeclockPageSize)
 		return &pbjobs.ListTimeclockResponse{Pagination: pag}, nil
 	}
 
@@ -146,7 +147,7 @@ func (s *Server) ListTimeclock(
 		return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
 	}
 
-	pag, limit := req.GetPagination().GetResponseWithPageSize(count, 30)
+	pag, limit := req.GetPagination().GetResponseWithPageSize(count, database.JobTimeclockPageSize)
 	resp := &pbjobs.ListTimeclockResponse{
 		Pagination: pag,
 	}
@@ -326,7 +327,8 @@ func (s *Server) ListInactiveEmployees(
 		return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
 	}
 	if usersel.HasSelection(req.GetUsers()) && len(resolvedUserIDs) == 0 {
-		pag, _ := req.GetPagination().GetResponseWithPageSize(0, 20)
+		pag, _ := req.GetPagination().
+			GetResponseWithPageSize(0, database.JobInactiveTimeclockPageSize)
 		return &pbjobs.ListInactiveEmployeesResponse{
 			Pagination: pag,
 			Colleagues: []*jobscolleagues.Colleague{},
@@ -342,7 +344,8 @@ func (s *Server) ListInactiveEmployees(
 		return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
 	}
 
-	pag, limit := req.GetPagination().GetResponseWithPageSize(count, 20)
+	pag, limit := req.GetPagination().
+		GetResponseWithPageSize(count, database.JobInactiveTimeclockPageSize)
 	resp := &pbjobs.ListInactiveEmployeesResponse{
 		Pagination: pag,
 		Colleagues: []*jobscolleagues.Colleague{},

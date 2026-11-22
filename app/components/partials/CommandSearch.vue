@@ -34,7 +34,7 @@ async function searchCitiznes(q: string, signal: AbortSignal): Promise<CommandPa
             {
                 pagination: {
                     offset: 0,
-                    pageSize: 10,
+                    pageSize: PAGINATION_PAGE_SIZE.commandSearch,
                 },
                 search: q.trim().substring(1, 64).trim(),
                 propertyFilters: [],
@@ -73,7 +73,7 @@ async function searchDocuments(q: string, signal: AbortSignal): Promise<CommandP
             {
                 pagination: {
                     offset: 0,
-                    pageSize: 10,
+                    pageSize: PAGINATION_PAGE_SIZE.commandSearch,
                 },
                 search: q.trim().substring(1, 64).trim(),
                 categoryIds: [],

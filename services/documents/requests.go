@@ -7,6 +7,7 @@ import (
 
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/audit"
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/common"
+	database "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/common/database"
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/documents"
 	documentsaccess "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/documents/access"
 	documentsactivity "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/documents/activity"
@@ -72,7 +73,8 @@ func (s *Server) ListDocumentReqs(
 		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 	}
 
-	pag, _ := req.GetPagination().GetResponseWithPageSize(count.Total, ActivityDefaultPageSize)
+	pag, _ := req.GetPagination().
+		GetResponseWithPageSize(count.Total, database.DocumentRequestPageSize)
 	resp := &pbdocuments.ListDocumentReqsResponse{
 		Pagination: pag,
 		Requests:   []*documentsrequests.DocRequest{},

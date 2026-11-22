@@ -531,7 +531,7 @@ func (s *uploadStorage) Delete(_ context.Context, key string) error {
 	return s.deleteErr
 }
 
-func (s *uploadStorage) List(context.Context, string, int, int) ([]*storage.FileInfo, error) {
+func (s *uploadStorage) List(context.Context, string, int, int64) ([]*storage.FileInfo, error) {
 	return nil, nil
 }
 

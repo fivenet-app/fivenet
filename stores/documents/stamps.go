@@ -13,8 +13,6 @@ import (
 	"github.com/go-jet/jet/v2/qrm"
 )
 
-const stampDefaultPageSize = 20
-
 func (s *Store) CheckJobStampCount(ctx context.Context, job string) (int64, error) {
 	tStamp := table.FivenetDocumentsStamps.AS("stamp")
 	countStmt := tStamp.
@@ -66,7 +64,10 @@ func (s *Store) ListUsableStamps(
 			return nil, nil, err
 		}
 	}
-	pag, limit := q.Pagination.GetResponseWithPageSize(count.Total, stampDefaultPageSize)
+	pag, limit := q.Pagination.GetResponseWithPageSize(
+		count.Total,
+		resourcesdatabase.DocumentStampPageSize,
+	)
 	if count.Total <= 0 {
 		return pag, []*documentsstamps.Stamp{}, nil
 	}

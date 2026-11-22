@@ -37,7 +37,10 @@ func (s *Store) ListDocumentActivity(
 		}
 	}
 
-	_, limit := q.Pagination.GetResponseWithPageSize(count.Total, 10)
+	_, limit := q.Pagination.GetResponseWithPageSize(
+		count.Total,
+		resourcesdatabase.DocumentActivityPageSize,
+	)
 	if count.Total <= 0 {
 		return count, []*documentsactivity.DocActivity{}, nil
 	}

@@ -809,7 +809,7 @@ func (s *Server) ListGroupManualMembers(
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
 	}
-	pag, limit := req.GetPagination().GetResponseWithPageSize(count, defaultPageSize)
+	pag, limit := req.GetPagination().GetResponseWithPageSize(count, database.JobPageSize)
 	resp := &pbjobs.ListGroupManualMembersResponse{
 		Pagination:    pag,
 		ManualMembers: []*jobsgroups.GroupManualMember{},
@@ -873,7 +873,7 @@ func (s *Server) ListGroupMemberExclusions(
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
 	}
-	pag, limit := req.GetPagination().GetResponseWithPageSize(count, defaultPageSize)
+	pag, limit := req.GetPagination().GetResponseWithPageSize(count, database.JobPageSize)
 	resp := &pbjobs.ListGroupMemberExclusionsResponse{
 		Pagination: pag,
 		Exclusions: []*jobsgroups.GroupMemberExclusion{},
@@ -936,7 +936,7 @@ func (s *Server) ListGroupLeaders(
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
 	}
-	pag, limit := req.GetPagination().GetResponseWithPageSize(count, defaultPageSize)
+	pag, limit := req.GetPagination().GetResponseWithPageSize(count, database.JobPageSize)
 	resp := &pbjobs.ListGroupLeadersResponse{
 		Pagination: pag,
 		Leaders:    []*jobsgroups.GroupLeader{},

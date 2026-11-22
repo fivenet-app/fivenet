@@ -25,8 +25,6 @@ import (
 	"github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/logging"
 )
 
-const MessagesDefaultPageSize = 20
-
 var tMessages = table.FivenetMailerMessages.AS("message")
 
 func (s *Server) ListThreadMessages(
@@ -52,7 +50,7 @@ func (s *Server) ListThreadMessages(
 		return nil, errswrap.NewError(err, errorsmailer.ErrFailedQuery)
 	}
 
-	pag, limit := req.GetPagination().GetResponseWithPageSize(count, MessagesDefaultPageSize)
+	pag, limit := req.GetPagination().GetResponseWithPageSize(count, database.MailerMessagePageSize)
 	resp := &pbmailer.ListThreadMessagesResponse{
 		Pagination: pag,
 		Messages:   []*mailermessages.Message{},
@@ -280,7 +278,7 @@ func (s *Server) SearchThreads(
 	if req.GetSearch() == "" {
 		return &pbmailer.SearchThreadsResponse{
 			Pagination: &database.PaginationResponse{
-				PageSize: 15,
+				PageSize: database.MailerThreadSearchPageSize,
 			},
 		}, nil
 	}
@@ -342,7 +340,8 @@ func (s *Server) SearchThreads(
 		}
 	}
 
-	pag, limit := req.GetPagination().GetResponseWithPageSize(count.Total, 15)
+	pag, limit := req.GetPagination().
+		GetResponseWithPageSize(count.Total, database.MailerThreadSearchPageSize)
 	resp := &pbmailer.SearchThreadsResponse{
 		Pagination: pag,
 	}

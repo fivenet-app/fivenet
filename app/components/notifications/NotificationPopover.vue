@@ -30,7 +30,7 @@ async function refresh(): Promise<void> {
     try {
         const client = await getNotificationsNotificationsClient();
         const { response } = await client.getNotifications({
-            pagination: { offset: 0, pageSize: 6 },
+            pagination: { offset: 0, pageSize: PAGINATION_PAGE_SIZE.notificationPopover },
             includeRead: true,
             categories: [],
             kinds: [],

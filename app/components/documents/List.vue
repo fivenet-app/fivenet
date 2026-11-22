@@ -102,9 +102,9 @@ const { data, status, refresh, error } = useAuthedLazyAsyncData('userState', doc
 async function listDocuments(values: Schema, signal: AbortSignal): Promise<ListDocumentsResponse> {
     const pagination = {
         offset: 0,
-        pageSize: 20,
+        pageSize: PAGINATION_PAGE_SIZE.documentList,
         end: 0,
-        totalCount: values.page * 20,
+        totalCount: values.page * PAGINATION_PAGE_SIZE.documentList,
 
         ...data.value?.pagination,
     };

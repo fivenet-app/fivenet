@@ -17,6 +17,8 @@ var (
 	ErrNotFound = errors.New("file not found")
 	// ErrInvalidPath is returned when a file path is invalid.
 	ErrInvalidPath = errors.New("invalid file path")
+	// ErrInvalidPagination is returned when storage listing pagination is invalid.
+	ErrInvalidPagination = errors.New("invalid storage list pagination")
 )
 
 // IStorage defines the interface for a storage backend.
@@ -39,7 +41,7 @@ type IStorage interface {
 	Delete(ctx context.Context, key string) error
 
 	// List returns a list of files by offset and page size.
-	List(ctx context.Context, key string, offset int, pageSize int) ([]*FileInfo, error)
+	List(ctx context.Context, key string, offset int, pageSize int64) ([]*FileInfo, error)
 
 	// GetSpaceUsage returns the total space used in storage.
 	GetSpaceUsage(ctx context.Context) (int64, error)

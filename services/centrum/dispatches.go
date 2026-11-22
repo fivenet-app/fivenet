@@ -35,11 +35,6 @@ var (
 	tDispatchHeatmap = table.FivenetCentrumDispatchesHeatmaps.AS("heatmap")
 )
 
-const (
-	dispatchesPageSize       = 40
-	dispatchActivityPageSize = 15
-)
-
 func (s *Server) ListDispatches(
 	ctx context.Context,
 	req *pbcentrum.ListDispatchesRequest,
@@ -122,7 +117,8 @@ func (s *Server) ListDispatches(
 		}
 	}
 
-	pag, limit := req.GetPagination().GetResponseWithPageSize(count.Total, dispatchesPageSize)
+	pag, limit := req.GetPagination().
+		GetResponseWithPageSize(count.Total, database.CentrumDispatchPageSize)
 	resp := &pbcentrum.ListDispatchesResponse{
 		Pagination: pag,
 	}
@@ -587,7 +583,8 @@ func (s *Server) ListDispatchActivity(
 		}
 	}
 
-	pag, limit := req.GetPagination().GetResponseWithPageSize(count.Total, dispatchActivityPageSize)
+	pag, limit := req.GetPagination().
+		GetResponseWithPageSize(count.Total, database.CentrumDispatchActivityPageSize)
 	resp := &pbcentrum.ListDispatchActivityResponse{
 		Pagination: pag,
 	}

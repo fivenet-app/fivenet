@@ -62,7 +62,7 @@ func (s *Noop) List(
 	ctx context.Context,
 	filePath string,
 	offset int,
-	pageSize int,
+	pageSize int64,
 ) ([]*FileInfo, error) {
 	return nil, nil
 }

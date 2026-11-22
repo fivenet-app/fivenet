@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/audit"
+	database "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/common/database"
 	qualificationsaccess "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/qualifications/access"
 	qualificationsactivity "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/qualifications/activity"
 	usershort "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/users/short"
@@ -89,7 +90,8 @@ func (s *Server) ListQualificationActivity(
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 	}
-	pagination, limit := req.GetPagination().GetResponseWithPageSize(count, ActivityPageSize)
+	pagination, limit := req.GetPagination().
+		GetResponseWithPageSize(count, database.QualificationActivityPageSize)
 	resp := &pbqualifications.ListQualificationActivityResponse{
 		Pagination: pagination,
 		Activity:   []*qualificationsactivity.QualificationActivity{},
