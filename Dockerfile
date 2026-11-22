@@ -28,19 +28,15 @@ FROM docker.io/library/alpine:3.24.4 AS iconsets
 
 WORKDIR /app
 
-# Clone the icon sets repository and filter for JSON files only
-RUN apk add --no-cache git && \
+# Load only the used icon set (see pkg/server/icons/iconify.go).
+ARG ICONIFY_ICON_SETS_REF=master
+RUN apk add --no-cache curl && \
     mkdir -p icons && \
-    git init icons && \
-    cd icons && \
-    git remote add -f origin https://github.com/iconify/icon-sets.git && \
-    git config core.sparseCheckout true && \
-    echo "json/" >> .git/info/sparse-checkout  && \
-    git pull origin master && \
-    rm -rf .git && \
-    mv json/* . && \
-    rm -rf json && \
-    find . -type f ! -name '*.json' -delete
+    for icon_set in mdi simple-icons flagpack; do \
+        curl --fail --location --silent --show-error \
+            "https://raw.githubusercontent.com/iconify/icon-sets/${ICONIFY_ICON_SETS_REF}/json/${icon_set}.json" \
+            --output "icons/${icon_set}.json"; \
+    done
 
 # Frontend Build
 FROM docker.io/library/node:26.13.1-alpine3.24 AS frontendbuild

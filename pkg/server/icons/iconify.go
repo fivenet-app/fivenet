@@ -31,6 +31,7 @@ const (
 )
 
 var (
+	// Keep Dockerfile's Iconify download list in sync when changing this slice.
 	loadedIconSets      = []string{MDIIconSetName, SimpleIconSetName, FlagpackSetName}
 	loadedIconSetLookup = map[string]struct{}{
 		MDIIconSetName:    {},
