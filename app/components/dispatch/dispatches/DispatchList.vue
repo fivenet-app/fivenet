@@ -272,7 +272,7 @@ const dispatchDetailsSlideover = overlay.create(DispatchDetailsByIDSlideover);
 </script>
 
 <template>
-    <div class="flex h-full flex-1 grow flex-col">
+    <div class="flex h-full w-full flex-1 grow flex-col">
         <div class="flex justify-between px-1">
             <h2 class="inline-flex flex-1 items-center text-base leading-6 font-semibold">
                 {{ $t('common.dispatches') }}
@@ -315,7 +315,7 @@ const dispatchDetailsSlideover = overlay.create(DispatchDetailsByIDSlideover);
 
                     <UTable
                         v-if="!centrum.dispatchListCardStyle"
-                        class="overflow-x-visible"
+                        class="w-full overflow-x-visible"
                         :columns="columns"
                         :data="group.dispatches"
                         :empty="$t('common.not_found', [$t('common.dispatch', 2)])"

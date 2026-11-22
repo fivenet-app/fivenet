@@ -1,6 +1,15 @@
 <script lang="ts" setup>
 import LivemapSettings from '~/components/user-settings/preferences/LivemapSettings.vue';
 
+withDefaults(
+    defineProps<{
+        showDebug?: boolean;
+    }>(),
+    {
+        showDebug: true,
+    },
+);
+
 defineEmits<{
     (e: 'close', v: boolean): void;
 }>();
@@ -110,9 +119,9 @@ async function copyLivemapDebugInfo(): Promise<void> {
             <UContainer class="max-w-xl space-y-4">
                 <LivemapSettings :show-sidebar-placement="false" />
 
-                <USeparator />
+                <USeparator v-if="showDebug" />
 
-                <UCollapsible>
+                <UCollapsible v-if="showDebug">
                     <UButton
                         :label="$t('components.debug_info.title')"
                         color="neutral"

@@ -2,6 +2,15 @@
 import SettingsDrawer from '~/components/livemap/controls/SettingsDrawer.vue';
 import { HELP_GUIDE_ACTION_EVENT, type HelpGuideActionDetail } from '~/composables/useHelpGuides';
 
+const props = withDefaults(
+    defineProps<{
+        showDebug?: boolean;
+    }>(),
+    {
+        showDebug: true,
+    },
+);
+
 const overlay = useOverlay();
 const settingsModal = overlay.create(SettingsDrawer);
 
@@ -10,7 +19,7 @@ function onHelpGuideAction(event: Event): void {
     if (!action) return;
 
     if (action.actionId === 'livemap-open-settings' && action.phase === 'enter') {
-        settingsModal.open();
+        settingsModal.open({ showDebug: props.showDebug });
     }
 
     if (action.actionId === 'livemap-close-settings' && action.phase === 'leave') {
@@ -31,7 +40,7 @@ onBeforeUnmount(() => window.removeEventListener(HELP_GUIDE_ACTION_EVENT, onHelp
                 icon="i-mdi-cog"
                 size="xs"
                 block
-                @click="settingsModal.open()"
+                @click="settingsModal.open({ showDebug: props.showDebug })"
             />
         </UTooltip>
     </LControl>

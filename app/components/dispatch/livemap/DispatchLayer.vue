@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import DispatchDetailsSlideover from '~/components/dispatch/dispatches/DispatchDetailsSlideover.vue';
+import DispatchDetailsByIDSlideover from '~/components/dispatch/dispatches/DispatchDetailsByIDSlideover.vue';
 import DispatchMarker from '~/components/dispatch/livemap/DispatchMarker.vue';
 import { useCentrumStore } from '~/stores/centrum';
 import { useSettingsStore } from '~/stores/settings';
@@ -23,6 +23,7 @@ const { livemap, livemapLayers } = storeToRefs(settingsStore);
 
 const dispatchQueryRaw = ref<string>('');
 const dispatchQuery = computed(() => dispatchQueryRaw.value.trim().toLowerCase());
+const isArchiveLayer = computed(() => props.dispatchList !== undefined);
 
 const dispatchesFiltered = computed(() =>
     [...(props.dispatchList ?? dispatches.value.values() ?? [])].filter(
@@ -85,11 +86,33 @@ onBeforeMount(async () => {
     });
 });
 
-const dispatchDetailsSlideover = overlay.create(DispatchDetailsSlideover);
+const dispatchDetailsSlideover = overlay.create(DispatchDetailsByIDSlideover);
 </script>
 
 <template>
     <LLayerGroup
+        v-if="isArchiveLayer"
+        key="dispatches_archive"
+        :name="$t('common.dispatch', 2)"
+        layer-type="overlay"
+        visible
+        :options="{ name: 'dispatches_archive' }"
+    >
+        <DispatchMarker
+            v-for="dispatch in dispatchesFiltered"
+            :key="dispatch.id"
+            :dispatch="dispatch"
+            :size="livemap.markerSize"
+            @selected="
+                dispatchDetailsSlideover.open({
+                    dispatchId: $event.id,
+                })
+            "
+        />
+    </LLayerGroup>
+
+    <LLayerGroup
+        v-else
         key="dispatches_own"
         :name="$t('common.your_dispatches')"
         layer-type="overlay"
@@ -109,28 +132,30 @@ const dispatchDetailsSlideover = overlay.create(DispatchDetailsSlideover);
         />
     </LLayerGroup>
 
-    <LLayerGroup
-        v-for="job in acls?.dispatches?.jobs"
-        :key="`dispatches_job_${job.job}`"
-        :name="$t('common.dispatch', 2)"
-        layer-type="overlay"
-        :visible="livemapLayers.find((l) => l.key === `dispatches_job_${job.job}`)?.visible === true"
-        :options="{ name: `dispatches_job_${job.job}` }"
-    >
-        <DispatchMarker
-            v-for="dispatch in dispatchesByJob.get(job.job ?? '') ?? []"
-            :key="dispatch.id"
-            :dispatch="dispatch"
-            :size="livemap.markerSize"
-            @selected="
-                dispatchDetailsSlideover.open({
-                    dispatchId: $event.id,
-                })
-            "
-        />
-    </LLayerGroup>
+    <template v-if="!isArchiveLayer">
+        <LLayerGroup
+            v-for="job in acls?.dispatches?.jobs"
+            :key="`dispatches_job_${job.job}`"
+            :name="$t('common.dispatch', 2)"
+            layer-type="overlay"
+            :visible="livemapLayers.find((l) => l.key === `dispatches_job_${job.job}`)?.visible === true"
+            :options="{ name: `dispatches_job_${job.job}` }"
+        >
+            <DispatchMarker
+                v-for="dispatch in dispatchesByJob.get(job.job ?? '') ?? []"
+                :key="dispatch.id"
+                :dispatch="dispatch"
+                :size="livemap.markerSize"
+                @selected="
+                    dispatchDetailsSlideover.open({
+                        dispatchId: $event.id,
+                    })
+                "
+            />
+        </LLayerGroup>
+    </template>
 
-    <LControl position="bottomleft">
+    <LControl v-if="!isArchiveLayer" position="bottomleft">
         <div v-if="settings?.enabled" class="flex flex-col gap-2">
             <UInput
                 v-model="dispatchQueryRaw"

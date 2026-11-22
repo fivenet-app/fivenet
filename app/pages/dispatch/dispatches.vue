@@ -4,6 +4,7 @@ import { z } from 'zod';
 import DispatchList from '~/components/dispatch/dispatches/DispatchList.vue';
 import DispatchLayer from '~/components/dispatch/livemap/DispatchLayer.vue';
 import BaseMap from '~/components/livemap/BaseMap.vue';
+import SettingsButton from '~/components/livemap/controls/SettingsButton.vue';
 import Pagination from '~/components/partials/Pagination.vue';
 import SelectMenu from '~/components/partials/SelectMenu.vue';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
@@ -168,7 +169,7 @@ const mount = ref<boolean>(false);
 
         <template #body>
             <div
-                class="max-h-[calc(100dvh-var(--ui-header-height)-var(--page-content-bottom-offset))] min-h-[calc(100dvh-var(--ui-header-height)-var(--page-content-bottom-offset))] overflow-hidden"
+                class="max-h-[calc(100dvh-var(--ui-header-height)-var(--page-content-bottom-offset))] min-h-[calc(100dvh-var(--ui-header-height)-var(--page-content-bottom-offset))] w-full overflow-hidden"
             >
                 <USplitter
                     v-if="mount"
@@ -183,6 +184,8 @@ const mount = ref<boolean>(false);
                         <ClientOnly>
                             <BaseMap ref="baseMapRef" :map-options="{ zoomControl: false }">
                                 <template #default>
+                                    <SettingsButton :show-debug="false" />
+
                                     <LazyLivemapTempMarker />
 
                                     <DispatchLayer show-all-dispatches :dispatch-list="data?.dispatches ?? []" />
@@ -192,16 +195,16 @@ const mount = ref<boolean>(false);
                     </template>
 
                     <template #details>
-                        <div class="max-h-full overflow-y-auto">
+                        <div class="size-full min-w-0 overflow-y-auto">
                             <div class="mb-2 px-2">
                                 <UForm
                                     ref="formRef"
-                                    class="flex flex-row gap-2"
+                                    class="flex flex-wrap gap-2"
                                     :schema="schema"
                                     :state="query"
                                     @submit="commitValidatedQuery"
                                 >
-                                    <UFormField class="flex-1" name="postal" :label="$t('common.postal')">
+                                    <UFormField class="min-w-0 flex-1 basis-48" name="postal" :label="$t('common.postal')">
                                         <UInput
                                             ref="inputRef"
                                             v-model="query.postal"
@@ -216,7 +219,7 @@ const mount = ref<boolean>(false);
                                         </UInput>
                                     </UFormField>
 
-                                    <UFormField class="flex-1" name="id" :label="$t('common.id')">
+                                    <UFormField class="min-w-0 flex-1 basis-48" name="id" :label="$t('common.id')">
                                         <UInput
                                             v-model="query.id"
                                             class="w-full"
@@ -228,7 +231,7 @@ const mount = ref<boolean>(false);
                                         />
                                     </UFormField>
 
-                                    <UFormField class="flex-1" name="creator" :label="$t('common.creator')">
+                                    <UFormField class="min-w-0 flex-1 basis-48" name="creator" :label="$t('common.creator')">
                                         <SelectMenu
                                             v-model="query.creatorIds"
                                             class="w-full"
@@ -280,8 +283,9 @@ const mount = ref<boolean>(false);
                                 :type="$t('common.dispatches')"
                             />
 
-                            <div v-else class="relative overflow-x-auto">
+                            <div v-else class="relative w-full overflow-x-auto">
                                 <DispatchList
+                                    class="w-full"
                                     :show-button="false"
                                     hide-actions
                                     always-show-day
