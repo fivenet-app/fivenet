@@ -1,0 +1,2 @@
+-- No safe rollback: PropertyList keys do not retain the exact legacy field
+-- spelling required to reconstruct the old StringList limits.
