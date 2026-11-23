@@ -204,6 +204,60 @@ func TestApplyUserInfoChanged(t *testing.T) {
 	assert.Equal(t, int32(3), current.GetJobGrade())
 }
 
+func TestApplyUserInfoChangedClearsSecondarySessionContextUntilReauth(t *testing.T) {
+	t.Parallel()
+
+	current := &pbuserinfo.UserInfo{
+		UserId:   7,
+		Job:      "ems",
+		JobGrade: 3,
+		OriginalJob: &pbuserinfo.OriginalJob{
+			Job:      "police",
+			JobGrade: 1,
+		},
+	}
+
+	applyUserInfoChanged(current, &pbuserinfo.UserInfoChanged{
+		NewJob:      new("sheriff"),
+		NewJobGrade: new(int32(4)),
+	})
+
+	// The stream stays subscribed to its user/system subjects only until the
+	// client refreshes its session job and reconnects with a new token.
+	assert.Empty(t, current.GetJob())
+	assert.Zero(t, current.GetJobGrade())
+	assert.Equal(t, "sheriff", current.GetOriginalJob().GetJob())
+	assert.Equal(t, int32(4), current.GetOriginalJob().GetJobGrade())
+
+	server := &Server{mailerStore: &mailerStoreStub{}}
+	baseSubjects, _, err := server.buildSubjects(t.Context(), current)
+	require.NoError(t, err)
+	assert.Equal(t, []string{"notifi.sys", "notifi.user.7"}, baseSubjects)
+}
+
+func TestApplyUserInfoChangedKeepsSameJobImpersonationBehavior(t *testing.T) {
+	t.Parallel()
+
+	current := &pbuserinfo.UserInfo{
+		Job:      "police",
+		JobGrade: 2,
+		OriginalJob: &pbuserinfo.OriginalJob{
+			Job:      "police",
+			JobGrade: 4,
+		},
+	}
+
+	applyUserInfoChanged(current, &pbuserinfo.UserInfoChanged{
+		NewJob:      new("sheriff"),
+		NewJobGrade: new(int32(1)),
+	})
+
+	assert.Equal(t, "sheriff", current.GetJob())
+	assert.Equal(t, int32(1), current.GetJobGrade())
+	assert.Equal(t, "police", current.GetOriginalJob().GetJob())
+	assert.Equal(t, int32(4), current.GetOriginalJob().GetJobGrade())
+}
+
 func TestApplyUserInfoChangedIgnoresNil(t *testing.T) {
 	t.Parallel()
 

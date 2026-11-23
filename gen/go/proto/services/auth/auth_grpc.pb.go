@@ -28,6 +28,8 @@ const (
 	AuthService_GetCharacters_FullMethodName         = "/services.auth.AuthService/GetCharacters"
 	AuthService_ChooseCharacter_FullMethodName       = "/services.auth.AuthService/ChooseCharacter"
 	AuthService_ImpersonateJob_FullMethodName        = "/services.auth.AuthService/ImpersonateJob"
+	AuthService_SelectSessionJob_FullMethodName      = "/services.auth.AuthService/SelectSessionJob"
+	AuthService_RefreshSessionJob_FullMethodName     = "/services.auth.AuthService/RefreshSessionJob"
 	AuthService_GetAccountInfo_FullMethodName        = "/services.auth.AuthService/GetAccountInfo"
 	AuthService_RefreshAccountSession_FullMethodName = "/services.auth.AuthService/RefreshAccountSession"
 	AuthService_DeleteSocialLogin_FullMethodName     = "/services.auth.AuthService/DeleteSocialLogin"
@@ -50,6 +52,12 @@ type AuthServiceClient interface {
 	GetCharacters(ctx context.Context, in *GetCharactersRequest, opts ...grpc.CallOption) (*GetCharactersResponse, error)
 	ChooseCharacter(ctx context.Context, in *ChooseCharacterRequest, opts ...grpc.CallOption) (*ChooseCharacterResponse, error)
 	ImpersonateJob(ctx context.Context, in *ImpersonateJobRequest, opts ...grpc.CallOption) (*ImpersonateJobResponse, error)
+	// Selects one of the character's server-synchronized secondary jobs as the
+	// effective job for this browser session. This is intentionally user-token
+	// protected rather than permission-gated: a user may only select their own
+	// currently held job.
+	SelectSessionJob(ctx context.Context, in *SelectSessionJobRequest, opts ...grpc.CallOption) (*SelectSessionJobResponse, error)
+	RefreshSessionJob(ctx context.Context, in *RefreshSessionJobRequest, opts ...grpc.CallOption) (*SelectSessionJobResponse, error)
 	GetAccountInfo(ctx context.Context, in *GetAccountInfoRequest, opts ...grpc.CallOption) (*GetAccountInfoResponse, error)
 	RefreshAccountSession(ctx context.Context, in *RefreshAccountSessionRequest, opts ...grpc.CallOption) (*RefreshAccountSessionResponse, error)
 	DeleteSocialLogin(ctx context.Context, in *DeleteSocialLoginRequest, opts ...grpc.CallOption) (*DeleteSocialLoginResponse, error)
@@ -154,6 +162,26 @@ func (c *authServiceClient) ImpersonateJob(ctx context.Context, in *ImpersonateJ
 	return out, nil
 }
 
+func (c *authServiceClient) SelectSessionJob(ctx context.Context, in *SelectSessionJobRequest, opts ...grpc.CallOption) (*SelectSessionJobResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(SelectSessionJobResponse)
+	err := c.cc.Invoke(ctx, AuthService_SelectSessionJob_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *authServiceClient) RefreshSessionJob(ctx context.Context, in *RefreshSessionJobRequest, opts ...grpc.CallOption) (*SelectSessionJobResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(SelectSessionJobResponse)
+	err := c.cc.Invoke(ctx, AuthService_RefreshSessionJob_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *authServiceClient) GetAccountInfo(ctx context.Context, in *GetAccountInfoRequest, opts ...grpc.CallOption) (*GetAccountInfoResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(GetAccountInfoResponse)
@@ -210,6 +238,12 @@ type AuthServiceServer interface {
 	GetCharacters(context.Context, *GetCharactersRequest) (*GetCharactersResponse, error)
 	ChooseCharacter(context.Context, *ChooseCharacterRequest) (*ChooseCharacterResponse, error)
 	ImpersonateJob(context.Context, *ImpersonateJobRequest) (*ImpersonateJobResponse, error)
+	// Selects one of the character's server-synchronized secondary jobs as the
+	// effective job for this browser session. This is intentionally user-token
+	// protected rather than permission-gated: a user may only select their own
+	// currently held job.
+	SelectSessionJob(context.Context, *SelectSessionJobRequest) (*SelectSessionJobResponse, error)
+	RefreshSessionJob(context.Context, *RefreshSessionJobRequest) (*SelectSessionJobResponse, error)
 	GetAccountInfo(context.Context, *GetAccountInfoRequest) (*GetAccountInfoResponse, error)
 	RefreshAccountSession(context.Context, *RefreshAccountSessionRequest) (*RefreshAccountSessionResponse, error)
 	DeleteSocialLogin(context.Context, *DeleteSocialLoginRequest) (*DeleteSocialLoginResponse, error)
@@ -250,6 +284,12 @@ func (UnimplementedAuthServiceServer) ChooseCharacter(context.Context, *ChooseCh
 }
 func (UnimplementedAuthServiceServer) ImpersonateJob(context.Context, *ImpersonateJobRequest) (*ImpersonateJobResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ImpersonateJob not implemented")
+}
+func (UnimplementedAuthServiceServer) SelectSessionJob(context.Context, *SelectSessionJobRequest) (*SelectSessionJobResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SelectSessionJob not implemented")
+}
+func (UnimplementedAuthServiceServer) RefreshSessionJob(context.Context, *RefreshSessionJobRequest) (*SelectSessionJobResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method RefreshSessionJob not implemented")
 }
 func (UnimplementedAuthServiceServer) GetAccountInfo(context.Context, *GetAccountInfoRequest) (*GetAccountInfoResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetAccountInfo not implemented")
@@ -446,6 +486,42 @@ func _AuthService_ImpersonateJob_Handler(srv interface{}, ctx context.Context, d
 	return interceptor(ctx, in, info, handler)
 }
 
+func _AuthService_SelectSessionJob_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SelectSessionJobRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AuthServiceServer).SelectSessionJob(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: AuthService_SelectSessionJob_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AuthServiceServer).SelectSessionJob(ctx, req.(*SelectSessionJobRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _AuthService_RefreshSessionJob_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(RefreshSessionJobRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AuthServiceServer).RefreshSessionJob(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: AuthService_RefreshSessionJob_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AuthServiceServer).RefreshSessionJob(ctx, req.(*RefreshSessionJobRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _AuthService_GetAccountInfo_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(GetAccountInfoRequest)
 	if err := dec(in); err != nil {
@@ -560,6 +636,14 @@ var AuthService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "ImpersonateJob",
 			Handler:    _AuthService_ImpersonateJob_Handler,
+		},
+		{
+			MethodName: "SelectSessionJob",
+			Handler:    _AuthService_SelectSessionJob_Handler,
+		},
+		{
+			MethodName: "RefreshSessionJob",
+			Handler:    _AuthService_RefreshSessionJob_Handler,
 		},
 		{
 			MethodName: "GetAccountInfo",

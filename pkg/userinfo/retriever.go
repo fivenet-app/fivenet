@@ -11,6 +11,7 @@ import (
 	accounts "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/accounts"
 	notificationsevents "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/notifications/events"
 	pbuserinfo "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/userinfo"
+	users "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/users"
 	"github.com/fivenet-app/fivenet/v2026/pkg/config"
 	"github.com/fivenet-app/fivenet/v2026/pkg/config/appconfig"
 	"github.com/fivenet-app/fivenet/v2026/pkg/events"
@@ -22,6 +23,7 @@ import (
 	"github.com/fivenet-app/fivenet/v2026/query/fivenet/model"
 	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
 	"github.com/go-jet/jet/v2/mysql"
+	"github.com/go-jet/jet/v2/qrm"
 	"github.com/nats-io/nats.go/jetstream"
 	"go.uber.org/fx"
 	"go.uber.org/zap"
@@ -381,8 +383,28 @@ func (r *Retriever) GetUserInfoFromClaims(
 		userInfo.Superuser = true
 	}
 
-	// If the user has an original job in their claims, check if the userInfo matches that job + grade.
-	if userClaims.OriginalJob != nil {
+	// A session job is an explicitly selected FiveNet work context. It is
+	// deliberately revalidated against the synchronized job list on every
+	// request so a fired/removed job cannot retain access until the token
+	// expires. A missing or primary entry falls back to the database-backed
+	// primary job already present in userInfo.
+	if userClaims.SessionJob && userClaims.Job != nil {
+		if job, err := r.getSecondarySessionJob(
+			ctx,
+			userClaims.UserID,
+			*userClaims.Job,
+		); err != nil {
+			return nil, err
+		} else if job != nil {
+			userInfo.OriginalJob = &pbuserinfo.OriginalJob{
+				Job:      userInfo.GetJob(),
+				JobGrade: userInfo.GetJobGrade(),
+			}
+			userInfo.Job = job.GetJob()
+			userInfo.JobGrade = job.GetGrade()
+		}
+		// If the user has an original job in their claims, check if the userInfo matches that job + grade.
+	} else if userClaims.OriginalJob != nil {
 		userInfo.OriginalJob = &pbuserinfo.OriginalJob{
 			Job:      userClaims.OriginalJob.Job,
 			JobGrade: userClaims.OriginalJob.JobGrade,
@@ -402,6 +424,36 @@ func (r *Retriever) GetUserInfoFromClaims(
 	}
 
 	return userInfo, nil
+}
+
+// getSecondarySessionJob returns a currently held secondary job. It never
+// returns the authoritative primary job because selecting that job simply
+// clears the session override.
+func (r *Retriever) getSecondarySessionJob(
+	ctx context.Context,
+	userID int32,
+	jobName string,
+) (*users.UserJob, error) {
+	tUserJobs := table.FivenetUserJobs
+	stmt := tUserJobs.
+		SELECT(tUserJobs.UserID, tUserJobs.Job, tUserJobs.Grade, tUserJobs.IsPrimary).
+		FROM(tUserJobs).
+		WHERE(mysql.AND(
+			tUserJobs.UserID.EQ(mysql.Int32(userID)),
+			tUserJobs.Job.EQ(mysql.String(jobName)),
+			tUserJobs.IsPrimary.IS_FALSE(),
+		)).
+		LIMIT(1)
+
+	job := &users.UserJob{}
+	if err := stmt.QueryContext(ctx, r.db, job); err != nil {
+		if errors.Is(err, qrm.ErrNoRows) {
+			return nil, nil
+		}
+		return nil, fmt.Errorf("failed to load session job for user %d: %w", userID, err)
+	}
+
+	return job, nil
 }
 
 func (r *Retriever) RefreshUserInfo(ctx context.Context, userId int32) error {

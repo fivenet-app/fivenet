@@ -194,6 +194,30 @@ message ImpersonateJobResponse {
   bool state = 6;
 }
 
+// SelectSessionJob changes the effective job used by this FiveNet session only.
+// It never changes the character's job on the game server. Omitting `job` (or
+// passing the primary job) clears the session override and returns to the
+// server-authoritative primary job.
+message SelectSessionJobRequest {
+  optional string job = 1 [(buf.validate.field).string.max_len = 20];
+}
+
+message SelectSessionJobResponse {
+  string token = 1;
+  resources.timestamp.Timestamp expires = 2;
+
+  optional resources.jobs.props.JobProps job_props = 3;
+  resources.users.User char = 4 [(tagger.tags) = "alias:\"user\""];
+
+  resources.permissions.authorization.AuthorizationState authorization = 5;
+  bool session_job_active = 6;
+}
+
+// RefreshSessionJob revalidates the current session work context against the
+// server-synchronized job list. It retains a valid secondary context with its
+// current grade, or falls back to the authoritative primary job.
+message RefreshSessionJobRequest {}
+
 message DeleteSocialLoginRequest {
   string provider = 1 [
     (buf.validate.field).string.max_len = 50,
@@ -254,6 +278,13 @@ service AuthService {
       name: "UpdateRolePerms"
     };
   }
+
+  // Selects one of the character's server-synchronized secondary jobs as the
+  // effective job for this browser session. This is intentionally user-token
+  // protected rather than permission-gated: a user may only select their own
+  // currently held job.
+  rpc SelectSessionJob(SelectSessionJobRequest) returns (SelectSessionJobResponse);
+  rpc RefreshSessionJob(RefreshSessionJobRequest) returns (SelectSessionJobResponse);
 
   rpc GetAccountInfo(GetAccountInfoRequest) returns (GetAccountInfoResponse);
   rpc RefreshAccountSession(RefreshAccountSessionRequest) returns (RefreshAccountSessionResponse);

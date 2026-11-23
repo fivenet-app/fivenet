@@ -75,6 +75,15 @@ export interface UserEvent {
          */
         notificationsUnreadCount: number;
     } | {
+        oneofKind: "workContextJobsChanged";
+        /**
+         * The user's server-synchronized job list changed. Clients should refresh
+         * their session work context to receive the current jobs and permissions.
+         *
+         * @generated from protobuf field: bool work_context_jobs_changed = 8
+         */
+        workContextJobsChanged: boolean;
+    } | {
         oneofKind: undefined;
     };
 }
@@ -155,7 +164,8 @@ class UserEvent$Type extends MessageType<UserEvent> {
             { no: 3, name: "notifications_read_count", kind: "scalar", oneof: "data", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ },
             { no: 4, name: "user_info_changed", kind: "message", oneof: "data", T: () => UserInfoChanged },
             { no: 5, name: "account_groups_changed", kind: "message", oneof: "data", T: () => AccountGroupsChanged },
-            { no: 6, name: "notifications_unread_count", kind: "scalar", oneof: "data", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ }
+            { no: 6, name: "notifications_unread_count", kind: "scalar", oneof: "data", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ },
+            { no: 8, name: "work_context_jobs_changed", kind: "scalar", oneof: "data", T: 8 /*ScalarType.BOOL*/ }
         ]);
     }
     create(value?: PartialMessage<UserEvent>): UserEvent {
@@ -209,6 +219,12 @@ class UserEvent$Type extends MessageType<UserEvent> {
                         notificationsUnreadCount: reader.int64().toNumber()
                     };
                     break;
+                case /* bool work_context_jobs_changed */ 8:
+                    message.data = {
+                        oneofKind: "workContextJobsChanged",
+                        workContextJobsChanged: reader.bool()
+                    };
+                    break;
                 default:
                     let u = options.readUnknownField;
                     if (u === "throw")
@@ -242,6 +258,9 @@ class UserEvent$Type extends MessageType<UserEvent> {
         /* optional int64 unread_count = 7; */
         if (message.unreadCount !== undefined)
             writer.tag(7, WireType.Varint).int64(message.unreadCount);
+        /* bool work_context_jobs_changed = 8; */
+        if (message.data.oneofKind === "workContextJobsChanged")
+            writer.tag(8, WireType.Varint).bool(message.data.workContextJobsChanged);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);

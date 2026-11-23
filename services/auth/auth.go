@@ -996,6 +996,126 @@ func (s *Server) ImpersonateJob(
 	}, nil
 }
 
+// SelectSessionJob selects a secondary job as this FiveNet session's effective
+// work context. It only changes the signed user token; the character's
+// game-server job and the synchronized primary job are never written here.
+func (s *Server) SelectSessionJob(
+	ctx context.Context,
+	req *pbauth.SelectSessionJobRequest,
+) (*pbauth.SelectSessionJobResponse, error) {
+	return s.selectSessionJob(ctx, req.GetJob(), false)
+}
+
+// RefreshSessionJob revalidates the current token's selected work context. It
+// is used for job-sync updates and intentionally falls back to primary rather
+// than surfacing an error when the selected secondary job was removed.
+func (s *Server) RefreshSessionJob(
+	ctx context.Context,
+	_ *pbauth.RefreshSessionJobRequest,
+) (*pbauth.SelectSessionJobResponse, error) {
+	userToken, err := auth.GetUserTokenFromGRPCContext(ctx)
+	if err != nil {
+		return nil, errswrap.NewError(err, errorsgrpcauth.ErrInvalidToken)
+	}
+	userClaims, err := s.tm.ParseUserToken(userToken)
+	if err != nil {
+		return nil, errswrap.NewError(err, errorsgrpcauth.ErrInvalidToken)
+	}
+
+	requestedJob := ""
+	if userClaims.SessionJob && userClaims.Job != nil {
+		requestedJob = *userClaims.Job
+	}
+
+	return s.selectSessionJob(ctx, requestedJob, true)
+}
+
+func (s *Server) selectSessionJob(
+	ctx context.Context,
+	requestedJob string,
+	fallbackToPrimary bool,
+) (*pbauth.SelectSessionJobResponse, error) {
+	userInfo := auth.MustGetUserInfoFromContext(ctx)
+	// Superuser mode is itself an effective-job override. Do not combine it
+	// with a user-owned session context, as that would make the source of the
+	// effective permissions ambiguous.
+	if userInfo.GetSuperuser() {
+		return nil, errorsauth.ErrSessionJobInvalid
+	}
+
+	accToken, err := auth.GetTokenFromAuthHeaderGRPCContext(ctx)
+	if err != nil {
+		return nil, errswrap.NewError(err, errorsgrpcauth.ErrInvalidToken)
+	}
+	accClaims, err := s.tm.ParseAccToken(accToken)
+	if err != nil {
+		return nil, errswrap.NewError(err, errorsgrpcauth.ErrInvalidToken)
+	}
+
+	// Always start from the server-authoritative character state. In
+	// particular, do not use userInfo here: it may already contain a session
+	// override from the token presented to this request.
+	char, primaryJobProps, err := s.getCharacter(ctx, userInfo.GetUserId())
+	if err != nil {
+		return nil, errswrap.NewError(err, errorsauth.ErrNoCharFound)
+	}
+
+	sessionJobActive := false
+	jobProps := primaryJobProps
+	if requestedJob != "" && requestedJob != char.GetJob() {
+		selectedJob := slices.IndexFunc(char.GetJobs(), func(job *users.UserJob) bool {
+			return job.GetJob() == requestedJob && !job.GetIsPrimary()
+		})
+		if selectedJob == -1 {
+			if !fallbackToPrimary {
+				return nil, errorsauth.ErrSessionJobInvalid
+			}
+		} else {
+			// Job properties are scoped to the effective FiveNet job. The held
+			// grade comes exclusively from fivenet_user_jobs, never from a request.
+			_, _, selectedJobProps, err := s.getJobWithProps(ctx, requestedJob)
+			if err != nil {
+				return nil, errorsauth.ErrSessionJobInvalid
+			}
+			jobProps = selectedJobProps
+			char.Job = char.GetJobs()[selectedJob].GetJob()
+			char.JobGrade = char.GetJobs()[selectedJob].GetGrade()
+			s.enricher.EnrichJobInfo(char)
+			sessionJobActive = true
+		}
+	}
+
+	ps, attrs, err := s.listUserPerms(
+		ctx,
+		char,
+		userInfo.GetCanBeSuperuser(),
+		userInfo.GetCanBeConfigAdmin(),
+		false,
+	)
+	if err != nil {
+		return nil, err
+	}
+
+	userClaims := auth.MapUserToClaims(accClaims.AccID, char)
+	if sessionJobActive {
+		userClaims.SessionJob = true
+	}
+
+	userToken, err := s.tm.FromUserClaims(userClaims)
+	if err != nil {
+		return nil, errswrap.NewError(err, errorsauth.ErrGenericLogin)
+	}
+
+	return &pbauth.SelectSessionJobResponse{
+		Token:            userToken,
+		Expires:          timestamp.New(userClaims.ExpiresAt.Time),
+		JobProps:         jobProps,
+		Char:             char,
+		Authorization:    authorizationState(ps, attrs),
+		SessionJobActive: sessionJobActive,
+	}, nil
+}
+
 func (s *Server) SetSuperuserMode(
 	ctx context.Context,
 	req *pbauth.SetSuperuserModeRequest,

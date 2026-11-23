@@ -5,6 +5,8 @@ import { useAuthStore } from './auth';
 const mocks = vi.hoisted(() => ({
     login: vi.fn(),
     chooseCharacter: vi.fn(),
+    selectSessionJob: vi.fn(),
+    refreshSessionJob: vi.fn(),
     refreshAccountSession: vi.fn(),
     logout: vi.fn(),
     authSessionStore: {
@@ -43,6 +45,8 @@ vi.mock('~~/gen/ts/clients', () => ({
     getAuthAuthClient: vi.fn(async () => ({
         login: mocks.login,
         chooseCharacter: mocks.chooseCharacter,
+        selectSessionJob: mocks.selectSessionJob,
+        refreshSessionJob: mocks.refreshSessionJob,
         refreshAccountSession: mocks.refreshAccountSession,
         logout: mocks.logout,
     })),
@@ -75,6 +79,7 @@ describe('useAuthStore', () => {
         vi.clearAllMocks();
         useCookie<string | null>('fivenet_authed').value = null;
         mocks.webSocket.status.value = 'OPEN';
+        mocks.authSessionStore.setUserToken.mockReset();
         mocks.authSessionStore.getUserToken.mockReturnValue(null);
         mocks.authSessionStore.userInfo.accountId = null;
         mocks.authSessionStore.userInfo.userId = null;
@@ -119,6 +124,142 @@ describe('useAuthStore', () => {
                 },
             },
         );
+    });
+
+    it('replaces job properties when changing the session work context', async () => {
+        mocks.authSessionStore.getUserToken.mockReturnValue('char-token');
+        mocks.authSessionStore.userInfo.accountId = 123;
+        mocks.authSessionStore.userInfo.userId = 123;
+        mocks.selectSessionJob.mockResolvedValueOnce({
+            response: {
+                token: 'session-job-token',
+                char: { userId: 123, job: 'doj' } as never,
+                authorization: { permissions: [], attributes: [] },
+                jobProps: {
+                    job: 'doj',
+                    livemapMarkerColor: '#ffffff',
+                    quickButtons: { penaltyCalculator: false },
+                },
+            },
+        });
+
+        const authStore = useAuthStore();
+        authStore.accountId = 123;
+        authStore.activeChar = { userId: 123, job: 'ambulance' } as never;
+        authStore.jobProps = {
+            job: 'ambulance',
+            livemapMarkerColor: '#000000',
+            radioFrequency: '911',
+            quickButtons: { penaltyCalculator: true },
+        };
+
+        await authStore.selectSessionJob('doj');
+
+        expect(authStore.jobProps).toEqual({
+            job: 'doj',
+            livemapMarkerColor: '#ffffff',
+            quickButtons: { penaltyCalculator: false },
+        });
+        expect(mocks.selectSessionJob).toHaveBeenCalledWith(
+            { job: 'doj' },
+            {
+                meta: {
+                    Authorization: 'Bearer char-token',
+                },
+            },
+        );
+    });
+
+    it('refreshes the current session work context with the character token', async () => {
+        mocks.authSessionStore.getUserToken.mockReturnValue('char-token');
+        mocks.authSessionStore.userInfo.accountId = 123;
+        mocks.authSessionStore.userInfo.userId = 123;
+        mocks.refreshSessionJob.mockResolvedValueOnce({
+            response: {
+                token: 'refreshed-session-job-token',
+                char: { userId: 123, job: 'doj' } as never,
+                authorization: { permissions: [], attributes: [] },
+                jobProps: { job: 'doj' },
+            },
+        });
+
+        const authStore = useAuthStore();
+        authStore.accountId = 123;
+        authStore.activeChar = { userId: 123, job: 'ambulance' } as never;
+
+        await authStore.refreshSessionJob();
+
+        expect(mocks.refreshSessionJob).toHaveBeenCalledWith(
+            {},
+            {
+                meta: {
+                    Authorization: 'Bearer char-token',
+                },
+            },
+        );
+        expect(authStore.activeChar).toMatchObject({ userId: 123, job: 'doj' });
+        expect(authStore.jobProps).toEqual({ job: 'doj' });
+    });
+
+    it('queues a work-context refresh behind an in-flight selection', async () => {
+        let currentToken = 'char-token';
+        let resolveSelection!: () => void;
+        mocks.authSessionStore.getUserToken.mockImplementation(() => currentToken);
+        mocks.authSessionStore.setUserToken.mockImplementation((token: string | null) => {
+            currentToken = token ?? '';
+        });
+        mocks.authSessionStore.userInfo.accountId = 123;
+        mocks.authSessionStore.userInfo.userId = 123;
+        mocks.selectSessionJob.mockImplementationOnce(
+            () =>
+                new Promise((resolve) => {
+                    resolveSelection = () =>
+                        resolve({
+                            response: {
+                                token: 'selected-job-token',
+                                char: { userId: 123, job: 'doj' } as never,
+                                authorization: { permissions: [], attributes: [] },
+                                jobProps: { job: 'doj' },
+                            },
+                        });
+                }),
+        );
+        mocks.refreshSessionJob.mockResolvedValueOnce({
+            response: {
+                token: 'refreshed-job-token',
+                char: { userId: 123, job: 'doj' } as never,
+                authorization: { permissions: [], attributes: [] },
+                jobProps: { job: 'doj' },
+            },
+        });
+
+        const authStore = useAuthStore();
+        authStore.accountId = 123;
+        authStore.activeChar = { userId: 123, job: 'ambulance' } as never;
+
+        const selection = authStore.selectSessionJob('doj');
+        await vi.waitFor(() => expect(mocks.selectSessionJob).toHaveBeenCalledTimes(1));
+
+        const refresh = authStore.refreshSessionJob();
+        await Promise.resolve();
+        expect(mocks.refreshSessionJob).not.toHaveBeenCalled();
+
+        resolveSelection();
+        await selection;
+        await vi.waitFor(() =>
+            expect(mocks.refreshSessionJob).toHaveBeenCalledWith(
+                {},
+                {
+                    meta: {
+                        Authorization: 'Bearer selected-job-token',
+                    },
+                },
+            ),
+        );
+        await refresh;
+
+        expect(authStore.activeChar).toMatchObject({ userId: 123, job: 'doj' });
+        expect(currentToken).toBe('refreshed-job-token');
     });
 
     it('does not reuse a character token from another account when selecting a character', async () => {

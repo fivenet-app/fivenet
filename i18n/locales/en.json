@@ -647,6 +647,9 @@
         },
         "jobs": {
             "title": "Job",
+            "work_context": "Work context",
+            "work_context_primary": "Your primary job",
+            "work_context_session": "Use in this tab",
             "colleagues": {
                 "title": "Colleagues",
                 "id": {
@@ -4121,6 +4124,10 @@
                 "ErrImpersonateJobInvalid": {
                     "title": "Invalid impersonation",
                     "content": "You can't impersonate this job grade!"
+                },
+                "ErrSessionJobInvalid": {
+                    "title": "Invalid work context",
+                    "content": "You can only select a job currently assigned to this character."
                 },
                 "ErrReauthRequired": {
                     "title": "Re-authentication required",

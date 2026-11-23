@@ -28,6 +28,9 @@ message UserEvent {
     resources.userinfo.AccountGroupsChanged account_groups_changed = 5;
     // The authoritative unread count after a notification-state mutation.
     int64 notifications_unread_count = 6;
+    // The user's server-synchronized job list changed. Clients should refresh
+    // their session work context to receive the current jobs and permissions.
+    bool work_context_jobs_changed = 8;
   }
 }
 

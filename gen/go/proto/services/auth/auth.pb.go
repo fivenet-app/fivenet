@@ -1681,6 +1681,295 @@ func (b0 ImpersonateJobResponse_builder) Build() *ImpersonateJobResponse {
 	return m0
 }
 
+// SelectSessionJob changes the effective job used by this FiveNet session only.
+// It never changes the character's job on the game server. Omitting `job` (or
+// passing the primary job) clears the session override and returns to the
+// server-authoritative primary job.
+type SelectSessionJobRequest struct {
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
+	Job           *string                `protobuf:"bytes,1,opt,name=job,proto3,oneof" json:"job,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *SelectSessionJobRequest) Reset() {
+	*x = SelectSessionJobRequest{}
+	mi := &file_services_auth_auth_proto_msgTypes[22]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *SelectSessionJobRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*SelectSessionJobRequest) ProtoMessage() {}
+
+func (x *SelectSessionJobRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_services_auth_auth_proto_msgTypes[22]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+func (x *SelectSessionJobRequest) GetJob() string {
+	if x != nil && x.Job != nil {
+		return *x.Job
+	}
+	return ""
+}
+
+func (x *SelectSessionJobRequest) SetJob(v string) {
+	x.Job = &v
+}
+
+func (x *SelectSessionJobRequest) HasJob() bool {
+	if x == nil {
+		return false
+	}
+	return x.Job != nil
+}
+
+func (x *SelectSessionJobRequest) ClearJob() {
+	x.Job = nil
+}
+
+type SelectSessionJobRequest_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Job *string
+}
+
+func (b0 SelectSessionJobRequest_builder) Build() *SelectSessionJobRequest {
+	m0 := &SelectSessionJobRequest{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Job = b.Job
+	return m0
+}
+
+type SelectSessionJobResponse struct {
+	state            protoimpl.MessageState            `protogen:"hybrid.v1"`
+	Token            string                            `protobuf:"bytes,1,opt,name=token,proto3" json:"token,omitempty"`
+	Expires          *timestamp.Timestamp              `protobuf:"bytes,2,opt,name=expires,proto3" json:"expires,omitempty"`
+	JobProps         *props.JobProps                   `protobuf:"bytes,3,opt,name=job_props,json=jobProps,proto3,oneof" json:"job_props,omitempty"`
+	Char             *users.User                       `protobuf:"bytes,4,opt,name=char,proto3" json:"char,omitempty" alias:"user"`
+	Authorization    *authorization.AuthorizationState `protobuf:"bytes,5,opt,name=authorization,proto3" json:"authorization,omitempty"`
+	SessionJobActive bool                              `protobuf:"varint,6,opt,name=session_job_active,json=sessionJobActive,proto3" json:"session_job_active,omitempty"`
+	unknownFields    protoimpl.UnknownFields
+	sizeCache        protoimpl.SizeCache
+}
+
+func (x *SelectSessionJobResponse) Reset() {
+	*x = SelectSessionJobResponse{}
+	mi := &file_services_auth_auth_proto_msgTypes[23]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *SelectSessionJobResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*SelectSessionJobResponse) ProtoMessage() {}
+
+func (x *SelectSessionJobResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_services_auth_auth_proto_msgTypes[23]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+func (x *SelectSessionJobResponse) GetToken() string {
+	if x != nil {
+		return x.Token
+	}
+	return ""
+}
+
+func (x *SelectSessionJobResponse) GetExpires() *timestamp.Timestamp {
+	if x != nil {
+		return x.Expires
+	}
+	return nil
+}
+
+func (x *SelectSessionJobResponse) GetJobProps() *props.JobProps {
+	if x != nil {
+		return x.JobProps
+	}
+	return nil
+}
+
+func (x *SelectSessionJobResponse) GetChar() *users.User {
+	if x != nil {
+		return x.Char
+	}
+	return nil
+}
+
+func (x *SelectSessionJobResponse) GetAuthorization() *authorization.AuthorizationState {
+	if x != nil {
+		return x.Authorization
+	}
+	return nil
+}
+
+func (x *SelectSessionJobResponse) GetSessionJobActive() bool {
+	if x != nil {
+		return x.SessionJobActive
+	}
+	return false
+}
+
+func (x *SelectSessionJobResponse) SetToken(v string) {
+	x.Token = v
+}
+
+func (x *SelectSessionJobResponse) SetExpires(v *timestamp.Timestamp) {
+	x.Expires = v
+}
+
+func (x *SelectSessionJobResponse) SetJobProps(v *props.JobProps) {
+	x.JobProps = v
+}
+
+func (x *SelectSessionJobResponse) SetChar(v *users.User) {
+	x.Char = v
+}
+
+func (x *SelectSessionJobResponse) SetAuthorization(v *authorization.AuthorizationState) {
+	x.Authorization = v
+}
+
+func (x *SelectSessionJobResponse) SetSessionJobActive(v bool) {
+	x.SessionJobActive = v
+}
+
+func (x *SelectSessionJobResponse) HasExpires() bool {
+	if x == nil {
+		return false
+	}
+	return x.Expires != nil
+}
+
+func (x *SelectSessionJobResponse) HasJobProps() bool {
+	if x == nil {
+		return false
+	}
+	return x.JobProps != nil
+}
+
+func (x *SelectSessionJobResponse) HasChar() bool {
+	if x == nil {
+		return false
+	}
+	return x.Char != nil
+}
+
+func (x *SelectSessionJobResponse) HasAuthorization() bool {
+	if x == nil {
+		return false
+	}
+	return x.Authorization != nil
+}
+
+func (x *SelectSessionJobResponse) ClearExpires() {
+	x.Expires = nil
+}
+
+func (x *SelectSessionJobResponse) ClearJobProps() {
+	x.JobProps = nil
+}
+
+func (x *SelectSessionJobResponse) ClearChar() {
+	x.Char = nil
+}
+
+func (x *SelectSessionJobResponse) ClearAuthorization() {
+	x.Authorization = nil
+}
+
+type SelectSessionJobResponse_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+	Token            string
+	Expires          *timestamp.Timestamp
+	JobProps         *props.JobProps
+	Char             *users.User
+	Authorization    *authorization.AuthorizationState
+	SessionJobActive bool
+}
+
+func (b0 SelectSessionJobResponse_builder) Build() *SelectSessionJobResponse {
+	m0 := &SelectSessionJobResponse{}
+	b, x := &b0, m0
+	_, _ = b, x
+	x.Token = b.Token
+	x.Expires = b.Expires
+	x.JobProps = b.JobProps
+	x.Char = b.Char
+	x.Authorization = b.Authorization
+	x.SessionJobActive = b.SessionJobActive
+	return m0
+}
+
+// RefreshSessionJob revalidates the current session work context against the
+// server-synchronized job list. It retains a valid secondary context with its
+// current grade, or falls back to the authoritative primary job.
+type RefreshSessionJobRequest struct {
+	state         protoimpl.MessageState `protogen:"hybrid.v1"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *RefreshSessionJobRequest) Reset() {
+	*x = RefreshSessionJobRequest{}
+	mi := &file_services_auth_auth_proto_msgTypes[24]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *RefreshSessionJobRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*RefreshSessionJobRequest) ProtoMessage() {}
+
+func (x *RefreshSessionJobRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_services_auth_auth_proto_msgTypes[24]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+type RefreshSessionJobRequest_builder struct {
+	_ [0]func() // Prevents comparability and use of unkeyed literals for the builder.
+
+}
+
+func (b0 RefreshSessionJobRequest_builder) Build() *RefreshSessionJobRequest {
+	m0 := &RefreshSessionJobRequest{}
+	b, x := &b0, m0
+	_, _ = b, x
+	return m0
+}
+
 type DeleteSocialLoginRequest struct {
 	state         protoimpl.MessageState `protogen:"hybrid.v1"`
 	Provider      string                 `protobuf:"bytes,1,opt,name=provider,proto3" json:"provider,omitempty"`
@@ -1690,7 +1979,7 @@ type DeleteSocialLoginRequest struct {
 
 func (x *DeleteSocialLoginRequest) Reset() {
 	*x = DeleteSocialLoginRequest{}
-	mi := &file_services_auth_auth_proto_msgTypes[22]
+	mi := &file_services_auth_auth_proto_msgTypes[25]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1702,7 +1991,7 @@ func (x *DeleteSocialLoginRequest) String() string {
 func (*DeleteSocialLoginRequest) ProtoMessage() {}
 
 func (x *DeleteSocialLoginRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_services_auth_auth_proto_msgTypes[22]
+	mi := &file_services_auth_auth_proto_msgTypes[25]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1747,7 +2036,7 @@ type DeleteSocialLoginResponse struct {
 
 func (x *DeleteSocialLoginResponse) Reset() {
 	*x = DeleteSocialLoginResponse{}
-	mi := &file_services_auth_auth_proto_msgTypes[23]
+	mi := &file_services_auth_auth_proto_msgTypes[26]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1759,7 +2048,7 @@ func (x *DeleteSocialLoginResponse) String() string {
 func (*DeleteSocialLoginResponse) ProtoMessage() {}
 
 func (x *DeleteSocialLoginResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_services_auth_auth_proto_msgTypes[23]
+	mi := &file_services_auth_auth_proto_msgTypes[26]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1805,7 +2094,7 @@ type SetSuperuserModeRequest struct {
 
 func (x *SetSuperuserModeRequest) Reset() {
 	*x = SetSuperuserModeRequest{}
-	mi := &file_services_auth_auth_proto_msgTypes[24]
+	mi := &file_services_auth_auth_proto_msgTypes[27]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1817,7 +2106,7 @@ func (x *SetSuperuserModeRequest) String() string {
 func (*SetSuperuserModeRequest) ProtoMessage() {}
 
 func (x *SetSuperuserModeRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_services_auth_auth_proto_msgTypes[24]
+	mi := &file_services_auth_auth_proto_msgTypes[27]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1890,7 +2179,7 @@ type SetSuperuserModeResponse struct {
 
 func (x *SetSuperuserModeResponse) Reset() {
 	*x = SetSuperuserModeResponse{}
-	mi := &file_services_auth_auth_proto_msgTypes[25]
+	mi := &file_services_auth_auth_proto_msgTypes[28]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1902,7 +2191,7 @@ func (x *SetSuperuserModeResponse) String() string {
 func (*SetSuperuserModeResponse) ProtoMessage() {}
 
 func (x *SetSuperuserModeResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_services_auth_auth_proto_msgTypes[25]
+	mi := &file_services_auth_auth_proto_msgTypes[28]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2106,7 +2395,20 @@ const file_services_auth_auth_proto_rawDesc = "" +
 	"\aexpires\x18\x02 \x01(\v2\x1e.resources.timestamp.TimestampR\aexpires\x12<\n" +
 	"\x04char\x18\x03 \x01(\v2\x15.resources.users.UserB\x11\x9a\x84\x9e\x03\falias:\"user\"R\x04char\x12]\n" +
 	"\rauthorization\x18\a \x01(\v27.resources.permissions.authorization.AuthorizationStateR\rauthorization\x12\x14\n" +
-	"\x05state\x18\x06 \x01(\bR\x05stateJ\x04\b\x04\x10\x05J\x04\b\x05\x10\x06\"@\n" +
+	"\x05state\x18\x06 \x01(\bR\x05stateJ\x04\b\x04\x10\x05J\x04\b\x05\x10\x06\"8\n" +
+	"\x17SelectSessionJobRequest\x12\x15\n" +
+	"\x03job\x18\x01 \x01(\tH\x00R\x03job\x88\x01\x01B\x06\n" +
+	"\x04_job\"\x85\x03\n" +
+	"\x18SelectSessionJobResponse\x12\x14\n" +
+	"\x05token\x18\x01 \x01(\tR\x05token\x128\n" +
+	"\aexpires\x18\x02 \x01(\v2\x1e.resources.timestamp.TimestampR\aexpires\x12@\n" +
+	"\tjob_props\x18\x03 \x01(\v2\x1e.resources.jobs.props.JobPropsH\x00R\bjobProps\x88\x01\x01\x12<\n" +
+	"\x04char\x18\x04 \x01(\v2\x15.resources.users.UserB\x11\x9a\x84\x9e\x03\falias:\"user\"R\x04char\x12]\n" +
+	"\rauthorization\x18\x05 \x01(\v27.resources.permissions.authorization.AuthorizationStateR\rauthorization\x12,\n" +
+	"\x12session_job_active\x18\x06 \x01(\bR\x10sessionJobActiveB\f\n" +
+	"\n" +
+	"_job_props\"\x1a\n" +
+	"\x18RefreshSessionJobRequest\"@\n" +
 	"\x18DeleteSocialLoginRequest\x12$\n" +
 	"\bprovider\x18\x01 \x01(\tB\b\xda\xf3\x18\x04\b\x01\x18\x01R\bprovider\"5\n" +
 	"\x19DeleteSocialLoginResponse\x12\x18\n" +
@@ -2122,8 +2424,7 @@ const file_services_auth_auth_proto_rawDesc = "" +
 	"\x04char\x18\x04 \x01(\v2\x15.resources.users.UserB\x11\x9a\x84\x9e\x03\falias:\"user\"R\x04char\x12]\n" +
 	"\rauthorization\x18\a \x01(\v27.resources.permissions.authorization.AuthorizationStateR\rauthorizationB\f\n" +
 	"\n" +
-	"_job_propsJ\x04\b\x05\x10\x06J\x04\b\x06\x10\a2\xa4\n" +
-	"\n" +
+	"_job_propsJ\x04\b\x05\x10\x06J\x04\b\x06\x10\a2\xf0\v\n" +
 	"\vAuthService\x12B\n" +
 	"\x05Login\x12\x1b.services.auth.LoginRequest\x1a\x1c.services.auth.LoginResponse\x12E\n" +
 	"\x06Logout\x12\x1c.services.auth.LogoutRequest\x1a\x1d.services.auth.LogoutResponse\x12Z\n" +
@@ -2133,13 +2434,15 @@ const file_services_auth_auth_proto_rawDesc = "" +
 	"\x0eForgotPassword\x12$.services.auth.ForgotPasswordRequest\x1a%.services.auth.ForgotPasswordResponse\x12Z\n" +
 	"\rGetCharacters\x12#.services.auth.GetCharactersRequest\x1a$.services.auth.GetCharactersResponse\x12h\n" +
 	"\x0fChooseCharacter\x12%.services.auth.ChooseCharacterRequest\x1a&.services.auth.ChooseCharacterResponse\"\x06\xd2\xf3\x18\x02\b\x01\x12\x91\x01\n" +
-	"\x0eImpersonateJob\x12$.services.auth.ImpersonateJobRequest\x1a%.services.auth.ImpersonateJobResponse\"2\xd2\xf3\x18.\b\x01\x12\bsettings\x1a\x0fSettingsService\"\x0fUpdateRolePerms\x12]\n" +
+	"\x0eImpersonateJob\x12$.services.auth.ImpersonateJobRequest\x1a%.services.auth.ImpersonateJobResponse\"2\xd2\xf3\x18.\b\x01\x12\bsettings\x1a\x0fSettingsService\"\x0fUpdateRolePerms\x12c\n" +
+	"\x10SelectSessionJob\x12&.services.auth.SelectSessionJobRequest\x1a'.services.auth.SelectSessionJobResponse\x12e\n" +
+	"\x11RefreshSessionJob\x12'.services.auth.RefreshSessionJobRequest\x1a'.services.auth.SelectSessionJobResponse\x12]\n" +
 	"\x0eGetAccountInfo\x12$.services.auth.GetAccountInfoRequest\x1a%.services.auth.GetAccountInfoResponse\x12r\n" +
 	"\x15RefreshAccountSession\x12+.services.auth.RefreshAccountSessionRequest\x1a,.services.auth.RefreshAccountSessionResponse\x12f\n" +
 	"\x11DeleteSocialLogin\x12'.services.auth.DeleteSocialLoginRequest\x1a(.services.auth.DeleteSocialLoginResponse\x12c\n" +
 	"\x10SetSuperuserMode\x12&.services.auth.SetSuperuserModeRequest\x1a'.services.auth.SetSuperuserModeResponse\x1a\x17\xea\xf3\x18\x13\x12\x11i-mdi-key-outlineBFZDgithub.com/fivenet-app/fivenet/v2026/gen/go/proto/services/auth;authb\x06proto3"
 
-var file_services_auth_auth_proto_msgTypes = make([]protoimpl.MessageInfo, 26)
+var file_services_auth_auth_proto_msgTypes = make([]protoimpl.MessageInfo, 29)
 var file_services_auth_auth_proto_goTypes = []any{
 	(*LoginRequest)(nil),                     // 0: services.auth.LoginRequest
 	(*LoginResponse)(nil),                    // 1: services.auth.LoginResponse
@@ -2163,69 +2466,80 @@ var file_services_auth_auth_proto_goTypes = []any{
 	(*ChooseCharacterResponse)(nil),          // 19: services.auth.ChooseCharacterResponse
 	(*ImpersonateJobRequest)(nil),            // 20: services.auth.ImpersonateJobRequest
 	(*ImpersonateJobResponse)(nil),           // 21: services.auth.ImpersonateJobResponse
-	(*DeleteSocialLoginRequest)(nil),         // 22: services.auth.DeleteSocialLoginRequest
-	(*DeleteSocialLoginResponse)(nil),        // 23: services.auth.DeleteSocialLoginResponse
-	(*SetSuperuserModeRequest)(nil),          // 24: services.auth.SetSuperuserModeRequest
-	(*SetSuperuserModeResponse)(nil),         // 25: services.auth.SetSuperuserModeResponse
-	(*timestamp.Timestamp)(nil),              // 26: resources.timestamp.Timestamp
-	(*accounts.Account)(nil),                 // 27: resources.accounts.Account
-	(*oauth2.OAuth2Provider)(nil),            // 28: resources.accounts.oauth2.OAuth2Provider
-	(*oauth2.OAuth2Account)(nil),             // 29: resources.accounts.oauth2.OAuth2Account
-	(*accounts.Character)(nil),               // 30: resources.accounts.Character
-	(*props.JobProps)(nil),                   // 31: resources.jobs.props.JobProps
-	(*users.User)(nil),                       // 32: resources.users.User
-	(*authorization.AuthorizationState)(nil), // 33: resources.permissions.authorization.AuthorizationState
+	(*SelectSessionJobRequest)(nil),          // 22: services.auth.SelectSessionJobRequest
+	(*SelectSessionJobResponse)(nil),         // 23: services.auth.SelectSessionJobResponse
+	(*RefreshSessionJobRequest)(nil),         // 24: services.auth.RefreshSessionJobRequest
+	(*DeleteSocialLoginRequest)(nil),         // 25: services.auth.DeleteSocialLoginRequest
+	(*DeleteSocialLoginResponse)(nil),        // 26: services.auth.DeleteSocialLoginResponse
+	(*SetSuperuserModeRequest)(nil),          // 27: services.auth.SetSuperuserModeRequest
+	(*SetSuperuserModeResponse)(nil),         // 28: services.auth.SetSuperuserModeResponse
+	(*timestamp.Timestamp)(nil),              // 29: resources.timestamp.Timestamp
+	(*accounts.Account)(nil),                 // 30: resources.accounts.Account
+	(*oauth2.OAuth2Provider)(nil),            // 31: resources.accounts.oauth2.OAuth2Provider
+	(*oauth2.OAuth2Account)(nil),             // 32: resources.accounts.oauth2.OAuth2Account
+	(*accounts.Character)(nil),               // 33: resources.accounts.Character
+	(*props.JobProps)(nil),                   // 34: resources.jobs.props.JobProps
+	(*users.User)(nil),                       // 35: resources.users.User
+	(*authorization.AuthorizationState)(nil), // 36: resources.permissions.authorization.AuthorizationState
 }
 var file_services_auth_auth_proto_depIdxs = []int32{
-	26, // 0: services.auth.LoginResponse.expires:type_name -> resources.timestamp.Timestamp
+	29, // 0: services.auth.LoginResponse.expires:type_name -> resources.timestamp.Timestamp
 	19, // 1: services.auth.LoginResponse.char:type_name -> services.auth.ChooseCharacterResponse
-	27, // 2: services.auth.GetAccountInfoResponse.account:type_name -> resources.accounts.Account
-	28, // 3: services.auth.GetAccountInfoResponse.oauth2_providers:type_name -> resources.accounts.oauth2.OAuth2Provider
-	29, // 4: services.auth.GetAccountInfoResponse.oauth2_connections:type_name -> resources.accounts.oauth2.OAuth2Account
-	26, // 5: services.auth.RefreshAccountSessionResponse.expires:type_name -> resources.timestamp.Timestamp
-	30, // 6: services.auth.GetCharactersResponse.chars:type_name -> resources.accounts.Character
-	26, // 7: services.auth.ChooseCharacterResponse.expires:type_name -> resources.timestamp.Timestamp
-	31, // 8: services.auth.ChooseCharacterResponse.job_props:type_name -> resources.jobs.props.JobProps
-	32, // 9: services.auth.ChooseCharacterResponse.char:type_name -> resources.users.User
-	33, // 10: services.auth.ChooseCharacterResponse.authorization:type_name -> resources.permissions.authorization.AuthorizationState
-	26, // 11: services.auth.ImpersonateJobResponse.expires:type_name -> resources.timestamp.Timestamp
-	32, // 12: services.auth.ImpersonateJobResponse.char:type_name -> resources.users.User
-	33, // 13: services.auth.ImpersonateJobResponse.authorization:type_name -> resources.permissions.authorization.AuthorizationState
-	26, // 14: services.auth.SetSuperuserModeResponse.expires:type_name -> resources.timestamp.Timestamp
-	31, // 15: services.auth.SetSuperuserModeResponse.job_props:type_name -> resources.jobs.props.JobProps
-	32, // 16: services.auth.SetSuperuserModeResponse.char:type_name -> resources.users.User
-	33, // 17: services.auth.SetSuperuserModeResponse.authorization:type_name -> resources.permissions.authorization.AuthorizationState
-	0,  // 18: services.auth.AuthService.Login:input_type -> services.auth.LoginRequest
-	2,  // 19: services.auth.AuthService.Logout:input_type -> services.auth.LogoutRequest
-	4,  // 20: services.auth.AuthService.CreateAccount:input_type -> services.auth.CreateAccountRequest
-	8,  // 21: services.auth.AuthService.ChangeUsername:input_type -> services.auth.ChangeUsernameRequest
-	6,  // 22: services.auth.AuthService.ChangePassword:input_type -> services.auth.ChangePasswordRequest
-	10, // 23: services.auth.AuthService.ForgotPassword:input_type -> services.auth.ForgotPasswordRequest
-	16, // 24: services.auth.AuthService.GetCharacters:input_type -> services.auth.GetCharactersRequest
-	18, // 25: services.auth.AuthService.ChooseCharacter:input_type -> services.auth.ChooseCharacterRequest
-	20, // 26: services.auth.AuthService.ImpersonateJob:input_type -> services.auth.ImpersonateJobRequest
-	12, // 27: services.auth.AuthService.GetAccountInfo:input_type -> services.auth.GetAccountInfoRequest
-	14, // 28: services.auth.AuthService.RefreshAccountSession:input_type -> services.auth.RefreshAccountSessionRequest
-	22, // 29: services.auth.AuthService.DeleteSocialLogin:input_type -> services.auth.DeleteSocialLoginRequest
-	24, // 30: services.auth.AuthService.SetSuperuserMode:input_type -> services.auth.SetSuperuserModeRequest
-	1,  // 31: services.auth.AuthService.Login:output_type -> services.auth.LoginResponse
-	3,  // 32: services.auth.AuthService.Logout:output_type -> services.auth.LogoutResponse
-	5,  // 33: services.auth.AuthService.CreateAccount:output_type -> services.auth.CreateAccountResponse
-	9,  // 34: services.auth.AuthService.ChangeUsername:output_type -> services.auth.ChangeUsernameResponse
-	7,  // 35: services.auth.AuthService.ChangePassword:output_type -> services.auth.ChangePasswordResponse
-	11, // 36: services.auth.AuthService.ForgotPassword:output_type -> services.auth.ForgotPasswordResponse
-	17, // 37: services.auth.AuthService.GetCharacters:output_type -> services.auth.GetCharactersResponse
-	19, // 38: services.auth.AuthService.ChooseCharacter:output_type -> services.auth.ChooseCharacterResponse
-	21, // 39: services.auth.AuthService.ImpersonateJob:output_type -> services.auth.ImpersonateJobResponse
-	13, // 40: services.auth.AuthService.GetAccountInfo:output_type -> services.auth.GetAccountInfoResponse
-	15, // 41: services.auth.AuthService.RefreshAccountSession:output_type -> services.auth.RefreshAccountSessionResponse
-	23, // 42: services.auth.AuthService.DeleteSocialLogin:output_type -> services.auth.DeleteSocialLoginResponse
-	25, // 43: services.auth.AuthService.SetSuperuserMode:output_type -> services.auth.SetSuperuserModeResponse
-	31, // [31:44] is the sub-list for method output_type
-	18, // [18:31] is the sub-list for method input_type
-	18, // [18:18] is the sub-list for extension type_name
-	18, // [18:18] is the sub-list for extension extendee
-	0,  // [0:18] is the sub-list for field type_name
+	30, // 2: services.auth.GetAccountInfoResponse.account:type_name -> resources.accounts.Account
+	31, // 3: services.auth.GetAccountInfoResponse.oauth2_providers:type_name -> resources.accounts.oauth2.OAuth2Provider
+	32, // 4: services.auth.GetAccountInfoResponse.oauth2_connections:type_name -> resources.accounts.oauth2.OAuth2Account
+	29, // 5: services.auth.RefreshAccountSessionResponse.expires:type_name -> resources.timestamp.Timestamp
+	33, // 6: services.auth.GetCharactersResponse.chars:type_name -> resources.accounts.Character
+	29, // 7: services.auth.ChooseCharacterResponse.expires:type_name -> resources.timestamp.Timestamp
+	34, // 8: services.auth.ChooseCharacterResponse.job_props:type_name -> resources.jobs.props.JobProps
+	35, // 9: services.auth.ChooseCharacterResponse.char:type_name -> resources.users.User
+	36, // 10: services.auth.ChooseCharacterResponse.authorization:type_name -> resources.permissions.authorization.AuthorizationState
+	29, // 11: services.auth.ImpersonateJobResponse.expires:type_name -> resources.timestamp.Timestamp
+	35, // 12: services.auth.ImpersonateJobResponse.char:type_name -> resources.users.User
+	36, // 13: services.auth.ImpersonateJobResponse.authorization:type_name -> resources.permissions.authorization.AuthorizationState
+	29, // 14: services.auth.SelectSessionJobResponse.expires:type_name -> resources.timestamp.Timestamp
+	34, // 15: services.auth.SelectSessionJobResponse.job_props:type_name -> resources.jobs.props.JobProps
+	35, // 16: services.auth.SelectSessionJobResponse.char:type_name -> resources.users.User
+	36, // 17: services.auth.SelectSessionJobResponse.authorization:type_name -> resources.permissions.authorization.AuthorizationState
+	29, // 18: services.auth.SetSuperuserModeResponse.expires:type_name -> resources.timestamp.Timestamp
+	34, // 19: services.auth.SetSuperuserModeResponse.job_props:type_name -> resources.jobs.props.JobProps
+	35, // 20: services.auth.SetSuperuserModeResponse.char:type_name -> resources.users.User
+	36, // 21: services.auth.SetSuperuserModeResponse.authorization:type_name -> resources.permissions.authorization.AuthorizationState
+	0,  // 22: services.auth.AuthService.Login:input_type -> services.auth.LoginRequest
+	2,  // 23: services.auth.AuthService.Logout:input_type -> services.auth.LogoutRequest
+	4,  // 24: services.auth.AuthService.CreateAccount:input_type -> services.auth.CreateAccountRequest
+	8,  // 25: services.auth.AuthService.ChangeUsername:input_type -> services.auth.ChangeUsernameRequest
+	6,  // 26: services.auth.AuthService.ChangePassword:input_type -> services.auth.ChangePasswordRequest
+	10, // 27: services.auth.AuthService.ForgotPassword:input_type -> services.auth.ForgotPasswordRequest
+	16, // 28: services.auth.AuthService.GetCharacters:input_type -> services.auth.GetCharactersRequest
+	18, // 29: services.auth.AuthService.ChooseCharacter:input_type -> services.auth.ChooseCharacterRequest
+	20, // 30: services.auth.AuthService.ImpersonateJob:input_type -> services.auth.ImpersonateJobRequest
+	22, // 31: services.auth.AuthService.SelectSessionJob:input_type -> services.auth.SelectSessionJobRequest
+	24, // 32: services.auth.AuthService.RefreshSessionJob:input_type -> services.auth.RefreshSessionJobRequest
+	12, // 33: services.auth.AuthService.GetAccountInfo:input_type -> services.auth.GetAccountInfoRequest
+	14, // 34: services.auth.AuthService.RefreshAccountSession:input_type -> services.auth.RefreshAccountSessionRequest
+	25, // 35: services.auth.AuthService.DeleteSocialLogin:input_type -> services.auth.DeleteSocialLoginRequest
+	27, // 36: services.auth.AuthService.SetSuperuserMode:input_type -> services.auth.SetSuperuserModeRequest
+	1,  // 37: services.auth.AuthService.Login:output_type -> services.auth.LoginResponse
+	3,  // 38: services.auth.AuthService.Logout:output_type -> services.auth.LogoutResponse
+	5,  // 39: services.auth.AuthService.CreateAccount:output_type -> services.auth.CreateAccountResponse
+	9,  // 40: services.auth.AuthService.ChangeUsername:output_type -> services.auth.ChangeUsernameResponse
+	7,  // 41: services.auth.AuthService.ChangePassword:output_type -> services.auth.ChangePasswordResponse
+	11, // 42: services.auth.AuthService.ForgotPassword:output_type -> services.auth.ForgotPasswordResponse
+	17, // 43: services.auth.AuthService.GetCharacters:output_type -> services.auth.GetCharactersResponse
+	19, // 44: services.auth.AuthService.ChooseCharacter:output_type -> services.auth.ChooseCharacterResponse
+	21, // 45: services.auth.AuthService.ImpersonateJob:output_type -> services.auth.ImpersonateJobResponse
+	23, // 46: services.auth.AuthService.SelectSessionJob:output_type -> services.auth.SelectSessionJobResponse
+	23, // 47: services.auth.AuthService.RefreshSessionJob:output_type -> services.auth.SelectSessionJobResponse
+	13, // 48: services.auth.AuthService.GetAccountInfo:output_type -> services.auth.GetAccountInfoResponse
+	15, // 49: services.auth.AuthService.RefreshAccountSession:output_type -> services.auth.RefreshAccountSessionResponse
+	26, // 50: services.auth.AuthService.DeleteSocialLogin:output_type -> services.auth.DeleteSocialLoginResponse
+	28, // 51: services.auth.AuthService.SetSuperuserMode:output_type -> services.auth.SetSuperuserModeResponse
+	37, // [37:52] is the sub-list for method output_type
+	22, // [22:37] is the sub-list for method input_type
+	22, // [22:22] is the sub-list for extension type_name
+	22, // [22:22] is the sub-list for extension extendee
+	0,  // [0:22] is the sub-list for field type_name
 }
 
 func init() { file_services_auth_auth_proto_init() }
@@ -2235,15 +2549,17 @@ func file_services_auth_auth_proto_init() {
 	}
 	file_services_auth_auth_proto_msgTypes[1].OneofWrappers = []any{}
 	file_services_auth_auth_proto_msgTypes[18].OneofWrappers = []any{}
-	file_services_auth_auth_proto_msgTypes[24].OneofWrappers = []any{}
-	file_services_auth_auth_proto_msgTypes[25].OneofWrappers = []any{}
+	file_services_auth_auth_proto_msgTypes[22].OneofWrappers = []any{}
+	file_services_auth_auth_proto_msgTypes[23].OneofWrappers = []any{}
+	file_services_auth_auth_proto_msgTypes[27].OneofWrappers = []any{}
+	file_services_auth_auth_proto_msgTypes[28].OneofWrappers = []any{}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_services_auth_auth_proto_rawDesc), len(file_services_auth_auth_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   26,
+			NumMessages:   29,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

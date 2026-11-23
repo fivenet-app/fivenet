@@ -13,6 +13,9 @@ import type { RefreshAccountSessionResponse } from "./auth";
 import type { RefreshAccountSessionRequest } from "./auth";
 import type { GetAccountInfoResponse } from "./auth";
 import type { GetAccountInfoRequest } from "./auth";
+import type { RefreshSessionJobRequest } from "./auth";
+import type { SelectSessionJobResponse } from "./auth";
+import type { SelectSessionJobRequest } from "./auth";
 import type { ImpersonateJobResponse } from "./auth";
 import type { ImpersonateJobRequest } from "./auth";
 import type { ChooseCharacterResponse } from "./auth";
@@ -77,6 +80,19 @@ export interface IAuthServiceClient {
      * @generated from protobuf rpc: ImpersonateJob
      */
     impersonateJob(input: ImpersonateJobRequest, options?: RpcOptions): UnaryCall<ImpersonateJobRequest, ImpersonateJobResponse>;
+    /**
+     * Selects one of the character's server-synchronized secondary jobs as the
+     * effective job for this browser session. This is intentionally user-token
+     * protected rather than permission-gated: a user may only select their own
+     * currently held job.
+     *
+     * @generated from protobuf rpc: SelectSessionJob
+     */
+    selectSessionJob(input: SelectSessionJobRequest, options?: RpcOptions): UnaryCall<SelectSessionJobRequest, SelectSessionJobResponse>;
+    /**
+     * @generated from protobuf rpc: RefreshSessionJob
+     */
+    refreshSessionJob(input: RefreshSessionJobRequest, options?: RpcOptions): UnaryCall<RefreshSessionJobRequest, SelectSessionJobResponse>;
     /**
      * @generated from protobuf rpc: GetAccountInfo
      */
@@ -170,31 +186,50 @@ export class AuthServiceClient implements IAuthServiceClient, ServiceInfo {
         return stackIntercept<ImpersonateJobRequest, ImpersonateJobResponse>("unary", this._transport, method, opt, input);
     }
     /**
+     * Selects one of the character's server-synchronized secondary jobs as the
+     * effective job for this browser session. This is intentionally user-token
+     * protected rather than permission-gated: a user may only select their own
+     * currently held job.
+     *
+     * @generated from protobuf rpc: SelectSessionJob
+     */
+    selectSessionJob(input: SelectSessionJobRequest, options?: RpcOptions): UnaryCall<SelectSessionJobRequest, SelectSessionJobResponse> {
+        const method = this.methods[9], opt = this._transport.mergeOptions(options);
+        return stackIntercept<SelectSessionJobRequest, SelectSessionJobResponse>("unary", this._transport, method, opt, input);
+    }
+    /**
+     * @generated from protobuf rpc: RefreshSessionJob
+     */
+    refreshSessionJob(input: RefreshSessionJobRequest, options?: RpcOptions): UnaryCall<RefreshSessionJobRequest, SelectSessionJobResponse> {
+        const method = this.methods[10], opt = this._transport.mergeOptions(options);
+        return stackIntercept<RefreshSessionJobRequest, SelectSessionJobResponse>("unary", this._transport, method, opt, input);
+    }
+    /**
      * @generated from protobuf rpc: GetAccountInfo
      */
     getAccountInfo(input: GetAccountInfoRequest, options?: RpcOptions): UnaryCall<GetAccountInfoRequest, GetAccountInfoResponse> {
-        const method = this.methods[9], opt = this._transport.mergeOptions(options);
+        const method = this.methods[11], opt = this._transport.mergeOptions(options);
         return stackIntercept<GetAccountInfoRequest, GetAccountInfoResponse>("unary", this._transport, method, opt, input);
     }
     /**
      * @generated from protobuf rpc: RefreshAccountSession
      */
     refreshAccountSession(input: RefreshAccountSessionRequest, options?: RpcOptions): UnaryCall<RefreshAccountSessionRequest, RefreshAccountSessionResponse> {
-        const method = this.methods[10], opt = this._transport.mergeOptions(options);
+        const method = this.methods[12], opt = this._transport.mergeOptions(options);
         return stackIntercept<RefreshAccountSessionRequest, RefreshAccountSessionResponse>("unary", this._transport, method, opt, input);
     }
     /**
      * @generated from protobuf rpc: DeleteSocialLogin
      */
     deleteSocialLogin(input: DeleteSocialLoginRequest, options?: RpcOptions): UnaryCall<DeleteSocialLoginRequest, DeleteSocialLoginResponse> {
-        const method = this.methods[11], opt = this._transport.mergeOptions(options);
+        const method = this.methods[13], opt = this._transport.mergeOptions(options);
         return stackIntercept<DeleteSocialLoginRequest, DeleteSocialLoginResponse>("unary", this._transport, method, opt, input);
     }
     /**
      * @generated from protobuf rpc: SetSuperuserMode
      */
     setSuperuserMode(input: SetSuperuserModeRequest, options?: RpcOptions): UnaryCall<SetSuperuserModeRequest, SetSuperuserModeResponse> {
-        const method = this.methods[12], opt = this._transport.mergeOptions(options);
+        const method = this.methods[14], opt = this._transport.mergeOptions(options);
         return stackIntercept<SetSuperuserModeRequest, SetSuperuserModeResponse>("unary", this._transport, method, opt, input);
     }
 }

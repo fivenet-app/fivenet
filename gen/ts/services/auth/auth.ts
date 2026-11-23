@@ -291,6 +291,58 @@ export interface ImpersonateJobResponse {
     state: boolean;
 }
 /**
+ * SelectSessionJob changes the effective job used by this FiveNet session only.
+ * It never changes the character's job on the game server. Omitting `job` (or
+ * passing the primary job) clears the session override and returns to the
+ * server-authoritative primary job.
+ *
+ * @generated from protobuf message services.auth.SelectSessionJobRequest
+ */
+export interface SelectSessionJobRequest {
+    /**
+     * @generated from protobuf field: optional string job = 1
+     */
+    job?: string;
+}
+/**
+ * @generated from protobuf message services.auth.SelectSessionJobResponse
+ */
+export interface SelectSessionJobResponse {
+    /**
+     * @generated from protobuf field: string token = 1
+     */
+    token: string;
+    /**
+     * @generated from protobuf field: resources.timestamp.Timestamp expires = 2
+     */
+    expires?: Timestamp;
+    /**
+     * @generated from protobuf field: optional resources.jobs.props.JobProps job_props = 3
+     */
+    jobProps?: JobProps;
+    /**
+     * @generated from protobuf field: resources.users.User char = 4
+     */
+    char?: User;
+    /**
+     * @generated from protobuf field: resources.permissions.authorization.AuthorizationState authorization = 5
+     */
+    authorization?: AuthorizationState;
+    /**
+     * @generated from protobuf field: bool session_job_active = 6
+     */
+    sessionJobActive: boolean;
+}
+/**
+ * RefreshSessionJob revalidates the current session work context against the
+ * server-synchronized job list. It retains a valid secondary context with its
+ * current grade, or falls back to the authoritative primary job.
+ *
+ * @generated from protobuf message services.auth.RefreshSessionJobRequest
+ */
+export interface RefreshSessionJobRequest {
+}
+/**
  * @generated from protobuf message services.auth.DeleteSocialLoginRequest
  */
 export interface DeleteSocialLoginRequest {
@@ -1505,6 +1557,173 @@ class ImpersonateJobResponse$Type extends MessageType<ImpersonateJobResponse> {
  */
 export const ImpersonateJobResponse = new ImpersonateJobResponse$Type();
 // @generated message type with reflection information, may provide speed optimized methods
+class SelectSessionJobRequest$Type extends MessageType<SelectSessionJobRequest> {
+    constructor() {
+        super("services.auth.SelectSessionJobRequest", [
+            { no: 1, name: "job", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "20" } } } }
+        ]);
+    }
+    create(value?: PartialMessage<SelectSessionJobRequest>): SelectSessionJobRequest {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        if (value !== undefined)
+            reflectionMergePartial<SelectSessionJobRequest>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: SelectSessionJobRequest): SelectSessionJobRequest {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* optional string job */ 1:
+                    message.job = reader.string();
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: SelectSessionJobRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* optional string job = 1; */
+        if (message.job !== undefined)
+            writer.tag(1, WireType.LengthDelimited).string(message.job);
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message services.auth.SelectSessionJobRequest
+ */
+export const SelectSessionJobRequest = new SelectSessionJobRequest$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class SelectSessionJobResponse$Type extends MessageType<SelectSessionJobResponse> {
+    constructor() {
+        super("services.auth.SelectSessionJobResponse", [
+            { no: 1, name: "token", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
+            { no: 2, name: "expires", kind: "message", T: () => Timestamp },
+            { no: 3, name: "job_props", kind: "message", T: () => JobProps },
+            { no: 4, name: "char", kind: "message", T: () => User, options: { "tagger.tags": "alias:\"user\"" } },
+            { no: 5, name: "authorization", kind: "message", T: () => AuthorizationState },
+            { no: 6, name: "session_job_active", kind: "scalar", T: 8 /*ScalarType.BOOL*/ }
+        ]);
+    }
+    create(value?: PartialMessage<SelectSessionJobResponse>): SelectSessionJobResponse {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        message.token = "";
+        message.sessionJobActive = false;
+        if (value !== undefined)
+            reflectionMergePartial<SelectSessionJobResponse>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: SelectSessionJobResponse): SelectSessionJobResponse {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* string token */ 1:
+                    message.token = reader.string();
+                    break;
+                case /* resources.timestamp.Timestamp expires */ 2:
+                    message.expires = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.expires);
+                    break;
+                case /* optional resources.jobs.props.JobProps job_props */ 3:
+                    message.jobProps = JobProps.internalBinaryRead(reader, reader.uint32(), options, message.jobProps);
+                    break;
+                case /* resources.users.User char */ 4:
+                    message.char = User.internalBinaryRead(reader, reader.uint32(), options, message.char);
+                    break;
+                case /* resources.permissions.authorization.AuthorizationState authorization */ 5:
+                    message.authorization = AuthorizationState.internalBinaryRead(reader, reader.uint32(), options, message.authorization);
+                    break;
+                case /* bool session_job_active */ 6:
+                    message.sessionJobActive = reader.bool();
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: SelectSessionJobResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* string token = 1; */
+        if (message.token !== "")
+            writer.tag(1, WireType.LengthDelimited).string(message.token);
+        /* resources.timestamp.Timestamp expires = 2; */
+        if (message.expires)
+            Timestamp.internalBinaryWrite(message.expires, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
+        /* optional resources.jobs.props.JobProps job_props = 3; */
+        if (message.jobProps)
+            JobProps.internalBinaryWrite(message.jobProps, writer.tag(3, WireType.LengthDelimited).fork(), options).join();
+        /* resources.users.User char = 4; */
+        if (message.char)
+            User.internalBinaryWrite(message.char, writer.tag(4, WireType.LengthDelimited).fork(), options).join();
+        /* resources.permissions.authorization.AuthorizationState authorization = 5; */
+        if (message.authorization)
+            AuthorizationState.internalBinaryWrite(message.authorization, writer.tag(5, WireType.LengthDelimited).fork(), options).join();
+        /* bool session_job_active = 6; */
+        if (message.sessionJobActive !== false)
+            writer.tag(6, WireType.Varint).bool(message.sessionJobActive);
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message services.auth.SelectSessionJobResponse
+ */
+export const SelectSessionJobResponse = new SelectSessionJobResponse$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class RefreshSessionJobRequest$Type extends MessageType<RefreshSessionJobRequest> {
+    constructor() {
+        super("services.auth.RefreshSessionJobRequest", []);
+    }
+    create(value?: PartialMessage<RefreshSessionJobRequest>): RefreshSessionJobRequest {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        if (value !== undefined)
+            reflectionMergePartial<RefreshSessionJobRequest>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: RefreshSessionJobRequest): RefreshSessionJobRequest {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: RefreshSessionJobRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message services.auth.RefreshSessionJobRequest
+ */
+export const RefreshSessionJobRequest = new RefreshSessionJobRequest$Type();
+// @generated message type with reflection information, may provide speed optimized methods
 class DeleteSocialLoginRequest$Type extends MessageType<DeleteSocialLoginRequest> {
     constructor() {
         super("services.auth.DeleteSocialLoginRequest", [
@@ -1740,6 +1959,8 @@ export const AuthService = new ServiceType("services.auth.AuthService", [
     { name: "GetCharacters", options: {}, I: GetCharactersRequest, O: GetCharactersResponse },
     { name: "ChooseCharacter", options: { "codegen.perms.perms": { enabled: true } }, I: ChooseCharacterRequest, O: ChooseCharacterResponse },
     { name: "ImpersonateJob", options: { "codegen.perms.perms": { enabled: true, namespace: "settings", service: "SettingsService", name: "UpdateRolePerms" } }, I: ImpersonateJobRequest, O: ImpersonateJobResponse },
+    { name: "SelectSessionJob", options: {}, I: SelectSessionJobRequest, O: SelectSessionJobResponse },
+    { name: "RefreshSessionJob", options: {}, I: RefreshSessionJobRequest, O: SelectSessionJobResponse },
     { name: "GetAccountInfo", options: {}, I: GetAccountInfoRequest, O: GetAccountInfoResponse },
     { name: "RefreshAccountSession", options: {}, I: RefreshAccountSessionRequest, O: RefreshAccountSessionResponse },
     { name: "DeleteSocialLogin", options: {}, I: DeleteSocialLoginRequest, O: DeleteSocialLoginResponse },

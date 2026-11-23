@@ -14,7 +14,11 @@ import type { RoleAttribute } from '~~/gen/ts/resources/permissions/attributes/a
 import type { AuthorizationState } from '~~/gen/ts/resources/permissions/authorization/authorization';
 import type { Permission } from '~~/gen/ts/resources/permissions/permissions/permissions';
 import type { User } from '~~/gen/ts/resources/users/user';
-import type { ImpersonateJobResponse, RefreshAccountSessionResponse } from '~~/gen/ts/services/auth/auth';
+import type {
+    ImpersonateJobResponse,
+    RefreshAccountSessionResponse,
+    SelectSessionJobResponse,
+} from '~~/gen/ts/services/auth/auth';
 
 const logger = useLogger('🔑 Auth');
 
@@ -210,6 +214,23 @@ export const useAuthStore = defineStore(
         let chooseCharacterPromise: Promise<void> | undefined;
         let loginPromise: Promise<void> | undefined;
         let accountSessionPromise: Promise<RefreshAccountSessionResponse> | undefined;
+        let sessionJobTransitionPromise: Promise<void> = Promise.resolve();
+
+        /**
+         * Serializes user-selected and background work-context transitions.
+         * A refresh must use the token returned by any preceding selection;
+         * otherwise a delayed response can restore an outdated context.
+         */
+        const queueSessionJobTransition = <T>(transition: () => Promise<T>): Promise<T> => {
+            const result = sessionJobTransitionPromise.then(transition, transition);
+            // Keep the queue available after a failed RPC while preserving the
+            // original result for the caller to handle.
+            sessionJobTransitionPromise = result.then(
+                () => undefined,
+                () => undefined,
+            );
+            return result;
+        };
 
         const broadcastSessionChange = (type: 'login' | 'logout' | 'changed'): void => {
             if (typeof BroadcastChannel === 'undefined') return;
@@ -269,6 +290,15 @@ export const useAuthStore = defineStore(
                 ...jobProps.value,
                 ...jp,
             };
+        };
+
+        /**
+         * Replaces job properties from an authoritative authentication response.
+         * Unlike live job-property updates, a work-context change must not carry
+         * optional fields (such as a radio frequency) over from the previous job.
+         */
+        const replaceJobProps = (jp: JobProps | undefined): void => {
+            jobProps.value = jp ? { ...jp } : null;
         };
 
         /**
@@ -359,7 +389,7 @@ export const useAuthStore = defineStore(
 
                     setActiveChar(response.char.char ?? null);
                     setAuthorizationState(response.char.authorization);
-                    setJobProps(response.char.jobProps);
+                    replaceJobProps(response.char.jobProps);
                     setUserToken(response.char.token);
                     phase.value = 'character-ready';
                     commitQueryContext();
@@ -544,7 +574,7 @@ export const useAuthStore = defineStore(
                 setUserToken(response.token);
                 setAuthorizationState(response.authorization);
                 setAccountCanBeConfigAdmin(false);
-                setJobProps(response.jobProps);
+                replaceJobProps(response.jobProps);
                 if (
                     superuserRestoreHint.value?.accountId === accountId.value &&
                     superuserRestoreHint.value?.charId === charId &&
@@ -629,6 +659,54 @@ export const useAuthStore = defineStore(
             return response;
         };
 
+        const applySessionJobResponse = async (response: SelectSessionJobResponse): Promise<SelectSessionJobResponse> => {
+            if (!response.char) {
+                throw new Error('Server Error! No character in session job response.');
+            }
+
+            beginQueryTransition();
+            try {
+                setActiveChar(response.char);
+                setUserToken(response.token);
+                setAuthorizationState(response.authorization);
+                replaceJobProps(response.jobProps);
+                // The new job can revoke access to the current Jobs subpage.
+                await revalidateCurrentRoutePermission(notifications.add);
+            } finally {
+                commitQueryContext();
+            }
+
+            return response;
+        };
+
+        /**
+         * Selects the effective work context for this browser session. This
+         * never changes the character's game-server job; the server validates
+         * the selected secondary job and returns a context-specific token.
+         * @param job - A held secondary job, or undefined to return to primary.
+         */
+        const selectSessionJob = async (job?: string): Promise<SelectSessionJobResponse> => {
+            return queueSessionJobTransition(async () => {
+                const authAuthClient = await getAuthAuthClient();
+                const call = authAuthClient.selectSessionJob({ job }, characterAuthOptions());
+                const { response } = await call;
+                return applySessionJobResponse(response);
+            });
+        };
+
+        /**
+         * Revalidates this tab's work context after a server-side job sync. A
+         * removed context safely resolves to the character's primary job.
+         */
+        const refreshSessionJob = async (): Promise<SelectSessionJobResponse> => {
+            return queueSessionJobTransition(async () => {
+                const authAuthClient = await getAuthAuthClient();
+                const call = authAuthClient.refreshSessionJob({}, characterAuthOptions());
+                const { response } = await call;
+                return applySessionJobResponse(response);
+            });
+        };
+
         /**
          * Sets the superuser mode for the user and updates permissions accordingly.
          * @param superuser - Whether to enable or disable superuser mode.
@@ -651,7 +729,7 @@ export const useAuthStore = defineStore(
                 setActiveChar(response.char!);
                 setUserToken(response.token);
                 setAuthorizationState(response.authorization);
-                setJobProps(response.jobProps);
+                replaceJobProps(response.jobProps);
                 superuserRestoreHint.value = superuser
                     ? {
                           accountId: accountId.value ?? 0,
@@ -984,6 +1062,8 @@ export const useAuthStore = defineStore(
 
             chooseCharacter,
             impersonateJob,
+            selectSessionJob,
+            refreshSessionJob,
             setSuperuserMode,
 
             isSuperuser,

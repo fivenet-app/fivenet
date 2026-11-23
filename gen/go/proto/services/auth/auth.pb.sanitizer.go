@@ -327,6 +327,70 @@ func (m *RefreshAccountSessionResponse) Sanitize() error {
 
 // Sanitize sanitizes the message's fields, in case of complex types it calls
 // their Sanitize() method recursively.
+func (m *SelectSessionJobRequest) Sanitize() error {
+	if m == nil {
+		return nil
+	}
+
+	// Field: Job
+	if m.Job != nil {
+		*m.Job = htmlsanitizer.SanitizeAndUnescape(*m.Job)
+	}
+
+	return nil
+}
+
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
+func (m *SelectSessionJobResponse) Sanitize() error {
+	if m == nil {
+		return nil
+	}
+
+	// Field: Authorization
+	if m.Authorization != nil {
+		if v, ok := any(m.GetAuthorization()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+	}
+
+	// Field: Char
+	if m.Char != nil {
+		if v, ok := any(m.GetChar()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+	}
+
+	// Field: Expires
+	if m.Expires != nil {
+		if v, ok := any(m.GetExpires()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+	}
+
+	// Field: JobProps
+	if m.JobProps != nil {
+		if v, ok := any(m.GetJobProps()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+	}
+
+	// Field: Token
+	m.Token = htmlsanitizer.SanitizeAndUnescape(m.Token)
+
+	return nil
+}
+
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *SetSuperuserModeRequest) Sanitize() error {
 	if m == nil {
 		return nil

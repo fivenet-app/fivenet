@@ -123,6 +123,15 @@ func (x *UserEvent) GetNotificationsUnreadCount() int64 {
 	return 0
 }
 
+func (x *UserEvent) GetWorkContextJobsChanged() bool {
+	if x != nil {
+		if x, ok := x.xxx_hidden_Data.(*userEvent_WorkContextJobsChanged); ok {
+			return x.WorkContextJobsChanged
+		}
+	}
+	return false
+}
+
 func (x *UserEvent) SetUnreadCount(v int64) {
 	x.xxx_hidden_UnreadCount = v
 	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 0, 2)
@@ -162,6 +171,10 @@ func (x *UserEvent) SetAccountGroupsChanged(v *userinfo.AccountGroupsChanged) {
 
 func (x *UserEvent) SetNotificationsUnreadCount(v int64) {
 	x.xxx_hidden_Data = &userEvent_NotificationsUnreadCount{v}
+}
+
+func (x *UserEvent) SetWorkContextJobsChanged(v bool) {
+	x.xxx_hidden_Data = &userEvent_WorkContextJobsChanged{v}
 }
 
 func (x *UserEvent) HasUnreadCount() bool {
@@ -226,6 +239,14 @@ func (x *UserEvent) HasNotificationsUnreadCount() bool {
 	return ok
 }
 
+func (x *UserEvent) HasWorkContextJobsChanged() bool {
+	if x == nil {
+		return false
+	}
+	_, ok := x.xxx_hidden_Data.(*userEvent_WorkContextJobsChanged)
+	return ok
+}
+
 func (x *UserEvent) ClearUnreadCount() {
 	protoimpl.X.ClearPresent(&(x.XXX_presence[0]), 0)
 	x.xxx_hidden_UnreadCount = 0
@@ -271,6 +292,12 @@ func (x *UserEvent) ClearNotificationsUnreadCount() {
 	}
 }
 
+func (x *UserEvent) ClearWorkContextJobsChanged() {
+	if _, ok := x.xxx_hidden_Data.(*userEvent_WorkContextJobsChanged); ok {
+		x.xxx_hidden_Data = nil
+	}
+}
+
 const UserEvent_Data_not_set_case case_UserEvent_Data = 0
 const UserEvent_RefreshToken_case case_UserEvent_Data = 1
 const UserEvent_Notification_case case_UserEvent_Data = 2
@@ -278,6 +305,7 @@ const UserEvent_NotificationsReadCount_case case_UserEvent_Data = 3
 const UserEvent_UserInfoChanged_case case_UserEvent_Data = 4
 const UserEvent_AccountGroupsChanged_case case_UserEvent_Data = 5
 const UserEvent_NotificationsUnreadCount_case case_UserEvent_Data = 6
+const UserEvent_WorkContextJobsChanged_case case_UserEvent_Data = 8
 
 func (x *UserEvent) WhichData() case_UserEvent_Data {
 	if x == nil {
@@ -296,6 +324,8 @@ func (x *UserEvent) WhichData() case_UserEvent_Data {
 		return UserEvent_AccountGroupsChanged_case
 	case *userEvent_NotificationsUnreadCount:
 		return UserEvent_NotificationsUnreadCount_case
+	case *userEvent_WorkContextJobsChanged:
+		return UserEvent_WorkContextJobsChanged_case
 	default:
 		return UserEvent_Data_not_set_case
 	}
@@ -317,6 +347,9 @@ type UserEvent_builder struct {
 	AccountGroupsChanged   *userinfo.AccountGroupsChanged
 	// The authoritative unread count after a notification-state mutation.
 	NotificationsUnreadCount *int64
+	// The user's server-synchronized job list changed. Clients should refresh
+	// their session work context to receive the current jobs and permissions.
+	WorkContextJobsChanged *bool
 	// -- end of xxx_hidden_Data
 }
 
@@ -345,6 +378,9 @@ func (b0 UserEvent_builder) Build() *UserEvent {
 	}
 	if b.NotificationsUnreadCount != nil {
 		x.xxx_hidden_Data = &userEvent_NotificationsUnreadCount{*b.NotificationsUnreadCount}
+	}
+	if b.WorkContextJobsChanged != nil {
+		x.xxx_hidden_Data = &userEvent_WorkContextJobsChanged{*b.WorkContextJobsChanged}
 	}
 	return m0
 }
@@ -390,6 +426,12 @@ type userEvent_NotificationsUnreadCount struct {
 	NotificationsUnreadCount int64 `protobuf:"varint,6,opt,name=notifications_unread_count,json=notificationsUnreadCount,proto3,oneof"`
 }
 
+type userEvent_WorkContextJobsChanged struct {
+	// The user's server-synchronized job list changed. Clients should refresh
+	// their session work context to receive the current jobs and permissions.
+	WorkContextJobsChanged bool `protobuf:"varint,8,opt,name=work_context_jobs_changed,json=workContextJobsChanged,proto3,oneof"`
+}
+
 func (*userEvent_RefreshToken) isUserEvent_Data() {}
 
 func (*userEvent_Notification) isUserEvent_Data() {}
@@ -401,6 +443,8 @@ func (*userEvent_UserInfoChanged) isUserEvent_Data() {}
 func (*userEvent_AccountGroupsChanged) isUserEvent_Data() {}
 
 func (*userEvent_NotificationsUnreadCount) isUserEvent_Data() {}
+
+func (*userEvent_WorkContextJobsChanged) isUserEvent_Data() {}
 
 // Job related events
 type JobEvent struct {
@@ -830,7 +874,7 @@ var File_resources_notifications_events_events_proto protoreflect.FileDescriptor
 
 const file_resources_notifications_events_events_proto_rawDesc = "" +
 	"\n" +
-	"+resources/notifications/events/events.proto\x12\x1eresources.notifications.events\x1a)resources/clientconfig/clientconfig.proto\x1a resources/jobs/props/props.proto\x1a+resources/notifications/notifications.proto\x1a!resources/userinfo/userinfo.proto\"\xf1\x03\n" +
+	"+resources/notifications/events/events.proto\x12\x1eresources.notifications.events\x1a)resources/clientconfig/clientconfig.proto\x1a resources/jobs/props/props.proto\x1a+resources/notifications/notifications.proto\x1a!resources/userinfo/userinfo.proto\"\xae\x04\n" +
 	"\tUserEvent\x12&\n" +
 	"\funread_count\x18\a \x01(\x03H\x01R\vunreadCount\x88\x01\x01\x12%\n" +
 	"\rrefresh_token\x18\x01 \x01(\bH\x00R\frefreshToken\x12K\n" +
@@ -838,7 +882,8 @@ const file_resources_notifications_events_events_proto_rawDesc = "" +
 	"\x18notifications_read_count\x18\x03 \x01(\x03H\x00R\x16notificationsReadCount\x12Q\n" +
 	"\x11user_info_changed\x18\x04 \x01(\v2#.resources.userinfo.UserInfoChangedH\x00R\x0fuserInfoChanged\x12`\n" +
 	"\x16account_groups_changed\x18\x05 \x01(\v2(.resources.userinfo.AccountGroupsChangedH\x00R\x14accountGroupsChanged\x12>\n" +
-	"\x1anotifications_unread_count\x18\x06 \x01(\x03H\x00R\x18notificationsUnreadCountB\x06\n" +
+	"\x1anotifications_unread_count\x18\x06 \x01(\x03H\x00R\x18notificationsUnreadCount\x12;\n" +
+	"\x19work_context_jobs_changed\x18\b \x01(\bH\x00R\x16workContextJobsChangedB\x06\n" +
 	"\x04dataB\x0f\n" +
 	"\r_unread_count\"Q\n" +
 	"\bJobEvent\x12=\n" +
@@ -889,6 +934,7 @@ func file_resources_notifications_events_events_proto_init() {
 		(*userEvent_UserInfoChanged)(nil),
 		(*userEvent_AccountGroupsChanged)(nil),
 		(*userEvent_NotificationsUnreadCount)(nil),
+		(*userEvent_WorkContextJobsChanged)(nil),
 	}
 	file_resources_notifications_events_events_proto_msgTypes[1].OneofWrappers = []any{
 		(*jobEvent_JobProps)(nil),

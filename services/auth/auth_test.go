@@ -292,6 +292,14 @@ func TestChooseCharacterConfigAdminEligibility(t *testing.T) {
 
 	_, err = db.ExecContext(ctx, "UPDATE fivenet_accounts SET last_char = ? WHERE id = ?", 5, 1)
 	require.NoError(err)
+	_, err = db.ExecContext(
+		ctx,
+		"INSERT INTO fivenet_user_jobs (user_id, job, grade, is_primary) VALUES (?, ?, ?, FALSE)",
+		1,
+		"doj",
+		16,
+	)
+	require.NoError(err)
 
 	client := pbauth.NewAuthServiceClient(clientConn)
 	accountToken := loginAndGetAccountToken(t, client, ctx, "user-1")
@@ -349,6 +357,103 @@ func TestChooseCharacterConfigAdminEligibility(t *testing.T) {
 	parsedUserClaims, err := srv.tm.ParseUserToken(chooseCharRes.GetToken())
 	require.NoError(err)
 	assert.Equal(int32(1), parsedUserClaims.UserID)
+
+	sessionCtx := metadata.NewOutgoingContext(
+		ctx,
+		metadata.New(map[string]string{
+			"Cookie":        auth.AccCookieName + "=" + updatedAccountToken,
+			"Authorization": "Bearer " + chooseCharRes.GetToken(),
+		}),
+	)
+	sessionRes, err := client.SelectSessionJob(
+		sessionCtx,
+		&pbauth.SelectSessionJobRequest{Job: new("doj")},
+	)
+	require.NoError(err)
+	require.NotNil(sessionRes)
+	assert.True(sessionRes.GetSessionJobActive())
+	assert.Equal("doj", sessionRes.GetChar().GetJob())
+	assert.Equal(int32(16), sessionRes.GetChar().GetJobGrade())
+	for _, job := range sessionRes.GetChar().GetJobs() {
+		assert.NotEmpty(job.GetJobLabel())
+		assert.NotEmpty(job.GetGradeLabel())
+		if job.GetJob() == "doj" {
+			assert.Equal("16", job.GetGradeLabel())
+		}
+	}
+
+	parsedSessionClaims, err := srv.tm.ParseUserToken(sessionRes.GetToken())
+	require.NoError(err)
+	assert.True(parsedSessionClaims.SessionJob)
+	assert.Equal("doj", parsedSessionClaims.Job)
+	assert.Nil(parsedSessionClaims.OriginalJob)
+
+	// Grade changes are read from the synchronized job row rather than the
+	// token, so an already-open session gets the current grade on refresh.
+	_, err = db.ExecContext(
+		ctx,
+		"UPDATE fivenet_user_jobs SET grade = ? WHERE user_id = ? AND job = ?",
+		15,
+		1,
+		"doj",
+	)
+	require.NoError(err)
+	gradeRefreshCtx := metadata.NewOutgoingContext(
+		ctx,
+		metadata.New(map[string]string{
+			"Cookie":        auth.AccCookieName + "=" + updatedAccountToken,
+			"Authorization": "Bearer " + sessionRes.GetToken(),
+		}),
+	)
+	gradeRefreshRes, err := client.RefreshSessionJob(
+		gradeRefreshCtx,
+		&pbauth.RefreshSessionJobRequest{},
+	)
+	require.NoError(err)
+	require.NotNil(gradeRefreshRes)
+	assert.Equal(int32(15), gradeRefreshRes.GetChar().GetJobGrade())
+
+	parsedGradeRefreshClaims, err := srv.tm.ParseUserToken(gradeRefreshRes.GetToken())
+	require.NoError(err)
+	gradeRefreshUserInfo, err := srv.ui.GetUserInfoFromClaims(
+		ctx,
+		parsedGradeRefreshClaims,
+		parsedAccClaims,
+	)
+	require.NoError(err)
+	assert.Equal("doj", gradeRefreshUserInfo.GetJob())
+	assert.Equal(int32(15), gradeRefreshUserInfo.GetJobGrade())
+
+	// A job removed by sync is never trusted from the old tab token. The
+	// authenticated request resolves it back to the server-primary job.
+	_, err = db.ExecContext(
+		ctx,
+		"DELETE FROM fivenet_user_jobs WHERE user_id = ? AND job = ?",
+		1,
+		"doj",
+	)
+	require.NoError(err)
+	fallbackUserInfo, err := srv.ui.GetUserInfoFromClaims(
+		ctx,
+		parsedGradeRefreshClaims,
+		parsedAccClaims,
+	)
+	require.NoError(err)
+	assert.Equal("ambulance", fallbackUserInfo.GetJob())
+	assert.Equal(int32(17), fallbackUserInfo.GetJobGrade())
+	fallbackCtx := metadata.NewOutgoingContext(
+		ctx,
+		metadata.New(map[string]string{
+			"Cookie":        auth.AccCookieName + "=" + updatedAccountToken,
+			"Authorization": "Bearer " + gradeRefreshRes.GetToken(),
+		}),
+	)
+	fallbackRes, err := client.RefreshSessionJob(fallbackCtx, &pbauth.RefreshSessionJobRequest{})
+	require.NoError(err)
+	require.NotNil(fallbackRes)
+	assert.False(fallbackRes.GetSessionJobActive())
+	assert.Equal("ambulance", fallbackRes.GetChar().GetJob())
+	assert.Equal(int32(17), fallbackRes.GetChar().GetJobGrade())
 
 	impersonateCtx := metadata.NewOutgoingContext(
 		ctx,

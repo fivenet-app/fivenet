@@ -610,6 +610,36 @@ func TestPublishUserInfoChangedFallsBackWhenCanonicalPublishFails(t *testing.T) 
 	assert.Equal(t, "sheriff", notifi.events[0].GetUserInfoChanged().GetNewJob())
 }
 
+func TestPublishWorkContextJobsChangedForSecondaryJobChanges(t *testing.T) {
+	t.Parallel()
+
+	store, _ := newTestStore(t)
+	notifi := &recordingNotifi{}
+	store.notifi = notifi
+
+	store.publishWorkContextJobsChanged(t.Context(), 11, &userJobChange{
+		workContextJobsChanged: true,
+	})
+
+	require.Len(t, notifi.events, 1)
+	assert.True(t, notifi.events[0].GetWorkContextJobsChanged())
+}
+
+func TestPublishWorkContextJobsChangedSkipsPrimaryJobChanges(t *testing.T) {
+	t.Parallel()
+
+	store, _ := newTestStore(t)
+	notifi := &recordingNotifi{}
+	store.notifi = notifi
+
+	store.publishWorkContextJobsChanged(t.Context(), 11, &userJobChange{
+		job:                    "sheriff",
+		workContextJobsChanged: true,
+	})
+
+	assert.Empty(t, notifi.events)
+}
+
 func TestHandleUserJobsPublishesPrimaryGradeChange(t *testing.T) {
 	t.Parallel()
 

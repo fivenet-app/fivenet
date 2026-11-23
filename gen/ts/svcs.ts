@@ -281,6 +281,8 @@ export const grpcMethods = [
 	'auth.AuthService/GetCharacters',
 	'auth.AuthService/ChooseCharacter',
 	'auth.AuthService/ImpersonateJob',
+	'auth.AuthService/SelectSessionJob',
+	'auth.AuthService/RefreshSessionJob',
 	'auth.AuthService/GetAccountInfo',
 	'auth.AuthService/RefreshAccountSession',
 	'auth.AuthService/DeleteSocialLogin',

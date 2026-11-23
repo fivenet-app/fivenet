@@ -184,8 +184,9 @@ func (s *Store) reconcileUserRow(
 }
 
 type userJobChange struct {
-	job   string
-	grade int32
+	job                    string
+	grade                  int32
+	workContextJobsChanged bool
 }
 
 func (s *Store) SendUsers(
@@ -677,6 +678,7 @@ func (s *Store) updateUser(
 	}
 
 	s.publishUserInfoChanged(ctx, accountID, user.GetUserId(), jobChange)
+	s.publishWorkContextJobsChanged(ctx, user.GetUserId(), jobChange)
 
 	return rows, nil
 }
@@ -863,6 +865,12 @@ func (s *Store) handleUserJobs(
 	}
 
 	toAdd, toUpdate, toRemove := compareJobs(currentJobs, jobs)
+	if len(toAdd) > 0 || len(toUpdate) > 0 || len(toRemove) > 0 {
+		if jobChange == nil {
+			jobChange = &userJobChange{}
+		}
+		jobChange.workContextJobsChanged = true
+	}
 	if len(toAdd) > 0 || len(toUpdate) > 0 {
 		stmt := tCitizensJobs.
 			INSERT(
@@ -945,7 +953,7 @@ func (s *Store) publishUserInfoChanged(
 	userID int32,
 	jobChange *userJobChange,
 ) {
-	if jobChange == nil || accountID == nil {
+	if jobChange == nil || jobChange.job == "" || accountID == nil {
 		return
 	}
 
@@ -983,6 +991,32 @@ func (s *Store) publishUserInfoChanged(
 			zap.Int32("user_id", userID),
 			zap.String("job", jobChange.job),
 			zap.Int32("job_grade", jobChange.grade),
+			zap.Error(err),
+		)
+	}
+}
+
+// publishWorkContextJobsChanged asks active tabs to revalidate their work
+// context after sync changed any held job, including a secondary job whose
+// primary job did not change.
+func (s *Store) publishWorkContextJobsChanged(
+	ctx context.Context,
+	userID int32,
+	jobChange *userJobChange,
+) {
+	if jobChange == nil || jobChange.job != "" || !jobChange.workContextJobsChanged ||
+		s.notifi == nil {
+		return
+	}
+
+	if err := s.notifi.SendUserEvent(ctx, userID, &notificationsevents.UserEvent{
+		Data: &notificationsevents.UserEvent_WorkContextJobsChanged{
+			WorkContextJobsChanged: true,
+		},
+	}); err != nil {
+		s.logger.Warn(
+			"failed to publish work context jobs changed event",
+			zap.Int32("user_id", userID),
 			zap.Error(err),
 		)
 	}

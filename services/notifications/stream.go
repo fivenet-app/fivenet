@@ -160,6 +160,24 @@ func applyUserInfoChanged(currentUserInfo *pbuserinfo.UserInfo, event *pbuserinf
 		return
 	}
 
+	// A non-superuser whose effective job differs from its original job is
+	// using a session-selected secondary work context. OriginalJob is also
+	// used for same-job grade impersonation, which must retain its established
+	// primary-job update behavior. For the secondary case, a primary-job event
+	// must not retarget the already-authorized stream to that new primary job:
+	// the client will revalidate and reconnect with a freshly issued token.
+	// Clear the effective job meanwhile, so the stream fails closed rather than
+	// delivering either the newly primary or potentially removed secondary
+	// job's events.
+	if currentUserInfo.GetOriginalJob() != nil && !currentUserInfo.GetSuperuser() &&
+		currentUserInfo.GetJob() != currentUserInfo.GetOriginalJob().GetJob() {
+		currentUserInfo.OriginalJob.Job = event.GetNewJob()
+		currentUserInfo.OriginalJob.JobGrade = event.GetNewJobGrade()
+		currentUserInfo.Job = ""
+		currentUserInfo.JobGrade = 0
+		return
+	}
+
 	currentUserInfo.Job = event.GetNewJob()
 	currentUserInfo.JobGrade = event.GetNewJobGrade()
 }

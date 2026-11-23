@@ -7302,6 +7302,7 @@ User related events
 | `user_info_changed` | [resources.userinfo.UserInfoChanged](#resourcesuserinfoUserInfoChanged) |  |  |
 | `account_groups_changed` | [resources.userinfo.AccountGroupsChanged](#resourcesuserinfoAccountGroupsChanged) |  |  |
 | `notifications_unread_count` | [int64](#int64) |  | The authoritative unread count after a notification-state mutation. |
+| `work_context_jobs_changed` | [bool](#bool) |  | The user's server-synchronized job list changed. Clients should refresh their session work context to receive the current jobs and permissions. |
 
 
 
@@ -9031,6 +9032,43 @@ PropertyLifecycleChange records the lifecycle fields changed by this activity, i
 
 
 
+### services.auth.RefreshSessionJobRequest
+RefreshSessionJob revalidates the current session work context against the server-synchronized job list. It retains a valid secondary context with its current grade, or falls back to the authoritative primary job.
+
+
+
+
+
+
+### services.auth.SelectSessionJobRequest
+SelectSessionJob changes the effective job used by this FiveNet session only. It never changes the character's job on the game server. Omitting `job` (or passing the primary job) clears the session override and returns to the server-authoritative primary job.
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `job` | [string](#string) | optional |  |
+
+
+
+
+
+### services.auth.SelectSessionJobResponse
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `token` | [string](#string) |  |  |
+| `expires` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) |  |  |
+| `job_props` | [resources.jobs.props.JobProps](#resourcesjobspropsJobProps) | optional |  |
+| `char` | [resources.users.User](#resourcesusersUser) |  |  |
+| `authorization` | [resources.permissions.authorization.AuthorizationState](#resourcespermissionsauthorizationAuthorizationState) |  |  |
+| `session_job_active` | [bool](#bool) |  |  |
+
+
+
+
+
 ### services.auth.SetSuperuserModeRequest
 
 
@@ -9079,6 +9117,8 @@ Auth Service handles user authentication, character selection and oauth2 connect
 | `GetCharacters` | [GetCharactersRequest](#servicesauthGetCharactersRequest) | [GetCharactersResponse](#servicesauthGetCharactersResponse) | |
 | `ChooseCharacter` | [ChooseCharacterRequest](#servicesauthChooseCharacterRequest) | [ChooseCharacterResponse](#servicesauthChooseCharacterResponse) | |
 | `ImpersonateJob` | [ImpersonateJobRequest](#servicesauthImpersonateJobRequest) | [ImpersonateJobResponse](#servicesauthImpersonateJobResponse) | |
+| `SelectSessionJob` | [SelectSessionJobRequest](#servicesauthSelectSessionJobRequest) | [SelectSessionJobResponse](#servicesauthSelectSessionJobResponse) |Selects one of the character's server-synchronized secondary jobs as the effective job for this browser session. This is intentionally user-token protected rather than permission-gated: a user may only select their own currently held job. |
+| `RefreshSessionJob` | [RefreshSessionJobRequest](#servicesauthRefreshSessionJobRequest) | [SelectSessionJobResponse](#servicesauthSelectSessionJobResponse) | |
 | `GetAccountInfo` | [GetAccountInfoRequest](#servicesauthGetAccountInfoRequest) | [GetAccountInfoResponse](#servicesauthGetAccountInfoResponse) | |
 | `RefreshAccountSession` | [RefreshAccountSessionRequest](#servicesauthRefreshAccountSessionRequest) | [RefreshAccountSessionResponse](#servicesauthRefreshAccountSessionResponse) | |
 | `DeleteSocialLogin` | [DeleteSocialLoginRequest](#servicesauthDeleteSocialLoginRequest) | [DeleteSocialLoginResponse](#servicesauthDeleteSocialLoginResponse) | |

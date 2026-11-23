@@ -21,6 +21,10 @@ type UserInfoClaims struct {
 
 	Superuser   *bool        `json:"su,omitempty"`
 	OriginalJob *UserJobInfo `json:"og,omitempty"`
+	// SessionJob marks a user-selected FiveNet work context. The authoritative
+	// primary job remains in storage and is revalidated on every authenticated
+	// request.
+	SessionJob bool `json:"sj,omitempty"`
 }
 
 type UserJobInfo struct {
@@ -46,6 +50,7 @@ type CombinedClaims struct {
 
 	Superuser   *bool        `json:"su,omitempty"`
 	OriginalJob *UserJobInfo `json:"og,omitempty"`
+	SessionJob  bool         `json:"sj,omitempty"`
 }
 
 func (c *CombinedClaims) GetAccountInfoClaims() *AccountInfoClaims {
@@ -67,5 +72,6 @@ func (c *CombinedClaims) GetUserInfoClaims() *UserInfoClaims {
 		JobGrade:         c.JobGrade,
 		Superuser:        c.Superuser,
 		OriginalJob:      c.OriginalJob,
+		SessionJob:       c.SessionJob,
 	}
 }

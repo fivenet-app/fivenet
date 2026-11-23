@@ -66,6 +66,11 @@ var (
 		&common.I18NItem{Key: "errors.auth.AuthService.ErrImpersonateJobInvalid.content"},
 		&common.I18NItem{Key: "errors.auth.AuthService.ErrImpersonateJobInvalid.title"},
 	)
+	ErrSessionJobInvalid = common.NewI18nErr(
+		codes.InvalidArgument,
+		&common.I18NItem{Key: "errors.auth.AuthService.ErrSessionJobInvalid.content"},
+		&common.I18NItem{Key: "errors.auth.AuthService.ErrSessionJobInvalid.title"},
+	)
 	ErrReauthRequired = common.NewI18nErr(
 		codes.Unauthenticated,
 		&common.I18NItem{Key: "errors.auth.AuthService.ErrReauthRequired.content"},

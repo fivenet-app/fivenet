@@ -2,6 +2,7 @@ package authstore
 
 import (
 	"context"
+	"errors"
 
 	accounts "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/accounts"
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/jobs"
@@ -10,6 +11,7 @@ import (
 	"github.com/fivenet-app/fivenet/v2026/pkg/dbutils"
 	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
 	"github.com/go-jet/jet/v2/mysql"
+	"github.com/go-jet/jet/v2/qrm"
 )
 
 func (s *Store) ListCharacters(
@@ -121,7 +123,38 @@ func (s *Store) GetCharacter(
 		return nil, nil, err
 	}
 
+	jobs, err := s.listCharacterJobs(ctx, charID)
+	if err != nil {
+		return nil, nil, err
+	}
+	dest.User.Jobs = jobs
+
 	return dest.User, dest.JobProps, nil
+}
+
+// listCharacterJobs returns the game-server-synchronized jobs held by a
+// character. The scalar User.Job remains the authoritative primary job; these
+// entries are used for session-local work-context selection.
+func (s *Store) listCharacterJobs(ctx context.Context, charID int32) ([]*users.UserJob, error) {
+	tUserJobs := table.FivenetUserJobs.AS("user_job")
+
+	stmt := tUserJobs.
+		SELECT(
+			tUserJobs.UserID,
+			tUserJobs.Job,
+			tUserJobs.Grade,
+			tUserJobs.IsPrimary,
+		).
+		FROM(tUserJobs).
+		WHERE(tUserJobs.UserID.EQ(mysql.Int32(charID))).
+		ORDER_BY(tUserJobs.IsPrimary.DESC(), tUserJobs.Job.ASC())
+
+	jobs := []*users.UserJob{}
+	if err := stmt.QueryContext(ctx, s.db, &jobs); err != nil && !errors.Is(err, qrm.ErrNoRows) {
+		return nil, err
+	}
+
+	return jobs, nil
 }
 
 func (s *Store) GetJobWithProps(

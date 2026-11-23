@@ -268,6 +268,15 @@ export const useNotificationsStore = defineStore(
             if (!hasCharScope(scope)) return;
 
             const streamActiveChar = scope.activeChar;
+            const primaryJob = streamActiveChar.jobs?.find((job) => job.isPrimary)?.job;
+
+            // A primary-job update must not briefly replace this tab's selected
+            // secondary context. The refresh below returns the same secondary
+            // context when it remains valid, or the new primary one otherwise.
+            if (!authStore.isSuperuser && primaryJob && streamActiveChar.job !== primaryJob) {
+                await authStore.refreshSessionJob();
+                return;
+            }
 
             const jobChanged = streamActiveChar.job != userInfoChanged.newJob;
             const jobGradeChanged = streamActiveChar.jobGrade !== userInfoChanged.newJobGrade;
@@ -297,7 +306,11 @@ export const useNotificationsStore = defineStore(
             if (userInfoChanged.newJobGrade !== undefined) streamActiveChar.jobGrade = userInfoChanged.newJobGrade;
             if (userInfoChanged.newJobGradeLabel) streamActiveChar.jobGradeLabel = userInfoChanged.newJobGradeLabel;
 
-            await handleRefreshTokenEvent(authStore, scope);
+            if (authStore.isSuperuser) {
+                await handleRefreshTokenEvent(authStore, scope);
+            } else {
+                await authStore.refreshSessionJob();
+            }
         };
 
         /**
@@ -328,6 +341,10 @@ export const useNotificationsStore = defineStore(
                 // total after a notification-state mutation.
             } else if (userEvent.data.oneofKind === 'userInfoChanged') {
                 await handleUserInfoChangedEvent(userEvent.data.userInfoChanged, authStore, scope);
+            } else if (userEvent.data.oneofKind === 'workContextJobsChanged') {
+                if (hasCharScope(scope) && !authStore.isSuperuser) {
+                    await authStore.refreshSessionJob();
+                }
             } else if (userEvent.data.oneofKind === 'accountGroupsChanged') {
                 await handleAccountGroupsChangedEvent(userEvent.data.accountGroupsChanged, authStore, scope, add);
             } else {

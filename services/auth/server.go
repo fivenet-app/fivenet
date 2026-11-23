@@ -114,8 +114,11 @@ func (s *Server) AuthFuncOverride(ctx context.Context, fullMethod string) (conte
 		}
 		return ctx, nil
 
-	case "/services.auth.AuthService/SetSuperuserMode", "/services.auth.AuthService/ImpersonateJob":
-		// Superuser mode and impersonation endpoints require user token
+	case "/services.auth.AuthService/SetSuperuserMode",
+		"/services.auth.AuthService/ImpersonateJob",
+		"/services.auth.AuthService/SelectSessionJob",
+		"/services.auth.AuthService/RefreshSessionJob":
+		// Work-context and superuser endpoints require a user token.
 		return s.auth.GRPCAuthFunc(ctx, fullMethod)
 
 	default:

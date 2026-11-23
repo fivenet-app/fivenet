@@ -647,6 +647,9 @@
         },
         "jobs": {
             "title": "Beruf",
+            "work_context": "Arbeitskontext",
+            "work_context_primary": "Dein primärer Beruf",
+            "work_context_session": "In diesem Tab verwenden",
             "colleagues": {
                 "title": "Kollegen",
                 "id": {
@@ -4121,6 +4124,10 @@
                 "ErrImpersonateJobInvalid": {
                     "title": "Ungültige Impersonierung",
                     "content": "Ungültiger Job-Grad zum Ausgeben."
+                },
+                "ErrSessionJobInvalid": {
+                    "title": "Ungültiger Arbeitskontext",
+                    "content": "Sie können nur einen Job auswählen, der diesem Charakter derzeit zugewiesen ist."
                 },
                 "ErrReauthRequired": {
                     "title": "Erneute Anmeldung erforderlich",
