@@ -41,15 +41,22 @@ FROM docker.io/library/node:26.13.1-alpine3.24 AS frontendbuild
 
 WORKDIR /app
 
-COPY --from=version /version /version
-COPY --exclude=public/images/livemap/ . ./
+COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
+COPY gen/ts/package.json gen/ts/pnpm-lock.yaml ./gen/ts/
 
-RUN apk add --no-cache git python3 make gcc g++ pkgconfig && \
+RUN --mount=type=cache,id=pnpm-store,target=/pnpm/store \
+    apk add --no-cache git python3 make gcc g++ pkgconfig && \
     npm install -g corepack && \
     corepack enable && \
     corepack install && \
+    pnpm fetch --frozen-lockfile --store-dir=/pnpm/store
+
+COPY --from=version /version /version
+COPY --exclude=.git --exclude=public/images/livemap/ . ./
+
+RUN --mount=type=cache,id=pnpm-store,target=/pnpm/store \
     version="$(cat /version)" && \
-    COMMIT_REF="$version" pnpm install --frozen-lockfile && \
+    COMMIT_REF="$version" pnpm install --offline --frozen-lockfile --store-dir=/pnpm/store && \
     NODE_OPTIONS="--max-old-space-size=8192" \
         COMMIT_REF="$version" pnpm generate
 
@@ -58,11 +65,19 @@ FROM docker.io/library/golang:1.27.4 AS backendbuild
 
 WORKDIR /go/src/github.com/fivenet-app/fivenet/v2026/
 
-COPY --from=version /version /version
-COPY --exclude=public/images/livemap/ . ./
+COPY go.mod go.sum go.work go.work.sum ./
+COPY internal/cmd/protoc-gen-backend/go.mod internal/cmd/protoc-gen-backend/go.sum ./internal/cmd/protoc-gen-backend/
+COPY internal/cmd/protoc-gen-frontend/go.mod internal/cmd/protoc-gen-frontend/go.sum ./internal/cmd/protoc-gen-frontend/
 
-RUN apt-get update && \
-    apt-get install -y git && \
+RUN --mount=type=cache,target=/go/pkg/mod go mod download
+
+COPY --from=version /version /version
+COPY --exclude=.git --exclude=public/images/livemap/ . ./
+
+RUN --mount=type=cache,target=/go/pkg/mod \
+    --mount=type=cache,target=/root/.cache/go-build \
+    apt-get update && \
+    apt-get install --no-install-recommends -y git && \
     version="$(cat /version)" && \
     make build-go GIT_VERSION="$version"
 
