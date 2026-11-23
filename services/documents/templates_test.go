@@ -5,6 +5,7 @@ import (
 
 	documentstemplates "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/documents/templates"
 	jobscolleagues "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/jobs/colleagues"
+	properties "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/properties"
 	users "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/users"
 	usersprops "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/users/props"
 	resourcesvehicles "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/vehicles"
@@ -40,6 +41,113 @@ func TestRenderTemplateUsesResolvedUserProps(t *testing.T) {
 	require.Equal(t, "canonical@example.test", title)
 	require.Equal(t, "42", state)
 	require.Equal(t, "Canonical", content)
+}
+
+func TestRenderTemplateDefaultsMissingUserProps(t *testing.T) {
+	t.Parallel()
+
+	server := &Server{}
+	tmpl := &documentstemplates.Template{
+		Content: "{{ (index .Users 0).Props.BloodType }}",
+	}
+	data := &resolvedTemplateData{Users: []*users.User{{UserId: 42}}}
+
+	_, _, content, err := server.renderTemplate(tmpl, data)
+
+	require.NoError(t, err)
+	require.Empty(t, content)
+	require.NotNil(t, data.Users[0].GetProps())
+	require.NotNil(t, data.Users[0].GetProps().BloodType)
+}
+
+func TestRenderTemplateFindsDynamicProperty(t *testing.T) {
+	t.Parallel()
+
+	server := &Server{}
+	value := &properties.PropertyValue{}
+	value.SetStringValue("blue")
+	tmpl := &documentstemplates.Template{
+		Content: `<span data-template-var="property (index .Users 0).Properties &#34;user.favorite_color&#34;">{{ (property (index .Users 0).Properties "user.favorite_color").GetValue.GetStringValue }}</span>`,
+	}
+	data := &resolvedTemplateData{Users: []*users.User{{
+		Properties: &properties.Properties{Properties: []*properties.Property{{
+			Key:   "user.favorite_color",
+			Value: value,
+		}}},
+	}}}
+
+	_, _, content, err := server.renderTemplate(tmpl, data)
+
+	require.NoError(t, err)
+	require.Equal(t, "blue", content)
+}
+
+func TestRenderTemplateFindsDynamicPropertyOnUserProps(t *testing.T) {
+	t.Parallel()
+
+	server := &Server{}
+	value := &properties.PropertyValue{}
+	value.SetStringValue("blue")
+	tmpl := &documentstemplates.Template{
+		Content: `<span data-template-var="property (index .Users 0).Props.Properties &#34;user.favorite_color&#34;">{{ (property (index .Users 0).Props.Properties "user.favorite_color").GetValue.GetStringValue }}</span>`,
+	}
+	data := &resolvedTemplateData{Users: []*users.User{{
+		Properties: &properties.Properties{Properties: []*properties.Property{{
+			Key:   "user.favorite_color",
+			Value: value,
+		}}},
+	}}}
+
+	_, _, content, err := server.renderTemplate(tmpl, data)
+
+	require.NoError(t, err)
+	require.Equal(t, "blue", content)
+}
+
+func TestRenderTemplateSupportsTemplateVariablePresets(t *testing.T) {
+	t.Parallel()
+
+	server := &Server{}
+	propertyValue := &properties.PropertyValue{}
+	propertyValue.SetBoolValue(true)
+	tmpl := &documentstemplates.Template{
+		ContentTitle: `{{ now | date "02.01.2006 15:04" }}|{{ now | date "02.01.2006" }}|{{ now | date "15:04" }}|{{ .ActiveChar.GetFirstname }}|{{ .ActiveChar.GetLastname }}|{{ .ActiveChar.GetDateofbirth }}|{{ .ActiveChar.GetPhoneNumber }}|{{ .ActiveChar.GetProps.GetNamePrefix }}|{{ .ActiveChar.GetProps.GetNameSuffix }}|{{ .ActiveChar.GetEmail }}|{{ (first .Users).GetFirstname }}|{{ (first .Users).GetLastname }}|{{ (first .Users).GetDateofbirth }}|{{ (first .Users).GetSex }}|{{ (first .Users).GetHeight }}|{{ (first .Users).GetProps.GetWanted }}|{{ (first .Users).GetPhoneNumber }}|{{ (property (first .Users).GetProperties "user.wanted").GetValue.GetBoolValue }}|{{ (propertyValue (first .Users).GetProperties "user.wanted").GetBoolValue }}`,
+	}
+	data := &resolvedTemplateData{
+		ActiveChar: &jobscolleagues.Colleague{
+			Firstname:   "Active",
+			Lastname:    "Colleague",
+			Dateofbirth: "2000-01-02",
+			PhoneNumber: new("555-0100"),
+			Email:       new("active@example.test"),
+			Props: &jobscolleagues.ColleagueProps{
+				NamePrefix: new("Dr."),
+				NameSuffix: new("Jr."),
+			},
+		},
+		Users: []*users.User{{
+			Firstname:   "Citizen",
+			Lastname:    "Example",
+			Dateofbirth: "2001-02-03",
+			Sex:         new("female"),
+			Height:      new(float32(1.75)),
+			PhoneNumber: new("555-0101"),
+			Props:       &usersprops.UserProps{Wanted: new(true)},
+			Properties: &properties.Properties{Properties: []*properties.Property{{
+				Key:   "user.wanted",
+				Value: propertyValue,
+			}}},
+		}},
+	}
+
+	title, _, _, err := server.renderTemplate(tmpl, data)
+
+	require.NoError(t, err)
+	require.Contains(
+		t,
+		title,
+		"Active|Colleague|2000-01-02|555-0100|Dr.|Jr.|active@example.test|Citizen|Example|2001-02-03|female|1.75|true|555-0101|true|true",
+	)
 }
 
 func TestRenderTemplateUsesColleagueActiveChar(t *testing.T) {

@@ -10,7 +10,6 @@ import (
 
 	resourcesaccess "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/access"
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/audit"
-	database "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/common/database"
 	resourcesdocuments "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/documents"
 	documentsaccess "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/documents/access"
 	documentstemplates "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/documents/templates"
@@ -19,8 +18,8 @@ import (
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/timestamp"
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/userinfo"
 	users "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/users"
+	usersprops "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/users/props"
 	resourcesvehicles "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/vehicles"
-	pbcitizens "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/citizens"
 	permscitizens "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/citizens/perms"
 	pbdocuments "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/documents"
 	permsdocuments "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/documents/perms"
@@ -32,7 +31,6 @@ import (
 	grpc_audit "github.com/fivenet-app/fivenet/v2026/pkg/grpc/interceptors/audit"
 	propertyregistry "github.com/fivenet-app/fivenet/v2026/pkg/properties"
 	errorsdocuments "github.com/fivenet-app/fivenet/v2026/services/documents/errors"
-	citizensstore "github.com/fivenet-app/fivenet/v2026/stores/citizens"
 	documentsstore "github.com/fivenet-app/fivenet/v2026/stores/documents"
 	colleagueshydrator "github.com/fivenet-app/fivenet/v2026/stores/jobs/colleagues/hydrator"
 	vehiclesstore "github.com/fivenet-app/fivenet/v2026/stores/vehicles"
@@ -70,7 +68,7 @@ const (
 )
 
 var sproutTemplateFuncs = sync.OnceValue(func() sprout.FunctionMap {
-	return sprout.New(
+	funcs := sprout.New(
 		sprout.WithRegistries(
 			checksum.NewRegistry(),
 			conversion.NewRegistry(),
@@ -86,6 +84,11 @@ var sproutTemplateFuncs = sync.OnceValue(func() sprout.FunctionMap {
 		),
 		sprout.WithSafeFuncs(true),
 	).Build()
+	// property and propertyValue allow templates to access dynamic properties
+	// without depending on their ordering in the Properties collection.
+	funcs["property"] = propertyregistry.Find
+	funcs["propertyValue"] = propertyregistry.FindValue
+	return funcs
 })
 
 func isTemplateActionSpan(node *htmlnode.Node) bool {
@@ -356,6 +359,21 @@ type resolvedTemplateData struct {
 	Vehicles   []*resourcesvehicles.Vehicle
 }
 
+func (d *resolvedTemplateData) defaultUserProps() {
+	for _, user := range d.Users {
+		if user == nil {
+			continue
+		}
+		if user.Props == nil {
+			user.Props = &usersprops.UserProps{UserId: user.GetUserId()}
+		}
+		user.Props.TemplateDefault()
+		if user.Properties != nil {
+			user.Props.Properties = user.Properties
+		}
+	}
+}
+
 func (d *resolvedTemplateData) Citizens() []*users.User {
 	return d.Users
 }
@@ -387,6 +405,7 @@ func (s *Server) resolveTemplateData(
 	data := &resolvedTemplateData{
 		ActiveChar: activeChar,
 	}
+	s.enricher.EnrichJobInfoSafeFunc(userInfo)(activeChar)
 	if selection == nil {
 		if allowMissing {
 			return data, nil
@@ -395,10 +414,6 @@ func (s *Server) resolveTemplateData(
 	}
 
 	if len(selection.GetUserIds()) > 0 {
-		pageSize := int64(len(selection.GetUserIds()))
-		citizensReq := &pbcitizens.ListCitizensRequest{Pagination: &database.PaginationRequest{}}
-		citizensReq.GetPagination().SetPageSize(pageSize)
-
 		propertyList, err := s.perms.AttrPropertyListContext(ctx,
 			userInfo,
 			permscitizens.CitizensService.ListCitizens.Properties,
@@ -406,27 +421,14 @@ func (s *Server) resolveTemplateData(
 		if err != nil {
 			return nil, errswrap.NewError(err, errorsdocuments.ErrTemplateRenderFailed)
 		}
-		definitions, err := s.citizensStore.ResolvePropertyDefinitions(ctx, propertyList.GetKeys())
+		usersByID, err := s.hydrator.HydrateByUserID(
+			ctx,
+			s.db,
+			userInfo,
+			selection.GetUserIds(),
+		)
 		if err != nil {
 			return nil, errswrap.NewError(err, errorsdocuments.ErrTemplateRenderFailed)
-		}
-		listOptions := citizensstore.ListCitizensOptionsForProperties(propertyList, definitions)
-		listOptions.UserIDs = selection.GetUserIds()
-
-		usersResp, err := s.citizensStore.ListCitizens(ctx, citizensReq, listOptions)
-		if err != nil {
-			return nil, errswrap.NewError(err, errorsdocuments.ErrTemplateRenderFailed)
-		}
-
-		jobInfoFn := s.enricher.EnrichJobInfoSafeFunc(userInfo)
-		jobInfoFn(activeChar)
-		for _, user := range usersResp.GetUsers() {
-			jobInfoFn(user)
-		}
-
-		byID := make(map[int32]*users.User, len(usersResp.GetUsers()))
-		for _, user := range usersResp.GetUsers() {
-			byID[user.GetUserId()] = user
 		}
 		seen := make(map[int32]struct{}, len(selection.GetUserIds()))
 		for _, id := range selection.GetUserIds() {
@@ -434,9 +436,30 @@ func (s *Server) resolveTemplateData(
 				continue
 			}
 			seen[id] = struct{}{}
-			if user := byID[id]; user != nil {
+			if user := usersByID[id]; user != nil {
 				data.Users = append(data.Users, user)
 			}
+		}
+		if propertyList.Len() > 0 && len(data.Users) > 0 {
+			userIDs := make([]int32, 0, len(data.Users))
+			for _, user := range data.Users {
+				userIDs = append(userIDs, user.GetUserId())
+			}
+			valuesByUserID, err := s.citizensStore.ListProperties(ctx, userIDs)
+			if err != nil {
+				return nil, errswrap.NewError(err, errorsdocuments.ErrTemplateRenderFailed)
+			}
+			catalog, err := s.citizensStore.ResolvePropertyCatalog(ctx, propertyList.GetKeys())
+			if err != nil {
+				return nil, errswrap.NewError(err, errorsdocuments.ErrTemplateRenderFailed)
+			}
+			propertyregistry.ResolveUserProperties(
+				data.Users,
+				valuesByUserID,
+				propertyList,
+				catalog.Definitions,
+				catalog.Groups,
+			)
 		}
 	}
 
@@ -570,6 +593,7 @@ func (s *Server) renderTemplate(
 	docTmpl *documentstemplates.Template,
 	data *resolvedTemplateData,
 ) (string, string, string, error) {
+	data.defaultUserProps()
 	templateFuncs := sproutTemplateFuncs()
 
 	// Render Title template

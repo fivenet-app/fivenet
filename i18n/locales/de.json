@@ -1657,6 +1657,13 @@
                         "custom_template": "Oder geben Sie einen benutzerdefinierten Vorlagen-Aufruf ein",
                         "insert_custom": "Benutzerdefiniert einfügen",
                         "custom_placeholder": "E.g. now | date \"01/02/2006 15:04\"",
+                        "presets": {
+                            "date_time_description": "Verwendet das in doppelten Anführungszeichen angegebene Go-Referenzlayout für Datum und Uhrzeit.",
+                            "date_description": "Verwendet das in doppelten Anführungszeichen angegebene Go-Referenzlayout für ein Datum.",
+                            "time_description": "Verwendet das in doppelten Anführungszeichen angegebene Go-Referenzlayout für eine Uhrzeit.",
+                            "property_description": "Findet eine Eigenschaft anhand ihres in Anführungszeichen angegebenen Schlüssels (z. B. \"user.wanted\"). Wähle zum Ausgeben einen passenden Getter für den Wert.",
+                            "property_value_description": "Findet einen Eigenschaftswert anhand seines in Anführungszeichen angegebenen Schlüssels (z. B. \"user.wanted\"). Ersetze GetBoolValue durch den zum Eigenschaftstyp passenden Getter."
+                        },
                         "categories": {
                             "date": "Datum",
                             "active_char": "Aktiver Benutzer"

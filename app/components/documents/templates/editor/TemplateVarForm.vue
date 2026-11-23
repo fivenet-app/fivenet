@@ -24,6 +24,7 @@ const emit = defineEmits<{
 const { t } = useI18n();
 
 type Category = { label: string; value: string; key: string };
+type TemplateVarPreset = { label: string; value: string; description?: string; prefix?: string };
 
 const categories: Category[] = [
     { label: t('common.date'), value: 'now', key: 'date' },
@@ -31,23 +32,35 @@ const categories: Category[] = [
     { label: t('common.first_citizen'), value: '(first .Users)', key: 'user' },
 ];
 
-const baseUserProperties: { label: string; value: string }[] = [
+const baseUserProperties: TemplateVarPreset[] = [
     { label: t('common.firstname'), value: '.GetFirstname' },
     { label: t('common.lastname'), value: '.GetLastname' },
     { label: t('common.date_of_birth'), value: '.GetDateofbirth' },
 ];
 
-const citizenProperties: { label: string; value: string }[] = [
+const citizenProperties: TemplateVarPreset[] = [
     ...baseUserProperties,
     { label: t('common.sex'), value: '.GetSex' },
     { label: t('common.height'), value: '.GetHeight' },
 ];
 
-const templateVars = computed<Record<string, { label: string; value: string }[]>>(() => ({
+const templateVars = computed<Record<string, TemplateVarPreset[]>>(() => ({
     date: [
-        { label: `${t('common.date')} "02.01.2006 15:04"`, value: ' | date "02.01.2006 15:04"' },
-        { label: `${t('common.date')} "02.01.2006"`, value: ' | date "02.01.2006"' },
-        { label: `${t('common.time')} "15:04"`, value: ' | date "15:04"' },
+        {
+            label: `${t('common.date')} "02.01.2006 15:04"`,
+            value: ' | date "02.01.2006 15:04"',
+            description: t('components.partials.tiptap_editor.extensions.template_var.presets.date_time_description'),
+        },
+        {
+            label: `${t('common.date')} "02.01.2006"`,
+            value: ' | date "02.01.2006"',
+            description: t('components.partials.tiptap_editor.extensions.template_var.presets.date_description'),
+        },
+        {
+            label: `${t('common.time')} "15:04"`,
+            value: ' | date "15:04"',
+            description: t('components.partials.tiptap_editor.extensions.template_var.presets.time_description'),
+        },
     ],
     activeChar: [
         ...baseUserProperties,
@@ -60,6 +73,18 @@ const templateVars = computed<Record<string, { label: string; value: string }[]>
         ...citizenProperties,
         { label: t('common.wanted'), value: '.GetProps.GetWanted' },
         { label: t('common.phone'), value: '.GetPhoneNumber' },
+        {
+            label: 'property()',
+            prefix: '(property ',
+            value: '.GetProperties "user.wanted").GetValue.GetBoolValue',
+            description: t('components.partials.tiptap_editor.extensions.template_var.presets.property_description'),
+        },
+        {
+            label: 'propertyValue()',
+            prefix: '(propertyValue ',
+            value: '.GetProperties "user.wanted").GetBoolValue',
+            description: t('components.partials.tiptap_editor.extensions.template_var.presets.property_value_description'),
+        },
     ],
 }));
 
@@ -92,7 +117,8 @@ function submit(value: string): void {
 
 function insertSelected(): void {
     if (!selectedCategory.value || !selectedProperty.value) return;
-    submit(selectedCategory.value.value + selectedProperty.value);
+    const preset = templateVars.value[selectedCategory.value.key]?.find((preset) => preset.value === selectedProperty.value);
+    submit((preset?.prefix ?? '') + selectedCategory.value.value + selectedProperty.value);
     selectedCategory.value = undefined;
     selectedProperty.value = undefined;
 }
@@ -117,6 +143,7 @@ function insertCustom(): void {
                     :items="templateVars[selectedCategory?.key ?? '']"
                     :disabled="!templateVars[selectedCategory?.key ?? '']"
                     value-key="value"
+                    :filter-fields="['label', 'description']"
                 />
             </UFormField>
         </template>

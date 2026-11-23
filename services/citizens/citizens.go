@@ -98,7 +98,7 @@ func (s *Server) ListCitizens(
 		if err != nil {
 			return nil, errswrap.NewError(err, errorscitizens.ErrFailedQuery)
 		}
-		resolveCitizenProperties(
+		propertyregistry.ResolveUserProperties(
 			resp.GetUsers(),
 			valuesByUserID,
 			propertyList,
@@ -124,91 +124,6 @@ func (s *Server) ListCitizens(
 	}
 
 	return resp, nil
-}
-
-func resolveCitizenProperties(
-	usersList []*users.User,
-	valuesByUserID map[int32][]*properties.Property,
-	propertyList *permissionsattributes.PropertyList,
-	definitions map[string]*properties.PropertyDefinition,
-	groupSets ...[]*properties.PropertyGroup,
-) {
-	groups := propertyregistry.ResolvePropertyGroups(definitions)
-	if len(groupSets) > 0 {
-		groups = groupSets[0]
-	}
-	for _, user := range usersList {
-		values := valuesByUserID[user.GetUserId()]
-		visibleValues := make([]*properties.Property, 0, len(values))
-		for _, value := range values {
-			if propertyList.Contains(value.GetKey()) &&
-				!isDerivedCitizenPropertyKey(value.GetKey()) {
-				visibleValues = append(visibleValues, value)
-			}
-		}
-		visibleValues = append(visibleValues, derivedCitizenProperties(user, propertyList)...)
-		user.Properties = propertyregistry.ResolvePropertiesResourceWithGroups(
-			visibleValues,
-			definitions,
-			groups,
-		)
-	}
-}
-
-func derivedCitizenProperties(
-	user *users.User,
-	propertyList *permissionsattributes.PropertyList,
-) []*properties.Property {
-	if user == nil || propertyList == nil {
-		return nil
-	}
-
-	result := make([]*properties.Property, 0, 6)
-	if propertyList.Contains("user.dateofbirth") && user.GetDateofbirth() != "" {
-		value := &properties.PropertyValue{}
-		value.SetStringValue(user.GetDateofbirth())
-		result = append(result, &properties.Property{Key: "user.dateofbirth", Value: value})
-	}
-	if propertyList.Contains("user.sex") && user.HasSex() {
-		value := &properties.PropertyValue{}
-		value.SetStringValue(user.GetSex())
-		result = append(result, &properties.Property{Key: "user.sex", Value: value})
-	}
-	if propertyList.Contains("user.height") && user.HasHeight() {
-		value := &properties.PropertyValue{}
-		value.SetNumberValue(float64(user.GetHeight()))
-		result = append(result, &properties.Property{Key: "user.height", Value: value})
-	}
-	if propertyList.Contains("user.phone_number") && user.HasPhoneNumber() {
-		value := &properties.PropertyValue{}
-		value.SetStringValue(user.GetPhoneNumber())
-		result = append(result, &properties.Property{Key: "user.phone_number", Value: value})
-	}
-	if propertyList.Contains("user.email") && user.GetProps().GetEmail() != "" {
-		value := &properties.PropertyValue{}
-		value.SetStringValue(user.GetProps().GetEmail())
-		result = append(result, &properties.Property{Key: "user.email", Value: value})
-	}
-	if propertyList.Contains("user.visum") && user.HasVisum() {
-		value := &properties.PropertyValue{}
-		value.SetIntegerValue(int64(user.GetVisum()))
-		result = append(result, &properties.Property{Key: "user.visum", Value: value})
-	}
-	return result
-}
-
-func isDerivedCitizenPropertyKey(key string) bool {
-	switch key {
-	case "user.dateofbirth",
-		"user.sex",
-		"user.height",
-		"user.phone_number",
-		"user.email",
-		"user.visum":
-		return true
-	default:
-		return false
-	}
 }
 
 func normalizeCitizenPropertyFilters(
@@ -425,17 +340,11 @@ func (s *Server) GetUser(
 	if err != nil {
 		return nil, errswrap.NewError(err, errorscitizens.ErrFailedQuery)
 	}
-	visibleValues := make([]*properties.Property, 0, len(values))
-	for _, value := range values {
-		if (!propertyAdmin && !propertyList.Contains(value.GetKey())) ||
-			isDerivedCitizenPropertyKey(value.GetKey()) {
-			continue
-		}
-		visibleValues = append(visibleValues, value)
-	}
-	visibleValues = append(visibleValues, derivedCitizenProperties(resp.User, propertyList)...)
-	resp.User.Properties = propertyregistry.ResolvePropertiesResourceWithGroups(
-		visibleValues,
+	effectivePropertyList := &permissionsattributes.PropertyList{Keys: keys}
+	propertyregistry.ResolveUserProperties(
+		[]*users.User{resp.User},
+		map[int32][]*properties.Property{resp.User.GetUserId(): values},
+		effectivePropertyList,
 		catalog.Definitions,
 		catalog.Groups,
 	)

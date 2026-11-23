@@ -9,12 +9,13 @@ import (
 	users "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/users"
 	usersprops "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/users/props"
 	pbcitizens "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/citizens"
+	propertyregistry "github.com/fivenet-app/fivenet/v2026/pkg/properties"
 	errorscitizens "github.com/fivenet-app/fivenet/v2026/services/citizens/errors"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
 
-func TestDerivedCitizenProperties(t *testing.T) {
+func TestResolveUserPropertiesIncludesDerivedValues(t *testing.T) {
 	t.Parallel()
 
 	sex := "f"
@@ -31,25 +32,53 @@ func TestDerivedCitizenProperties(t *testing.T) {
 	user.Props = &usersprops.UserProps{}
 	user.Props.SetEmail("citizen@example.invalid")
 
-	properties := derivedCitizenProperties(user, &permissionsattributes.PropertyList{Keys: []string{
+	keys := []string{
 		"user.dateofbirth",
 		"user.sex",
 		"user.height",
 		"user.phone_number",
 		"user.email",
 		"user.visum",
-	}})
+	}
+	definitions := make(map[string]*properties.PropertyDefinition, len(keys))
+	for _, key := range keys {
+		definitions[key] = &properties.PropertyDefinition{Key: key, Enabled: true}
+	}
+	propertyregistry.ResolveUserProperties(
+		[]*users.User{user},
+		nil,
+		&permissionsattributes.PropertyList{Keys: keys},
+		definitions,
+		nil,
+	)
 
-	require.Len(t, properties, 6)
-	require.Equal(t, "2000-01-02", properties[0].GetValue().GetStringValue())
-	require.Equal(t, "f", properties[1].GetValue().GetStringValue())
-	require.InEpsilon(t, 170.5, properties[2].GetValue().GetNumberValue(), 0.0001)
-	require.Equal(t, "555-0100", properties[3].GetValue().GetStringValue())
-	require.Equal(t, "citizen@example.invalid", properties[4].GetValue().GetStringValue())
-	require.Equal(t, int64(2), properties[5].GetValue().GetIntegerValue())
+	resolved := user.GetProperties()
+	require.Equal(
+		t,
+		"2000-01-02",
+		propertyregistry.FindValue(resolved, "user.dateofbirth").GetStringValue(),
+	)
+	require.Equal(t, "f", propertyregistry.FindValue(resolved, "user.sex").GetStringValue())
+	require.InEpsilon(
+		t,
+		170.5,
+		propertyregistry.FindValue(resolved, "user.height").GetNumberValue(),
+		0.0001,
+	)
+	require.Equal(
+		t,
+		"555-0100",
+		propertyregistry.FindValue(resolved, "user.phone_number").GetStringValue(),
+	)
+	require.Equal(
+		t,
+		"citizen@example.invalid",
+		propertyregistry.FindValue(resolved, "user.email").GetStringValue(),
+	)
+	require.Equal(t, int64(2), propertyregistry.FindValue(resolved, "user.visum").GetIntegerValue())
 }
 
-func TestResolveCitizenPropertiesIncludesPermittedUnsetSystemProperty(t *testing.T) {
+func TestResolveUserPropertiesIncludesPermittedUnsetSystemProperty(t *testing.T) {
 	t.Parallel()
 
 	user := &users.User{UserId: 42}
@@ -62,11 +91,12 @@ func TestResolveCitizenPropertiesIncludesPermittedUnsetSystemProperty(t *testing
 		EmptyValueDisplay: properties.PropertyEmptyValueDisplay_PROPERTY_EMPTY_VALUE_DISPLAY_NA,
 	}
 
-	resolveCitizenProperties(
+	propertyregistry.ResolveUserProperties(
 		[]*users.User{user},
 		nil,
 		&permissionsattributes.PropertyList{Keys: []string{"user.email"}},
 		map[string]*properties.PropertyDefinition{"user.email": definition},
+		nil,
 	)
 
 	require.Len(t, user.GetProperties().GetProperties(), 1)
@@ -126,13 +156,15 @@ func TestCitizenFilterAccessRequiresEnabledDefinitionAndGrant(t *testing.T) {
 	)
 }
 
-func TestResolveCitizenPropertiesFiltersValuesAndIncludesEmptyCustomDefinitions(t *testing.T) {
+func TestResolveUserPropertiesFiltersValuesAndIncludesEmptyCustomDefinitions(t *testing.T) {
 	t.Parallel()
 
 	visible := &properties.PropertyValue{}
 	visible.SetStringValue("watchlist")
 	hidden := &properties.PropertyValue{}
 	hidden.SetStringValue("secret")
+	disabled := &properties.PropertyValue{}
+	disabled.SetStringValue("retired")
 
 	definition := &properties.PropertyDefinition{
 		Scope:     properties.PropertyScope_PROPERTY_SCOPE_USER,
@@ -150,24 +182,38 @@ func TestResolveCitizenPropertiesFiltersValuesAndIncludesEmptyCustomDefinitions(
 		Enabled:   true,
 		Label:     "Clearance",
 	}
+	disabledDefinition := &properties.PropertyDefinition{
+		Scope:     properties.PropertyScope_PROPERTY_SCOPE_USER,
+		Source:    properties.PropertyDefinitionSource_PROPERTY_DEFINITION_SOURCE_CUSTOM,
+		Key:       "user.legacy_status",
+		ValueType: properties.PropertyValueType_PROPERTY_VALUE_TYPE_STRING,
+		Enabled:   false,
+		Label:     "Legacy status",
+	}
 	user := &users.User{UserId: 42}
-	resolveCitizenProperties(
+	propertyregistry.ResolveUserProperties(
 		[]*users.User{user},
 		map[int32][]*properties.Property{
 			42: {
 				{Key: "user.risk_level", Value: visible},
 				{Key: "user.internal_note", Value: hidden},
+				{Key: "user.legacy_status", Value: disabled},
 			},
 		},
-		&permissionsattributes.PropertyList{Keys: []string{"user.risk_level", "user.clearance"}},
-		map[string]*properties.PropertyDefinition{
-			"user.risk_level": definition,
-			"user.clearance":  emptyDefinition,
+		&permissionsattributes.PropertyList{
+			Keys: []string{"user.risk_level", "user.clearance", "user.legacy_status"},
 		},
+		map[string]*properties.PropertyDefinition{
+			"user.risk_level":    definition,
+			"user.clearance":     emptyDefinition,
+			"user.legacy_status": disabledDefinition,
+		},
+		nil,
 	)
 
 	require.Len(t, user.GetProperties().GetProperties(), 2)
 	require.Equal(t, "user.clearance", user.GetProperties().GetProperties()[0].GetKey())
 	require.Nil(t, user.GetProperties().GetProperties()[0].GetValue())
 	require.Equal(t, "user.risk_level", user.GetProperties().GetProperties()[1].GetKey())
+	assert.Nil(t, propertyregistry.Find(user.GetProperties(), "user.legacy_status"))
 }

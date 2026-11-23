@@ -1657,6 +1657,13 @@
                         "custom_template": "Or enter custom template call",
                         "insert_custom": "Insert Custom",
                         "custom_placeholder": "e.g. formatDate .CreatedAt",
+                        "presets": {
+                            "date_time_description": "Uses the double-quoted Go reference layout for date and time.",
+                            "date_description": "Uses the double-quoted Go reference layout for a date.",
+                            "time_description": "Uses the double-quoted Go reference layout for a time.",
+                            "property_description": "Finds a property by its quoted key (e.g., \"user.wanted\"). Choose a matching getter on its value to render it.",
+                            "property_value_description": "Finds a property value by its quoted key (e.g., \"user.wanted\"). Change GetBoolValue to the getter matching the property's type."
+                        },
                         "categories": {
                             "date": "Datum",
                             "active_char": "Aktiver Benutzer"
