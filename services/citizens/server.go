@@ -118,6 +118,7 @@ func findUserMugshot(
 
 func init() {
 	filestore.RegisterFileReference(table.FivenetUser, table.FivenetUser.AvatarFileID)
+	filestore.RegisterFileReference(table.FivenetUserFiles, table.FivenetUserFiles.FileID)
 }
 
 type Server struct {

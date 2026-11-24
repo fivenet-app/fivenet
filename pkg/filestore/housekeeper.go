@@ -173,13 +173,11 @@ func (h *Housekeeper) Run(ctx context.Context) (int64, error) {
 	// 1) Build the WHERE clause for this batch:
 	//
 	//   WHERE
-	//   (deleted_at IS NOT NULL AND deleted_at < cutoff)
-	//   OR
-	//   (deleted_at IS NULL
-	//     AND NOT EXISTS (SELECT 1 FROM fivenet_documents_files WHERE file_id = f.id)
-	//     AND NOT EXISTS (SELECT 1 FROM fivenet_wiki_pages_files WHERE file_id = f.id)
-	//     AND ... for each join table ...
-	//   )
+	//   (deleted_at IS NOT NULL AND deleted_at < cutoff
+	//    OR deleted_at IS NULL)
+	//   AND NOT EXISTS (SELECT 1 FROM fivenet_documents_files WHERE file_id = f.id)
+	//   AND NOT EXISTS (SELECT 1 FROM fivenet_wiki_pages_files WHERE file_id = f.id)
+	//   AND ... for each registered file reference ...
 	//
 
 	// A) soft-deleted & expired
@@ -187,28 +185,21 @@ func (h *Housekeeper) Run(ctx context.Context) (int64, error) {
 		tFiles.DeletedAt.IS_NOT_NULL(),
 		tFiles.DeletedAt.LT(mysql.DateTimeT(cutoff)),
 	)
-	// FIXME Consider applying reference checks to softExpired as defensive
-	// protection against legacy data or writes outside the normal transaction.
+	// B) orphaned & not yet soft-deleted. Reference checks also protect
+	// soft-deleted files against legacy data or writes outside the normal
+	// relation-update transaction.
+	candidateWhere := mysql.OR(softExpired, tFiles.DeletedAt.IS_NULL())
 
-	// B) orphaned & not yet soft-deleted
-	candidateWhere := softExpired
-
-	if len(joinTables) > 0 {
-		orphanCondition := tFiles.DeletedAt.IS_NULL()
-
-		for _, ji := range joinTables {
-			// NOT EXISTS (SELECT 1 FROM ji.table WHERE ji.fileCol = files.id)
-			orphanCondition = orphanCondition.AND(
-				mysql.NOT(mysql.EXISTS(
-					ji.Table.
-						SELECT(mysql.RawInt("1")).
-						FROM(ji.Table).
-						WHERE(ji.FileCol.EQ(tFiles.ID)),
-				)),
-			)
-		}
-
-		candidateWhere = mysql.OR(softExpired, orphanCondition)
+	for _, ji := range joinTables {
+		// NOT EXISTS (SELECT 1 FROM ji.table WHERE ji.fileCol = files.id)
+		candidateWhere = candidateWhere.AND(
+			mysql.NOT(mysql.EXISTS(
+				ji.Table.
+					SELECT(mysql.RawInt("1")).
+					FROM(ji.Table).
+					WHERE(ji.FileCol.EQ(tFiles.ID)),
+			)),
+		)
 	}
 
 	for {

@@ -127,16 +127,22 @@ func TestHousekeeperRunIncludesDirectFileReferenceChecks(t *testing.T) {
 	t.Parallel()
 	db, mock := newFilestoreDB(t)
 
-	mock.ExpectQuery(`(?s)SELECT .*FROM fivenet_files.*WHERE .*NOT .*EXISTS.*SELECT 1.*FROM fivenet_user.*avatar_file_id = fivenet_files\.id.*ORDER BY .*LIMIT \?;`).
+	mock.ExpectQuery(`(?s)SELECT .*FROM fivenet_files.*WHERE .*NOT .*EXISTS.*SELECT 1.*FROM fivenet_user.*avatar_file_id = fivenet_files\.id.*NOT .*EXISTS.*SELECT 1.*FROM fivenet_user_files.*file_id = fivenet_files\.id.*ORDER BY .*LIMIT \?;`).
 		WithArgs(sqlmock.AnyArg(), int64(100)).
 		WillReturnRows(sqlmock.NewRows([]string{"file.id", "file.file_path"}))
 
 	h := newTestHousekeeper(db, &uploadStorage{})
 	h.getTablesListFn = func() []joinInfo {
-		return []joinInfo{{
-			Table:   table.FivenetUser,
-			FileCol: table.FivenetUser.AvatarFileID,
-		}}
+		return []joinInfo{
+			{
+				Table:   table.FivenetUser,
+				FileCol: table.FivenetUser.AvatarFileID,
+			},
+			{
+				Table:   table.FivenetUserFiles,
+				FileCol: table.FivenetUserFiles.FileID,
+			},
+		}
 	}
 
 	deleted, err := h.Run(t.Context())
