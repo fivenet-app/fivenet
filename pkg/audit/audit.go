@@ -38,6 +38,10 @@ var Module = fx.Module("audit",
 	fx.Provide(
 		New,
 	),
+	// Retention housekeeping must be registered even in worker-only processes.
+	// Those processes execute cron jobs but do not necessarily construct the
+	// audit writer itself.
+	fx.Invoke(registerHousekeeping),
 )
 
 type auditMetrics struct {
@@ -105,7 +109,21 @@ type Params struct {
 	Config *config.Config
 }
 
-// New creates a new AuditStorer, registers the audit table with the housekeeper, and starts worker goroutines.
+// registerHousekeeping registers audit-log retention independently from the
+// audit writer lifecycle. A dedicated worker runs the housekeeper cron handler
+// without serving gRPC requests, so New is not guaranteed to be constructed
+// there.
+func registerHousekeeping(cfg *config.Config) {
+	housekeeper.AddTable(&housekeeper.Table{
+		Table:           tAudit,
+		IDColumn:        tAudit.ID,
+		DeletedAtColumn: tAudit.CreatedAt,
+
+		MinDays: cfg.Audit.RetentionDays,
+	})
+}
+
+// New creates a new AuditStorer and starts worker goroutines.
 func New(p Params) IAuditer {
 	ctxCancel, cancel := context.WithCancel(context.Background())
 
@@ -116,15 +134,6 @@ func New(p Params) IAuditer {
 		input:   make(chan *audit.AuditEntry, bufferSize),
 		metrics: getAuditMetrics(),
 	}
-
-	// Register audit log table in housekeeper for retention management.
-	housekeeper.AddTable(&housekeeper.Table{
-		Table:           tAudit,
-		IDColumn:        tAudit.ID,
-		DeletedAtColumn: tAudit.CreatedAt,
-
-		MinDays: p.Config.Audit.RetentionDays,
-	})
 
 	wg := sync.WaitGroup{}
 	// Start worker goroutines for processing audit entries.

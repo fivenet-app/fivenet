@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	"github.com/DATA-DOG/go-sqlmock"
+	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/cron"
 	"github.com/go-jet/jet/v2/mysql"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -185,7 +186,7 @@ func TestHardDelete(t *testing.T) {
 		WillReturnResult(sqlmock.NewResult(0, 5))
 
 	// Mock queries for main table `calendars`
-	mock.ExpectExec("DELETE FROM calendars WHERE \\( \\(deleted_at IS NOT NULL\\) AND \\(deleted_at <= \\(CURRENT_DATE - INTERVAL 30 DAY\\)\\) \\) LIMIT \\?;").
+	mock.ExpectExec("DELETE FROM calendars WHERE \\( \\(deleted_at IS NOT NULL\\) AND \\(deleted_at <= \\(CURRENT_DATE - INTERVAL 30 DAY\\)\\) \\) ORDER BY deleted_at ASC, id ASC LIMIT \\?;").
 		WithArgs().
 		WillReturnResult(sqlmock.NewResult(0, 5))
 
@@ -227,4 +228,130 @@ func TestHardDeleteStringKeyDependencyIsBatched(t *testing.T) {
 	_, err = h.HardDelete(t.Context(), table)
 	require.NoError(t, err)
 	require.NoError(t, mock.ExpectationsWereMet())
+}
+
+func TestRunHardDeleteRecordsProgressAttributes(t *testing.T) {
+	t.Parallel()
+
+	db, mock, err := sqlmock.New()
+	require.NoError(t, err)
+	defer db.Close()
+
+	table := &Table{
+		Table:           mysql.NewTable("", "fivenet_audit_log", ""),
+		IDColumn:        mysql.IntegerColumn("id"),
+		DeletedAtColumn: mysql.TimestampColumn("created_at"),
+		MinDays:         90,
+	}
+	h := &Housekeeper{
+		logger: zap.NewNop(),
+		db:     db,
+		getTablesListFn: func() map[string]*Table {
+			return map[string]*Table{"fivenet_audit_log": table}
+		},
+	}
+
+	mock.ExpectExec("DELETE FROM fivenet_audit_log WHERE .*created_at <= .* LIMIT \\?;").
+		WillReturnResult(sqlmock.NewResult(0, DefaultDeleteLimit))
+
+	data := &cron.GenericCronData{Attributes: map[string]string{}}
+	rows, err := h.runHardDelete(t.Context(), data)
+	require.NoError(t, err)
+	assert.EqualValues(t, DefaultDeleteLimit, rows)
+	assert.Equal(t, "fivenet_audit_log", data.GetAttribute(currentTable))
+	assert.Equal(t, "true", data.GetAttribute(backlogRemaining))
+	assert.Empty(t, data.GetAttribute(lastTableMapIndex))
+	require.NoError(t, mock.ExpectationsWereMet())
+}
+
+func TestRetentionDeleteOrderByUsesConfiguredAgeColumn(t *testing.T) {
+	t.Parallel()
+
+	tests := []struct {
+		name  string
+		table *Table
+		want  string
+	}{
+		{
+			name: "date",
+			table: &Table{
+				DateColumn: mysql.DateColumn("entry_date"),
+				IDColumn:   mysql.IntegerColumn("id"),
+			},
+			want: "entry_date ASC, id ASC",
+		},
+		{
+			name: "timestamp",
+			table: &Table{
+				TimestampColumn: mysql.TimestampColumn("created_at"),
+				IDColumn:        mysql.IntegerColumn("id"),
+			},
+			want: "created_at ASC, id ASC",
+		},
+		{
+			name: "deleted at",
+			table: &Table{
+				DeletedAtColumn: mysql.TimestampColumn("deleted_at"),
+				IDColumn:        mysql.IntegerColumn("id"),
+			},
+			want: "deleted_at ASC, id ASC",
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			orderBy := retentionDeleteOrderBy(tt.table)
+			require.Len(t, orderBy, 2)
+
+			stmt := mysql.NewTable("", "cleanup", "").
+				DELETE().
+				WHERE(mysql.Bool(true)).
+				ORDER_BY(orderBy...).
+				LIMIT(DefaultDeleteLimit)
+			assert.Contains(t, stmt.DebugSql(), "ORDER BY "+tt.want)
+		})
+	}
+}
+
+func TestTableRegistrationKeyUsesActiveRetentionColumn(t *testing.T) {
+	t.Parallel()
+
+	table := mysql.NewTable("", "fivenet_centrum_markers", "")
+	assert.Equal(t, "fivenet_centrum_markers:deleted_at", tableRegistrationKey(&Table{
+		Table:           table,
+		DeletedAtColumn: mysql.TimestampColumn("deleted_at"),
+	}))
+	assert.Equal(t, "fivenet_centrum_markers:expires_at", tableRegistrationKey(&Table{
+		Table:           table,
+		TimestampColumn: mysql.TimestampColumn("expires_at"),
+		DeletedAtColumn: mysql.TimestampColumn("deleted_at"),
+	}))
+}
+
+func TestAddTableKeepsSeparatePoliciesForSameTable(t *testing.T) {
+	tableListsMu.Lock()
+	originalTablesList := tablesList
+	tablesList = map[string]*Table{}
+	tableListsMu.Unlock()
+	t.Cleanup(func() {
+		tableListsMu.Lock()
+		tablesList = originalTablesList
+		tableListsMu.Unlock()
+	})
+
+	table := mysql.NewTable("", "fivenet_centrum_markers", "")
+	AddTable(&Table{
+		Table:           table,
+		DeletedAtColumn: mysql.TimestampColumn("deleted_at"),
+	})
+	AddTable(&Table{
+		Table:           table,
+		TimestampColumn: mysql.TimestampColumn("expires_at"),
+		DeletedAtColumn: mysql.TimestampColumn("deleted_at"),
+	})
+
+	tableListsMu.Lock()
+	defer tableListsMu.Unlock()
+	assert.Contains(t, tablesList, "fivenet_centrum_markers:deleted_at")
+	assert.Contains(t, tablesList, "fivenet_centrum_markers:expires_at")
 }

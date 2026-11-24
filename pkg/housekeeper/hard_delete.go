@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"slices"
+	"strconv"
 
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/cron"
 	"github.com/go-jet/jet/v2/mysql"
@@ -24,6 +25,8 @@ func (h *Housekeeper) runHardDelete(
 		keys = append(keys, key)
 	}
 	if len(keys) == 0 {
+		data.SetAttribute(currentTable, "")
+		data.SetAttribute(backlogRemaining, "false")
 		return 0, nil
 	}
 	slices.Sort(keys)
@@ -47,6 +50,7 @@ func (h *Housekeeper) runHardDelete(
 	if !ok {
 		return 0, fmt.Errorf("no table config for key: %s", nextKey)
 	}
+	data.SetAttribute(currentTable, tbl.Table.TableName())
 
 	rowsAffected, err := h.HardDelete(ctx, tbl)
 	if err != nil {
@@ -55,8 +59,14 @@ func (h *Housekeeper) runHardDelete(
 
 	metricHardDeleteRowsAffected.WithLabelValues(tbl.Table.TableName()).Set(float64(rowsAffected))
 
-	// Only update the last table key if less than the limit rows were affected
-	if rowsAffected < DefaultDeleteLimit {
+	// A full batch means the cursor stays on this table for the next run. This
+	// is intentionally a cheap progress signal: a full batch can only be
+	// produced while there was at least one eligible row at the start of it.
+	backlog := rowsAffected >= DefaultDeleteLimit
+	data.SetAttribute(backlogRemaining, strconv.FormatBool(backlog))
+
+	// Only update the last table key if less than the limit rows were affected.
+	if !backlog {
 		data.SetAttribute(lastTableMapIndex, nextKey)
 	}
 
@@ -204,8 +214,19 @@ func (h *Housekeeper) deleteRows(
 
 	stmt := table.Table.
 		DELETE().
-		WHERE(condition).
-		LIMIT(DefaultDeleteLimit)
+		WHERE(condition)
+
+	// Retention deletes can be ordered by their eligibility timestamp. This
+	// makes batches progress from the oldest rows first without requiring each
+	// table registration to repeat an ordering declaration. Dependant-table
+	// deletes are instead driven by a parent-table relationship, so an age
+	// column on the child is not relevant to their eligibility.
+	if parent == nil {
+		if orderBy := retentionDeleteOrderBy(table); len(orderBy) > 0 {
+			stmt = stmt.ORDER_BY(orderBy...)
+		}
+	}
+	stmt = stmt.LIMIT(DefaultDeleteLimit)
 
 	var rowsAffected int64
 
@@ -230,4 +251,28 @@ func (h *Housekeeper) deleteRows(
 		zap.Int64("rows", rowsAffected),
 	)
 	return rowsAffected, nil
+}
+
+// retentionDeleteOrderBy returns an oldest-first order that matches the age
+// column selected by deleteRows. IDColumn is used as a deterministic tie-breaker
+// when the registration provides one.
+func retentionDeleteOrderBy(table *Table) []mysql.OrderByClause {
+	orderBy := make([]mysql.OrderByClause, 0, 2)
+
+	switch {
+	case table.DateColumn != nil:
+		orderBy = append(orderBy, table.DateColumn.ASC())
+	case table.TimestampColumn != nil:
+		orderBy = append(orderBy, table.TimestampColumn.ASC())
+	case table.DeletedAtColumn != nil:
+		orderBy = append(orderBy, table.DeletedAtColumn.ASC())
+	default:
+		return nil
+	}
+
+	if table.IDColumn != nil {
+		orderBy = append(orderBy, table.IDColumn.ASC())
+	}
+
+	return orderBy
 }

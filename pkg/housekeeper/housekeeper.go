@@ -26,7 +26,9 @@ var Module = fx.Module("db_housekeeper",
 )
 
 // DefaultDeleteLimit is the default limit for delete operations in a single run.
-const DefaultDeleteLimit = 500
+// The limit keeps each cron execution bounded while allowing retention cleanup
+// to make useful progress through a large backlog.
+const DefaultDeleteLimit = 1000
 
 const (
 	// lastJobName is the key for the last job name attribute.
@@ -35,6 +37,11 @@ const (
 	lastTableMapIndex = "last_key"
 	// deletedRows is the key for the number of rows deleted in the last run.
 	deletedRows = "deleted_rows"
+	// currentTable is the table selected by the most recent hard-delete run.
+	currentTable = "current_table"
+	// backlogRemaining reports whether the selected table filled the deletion
+	// batch and will be retried before advancing the hard-delete cursor.
+	backlogRemaining = "backlog_remaining"
 )
 
 // Housekeeper is responsible for running background cleanup and maintenance jobs on the database.

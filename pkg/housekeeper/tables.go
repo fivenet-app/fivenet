@@ -12,7 +12,8 @@ var (
 	// tableListsMu is a mutex to protect access to the tablesList map.
 	tableListsMu = sync.Mutex{}
 
-	// tablesList holds all registered tables for housekeeping jobs, keyed by table name.
+	// tablesList holds all registered cleanup policies. The key includes the
+	// retention column so one physical table can have more than one policy.
 	tablesList = map[string]*Table{}
 )
 
@@ -62,7 +63,26 @@ func AddTable(tbl *Table) {
 	// Ensure minimum days is set for the table and its dependants.
 	ensureMinDays(tbl)
 
-	tablesList[tbl.Table.TableName()] = tbl
+	tablesList[tableRegistrationKey(tbl)] = tbl
+}
+
+// tableRegistrationKey identifies a cleanup policy by its physical table and
+// the age column used to select rows. This mirrors deleteRows' precedence when
+// more than one age column is set on a registration.
+func tableRegistrationKey(tbl *Table) string {
+	var columnName string
+	switch {
+	case tbl.DateColumn != nil:
+		columnName = tbl.DateColumn.Name()
+	case tbl.TimestampColumn != nil:
+		columnName = tbl.TimestampColumn.Name()
+	case tbl.DeletedAtColumn != nil:
+		columnName = tbl.DeletedAtColumn.Name()
+	default:
+		return tbl.Table.TableName()
+	}
+
+	return tbl.Table.TableName() + ":" + columnName
 }
 
 // ensureMinDays sets a default MinDays if not set, and applies recursively to dependant tables.
