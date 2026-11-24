@@ -169,11 +169,14 @@
         "westures": "1.1.1"
     },
     "resolutions": {
+        "@devframes/agentic": "1.4.0",
+        "@devframes/hub": "1.4.0",
         "@internationalized/date": "3.12.4",
         "@nuxt/kit": "4.7.0",
         "@tiptap/core": "3.35.0",
         "@tiptap/pm": "3.35.0",
-        "@tiptap/vue-3": "3.35.0"
+        "@tiptap/vue-3": "3.35.0",
+        "devframe": "1.4.0"
     },
     "packageManager": "pnpm@12.23.0"
 }

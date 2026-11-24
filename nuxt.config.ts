@@ -292,7 +292,6 @@ export default defineNuxtConfig({
                 '@tiptap/pm/state',
                 '@tiptap/pm/view',
                 '@tiptap/y-tiptap',
-                '@vue/devtools-core',
                 '@vue/devtools-kit',
                 '@vueuse/integrations/useSortable',
                 'browser-headers', // CJS
