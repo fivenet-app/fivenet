@@ -25,8 +25,11 @@ import SelectMenu from '../partials/SelectMenu.vue';
 import { eventActionToBadgeColor, eventResultToBadgeColor } from './helpers';
 
 const { d, t } = useI18n();
+const { canBeConfigAdmin, isSuperuser } = useAuth();
 
 const completorStore = useCompletorStore();
+const { jobs } = storeToRefs(completorStore);
+const { listJobs } = completorStore;
 
 const settingsSettingsClient = await getSettingsSettingsClient();
 
@@ -42,6 +45,7 @@ const schema = z.object({
     methods: z.coerce.string().max(64).array().max(10).default([]),
     actions: z.enum(EventAction).array().max(6).default([]),
     results: z.enum(EventResult).array().max(6).default([]),
+    jobs: z.coerce.string().max(20).array().max(10).default([]),
     search: z.coerce.string().max(64).default(''),
     sorting: z
         .object({
@@ -99,7 +103,7 @@ const resultOptions = eventResults.map((e) => ({
 const { data, status, refresh, error } = useAuthedLazyAsyncData(
     'capabilities',
     () =>
-        `settings-audit-${JSON.stringify(validatedQuery.value.sorting)}-${validatedQuery.value.page}-${validatedQuery.value.date?.start}-${validatedQuery.value.date?.end}-${validatedQuery.value.methods}-${validatedQuery.value.services}-${validatedQuery.value.search}-${validatedQuery.value.users.join(',')}`,
+        `settings-audit-${JSON.stringify(validatedQuery.value.sorting)}-${validatedQuery.value.page}-${validatedQuery.value.date?.start}-${validatedQuery.value.date?.end}-${validatedQuery.value.methods}-${validatedQuery.value.services}-${validatedQuery.value.jobs}-${validatedQuery.value.search}-${validatedQuery.value.users.join(',')}`,
     ({ signal }) => viewAuditLog(validatedQuery.value, signal),
 );
 
@@ -115,6 +119,7 @@ async function viewAuditLog(values: Schema, signal: AbortSignal): Promise<ViewAu
         methods: values.methods.map((m) => m.split('/').pop() ?? m),
         actions: values.actions,
         results: values.results,
+        jobs: values.jobs,
     };
 
     if (values.date) {
@@ -311,6 +316,41 @@ watch(
 );
 
 const dataToggled = ref<boolean>(false);
+const dataSearches = ref<Record<number, string>>({});
+
+const canFilterJobs = computed(() => isSuperuser.value || canBeConfigAdmin.value);
+
+function getDataSearch(id: number): string {
+    return dataSearches.value[id] ?? '';
+}
+
+function setDataSearch(id: number, value: string | number): void {
+    dataSearches.value[id] = String(value);
+}
+
+function escapeRegExp(value: string): string {
+    return value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+}
+
+function highlightJsonText(value: string, search: string) {
+    const query = search.trim();
+    if (query === '') {
+        return value;
+    }
+
+    const matches = new RegExp(`(${escapeRegExp(query)})`, 'gi');
+    return value
+        .split(matches)
+        .map((part, index) =>
+            index % 2 === 1 ? h('mark', { class: 'rounded bg-warning/30 px-0.5 text-inherit dark:bg-warning/40' }, part) : part,
+        );
+}
+
+onBeforeMount(async () => {
+    if (canFilterJobs.value) {
+        await listJobs();
+    }
+});
 
 const today = new Date();
 const tomorrow = addDays(today, 1);
@@ -421,6 +461,23 @@ const tomorrow = addDays(today, 1);
 
                             <template #content>
                                 <div class="flex flex-row flex-wrap gap-1">
+                                    <UFormField v-if="canFilterJobs" class="flex-1" name="jobs" :label="$t('common.job', 2)">
+                                        <USelectMenu
+                                            v-model="query.jobs"
+                                            class="w-full"
+                                            multiple
+                                            name="jobs"
+                                            :placeholder="$t('common.job', 2)"
+                                            :items="jobs"
+                                            label-key="label"
+                                            value-key="name"
+                                        >
+                                            <template #empty>
+                                                {{ $t('common.not_found', [$t('common.job', 2)]) }}
+                                            </template>
+                                        </USelectMenu>
+                                    </UFormField>
+
                                     <UFormField class="flex-1" name="service" :label="$t('common.service')">
                                         <ClientOnly>
                                             <USelectMenu
@@ -539,6 +596,27 @@ const tomorrow = addDays(today, 1);
                                     {{ $t('common.data') }}
                                 </div>
 
+                                <UInput
+                                    :model-value="getDataSearch(row.original.id)"
+                                    class="w-48"
+                                    type="search"
+                                    :placeholder="$t('common.search')"
+                                    :aria-label="$t('common.search')"
+                                    leading-icon="i-mdi-search"
+                                    @update:model-value="setDataSearch(row.original.id, $event)"
+                                >
+                                    <template #trailing>
+                                        <UButton
+                                            v-if="getDataSearch(row.original.id) !== ''"
+                                            color="neutral"
+                                            variant="link"
+                                            icon="i-mdi-close"
+                                            :aria-label="$t('common.clear')"
+                                            @click="setDataSearch(row.original.id, '')"
+                                        />
+                                    </template>
+                                </UInput>
+
                                 <div>
                                     <UTooltip :text="$t('common.expand_collapse')">
                                         <UButton
@@ -569,6 +647,13 @@ const tomorrow = addDays(today, 1);
                                 virtual
                                 :height="dataToggled ? 240 : 800"
                                 show-line-number
+                                :render-node-key="
+                                    ({ defaultKey }) => highlightJsonText(String(defaultKey), getDataSearch(row.original.id))
+                                "
+                                :render-node-value="
+                                    ({ defaultValue }) =>
+                                        highlightJsonText(String(defaultValue), getDataSearch(row.original.id))
+                                "
                             />
                         </div>
 

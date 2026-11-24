@@ -21,7 +21,7 @@ import (
 type ViewAuditLogOptions struct {
 	Pagination *database.PaginationRequest
 	Sort       *database.Sort
-	Job        string
+	Jobs       []string
 	UserIDs    []int32
 	From       *timestamp.Timestamp
 	To         *timestamp.Timestamp

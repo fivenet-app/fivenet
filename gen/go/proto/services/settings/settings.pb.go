@@ -1214,6 +1214,7 @@ type ViewAuditLogRequest struct {
 	Search        *string              `protobuf:"bytes,8,opt,name=search,proto3,oneof" json:"search,omitempty"`
 	Actions       []audit.EventAction  `protobuf:"varint,9,rep,packed,name=actions,proto3,enum=resources.audit.EventAction" json:"actions,omitempty"`
 	Results       []audit.EventResult  `protobuf:"varint,10,rep,packed,name=results,proto3,enum=resources.audit.EventResult" json:"results,omitempty"`
+	Jobs          []string             `protobuf:"bytes,11,rep,name=jobs,proto3" json:"jobs,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1313,6 +1314,13 @@ func (x *ViewAuditLogRequest) GetResults() []audit.EventResult {
 	return nil
 }
 
+func (x *ViewAuditLogRequest) GetJobs() []string {
+	if x != nil {
+		return x.Jobs
+	}
+	return nil
+}
+
 func (x *ViewAuditLogRequest) SetPagination(v *database.PaginationRequest) {
 	x.Pagination = v
 }
@@ -1351,6 +1359,10 @@ func (x *ViewAuditLogRequest) SetActions(v []audit.EventAction) {
 
 func (x *ViewAuditLogRequest) SetResults(v []audit.EventResult) {
 	x.Results = v
+}
+
+func (x *ViewAuditLogRequest) SetJobs(v []string) {
+	x.Jobs = v
 }
 
 func (x *ViewAuditLogRequest) HasPagination() bool {
@@ -1422,6 +1434,7 @@ type ViewAuditLogRequest_builder struct {
 	Search   *string
 	Actions  []audit.EventAction
 	Results  []audit.EventResult
+	Jobs     []string
 }
 
 func (b0 ViewAuditLogRequest_builder) Build() *ViewAuditLogRequest {
@@ -1438,6 +1451,7 @@ func (b0 ViewAuditLogRequest_builder) Build() *ViewAuditLogRequest {
 	x.Search = b.Search
 	x.Actions = b.Actions
 	x.Results = b.Results
+	x.Jobs = b.Jobs
 	return m0
 }
 
@@ -1860,7 +1874,7 @@ const file_services_settings_settings_proto_rawDesc = "" +
 	"\vpermissions\x18\x02 \x03(\v2-.resources.permissions.permissions.PermissionR\vpermissions\x12O\n" +
 	"\n" +
 	"attributes\x18\x03 \x03(\v2/.resources.permissions.attributes.RoleAttributeR\n" +
-	"attributes\"\xa1\x04\n" +
+	"attributes\"\xb5\x04\n" +
 	"\x13ViewAuditLogRequest\x12L\n" +
 	"\n" +
 	"pagination\x18\x01 \x01(\v2,.resources.common.database.PaginationRequestR\n" +
@@ -1874,7 +1888,8 @@ const file_services_settings_settings_proto_rawDesc = "" +
 	"\x06search\x18\b \x01(\tH\x03R\x06search\x88\x01\x01\x126\n" +
 	"\aactions\x18\t \x03(\x0e2\x1c.resources.audit.EventActionR\aactions\x126\n" +
 	"\aresults\x18\n" +
-	" \x03(\x0e2\x1c.resources.audit.EventResultR\aresultsB\a\n" +
+	" \x03(\x0e2\x1c.resources.audit.EventResultR\aresults\x12\x12\n" +
+	"\x04jobs\x18\v \x03(\tR\x04jobsB\a\n" +
 	"\x05_sortB\a\n" +
 	"\x05_fromB\x05\n" +
 	"\x03_toB\t\n" +

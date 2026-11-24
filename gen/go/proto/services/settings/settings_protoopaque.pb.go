@@ -1230,6 +1230,7 @@ type ViewAuditLogRequest struct {
 	xxx_hidden_Search      *string                     `protobuf:"bytes,8,opt,name=search,proto3,oneof"`
 	xxx_hidden_Actions     []audit.EventAction         `protobuf:"varint,9,rep,packed,name=actions,proto3,enum=resources.audit.EventAction"`
 	xxx_hidden_Results     []audit.EventResult         `protobuf:"varint,10,rep,packed,name=results,proto3,enum=resources.audit.EventResult"`
+	xxx_hidden_Jobs        []string                    `protobuf:"bytes,11,rep,name=jobs,proto3"`
 	XXX_raceDetectHookData protoimpl.RaceDetectHookData
 	XXX_presence           [1]uint32
 	unknownFields          protoimpl.UnknownFields
@@ -1334,6 +1335,13 @@ func (x *ViewAuditLogRequest) GetResults() []audit.EventResult {
 	return nil
 }
 
+func (x *ViewAuditLogRequest) GetJobs() []string {
+	if x != nil {
+		return x.xxx_hidden_Jobs
+	}
+	return nil
+}
+
 func (x *ViewAuditLogRequest) SetPagination(v *database.PaginationRequest) {
 	x.xxx_hidden_Pagination = v
 }
@@ -1364,7 +1372,7 @@ func (x *ViewAuditLogRequest) SetMethods(v []string) {
 
 func (x *ViewAuditLogRequest) SetSearch(v string) {
 	x.xxx_hidden_Search = &v
-	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 7, 10)
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 7, 11)
 }
 
 func (x *ViewAuditLogRequest) SetActions(v []audit.EventAction) {
@@ -1373,6 +1381,10 @@ func (x *ViewAuditLogRequest) SetActions(v []audit.EventAction) {
 
 func (x *ViewAuditLogRequest) SetResults(v []audit.EventResult) {
 	x.xxx_hidden_Results = v
+}
+
+func (x *ViewAuditLogRequest) SetJobs(v []string) {
+	x.xxx_hidden_Jobs = v
 }
 
 func (x *ViewAuditLogRequest) HasPagination() bool {
@@ -1445,6 +1457,7 @@ type ViewAuditLogRequest_builder struct {
 	Search   *string
 	Actions  []audit.EventAction
 	Results  []audit.EventResult
+	Jobs     []string
 }
 
 func (b0 ViewAuditLogRequest_builder) Build() *ViewAuditLogRequest {
@@ -1459,11 +1472,12 @@ func (b0 ViewAuditLogRequest_builder) Build() *ViewAuditLogRequest {
 	x.xxx_hidden_Services = b.Services
 	x.xxx_hidden_Methods = b.Methods
 	if b.Search != nil {
-		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 7, 10)
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 7, 11)
 		x.xxx_hidden_Search = b.Search
 	}
 	x.xxx_hidden_Actions = b.Actions
 	x.xxx_hidden_Results = b.Results
+	x.xxx_hidden_Jobs = b.Jobs
 	return m0
 }
 
@@ -1892,7 +1906,7 @@ const file_services_settings_settings_proto_rawDesc = "" +
 	"\vpermissions\x18\x02 \x03(\v2-.resources.permissions.permissions.PermissionR\vpermissions\x12O\n" +
 	"\n" +
 	"attributes\x18\x03 \x03(\v2/.resources.permissions.attributes.RoleAttributeR\n" +
-	"attributes\"\xa1\x04\n" +
+	"attributes\"\xb5\x04\n" +
 	"\x13ViewAuditLogRequest\x12L\n" +
 	"\n" +
 	"pagination\x18\x01 \x01(\v2,.resources.common.database.PaginationRequestR\n" +
@@ -1906,7 +1920,8 @@ const file_services_settings_settings_proto_rawDesc = "" +
 	"\x06search\x18\b \x01(\tH\x03R\x06search\x88\x01\x01\x126\n" +
 	"\aactions\x18\t \x03(\x0e2\x1c.resources.audit.EventActionR\aactions\x126\n" +
 	"\aresults\x18\n" +
-	" \x03(\x0e2\x1c.resources.audit.EventResultR\aresultsB\a\n" +
+	" \x03(\x0e2\x1c.resources.audit.EventResultR\aresults\x12\x12\n" +
+	"\x04jobs\x18\v \x03(\tR\x04jobsB\a\n" +
 	"\x05_sortB\a\n" +
 	"\x05_fromB\x05\n" +
 	"\x03_toB\t\n" +

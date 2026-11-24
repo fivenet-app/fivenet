@@ -308,6 +308,14 @@ func (m *ViewAuditLogRequest) Sanitize() error {
 		}
 	}
 
+	// Field: Jobs
+	for idx, item := range m.Jobs {
+		_, _ = idx, item
+
+		m.Jobs[idx] = htmlsanitizer.SanitizeAndUnescape(m.Jobs[idx])
+
+	}
+
 	// Field: Methods
 	for idx, item := range m.Methods {
 		_, _ = idx, item

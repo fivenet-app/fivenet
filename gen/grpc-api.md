@@ -15826,6 +15826,7 @@ Sets the instance-specific placement of a system property. An omitted group_key 
 | `search` | [string](#string) | optional |  |
 | `actions` | [resources.audit.EventAction](#resourcesauditEventAction) | repeated |  |
 | `results` | [resources.audit.EventResult](#resourcesauditEventResult) | repeated |  |
+| `jobs` | [string](#string) | repeated |  |
 
 
 

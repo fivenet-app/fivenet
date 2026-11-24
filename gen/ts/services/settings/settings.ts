@@ -249,6 +249,10 @@ export interface ViewAuditLogRequest {
      * @generated from protobuf field: repeated resources.audit.EventResult results = 10
      */
     results: EventResult[];
+    /**
+     * @generated from protobuf field: repeated string jobs = 11
+     */
+    jobs: string[];
 }
 /**
  * @generated from protobuf message services.settings.ViewAuditLogResponse
@@ -1172,7 +1176,8 @@ class ViewAuditLogRequest$Type extends MessageType<ViewAuditLogRequest> {
             { no: 7, name: "methods", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { repeated: { maxItems: "10", items: { string: { maxLen: "64" } } } }, "codegen.sanitizer.sanitizer": { enabled: true, stripHtmlTags: true } } },
             { no: 8, name: "search", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "64" } } } },
             { no: 9, name: "actions", kind: "enum", repeat: 1 /*RepeatType.PACKED*/, T: () => ["resources.audit.EventAction", EventAction, "EVENT_ACTION_"], options: { "buf.validate.field": { repeated: { maxItems: "6", items: { enum: { definedOnly: true } } } } } },
-            { no: 10, name: "results", kind: "enum", repeat: 1 /*RepeatType.PACKED*/, T: () => ["resources.audit.EventResult", EventResult, "EVENT_RESULT_"], options: { "buf.validate.field": { repeated: { maxItems: "6", items: { enum: { definedOnly: true } } } } } }
+            { no: 10, name: "results", kind: "enum", repeat: 1 /*RepeatType.PACKED*/, T: () => ["resources.audit.EventResult", EventResult, "EVENT_RESULT_"], options: { "buf.validate.field": { repeated: { maxItems: "6", items: { enum: { definedOnly: true } } } } } },
+            { no: 11, name: "jobs", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { repeated: { maxItems: "10", items: { string: { maxLen: "20" } } } } } }
         ]);
     }
     create(value?: PartialMessage<ViewAuditLogRequest>): ViewAuditLogRequest {
@@ -1182,6 +1187,7 @@ class ViewAuditLogRequest$Type extends MessageType<ViewAuditLogRequest> {
         message.methods = [];
         message.actions = [];
         message.results = [];
+        message.jobs = [];
         if (value !== undefined)
             reflectionMergePartial<ViewAuditLogRequest>(this, message, value);
         return message;
@@ -1232,6 +1238,9 @@ class ViewAuditLogRequest$Type extends MessageType<ViewAuditLogRequest> {
                             message.results.push(reader.int32());
                     else
                         message.results.push(reader.int32());
+                    break;
+                case /* repeated string jobs */ 11:
+                    message.jobs.push(reader.string());
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -1287,6 +1296,9 @@ class ViewAuditLogRequest$Type extends MessageType<ViewAuditLogRequest> {
                 writer.int32(message.results[i]);
             writer.join();
         }
+        /* repeated string jobs = 11; */
+        for (let i = 0; i < message.jobs.length; i++)
+            writer.tag(11, WireType.LengthDelimited).string(message.jobs[i]);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);

@@ -18,16 +18,17 @@ func (s *Server) ViewAuditLog(
 ) (*pbsettings.ViewAuditLogResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
-	// Force the job filter to the user's job unless they are a job admin, in which case they can view all jobs.
-	job := userInfo.GetJob()
-	if userInfo.GetJobAdmin() {
-		job = ""
+	// Only job and config admins can choose which jobs to view. Everyone else is
+	// always restricted to their active job, regardless of the request contents.
+	jobs := req.GetJobs()
+	if !userInfo.GetJobAdmin() && !userInfo.GetCanBeConfigAdmin() {
+		jobs = []string{userInfo.GetJob()}
 	}
 
 	resp, err := s.store.ViewAuditLog(ctx, settingsstore.ViewAuditLogOptions{
 		Pagination: req.GetPagination(),
 		Sort:       req.GetSort(),
-		Job:        job,
+		Jobs:       jobs,
 		UserIDs:    req.GetUserIds(),
 		From:       req.GetFrom(),
 		To:         req.GetTo(),
