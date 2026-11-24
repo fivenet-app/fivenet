@@ -434,7 +434,9 @@ func (r *Retriever) getSecondarySessionJob(
 	userID int32,
 	jobName string,
 ) (*users.UserJob, error) {
-	tUserJobs := table.FivenetUserJobs
+	// Use the same alias as the character job-list query so Jet can map the
+	// selected columns onto the protobuf message fields.
+	tUserJobs := table.FivenetUserJobs.AS("user_job")
 	stmt := tUserJobs.
 		SELECT(tUserJobs.UserID, tUserJobs.Job, tUserJobs.Grade, tUserJobs.IsPrimary).
 		FROM(tUserJobs).

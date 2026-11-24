@@ -385,7 +385,8 @@ func TestChooseCharacterConfigAdminEligibility(t *testing.T) {
 	parsedSessionClaims, err := srv.tm.ParseUserToken(sessionRes.GetToken())
 	require.NoError(err)
 	assert.True(parsedSessionClaims.SessionJob)
-	assert.Equal("doj", parsedSessionClaims.Job)
+	require.NotNil(parsedSessionClaims.Job)
+	assert.Equal("doj", *parsedSessionClaims.Job)
 	assert.Nil(parsedSessionClaims.OriginalJob)
 
 	// Grade changes are read from the synchronized job row rather than the
