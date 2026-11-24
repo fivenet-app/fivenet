@@ -521,7 +521,7 @@ func (s *Server) UpdatePage(
 	}
 
 	// Only store activity if there are actual changes
-	if diff.HasChanges() {
+	if pageUpdatedHasChanges(diff) {
 		if _, err := s.store.AddPageActivity(ctx, tx, &wikiactivity.PageActivity{
 			PageId:       req.GetPage().GetId(),
 			ActivityType: wikiactivity.PageActivityType_PAGE_ACTIVITY_TYPE_UPDATED,

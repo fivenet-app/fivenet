@@ -2,7 +2,6 @@ package wiki
 
 import (
 	"context"
-	"strings"
 
 	database "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/common/database"
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/wiki"
@@ -85,14 +84,14 @@ func (s *Server) ListPageActivity(
 	return resp, nil
 }
 
-// generatePageDiff Generates diff if the old and new contents are not equal, using a simple "string comparison".
+// generatePageDiff produces activity changes from page metadata and extracted content text.
 func (s *Server) generatePageDiff(
 	old *wiki.Page,
 	new *wiki.Page,
 ) (*wikiactivity.PageUpdated, error) {
 	diff := &wikiactivity.PageUpdated{}
 
-	if !strings.EqualFold(old.GetMeta().GetTitle(), new.GetMeta().GetTitle()) {
+	if old.GetMeta().GetTitle() != new.GetMeta().GetTitle() {
 		if titleDiff := textdiff.DiffText(
 			old.GetMeta().GetTitle(),
 			new.GetMeta().GetTitle(),
@@ -101,7 +100,7 @@ func (s *Server) generatePageDiff(
 		}
 	}
 
-	if !strings.EqualFold(old.GetMeta().GetDescription(), new.GetMeta().GetDescription()) {
+	if old.GetMeta().GetDescription() != new.GetMeta().GetDescription() {
 		if descriptionDiff := textdiff.DiffText(
 			old.GetMeta().GetDescription(),
 			new.GetMeta().GetDescription(),
@@ -110,10 +109,27 @@ func (s *Server) generatePageDiff(
 		}
 	}
 
-	newRawContent := new.GetContent().Extract().GetText()
-	if cd := textdiff.DiffText(old.GetContent().GetRawHtml(), newRawContent); cd.HasChanges() {
+	if cd := textdiff.DiffText(
+		old.GetContent().Extract().GetText(),
+		new.GetContent().Extract().GetText(),
+	); cd.HasChanges() {
 		diff.ContentCdiff = cd
 	}
 
 	return diff, nil
+}
+
+func pageUpdatedHasChanges(diff *wikiactivity.PageUpdated) bool {
+	if diff == nil {
+		return false
+	}
+
+	return diff.GetTitleCdiff() != nil ||
+		diff.GetDescriptionCdiff() != nil ||
+		diff.GetContentCdiff() != nil ||
+		diff.GetTitleDiff() != "" ||
+		diff.GetDescriptionDiff() != "" ||
+		diff.GetContentDiff() != "" ||
+		(diff.GetFilesChange() != nil &&
+			(diff.GetFilesChange().GetAdded() > 0 || diff.GetFilesChange().GetDeleted() > 0))
 }

@@ -813,7 +813,7 @@ func (s *Server) UpdateDocument(
 			}
 		}
 
-		if diff.HasChanges() {
+		if documentUpdatedHasChanges(diff) {
 			if _, err := addDocumentActivity(ctx, tx, &documentsactivity.DocActivity{
 				DocumentId:   oldDoc.GetId(),
 				ActivityType: documentsactivity.DocActivityType_DOC_ACTIVITY_TYPE_UPDATED,

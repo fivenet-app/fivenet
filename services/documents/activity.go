@@ -2,7 +2,6 @@ package documents
 
 import (
 	"context"
-	"strings"
 
 	database "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/common/database"
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/documents"
@@ -135,20 +134,20 @@ func addDocumentActivity(
 	return lastId, nil
 }
 
-// generateDocumentDiff Generates diff if the old and new contents are not equal, using a simple "string comparison".
+// generateDocumentDiff produces activity changes from document metadata and extracted content text.
 func (s *Server) generateDocumentDiff(
 	old *documents.Document,
 	new *documents.Document,
 ) (*documentsactivity.DocUpdated, error) {
 	diff := &documentsactivity.DocUpdated{}
 
-	if !strings.EqualFold(old.GetTitle(), new.GetTitle()) {
+	if old.GetTitle() != new.GetTitle() {
 		if titleDiff := textdiff.DiffText(old.GetTitle(), new.GetTitle()); titleDiff.HasChanges() {
 			diff.TitleCdiff = titleDiff
 		}
 	}
 
-	if !strings.EqualFold(old.GetMeta().GetState(), new.GetMeta().GetState()) {
+	if old.GetMeta().GetState() != new.GetMeta().GetState() {
 		if stateDiff := textdiff.DiffText(
 			old.GetMeta().GetState(),
 			new.GetMeta().GetState(),
@@ -165,4 +164,19 @@ func (s *Server) generateDocumentDiff(
 	}
 
 	return diff, nil
+}
+
+func documentUpdatedHasChanges(diff *documentsactivity.DocUpdated) bool {
+	if diff == nil {
+		return false
+	}
+
+	return diff.GetTitleCdiff() != nil ||
+		diff.GetStateCdiff() != nil ||
+		diff.GetContentCdiff() != nil ||
+		diff.GetTitleDiff() != "" ||
+		diff.GetStateDiff() != "" ||
+		diff.GetContentDiff() != "" ||
+		(diff.GetFilesChange() != nil &&
+			(diff.GetFilesChange().GetAdded() > 0 || diff.GetFilesChange().GetDeleted() > 0))
 }

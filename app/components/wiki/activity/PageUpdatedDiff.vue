@@ -10,7 +10,7 @@ defineProps<{
 
 <template>
     <div>
-        <div v-if="update.titleDiff">
+        <div v-if="update.titleDiff || update.titleCdiff">
             <p class="text-base font-semibold">
                 {{ $t('common.title') }} {{ $t('components.documents.activity_list.difference') }}:
             </p>
@@ -26,11 +26,11 @@ defineProps<{
 
         <div v-if="update.descriptionDiff || update.descriptionCdiff">
             <p class="text-base font-semibold">
-                {{ $t('common.state') }} {{ $t('components.documents.activity_list.difference') }}:
+                {{ $t('common.description') }} {{ $t('components.documents.activity_list.difference') }}:
             </p>
             <div class="my-2 rounded-lg break-words">
                 <TextDiff v-if="update.descriptionCdiff" :ops="update.descriptionCdiff.ops" />
-                <span v-else-if="update.contentDiff?.length === 0">
+                <span v-else-if="update.descriptionDiff?.length === 0">
                     {{ $t('common.na') }}
                 </span>
                 <div v-else-if="update.descriptionDiff?.startsWith('---')" class="p-4">
