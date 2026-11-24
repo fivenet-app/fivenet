@@ -42,7 +42,6 @@ func (s *Server) ViewAuditLog(
 		return nil, errswrap.NewError(err, errorssettings.ErrFailedQuery)
 	}
 
-	hydrateShort := s.hydrator.HydrateBasicTargetsSafeFunc(userInfo)
 	targets := make([]citizenshydrator.BasicTarget, 0, len(resp.GetLogs())*2)
 	for i, logEntry := range resp.GetLogs() {
 		if logEntry.GetUserId() > 0 {
@@ -63,7 +62,7 @@ func (s *Server) ViewAuditLog(
 		}
 	}
 	if len(targets) > 0 {
-		if err := hydrateShort(ctx, nil, targets); err != nil {
+		if err := s.hydrator.HydrateBasicTargets(ctx, s.db, userInfo, targets); err != nil {
 			return nil, errswrap.NewError(err, errorssettings.ErrFailedQuery)
 		}
 	}

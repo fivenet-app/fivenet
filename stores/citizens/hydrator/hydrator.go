@@ -523,6 +523,9 @@ func (h *Hydrator) loadBasicUsers(
 		tUser.Job,
 		tUser.JobGrade,
 	}
+	if fields.dateOfBirth {
+		selectors = append(selectors, tUser.Dateofbirth)
+	}
 	if fields.phoneNumber {
 		selectors = append(selectors, tUser.PhoneNumber)
 	}

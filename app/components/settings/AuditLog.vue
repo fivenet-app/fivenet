@@ -146,11 +146,11 @@ const notifications = useNotificationsStore();
 
 async function addToClipboard(logEntry: AuditEntry): Promise<void> {
     const user = logEntry.user;
-    let text = `**Audit Log Entry ${logEntry.id} - ${d(toDate(logEntry.createdAt)!, 'short')}**
+    let text = `## Audit Log Entry ${logEntry.id} - ${d(toDate(logEntry.createdAt)!, 'short')}
 
 `;
     if (user) {
-        text += `**User**: ${user?.firstname} ${user?.lastname} (ID: ${user?.userId})
+        text += `**User**: ${userToLabel(user)} (ID: ${user.userId})
 `;
     }
     text += `**Service/Method**: \`${logEntry.service}/${logEntry.method}\`
@@ -291,16 +291,16 @@ function hasMetadataForDisplay(meta: AuditEntry['meta']): boolean {
     return Object.keys(metadataForDisplay(meta)).length > 0;
 }
 
-function hasJsonData(data?: string): boolean {
+function jsonDataForDisplay(data?: string): JSONDataType | undefined {
     if (!data) {
-        return false;
+        return undefined;
     }
 
     try {
-        const parsed = JSON.parse(data) as unknown;
-        return parsed === null || typeof parsed !== 'object' || Object.keys(parsed).length > 0;
+        const parsed = JSON.parse(data) as JSONDataType;
+        return parsed === null || typeof parsed !== 'object' || Object.keys(parsed).length > 0 ? parsed : undefined;
     } catch {
-        return true;
+        return data;
     }
 }
 
@@ -319,6 +319,19 @@ const dataToggled = ref<boolean>(false);
 const dataSearches = ref<Record<number, string>>({});
 
 const canFilterJobs = computed(() => isSuperuser.value || canBeConfigAdmin.value);
+
+function jobToLabel(job: { label: string; name: string }): string {
+    return `${job.label} (${job.name})`;
+}
+
+function selectedJobsToLabel(): string {
+    return query.jobs
+        .map((name) => {
+            const job = jobs.value.find((job) => job.name === name);
+            return job ? jobToLabel(job) : name;
+        })
+        .join(', ');
+}
 
 function getDataSearch(id: number): string {
     return dataSearches.value[id] ?? '';
@@ -411,6 +424,13 @@ const tomorrow = addDays(today, 1);
                                     trailing
                                     value-key="userId"
                                 >
+                                    <template #default="{ items }">
+                                        <span v-if="items?.some((item) => query.users.includes(item.userId))" class="truncate">
+                                            {{ usersToLabel(items?.filter((item) => query.users.includes(item.userId))) }}
+                                        </span>
+                                        <span v-else>&nbsp;</span>
+                                    </template>
+
                                     <template #item-label="{ item }">
                                         {{ userToLabel(item) }}
                                     </template>
@@ -471,7 +491,21 @@ const tomorrow = addDays(today, 1);
                                             :items="jobs"
                                             label-key="label"
                                             value-key="name"
+                                            :filter-fields="['label', 'name']"
                                         >
+                                            <template #default>
+                                                <span v-if="query.jobs.length" class="truncate">
+                                                    {{ selectedJobsToLabel() }}
+                                                </span>
+                                                <span v-else class="truncate">
+                                                    {{ $t('common.none_selected', [$t('common.job', 2)]) }}
+                                                </span>
+                                            </template>
+
+                                            <template #item-label="{ item }">
+                                                {{ jobToLabel(item) }}
+                                            </template>
+
                                             <template #empty>
                                                 {{ $t('common.not_found', [$t('common.job', 2)]) }}
                                             </template>
@@ -636,12 +670,12 @@ const tomorrow = addDays(today, 1);
                             </div>
                         </template>
 
-                        <div v-if="!hasJsonData(row.original.data)" class="p-3 text-muted">
+                        <div v-if="jsonDataForDisplay(row.original.data) === undefined" class="p-3 text-muted">
                             {{ $t('common.empty') }}
                         </div>
                         <div v-else class="p-1">
                             <VueJsonPretty
-                                :data="JSON.parse(row.original.data!) as JSONDataType"
+                                :data="jsonDataForDisplay(row.original.data)!"
                                 show-icon
                                 show-length
                                 virtual

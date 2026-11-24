@@ -162,7 +162,7 @@ func TestResolvedFieldsHonorsDisabledProperties(t *testing.T) {
 	}
 }
 
-func TestListBasicByUserIDOnlySelectsPermittedPhoneNumber(t *testing.T) {
+func TestListBasicByUserIDSelectsPermittedFields(t *testing.T) {
 	t.Parallel()
 
 	db, mock, err := sqlmock.New()
@@ -175,12 +175,13 @@ func TestListBasicByUserIDOnlySelectsPermittedPhoneNumber(t *testing.T) {
 		db: db,
 		perms: &testPermissions{
 			properties: []string{
+				string(permscitizens.CitizensServiceListCitizensPropertiesPermValueUserDateofbirth),
 				string(permscitizens.CitizensServiceListCitizensPropertiesPermValueUserPhoneNumber),
 			},
 		},
 		enricher: mstlystcdata.NewDummyUserAwareEnricher(),
 	}
-	mock.ExpectQuery(`(?s)^SELECT .*user_short\.phone_number.*FROM fivenet_user AS user_short .*user_short\.deleted_at IS NULL.*LIMIT \?;$`).
+	mock.ExpectQuery(`(?s)^SELECT .*user_short\.dateofbirth.*user_short\.phone_number.*FROM fivenet_user AS user_short .*user_short\.deleted_at IS NULL.*LIMIT \?;$`).
 		WithArgs(int32(42), int64(1)).
 		WillReturnRows(sqlmock.NewRows([]string{
 			"user_short.id",
@@ -188,15 +189,17 @@ func TestListBasicByUserIDOnlySelectsPermittedPhoneNumber(t *testing.T) {
 			"user_short.lastname",
 			"user_short.job",
 			"user_short.job_grade",
+			"user_short.dateofbirth",
 			"user_short.phone_number",
-		}).AddRow(42, "Ada", "Lovelace", "police", 4, "555-0100"))
+		}).AddRow(42, "Ada", "Lovelace", "police", 4, "1815-12-10", "555-0100"))
 
 	users, err := h.ListBasicByUserID(t.Context(), nil, &userinfo.UserInfo{}, []int32{42})
 	if err != nil {
 		t.Fatalf("ListBasicByUserID returned error: %v", err)
 	}
-	if len(users) != 1 || users[0].GetPhoneNumber() != "555-0100" {
-		t.Fatalf("expected permission-gated phone number, got %#v", users)
+	if len(users) != 1 || users[0].GetDateofbirth() != "1815-12-10" ||
+		users[0].GetPhoneNumber() != "555-0100" {
+		t.Fatalf("expected permission-gated basic fields, got %#v", users)
 	}
 	if err := mock.ExpectationsWereMet(); err != nil {
 		t.Fatalf("sql expectations were not met: %v", err)
