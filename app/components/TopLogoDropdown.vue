@@ -104,7 +104,7 @@ const workContextItems = computed<DropdownMenuItem[][]>(() => [
             aria-live="polite"
             :aria-label="$t('common.loading', [$t('pages.jobs.work_context')])"
         >
-            <UIcon name="i-mdi-loading" class="size-12 animate-spin text-primary" />
+            <UIcon name="i-mdi-loading" class="size-26 animate-spin text-white" />
         </div>
     </Teleport>
 </template>

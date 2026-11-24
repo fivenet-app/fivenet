@@ -51,6 +51,23 @@ type StreamCharScope = {
 
 const hasCharScope = (scope: StreamScope): scope is StreamCharScope => !scope.accountOnly && scope.activeChar !== null;
 
+type WorkContextRefreshAuthStore = Pick<
+    ReturnType<typeof useAuthStore>,
+    'isSuperuser' | 'refreshCharacterSession' | 'refreshSessionJob'
+>;
+
+export const refreshTokenForCurrentWorkContext = async (authStore: WorkContextRefreshAuthStore): Promise<void> => {
+    // A role-permission update must refresh the token for the current
+    // effective work context. Re-selecting the character always starts at its
+    // synchronized primary job, whereas this preserves a valid selected
+    // secondary job (and falls back to primary only if that job was removed).
+    if (authStore.isSuperuser) {
+        await authStore.refreshCharacterSession();
+    } else {
+        await authStore.refreshSessionJob();
+    }
+};
+
 export const shouldRestartNotificationStream = (
     currentAbort: AbortController | undefined,
     streamAbort: AbortController,
@@ -188,7 +205,7 @@ export const useNotificationsStore = defineStore(
             logger.info('Refreshing token...');
             authStore.beginQueryTransition();
             try {
-                await authStore.refreshCharacterSession();
+                await refreshTokenForCurrentWorkContext(authStore);
                 await revalidateCurrentRoutePermission(add);
             } finally {
                 authStore.commitQueryContext();

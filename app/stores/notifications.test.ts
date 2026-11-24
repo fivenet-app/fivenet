@@ -1,6 +1,38 @@
 import { describe, expect, it, vi } from 'vitest';
 import type { AccountGroupsChanged } from '~~/gen/ts/resources/userinfo/userinfo';
-import { handleAccountGroupsChangedEvent, shouldRestartNotificationStream } from './notifications';
+import {
+    handleAccountGroupsChangedEvent,
+    refreshTokenForCurrentWorkContext,
+    shouldRestartNotificationStream,
+} from './notifications';
+
+describe('refreshTokenForCurrentWorkContext', () => {
+    it('preserves a non-superuser secondary-job context while refreshing permissions', async () => {
+        const authStore = {
+            isSuperuser: false,
+            refreshCharacterSession: vi.fn(),
+            refreshSessionJob: vi.fn().mockResolvedValue({}),
+        };
+
+        await refreshTokenForCurrentWorkContext(authStore as never);
+
+        expect(authStore.refreshSessionJob).toHaveBeenCalledOnce();
+        expect(authStore.refreshCharacterSession).not.toHaveBeenCalled();
+    });
+
+    it('uses the character refresh for a superuser context', async () => {
+        const authStore = {
+            isSuperuser: true,
+            refreshCharacterSession: vi.fn().mockResolvedValue({ kind: 'ready' }),
+            refreshSessionJob: vi.fn(),
+        };
+
+        await refreshTokenForCurrentWorkContext(authStore as never);
+
+        expect(authStore.refreshCharacterSession).toHaveBeenCalledOnce();
+        expect(authStore.refreshSessionJob).not.toHaveBeenCalled();
+    });
+});
 
 describe('handleAccountGroupsChangedEvent', () => {
     function createAuthStore(
