@@ -232,6 +232,20 @@ func (s *Server) refreshStreamUserInfo(ctx context.Context, current *userinfo.Us
 	if err != nil {
 		return fmt.Errorf("failed to retrieve current user info: %w", err)
 	}
+
+	// The authenticated stream can have a user-selected secondary work
+	// context. GetUserInfo intentionally returns the database-backed primary
+	// job, so overwriting current here would make the next ACL calculation use
+	// the primary role's attributes (for example, Livemap Stream/Markers).
+	// Retain the effective secondary context and only refresh its original
+	// primary-job metadata. A new request revalidates the secondary job itself.
+	if originalJob := current.GetOriginalJob(); originalJob != nil && !current.GetSuperuser() &&
+		current.GetJob() != originalJob.GetJob() {
+		originalJob.Job = updated.GetJob()
+		originalJob.JobGrade = updated.GetJobGrade()
+		return nil
+	}
+
 	current.SetJob(updated.GetJob())
 	current.SetJobGrade(updated.GetJobGrade())
 	return nil

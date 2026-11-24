@@ -82,6 +82,29 @@ func TestRefreshStreamUserInfoUsesAuthoritativeState(t *testing.T) {
 	assert.Equal(t, int32(3), user.GetJobGrade())
 }
 
+func TestRefreshStreamUserInfoPreservesSecondaryWorkContext(t *testing.T) {
+	t.Parallel()
+
+	user := &pbuserinfo.UserInfo{
+		UserId:   42,
+		Job:      "5net",
+		JobGrade: 2,
+		OriginalJob: &pbuserinfo.OriginalJob{
+			Job:      "lspd",
+			JobGrade: 3,
+		},
+	}
+	server := &Server{userinfo: &authoritativeStreamUserInfo{
+		user: &pbuserinfo.UserInfo{UserId: 42, Job: "lspd", JobGrade: 4},
+	}}
+
+	require.NoError(t, server.refreshStreamUserInfo(t.Context(), user))
+	assert.Equal(t, "5net", user.GetJob())
+	assert.Equal(t, int32(2), user.GetJobGrade())
+	assert.Equal(t, "lspd", user.GetOriginalJob().GetJob())
+	assert.Equal(t, int32(4), user.GetOriginalJob().GetJobGrade())
+}
+
 func TestStreamRequestsSnapshotAfterOwnSettingsChange(t *testing.T) {
 	t.Parallel()
 

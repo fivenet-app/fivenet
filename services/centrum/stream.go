@@ -228,6 +228,17 @@ func (s *Server) refreshStreamUserInfo(ctx context.Context, current *userinfo.Us
 		return fmt.Errorf("failed to retrieve current user info. %w", err)
 	}
 
+	// GetUserInfo returns the database-backed primary job. Do not let a
+	// long-lived Centrum stream replace its authenticated secondary work
+	// context with that primary job before recalculating dispatch access.
+	// The session context itself is revalidated when its token is refreshed.
+	if originalJob := current.GetOriginalJob(); originalJob != nil && !current.GetSuperuser() &&
+		current.GetJob() != originalJob.GetJob() {
+		originalJob.Job = updated.GetJob()
+		originalJob.JobGrade = updated.GetJobGrade()
+		return nil
+	}
+
 	current.SetJob(updated.GetJob())
 	current.SetJobGrade(updated.GetJobGrade())
 	return nil

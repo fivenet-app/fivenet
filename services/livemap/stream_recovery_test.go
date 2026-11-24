@@ -92,6 +92,29 @@ func (*streamRecoveryChanges) UnsubscribeAccountGroupsChanges(
 ) {
 }
 
+func TestRefreshStreamUserInfoPreservesSecondaryWorkContext(t *testing.T) {
+	t.Parallel()
+
+	primary := newUserInfo(10, "lspd", 4, false)
+	current := newUserInfo(10, "5net", 2, false)
+	current.OriginalJob = &pbuserinfo.OriginalJob{
+		Job:      "lspd",
+		JobGrade: 3,
+	}
+	server := &Server{
+		userinfo: &streamRecoveryUserInfo{userInfo: primary},
+	}
+
+	require.NoError(t, server.refreshStreamUserInfo(t.Context(), current))
+
+	// The livemap ACL must use the selected secondary role rather than the
+	// database-backed primary job returned by GetUserInfo.
+	require.Equal(t, "5net", current.GetJob())
+	require.EqualValues(t, 2, current.GetJobGrade())
+	require.Equal(t, "lspd", current.GetOriginalJob().GetJob())
+	require.EqualValues(t, 4, current.GetOriginalJob().GetJobGrade())
+}
+
 type streamRecoveryServer struct {
 	pblivemap.LivemapService_StreamServer
 
