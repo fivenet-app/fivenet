@@ -1,5 +1,7 @@
 import { createPinia, setActivePinia } from 'pinia';
 import { beforeEach, describe, expect, it } from 'vitest';
+import type { Job } from '~~/gen/ts/resources/jobs/jobs';
+import type { MarkerMarker } from '~~/gen/ts/resources/livemap/markers/marker_marker';
 import type { UserMarker } from '~~/gen/ts/resources/livemap/markers/user_marker';
 import { useLivemapStore } from './livemap';
 
@@ -81,5 +83,33 @@ describe('useLivemapStore user markers', () => {
 
         expect(store.ownMarker).toBe(store.markersUsers.get(9));
         expect(store.ownMarker).toMatchObject({ x: 50, y: 60 });
+    });
+
+    it('clears the previous projection before an authorization-context restart', async () => {
+        const store = useLivemapStore();
+        const userMarker = marker({ userId: 9 });
+
+        store.stopping = true;
+        store.jobsMarkers = [{ name: 'police', label: 'Police', grades: [] }] as Job[];
+        store.jobsUsers = [{ name: 'ambulance', label: 'Ambulance', grades: [] }] as Job[];
+        store.markersMarkers = new Map([[1, { id: 1 } as MarkerMarker]]);
+        store.markersUsers = new Map([[userMarker.userId, userMarker]]);
+        store.ownMarker = userMarker;
+        store.selectedMarker = userMarker;
+        store.followMarker = true;
+        store.initiated = true;
+        store.userOnDuty = true;
+
+        await store.restartForAuthContext();
+
+        expect(store.jobsMarkers).toEqual([]);
+        expect(store.jobsUsers).toEqual([]);
+        expect(store.markersMarkers.size).toBe(0);
+        expect(store.markersUsers.size).toBe(0);
+        expect(store.ownMarker).toBeUndefined();
+        expect(store.selectedMarker).toBeUndefined();
+        expect(store.followMarker).toBe(false);
+        expect(store.initiated).toBe(false);
+        expect(store.userOnDuty).toBe(false);
     });
 });

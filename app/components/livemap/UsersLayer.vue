@@ -28,23 +28,29 @@ const livemapStore = useLivemapStore();
 const { jobsUsers, markersUsers, ownMarker } = storeToRefs(livemapStore);
 const { startStream, stopStream, gotoCoords } = livemapStore;
 
+const { can, attr } = useAuth();
+const canStream = computed(() => can('livemap.LivemapService/Stream').value);
+
 const settingsStore = useSettingsStore();
 const { addOrUpdateLivemapLayer, addOrUpdateLivemapCategory } = settingsStore;
 const { livemap, livemapLayers } = storeToRefs(settingsStore);
 
-watch(jobsUsers, (val) =>
-    val.forEach((job) =>
-        addOrUpdateLivemapLayer({
-            key: `users_${job.name}`,
-            category: 'users',
-            label: job.label,
-            perm: 'livemap.LivemapService/Stream',
-            attr: {
-                key: 'Players',
-                val: job.name,
-            },
-        }),
-    ),
+watch(
+    jobsUsers,
+    (val) =>
+        val.forEach((job) =>
+            addOrUpdateLivemapLayer({
+                key: `users_${job.name}`,
+                category: 'users',
+                label: job.label,
+                perm: 'livemap.LivemapService/Stream',
+                attr: {
+                    key: 'Players',
+                    val: job.name,
+                },
+            }),
+        ),
+    { immediate: true },
 );
 
 onBeforeMount(async () => {
@@ -72,6 +78,9 @@ onBeforeRouteLeave(async (to) => {
 
 const playerQueryRaw = ref<string>('');
 const playerQuery = computed(() => playerQueryRaw.value.toLowerCase());
+const visibleJobs = computed(() =>
+    jobsUsers.value.filter((job) => canStream.value && attr('livemap.LivemapService/Stream', 'Players', job.name).value),
+);
 
 const markersByJob = computed(() => {
     const query = playerQuery.value;
@@ -85,7 +94,7 @@ const markersByJob = computed(() => {
 
 <template>
     <UsersJobLayer
-        v-for="job in jobsUsers"
+        v-for="job in visibleJobs"
         :key="job.name"
         :job="job"
         :markers="markersByJob.get(job.name) ?? []"

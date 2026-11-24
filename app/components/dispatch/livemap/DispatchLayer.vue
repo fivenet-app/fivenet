@@ -17,6 +17,9 @@ const overlay = useOverlay();
 const centrumStore = useCentrumStore();
 const { dispatches, acls, ownDispatches, settings } = storeToRefs(centrumStore);
 
+const { can } = useAuth();
+const canStream = computed(() => can('centrum.CentrumService/Stream').value);
+
 const settingsStore = useSettingsStore();
 const { addOrUpdateLivemapLayer, addOrUpdateLivemapCategory } = settingsStore;
 const { livemap, livemapLayers } = storeToRefs(settingsStore);
@@ -53,29 +56,36 @@ const dispatchesByJob = computed(() => {
     return byJob;
 });
 
-watch(settings, () => {
-    if (!settings.value?.enabled) return;
+watch(
+    settings,
+    () => {
+        if (!settings.value?.enabled) return;
 
-    addOrUpdateLivemapLayer({
-        key: 'dispatches_own',
-        category: 'dispatches',
-        label: t('common.your_dispatches'),
-        perm: 'centrum.CentrumService/Stream',
-        disabled: true,
-        order: 1,
-    });
-});
-
-watch(acls, () =>
-    acls.value?.dispatches?.jobs.forEach((job) =>
         addOrUpdateLivemapLayer({
-            key: `dispatches_job_${job.job}`,
+            key: 'dispatches_own',
             category: 'dispatches',
-            label: job.jobLabel ?? job.job ?? '',
+            label: t('common.your_dispatches'),
             perm: 'centrum.CentrumService/Stream',
-            order: 10,
-        }),
-    ),
+            disabled: true,
+            order: 1,
+        });
+    },
+    { immediate: true },
+);
+
+watch(
+    acls,
+    () =>
+        acls.value?.dispatches?.jobs.forEach((job) =>
+            addOrUpdateLivemapLayer({
+                key: `dispatches_job_${job.job}`,
+                category: 'dispatches',
+                label: job.jobLabel ?? job.job ?? '',
+                perm: 'centrum.CentrumService/Stream',
+                order: 10,
+            }),
+        ),
+    { immediate: true },
 );
 
 onBeforeMount(async () => {
@@ -91,7 +101,7 @@ const dispatchDetailsSlideover = overlay.create(DispatchDetailsByIDSlideover);
 
 <template>
     <LLayerGroup
-        v-if="isArchiveLayer"
+        v-if="isArchiveLayer && canStream"
         key="dispatches_archive"
         :name="$t('common.dispatch', 2)"
         layer-type="overlay"
@@ -112,7 +122,7 @@ const dispatchDetailsSlideover = overlay.create(DispatchDetailsByIDSlideover);
     </LLayerGroup>
 
     <LLayerGroup
-        v-else
+        v-else-if="canStream"
         key="dispatches_own"
         :name="$t('common.your_dispatches')"
         layer-type="overlay"
@@ -132,7 +142,7 @@ const dispatchDetailsSlideover = overlay.create(DispatchDetailsByIDSlideover);
         />
     </LLayerGroup>
 
-    <template v-if="!isArchiveLayer">
+    <template v-if="!isArchiveLayer && canStream">
         <LLayerGroup
             v-for="job in acls?.dispatches?.jobs"
             :key="`dispatches_job_${job.job}`"
@@ -155,7 +165,7 @@ const dispatchDetailsSlideover = overlay.create(DispatchDetailsByIDSlideover);
         </LLayerGroup>
     </template>
 
-    <LControl v-if="!isArchiveLayer" position="bottomleft">
+    <LControl v-if="!isArchiveLayer && canStream" position="bottomleft">
         <div v-if="settings?.enabled" class="flex flex-col gap-2">
             <UInput
                 v-model="dispatchQueryRaw"

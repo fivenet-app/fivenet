@@ -504,6 +504,23 @@ export const useLivemapStore = defineStore(
          * former authorization context as soon as possible.
          */
         const restartForAuthContext = async (): Promise<void> => {
+            // The stream may have supplied jobs and markers which are no
+            // longer authorized in the new work context. Clear them before
+            // reconnecting so the old projection is never rendered while the
+            // new stream is authorizing and loading its snapshot.
+            const settingsStore = useSettingsStore();
+            jobsMarkers.value.forEach((job) => settingsStore.removeLivemapLayer(`markers_${job.name}`));
+            jobsUsers.value.forEach((job) => settingsStore.removeLivemapLayer(`users_${job.name}`));
+            jobsMarkers.value = [];
+            jobsUsers.value = [];
+            markersMarkers.value.clear();
+            markersUsers.value.clear();
+            ownMarker.value = undefined;
+            selectedMarker.value = undefined;
+            followMarker.value = false;
+            initiated.value = false;
+            userOnDuty.value = false;
+
             await restartAuthContextStream({ abort: abort.value, isStopping: () => stopping.value }, stopStream, startStream);
         };
 

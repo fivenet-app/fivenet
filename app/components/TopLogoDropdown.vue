@@ -95,4 +95,16 @@ const workContextItems = computed<DropdownMenuItem[][]>(() => [
             }"
         />
     </UTooltip>
+
+    <Teleport to="body">
+        <div
+            v-if="isSwitchingWorkContext"
+            class="fixed inset-0 z-100 flex items-center justify-center bg-default/60 backdrop-blur-[1px]"
+            role="status"
+            aria-live="polite"
+            :aria-label="$t('common.loading', [$t('pages.jobs.work_context')])"
+        >
+            <UIcon name="i-mdi-loading" class="size-12 animate-spin text-primary" />
+        </div>
+    </Teleport>
 </template>

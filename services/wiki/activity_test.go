@@ -29,8 +29,16 @@ func TestGeneratePageDiffUsesExtractedTextForTiptapContent(t *testing.T) {
 	stats := updated.GetContentCdiff().GetStats()
 	assert.Positive(t, stats.GetInsertedRunes())
 	assert.Positive(t, stats.GetDeletedRunes())
-	assert.Less(t, stats.GetInsertedRunes(), uint32(utf8.RuneCountInString(newContent.Extract().GetText())))
-	assert.Less(t, stats.GetDeletedRunes(), uint32(utf8.RuneCountInString(oldContent.Extract().GetText())))
+	assert.Less(
+		t,
+		stats.GetInsertedRunes(),
+		uint32(utf8.RuneCountInString(newContent.Extract().GetText())),
+	)
+	assert.Less(
+		t,
+		stats.GetDeletedRunes(),
+		uint32(utf8.RuneCountInString(oldContent.Extract().GetText())),
+	)
 	assert.Contains(t, updated.GetContentCdiff().GetOps(), &content.ContentDiffOp{
 		Kind: content.Kind_KIND_EQUAL,
 		Text: "Shared introduction\nThe ",

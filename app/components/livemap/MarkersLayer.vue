@@ -18,23 +18,29 @@ const overlay = useOverlay();
 const livemapStore = useLivemapStore();
 const { jobsMarkers, markersMarkers } = storeToRefs(livemapStore);
 
+const { can, attr } = useAuth();
+const canStream = computed(() => can('livemap.LivemapService/Stream').value);
+
 const settingsStore = useSettingsStore();
 const { addOrUpdateLivemapLayer, addOrUpdateLivemapCategory } = settingsStore;
 const { livemapLayers } = storeToRefs(settingsStore);
 
-watch(jobsMarkers, (val) =>
-    val.forEach((job) =>
-        addOrUpdateLivemapLayer({
-            key: `markers_${job.name}`,
-            category: 'markers',
-            label: job.label,
-            perm: 'livemap.LivemapService/Stream',
-            attr: {
-                key: 'Markers',
-                val: job.name,
-            },
-        }),
-    ),
+watch(
+    jobsMarkers,
+    (val) =>
+        val.forEach((job) =>
+            addOrUpdateLivemapLayer({
+                key: `markers_${job.name}`,
+                category: 'markers',
+                label: job.label,
+                perm: 'livemap.LivemapService/Stream',
+                attr: {
+                    key: 'Markers',
+                    val: job.name,
+                },
+            }),
+        ),
+    { immediate: true },
 );
 
 onBeforeMount(() =>
@@ -47,6 +53,9 @@ onBeforeMount(() =>
 );
 
 const publicMarkers = computed(() => [...markersMarkers.value.values()].filter((marker) => marker.public === true));
+const visibleJobs = computed(() =>
+    jobsMarkers.value.filter((job) => canStream.value && attr('livemap.LivemapService/Stream', 'Markers', job.name).value),
+);
 const markersByJob = computed(() =>
     groupByJob<MarkerMarker>(markersMarkers.value.values(), (marker) => marker.public !== true),
 );
@@ -64,7 +73,7 @@ const markerSearchDrawer = overlay.create(MarkerSearchDrawer);
 
 <template>
     <MarkersJobLayer
-        v-for="job in jobsMarkers"
+        v-for="job in visibleJobs"
         :key="job.name"
         :job="job"
         :markers="markersByJob.get(job.name) ?? []"
@@ -73,6 +82,7 @@ const markerSearchDrawer = overlay.create(MarkerSearchDrawer);
     />
 
     <PublicMarkersLayer
+        v-if="canStream"
         :markers="publicMarkers"
         :visible="livemapLayers.find((l) => l.key === 'markers_public')?.visible === true"
         @marker-selected="$emit('markerSelected', $event)"

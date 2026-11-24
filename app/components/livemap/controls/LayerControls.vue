@@ -2,6 +2,7 @@
 import { HELP_GUIDE_ACTION_EVENT, type HelpGuideActionDetail } from '~/composables/useHelpGuides';
 import { useSettingsStore, type LivemapLayer } from '~/stores/settings';
 import { tileLayers } from '~/types/livemap';
+import { canAccessLivemapLayer } from '~/utils/livemap/layer-access';
 
 const { attr, can } = useAuth();
 
@@ -30,8 +31,10 @@ const groupedLayers = computed(() => {
     const reduced = livemapLayers.value.reduce(
         (grouped, l) => {
             if (
-                l.perm === undefined ||
-                (l.attr === undefined ? can(l.perm).value : attr(l.perm, l.attr.key, l.attr.val).value)
+                canAccessLivemapLayer(l, {
+                    can: (perm) => can(perm).value,
+                    attr: (perm, key, value) => attr(perm, key, value).value,
+                })
             ) {
                 grouped[l.category] = (grouped[l.category] || []).concat(l);
             }
