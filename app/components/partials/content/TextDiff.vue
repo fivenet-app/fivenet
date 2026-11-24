@@ -15,6 +15,13 @@ const props = defineProps<{
                 {{ op.text }}
             </span>
 
+            <span
+                v-else-if="op.kind === Kind.COLLAPSED"
+                class="my-1 block border-y border-dashed border-default py-0.5 text-center text-xs text-dimmed"
+            >
+                {{ $t('common.diff_omitted_lines', op.collapsedLines) }}
+            </span>
+
             <span v-else class="rounded bg-red/30 px-0.5 text-red-700 line-through">
                 {{ op.text }}
             </span>

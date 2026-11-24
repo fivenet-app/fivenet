@@ -1008,6 +1008,7 @@
         "template": "Vorlage | Vorlagen",
         "go_back": "Zurück",
         "content": "Inhalt",
+        "diff_omitted_lines": "{count} unveränderte Zeile ausgeblendet | {count} unveränderte Zeilen ausgeblendet",
         "schema": "Schema",
         "edit": "Editieren",
         "post": "Veröffentlichen",

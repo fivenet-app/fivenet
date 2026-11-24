@@ -3285,7 +3285,8 @@ One diff operation, designed for inline client rendering.
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | `kind` | [Kind](#resourcescommoncontentKind) |  |  |
-| `text` | [string](#string) |  | Plain text segment. Can contain whitespace and newlines. Client renders: - EQUAL: normal text - INSERT: highlighted - DELETE: strikethrough or hidden behind a toggle |
+| `text` | [string](#string) |  | Plain text segment. Can contain whitespace and newlines. Client renders: - EQUAL: normal text - INSERT: highlighted - DELETE: strikethrough or hidden behind a toggle - COLLAPSED: an omitted unchanged-line marker |
+| `collapsed_lines` | [uint32](#uint32) |  | Number of unchanged lines omitted by a COLLAPSED operation. |
 
 
 
@@ -3316,6 +3317,7 @@ Optional stats to quickly show "what changed" without parsing ops.
 | `KIND_EQUAL` | 1 |  |
 | `KIND_INSERT` | 2 |  |
 | `KIND_DELETE` | 3 |  |
+| `KIND_COLLAPSED` | 4 |  |
 
 
  <!-- end enums -->

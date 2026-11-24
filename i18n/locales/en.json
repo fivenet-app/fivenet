@@ -1008,6 +1008,7 @@
         "template": "Template | Templates",
         "go_back": "Go Back",
         "content": "Content",
+        "diff_omitted_lines": "{count} unchanged line omitted | {count} unchanged lines omitted",
         "schema": "Schema",
         "edit": "Edit",
         "post": "Post",

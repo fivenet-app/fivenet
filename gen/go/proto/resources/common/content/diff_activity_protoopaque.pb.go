@@ -29,6 +29,7 @@ const (
 	Kind_KIND_EQUAL       Kind = 1
 	Kind_KIND_INSERT      Kind = 2
 	Kind_KIND_DELETE      Kind = 3
+	Kind_KIND_COLLAPSED   Kind = 4
 )
 
 // Enum value maps for Kind.
@@ -38,12 +39,14 @@ var (
 		1: "KIND_EQUAL",
 		2: "KIND_INSERT",
 		3: "KIND_DELETE",
+		4: "KIND_COLLAPSED",
 	}
 	Kind_value = map[string]int32{
 		"KIND_UNSPECIFIED": 0,
 		"KIND_EQUAL":       1,
 		"KIND_INSERT":      2,
 		"KIND_DELETE":      3,
+		"KIND_COLLAPSED":   4,
 	}
 )
 
@@ -71,11 +74,12 @@ func (x Kind) Number() protoreflect.EnumNumber {
 
 // One diff operation, designed for inline client rendering.
 type ContentDiffOp struct {
-	state           protoimpl.MessageState `protogen:"opaque.v1"`
-	xxx_hidden_Kind Kind                   `protobuf:"varint,1,opt,name=kind,proto3,enum=resources.common.content.Kind"`
-	xxx_hidden_Text string                 `protobuf:"bytes,2,opt,name=text,proto3"`
-	unknownFields   protoimpl.UnknownFields
-	sizeCache       protoimpl.SizeCache
+	state                     protoimpl.MessageState `protogen:"opaque.v1"`
+	xxx_hidden_Kind           Kind                   `protobuf:"varint,1,opt,name=kind,proto3,enum=resources.common.content.Kind"`
+	xxx_hidden_Text           string                 `protobuf:"bytes,2,opt,name=text,proto3"`
+	xxx_hidden_CollapsedLines uint32                 `protobuf:"varint,3,opt,name=collapsed_lines,json=collapsedLines,proto3"`
+	unknownFields             protoimpl.UnknownFields
+	sizeCache                 protoimpl.SizeCache
 }
 
 func (x *ContentDiffOp) Reset() {
@@ -117,12 +121,23 @@ func (x *ContentDiffOp) GetText() string {
 	return ""
 }
 
+func (x *ContentDiffOp) GetCollapsedLines() uint32 {
+	if x != nil {
+		return x.xxx_hidden_CollapsedLines
+	}
+	return 0
+}
+
 func (x *ContentDiffOp) SetKind(v Kind) {
 	x.xxx_hidden_Kind = v
 }
 
 func (x *ContentDiffOp) SetText(v string) {
 	x.xxx_hidden_Text = v
+}
+
+func (x *ContentDiffOp) SetCollapsedLines(v uint32) {
+	x.xxx_hidden_CollapsedLines = v
 }
 
 type ContentDiffOp_builder struct {
@@ -134,7 +149,10 @@ type ContentDiffOp_builder struct {
 	// - EQUAL: normal text
 	// - INSERT: highlighted
 	// - DELETE: strikethrough or hidden behind a toggle
+	// - COLLAPSED: an omitted unchanged-line marker
 	Text string
+	// Number of unchanged lines omitted by a COLLAPSED operation.
+	CollapsedLines uint32
 }
 
 func (b0 ContentDiffOp_builder) Build() *ContentDiffOp {
@@ -143,6 +161,7 @@ func (b0 ContentDiffOp_builder) Build() *ContentDiffOp {
 	_, _ = b, x
 	x.xxx_hidden_Kind = b.Kind
 	x.xxx_hidden_Text = b.Text
+	x.xxx_hidden_CollapsedLines = b.CollapsedLines
 	return m0
 }
 
@@ -324,23 +343,25 @@ var File_resources_common_content_diff_activity_proto protoreflect.FileDescripto
 
 const file_resources_common_content_diff_activity_proto_rawDesc = "" +
 	"\n" +
-	",resources/common/content/diff_activity.proto\x12\x18resources.common.content\"W\n" +
+	",resources/common/content/diff_activity.proto\x12\x18resources.common.content\"\x80\x01\n" +
 	"\rContentDiffOp\x122\n" +
 	"\x04kind\x18\x01 \x01(\x0e2\x1e.resources.common.content.KindR\x04kind\x12\x12\n" +
-	"\x04text\x18\x02 \x01(\tR\x04text\"y\n" +
+	"\x04text\x18\x02 \x01(\tR\x04text\x12'\n" +
+	"\x0fcollapsed_lines\x18\x03 \x01(\rR\x0ecollapsedLines\"y\n" +
 	"\x10ContentDiffStats\x12%\n" +
 	"\x0einserted_runes\x18\x01 \x01(\rR\rinsertedRunes\x12#\n" +
 	"\rdeleted_runes\x18\x02 \x01(\rR\fdeletedRunes\x12\x19\n" +
 	"\bop_count\x18\x03 \x01(\rR\aopCount\"\x8a\x01\n" +
 	"\vContentDiff\x12@\n" +
 	"\x05stats\x18\x01 \x01(\v2*.resources.common.content.ContentDiffStatsR\x05stats\x129\n" +
-	"\x03ops\x18\x02 \x03(\v2'.resources.common.content.ContentDiffOpR\x03ops*N\n" +
+	"\x03ops\x18\x02 \x03(\v2'.resources.common.content.ContentDiffOpR\x03ops*b\n" +
 	"\x04Kind\x12\x14\n" +
 	"\x10KIND_UNSPECIFIED\x10\x00\x12\x0e\n" +
 	"\n" +
 	"KIND_EQUAL\x10\x01\x12\x0f\n" +
 	"\vKIND_INSERT\x10\x02\x12\x0f\n" +
-	"\vKIND_DELETE\x10\x03BTZRgithub.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/common/content;contentb\x06proto3"
+	"\vKIND_DELETE\x10\x03\x12\x12\n" +
+	"\x0eKIND_COLLAPSED\x10\x04BTZRgithub.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/common/content;contentb\x06proto3"
 
 var file_resources_common_content_diff_activity_proto_enumTypes = make([]protoimpl.EnumInfo, 1)
 var file_resources_common_content_diff_activity_proto_msgTypes = make([]protoimpl.MessageInfo, 3)

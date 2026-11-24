@@ -27,10 +27,17 @@ export interface ContentDiffOp {
      * - EQUAL: normal text
      * - INSERT: highlighted
      * - DELETE: strikethrough or hidden behind a toggle
+     * - COLLAPSED: an omitted unchanged-line marker
      *
      * @generated from protobuf field: string text = 2
      */
     text: string;
+    /**
+     * Number of unchanged lines omitted by a COLLAPSED operation.
+     *
+     * @generated from protobuf field: uint32 collapsed_lines = 3
+     */
+    collapsedLines: number;
 }
 /**
  * Optional stats to quickly show "what changed" without parsing ops.
@@ -91,20 +98,26 @@ export enum Kind {
     /**
      * @generated from protobuf enum value: KIND_DELETE = 3;
      */
-    DELETE = 3
+    DELETE = 3,
+    /**
+     * @generated from protobuf enum value: KIND_COLLAPSED = 4;
+     */
+    COLLAPSED = 4
 }
 // @generated message type with reflection information, may provide speed optimized methods
 class ContentDiffOp$Type extends MessageType<ContentDiffOp> {
     constructor() {
         super("resources.common.content.ContentDiffOp", [
             { no: 1, name: "kind", kind: "enum", T: () => ["resources.common.content.Kind", Kind, "KIND_"], options: { "buf.validate.field": { enum: { definedOnly: true } } } },
-            { no: 2, name: "text", kind: "scalar", T: 9 /*ScalarType.STRING*/ }
+            { no: 2, name: "text", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
+            { no: 3, name: "collapsed_lines", kind: "scalar", T: 13 /*ScalarType.UINT32*/ }
         ]);
     }
     create(value?: PartialMessage<ContentDiffOp>): ContentDiffOp {
         const message = globalThis.Object.create((this.messagePrototype!));
         message.kind = 0;
         message.text = "";
+        message.collapsedLines = 0;
         if (value !== undefined)
             reflectionMergePartial<ContentDiffOp>(this, message, value);
         return message;
@@ -119,6 +132,9 @@ class ContentDiffOp$Type extends MessageType<ContentDiffOp> {
                     break;
                 case /* string text */ 2:
                     message.text = reader.string();
+                    break;
+                case /* uint32 collapsed_lines */ 3:
+                    message.collapsedLines = reader.uint32();
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -138,6 +154,9 @@ class ContentDiffOp$Type extends MessageType<ContentDiffOp> {
         /* string text = 2; */
         if (message.text !== "")
             writer.tag(2, WireType.LengthDelimited).string(message.text);
+        /* uint32 collapsed_lines = 3; */
+        if (message.collapsedLines !== 0)
+            writer.tag(3, WireType.Varint).uint32(message.collapsedLines);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);

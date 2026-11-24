@@ -65,6 +65,12 @@ func (s *Server) ListPageActivity(
 		return nil, errswrap.NewError(err, errorswiki.ErrFailedQuery)
 	}
 	resp.Activity = activity
+	for _, act := range resp.GetActivity() {
+		update := act.GetData().GetUpdated()
+		textdiff.CollapseEqualLines(update.GetTitleCdiff())
+		textdiff.CollapseEqualLines(update.GetDescriptionCdiff())
+		textdiff.CollapseEqualLines(update.GetContentCdiff())
+	}
 
 	hydrateShort := s.hydrator.HydrateBasicTargetsSafeFunc(userInfo)
 	targets := make([]citizenshydrator.BasicTarget, 0, len(resp.GetActivity()))

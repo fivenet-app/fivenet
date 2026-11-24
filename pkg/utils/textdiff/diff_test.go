@@ -85,6 +85,107 @@ func TestDiffText(t *testing.T) {
 	}
 }
 
+func TestCollapseEqualLines(t *testing.T) {
+	t.Parallel()
+
+	ops := collapseEqualLines([]*content.ContentDiffOp{
+		{Kind: content.Kind_KIND_EQUAL, Text: "a\nb\nc\nd\ne\nf\n"},
+		{Kind: content.Kind_KIND_INSERT, Text: "changed"},
+		{Kind: content.Kind_KIND_EQUAL, Text: "g\nh\ni\nj\nk\nl\n"},
+	})
+
+	assert.Equal(t, []*content.ContentDiffOp{
+		{Kind: content.Kind_KIND_COLLAPSED, CollapsedLines: 3},
+		{Kind: content.Kind_KIND_EQUAL, Text: "d\ne\nf\n"},
+		{Kind: content.Kind_KIND_INSERT, Text: "changed"},
+		{Kind: content.Kind_KIND_EQUAL, Text: "g\nh\ni\n"},
+		{Kind: content.Kind_KIND_COLLAPSED, CollapsedLines: 3},
+	}, ops)
+}
+
+func TestCollapseEqualLinesKeepsShortContext(t *testing.T) {
+	t.Parallel()
+
+	ops := []*content.ContentDiffOp{
+		{Kind: content.Kind_KIND_EQUAL, Text: "a\nb\nc\n"},
+		{Kind: content.Kind_KIND_INSERT, Text: "changed"},
+		{Kind: content.Kind_KIND_EQUAL, Text: "d\ne\nf"},
+	}
+
+	assert.Equal(t, ops, collapseEqualLines(ops))
+}
+
+func TestCollapseEqualLinesHandlesDeletionAndMultipleHunks(t *testing.T) {
+	t.Parallel()
+
+	ops := collapseEqualLines([]*content.ContentDiffOp{
+		{Kind: content.Kind_KIND_EQUAL, Text: "a\nb\nc\nd\ne\nf\n"},
+		{Kind: content.Kind_KIND_DELETE, Text: "old"},
+		{Kind: content.Kind_KIND_EQUAL, Text: "g\nh\ni\nj\nk\nl\nm\nn\n"},
+		{Kind: content.Kind_KIND_INSERT, Text: "new"},
+		{Kind: content.Kind_KIND_EQUAL, Text: "o\np\nq\nr\ns\nt\n"},
+	})
+
+	assert.Equal(t, []*content.ContentDiffOp{
+		{Kind: content.Kind_KIND_COLLAPSED, CollapsedLines: 3},
+		{Kind: content.Kind_KIND_EQUAL, Text: "d\ne\nf\n"},
+		{Kind: content.Kind_KIND_DELETE, Text: "old"},
+		{Kind: content.Kind_KIND_EQUAL, Text: "g\nh\ni\n"},
+		{Kind: content.Kind_KIND_COLLAPSED, CollapsedLines: 2},
+		{Kind: content.Kind_KIND_EQUAL, Text: "l\nm\nn\n"},
+		{Kind: content.Kind_KIND_INSERT, Text: "new"},
+		{Kind: content.Kind_KIND_EQUAL, Text: "o\np\nq\n"},
+		{Kind: content.Kind_KIND_COLLAPSED, CollapsedLines: 3},
+	}, ops)
+}
+
+func TestCollapseEqualLinesIsIdempotent(t *testing.T) {
+	t.Parallel()
+
+	first := collapseEqualLines([]*content.ContentDiffOp{
+		{Kind: content.Kind_KIND_EQUAL, Text: "a\nb\nc\nd\ne\nf\n"},
+		{Kind: content.Kind_KIND_INSERT, Text: "changed"},
+		{Kind: content.Kind_KIND_EQUAL, Text: "g\nh\ni\nj\nk\nl\n"},
+	})
+
+	assert.Equal(t, first, collapseEqualLines(first))
+}
+
+func TestDiffTextCollapsesUnchangedLineRuns(t *testing.T) {
+	t.Parallel()
+
+	diff := DiffText(
+		"first\none\ntwo\nthree\nfour\nfive\nsix\nseven\nbefore\nlast",
+		"first\none\ntwo\nthree\nfour\nfive\nsix\nseven\nafter\nlast",
+	)
+
+	assert.Equal(t, uint32(len(diff.GetOps())), diff.GetStats().GetOpCount())
+	assert.Contains(t, diff.GetOps(), &content.ContentDiffOp{
+		Kind:           content.Kind_KIND_COLLAPSED,
+		CollapsedLines: 5,
+	})
+}
+
+func TestCollapseEqualLinesUpdatesOperationCount(t *testing.T) {
+	t.Parallel()
+
+	diff := &content.ContentDiff{
+		Stats: &content.ContentDiffStats{},
+		Ops: []*content.ContentDiffOp{
+			{Kind: content.Kind_KIND_EQUAL, Text: "a\nb\nc\nd\ne\nf\n"},
+			{Kind: content.Kind_KIND_INSERT, Text: "changed"},
+		},
+	}
+
+	CollapseEqualLines(diff)
+
+	assert.Equal(t, uint32(len(diff.GetOps())), diff.GetStats().GetOpCount())
+	assert.Contains(t, diff.GetOps(), &content.ContentDiffOp{
+		Kind:           content.Kind_KIND_COLLAPSED,
+		CollapsedLines: 3,
+	})
+}
+
 type diffOp struct {
 	kind content.Kind
 	text string

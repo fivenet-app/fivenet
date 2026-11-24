@@ -67,6 +67,12 @@ func (s *Server) ListDocumentActivity(
 		return resp, nil
 	}
 	resp.Activity = activity
+	for _, act := range resp.GetActivity() {
+		update := act.GetData().GetUpdated()
+		textdiff.CollapseEqualLines(update.GetTitleCdiff())
+		textdiff.CollapseEqualLines(update.GetContentCdiff())
+		textdiff.CollapseEqualLines(update.GetStateCdiff())
+	}
 
 	hydrateShort := s.hydrator.HydrateBasicTargetsSafeFunc(userInfo)
 	targets := make([]citizenshydrator.BasicTarget, 0, len(resp.GetActivity()))

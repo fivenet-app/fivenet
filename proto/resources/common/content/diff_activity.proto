@@ -11,6 +11,7 @@ enum Kind {
   KIND_EQUAL = 1;
   KIND_INSERT = 2;
   KIND_DELETE = 3;
+  KIND_COLLAPSED = 4;
 }
 
 // One diff operation, designed for inline client rendering.
@@ -22,7 +23,11 @@ message ContentDiffOp {
   // - EQUAL: normal text
   // - INSERT: highlighted
   // - DELETE: strikethrough or hidden behind a toggle
+  // - COLLAPSED: an omitted unchanged-line marker
   string text = 2;
+
+  // Number of unchanged lines omitted by a COLLAPSED operation.
+  uint32 collapsed_lines = 3;
 }
 
 // Optional stats to quickly show "what changed" without parsing ops.
