@@ -4,6 +4,7 @@ const STORAGE_KEY = 'fivenet.client-errors';
 export const MAX_CLIENT_ERRORS = 25;
 
 const IGNORED_CLIENT_ERROR_MESSAGES = new Set(['AsyncData request cancelled by deduplication']);
+const IGNORED_GRPC_ERROR_CODES = new Set(['CANCELLED']);
 
 export interface ClientError {
     timestamp: string;
@@ -48,7 +49,14 @@ function formatStack(stack: string): string {
 }
 
 export function shouldIgnoreClientError(error: unknown): boolean {
-    return IGNORED_CLIENT_ERROR_MESSAGES.has(normalizeError(error).message);
+    if (IGNORED_CLIENT_ERROR_MESSAGES.has(normalizeError(error).message)) return true;
+
+    return (
+        typeof error === 'object' &&
+        error !== null &&
+        typeof (error as { code?: unknown }).code === 'string' &&
+        IGNORED_GRPC_ERROR_CODES.has((error as { code: string }).code.toUpperCase())
+    );
 }
 
 export function getClientErrors(): ClientError[] {
