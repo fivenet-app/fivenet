@@ -1,29 +1,76 @@
 <script lang="ts" setup>
 import type { DropdownMenuItem } from '@nuxt/ui';
 import type { RpcError } from '@protobuf-ts/runtime-rpc';
+import { breakpointsTailwind, createReusableTemplate, useBreakpoints } from '@vueuse/core';
 import { useAuthStore } from '~/stores/auth';
 
 const props = defineProps<{
     collapsed?: boolean;
 }>();
 
-const version = APP_VERSION;
-
 const { t } = useI18n();
+
+const [DefineLogoButton, ReuseLogoButton] = createReusableTemplate();
+const breakpoints = useBreakpoints(breakpointsTailwind);
+const isMobile = breakpoints.smaller('lg');
+const { isDashboardSidebarSlideoverOpen } = useDashboard();
 
 const authStore = useAuthStore();
 const { selectSessionJob } = authStore;
-const { activeChar, isSuperuser } = storeToRefs(authStore);
+const { activeChar, isSuperuser, jobProps } = storeToRefs(authStore);
 
 const isSwitchingWorkContext = ref(false);
 
 const workContextJobs = computed(() => activeChar.value?.jobs ?? []);
 const hasWorkContextSwitcher = computed(() => !isSuperuser.value && workContextJobs.value.length > 1);
+const activeWorkContextJob = computed(() => activeChar.value?.job);
 const activeWorkContextLabel = computed(() => activeChar.value?.jobLabel || activeChar.value?.job || t('common.job'));
-const title = computed(() => (activeChar.value ? `FiveNet – ${activeWorkContextLabel.value}` : 'FiveNet'));
-const tooltip = computed(() =>
-    hasWorkContextSwitcher.value ? `${t('pages.jobs.work_context')}: ${activeWorkContextLabel.value}` : version,
+const jobLogo = computed(() =>
+    jobProps.value?.logoFile?.filePath ? `/api/filestore/${jobProps.value.logoFile.filePath}` : undefined,
 );
+const tooltip = computed(() =>
+    hasWorkContextSwitcher.value ? `${t('pages.jobs.work_context')}: ${activeWorkContextLabel.value}` : undefined,
+);
+
+const isShowingJobIdentity = ref(false);
+const isShowingJobLabel = computed(() => isSuperuser.value || isShowingJobIdentity.value);
+const transitionDuration = computed(() => (isMobile.value ? 'duration-150' : 'duration-250'));
+const identityTransition = computed(() => ({
+    mode: 'out-in' as const,
+    enterActiveClass: `transition-all ${transitionDuration.value} ease-out`,
+    leaveActiveClass: `transition-all ${transitionDuration.value} ease-in`,
+    enterFromClass: 'translate-x-1 opacity-0',
+    leaveToClass: '-translate-x-1 opacity-0',
+}));
+let identityTimer: ReturnType<typeof setTimeout> | undefined;
+
+function resetJobIdentity(): void {
+    if (identityTimer) clearTimeout(identityTimer);
+    identityTimer = undefined;
+    isShowingJobIdentity.value = false;
+}
+
+function scheduleJobIdentity(): void {
+    resetJobIdentity();
+
+    // On mobile, the sidebar is a drawer. Do not run the handoff until it is visible.
+    if (!jobLogo.value || (isMobile.value && !isDashboardSidebarSlideoverOpen.value)) return;
+
+    identityTimer = setTimeout(
+        () => {
+            isShowingJobIdentity.value = true;
+            identityTimer = undefined;
+        },
+        isMobile.value ? 350 : 650,
+    );
+}
+
+watch(
+    [isMobile, isDashboardSidebarSlideoverOpen, isSuperuser, activeWorkContextJob, jobLogo, activeWorkContextLabel],
+    scheduleJobIdentity,
+);
+onMounted(scheduleJobIdentity);
+onBeforeUnmount(resetJobIdentity);
 
 async function switchWorkContext(job: string): Promise<void> {
     if (isSwitchingWorkContext.value || job === activeChar.value?.job) return;
@@ -50,6 +97,42 @@ const workContextItems = computed<DropdownMenuItem[][]>(() => [
 </script>
 
 <template>
+    <DefineLogoButton>
+        <UButton
+            class="w-full font-bold"
+            color="neutral"
+            variant="ghost"
+            :square="props.collapsed"
+            :loading="isSwitchingWorkContext"
+            :disabled="isSwitchingWorkContext"
+            :trailing-icon="props.collapsed || isSuperuser ? undefined : 'i-mdi-chevron-down'"
+            :ui="{
+                base: props.collapsed ? 'w-40' : 'w-(--reka-dropdown-menu-trigger-width)',
+                label: 'min-w-0 flex-1 text-left text-highlighted',
+                trailingIcon: 'ml-auto',
+            }"
+        >
+            <template #leading>
+                <Transition v-bind="identityTransition">
+                    <NuxtImg
+                        :key="isShowingJobIdentity ? jobLogo : '/images/logo.webp'"
+                        class="size-5 shrink-0 rounded-none object-contain"
+                        :src="isShowingJobIdentity && jobLogo ? jobLogo : '/images/logo.webp'"
+                        :alt="isShowingJobIdentity ? activeWorkContextLabel : 'FiveNet'"
+                    />
+                </Transition>
+            </template>
+
+            <template #default="{ ui }">
+                <Transition v-if="!props.collapsed" v-bind="identityTransition">
+                    <span :key="isShowingJobLabel ? activeWorkContextLabel : 'FiveNet'" :class="ui.label()">
+                        {{ isShowingJobLabel ? activeWorkContextLabel : 'FiveNet' }}
+                    </span>
+                </Transition>
+            </template>
+        </UButton>
+    </DefineLogoButton>
+
     <UDropdownMenu
         v-if="hasWorkContextSwitcher"
         :items="workContextItems"
@@ -57,43 +140,12 @@ const workContextItems = computed<DropdownMenuItem[][]>(() => [
         :ui="{ content: props.collapsed ? 'w-64' : 'w-(--reka-dropdown-menu-trigger-width)' }"
     >
         <UTooltip :text="tooltip">
-            <UButton
-                class="w-full"
-                color="neutral"
-                variant="ghost"
-                :avatar="{
-                    src: '/images/logo.webp',
-                    alt: 'FiveNet',
-                }"
-                :loading="isSwitchingWorkContext"
-                :disabled="isSwitchingWorkContext"
-                :label="props.collapsed ? undefined : title"
-                :trailing-icon="props.collapsed ? undefined : 'i-mdi-chevron-down'"
-                :ui="{
-                    base: props.collapsed ? 'w-40' : 'w-(--reka-dropdown-menu-trigger-width)',
-                    leadingAvatar: 'rounded-none',
-                    label: 'min-w-0 flex-1 text-left font-semibold text-highlighted',
-                }"
-            />
+            <ReuseLogoButton />
         </UTooltip>
     </UDropdownMenu>
 
     <UTooltip v-else :text="tooltip">
-        <UButton
-            class="w-full"
-            color="neutral"
-            variant="ghost"
-            :avatar="{
-                src: '/images/logo.webp',
-                alt: 'FiveNet',
-            }"
-            :label="props.collapsed ? undefined : title"
-            :ui="{
-                base: props.collapsed ? 'w-40' : 'w-(--reka-dropdown-menu-trigger-width)',
-                leadingAvatar: 'rounded-none',
-                label: 'min-w-0 flex-1 text-left font-semibold text-highlighted',
-            }"
-        />
+        <ReuseLogoButton />
     </UTooltip>
 
     <Teleport to="body">
