@@ -357,8 +357,6 @@ func (b *calculatedVisibilityBackend) userSubjectsComponents(
 	tSubjectQualis := table.FivenetACLSubjectQualifications.AS("asq")
 	tQualiSuccess := table.FivenetQualificationsResultSuccessMap.AS("qrsm")
 	tSubjectJobGrade := table.FivenetACLSubjectJobGradeScopes.AS("asjg")
-	tUserJobs := table.FivenetUserJobs.AS("uj")
-
 	userSubjectsSelect := mysql.
 		SELECT(
 			tSubjectUsers.SubjectID.AS("subject_id"),
@@ -382,22 +380,6 @@ func (b *calculatedVisibilityBackend) userSubjectsComponents(
 						tQualiSuccess.UserID.EQ(mysql.Int32(userInfo.GetUserId())),
 					),
 					),
-				),
-		).
-		UNION_ALL(
-			mysql.
-				SELECT(
-					tSubjectJobGrade.SubjectID.AS("subject_id"),
-					mysql.Int32(SubjectSpecificityJobGrade).AS("specificity"),
-					tSubjectJobGrade.MinimumGrade.AS("grade_specificity"),
-				).
-				FROM(tSubjectJobGrade.
-					INNER_JOIN(tUserJobs, mysql.AND(
-						tUserJobs.UserID.EQ(mysql.Int32(userInfo.GetUserId())),
-						tUserJobs.Job.EQ(tSubjectJobGrade.Job),
-						tUserJobs.Grade.GT_EQ(tSubjectJobGrade.MinimumGrade),
-						tUserJobs.IsPrimary.IS_TRUE(),
-					)),
 				),
 		).
 		UNION_ALL(

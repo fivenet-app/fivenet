@@ -42,7 +42,7 @@ func TestSubjectObjectAccessVisibleIDsStatementShape(t *testing.T) {
 	assert.Contains(t, sql, "fivenet_acl_subject_qualifications")
 	assert.Contains(t, sql, "fivenet_qualifications_result_success_map")
 	assert.Contains(t, sql, "fivenet_acl_subject_job_grade_scopes")
-	assert.Contains(t, sql, "fivenet_user_jobs")
+	assert.NotContains(t, sql, "fivenet_user_jobs")
 	assert.Contains(t, sql, "fivenet_documents_visibility_public")
 	assert.Contains(t, sql, "fivenet_documents_visibility_creator")
 	assert.Contains(t, sql, "fivenet_documents_access")
@@ -166,6 +166,42 @@ func TestSubjectObjectAccessACLAccessExistsConditionUsesWinnerLogic(t *testing.T
 	assert.Contains(t, sql, "access >= ?")
 	assert.Contains(t, sql, "effect IS TRUE")
 	require.NotEmpty(t, args)
+}
+
+func TestJobSubjectAccessUsesOnlyEffectiveWorkContext(t *testing.T) {
+	t.Parallel()
+
+	user := &userinfo.UserInfo{
+		UserId:   7,
+		Job:      "mechanic",
+		JobGrade: 3,
+	}
+	access := NewDocumentsSubjectObjectAccess(new(sql.DB))
+
+	visibleSQL, visibleArgs := access.VisibleIDsStatement(user, 2, false, 10).Sql()
+	assert.NotContains(t, visibleSQL, "fivenet_user_jobs")
+	assert.Contains(t, visibleArgs, "mechanic")
+	assert.Contains(t, visibleArgs, int32(3))
+
+	legacyCTEs, legacyStmt := access.aclVisibleIDsComponents(
+		user,
+		2,
+		table.FivenetDocuments.ID.EQ(mysql.Int64(10)),
+		false,
+	)
+	legacySQL, legacyArgs := mysql.WITH(legacyCTEs...)(legacyStmt).Sql()
+	assert.NotContains(t, legacySQL, "fivenet_user_jobs")
+	assert.Contains(t, legacyArgs, "mechanic")
+	assert.Contains(t, legacyArgs, int32(3))
+
+	existsStmt := mysql.
+		SELECT(mysql.Int(1).AS("ok")).
+		FROM(table.FivenetDocuments).
+		WHERE(access.ACLAccessExistsCondition(table.FivenetDocuments.ID, user, 2))
+	existsSQL, existsArgs := existsStmt.Sql()
+	assert.NotContains(t, existsSQL, "fivenet_user_jobs")
+	assert.Contains(t, existsArgs, "mechanic")
+	assert.Contains(t, existsArgs, int32(3))
 }
 
 func TestWikiPageSubjectObjectAccessVisibleIDsStatementShape(t *testing.T) {
