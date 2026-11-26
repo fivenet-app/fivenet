@@ -186,7 +186,9 @@ defineShortcuts(extractShortcuts(quickAccessButtons.value, '-'));
         >
             <template #header="{ collapsed }">
                 <div class="flex w-full min-w-0 items-center gap-1">
-                    <TopLogoDropdown class="min-w-0 flex-1" :collapsed="collapsed" />
+                    <div class="min-w-0 flex-1">
+                        <TopLogoDropdown class="w-full" :collapsed="collapsed" />
+                    </div>
                     <NotificationsNotificationPopover v-if="!collapsed" class="shrink-0" />
                 </div>
             </template>
