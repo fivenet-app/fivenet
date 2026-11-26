@@ -315,7 +315,7 @@ watch(
     },
 );
 
-const dataToggled = ref<boolean>(false);
+const dataCollapsed = ref<boolean>(true);
 const dataSearches = ref<Record<number, string>>({});
 
 const canFilterJobs = computed(() => isSuperuser.value || canBeConfigAdmin.value);
@@ -655,15 +655,15 @@ const tomorrow = addDays(today, 1);
                                     <UTooltip :text="$t('common.expand_collapse')">
                                         <UButton
                                             class="place-self-end"
-                                            :class="dataToggled ? 'rotate-180' : ''"
+                                            :class="dataCollapsed ? 'rotate-180' : ''"
                                             icon="i-mdi-chevron-double-down"
                                             variant="link"
                                             size="sm"
                                             :ui="{
                                                 leadingIcon: 'transition-transform duration-200',
                                             }"
-                                            :data-state="dataToggled ? 'open' : 'closed'"
-                                            @click="dataToggled = !dataToggled"
+                                            :data-state="dataCollapsed ? 'open' : 'closed'"
+                                            @click="dataCollapsed = !dataCollapsed"
                                         />
                                     </UTooltip>
                                 </div>
@@ -679,7 +679,7 @@ const tomorrow = addDays(today, 1);
                                 show-icon
                                 show-length
                                 virtual
-                                :height="dataToggled ? 240 : 800"
+                                :height="dataCollapsed ? 240 : 800"
                                 show-line-number
                                 :render-node-key="
                                     ({ defaultKey }) => highlightJsonText(String(defaultKey), getDataSearch(row.original.id))
