@@ -300,6 +300,8 @@ func TestRetentionDeleteOrderByUsesConfiguredAgeColumn(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
 			orderBy := retentionDeleteOrderBy(tt.table)
 			require.Len(t, orderBy, 2)
 
@@ -329,6 +331,8 @@ func TestTableRegistrationKeyUsesActiveRetentionColumn(t *testing.T) {
 }
 
 func TestAddTableKeepsSeparatePoliciesForSameTable(t *testing.T) {
+	t.Parallel()
+
 	tableListsMu.Lock()
 	originalTablesList := tablesList
 	tablesList = map[string]*Table{}
