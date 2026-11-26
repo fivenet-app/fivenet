@@ -21,6 +21,7 @@ const { activeChar, isSuperuser, jobProps } = storeToRefs(authStore);
 
 const isSwitchingWorkContext = ref(false);
 
+const fivenetLogo = '/images/logo.webp';
 const workContextJobs = computed(() => activeChar.value?.jobs ?? []);
 const hasWorkContextSwitcher = computed(() => !isSuperuser.value && workContextJobs.value.length > 1);
 const activeWorkContextJob = computed(() => activeChar.value?.job);
@@ -28,14 +29,16 @@ const activeWorkContextLabel = computed(() => activeChar.value?.jobLabel || acti
 const jobLogo = computed(() =>
     jobProps.value?.logoFile?.filePath ? `/api/filestore/${jobProps.value.logoFile.filePath}` : undefined,
 );
+const jobIdentityLogo = computed(() => jobLogo.value || fivenetLogo);
 const tooltip = computed(() =>
     hasWorkContextSwitcher.value ? `${t('pages.jobs.work_context')}: ${activeWorkContextLabel.value}` : undefined,
 );
 
 const isShowingJobIdentity = ref(false);
-const isShowingJobLabel = computed(() => isSuperuser.value || isShowingJobIdentity.value);
-const transitionDuration = computed(() => (isMobile.value ? 'duration-150' : 'duration-250'));
+const isShowingJobLabel = computed(() => isShowingJobIdentity.value);
+const transitionDuration = computed(() => (isMobile.value ? 'duration-[250ms]' : 'duration-[350ms]'));
 const identityTransition = computed(() => ({
+    appear: true,
     mode: 'out-in' as const,
     enterActiveClass: `transition-all ${transitionDuration.value} ease-out`,
     leaveActiveClass: `transition-all ${transitionDuration.value} ease-in`,
@@ -54,7 +57,7 @@ function scheduleJobIdentity(): void {
     resetJobIdentity();
 
     // On mobile, the sidebar is a drawer. Do not run the handoff until it is visible.
-    if (!jobLogo.value || (isMobile.value && !isDashboardSidebarSlideoverOpen.value)) return;
+    if (!activeWorkContextJob.value || (isMobile.value && !isDashboardSidebarSlideoverOpen.value)) return;
 
     identityTimer = setTimeout(
         () => {
@@ -105,7 +108,7 @@ const workContextItems = computed<DropdownMenuItem[][]>(() => [
             :square="props.collapsed"
             :loading="isSwitchingWorkContext"
             :disabled="isSwitchingWorkContext"
-            :trailing-icon="props.collapsed || isSuperuser ? undefined : 'i-mdi-chevron-down'"
+            :trailing-icon="props.collapsed || !hasWorkContextSwitcher ? undefined : 'i-mdi-chevron-down'"
             :ui="{
                 base: props.collapsed ? 'w-40' : 'w-(--reka-dropdown-menu-trigger-width)',
                 label: 'min-w-0 flex-1 text-left text-highlighted',
@@ -115,9 +118,9 @@ const workContextItems = computed<DropdownMenuItem[][]>(() => [
             <template #leading>
                 <Transition v-bind="identityTransition">
                     <NuxtImg
-                        :key="isShowingJobIdentity ? jobLogo : '/images/logo.webp'"
+                        :key="isShowingJobIdentity ? `job-${activeWorkContextJob}` : 'fivenet'"
                         class="size-5 shrink-0 rounded-none object-contain"
-                        :src="isShowingJobIdentity && jobLogo ? jobLogo : '/images/logo.webp'"
+                        :src="isShowingJobIdentity ? jobIdentityLogo : fivenetLogo"
                         :alt="isShowingJobIdentity ? activeWorkContextLabel : 'FiveNet'"
                     />
                 </Transition>
