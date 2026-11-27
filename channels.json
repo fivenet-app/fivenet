@@ -2,15 +2,15 @@
   "dev": {
     "repoUrl": "https://fivenet.github.io/charts",
     "chartName": "fivenet",
-    "chartVersion": "0.30.5",
+    "chartVersion": "0.30.6",
     "appVersion": "sha-29a1784",
-    "publishedAt": "2026-11-27T11:10:54Z"
+    "publishedAt": "2026-11-27T11:32:55Z"
   },
   "stable": {
     "repoUrl": "https://fivenet.github.io/charts",
     "chartName": "fivenet",
-    "chartVersion": "0.30.5",
-    "appVersion": "sha-1ef5c6a",
-    "publishedAt": "2026-11-27T11:32:17Z"
+    "chartVersion": "0.30.6",
+    "appVersion": "v2026.11.3",
+    "publishedAt": "2026-11-27T11:32:55Z"
   }
 }
