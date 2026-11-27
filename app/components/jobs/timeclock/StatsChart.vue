@@ -45,11 +45,14 @@ const xTicks = (i: number) => {
     return formatDate(data.value[i]?.date ?? new Date());
 };
 
-const template = (dr: DataRecord) =>
-    `<span class="font-semibold">${formatDate(dr.date)}</span><br />
+const template = (dr?: DataRecord) => {
+    if (!dr || !(dr.date instanceof Date)) return '';
+
+    return `<span class="font-semibold">${formatDate(dr.date)}</span><br />
 ${t('components.jobs.timeclock.Stats.sum')}: ${n(dr.sum, 'decimal')} h<br />
 ${t('components.jobs.timeclock.Stats.avg')}: ${n(dr.avg, 'decimal')} h<br />
 ${t('components.jobs.timeclock.Stats.max')}: ${n(dr.max, 'decimal')} h`;
+};
 </script>
 
 <template>
