@@ -56,9 +56,10 @@ func newCentrumJoinUnitTestTracker() *centrumJoinUnitTestTracker {
 	return &centrumJoinUnitTestTracker{
 		markers: map[int32]*livemapmarkers.UserMarker{
 			1: {
-				UserId: 1,
-				Job:    "ambulance",
-				Hidden: false,
+				UserId:   1,
+				Job:      "ambulance",
+				JobGrade: new(int32(17)),
+				Hidden:   false,
 			},
 		},
 		mappings: map[int32]*pbtracker.UserMapping{},
