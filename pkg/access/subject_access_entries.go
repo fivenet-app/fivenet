@@ -20,6 +20,14 @@ type SubjectAccessOptions struct {
 	DeniedAccessLevels []int32
 }
 
+// ActorSubjectOptions controls which job contexts are considered when matching
+// job-grade ACL subjects. The default only considers the effective job carried
+// by UserInfo. Callers that deliberately need to look across a user's jobs can
+// opt in without broadening ACL checks elsewhere.
+type ActorSubjectOptions struct {
+	IncludeAllUserJobs bool
+}
+
 type SubjectAccessEntryChanges[T any] struct {
 	ToCreate []T
 	ToUpdate []T
@@ -198,6 +206,20 @@ func (a *SubjectObjectAccess) ACLAccessExistsCondition(
 	userInfo *userinfo.UserInfo,
 	access int32,
 ) mysql.BoolExpression {
+	return a.ACLAccessExistsConditionWithActorSubjects(
+		targetID,
+		userInfo,
+		access,
+		ActorSubjectOptions{},
+	)
+}
+
+func (a *SubjectObjectAccess) ACLAccessExistsConditionWithActorSubjects(
+	targetID mysql.IntegerExpression,
+	userInfo *userinfo.UserInfo,
+	access int32,
+	actorOptions ActorSubjectOptions,
+) mysql.BoolExpression {
 	tAccess := a.accessTable
 	columns := a.accessColumns
 	tSubjectUsers := table.FivenetACLSubjectUsers.AS("subject_acl_user_exists")
@@ -244,6 +266,24 @@ func (a *SubjectObjectAccess) ACLAccessExistsCondition(
 					tSubjectJobGrade.MinimumGrade.LT_EQ(mysql.Int32(userInfo.GetJobGrade())),
 				)),
 		)
+	if actorOptions.IncludeAllUserJobs {
+		tUserJobs := table.FivenetUserJobs.AS("subject_acl_user_jobs_exists")
+		actorSubjectsSelect = actorSubjectsSelect.UNION_ALL(
+			mysql.
+				SELECT(
+					tSubjectJobGrade.SubjectID.AS("subject_id"),
+					mysql.Int32(SubjectSpecificityJobGrade).AS("specificity"),
+					tSubjectJobGrade.MinimumGrade.AS("grade_specificity"),
+				).
+				FROM(tSubjectJobGrade.
+					INNER_JOIN(tUserJobs, mysql.AND(
+						tUserJobs.UserID.EQ(mysql.Int32(userInfo.GetUserId())),
+						tUserJobs.Job.EQ(tSubjectJobGrade.Job),
+						tUserJobs.Grade.GT_EQ(tSubjectJobGrade.MinimumGrade),
+					)),
+				),
+		)
+	}
 
 	actorSubjectsTable := actorSubjectsSelect.AsTable("acl_access_actor_subjects")
 	actorSubjectID := mysql.IntegerColumn("subject_id").From(actorSubjectsTable)

@@ -38,7 +38,11 @@ func TestResolveActorSubjectsUsesOnlyEffectiveWorkContext(t *testing.T) {
 
 	resolver := NewSubjectResolver(db)
 	mock.ExpectQuery(`(?s)SELECT.*fivenet_acl_subject_job_grade_scopes.*`).
-		WithArgs(int32(7), int32(7), "mechanic", int32(3)).
+		WithArgs(
+			int32(SubjectSpecificityUser), int32(-1), int32(7),
+			int32(SubjectSpecificityQualification), int32(-1), int32(7),
+			int32(SubjectSpecificityJobGrade), "mechanic", int32(3),
+		).
 		WillReturnRows(sqlmock.NewRows([]string{
 			"subject_id",
 			"specificity",
@@ -50,6 +54,37 @@ func TestResolveActorSubjectsUsesOnlyEffectiveWorkContext(t *testing.T) {
 		Job:      "mechanic",
 		JobGrade: 3,
 	})
+	require.NoError(t, err)
+	assert.Empty(t, subjects)
+	require.NoError(t, mock.ExpectationsWereMet())
+}
+
+func TestResolveActorSubjectsCanIncludeAllUserJobs(t *testing.T) {
+	t.Parallel()
+
+	db, mock, err := sqlmock.New()
+	require.NoError(t, err)
+	t.Cleanup(func() { _ = db.Close() })
+
+	resolver := NewSubjectResolver(db)
+	mock.ExpectQuery(`(?s)SELECT.*fivenet_user_jobs AS uj_resolve.*`).
+		WithArgs(
+			int32(SubjectSpecificityUser), int32(-1), int32(7),
+			int32(SubjectSpecificityQualification), int32(-1), int32(7),
+			int32(SubjectSpecificityJobGrade), "mechanic", int32(3),
+			int32(SubjectSpecificityJobGrade), int32(7),
+		).
+		WillReturnRows(sqlmock.NewRows([]string{
+			"subject_id",
+			"specificity",
+			"grade_specificity",
+		}))
+
+	subjects, err := resolver.ResolveActorSubjectsWithOptions(t.Context(), db, &userinfo.UserInfo{
+		UserId:   7,
+		Job:      "mechanic",
+		JobGrade: 3,
+	}, ActorSubjectOptions{IncludeAllUserJobs: true})
 	require.NoError(t, err)
 	assert.Empty(t, subjects)
 	require.NoError(t, mock.ExpectationsWereMet())

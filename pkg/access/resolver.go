@@ -167,6 +167,15 @@ func (r *SubjectResolver) ResolveActorSubjects(
 	tx qrm.DB,
 	userInfo *userinfo.UserInfo,
 ) ([]ActorSubject, error) {
+	return r.ResolveActorSubjectsWithOptions(ctx, tx, userInfo, ActorSubjectOptions{})
+}
+
+func (r *SubjectResolver) ResolveActorSubjectsWithOptions(
+	ctx context.Context,
+	tx qrm.DB,
+	userInfo *userinfo.UserInfo,
+	actorOptions ActorSubjectOptions,
+) ([]ActorSubject, error) {
 	if userInfo == nil || userInfo.GetUserId() <= 0 {
 		return nil, nil
 	}
@@ -211,6 +220,26 @@ func (r *SubjectResolver) ResolveActorSubjects(
 					tSubjectJobGrade.MinimumGrade.LT_EQ(mysql.Int32(userInfo.GetJobGrade())),
 				)),
 		)
+	if actorOptions.IncludeAllUserJobs {
+		tUserJobs := table.FivenetUserJobs.AS("uj_resolve")
+		stmt = stmt.UNION_ALL(
+			mysql.
+				SELECT(
+					tSubjectJobGrade.SubjectID.AS("subject_id"),
+					mysql.Int32(SubjectSpecificityJobGrade).AS("specificity"),
+					tSubjectJobGrade.MinimumGrade.AS("grade_specificity"),
+				).
+				FROM(tSubjectJobGrade.
+					INNER_JOIN(tUserJobs,
+						mysql.AND(
+							tUserJobs.UserID.EQ(mysql.Int32(userInfo.GetUserId())),
+							tUserJobs.Job.EQ(tSubjectJobGrade.Job),
+							tUserJobs.Grade.GT_EQ(tSubjectJobGrade.MinimumGrade),
+						),
+					),
+				),
+		)
+	}
 
 	var dest []ActorSubject
 	if err := stmt.QueryContext(ctx, tx, &dest); err != nil {
