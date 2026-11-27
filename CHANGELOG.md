@@ -2,6 +2,49 @@
 
 All notable changes to this project will be documented in this file.
 
+## [2026.11.3] - 2026-11-27
+
+### 🚀 Features
+
+- *(jobs)* Add per-tab work context switching
+- *(audit)* Add job filters and JSON highlighting
+- *(ui)* Show active job identity in sidebar
+
+### 🐛 Bug Fixes
+
+- *(properties)* Unify activity filters and harden property mutations
+- *(ui)* Update hints box and report bugs text
+- *(leaflet)* Modernize and optimize simple graticule redraws
+- *(livemap)* Update leaflet.heat to v1.0.1
+- *(dispatches)* Cleanup list width and page size
+- *(container)* Reduce download during build by only loading icon sets
+- *(container)* Pin iconify commit for iconset download
+- *(ui)* Remove colon from "created by ..." texts
+- *(ui)* Help slideover width
+- *(documents)* Hydrate template user properties and add property presets
+- *(properties)* Migrate legacy citizen property RBAC job limits
+- *(audit)* Enrich audit log user details
+- *(activity)* Generate accurate document and wiki diffs
+- Add/update nuxt devtools
+- *(nuxt)* Align DevTools dependencies and remove stale Vite prebundles
+- *(auth)* Map secondary session jobs correctly
+- *(livemap)* Refresh layers after job context changes
+- *(auth)* Multi job secondary refresh using wrong job
+- *(ui)* Ignore CANCELLED grpc request errors
+- *(streams)* Preserve secondary job context
+- *(diff)* Collapse unchanged activity diff lines
+- *(housekeeper)* Restore retention cleanup and add ordered batching
+- *(filestore)* Protect user-file references during housekeeping
+- *(audit)* Collapse data in expanded rows by default
+- *(ui)* Keep notification button within sidebar header
+- *(access)* Use effective work context for ACL job checks
+- Housekeeper go lint test issue
+- *(ui)* Improve logo and label transition
+- *(acl)* Make actor job scope configurable
+- *(calendar)* Restrict subscription visibility to public calendars
+- *(centrum)* Set active marker grade in tests
+- *(acl)* Check resolver test SQL argument casts
+
 ## [2026.11.2] - 2026-11-20
 
 ### 🚀 Features
