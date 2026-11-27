@@ -121,7 +121,7 @@
     },
     "devDependencies": {
         "@csmith/release-it-calver-plugin": "2026.9.0",
-        "@nuxt/devtools": "4.2.1",
+        "@nuxt/devtools": "4.2.2",
         "@nuxt/eslint": "1.17.0",
         "@nuxt/test-utils": "4.4.0",
         "@nuxtjs/i18n": "10.7.0",
@@ -164,7 +164,7 @@
         "typescript": "catalog:",
         "vite": "8.4.0",
         "vitest": "5.1.2",
-        "vue-router": "5.5.2",
+        "vue-router": "5.5.3",
         "vue-tsc": "3.3.14",
         "westures": "1.1.1"
     },
