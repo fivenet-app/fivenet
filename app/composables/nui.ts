@@ -85,10 +85,34 @@ export function setNUIFocusSession(session: number): void {
  * @returns void
  */
 export function onFocusHandler(event: FocusEvent): void {
-    if (!isNUITextTarget(event.target) && !isNUITextTarget(document.activeElement)) return;
-
     logger.debug('focus handler event:', event.type);
+
+    // Starting the NUI request immediately matters because FiveM keeps game
+    // controls active until the client callback has completed. Deferring a
+    // focusin by even one microtask lets a quick typist move before input is
+    // blocked. Only focusout needs to wait, so moving between text controls
+    // does not briefly unblock game input.
+    if (event.type === 'focusin' && isNUITextTarget(event.target)) {
+        sendFocusState(true);
+        return;
+    }
+
+    if (event.type !== 'focusout' || !isNUITextTarget(event.target)) return;
+
     updateNUIInputFocus();
+}
+
+/**
+ * Start blocking game controls before a pointer interaction gives an editor
+ * focus. This hides the unavoidable NUI callback round trip behind mouse or
+ * touch down, which is particularly important for Tiptap's contenteditable
+ * surface.
+ */
+export function onTextInputPointerDownHandler(event: PointerEvent): void {
+    if (!isNUITextTarget(event.target)) return;
+
+    logger.debug('text input pointer down');
+    sendFocusState(true);
 }
 
 type NUIRequest = boolean | string | object;

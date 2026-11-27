@@ -1,4 +1,4 @@
-import { isNUITextTarget, onFocusHandler, onNUIMessage, toggleTablet } from '~/composables/nui';
+import { isNUITextTarget, onFocusHandler, onNUIMessage, onTextInputPointerDownHandler, toggleTablet } from '~/composables/nui';
 
 export default defineNuxtPlugin({
     name: 'nui',
@@ -49,6 +49,7 @@ export default defineNuxtPlugin({
 
             useEventListener(window, 'focusin', onFocusHandler, true);
             useEventListener(window, 'focusout', onFocusHandler, true);
+            useEventListener(window, 'pointerdown', onTextInputPointerDownHandler, true);
         }
     },
 });
