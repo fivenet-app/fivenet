@@ -108,7 +108,7 @@ const workContextItems = computed<DropdownMenuItem[][]>(() => [
 <template>
     <DefineLogoButton>
         <UButton
-            class="w-full font-bold"
+            class="w-full font-semibold"
             color="neutral"
             variant="ghost"
             :square="props.collapsed"
