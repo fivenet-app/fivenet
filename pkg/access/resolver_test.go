@@ -5,9 +5,18 @@ import (
 
 	"github.com/DATA-DOG/go-sqlmock"
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/userinfo"
+	"github.com/fivenet-app/fivenet/v2026/pkg/utils"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
+
+func requireInt32(t *testing.T, value int) int32 {
+	t.Helper()
+
+	converted, ok := utils.ToInt32Checked(value)
+	require.Truef(t, ok, "value %d must fit in int32", value)
+	return converted
+}
 
 func TestSubjectCleanupOrphanSubjectsStatementShape(t *testing.T) {
 	t.Parallel()
@@ -39,9 +48,9 @@ func TestResolveActorSubjectsUsesOnlyEffectiveWorkContext(t *testing.T) {
 	resolver := NewSubjectResolver(db)
 	mock.ExpectQuery(`(?s)SELECT.*fivenet_acl_subject_job_grade_scopes.*`).
 		WithArgs(
-			int32(SubjectSpecificityUser), int32(-1), int32(7),
-			int32(SubjectSpecificityQualification), int32(-1), int32(7),
-			int32(SubjectSpecificityJobGrade), "mechanic", int32(3),
+			SubjectSpecificityUser, requireInt32(t, -1), requireInt32(t, 7),
+			SubjectSpecificityQualification, requireInt32(t, -1), requireInt32(t, 7),
+			SubjectSpecificityJobGrade, "mechanic", requireInt32(t, 3),
 		).
 		WillReturnRows(sqlmock.NewRows([]string{
 			"subject_id",
@@ -69,10 +78,10 @@ func TestResolveActorSubjectsCanIncludeAllUserJobs(t *testing.T) {
 	resolver := NewSubjectResolver(db)
 	mock.ExpectQuery(`(?s)SELECT.*fivenet_user_jobs AS uj_resolve.*`).
 		WithArgs(
-			int32(SubjectSpecificityUser), int32(-1), int32(7),
-			int32(SubjectSpecificityQualification), int32(-1), int32(7),
-			int32(SubjectSpecificityJobGrade), "mechanic", int32(3),
-			int32(SubjectSpecificityJobGrade), int32(7),
+			SubjectSpecificityUser, requireInt32(t, -1), requireInt32(t, 7),
+			SubjectSpecificityQualification, requireInt32(t, -1), requireInt32(t, 7),
+			SubjectSpecificityJobGrade, "mechanic", requireInt32(t, 3),
+			SubjectSpecificityJobGrade, requireInt32(t, 7),
 		).
 		WillReturnRows(sqlmock.NewRows([]string{
 			"subject_id",
