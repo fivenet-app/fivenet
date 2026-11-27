@@ -30,9 +30,10 @@ const (
 
 	feedFetch = 16
 
-	streamRestartInitialBackoff = 100 * time.Millisecond
-	streamRestartMaxBackoff     = 5 * time.Second
-	streamPullHeartbeat         = 3 * time.Second
+	streamRestartInitialBackoff   = 100 * time.Millisecond
+	streamRestartMaxBackoff       = 5 * time.Second
+	streamPullHeartbeat           = 3 * time.Second
+	userMarkerCacheBarrierTimeout = 2 * time.Second
 )
 
 var (
@@ -473,6 +474,7 @@ func (s *Server) stream(
 				}
 
 				if err := s.processMessage(
+					gctx,
 					msg,
 					userInfo,
 					&userOnDuty,
@@ -514,6 +516,7 @@ func markerUpdateShouldDeleteForUser(
 
 // Helper function to process a single message.
 func (s *Server) processMessage(
+	ctx context.Context,
 	m jetstream.Msg,
 	userInfo *userinfo.UserInfo,
 	userOnDuty *bool,
@@ -583,6 +586,25 @@ func (s *Server) processMessage(
 	if !*userOnDuty {
 		if um.GetUserId() == userInfo.GetUserId() {
 			*userOnDuty = true
+			// This message arrives through a direct KV consumer, while the
+			// snapshot below reads the tracker's cache. Wait until that cache
+			// has applied the same revision so the on-duty snapshot cannot race
+			// ahead of the worker's startup updates.
+			if metadata, err := m.Metadata(); err == nil && metadata != nil {
+				if waiter, ok := s.tracker.(tracker.UserMarkerRevisionWaiter); ok {
+					barrierCtx, cancel := context.WithTimeout(ctx, userMarkerCacheBarrierTimeout)
+					err = waiter.WaitForUserMarkerRevision(barrierCtx, metadata.Sequence.Stream)
+					cancel()
+					if err != nil {
+						return fmt.Errorf(
+							"%w: waiting for user marker cache revision %d: %w",
+							errLivemapUserFeedResync,
+							metadata.Sequence.Stream,
+							err,
+						)
+					}
+				}
+			}
 			if err := sendOut(s.userMarkersResponse(usersJobs, userInfo, true)); err != nil {
 				return err
 			}

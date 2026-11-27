@@ -129,6 +129,15 @@ type Store[T any, U protoutils.ProtoMessageWithMerge[T]] struct {
 	ready     chan struct{}
 	readyOnce sync.Once
 
+	// appliedRevision is the latest KV revision applied to the local cache.
+	// revisionSnapshotComplete ensures callers never treat
+	// an in-progress initial/replacement snapshot as an ordered watermark.
+	// revisionChanged wakes callers waiting for a cache barrier without polling.
+	revisionMu               sync.Mutex
+	appliedRevision          uint64
+	revisionSnapshotComplete bool
+	revisionChanged          chan struct{}
+
 	// callback for update events
 	onUpdate OnUpdateFn[T, U]
 	// callback for delete events
@@ -173,10 +182,11 @@ func New[T any, U protoutils.ProtoMessageWithMerge[T]](
 
 		cl: true,
 
-		mu:      xsync.NewMap[string, *sync.Mutex](),
-		data:    xsync.NewMap[string, U](),
-		metrics: getStoreMetrics(),
-		ready:   make(chan struct{}),
+		mu:              xsync.NewMap[string, *sync.Mutex](),
+		data:            xsync.NewMap[string, U](),
+		metrics:         getStoreMetrics(),
+		ready:           make(chan struct{}),
+		revisionChanged: make(chan struct{}),
 	}
 
 	kvConfig := jetstream.KeyValueConfig{
@@ -241,6 +251,57 @@ func (s *Store[T, U]) WaitForReady(ctx context.Context) error {
 	}
 }
 
+// WaitForRevision blocks until the local cache has completed its current
+// snapshot and applied at least revision. It is useful when a caller consumes
+// a KV update directly but needs a subsequent cache-backed read to include it.
+func (s *Store[T, U]) WaitForRevision(ctx context.Context, revision uint64) error {
+	if revision == 0 {
+		return nil
+	}
+
+	for {
+		s.revisionMu.Lock()
+		if s.revisionSnapshotComplete && s.appliedRevision >= revision {
+			s.revisionMu.Unlock()
+			return nil
+		}
+		changed := s.revisionChanged
+		s.revisionMu.Unlock()
+
+		select {
+		case <-changed:
+		case <-ctx.Done():
+			return ctx.Err()
+		}
+	}
+}
+
+func (s *Store[T, U]) markRevisionApplied(revision uint64) {
+	if revision == 0 {
+		return
+	}
+
+	s.revisionMu.Lock()
+	defer s.revisionMu.Unlock()
+	if revision <= s.appliedRevision {
+		return
+	}
+	s.appliedRevision = revision
+	close(s.revisionChanged)
+	s.revisionChanged = make(chan struct{})
+}
+
+func (s *Store[T, U]) setRevisionSnapshotComplete(complete bool) {
+	s.revisionMu.Lock()
+	defer s.revisionMu.Unlock()
+	if s.revisionSnapshotComplete == complete {
+		return
+	}
+	s.revisionSnapshotComplete = complete
+	close(s.revisionChanged)
+	s.revisionChanged = make(chan struct{})
+}
+
 func (s *Store[T, U]) Start(ctx context.Context, wait bool) error {
 	watcher, err := s.kv.Watch(ctx, s.prefix+">")
 	if err != nil {
@@ -273,6 +334,7 @@ func (s *Store[T, U]) Start(ctx context.Context, wait bool) error {
 				case entry, ok := <-updateCh:
 					if !ok {
 						s.logger.Warn("store watcher channel closed; restarting watcher")
+						s.setRevisionSnapshotComplete(false)
 						// A closed channel before the initial nil sentinel means the
 						// cache has not finished loading; retry the watcher.
 						break watcherLoop
@@ -282,6 +344,7 @@ func (s *Store[T, U]) Start(ctx context.Context, wait bool) error {
 					// by the JetStream KV watcher.
 					if entry == nil {
 						s.reconcileWatcherSnapshot(ctx, seen)
+						s.setRevisionSnapshotComplete(true)
 						markReady()
 						continue
 					}
@@ -295,9 +358,12 @@ func (s *Store[T, U]) Start(ctx context.Context, wait bool) error {
 					switch entry.Operation() {
 					case jetstream.KeyValueDelete, jetstream.KeyValuePurge:
 						s.handleWatcherDelete(ctx, key, entry)
+						s.markRevisionApplied(entry.Revision())
 
 					case jetstream.KeyValuePut:
-						s.handleWatcherPut(ctx, key, entry)
+						if s.handleWatcherPut(ctx, key, entry) {
+							s.markRevisionApplied(entry.Revision())
+						}
 					}
 				}
 			}
@@ -417,7 +483,7 @@ func (s *Store[T, U]) handleWatcherPut(
 	ctx context.Context,
 	key string,
 	entry jetstream.KeyValueEntry,
-) {
+) bool {
 	mu, _ := s.mu.LoadOrCompute(key, mutexCompute)
 	mu.Lock()
 	defer mu.Unlock()
@@ -438,6 +504,7 @@ func (s *Store[T, U]) handleWatcherPut(
 			zap.String("key", key),
 			zap.Error(err),
 		)
+		return false
 	}
 
 	if s.onRemoteUpdate != nil {
@@ -449,6 +516,8 @@ func (s *Store[T, U]) handleWatcherPut(
 			)
 		}
 	}
+
+	return true
 }
 
 // Get copy of data from local data.

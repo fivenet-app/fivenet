@@ -19,7 +19,8 @@ import (
 )
 
 type streamTestTracker struct {
-	markers []*livemapmarkers.UserMarker
+	markers      []*livemapmarkers.UserMarker
+	waitRevision func(context.Context, uint64) error
 }
 
 func (t *streamTestTracker) ListTrackedJobs() []string {
@@ -32,6 +33,13 @@ func (t *streamTestTracker) GetUserMarkerById(_ int32) (*livemapmarkers.UserMark
 
 func (t *streamTestTracker) IsUserOnDuty(_ int32) bool {
 	return false
+}
+
+func (t *streamTestTracker) WaitForUserMarkerRevision(ctx context.Context, revision uint64) error {
+	if t.waitRevision != nil {
+		return t.waitRevision(ctx, revision)
+	}
+	return nil
 }
 
 func (t *streamTestTracker) Subscribe(
@@ -83,13 +91,15 @@ func (t *streamTestTracker) ListUserMappings(
 var _ pkgtracker.ITracker = (*streamTestTracker)(nil)
 
 type streamTestMsg struct {
-	subject string
-	headers nats.Header
-	data    []byte
+	subject     string
+	headers     nats.Header
+	data        []byte
+	metadata    *jetstream.MsgMetadata
+	metadataErr error
 }
 
 func (m *streamTestMsg) Metadata() (*jetstream.MsgMetadata, error) {
-	return nil, nil
+	return m.metadata, m.metadataErr
 }
 
 func (m *streamTestMsg) Data() []byte {
@@ -152,9 +162,15 @@ func TestProcessMessageOnDutyTransitionEnqueuesSnapshot(t *testing.T) {
 	data, err := proto.Marshal(userMarker)
 	require.NoError(t, err)
 
+	barrierWaited := false
 	srv := &Server{
 		tracker: &streamTestTracker{
 			markers: []*livemapmarkers.UserMarker{userMarker},
+			waitRevision: func(_ context.Context, revision uint64) error {
+				barrierWaited = true
+				require.Equal(t, uint64(42), revision)
+				return nil
+			},
 		},
 	}
 	userInfo := newUserInfo(10, "police", 3, false)
@@ -165,10 +181,12 @@ func TestProcessMessageOnDutyTransitionEnqueuesSnapshot(t *testing.T) {
 
 	var sent []*pblivemap.StreamResponse
 	err = srv.processMessage(
+		t.Context(),
 		&streamTestMsg{
-			subject: "$KV.userloc.police.3.10",
-			headers: nats.Header{},
-			data:    data,
+			subject:  "$KV.userloc.police.3.10",
+			headers:  nats.Header{},
+			data:     data,
+			metadata: &jetstream.MsgMetadata{Sequence: jetstream.SequencePair{Stream: 42}},
 		},
 		userInfo,
 		&userOnDuty,
@@ -180,6 +198,7 @@ func TestProcessMessageOnDutyTransitionEnqueuesSnapshot(t *testing.T) {
 	)
 
 	require.NoError(t, err)
+	require.True(t, barrierWaited)
 	require.True(t, userOnDuty)
 	require.Len(t, sent, 2)
 	require.True(t, sent[0].GetUserOnDuty())
@@ -210,6 +229,7 @@ func TestProcessMessageForwardsSubsequentUserMarkerUpdates(t *testing.T) {
 		require.NoError(t, err)
 
 		err = (&Server{}).processMessage(
+			t.Context(),
 			&streamTestMsg{data: data},
 			userInfo,
 			&userOnDuty,
@@ -254,6 +274,7 @@ func TestProcessMessageForwardsDeleteAndRecreate(t *testing.T) {
 	}
 
 	err = (&Server{}).processMessage(
+		t.Context(),
 		&streamTestMsg{
 			subject: "$KV.userloc.ambulance.3.42",
 			headers: nats.Header{"KV-Operation": []string{"DEL"}},
@@ -266,6 +287,7 @@ func TestProcessMessageForwardsDeleteAndRecreate(t *testing.T) {
 	require.NoError(t, err)
 
 	err = (&Server{}).processMessage(
+		t.Context(),
 		&streamTestMsg{
 			subject: "$KV.userloc.ambulance.3.42",
 			data:    data,

@@ -211,6 +211,34 @@ func TestStoreWaitForReadyAfterAsyncStart(t *testing.T) {
 	require.NoError(t, <-ready)
 }
 
+func TestStoreWaitForRevisionWaitsForInitialSnapshot(t *testing.T) {
+	t.Parallel()
+
+	watcher := newScriptedKeyWatcher(false)
+	store := newScriptedStore(t, &scriptedWatchKV{
+		results: []scriptedWatchResult{{watcher: watcher}},
+	})
+
+	ctx, cancel := context.WithCancel(t.Context())
+	t.Cleanup(cancel)
+	require.NoError(t, store.Start(ctx, false))
+
+	barrier := make(chan error, 1)
+	go func() { barrier <- store.WaitForRevision(ctx, 7) }()
+
+	// Applying a snapshot entry with a higher revision alone is insufficient:
+	// the initial snapshot may be delivered out of revision order.
+	watcher.updates <- newScriptedPutEntry(t, "marker", "value", 7)
+	select {
+	case err := <-barrier:
+		t.Fatalf("revision barrier completed before initial snapshot: %v", err)
+	case <-time.After(20 * time.Millisecond):
+	}
+
+	watcher.updates <- nil
+	require.NoError(t, <-barrier)
+}
+
 func TestBasicStoreCreateAndUse(t *testing.T) {
 	t.Parallel()
 	js := nats.NewServer(t, nats.ServerOptions{InProcess: true}).GetJS()

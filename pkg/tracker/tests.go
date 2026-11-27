@@ -119,6 +119,10 @@ func (s *TestTracker) IsUserOnDuty(userId int32) bool {
 	return true
 }
 
+func (*TestTracker) WaitForUserMarkerRevision(context.Context, uint64) error {
+	return nil
+}
+
 func (s *TestTracker) GetUserMarkerById(id int32) (*livemapmarkers.UserMarker, bool) {
 	info, ok := s.usersIDs.Load(id)
 	if !ok {

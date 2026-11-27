@@ -56,6 +56,13 @@ type ITracker interface {
 	ListUserMappings(ctx context.Context) (map[int32]*tracker.UserMapping, error)
 }
 
+// UserMarkerRevisionWaiter is implemented by trackers that can synchronize a
+// cache-backed read with a userloc KV revision. It is intentionally separate
+// from ITracker because only livemap streams require this consistency barrier.
+type UserMarkerRevisionWaiter interface {
+	WaitForUserMarkerRevision(ctx context.Context, revision uint64) error
+}
+
 type Tracker struct {
 	logger *zap.Logger
 	tracer trace.Tracer
@@ -211,6 +218,10 @@ func (t *Tracker) GetUserMarkerById(id int32) (*livemapmarkers.UserMarker, bool)
 func (t *Tracker) IsUserOnDuty(id int32) bool {
 	um, err := t.userByIDStore.Get(strconv.Itoa(int(id)))
 	return err == nil && um != nil && !um.GetHidden()
+}
+
+func (t *Tracker) WaitForUserMarkerRevision(ctx context.Context, revision uint64) error {
+	return t.userLocStore.WaitForRevision(ctx, revision)
 }
 
 func (t *Tracker) Subscribe(
