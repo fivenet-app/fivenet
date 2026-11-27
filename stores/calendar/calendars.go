@@ -9,6 +9,7 @@ import (
 	database "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/common/database"
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/timestamp"
 	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/userinfo"
+	"github.com/fivenet-app/fivenet/v2026/pkg/access"
 	"github.com/fivenet-app/fivenet/v2026/pkg/dbutils"
 	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
 	"github.com/go-jet/jet/v2/mysql"
@@ -136,15 +137,7 @@ func (s *Store) listConditions(
 		return condition, []mysql.OrderByClause{tCalendar.Name.ASC()}
 	}
 
-	subsCondition := tCalendar.ID.IN(tCalendarSubs.
-		SELECT(
-			tCalendarSubs.CalendarID,
-		).
-		FROM(tCalendarSubs).
-		WHERE(mysql.AND(
-			tCalendarSubs.UserID.EQ(mysql.Int32(q.UserInfo.GetUserId())),
-		)),
-	)
+	subsCondition := subscribedPublicCalendarCondition(q.UserInfo)
 
 	minAccessLevel := calendaraccess.AccessLevel_ACCESS_LEVEL_VIEW
 	if q.MinAccessLevel != nil {
@@ -152,22 +145,34 @@ func (s *Store) listConditions(
 		subsCondition = mysql.Bool(false)
 	}
 
+	regularCalendarCondition := mysql.OR(
+		tCalendar.SystemKind.IS_NULL(),
+		tCalendar.SystemKind.NOT_EQ(
+			mysql.Int32(
+				int32(calendarresource.CalendarSystemKind_CALENDAR_SYSTEM_KIND_JOB_BIRTHDAYS),
+			),
+		),
+	)
+	birthdayCalendarCondition := s.birthdayCalendarVisible(
+		tCalendar.ID,
+		minAccessLevel,
+		q.UserInfo,
+	)
+
 	var accessExists mysql.BoolExpression
 	if !q.UserInfo.GetJobAdmin() {
-		accessExists = s.access.ACLAccessExistsCondition(
-			tCalendar.ID,
-			q.UserInfo,
-			int32(minAccessLevel),
+		accessExists = mysql.AND(
+			regularCalendarCondition,
+			s.access.ACLAccessExistsCondition(
+				tCalendar.ID,
+				q.UserInfo,
+				int32(minAccessLevel),
+			),
 		)
 	} else {
 		accessExists = mysql.OR(
-			tCalendar.SystemKind.IS_NULL(),
-			tCalendar.SystemKind.NOT_EQ(
-				mysql.Int32(
-					int32(calendarresource.CalendarSystemKind_CALENDAR_SYSTEM_KIND_JOB_BIRTHDAYS),
-				),
-			),
-			s.birthdayCalendarVisible(tCalendar.ID, minAccessLevel, q.UserInfo),
+			regularCalendarCondition,
+			birthdayCalendarCondition,
 		)
 	}
 
@@ -178,11 +183,12 @@ func (s *Store) listConditions(
 	)
 	condition = mysql.AND(
 		condition,
+		mysql.OR(regularCalendarCondition, birthdayCalendarCondition),
 		mysql.OR(
 			subsCondition,
 			creatorPrivateCondition,
 			accessExists,
-			s.birthdayCalendarVisible(tCalendar.ID, minAccessLevel, q.UserInfo),
+			birthdayCalendarCondition,
 		),
 	)
 
@@ -209,6 +215,14 @@ func (s *Store) birthdayCalendarVisible(
 	accessLevel calendaraccess.AccessLevel,
 	userInfo *userinfo.UserInfo,
 ) mysql.BoolExpression {
+	tUserJobs := table.FivenetUserJobs.AS("birthday_calendar_user_job")
+	userHasCalendarJob := tCalendar.Job.IN(
+		tUserJobs.
+			SELECT(tUserJobs.Job).
+			FROM(tUserJobs).
+			WHERE(tUserJobs.UserID.EQ(mysql.Int32(userInfo.GetUserId()))),
+	)
+
 	return mysql.AND(
 		tCalendar.SystemKind.EQ(
 			mysql.Int32(
@@ -217,9 +231,14 @@ func (s *Store) birthdayCalendarVisible(
 		),
 		mysql.OR(
 			mysql.Bool(userInfo.GetJobAdmin()),
-			tCalendar.Job.EQ(mysql.String(userInfo.GetJob())),
+			userHasCalendarJob,
 		),
-		s.access.ACLAccessExistsCondition(calendarID, userInfo, int32(accessLevel)),
+		s.access.ACLAccessExistsConditionWithActorSubjects(
+			calendarID,
+			userInfo,
+			int32(accessLevel),
+			access.ActorSubjectOptions{IncludeAllUserJobs: true},
+		),
 	)
 }
 

@@ -87,6 +87,19 @@ func TestListCalendarsStmtFiltersOnlyPublicWhenRequested(t *testing.T) {
 	assert.Contains(t, sql, "calendar.public IS TRUE")
 }
 
+func TestListCalendarsStmtOnlyUsesSubscriptionsForPublicCalendars(t *testing.T) {
+	t.Parallel()
+
+	store := New(testParams(new(sql.DB))).(*Store)
+	stmt := store.listCalendarsStmt(ListQuery{
+		UserInfo: &userinfo.UserInfo{UserId: 7, Job: "police"},
+	}, 7, 0, 20)
+
+	sql, _ := stmt.Sql()
+	assert.Contains(t, sql, "calendar.public IS TRUE")
+	assert.Contains(t, sql, "calendar_sub.user_id = ?")
+}
+
 func TestGetCalendarStmtIncludesCreatorJoins(t *testing.T) {
 	t.Parallel()
 

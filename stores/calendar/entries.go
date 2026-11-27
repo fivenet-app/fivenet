@@ -190,21 +190,37 @@ func (s *Store) listCalendarEntriesVisibility(
 		mysql.Bool(true),
 	)
 	visibleIDStmt := visibilityIDsSelect(visibleIDs)
-	visibleCalendarCondition := tCalendar.ID.IN(visibleIDStmt)
+	regularCalendarCondition := mysql.OR(
+		tCalendar.SystemKind.IS_NULL(),
+		tCalendar.SystemKind.NOT_EQ(
+			mysql.Int32(
+				int32(calendarresource.CalendarSystemKind_CALENDAR_SYSTEM_KIND_JOB_BIRTHDAYS),
+			),
+		),
+	)
+	visibleCalendarCondition := mysql.AND(
+		regularCalendarCondition,
+		tCalendar.ID.IN(visibleIDStmt),
+	)
+	birthdayCalendarCondition := s.birthdayCalendarVisible(
+		tCalendar.ID,
+		accessLevel,
+		userInfo,
+	)
+	visibleCalendarCondition = mysql.OR(visibleCalendarCondition, birthdayCalendarCondition)
 
 	visibility := mysql.OR(
-		tCalendar.ID.IN(
-			tCalendarSubs.
-				SELECT(tCalendarSubs.CalendarID).
-				FROM(tCalendarSubs).
-				WHERE(mysql.AND(tCalendarSubs.UserID.EQ(mysql.Int32(userInfo.GetUserId())))),
-		),
+		subscribedPublicCalendarCondition(userInfo),
 		mysql.AND(
 			tCalendar.Job.IS_NULL(),
 			tCalendar.CreatorID.EQ(mysql.Int32(userInfo.GetUserId())),
 		),
 		visibleCalendarCondition,
 		calendarEntryRSVPVisible(userInfo, rsvpResponse),
+	)
+	visibility = mysql.AND(
+		visibility,
+		mysql.OR(regularCalendarCondition, birthdayCalendarCondition),
 	)
 
 	return visibility, visibleCalendarCondition, visibleIDs.CTEs
@@ -229,12 +245,7 @@ func (s *Store) ListCalendarEntries(
 
 	condition := mysql.AND(
 		mysql.OR(
-			tCalendar.ID.IN(
-				tCalendarSubs.
-					SELECT(tCalendarSubs.CalendarID).
-					FROM(tCalendarSubs).
-					WHERE(mysql.AND(tCalendarSubs.UserID.EQ(mysql.Int32(userInfo.GetUserId())))),
-			),
+			subscribedPublicCalendarCondition(userInfo),
 			tCalendarEntry.ID.IN(
 				tCalendarRSVP.
 					SELECT(tCalendarRSVP.EntryID).
@@ -308,14 +319,10 @@ func (s *Store) ListCalendarEntries(
 
 	birthdayCondition := mysql.AND(
 		condition,
-		tCalendar.SystemKind.EQ(
-			mysql.Int32(
-				int32(calendarresource.CalendarSystemKind_CALENDAR_SYSTEM_KIND_JOB_BIRTHDAYS),
-			),
-		),
-		mysql.OR(
-			mysql.Bool(userInfo.GetJobAdmin()),
-			tCalendar.Job.EQ(mysql.String(userInfo.GetJob())),
+		s.birthdayCalendarVisible(
+			tCalendar.ID,
+			calendaraccess.AccessLevel_ACCESS_LEVEL_VIEW,
+			userInfo,
 		),
 	)
 
@@ -423,14 +430,10 @@ func (s *Store) GetUpcomingEntries(
 	))
 	birthdayCondition := mysql.AND(
 		condition,
-		tCalendar.SystemKind.EQ(
-			mysql.Int32(
-				int32(calendarresource.CalendarSystemKind_CALENDAR_SYSTEM_KIND_JOB_BIRTHDAYS),
-			),
-		),
-		mysql.OR(
-			mysql.Bool(userInfo.GetJobAdmin()),
-			tCalendar.Job.EQ(mysql.String(userInfo.GetJob())),
+		s.birthdayCalendarVisible(
+			tCalendar.ID,
+			calendaraccess.AccessLevel_ACCESS_LEVEL_VIEW,
+			userInfo,
 		),
 	)
 

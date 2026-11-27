@@ -76,6 +76,9 @@ func TestCalendarEntriesQueryUsesAliasedCalendarEntryColumnForBirthdayVisibility
 	sql, _ := stmt.Sql()
 	assert.Contains(t, sql, "calendar_entry.calendar_id")
 	assert.NotContains(t, sql, "fivenet_calendar_entries.calendar_id")
+	assert.Contains(t, sql, "fivenet_user_jobs AS birthday_calendar_user_job")
+	assert.Contains(t, sql, "fivenet_user_jobs AS subject_acl_user_jobs_exists")
+	assert.NotContains(t, sql, "subject_acl_user_jobs_exists.is_primary")
 }
 
 func TestCalendarEntriesQuerySelectsIconColumns(t *testing.T) {
@@ -179,6 +182,30 @@ func TestCalendarEntryVisibilityAllowsCreatorOwnedPrivateCalendars(t *testing.T)
 	sql, _ := stmt.Sql()
 	assert.Contains(t, sql, "job IS NULL")
 	assert.Contains(t, sql, "creator_id = ?")
+}
+
+func TestCalendarEntryVisibilityOnlyUsesSubscriptionsForPublicCalendars(t *testing.T) {
+	t.Parallel()
+
+	store := New(testParams(new(sql.DB))).(*Store)
+	visibility, _, ctes := store.listCalendarEntriesVisibility(
+		&userinfo.UserInfo{UserId: 1, Job: "police"},
+		false,
+		calendaraccess.AccessLevel_ACCESS_LEVEL_VIEW,
+		calendarentries.RsvpResponses_RSVP_RESPONSES_HIDDEN,
+	)
+	stmt := calendarEntriesQuery(
+		&userinfo.UserInfo{UserId: 1, Job: "police"},
+		mysql.Bool(true),
+		visibility,
+		ctes,
+		false,
+		nil,
+	)
+
+	sql, _ := stmt.Sql()
+	assert.Contains(t, sql, "calendar.public IS TRUE")
+	assert.Contains(t, sql, "calendar_sub.user_id = ?")
 }
 
 func TestNextRecurringOccurrence(t *testing.T) {

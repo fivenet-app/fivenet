@@ -30,6 +30,18 @@ var (
 	)
 )
 
+func subscribedPublicCalendarCondition(userInfo *userinfo.UserInfo) mysql.BoolExpression {
+	return mysql.AND(
+		tCalendar.Public.IS_TRUE(),
+		tCalendar.ID.IN(
+			tCalendarSubs.
+				SELECT(tCalendarSubs.CalendarID).
+				FROM(tCalendarSubs).
+				WHERE(tCalendarSubs.UserID.EQ(mysql.Int32(userInfo.GetUserId()))),
+		),
+	)
+}
+
 type ListQuery struct {
 	UserInfo       *userinfo.UserInfo
 	MinAccessLevel *calendaraccess.AccessLevel

@@ -53,23 +53,30 @@ func (s *Store) CheckIfUserHasAccessToCalendarIDs(
 		condition = condition.OR(tCalendar.Public.IS_TRUE())
 	}
 
-	var accessExists mysql.BoolExpression
+	regularCalendarCondition := mysql.OR(
+		tCalendar.SystemKind.IS_NULL(),
+		tCalendar.SystemKind.NOT_EQ(
+			mysql.Int32(
+				int32(calendar.CalendarSystemKind_CALENDAR_SYSTEM_KIND_JOB_BIRTHDAYS),
+			),
+		),
+	)
+	birthdayCalendarCondition := s.birthdayCalendarVisible(tCalendar.ID, accessLevel, userInfo)
+
+	var regularAccess mysql.BoolExpression
 	if !userInfo.GetJobAdmin() {
-		accessExists = s.access.ACLAccessExistsCondition(tCalendar.ID, userInfo, int32(accessLevel))
+		regularAccess = mysql.OR(
+			condition,
+			s.access.ACLAccessExistsCondition(tCalendar.ID, userInfo, int32(accessLevel)),
+		)
+	} else {
+		regularAccess = mysql.Bool(true)
 	}
 
-	visibleCondition := mysql.OR(accessExists, condition)
-	if userInfo.GetJobAdmin() {
-		visibleCondition = mysql.OR(
-			tCalendar.SystemKind.IS_NULL(),
-			tCalendar.SystemKind.NOT_EQ(
-				mysql.Int32(
-					int32(calendar.CalendarSystemKind_CALENDAR_SYSTEM_KIND_JOB_BIRTHDAYS),
-				),
-			),
-			s.birthdayCalendarVisible(tCalendar.ID, accessLevel, userInfo),
-		)
-	}
+	visibleCondition := mysql.OR(
+		mysql.AND(regularCalendarCondition, regularAccess),
+		birthdayCalendarCondition,
+	)
 
 	stmt := tCalendar.
 		SELECT(
