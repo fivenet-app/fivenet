@@ -45,6 +45,7 @@ const identityTransition = computed(() => ({
     leaveToClass: '-translate-x-1 opacity-0',
 }));
 let identityTimer: ReturnType<typeof setTimeout> | undefined;
+let isJobIdentityPending = true;
 
 function resetJobIdentity(): void {
     if (identityTimer) clearTimeout(identityTimer);
@@ -56,8 +57,12 @@ function scheduleJobIdentity(): void {
     resetJobIdentity();
 
     // On mobile, the sidebar is a drawer. Do not run the handoff until it is visible.
-    if (!activeWorkContextJob.value || (isMobile.value && !isDashboardSidebarSlideoverOpen.value)) return;
+    if (!activeWorkContextJob.value || (isMobile.value && !isDashboardSidebarSlideoverOpen.value)) {
+        isJobIdentityPending = true;
+        return;
+    }
 
+    isJobIdentityPending = false;
     identityTimer = setTimeout(
         () => {
             isShowingJobIdentity.value = true;
@@ -67,10 +72,12 @@ function scheduleJobIdentity(): void {
     );
 }
 
-watch(
-    [isMobile, isDashboardSidebarSlideoverOpen, isSuperuser, activeWorkContextJob, jobLogo, activeWorkContextLabel],
-    scheduleJobIdentity,
-);
+watch(activeWorkContextJob, scheduleJobIdentity);
+
+// On mobile, defer the initial or job-change reveal until the sidebar drawer is opened.
+watch([isMobile, isDashboardSidebarSlideoverOpen], () => {
+    if (isJobIdentityPending) scheduleJobIdentity();
+});
 onMounted(scheduleJobIdentity);
 onBeforeUnmount(resetJobIdentity);
 
@@ -127,7 +134,7 @@ const workContextItems = computed<DropdownMenuItem[][]>(() => [
 
             <template #default="{ ui }">
                 <Transition v-if="!props.collapsed" v-bind="identityTransition">
-                    <span :key="isShowingJobLabel ? activeWorkContextLabel : 'FiveNet'" :class="ui.label()">
+                    <span :key="isShowingJobLabel ? `job-${activeWorkContextJob}` : 'fivenet'" :class="ui.label()">
                         {{ isShowingJobLabel ? activeWorkContextLabel : 'FiveNet' }}
                     </span>
                 </Transition>
