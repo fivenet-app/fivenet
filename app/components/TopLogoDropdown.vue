@@ -36,12 +36,11 @@ const tooltip = computed(() =>
 
 const isShowingJobIdentity = ref(false);
 const isShowingJobLabel = computed(() => isShowingJobIdentity.value);
-const transitionDuration = computed(() => (isMobile.value ? 'duration-[250ms]' : 'duration-[350ms]'));
 const identityTransition = computed(() => ({
     appear: true,
     mode: 'out-in' as const,
-    enterActiveClass: `transition-all ${transitionDuration.value} ease-out`,
-    leaveActiveClass: `transition-all ${transitionDuration.value} ease-in`,
+    enterActiveClass: `transition-all duration-[200ms] ease-out`,
+    leaveActiveClass: `transition-all duration-[200ms] ease-in`,
     enterFromClass: 'translate-x-1 opacity-0',
     leaveToClass: '-translate-x-1 opacity-0',
 }));
@@ -64,7 +63,7 @@ function scheduleJobIdentity(): void {
             isShowingJobIdentity.value = true;
             identityTimer = undefined;
         },
-        isMobile.value ? 350 : 650,
+        isMobile.value ? 650 : 800,
     );
 }
 
