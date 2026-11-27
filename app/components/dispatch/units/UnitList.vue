@@ -9,6 +9,7 @@ const { can } = useAuth();
 
 const centrumStore = useCentrumStore();
 const { getSortedUnits, abort, stopping } = storeToRefs(centrumStore);
+const membersExpanded = ref(false);
 
 const grouped = computed(() => {
     const groups: GroupedUnits = [];
@@ -46,7 +47,7 @@ const grouped = computed(() => {
 
 <template>
     <div class="flex h-full grow flex-col overflow-y-auto px-1">
-        <div class="flex justify-between">
+        <div class="flex items-center justify-between gap-2">
             <h2 class="inline-flex items-center text-base leading-6 font-semibold text-toned">
                 {{ $t('common.unit', 2) }}
 
@@ -57,6 +58,20 @@ const grouped = computed(() => {
                     <UButton to="/dispatch/units" icon="i-mdi-car-multiple" variant="link" />
                 </UTooltip>
             </h2>
+
+            <UTooltip :text="$t('common.expand_collapse')">
+                <UButton
+                    class="transition-transform duration-200"
+                    color="neutral"
+                    size="xs"
+                    variant="ghost"
+                    :aria-expanded="membersExpanded"
+                    :aria-label="$t('common.expand_collapse')"
+                    icon="i-mdi-chevron-double-down"
+                    :class="{ 'rotate-180': membersExpanded }"
+                    @click="membersExpanded = !membersExpanded"
+                />
+            </UTooltip>
         </div>
 
         <div class="@container/unitlist flex-1">
@@ -91,7 +106,12 @@ const grouped = computed(() => {
                         {{ $t(`enums.centrum.StatusUnit.${StatusUnit[group.status]}`) }}
                     </p>
                     <ul class="mt-3 grid grid-cols-1 gap-2 @md:grid-cols-2 @3xl:grid-cols-3" role="list">
-                        <UnitListEntry v-for="unit in group.units" :key="unit.id" :unit="unit" />
+                        <UnitListEntry
+                            v-for="unit in group.units"
+                            :key="unit.id"
+                            :unit="unit"
+                            :show-members="membersExpanded"
+                        />
                     </ul>
                 </template>
             </template>
