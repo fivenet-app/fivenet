@@ -15,7 +15,7 @@ require (
 	github.com/DeRuina/timberjack v1.4.10
 	github.com/HugoSmits86/nativewebp v1.3.0
 	github.com/XSAM/otelsql v0.44.0
-	github.com/adhocore/gronx v1.20.10
+	github.com/adhocore/gronx v1.20.11
 	github.com/alecthomas/kong v1.17.0
 	github.com/blevesearch/bleve/v2 v2.6.4
 	github.com/brianvoe/gofakeit/v7 v7.18.11
@@ -36,7 +36,7 @@ require (
 	github.com/go-jet/jet/v2 v2.16.1
 	github.com/go-playground/validator/v10 v10.30.6
 	github.com/go-sprout/sprout v1.1.2
-	github.com/go-sql-driver/mysql v1.10.2
+	github.com/go-sql-driver/mysql v1.11.0
 	github.com/goccy/go-yaml v1.19.2
 	github.com/golang-jwt/jwt/v5 v5.3.1
 	github.com/golang-migrate/migrate/v4 v4.20.1
